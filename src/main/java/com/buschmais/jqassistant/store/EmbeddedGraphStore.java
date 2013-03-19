@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.store;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
-public class EmbeddedGraphStore extends AbstractinVMGraphStore {
+public class EmbeddedGraphStore extends AbstractInVMGraphStore {
 
     @Override
     protected GraphDatabaseService startDatabase() {

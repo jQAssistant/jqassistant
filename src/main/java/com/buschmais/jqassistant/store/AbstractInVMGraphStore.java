@@ -12,7 +12,7 @@ import org.neo4j.server.WrappingNeoServerBootstrapper;
 
 import com.buschmais.jqassistant.model.ClassDescriptor;
 
-public abstract class AbstractinVMGraphStore implements GraphStore {
+public abstract class AbstractInVMGraphStore implements GraphStore {
 
     private final Map<ClassDescriptor, Node> classNodes = new HashMap<ClassDescriptor, Node>();
 
@@ -22,6 +22,7 @@ public abstract class AbstractinVMGraphStore implements GraphStore {
 
     @Override
     public void start() {
+        database = startDatabase();
         server = new WrappingNeoServerBootstrapper((GraphDatabaseAPI) database);
         server.start();
     }
@@ -29,7 +30,7 @@ public abstract class AbstractinVMGraphStore implements GraphStore {
     @Override
     public void stop() {
         server.stop();
-        database.shutdown();
+        stopDatabase(database);
     }
 
     @Override
