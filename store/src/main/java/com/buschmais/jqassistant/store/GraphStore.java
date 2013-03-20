@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.store;
 import java.util.Map;
 import java.util.Set;
 
-import com.buschmais.jqassistant.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.model.ClassDescriptor;
 
 public interface GraphStore {
 

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.model;
+package com.buschmais.jqassistant.store.model;
 
 public abstract class AbstractDescriptor {
 
@@ -43,6 +43,11 @@ public abstract class AbstractDescriptor {
         } else if (!fullQualifiedName.equals(otherFullQualifiedName))
             return false;
         return true;
+    }
+
+    @Override
+    public final String toString() {
+        return getFullQualifiedName();
     }
 
 }

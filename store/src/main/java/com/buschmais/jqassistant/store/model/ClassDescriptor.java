@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.model;
+package com.buschmais.jqassistant.store.model;
 
 public class ClassDescriptor extends AbstractDescriptor implements Comparable<ClassDescriptor> {
 
@@ -47,11 +47,6 @@ public class ClassDescriptor extends AbstractDescriptor implements Comparable<Cl
         } else if (!packageDescriptor.equals(other.packageDescriptor))
             return false;
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return packageDescriptor.getName() + "." + this.getName();
     }
 
     @Override

@@ -12,8 +12,8 @@ import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServerBootstrapper;
 import org.neo4j.tooling.GlobalGraphOperations;
 
-import com.buschmais.jqassistant.model.ClassDescriptor;
-import com.buschmais.jqassistant.model.PackageDescriptor;
+import com.buschmais.jqassistant.store.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.model.PackageDescriptor;
 
 public abstract class AbstractInVMGraphStore implements GraphStore {
 

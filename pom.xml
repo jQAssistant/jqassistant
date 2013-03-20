@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.buschmais.neo4j</groupId>
+	<groupId>com.buschmais.jqassistant</groupId>
 	<artifactId>jqassistant</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
 
 	<repositories>
 		<repository>
@@ -35,6 +36,26 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>com.buschmais.jqassistant</groupId>
+				<artifactId>jqassistant.scanner</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.buschmais.jqassistant</groupId>
+				<artifactId>jqassistant.store</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.buschmais.jqassistant</groupId>
+				<artifactId>jqassistant.mojo</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>asm</groupId>
+				<artifactId>asm</artifactId>
+				<version>3.3.1</version>
+			</dependency>
+			<dependency>
 				<groupId>org.neo4j</groupId>
 				<artifactId>server-api</artifactId>
 				<version>1.8.2</version>
@@ -49,54 +70,50 @@
 				<artifactId>neo4j-lucene-index</artifactId>
 				<version>1.8.2</version>
 			</dependency>
+			<dependency>
+				<groupId>org.neo4j</groupId>
+				<artifactId>neo4j</artifactId>
+				<version>1.8.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.neo4j.app</groupId>
+				<artifactId>neo4j-server</artifactId>
+				<version>1.8.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.neo4j.app</groupId>
+				<artifactId>neo4j-server</artifactId>
+				<classifier>static-web</classifier>
+				<version>1.8.2</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-plugin-api</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-core</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.maven</groupId>
+				<artifactId>maven-artifact</artifactId>
+				<version>2.2.1</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.11</version>
+				<scope>test</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
+	<modules>
+		<module>scanner</module>
+		<module>store</module>
+		<module>mojo</module>
+	</modules>
 
-	<dependencies>
-		<dependency>
-			<groupId>asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>3.3.1</version>
-		</dependency>
-		<!-- <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j-rest-graphdb</artifactId> <version>1.8.1</version> </dependency> -->
-		<!-- <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j-cypher-dsl</artifactId> <version>1.7</version> </dependency> -->
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
-			<version>1.8.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-			<version>1.8.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-			<classifier>static-web</classifier>
-			<version>1.8.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-core</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-artifact</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
 </project>

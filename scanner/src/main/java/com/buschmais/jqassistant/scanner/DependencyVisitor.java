@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant;
+package com.buschmais.jqassistant.scanner;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +15,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 
-import com.buschmais.jqassistant.model.ClassDescriptor;
-import com.buschmais.jqassistant.model.PackageDescriptor;
+import com.buschmais.jqassistant.store.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.model.PackageDescriptor;
 
 public class DependencyVisitor implements AnnotationVisitor, SignatureVisitor, ClassVisitor, FieldVisitor, MethodVisitor {
 

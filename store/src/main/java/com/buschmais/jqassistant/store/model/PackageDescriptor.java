@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.model;
+package com.buschmais.jqassistant.store.model;
 
 public class PackageDescriptor extends AbstractDescriptor implements Comparable<PackageDescriptor> {
 
@@ -7,11 +7,6 @@ public class PackageDescriptor extends AbstractDescriptor implements Comparable<
     public PackageDescriptor(PackageDescriptor parent, String name) {
         super(name);
         this.parent = parent;
-    }
-
-    @Override
-    public String toString() {
-        return this.getName();
     }
 
     @Override
