@@ -16,6 +16,8 @@ public abstract class AbstractDescriptor {
         return name;
     }
 
+    public abstract String getFullQualifiedName();
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -33,10 +35,12 @@ public abstract class AbstractDescriptor {
         if (getClass() != obj.getClass())
             return false;
         AbstractDescriptor other = (AbstractDescriptor) obj;
-        if (name == null) {
-            if (other.name != null)
+        String fullQualifiedName = getFullQualifiedName();
+        String otherFullQualifiedName = other.getFullQualifiedName();
+        if (fullQualifiedName == null) {
+            if (otherFullQualifiedName != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!fullQualifiedName.equals(otherFullQualifiedName))
             return false;
         return true;
     }

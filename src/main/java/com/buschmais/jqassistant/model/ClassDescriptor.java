@@ -14,6 +14,17 @@ public class ClassDescriptor extends AbstractDescriptor implements Comparable<Cl
     }
 
     @Override
+    public String getFullQualifiedName() {
+        StringBuffer buffer = new StringBuffer();
+        if (packageDescriptor != null) {
+            buffer.append(packageDescriptor.getFullQualifiedName());
+            buffer.append('.');
+        }
+        buffer.append(getName());
+        return buffer.toString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -43,6 +54,7 @@ public class ClassDescriptor extends AbstractDescriptor implements Comparable<Cl
         return packageDescriptor.getName() + "." + this.getName();
     }
 
+    @Override
     public int compareTo(ClassDescriptor o) {
         int result = this.getPackageDescriptor().compareTo(o.getPackageDescriptor());
         if (result == 0) {
