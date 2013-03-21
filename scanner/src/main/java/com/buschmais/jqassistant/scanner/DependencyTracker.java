@@ -50,8 +50,8 @@ public class DependencyTracker {
     }
 
     private void scanZipFile(String filename) throws IOException {
-
-        DependencyVisitor v = new DependencyVisitor();
+        DependencyModel model = new DependencyModel();
+        ClassVisitor v = new ClassVisitor(model);
         ZipFile f = new ZipFile(filename);
         Enumeration<? extends ZipEntry> en = f.entries();
         while (en.hasMoreElements()) {
@@ -64,7 +64,7 @@ public class DependencyTracker {
 
         graphStore.start();
         System.out.println("Writing to DB");
-        graphStore.createClassNodesWithDependencies(v.getDependencies());
+        graphStore.createClassNodesWithDependencies(model.getDependencies());
         System.out.println("Writing to DB finished.");
         graphStore.stop();
     }
