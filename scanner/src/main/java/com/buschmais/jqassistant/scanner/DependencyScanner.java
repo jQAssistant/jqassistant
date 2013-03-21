@@ -39,9 +39,9 @@ import org.objectweb.asm.ClassReader;
 import com.buschmais.jqassistant.store.EmbeddedGraphStore;
 import com.buschmais.jqassistant.store.GraphStore;
 
-public class DependencyTracker {
+public class DependencyScanner {
 
-    private static DependencyTracker tracker = new DependencyTracker();
+    private static DependencyScanner tracker = new DependencyScanner();
 
     private final GraphStore graphStore = new EmbeddedGraphStore();
 
@@ -51,14 +51,14 @@ public class DependencyTracker {
 
     private void scanZipFile(String filename) throws IOException {
         DependencyModel model = new DependencyModel();
-        ClassVisitor v = new ClassVisitor(model);
+        ClassVisitor visitor = new ClassVisitor(model);
         ZipFile f = new ZipFile(filename);
         Enumeration<? extends ZipEntry> en = f.entries();
         while (en.hasMoreElements()) {
             ZipEntry e = en.nextElement();
             String name = e.getName();
             if (name.endsWith(".class")) {
-                new ClassReader(f.getInputStream(e)).accept(v, 0);
+                new ClassReader(f.getInputStream(e)).accept(visitor, 0);
             }
         }
 
