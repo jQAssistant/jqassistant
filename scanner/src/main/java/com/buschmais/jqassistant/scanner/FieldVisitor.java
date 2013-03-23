@@ -1,19 +1,31 @@
 package com.buschmais.jqassistant.scanner;
 
-import com.buschmais.jqassistant.store.model.ClassDescriptor;
+import org.objectweb.asm.Attribute;
 
-public class FieldVisitor extends AbstractVisitor implements org.objectweb.asm.FieldVisitor {
+import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 
-    private ClassDescriptor classDescriptor;
+public class FieldVisitor extends AbstractVisitor implements
+		org.objectweb.asm.FieldVisitor {
 
-    protected FieldVisitor(DependencyModel model, ClassDescriptor classDescriptor) {
-        super(model);
-        this.classDescriptor = classDescriptor;
-    }
+	private final ClassDescriptor classDescriptor;
 
-    @Override
-    public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
-        return new AnnotationVisitor(getModel(), classDescriptor);
-    }
+	protected FieldVisitor(Store store, ClassDescriptor classDescriptor) {
+		super(store);
+		this.classDescriptor = classDescriptor;
+	}
+
+	@Override
+	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
+		return new AnnotationVisitor(getStore(), classDescriptor);
+	}
+
+	@Override
+	public void visitAttribute(Attribute attribute) {
+	}
+
+	@Override
+	public void visitEnd() {
+	}
 
 }

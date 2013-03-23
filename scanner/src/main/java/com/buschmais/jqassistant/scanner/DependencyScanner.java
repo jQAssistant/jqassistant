@@ -29,44 +29,47 @@
  */
 package com.buschmais.jqassistant.scanner;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.objectweb.asm.ClassReader;
 
-import com.buschmais.jqassistant.store.EmbeddedGraphStore;
-import com.buschmais.jqassistant.store.GraphStore;
+import com.buschmais.jqassistant.store.api.Store;
 
 public class DependencyScanner {
 
-    private static DependencyScanner tracker = new DependencyScanner();
+	private final Store graphStore;
 
-    private final GraphStore graphStore = new EmbeddedGraphStore();
+	public DependencyScanner(Store graphStore) {
+		this.graphStore = graphStore;
+	}
 
-    public static void main(final String[] args) throws IOException {
-        tracker.scanZipFile(args[0]);
-    }
+	public void scanArchive(File archive) throws IOException {
+		ZipFile zipFile = new ZipFile(archive);
+		final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		while (zipEntries.hasMoreElements()) {
+			ZipEntry e = zipEntries.nextElement();
+			String name = e.getName();
+			if (name.endsWith(".class")) {
+				scanInputStream(zipFile.getInputStream(e));
+			}
+		}
+	}
 
-    private void scanZipFile(String filename) throws IOException {
-        DependencyModel model = new DependencyModel();
-        ClassVisitor visitor = new ClassVisitor(model);
-        ZipFile f = new ZipFile(filename);
-        Enumeration<? extends ZipEntry> en = f.entries();
-        while (en.hasMoreElements()) {
-            ZipEntry e = en.nextElement();
-            String name = e.getName();
-            if (name.endsWith(".class")) {
-                new ClassReader(f.getInputStream(e)).accept(visitor, 0);
-            }
-        }
+	public void scanFiles(Iterable<File> files) {
 
-        graphStore.start();
-        System.out.println("Writing to DB");
-        graphStore.createClassNodesWithDependencies(model.getDependencies());
-        System.out.println("Writing to DB finished.");
-        graphStore.stop();
-    }
+	}
 
+	public void scanFile(File file) {
+
+	}
+
+	public void scanInputStream(InputStream inputStream) throws IOException {
+		ClassVisitor visitor = new ClassVisitor(graphStore);
+		new ClassReader(inputStream).accept(visitor, 0);
+	}
 }
