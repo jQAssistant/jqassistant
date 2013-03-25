@@ -7,10 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.store.api.model.Descriptor;
+import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.store.impl.model.AbstractDescriptor;
+import com.buschmais.jqassistant.store.impl.model.AbstractParentDescriptor;
 import com.buschmais.jqassistant.store.impl.model.ClassDescriptorImpl;
+import com.buschmais.jqassistant.store.impl.model.MethodDescriptorImpl;
 import com.buschmais.jqassistant.store.impl.model.PackageDescriptorImpl;
-import com.buschmais.jqassistant.store.impl.model.RelationType;
 
 public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 
@@ -19,6 +21,10 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 
 	private Transaction transaction = null;
 
+	private Index<Node> packageIndex;
+	private Index<Node> classIndex;
+	private Index<Node> methodIndex;
+
 	@Override
 	public void beginTransaction() {
 		if (transaction != null) {
@@ -26,7 +32,9 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 					"There is already an existing transaction.");
 		}
 		transaction = database.beginTx();
-
+		methodIndex = database.index().forNodes("methods");
+		classIndex = database.index().forNodes("classes");
+		packageIndex = database.index().forNodes("packages");
 	}
 
 	@Override
@@ -41,7 +49,7 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 
 	@Override
 	public ClassDescriptorImpl getClassDescriptor(String fullQualifiedName) {
-		Node node = getClassIndex().get(Descriptor.FULLQUALIFIEDNAME,
+		Node node = classIndex.get(Descriptor.FULLQUALIFIEDNAME,
 				fullQualifiedName).getSingle();
 		if (node != null) {
 			Name name = getName(fullQualifiedName, '.');
@@ -57,18 +65,16 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 		Name name = getName(fullQualifiedName, '.');
 		PackageDescriptorImpl packageDescriptor = resolvePackageDescriptor(name
 				.getParentName());
-		LOGGER.info("Creating node for '{}'.", fullQualifiedName);
-		Node classNode = database.createNode();
+		Node classNode = createNode(fullQualifiedName);
 		ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
 				classNode, packageDescriptor);
-		initDescriptor(classDescriptor, packageDescriptor, name,
-				getClassIndex());
+		initDescriptor(classDescriptor, packageDescriptor, name, classIndex);
 		return classDescriptor;
 	}
 
 	@Override
 	public PackageDescriptorImpl getPackageDescriptor(String fullQualifiedName) {
-		Node node = getPackageIndex().get(Descriptor.FULLQUALIFIEDNAME,
+		Node node = packageIndex.get(Descriptor.FULLQUALIFIEDNAME,
 				fullQualifiedName).getSingle();
 		if (node != null) {
 			Name name = getName(fullQualifiedName, '.');
@@ -85,35 +91,63 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 		Name name = getName(fullQualifiedName, '.');
 		PackageDescriptorImpl parentPackageDescriptor = resolvePackageDescriptor(name
 				.getParentName());
-		LOGGER.info("Creating node for '{}'.", fullQualifiedName);
-		Node packageNode = database.createNode();
+		Node packageNode = createNode(fullQualifiedName);
 		PackageDescriptorImpl packageDescriptor = new PackageDescriptorImpl(
 				packageNode, parentPackageDescriptor);
 		initDescriptor(packageDescriptor, parentPackageDescriptor, name,
-				getPackageIndex());
+				packageIndex);
 		return packageDescriptor;
 	}
 
-	private PackageDescriptorImpl resolvePackageDescriptor(String name) {
-		PackageDescriptorImpl parentPackageDescriptor = null;
-		if (name != null) {
-			parentPackageDescriptor = getPackageDescriptor(name);
-			if (parentPackageDescriptor == null) {
-				parentPackageDescriptor = createPackageDescriptor(name);
-			}
+	@Override
+	public MethodDescriptor getMethodDescriptor(String fullQualifiedName) {
+		Node node = packageIndex.get(Descriptor.FULLQUALIFIEDNAME,
+				fullQualifiedName).getSingle();
+		if (node != null) {
+			Name name = getName(fullQualifiedName, '#');
+			ClassDescriptorImpl classDescriptor = getClassDescriptor(name
+					.getParentName());
+			return new MethodDescriptorImpl(node, classDescriptor);
 		}
-		return parentPackageDescriptor;
+		return null;
+	}
+
+	@Override
+	public MethodDescriptor createMethodDescriptor(String fullQualifiedName) {
+		Name name = getName(fullQualifiedName, '#');
+		ClassDescriptorImpl classDescriptor = getClassDescriptor(name
+				.getParentName());
+		Node methodNode = createNode(fullQualifiedName);
+		MethodDescriptorImpl methodDescriptor = new MethodDescriptorImpl(
+				methodNode, classDescriptor);
+		initDescriptor(methodDescriptor, classDescriptor, name, methodIndex);
+		return methodDescriptor;
+	}
+
+	private Node createNode(String fullQualifiedName) {
+		LOGGER.info("Creating node for '{}'.", fullQualifiedName);
+		Node node = database.createNode();
+		return node;
+	}
+
+	private PackageDescriptorImpl resolvePackageDescriptor(
+			String fullQualifiedName) {
+		PackageDescriptorImpl packageDescriptor = null;
+		if (fullQualifiedName != null
+				&& getPackageDescriptor(fullQualifiedName) == null) {
+			packageDescriptor = createPackageDescriptor(fullQualifiedName);
+		}
+		return packageDescriptor;
 	}
 
 	private void initDescriptor(AbstractDescriptor descriptor,
-			AbstractDescriptor parent, Name name, Index<Node> index) {
+			AbstractParentDescriptor parent, Name name, Index<Node> index) {
 		descriptor.setFullQualifiedName(name.getFullQualifiedName());
 		descriptor.setLocalName(name.getLocalName());
-		getClassIndex().add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
+		index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
 				name.getFullQualifiedName());
 		if (parent != null) {
-			parent.getNode().createRelationshipTo(descriptor.getNode(),
-					RelationType.CONTAINS);
+			parent.addChild(descriptor);
 		}
 	}
 
@@ -130,14 +164,6 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 			parentName = null;
 		}
 		return new Name(parentName, localName, fullQualifiedName);
-	}
-
-	private Index<Node> getClassIndex() {
-		return database.index().forNodes("classes");
-	}
-
-	private Index<Node> getPackageIndex() {
-		return database.index().forNodes("packages");
 	}
 
 }

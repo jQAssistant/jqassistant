@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.store.impl.model;
 
 import org.neo4j.graphdb.Node;
 
+import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
 public class MethodDescriptorImpl extends AbstractDescriptor implements
@@ -18,4 +19,8 @@ public class MethodDescriptorImpl extends AbstractDescriptor implements
 		return classDescriptor;
 	}
 
+	@Override
+	public void addDependency(ClassDescriptor dependency) {
+		addRelationShip(RelationType.DEPENDS_ON, dependency);
+	}
 }

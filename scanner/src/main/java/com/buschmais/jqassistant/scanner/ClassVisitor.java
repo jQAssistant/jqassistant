@@ -30,7 +30,8 @@ public class ClassVisitor extends AbstractVisitor implements
 						.addImplements(getClassDescriptor(getInternalName(interfaces[i])));
 			}
 		} else {
-			addSignature(signature);
+			new SignatureReader(signature).accept(new ClassSignatureVisitor(
+					getStore(), classDescriptor));
 		}
 	}
 
@@ -40,7 +41,8 @@ public class ClassVisitor extends AbstractVisitor implements
 		if (signature == null) {
 			addDependency(classDescriptor, getType((desc)));
 		} else {
-			addDependency(classDescriptor, getTypeSignature(signature));
+			addDependency(classDescriptor,
+					getTypeSignature(signature, classDescriptor));
 		}
 		if (value instanceof Type) {
 			addDependency(classDescriptor, getType((Type) value));
@@ -51,10 +53,12 @@ public class ClassVisitor extends AbstractVisitor implements
 	@Override
 	public MethodVisitor visitMethod(final int access, final String name,
 			final String desc, final String signature, final String[] exceptions) {
+		getMethodDescriptor(classDescriptor, name, desc);
 		if (signature == null) {
 			addMethodDesc(desc);
 		} else {
-			addSignature(signature);
+			new SignatureReader(signature).accept(new MethodSignatureVisitor(
+					getStore(), classDescriptor));
 		}
 		addInternalNames(exceptions);
 		return new MethodVisitor(getStore(), classDescriptor);
@@ -91,15 +95,6 @@ public class ClassVisitor extends AbstractVisitor implements
 		Type[] types = Type.getArgumentTypes(desc);
 		for (int i = 0; i < types.length; i++) {
 			addDependency(classDescriptor, getType(types[i]));
-		}
-	}
-
-	private void addSignature(final String signature) {
-		if (signature != null) {
-			SignatureVisitor signatureVisitor = new SignatureVisitor(getStore());
-			new SignatureReader(signature).accept(signatureVisitor);
-			addDependency(classDescriptor,
-					signatureVisitor.getSignatureClassName());
 		}
 	}
 

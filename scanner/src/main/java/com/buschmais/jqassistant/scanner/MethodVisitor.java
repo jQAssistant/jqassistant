@@ -59,7 +59,8 @@ public class MethodVisitor extends AbstractVisitor implements
 	public void visitLocalVariable(final String name, final String desc,
 			final String signature, final Label start, final Label end,
 			final int index) {
-		addDependency(classDescriptor, getTypeSignature(signature));
+		addDependency(classDescriptor,
+				getTypeSignature(signature, classDescriptor));
 	}
 
 	@Override

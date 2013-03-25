@@ -1,14 +1,18 @@
 package com.buschmais.jqassistant.scanner;
 
 import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.store.api.model.Descriptor;
 
 public class SignatureVisitor extends AbstractVisitor implements
 		org.objectweb.asm.signature.SignatureVisitor {
 
 	private String signatureClassName;
 
-	protected SignatureVisitor(Store store) {
+	private final Descriptor descriptor;
+
+	protected SignatureVisitor(Store store, Descriptor descriptor) {
 		super(store);
+		this.descriptor = descriptor;
 	}
 
 	@Override
@@ -17,37 +21,37 @@ public class SignatureVisitor extends AbstractVisitor implements
 
 	@Override
 	public SignatureVisitor visitClassBound() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override
 	public SignatureVisitor visitInterfaceBound() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override
 	public SignatureVisitor visitSuperclass() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override
 	public SignatureVisitor visitInterface() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override
 	public SignatureVisitor visitParameterType() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override
 	public SignatureVisitor visitReturnType() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override
 	public SignatureVisitor visitExceptionType() {
-		return this;
+		return new SignatureVisitor(getStore(), descriptor);
 	}
 
 	@Override

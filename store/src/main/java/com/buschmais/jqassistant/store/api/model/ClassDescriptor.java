@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.store.api.model;
 
-public interface ClassDescriptor extends Descriptor {
-
-	void addDependency(ClassDescriptor dependency);
+public interface ClassDescriptor extends ParentDescriptor, DependentDescriptor {
 
 	void addSuperClass(ClassDescriptor superClass);
 

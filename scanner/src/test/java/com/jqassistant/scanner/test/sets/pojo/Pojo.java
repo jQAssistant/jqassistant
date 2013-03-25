@@ -1,6 +1,9 @@
 package com.jqassistant.scanner.test.sets.pojo;
 
-public class Pojo {
+import java.util.Map;
+import java.util.Set;
+
+public class Pojo<X> {
 
 	private String stringValue;
 
@@ -10,6 +13,10 @@ public class Pojo {
 
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
+	}
+
+	public <Y> void setX(X x, Map<X, Set<Y>> values) {
+
 	}
 
 }

@@ -5,7 +5,7 @@ import org.neo4j.graphdb.Node;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 
-public class ClassDescriptorImpl extends AbstractDescriptor implements
+public class ClassDescriptorImpl extends AbstractParentDescriptor implements
 		ClassDescriptor {
 
 	private final PackageDescriptorImpl packageDescriptor;
@@ -22,21 +22,18 @@ public class ClassDescriptorImpl extends AbstractDescriptor implements
 
 	@Override
 	public void addDependency(ClassDescriptor dependency) {
-		getNode().createRelationshipTo(getNode(dependency),
-				RelationType.DEPENDS_ON);
+		addRelationShip(RelationType.DEPENDS_ON, dependency);
 	}
 
 	@Override
 	public void addSuperClass(ClassDescriptor superClass) {
-		getNode().createRelationshipTo(getNode(superClass),
-				RelationType.INHERITS_FROM);
+		addRelationShip(RelationType.INHERITS_FROM, superClass);
 
 	}
 
 	@Override
 	public void addImplements(ClassDescriptor interfaceClass) {
-		getNode().createRelationshipTo(getNode(interfaceClass),
-				RelationType.IMPLEMENTS);
-
+		addRelationShip(RelationType.IMPLEMENTS, interfaceClass);
 	}
+
 }
