@@ -37,39 +37,51 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.objectweb.asm.ClassReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.store.api.Store;
 
 public class DependencyScanner {
 
-	private final Store graphStore;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DependencyScanner.class);
 
-	public DependencyScanner(Store graphStore) {
-		this.graphStore = graphStore;
-	}
+    private final Store store;
 
-	public void scanArchive(File archive) throws IOException {
-		ZipFile zipFile = new ZipFile(archive);
-		final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-		while (zipEntries.hasMoreElements()) {
-			ZipEntry e = zipEntries.nextElement();
-			String name = e.getName();
-			if (name.endsWith(".class")) {
-				scanInputStream(zipFile.getInputStream(e));
-			}
-		}
-	}
+    public DependencyScanner(Store graphStore) {
+        this.store = graphStore;
+    }
 
-	public void scanFiles(Iterable<File> files) {
+    public void scanArchive(File archive) throws IOException {
+        ZipFile zipFile = new ZipFile(archive);
+        final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+        while (zipEntries.hasMoreElements()) {
+            ZipEntry e = zipEntries.nextElement();
+            String name = e.getName();
+            if (name.endsWith(".class")) {
+                scanInputStream(zipFile.getInputStream(e), name);
+            }
+        }
+    }
 
-	}
+    public void scanFiles(Iterable<File> files) {
 
-	public void scanFile(File file) {
+    }
 
-	}
+    public void scanFile(File file) {
 
-	public void scanInputStream(InputStream inputStream) throws IOException {
-		ClassVisitor visitor = new ClassVisitor(graphStore);
-		new ClassReader(inputStream).accept(visitor, 0);
-	}
+    }
+
+    public void scanClass(Class<?> classType) throws IOException {
+        String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
+        scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
+    }
+
+    public void scanInputStream(InputStream inputStream, String name) throws IOException {
+        LOGGER.info("Scanning " + name);
+        store.beginTransaction();
+        ClassVisitor visitor = new ClassVisitor(store);
+        new ClassReader(inputStream).accept(visitor, 0);
+        store.endTransaction();
+    }
 }

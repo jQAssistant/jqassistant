@@ -1,8 +1,11 @@
 package com.buschmais.jqassistant.store.impl.model;
 
-import org.neo4j.graphdb.Direction;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,59 +13,59 @@ import com.buschmais.jqassistant.store.api.model.Descriptor;
 
 public abstract class AbstractDescriptor implements Descriptor {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractDescriptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDescriptor.class);
 
-	private final Node node;
+    private final Node node;
 
-	public AbstractDescriptor(Node node) {
-		this.node = node;
-	}
+    private Map<RelationType, Set<AbstractDescriptor>> relationCache = new HashMap<RelationType, Set<AbstractDescriptor>>();
 
-	@Override
-	public String getLocalName() {
-		return (String) node.getProperty("localName");
-	}
+    public AbstractDescriptor(Node node) {
+        this.node = node;
+    }
 
-	@Override
-	public void setLocalName(String localName) {
-		node.setProperty("localName", localName);
-	}
+    @Override
+    public String getLocalName() {
+        return (String) node.getProperty("localName");
+    }
 
-	@Override
-	public String getFullQualifiedName() {
-		return (String) node.getProperty(FULLQUALIFIEDNAME);
-	}
+    @Override
+    public void setLocalName(String localName) {
+        node.setProperty("localName", localName);
+    }
 
-	@Override
-	public void setFullQualifiedName(String fullQualifiedName) {
-		node.setProperty(FULLQUALIFIEDNAME, fullQualifiedName);
-	}
+    @Override
+    public String getFullQualifiedName() {
+        return (String) node.getProperty(FULLQUALIFIEDNAME);
+    }
 
-	@Override
-	public final String toString() {
-		return getFullQualifiedName();
-	}
+    @Override
+    public void setFullQualifiedName(String fullQualifiedName) {
+        node.setProperty(FULLQUALIFIEDNAME, fullQualifiedName);
+    }
 
-	public Node getNode() {
-		return node;
-	}
+    @Override
+    public final String toString() {
+        return getFullQualifiedName();
+    }
 
-	protected void addRelationShip(RelationType type, Descriptor descriptor) {
-		Node descriptorNode = getNode(descriptor);
-		for (Relationship relationship : node.getRelationships(type,
-				Direction.OUTGOING)) {
-			if (type.name().equals(relationship.getType().name())
-					&& node.equals(descriptorNode)) {
-				return;
-			}
-		}
-		LOGGER.info("Creating relationship '(" + this + ")-[:" + type + "]->("
-				+ descriptor + ")'.");
-		node.createRelationshipTo(descriptorNode, type);
-	}
+    public Node getNode() {
+        return node;
+    }
 
-	private Node getNode(Descriptor descriptor) {
-		return ((AbstractDescriptor) descriptor).getNode();
-	}
+    protected void addRelationShip(RelationType type, Descriptor descriptor) {
+        Set<AbstractDescriptor> relationsPerType = relationCache.get(type);
+        if (relationsPerType == null) {
+            relationsPerType = new HashSet<AbstractDescriptor>();
+            relationCache.put(type, relationsPerType);
+        }
+        if (!relationsPerType.contains(descriptor)) {
+            Node descriptorNode = getNode(descriptor);
+            LOGGER.debug("Creating relationship '(" + this + ")-[:" + type + "]->(" + descriptor + ")'.");
+            node.createRelationshipTo(descriptorNode, type);
+        }
+    }
+
+    private Node getNode(Descriptor descriptor) {
+        return ((AbstractDescriptor) descriptor).getNode();
+    }
 }

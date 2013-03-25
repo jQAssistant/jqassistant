@@ -10,34 +10,33 @@ import com.buschmais.jqassistant.store.api.Store;
 
 public abstract class AbstractGraphStore implements Store {
 
-	protected GraphDatabaseService database;
-	private WrappingNeoServerBootstrapper server;
+    protected GraphDatabaseService database;
+    private WrappingNeoServerBootstrapper server;
 
-	@Override
-	public void start() {
-		database = startDatabase();
-		beginTransaction();
-		for (Relationship relationShip : GlobalGraphOperations.at(database)
-				.getAllRelationships()) {
-			relationShip.delete();
-		}
-		for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
-			node.delete();
-		}
-		endTransaction();
-		// server = new WrappingNeoServerBootstrapper((GraphDatabaseAPI)
-		// database);
-		// server.start();
-	}
+    @Override
+    public void start() {
+        database = startDatabase();
+        beginTransaction();
+        for (Relationship relationShip : GlobalGraphOperations.at(database).getAllRelationships()) {
+            relationShip.delete();
+        }
+        for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
+            node.delete();
+        }
+        endTransaction();
+        // server = new WrappingNeoServerBootstrapper((GraphDatabaseAPI)
+        // database);
+        // server.start();
+    }
 
-	@Override
-	public void stop() {
-		// server.stop();
-		stopDatabase(database);
-	}
+    @Override
+    public void stop() {
+        // server.stop();
+        stopDatabase(database);
+    }
 
-	protected abstract GraphDatabaseService startDatabase();
+    protected abstract GraphDatabaseService startDatabase();
 
-	protected abstract void stopDatabase(GraphDatabaseService database);
+    protected abstract void stopDatabase(GraphDatabaseService database);
 
 }
