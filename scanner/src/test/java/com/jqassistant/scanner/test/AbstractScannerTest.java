@@ -9,19 +9,19 @@ import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 
 public abstract class AbstractScannerTest {
 
-    private Store store;
-    protected DependencyScanner scanner;
+	private Store store;
+	protected DependencyScanner scanner;
 
-    @Before
-    public void startStore() {
-        store = new EmbeddedGraphStore();
-        scanner = new DependencyScanner(store);
-        store.start();
-    }
+	@Before
+	public void startStore() {
+		store = new EmbeddedGraphStore("target/graphdb");
+		scanner = new DependencyScanner(store);
+		store.start();
+	}
 
-    @After
-    public void stopStore() {
-        store.stop();
-    }
+	@After
+	public void stopStore() {
+		store.stop();
+	}
 
 }

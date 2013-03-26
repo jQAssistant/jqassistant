@@ -5,10 +5,16 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 public class EmbeddedGraphStore extends AbstractInVMGraphStore {
 
+	private final String databaseDirectory;
+
+	public EmbeddedGraphStore(String databaseDirectory) {
+		this.databaseDirectory = databaseDirectory;
+	}
+
 	@Override
 	protected GraphDatabaseService startDatabase() {
 		return new GraphDatabaseFactory()
-				.newEmbeddedDatabase("target/graph.db");
+				.newEmbeddedDatabase(databaseDirectory);
 	}
 
 	@Override

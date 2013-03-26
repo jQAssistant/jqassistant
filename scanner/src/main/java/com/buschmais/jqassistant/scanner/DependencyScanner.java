@@ -29,13 +29,19 @@
  */
 package com.buschmais.jqassistant.scanner;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.DirectoryWalker;
 import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,44 +50,66 @@ import com.buschmais.jqassistant.store.api.Store;
 
 public class DependencyScanner {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DependencyScanner.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(DependencyScanner.class);
 
-    private final Store store;
+	private final Store store;
 
-    public DependencyScanner(Store graphStore) {
-        this.store = graphStore;
-    }
+	public DependencyScanner(Store graphStore) {
+		this.store = graphStore;
+	}
 
-    public void scanArchive(File archive) throws IOException {
-        ZipFile zipFile = new ZipFile(archive);
-        final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-        while (zipEntries.hasMoreElements()) {
-            ZipEntry e = zipEntries.nextElement();
-            String name = e.getName();
-            if (name.endsWith(".class")) {
-                scanInputStream(zipFile.getInputStream(e), name);
-            }
-        }
-    }
+	public void scanArchive(File archive) throws IOException {
+		ZipFile zipFile = new ZipFile(archive);
+		final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		while (zipEntries.hasMoreElements()) {
+			ZipEntry e = zipEntries.nextElement();
+			String name = e.getName();
+			if (name.endsWith(".class")) {
+				scanInputStream(zipFile.getInputStream(e), name);
+			}
+		}
+	}
 
-    public void scanFiles(Iterable<File> files) {
+	public void scanDirectory(File directory) throws IOException {
+		final List<File> classFiles = new ArrayList<File>();
+		new DirectoryWalker<File>() {
 
-    }
+			@Override
+			protected void handleFile(File file, int depth,
+					Collection<File> results) throws IOException {
+				if (!file.isDirectory() && file.getName().endsWith(".class")) {
+					results.add(file);
+				}
+			}
 
-    public void scanFile(File file) {
+			public void scan(File directory) throws IOException {
+				super.walk(directory, classFiles);
+			}
+		}.scan(directory);
+		for (File classFile : classFiles) {
+			scanFile(classFile);
+		}
+	}
 
-    }
+	public void scanFile(File file) throws IOException {
+		scanInputStream(new BufferedInputStream(new FileInputStream(file)),
+				file.getName());
+	}
 
-    public void scanClass(Class<?> classType) throws IOException {
-        String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
-        scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
-    }
+	public void scanClass(Class<?> classType) throws IOException {
+		String resourceName = "/" + classType.getName().replace('.', '/')
+				+ ".class";
+		scanInputStream(classType.getResourceAsStream(resourceName),
+				resourceName);
+	}
 
-    public void scanInputStream(InputStream inputStream, String name) throws IOException {
-        LOGGER.info("Scanning " + name);
-        store.beginTransaction();
-        ClassVisitor visitor = new ClassVisitor(store);
-        new ClassReader(inputStream).accept(visitor, 0);
-        store.endTransaction();
-    }
+	public void scanInputStream(InputStream inputStream, String name)
+			throws IOException {
+		LOGGER.info("Scanning " + name);
+		store.beginTransaction();
+		ClassVisitor visitor = new ClassVisitor(store);
+		new ClassReader(inputStream).accept(visitor, 0);
+		store.endTransaction();
+	}
 }
