@@ -17,158 +17,192 @@ import com.buschmais.jqassistant.store.impl.model.PackageDescriptorImpl;
 
 public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractInVMGraphStore.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(AbstractInVMGraphStore.class);
 
-    private Transaction transaction = null;
+	private Transaction transaction = null;
 
-    private DescriptorCache<PackageDescriptorImpl> packageCache;
-    private Index<Node> packageIndex;
-    private DescriptorCache<ClassDescriptorImpl> classCache;
-    private Index<Node> classIndex;
-    private DescriptorCache<MethodDescriptorImpl> methodCache;
-    private Index<Node> methodIndex;
+	private DescriptorCache<PackageDescriptorImpl> packageCache;
+	private Index<Node> packageIndex;
+	private DescriptorCache<ClassDescriptorImpl> classCache;
+	private Index<Node> classIndex;
+	private DescriptorCache<MethodDescriptorImpl> methodCache;
+	private Index<Node> methodIndex;
 
-    @Override
-    public void beginTransaction() {
-        if (transaction != null) {
-            throw new IllegalStateException("There is already an existing transaction.");
-        }
-        transaction = database.beginTx();
-        methodIndex = database.index().forNodes("methods");
-        methodCache = new DescriptorCache<MethodDescriptorImpl>();
-        classIndex = database.index().forNodes("classes");
-        classCache = new DescriptorCache<ClassDescriptorImpl>();
-        packageIndex = database.index().forNodes("packages");
-        packageCache = new DescriptorCache<PackageDescriptorImpl>();
-    }
+	@Override
+	public void beginTransaction() {
+		if (transaction != null) {
+			throw new IllegalStateException(
+					"There is already an existing transaction.");
+		}
+		transaction = database.beginTx();
+		methodIndex = null;// database.index().forNodes("methods");
+		methodCache = new DescriptorCache<MethodDescriptorImpl>();
+		classIndex = database.index().forNodes("classes");
+		classCache = new DescriptorCache<ClassDescriptorImpl>();
+		packageIndex = database.index().forNodes("packages");
+		packageCache = new DescriptorCache<PackageDescriptorImpl>();
+	}
 
-    @Override
-    public void endTransaction() {
-        if (transaction == null) {
-            throw new IllegalStateException("There is no existing transaction.");
-        }
-        transaction.success();
-        transaction.finish();
-        transaction = null;
-    }
+	@Override
+	public void endTransaction() {
+		if (transaction == null) {
+			throw new IllegalStateException("There is no existing transaction.");
+		}
+		transaction.success();
+		transaction.finish();
+		transaction = null;
+	}
 
-    @Override
-    public ClassDescriptorImpl getClassDescriptor(final String fullQualifiedName) {
-        return classCache.get(fullQualifiedName, new DescriptorFactory<ClassDescriptorImpl>() {
-            @Override
-            public ClassDescriptorImpl create() {
-                Node node = classIndex.get(Descriptor.FULLQUALIFIEDNAME, fullQualifiedName).getSingle();
-                if (node != null) {
-                    Name name = getName(fullQualifiedName, '.');
-                    PackageDescriptorImpl packageDescriptor = name.getParentName() != null ? getPackageDescriptor(name.getParentName()) : null;
-                    return new ClassDescriptorImpl(node, packageDescriptor);
-                }
-                return null;
-            }
-        });
-    }
+	@Override
+	public ClassDescriptorImpl getClassDescriptor(final String fullQualifiedName) {
+		return classCache.get(fullQualifiedName,
+				new DescriptorFactory<ClassDescriptorImpl>() {
+					@Override
+					public ClassDescriptorImpl create() {
+						Node node = classIndex
+								.get(Descriptor.FULLQUALIFIEDNAME,
+										fullQualifiedName).getSingle();
+						if (node != null) {
+							Name name = getName(fullQualifiedName, '.');
+							PackageDescriptorImpl packageDescriptor = name
+									.getParentName() != null ? getPackageDescriptor(name
+									.getParentName()) : null;
+							return new ClassDescriptorImpl(node,
+									packageDescriptor);
+						}
+						return null;
+					}
+				});
+	}
 
-    @Override
-    public ClassDescriptorImpl createClassDescriptor(String fullQualifiedName) {
-        Name name = getName(fullQualifiedName, '.');
-        PackageDescriptorImpl packageDescriptor = resolvePackageDescriptor(name.getParentName());
-        Node classNode = createNode(fullQualifiedName);
-        ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(classNode, packageDescriptor);
-        initDescriptor(classDescriptor, packageDescriptor, name, classIndex);
-        classCache.put(fullQualifiedName, classDescriptor);
-        return classDescriptor;
-    }
+	@Override
+	public ClassDescriptorImpl createClassDescriptor(String fullQualifiedName) {
+		Name name = getName(fullQualifiedName, '.');
+		PackageDescriptorImpl packageDescriptor = resolvePackageDescriptor(name
+				.getParentName());
+		Node classNode = createNode(fullQualifiedName);
+		ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+				classNode, packageDescriptor);
+		initDescriptor(classDescriptor, packageDescriptor, name, classIndex);
+		classCache.put(fullQualifiedName, classDescriptor);
+		return classDescriptor;
+	}
 
-    @Override
-    public PackageDescriptorImpl getPackageDescriptor(final String fullQualifiedName) {
-        return packageCache.get(fullQualifiedName, new DescriptorFactory<PackageDescriptorImpl>() {
-            @Override
-            public PackageDescriptorImpl create() {
-                Node node = packageIndex.get(Descriptor.FULLQUALIFIEDNAME, fullQualifiedName).getSingle();
-                if (node != null) {
-                    Name name = getName(fullQualifiedName, '.');
-                    PackageDescriptorImpl parentPackageDescriptor =
-                            name.getParentName() != null ? getPackageDescriptor(name.getParentName()) : null;
-                    return new PackageDescriptorImpl(node, parentPackageDescriptor);
-                }
-                return null;
-            }
-        });
-    }
+	@Override
+	public PackageDescriptorImpl getPackageDescriptor(
+			final String fullQualifiedName) {
+		return packageCache.get(fullQualifiedName,
+				new DescriptorFactory<PackageDescriptorImpl>() {
+					@Override
+					public PackageDescriptorImpl create() {
+						Node node = packageIndex
+								.get(Descriptor.FULLQUALIFIEDNAME,
+										fullQualifiedName).getSingle();
+						if (node != null) {
+							Name name = getName(fullQualifiedName, '.');
+							PackageDescriptorImpl parentPackageDescriptor = name
+									.getParentName() != null ? getPackageDescriptor(name
+									.getParentName()) : null;
+							return new PackageDescriptorImpl(node,
+									parentPackageDescriptor);
+						}
+						return null;
+					}
+				});
+	}
 
-    public PackageDescriptorImpl createPackageDescriptor(String fullQualifiedName) {
-        Name name = getName(fullQualifiedName, '.');
-        PackageDescriptorImpl parentPackageDescriptor = resolvePackageDescriptor(name.getParentName());
-        Node packageNode = createNode(fullQualifiedName);
-        PackageDescriptorImpl packageDescriptor = new PackageDescriptorImpl(packageNode, parentPackageDescriptor);
-        initDescriptor(packageDescriptor, parentPackageDescriptor, name, packageIndex);
-        packageCache.put(null, packageDescriptor);
-        return packageDescriptor;
-    }
+	public PackageDescriptorImpl createPackageDescriptor(
+			String fullQualifiedName) {
+		Name name = getName(fullQualifiedName, '.');
+		PackageDescriptorImpl parentPackageDescriptor = resolvePackageDescriptor(name
+				.getParentName());
+		Node packageNode = createNode(fullQualifiedName);
+		PackageDescriptorImpl packageDescriptor = new PackageDescriptorImpl(
+				packageNode, parentPackageDescriptor);
+		initDescriptor(packageDescriptor, parentPackageDescriptor, name,
+				packageIndex);
+		packageCache.put(null, packageDescriptor);
+		return packageDescriptor;
+	}
 
-    @Override
-    public MethodDescriptorImpl getMethodDescriptor(final String fullQualifiedName) {
-        return methodCache.get(fullQualifiedName, new DescriptorFactory<MethodDescriptorImpl>() {
-            @Override
-            public MethodDescriptorImpl create() {
+	@Override
+	public MethodDescriptorImpl getMethodDescriptor(
+			final String fullQualifiedName) {
+		return methodCache.get(fullQualifiedName,
+				new DescriptorFactory<MethodDescriptorImpl>() {
+					@Override
+					public MethodDescriptorImpl create() {
 
-                Node node = methodIndex.get(Descriptor.FULLQUALIFIEDNAME, fullQualifiedName).getSingle();
-                if (node != null) {
-                    Name name = getName(fullQualifiedName, '#');
-                    ClassDescriptorImpl classDescriptor = getClassDescriptor(name.getParentName());
-                    return new MethodDescriptorImpl(node, classDescriptor);
-                }
-                return null;
-            }
-        });
-    }
+						Node node = null;// methodIndex.get(Descriptor.FULLQUALIFIEDNAME,
+											// fullQualifiedName).getSingle();
+						if (node != null) {
+							Name name = getName(fullQualifiedName, '#');
+							ClassDescriptorImpl classDescriptor = getClassDescriptor(name
+									.getParentName());
+							return new MethodDescriptorImpl(node,
+									classDescriptor);
+						}
+						return null;
+					}
+				});
+	}
 
-    @Override
-    public MethodDescriptor createMethodDescriptor(String fullQualifiedName) {
-        Name name = getName(fullQualifiedName, '#');
-        ClassDescriptorImpl classDescriptor = getClassDescriptor(name.getParentName());
-        Node methodNode = createNode(fullQualifiedName);
-        MethodDescriptorImpl methodDescriptor = new MethodDescriptorImpl(methodNode, classDescriptor);
-        initDescriptor(methodDescriptor, classDescriptor, name, methodIndex);
-        methodCache.put(fullQualifiedName, methodDescriptor);
-        return methodDescriptor;
-    }
+	@Override
+	public MethodDescriptor createMethodDescriptor(String fullQualifiedName) {
+		Name name = getName(fullQualifiedName, '#');
+		ClassDescriptorImpl classDescriptor = getClassDescriptor(name
+				.getParentName());
+		Node methodNode = createNode(fullQualifiedName);
+		MethodDescriptorImpl methodDescriptor = new MethodDescriptorImpl(
+				methodNode, classDescriptor);
+		initDescriptor(methodDescriptor, classDescriptor, name, null);
+		methodCache.put(fullQualifiedName, methodDescriptor);
+		return methodDescriptor;
+	}
 
-    private Node createNode(String fullQualifiedName) {
-        LOGGER.debug("Creating node for '{}'.", fullQualifiedName);
-        Node node = database.createNode();
-        return node;
-    }
+	private Node createNode(String fullQualifiedName) {
+		LOGGER.debug("Creating node for '{}'.", fullQualifiedName);
+		Node node = database.createNode();
+		return node;
+	}
 
-    private PackageDescriptorImpl resolvePackageDescriptor(String fullQualifiedName) {
-        PackageDescriptorImpl packageDescriptor = null;
-        if (fullQualifiedName != null && getPackageDescriptor(fullQualifiedName) == null) {
-            packageDescriptor = createPackageDescriptor(fullQualifiedName);
-        }
-        return packageDescriptor;
-    }
+	private PackageDescriptorImpl resolvePackageDescriptor(
+			String fullQualifiedName) {
+		PackageDescriptorImpl packageDescriptor = null;
+		if (fullQualifiedName != null
+				&& getPackageDescriptor(fullQualifiedName) == null) {
+			packageDescriptor = createPackageDescriptor(fullQualifiedName);
+		}
+		return packageDescriptor;
+	}
 
-    private void initDescriptor(AbstractDescriptor descriptor, AbstractParentDescriptor parent, Name name, Index<Node> index) {
-        descriptor.setFullQualifiedName(name.getFullQualifiedName());
-        descriptor.setLocalName(name.getLocalName());
-        index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME, name.getFullQualifiedName());
-        if (parent != null) {
-            parent.addChild(descriptor);
-        }
-    }
+	private void initDescriptor(AbstractDescriptor descriptor,
+			AbstractParentDescriptor parent, Name name, Index<Node> index) {
+		descriptor.setFullQualifiedName(name.getFullQualifiedName());
+		descriptor.setLocalName(name.getLocalName());
+		if (index != null) {
+			index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
+					name.getFullQualifiedName());
+		}
+		if (parent != null) {
+			parent.addChild(descriptor);
+		}
+	}
 
-    private Name getName(String fullQualifiedName, char localNameSeparator) {
-        int n = fullQualifiedName.lastIndexOf(localNameSeparator);
-        String localName;
-        String parentName;
-        if (n > -1) {
-            localName = fullQualifiedName.substring(n + 1, fullQualifiedName.length());
-            parentName = fullQualifiedName.substring(0, n);
-        } else {
-            localName = fullQualifiedName;
-            parentName = null;
-        }
-        return new Name(parentName, localName, fullQualifiedName);
-    }
+	private Name getName(String fullQualifiedName, char localNameSeparator) {
+		int n = fullQualifiedName.lastIndexOf(localNameSeparator);
+		String localName;
+		String parentName;
+		if (n > -1) {
+			localName = fullQualifiedName.substring(n + 1,
+					fullQualifiedName.length());
+			parentName = fullQualifiedName.substring(0, n);
+		} else {
+			localName = fullQualifiedName;
+			parentName = null;
+		}
+		return new Name(parentName, localName, fullQualifiedName);
+	}
 
 }

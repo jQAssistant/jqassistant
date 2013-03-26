@@ -60,14 +60,26 @@ public class DependencyScanner {
 	}
 
 	public void scanArchive(File archive) throws IOException {
-		ZipFile zipFile = new ZipFile(archive);
-		final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-		while (zipEntries.hasMoreElements()) {
-			ZipEntry e = zipEntries.nextElement();
-			String name = e.getName();
-			if (name.endsWith(".class")) {
-				scanInputStream(zipFile.getInputStream(e), name);
+		if (!archive.exists()) {
+			LOGGER.warn("Archive '{}' not found, skipping.",
+					archive.getAbsolutePath());
+		} else {
+			LOGGER.info("Scanning archive '{}'.",
+					archive.getAbsolutePath());
+			long start = System.currentTimeMillis();
+			ZipFile zipFile = new ZipFile(archive);
+			final Enumeration<? extends ZipEntry> zipEntries = zipFile
+					.entries();
+			while (zipEntries.hasMoreElements()) {
+				ZipEntry e = zipEntries.nextElement();
+				String name = e.getName();
+				if (name.endsWith(".class")) {
+					scanInputStream(zipFile.getInputStream(e), name);
+				}
 			}
+			long end = System.currentTimeMillis();
+			LOGGER.info("Scanned archive '{}' in {}ms.",
+					archive.getAbsolutePath(), Long.valueOf(end-start));
 		}
 	}
 
