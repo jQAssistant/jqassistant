@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.scanner;
 import org.objectweb.asm.Attribute;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 
 public class FieldVisitor extends AbstractVisitor implements
 		org.objectweb.asm.FieldVisitor {
 
-	private final ClassDescriptor classDescriptor;
+	private final FieldDescriptor classDescriptor;
 
-	protected FieldVisitor(Store store, ClassDescriptor classDescriptor) {
+	protected FieldVisitor(Store store, FieldDescriptor classDescriptor) {
 		super(store);
 		this.classDescriptor = classDescriptor;
 	}

@@ -5,67 +5,67 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
 public class MethodVisitor extends AbstractVisitor implements
 		org.objectweb.asm.MethodVisitor {
 
-	private final ClassDescriptor classDescriptor;
+	private final MethodDescriptor methodDescriptor;
 
-	protected MethodVisitor(Store store, ClassDescriptor classDescriptor) {
+	protected MethodVisitor(Store store, MethodDescriptor classDescriptor) {
 		super(store);
-		this.classDescriptor = classDescriptor;
+		this.methodDescriptor = classDescriptor;
 	}
 
 	@Override
 	public AnnotationVisitor visitParameterAnnotation(final int parameter,
 			final String desc, final boolean visible) {
-		addDependency(classDescriptor, getType(desc));
-		return new AnnotationVisitor(getStore(), classDescriptor);
+		addDependency(methodDescriptor, getType(desc));
+		return new AnnotationVisitor(getStore(), methodDescriptor);
 	}
 
 	@Override
 	public void visitTypeInsn(final int opcode, final String type) {
-		addDependency(classDescriptor, getType(Type.getObjectType(type)));
+		addDependency(methodDescriptor, getType(Type.getObjectType(type)));
 	}
 
 	@Override
 	public void visitFieldInsn(final int opcode, final String owner,
 			final String name, final String desc) {
-		addDependency(classDescriptor, getInternalName(owner));
-		addDependency(classDescriptor, getType(desc));
+		addDependency(methodDescriptor, getInternalName(owner));
+		addDependency(methodDescriptor, getType(desc));
 	}
 
 	@Override
 	public void visitMethodInsn(final int opcode, final String owner,
 			final String name, final String desc) {
-		addDependency(classDescriptor, getInternalName(owner));
+		addDependency(methodDescriptor, getInternalName(owner));
 		addMethodDesc(desc);
 	}
 
 	@Override
 	public void visitLdcInsn(final Object cst) {
 		if (cst instanceof Type) {
-			addDependency(classDescriptor, getType((Type) cst));
+			addDependency(methodDescriptor, getType((Type) cst));
 		}
 	}
 
 	@Override
 	public void visitMultiANewArrayInsn(final String desc, final int dims) {
-		addDependency(classDescriptor, getType(desc));
+		addDependency(methodDescriptor, getType(desc));
 	}
 
 	@Override
 	public void visitLocalVariable(final String name, final String desc,
 			final String signature, final Label start, final Label end,
 			final int index) {
-		addDependency(classDescriptor,
-				getTypeSignature(signature, classDescriptor));
+		addDependency(methodDescriptor,
+				getTypeSignature(signature, methodDescriptor));
 	}
 
 	@Override
 	public AnnotationVisitor visitAnnotationDefault() {
-		return new AnnotationVisitor(getStore(), classDescriptor);
+		return new AnnotationVisitor(getStore(), methodDescriptor);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public class MethodVisitor extends AbstractVisitor implements
 	@Override
 	public void visitTryCatchBlock(final Label start, final Label end,
 			final Label handler, final String type) {
-		addDependency(classDescriptor, getInternalName(type));
+		addDependency(methodDescriptor, getInternalName(type));
 	}
 
 	@Override
@@ -128,15 +128,15 @@ public class MethodVisitor extends AbstractVisitor implements
 	@Override
 	public AnnotationVisitor visitAnnotation(final String desc,
 			final boolean visible) {
-		addDependency(classDescriptor, getType(desc));
-		return new AnnotationVisitor(getStore(), classDescriptor);
+		addDependency(methodDescriptor, getType(desc));
+		return new AnnotationVisitor(getStore(), methodDescriptor);
 	}
 
 	private void addMethodDesc(final String desc) {
-		addDependency(classDescriptor, getType(Type.getReturnType(desc)));
+		addDependency(methodDescriptor, getType(Type.getReturnType(desc)));
 		Type[] types = Type.getArgumentTypes(desc);
 		for (int i = 0; i < types.length; i++) {
-			addDependency(classDescriptor, getType(types[i]));
+			addDependency(methodDescriptor, getType(types[i]));
 		}
 	}
 

@@ -6,6 +6,8 @@ import org.objectweb.asm.signature.SignatureReader;
 
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
 public class ClassVisitor extends AbstractVisitor implements
 		org.objectweb.asm.ClassVisitor {
@@ -38,30 +40,35 @@ public class ClassVisitor extends AbstractVisitor implements
 	@Override
 	public FieldVisitor visitField(final int access, final String name,
 			final String desc, final String signature, final Object value) {
+		FieldDescriptor fieldDescriptor = getFielDescriptor(classDescriptor,
+				name, desc);
 		if (signature == null) {
-			addDependency(classDescriptor, getType((desc)));
+			addDependency(fieldDescriptor, getType((desc)));
 		} else {
-			addDependency(classDescriptor,
-					getTypeSignature(signature, classDescriptor));
+			new SignatureReader(signature)
+					.accept(new DependentSignatureVisitor<FieldDescriptor>(
+							getStore(), fieldDescriptor));
 		}
 		if (value instanceof Type) {
-			addDependency(classDescriptor, getType((Type) value));
+			addDependency(fieldDescriptor, getType((Type) value));
 		}
-		return new FieldVisitor(getStore(), classDescriptor);
+		return new FieldVisitor(getStore(), fieldDescriptor);
 	}
 
 	@Override
 	public MethodVisitor visitMethod(final int access, final String name,
 			final String desc, final String signature, final String[] exceptions) {
-		getMethodDescriptor(classDescriptor, name, desc);
+		MethodDescriptor methodDescriptor = getMethodDescriptor(
+				classDescriptor, name, desc);
 		if (signature == null) {
 			addMethodDesc(desc);
 		} else {
-			new SignatureReader(signature).accept(new MethodSignatureVisitor(
-					getStore(), classDescriptor));
+			new SignatureReader(signature)
+					.accept(new DependentSignatureVisitor<MethodDescriptor>(
+							getStore(), methodDescriptor));
 		}
 		addInternalNames(exceptions);
-		return new MethodVisitor(getStore(), classDescriptor);
+		return new MethodVisitor(getStore(), methodDescriptor);
 	}
 
 	@Override

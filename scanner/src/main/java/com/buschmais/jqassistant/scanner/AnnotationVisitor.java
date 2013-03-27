@@ -3,35 +3,36 @@ package com.buschmais.jqassistant.scanner;
 import org.objectweb.asm.Type;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
 
 public class AnnotationVisitor extends AbstractVisitor implements
 		org.objectweb.asm.AnnotationVisitor {
 
-	private final ClassDescriptor classDescriptor;
+	private final DependentDescriptor parentDescriptor;
 
-	protected AnnotationVisitor(Store store, ClassDescriptor classDescriptor) {
+	protected AnnotationVisitor(Store store,
+			DependentDescriptor parentDescriptor) {
 		super(store);
-		this.classDescriptor = classDescriptor;
+		this.parentDescriptor = parentDescriptor;
 	}
 
 	@Override
 	public void visit(final String name, final Object value) {
 		if (value instanceof Type) {
-			addDependency(classDescriptor, getType((Type) value));
+			addDependency(parentDescriptor, getType((Type) value));
 		}
 	}
 
 	@Override
 	public void visitEnum(final String name, final String desc,
 			final String value) {
-		addDependency(classDescriptor, getType((desc)));
+		addDependency(parentDescriptor, getType((desc)));
 	}
 
 	@Override
 	public AnnotationVisitor visitAnnotation(final String name,
 			final String desc) {
-		addDependency(classDescriptor, getType((desc)));
+		addDependency(parentDescriptor, getType((desc)));
 		return this;
 	}
 

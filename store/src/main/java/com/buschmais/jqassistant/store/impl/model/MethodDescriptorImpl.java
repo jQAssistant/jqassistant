@@ -8,15 +8,8 @@ import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 public class MethodDescriptorImpl extends AbstractDescriptor implements
 		MethodDescriptor {
 
-	private final ClassDescriptorImpl classDescriptor;
-
-	public MethodDescriptorImpl(Node node, ClassDescriptorImpl classDescriptor) {
+	public MethodDescriptorImpl(Node node) {
 		super(node);
-		this.classDescriptor = classDescriptor;
-	}
-
-	public ClassDescriptorImpl getClassDescriptor() {
-		return classDescriptor;
 	}
 
 	@Override
