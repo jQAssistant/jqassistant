@@ -3,8 +3,10 @@ package com.buschmais.jqassistant.scanner;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.signature.SignatureReader;
 
 import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
 import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
 public class MethodVisitor extends AbstractVisitor implements
@@ -12,9 +14,9 @@ public class MethodVisitor extends AbstractVisitor implements
 
 	private final MethodDescriptor methodDescriptor;
 
-	protected MethodVisitor(Store store, MethodDescriptor classDescriptor) {
+	protected MethodVisitor(Store store, MethodDescriptor methodDescriptor) {
 		super(store);
-		this.methodDescriptor = classDescriptor;
+		this.methodDescriptor = methodDescriptor;
 	}
 
 	@Override
@@ -59,8 +61,11 @@ public class MethodVisitor extends AbstractVisitor implements
 	public void visitLocalVariable(final String name, final String desc,
 			final String signature, final Label start, final Label end,
 			final int index) {
-		addDependency(methodDescriptor,
-				getTypeSignature(signature, methodDescriptor));
+		if (signature != null) {
+			new SignatureReader(signature)
+					.accept(new DependentSignatureVisitor<DependentDescriptor>(
+							getStore(), methodDescriptor));
+		}
 	}
 
 	@Override

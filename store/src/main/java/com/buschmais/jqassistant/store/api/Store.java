@@ -7,6 +7,8 @@ import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 
 public interface Store {
 
+	void reset();
+
 	void start();
 
 	void stop();

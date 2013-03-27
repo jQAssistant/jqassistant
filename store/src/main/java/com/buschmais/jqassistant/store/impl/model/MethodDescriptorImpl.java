@@ -16,4 +16,9 @@ public class MethodDescriptorImpl extends AbstractDescriptor implements
 	public void addDependency(ClassDescriptor dependency) {
 		addRelationShip(RelationType.DEPENDS_ON, dependency);
 	}
+
+	@Override
+	public void addThrows(ClassDescriptor exception) {
+		addRelationShip(RelationType.THROWS, exception);		
+	}
 }

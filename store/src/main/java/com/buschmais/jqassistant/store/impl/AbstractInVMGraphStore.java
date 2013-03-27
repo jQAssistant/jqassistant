@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.store.impl.model.AbstractParentDescriptor;
 import com.buschmais.jqassistant.store.impl.model.ClassDescriptorImpl;
 import com.buschmais.jqassistant.store.impl.model.FieldDescriptorImpl;
 import com.buschmais.jqassistant.store.impl.model.MethodDescriptorImpl;
+import com.buschmais.jqassistant.store.impl.model.NodeType;
 import com.buschmais.jqassistant.store.impl.model.PackageDescriptorImpl;
 
 public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
@@ -80,7 +81,8 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 				.getParentName());
 		Node classNode = createNode(fullQualifiedName);
 		ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(classNode);
-		initDescriptor(classDescriptor, packageDescriptor, name, classIndex);
+		initDescriptor(classDescriptor, packageDescriptor, name,
+				NodeType.CLASS, classIndex);
 		classCache.put(fullQualifiedName, classDescriptor);
 		return classDescriptor;
 	}
@@ -117,8 +119,8 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 		PackageDescriptorImpl packageDescriptor = new PackageDescriptorImpl(
 				packageNode, parentPackageDescriptor);
 		initDescriptor(packageDescriptor, parentPackageDescriptor, name,
-				packageIndex);
-		packageCache.put(null, packageDescriptor);
+				NodeType.PACKAGE, packageIndex);
+		packageCache.put(fullQualifiedName, packageDescriptor);
 		return packageDescriptor;
 	}
 
@@ -142,7 +144,8 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 		Node methodNode = createNode(fullQualifiedName);
 		MethodDescriptorImpl methodDescriptor = new MethodDescriptorImpl(
 				methodNode);
-		initDescriptor(methodDescriptor, classDescriptor, name, null);
+		initDescriptor(methodDescriptor, classDescriptor, name,
+				NodeType.METHOD, null);
 		methodCache.put(fullQualifiedName, methodDescriptor);
 		return methodDescriptor;
 	}
@@ -165,7 +168,8 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 				.getParentName());
 		Node fieldNode = createNode(fullQualifiedName);
 		FieldDescriptorImpl fieldDescriptor = new FieldDescriptorImpl(fieldNode);
-		initDescriptor(fieldDescriptor, classDescriptor, name, null);
+		initDescriptor(fieldDescriptor, classDescriptor, name, NodeType.FIELD,
+				null);
 		fieldCache.put(fullQualifiedName, fieldDescriptor);
 		return fieldDescriptor;
 	}
@@ -187,9 +191,10 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 	}
 
 	private void initDescriptor(AbstractDescriptor descriptor,
-			AbstractParentDescriptor parent, Name name, Index<Node> index) {
+			AbstractParentDescriptor parent, Name name, NodeType type,
+			Index<Node> index) {
 		descriptor.setFullQualifiedName(name.getFullQualifiedName());
-		descriptor.setLocalName(name.getLocalName());
+		descriptor.setType(type.name().toLowerCase());
 		if (index != null) {
 			index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
 					name.getFullQualifiedName());

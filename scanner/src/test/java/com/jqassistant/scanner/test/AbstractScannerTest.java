@@ -17,6 +17,7 @@ public abstract class AbstractScannerTest {
 		store = new EmbeddedGraphStore("target/graphdb");
 		scanner = new DependencyScanner(store);
 		store.start();
+		store.reset();
 	}
 
 	@After

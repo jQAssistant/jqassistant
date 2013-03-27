@@ -22,7 +22,8 @@ public class ClassVisitor extends AbstractVisitor implements
 	public void visit(final int version, final int access, final String name,
 			final String signature, final String superName,
 			final String[] interfaces) {
-		classDescriptor = getClassDescriptor(name);
+		classDescriptor = getClassDescriptor(Type.getObjectType(name)
+				.getClassName());
 		if (signature == null) {
 			if (superName != null) {
 				classDescriptor.addSuperClass(getClassDescriptor(superName));
@@ -67,7 +68,11 @@ public class ClassVisitor extends AbstractVisitor implements
 					.accept(new DependentSignatureVisitor<MethodDescriptor>(
 							getStore(), methodDescriptor));
 		}
-		addInternalNames(exceptions);
+		for (int i = 0; exceptions != null && i < exceptions.length; i++) {
+			ClassDescriptor exception = getClassDescriptor(Type.getObjectType(
+					exceptions[i]).getClassName());
+			methodDescriptor.addThrows(exception);
+		}
 		return new MethodVisitor(getStore(), methodDescriptor);
 	}
 
@@ -90,12 +95,6 @@ public class ClassVisitor extends AbstractVisitor implements
 	}
 
 	// ---------------------------------------------
-
-	private void addInternalNames(final String[] names) {
-		for (int i = 0; names != null && i < names.length; i++) {
-			addDependency(classDescriptor, getInternalName(names[i]));
-		}
-	}
 
 	private void addMethodDesc(final String desc) {
 		addDependency(classDescriptor, getType(Type.getReturnType(desc)));

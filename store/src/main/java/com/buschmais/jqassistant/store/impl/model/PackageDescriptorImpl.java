@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.store.impl.model;
 
 import org.neo4j.graphdb.Node;
 
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 
 public class PackageDescriptorImpl extends AbstractParentDescriptor implements
@@ -19,13 +18,4 @@ public class PackageDescriptorImpl extends AbstractParentDescriptor implements
 		return parent;
 	}
 
-	@Override
-	public void addClass(ClassDescriptor classDescriptor) {
-		addRelationShip(RelationType.CONTAINS, classDescriptor);
-	}
-
-	@Override
-	public void addPackage(PackageDescriptor packageDescriptor) {
-		addRelationShip(RelationType.CONTAINS, packageDescriptor);
-	}
 }

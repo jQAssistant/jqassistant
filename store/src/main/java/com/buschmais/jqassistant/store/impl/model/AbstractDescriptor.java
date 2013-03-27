@@ -13,59 +13,59 @@ import com.buschmais.jqassistant.store.api.model.Descriptor;
 
 public abstract class AbstractDescriptor implements Descriptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDescriptor.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(AbstractDescriptor.class);
 
-    private final Node node;
+	private final Node node;
 
-    private Map<RelationType, Set<AbstractDescriptor>> relationCache = new HashMap<RelationType, Set<AbstractDescriptor>>();
+	private Map<RelationType, Set<AbstractDescriptor>> relationCache = new HashMap<RelationType, Set<AbstractDescriptor>>();
 
-    public AbstractDescriptor(Node node) {
-        this.node = node;
-    }
+	public AbstractDescriptor(Node node) {
+		this.node = node;
+	}
 
-    @Override
-    public String getLocalName() {
-        return (String) node.getProperty("localName");
-    }
+	@Override
+	public String getFullQualifiedName() {
+		return (String) node.getProperty(FULLQUALIFIEDNAME);
+	}
 
-    @Override
-    public void setLocalName(String localName) {
-        node.setProperty("localName", localName);
-    }
+	public void setFullQualifiedName(String fullQualifiedName) {
+		node.setProperty(FULLQUALIFIEDNAME, fullQualifiedName);
+	}
 
-    @Override
-    public String getFullQualifiedName() {
-        return (String) node.getProperty(FULLQUALIFIEDNAME);
-    }
+	@Override
+	public String getType() {
+		return (String) node.getProperty("type");
+	}
 
-    @Override
-    public void setFullQualifiedName(String fullQualifiedName) {
-        node.setProperty(FULLQUALIFIEDNAME, fullQualifiedName);
-    }
+	public void setType(String type) {
+		node.setProperty("type", type);
+	}
 
-    @Override
-    public final String toString() {
-        return getFullQualifiedName();
-    }
+	@Override
+	public final String toString() {
+		return getFullQualifiedName();
+	}
 
-    public Node getNode() {
-        return node;
-    }
+	public Node getNode() {
+		return node;
+	}
 
-    protected void addRelationShip(RelationType type, Descriptor descriptor) {
-        Set<AbstractDescriptor> relationsPerType = relationCache.get(type);
-        if (relationsPerType == null) {
-            relationsPerType = new HashSet<AbstractDescriptor>();
-            relationCache.put(type, relationsPerType);
-        }
-        if (!relationsPerType.contains(descriptor)) {
-            Node descriptorNode = getNode(descriptor);
-            LOGGER.debug("Creating relationship '(" + this + ")-[:" + type + "]->(" + descriptor + ")'.");
-            node.createRelationshipTo(descriptorNode, type);
-        }
-    }
+	protected void addRelationShip(RelationType type, Descriptor descriptor) {
+		Set<AbstractDescriptor> relationsPerType = relationCache.get(type);
+		if (relationsPerType == null) {
+			relationsPerType = new HashSet<AbstractDescriptor>();
+			relationCache.put(type, relationsPerType);
+		}
+		if (!relationsPerType.contains(descriptor)) {
+			Node descriptorNode = getNode(descriptor);
+			LOGGER.debug("Creating relationship '(" + this + ")-[:" + type
+					+ "]->(" + descriptor + ")'.");
+			node.createRelationshipTo(descriptorNode, type);
+		}
+	}
 
-    private Node getNode(Descriptor descriptor) {
-        return ((AbstractDescriptor) descriptor).getNode();
-    }
+	private Node getNode(Descriptor descriptor) {
+		return ((AbstractDescriptor) descriptor).getNode();
+	}
 }

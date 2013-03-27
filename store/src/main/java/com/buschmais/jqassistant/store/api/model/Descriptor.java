@@ -6,9 +6,6 @@ public interface Descriptor {
 
 	String getFullQualifiedName();
 
-	void setFullQualifiedName(String fullQualifiedName);
+	String getType();
 
-	String getLocalName();
-
-	void setLocalName(String localName);
 }

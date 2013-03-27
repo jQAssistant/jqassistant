@@ -1,12 +1,10 @@
 package com.buschmais.jqassistant.scanner;
 
 import org.objectweb.asm.Type;
-import org.objectweb.asm.signature.SignatureReader;
 
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.store.api.model.Descriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
@@ -39,22 +37,9 @@ public abstract class AbstractVisitor {
 		switch (t.getSort()) {
 		case Type.ARRAY:
 			return getType(t.getElementType());
-		case Type.OBJECT:
-			return t.getInternalName();
 		default:
-			return null;
+			return t.getClassName();
 		}
-	}
-
-	protected String getTypeSignature(final String signature,
-			Descriptor descriptor) {
-		if (signature != null) {
-			SignatureVisitor signatureVisitor = new SignatureVisitor(store,
-					descriptor);
-			new SignatureReader(signature).acceptType(signatureVisitor);
-			return signatureVisitor.getSignatureClassName();
-		}
-		return null;
 	}
 
 	protected void addDependency(DependentDescriptor depentendDescriptor,
@@ -66,7 +51,7 @@ public abstract class AbstractVisitor {
 	}
 
 	protected ClassDescriptor getClassDescriptor(String typeName) {
-		String fullQualifiedName = getClassName(typeName);
+		String fullQualifiedName = Type.getObjectType(typeName).getClassName();
 		ClassDescriptor classDescriptor = store
 				.getClassDescriptor(fullQualifiedName);
 		if (classDescriptor == null) {
@@ -109,7 +94,7 @@ public abstract class AbstractVisitor {
 
 	private String getMethodSignature(String name, String desc) {
 		StringBuffer signature = new StringBuffer();
-		String returnType = getClassName(getType(Type.getReturnType(desc)));
+		String returnType = getType(Type.getReturnType(desc));
 		if (returnType != null) {
 			signature.append(returnType);
 			signature.append(' ');
@@ -121,7 +106,7 @@ public abstract class AbstractVisitor {
 			if (i > 0) {
 				signature.append(',');
 			}
-			signature.append(getClassName(getType(types[i])));
+			signature.append(getType(types[i]));
 		}
 		signature.append(')');
 		return signature.toString();
@@ -129,18 +114,11 @@ public abstract class AbstractVisitor {
 
 	private String getFieldSignature(String name, String desc) {
 		StringBuffer signature = new StringBuffer();
-		String returnType = getClassName(getType(Type.getReturnType(desc)));
+		String returnType = getType(Type.getReturnType(desc));
 		signature.append(returnType);
 		signature.append(' ');
 		signature.append(name);
 		return signature.toString();
 	}
 
-	private String getClassName(String typeName) {
-		if (typeName != null) {
-			String fullQualifiedName = typeName.replace("/", ".");
-			return fullQualifiedName;
-		}
-		return null;
-	}
 }

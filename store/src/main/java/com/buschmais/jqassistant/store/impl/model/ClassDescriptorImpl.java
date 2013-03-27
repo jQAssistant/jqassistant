@@ -18,6 +18,10 @@ public class ClassDescriptorImpl extends AbstractParentDescriptor implements
 
 	@Override
 	public void addSuperClass(ClassDescriptor superClass) {
+		if (this.toString().equals("java.util.Collection")
+				&& superClass.toString().equals("java.lang.Enum")) {
+			System.out.println("Hi");
+		}
 		addRelationShip(RelationType.INHERITS_FROM, superClass);
 
 	}

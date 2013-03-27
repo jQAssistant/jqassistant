@@ -1,22 +1,27 @@
 package com.jqassistant.scanner.test.sets.pojo;
 
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
 
 public class Pojo<X> {
 
 	private String stringValue;
 
+	private int intValue;
+
 	public String getStringValue() {
 		return stringValue;
 	}
 
-	public void setStringValue(String stringValue) {
+	public void setStringValue(String stringValue) throws IOException {
 		this.stringValue = stringValue;
 	}
 
-	public <Y> void setX(X x, Map<X, Set<Y>> values) {
+	public int getIntValue() {
+		return intValue;
+	}
 
+	public void setIntValue(int intValue) {
+		this.intValue = intValue;
 	}
 
 }

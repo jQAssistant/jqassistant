@@ -8,16 +8,16 @@ import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 public class FieldVisitor extends AbstractVisitor implements
 		org.objectweb.asm.FieldVisitor {
 
-	private final FieldDescriptor classDescriptor;
+	private final FieldDescriptor fieldDescriptor;
 
-	protected FieldVisitor(Store store, FieldDescriptor classDescriptor) {
+	protected FieldVisitor(Store store, FieldDescriptor fieldDescriptor) {
 		super(store);
-		this.classDescriptor = classDescriptor;
+		this.fieldDescriptor = fieldDescriptor;
 	}
 
 	@Override
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
-		return new AnnotationVisitor(getStore(), classDescriptor);
+		return new AnnotationVisitor(getStore(), fieldDescriptor);
 	}
 
 	@Override
