@@ -6,11 +6,6 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<properties>
-		<org.neo4j_version>1.8.2</org.neo4j_version>
-		<org.apache.maven_version>3.0.5</org.apache.maven_version>
-	</properties>
-
 	<repositories>
 		<repository>
 			<id>neo4j-release-repository</id>
@@ -42,80 +37,14 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.buschmais.jqassistant</groupId>
-				<artifactId>jqassistant.scanner</artifactId>
+				<groupId>com.buschmais.jqassistant.core</groupId>
+				<artifactId>jqassistant.core.scanner</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.buschmais.jqassistant</groupId>
-				<artifactId>jqassistant.store</artifactId>
+				<groupId>com.buschmais.jqassistant.core</groupId>
+				<artifactId>jqassistant.core.store</artifactId>
 				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant</groupId>
-				<artifactId>jqassistant.mojo</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ow2.asm</groupId>
-				<artifactId>asm</artifactId>
-				<version>4.1</version>
-			</dependency>
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>server-api</artifactId>
-				<version>${org.neo4j_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j-kernel</artifactId>
-				<version>${org.neo4j_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j-lucene-index</artifactId>
-				<version>${org.neo4j_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.neo4j</groupId>
-				<artifactId>neo4j</artifactId>
-				<version>${org.neo4j_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.neo4j.app</groupId>
-				<artifactId>neo4j-server</artifactId>
-				<version>${org.neo4j_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.neo4j.app</groupId>
-				<artifactId>neo4j-server</artifactId>
-				<classifier>static-web</classifier>
-				<version>${org.neo4j_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>2.4</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-plugin-api</artifactId>
-				<version>${org.apache.maven_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-core</artifactId>
-				<version>${org.apache.maven_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-artifact</artifactId>
-				<version>${org.apache.maven_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.6.2</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
@@ -127,9 +56,8 @@
 	</dependencyManagement>
 
 	<modules>
-		<module>scanner</module>
-		<module>store</module>
-		<module>mojo</module>
+		<module>core</module>
+		<module>maven</module>
 	</modules>
 
 </project>
