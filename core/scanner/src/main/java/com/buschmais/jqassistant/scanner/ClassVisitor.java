@@ -22,8 +22,7 @@ public class ClassVisitor extends AbstractVisitor implements
 	public void visit(final int version, final int access, final String name,
 			final String signature, final String superName,
 			final String[] interfaces) {
-		classDescriptor = getClassDescriptor(Type.getObjectType(name)
-				.getClassName());
+		classDescriptor = getClassDescriptor(name);
 		if (signature == null) {
 			if (superName != null) {
 				classDescriptor.addSuperClass(getClassDescriptor(superName));
@@ -123,12 +122,8 @@ public class ClassVisitor extends AbstractVisitor implements
 			ClassDescriptor classDescriptor, String name, String desc) {
 		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
 				+ getMethodSignature(name, desc);
-		MethodDescriptor methodDescriptor = getStore().getMethodDescriptor(
+		MethodDescriptor methodDescriptor = getStore().resolveMethodDescriptor(
 				fullQualifiedName);
-		if (methodDescriptor == null) {
-			methodDescriptor = getStore().createMethodDescriptor(
-					fullQualifiedName);
-		}
 		return methodDescriptor;
 	}
 
@@ -136,12 +131,8 @@ public class ClassVisitor extends AbstractVisitor implements
 			ClassDescriptor classDescriptor, String name, String desc) {
 		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
 				+ getFieldSignature(name, desc);
-		FieldDescriptor fieldDescriptor = getStore().getFieldDescriptor(
+		FieldDescriptor fieldDescriptor = getStore().resolveFieldDescriptor(
 				fullQualifiedName);
-		if (fieldDescriptor == null) {
-			fieldDescriptor = getStore().createFieldDescriptor(
-					fullQualifiedName);
-		}
 		return fieldDescriptor;
 	}
 

@@ -52,16 +52,18 @@ public abstract class AbstractDescriptor implements Descriptor {
 	}
 
 	protected void addRelationShip(RelationType type, Descriptor descriptor) {
-		Set<AbstractDescriptor> relationsPerType = relationCache.get(type);
-		if (relationsPerType == null) {
-			relationsPerType = new HashSet<AbstractDescriptor>();
-			relationCache.put(type, relationsPerType);
-		}
-		if (!relationsPerType.contains(descriptor)) {
-			Node descriptorNode = getNode(descriptor);
-			LOGGER.debug("Creating relationship '(" + this + ")-[:" + type
-					+ "]->(" + descriptor + ")'.");
-			node.createRelationshipTo(descriptorNode, type);
+		if (!this.equals(descriptor)) {
+			Set<AbstractDescriptor> relationsPerType = relationCache.get(type);
+			if (relationsPerType == null) {
+				relationsPerType = new HashSet<AbstractDescriptor>();
+				relationCache.put(type, relationsPerType);
+			}
+			if (!relationsPerType.contains(descriptor)) {
+				Node descriptorNode = getNode(descriptor);
+				LOGGER.debug("Creating relationship '(" + this + ")-[:" + type
+						+ "]->(" + descriptor + ")'.");
+				node.createRelationshipTo(descriptorNode, type);
+			}
 		}
 	}
 
