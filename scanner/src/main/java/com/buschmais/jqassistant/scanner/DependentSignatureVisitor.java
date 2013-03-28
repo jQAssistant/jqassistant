@@ -5,14 +5,18 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
 
-public final class DependentSignatureVisitor<T extends DependentDescriptor>
-		extends AbstractSignatureVisitor {
+public class DependentSignatureVisitor<T extends DependentDescriptor> extends
+		AbstractVisitor implements SignatureVisitor {
 
-	private final DependentDescriptor dependentDescriptor;
+	private final T dependentDescriptor;
 
 	public DependentSignatureVisitor(Store store, T dependentDescriptor) {
 		super(store);
 		this.dependentDescriptor = dependentDescriptor;
+	}
+
+	public T getDependentDescriptor() {
+		return dependentDescriptor;
 	}
 
 	@Override
@@ -50,8 +54,46 @@ public final class DependentSignatureVisitor<T extends DependentDescriptor>
 		return getTypeVisitor();
 	}
 
-	private AbstractSignatureVisitor getTypeVisitor() {
-		return new AbstractSignatureVisitor(getStore()) {
+	@Override
+	public void visitFormalTypeParameter(String name) {
+	}
+
+	@Override
+	public SignatureVisitor visitSuperclass() {
+		return getTypeVisitor();
+	}
+
+	@Override
+	public SignatureVisitor visitInterface() {
+		return getTypeVisitor();
+	}
+
+	@Override
+	public void visitBaseType(char descriptor) {
+	}
+
+	@Override
+	public void visitTypeVariable(String name) {
+	}
+
+	@Override
+	public void visitClassType(String name) {
+	}
+
+	@Override
+	public void visitInnerClassType(String name) {
+	}
+
+	@Override
+	public void visitTypeArgument() {
+	}
+
+	@Override
+	public void visitEnd() {
+	}
+
+	private SignatureVisitor getTypeVisitor() {
+		return new DependentSignatureVisitor<T>(getStore(), dependentDescriptor) {
 
 			@Override
 			public void visitClassType(String name) {
@@ -65,4 +107,5 @@ public final class DependentSignatureVisitor<T extends DependentDescriptor>
 
 		};
 	}
+
 }

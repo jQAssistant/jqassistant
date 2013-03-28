@@ -119,4 +119,59 @@ public class ClassVisitor extends AbstractVisitor implements
 	public void visitEnd() {
 	}
 
+	protected MethodDescriptor getMethodDescriptor(
+			ClassDescriptor classDescriptor, String name, String desc) {
+		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
+				+ getMethodSignature(name, desc);
+		MethodDescriptor methodDescriptor = getStore().getMethodDescriptor(
+				fullQualifiedName);
+		if (methodDescriptor == null) {
+			methodDescriptor = getStore().createMethodDescriptor(
+					fullQualifiedName);
+		}
+		return methodDescriptor;
+	}
+
+	protected FieldDescriptor getFielDescriptor(
+			ClassDescriptor classDescriptor, String name, String desc) {
+		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
+				+ getFieldSignature(name, desc);
+		FieldDescriptor fieldDescriptor = getStore().getFieldDescriptor(
+				fullQualifiedName);
+		if (fieldDescriptor == null) {
+			fieldDescriptor = getStore().createFieldDescriptor(
+					fullQualifiedName);
+		}
+		return fieldDescriptor;
+	}
+
+	private String getMethodSignature(String name, String desc) {
+		StringBuffer signature = new StringBuffer();
+		String returnType = getType(Type.getReturnType(desc));
+		if (returnType != null) {
+			signature.append(returnType);
+			signature.append(' ');
+		}
+		signature.append(name);
+		signature.append('(');
+		Type[] types = Type.getArgumentTypes(desc);
+		for (int i = 0; i < types.length; i++) {
+			if (i > 0) {
+				signature.append(',');
+			}
+			signature.append(getType(types[i]));
+		}
+		signature.append(')');
+		return signature.toString();
+	}
+
+	private String getFieldSignature(String name, String desc) {
+		StringBuffer signature = new StringBuffer();
+		String returnType = getType(Type.getReturnType(desc));
+		signature.append(returnType);
+		signature.append(' ');
+		signature.append(name);
+		return signature.toString();
+	}
+
 }

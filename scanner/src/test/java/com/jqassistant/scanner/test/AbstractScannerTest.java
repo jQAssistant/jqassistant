@@ -14,7 +14,7 @@ public abstract class AbstractScannerTest {
 
 	@Before
 	public void startStore() {
-		store = new EmbeddedGraphStore("target/graphdb");
+		store = new EmbeddedGraphStore("target/jqassistant");
 		scanner = new DependencyScanner(store);
 		store.start();
 		store.reset();

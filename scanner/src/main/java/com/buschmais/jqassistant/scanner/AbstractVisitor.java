@@ -5,8 +5,6 @@ import org.objectweb.asm.Type;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
 public abstract class AbstractVisitor {
 
@@ -18,6 +16,24 @@ public abstract class AbstractVisitor {
 
 	protected Store getStore() {
 		return store;
+	}
+
+	protected ClassDescriptor getClassDescriptor(String typeName) {
+		String fullQualifiedName = Type.getObjectType(typeName).getClassName();
+		ClassDescriptor classDescriptor = store
+				.getClassDescriptor(fullQualifiedName);
+		if (classDescriptor == null) {
+			classDescriptor = store.createClassDescriptor(fullQualifiedName);
+		}
+		return classDescriptor;
+	}
+
+	protected void addDependency(DependentDescriptor depentendDescriptor,
+			String typeName) {
+		if (typeName != null) {
+			ClassDescriptor dependency = getClassDescriptor(typeName);
+			depentendDescriptor.addDependency(dependency);
+		}
 	}
 
 	// utility methods
@@ -40,85 +56,6 @@ public abstract class AbstractVisitor {
 		default:
 			return t.getClassName();
 		}
-	}
-
-	protected void addDependency(DependentDescriptor depentendDescriptor,
-			String typeName) {
-		if (typeName != null) {
-			ClassDescriptor dependency = getClassDescriptor(typeName);
-			depentendDescriptor.addDependency(dependency);
-		}
-	}
-
-	protected ClassDescriptor getClassDescriptor(String typeName) {
-		String fullQualifiedName = Type.getObjectType(typeName).getClassName();
-		ClassDescriptor classDescriptor = store
-				.getClassDescriptor(fullQualifiedName);
-		if (classDescriptor == null) {
-			classDescriptor = store.createClassDescriptor(fullQualifiedName);
-		}
-		return classDescriptor;
-	}
-
-	protected MethodDescriptor getMethodDescriptor(
-			ClassDescriptor classDescriptor, String name, String desc) {
-		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
-				+ getMethodSignature(name, desc);
-		MethodDescriptor methodDescriptor = getStore().getMethodDescriptor(
-				fullQualifiedName);
-		if (methodDescriptor == null) {
-			methodDescriptor = store.createMethodDescriptor(fullQualifiedName);
-		}
-		return methodDescriptor;
-	}
-
-	protected FieldDescriptor getFielDescriptor(
-			ClassDescriptor classDescriptor, String name, String desc) {
-		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
-				+ getFieldSignature(name, desc);
-		FieldDescriptor fieldDescriptor = getStore().getFieldDescriptor(
-				fullQualifiedName);
-		if (fieldDescriptor == null) {
-			fieldDescriptor = store.createFieldDescriptor(fullQualifiedName);
-		}
-		return fieldDescriptor;
-	}
-
-	protected void addDependency(MethodDescriptor methodDescriptor,
-			String typeName) {
-		if (typeName != null) {
-			ClassDescriptor dependency = getClassDescriptor(typeName);
-			methodDescriptor.addDependency(dependency);
-		}
-	}
-
-	private String getMethodSignature(String name, String desc) {
-		StringBuffer signature = new StringBuffer();
-		String returnType = getType(Type.getReturnType(desc));
-		if (returnType != null) {
-			signature.append(returnType);
-			signature.append(' ');
-		}
-		signature.append(name);
-		signature.append('(');
-		Type[] types = Type.getArgumentTypes(desc);
-		for (int i = 0; i < types.length; i++) {
-			if (i > 0) {
-				signature.append(',');
-			}
-			signature.append(getType(types[i]));
-		}
-		signature.append(')');
-		return signature.toString();
-	}
-
-	private String getFieldSignature(String name, String desc) {
-		StringBuffer signature = new StringBuffer();
-		String returnType = getType(Type.getReturnType(desc));
-		signature.append(returnType);
-		signature.append(' ');
-		signature.append(name);
-		return signature.toString();
 	}
 
 }

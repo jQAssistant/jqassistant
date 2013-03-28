@@ -18,7 +18,7 @@ public abstract class AbstractDescriptor implements Descriptor {
 
 	private final Node node;
 
-	private Map<RelationType, Set<AbstractDescriptor>> relationCache = new HashMap<RelationType, Set<AbstractDescriptor>>();
+	private final Map<RelationType, Set<AbstractDescriptor>> relationCache = new HashMap<RelationType, Set<AbstractDescriptor>>();
 
 	public AbstractDescriptor(Node node) {
 		this.node = node;

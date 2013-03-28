@@ -16,70 +16,32 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
+import java.io.IOException;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.impl.AbstractGraphStore;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.store.impl.Server;
 
 /**
- * @phase verify
  * @goal server
- * @requiresDependencyResolution test
- * @aggregator true
+ * @requiresProject false
  */
-public class ServerMojo extends AbstractMojo {
-
-	/**
-	 * The build directory.
-	 * 
-	 * @parameter expression="${project.build.directory}"
-	 * @readonly
-	 */
-	protected File buildDirectory;
-
-	/**
-	 * The classes directory.
-	 * 
-	 * @parameter expression="${project.build.outputDirectory}"
-	 * @readonly
-	 */
-	protected File classesDirectory;
-
-	/**
-	 * The build directory.
-	 * 
-	 * @parameter expression="${jqassistant.store.directory}"
-	 * @readonly
-	 */
-	protected File storeDirectory;
+public class ServerMojo extends AbstractJQAssistantMojo {
 
 	@Override
-	public void execute() throws MojoExecutionException {
-		File databaseDirectory;
-		if (storeDirectory != null) {
-			databaseDirectory = storeDirectory;
-		} else {
-			databaseDirectory = new File(buildDirectory, "jqassistent");
-		}
-		Store store = new EmbeddedGraphStore(
-				databaseDirectory.getAbsolutePath());
-		store.start();
+	protected void execute(Store store) throws MojoExecutionException {
+		Server server = new Server((AbstractGraphStore) store);
+		server.start();
 		try {
-			Server server = new Server((AbstractGraphStore) store);
-			server.start();
-			try {
-				System.out.println("Waiting");
-			} finally {
-				server.stop();
-			}
+			getLog().info("Press <Enter> to finish.");
+			System.in.read();
+		} catch (IOException e) {
+			throw new MojoExecutionException(
+					"Error while reading from System.in.", e);
 		} finally {
-			store.stop();
+			server.stop();
 		}
-
 	}
 }

@@ -16,61 +16,18 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
-
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 
 /**
- * @phase verify
  * @goal reset
- * @aggregator true
+ * @requiresProject false
  */
-public class ResetMojo extends AbstractMojo {
-
-	/**
-	 * The build directory.
-	 * 
-	 * @parameter expression="${project.build.directory}"
-	 * @readonly
-	 */
-	protected File buildDirectory;
-
-	/**
-	 * The classes directory.
-	 * 
-	 * @parameter expression="${project.build.outputDirectory}"
-	 * @readonly
-	 */
-	protected File classesDirectory;
-
-	/**
-	 * The build directory.
-	 * 
-	 * @parameter expression="${jqassistant.store.directory}"
-	 * @readonly
-	 */
-	protected File storeDirectory;
+public class ResetMojo extends AbstractJQAssistantMojo {
 
 	@Override
-	public void execute() throws MojoExecutionException {
-		File databaseDirectory;
-		if (storeDirectory != null) {
-			databaseDirectory = storeDirectory;
-		} else {
-			databaseDirectory = new File(buildDirectory, "jqassistent");
-		}
-		Store store = new EmbeddedGraphStore(
-				databaseDirectory.getAbsolutePath());
-		store.start();
-		try {
-			store.reset();
-		} finally {
-			store.stop();
-		}
-
+	protected void execute(Store store) throws MojoExecutionException {
+		store.reset();
 	}
 }

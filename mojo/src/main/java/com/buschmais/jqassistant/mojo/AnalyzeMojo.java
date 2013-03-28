@@ -16,66 +16,27 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.scanner.DependencyScanner;
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 
 /**
  * @phase verify
  * @goal analyze
  * @requiresDependencyResolution test
  */
-public class AnalyzeMojo extends AbstractMojo {
-
-	/**
-	 * The build directory.
-	 * 
-	 * @parameter expression="${project.build.directory}"
-	 * @readonly
-	 */
-	protected File buildDirectory;
-
-	/**
-	 * The classes directory.
-	 * 
-	 * @parameter expression="${project.build.outputDirectory}"
-	 * @readonly
-	 */
-	protected File classesDirectory;
-
-	/**
-	 * The build directory.
-	 * 
-	 * @parameter expression="${jqassistant.store.directory}"
-	 * @readonly
-	 */
-	protected File storeDirectory;
+public class AnalyzeMojo extends AbstractJQAssistantMojo {
 
 	@Override
-	public void execute() throws MojoExecutionException {
-		File databaseDirectory;
-		if (storeDirectory != null) {
-			databaseDirectory = storeDirectory;
-		} else {
-			databaseDirectory = new File(buildDirectory, "jqassistent");
-		}
-		Store store = new EmbeddedGraphStore(
-				databaseDirectory.getAbsolutePath());
-		store.start();
+	protected void execute(Store store) throws MojoExecutionException {
 		DependencyScanner scanner = new DependencyScanner(store);
 		try {
 			scanner.scanDirectory(classesDirectory);
 		} catch (IOException e) {
 			throw new MojoExecutionException("Cannot scan classes.", e);
-		} finally {
-			store.stop();
 		}
-
 	}
 }
