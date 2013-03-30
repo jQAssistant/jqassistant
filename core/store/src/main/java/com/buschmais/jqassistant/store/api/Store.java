@@ -17,12 +17,16 @@ public interface Store {
 
 	void endTransaction();
 
-	PackageDescriptor resolvePackageDescriptor(String fullQualifiedName);
+	PackageDescriptor resolvePackageDescriptor(
+			PackageDescriptor packageDescriptor, String packageName);
 
-	ClassDescriptor resolveClassDescriptor(String fullQualifiedName);
+	ClassDescriptor resolveClassDescriptor(PackageDescriptor packageDescriptor,
+			String className);
 
-	MethodDescriptor resolveMethodDescriptor(String fullQualifiedName);
+	MethodDescriptor resolveMethodDescriptor(ClassDescriptor classDescriptor,
+			String methodName);
 
-	FieldDescriptor resolveFieldDescriptor(String fullQualifiedName);
+	FieldDescriptor resolveFieldDescriptor(ClassDescriptor classDescriptor,
+			String fieldName);
 
 }

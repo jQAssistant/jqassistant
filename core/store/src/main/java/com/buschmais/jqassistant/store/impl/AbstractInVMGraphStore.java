@@ -6,11 +6,12 @@ import org.neo4j.graphdb.index.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.Descriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.store.impl.DescriptorCache.DescriptorFactory;
 import com.buschmais.jqassistant.store.impl.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.impl.model.AbstractParentDescriptor;
 import com.buschmais.jqassistant.store.impl.model.ClassDescriptorImpl;
 import com.buschmais.jqassistant.store.impl.model.FieldDescriptorImpl;
 import com.buschmais.jqassistant.store.impl.model.MethodDescriptorImpl;
@@ -57,61 +58,25 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 	}
 
 	@Override
-	public ClassDescriptorImpl resolveClassDescriptor(
-			final String fullQualifiedName) {
-		return classCache.get(fullQualifiedName,
-				new DescriptorFactory<ClassDescriptorImpl>() {
-
-					@Override
-					public ClassDescriptorImpl create() {
-						Node node = classIndex
-								.get(Descriptor.FULLQUALIFIEDNAME,
-										fullQualifiedName).getSingle();
-						if (node != null) {
-							return new ClassDescriptorImpl(node);
-						}
-						Name name = getName(fullQualifiedName, '.');
-						PackageDescriptorImpl packageDescriptor = null;
-						if (name.getParentName() != null) {
-							packageDescriptor = resolvePackageDescriptor(name
-									.getParentName());
-						}
-						Node classNode = createNode(fullQualifiedName);
-						ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
-								classNode);
-						initDescriptor(classDescriptor, packageDescriptor,
-								name, NodeType.CLASS, classIndex);
-						return classDescriptor;
-					}
-				});
-	}
-
-	@Override
 	public PackageDescriptorImpl resolvePackageDescriptor(
-			final String fullQualifiedName) {
-		return packageCache.get(fullQualifiedName,
+			final PackageDescriptor parentPackageDescriptor,
+			final String packageName) {
+		final Name name = new Name(parentPackageDescriptor, '.', packageName);
+		return packageCache.get(name.getFullQualifiedName(),
 				new DescriptorFactory<PackageDescriptorImpl>() {
 
 					@Override
 					public PackageDescriptorImpl create() {
-						Name name = getName(fullQualifiedName, '.');
-						PackageDescriptorImpl parentPackageDescriptor = null;
-						if (name.getParentName() != null) {
-							parentPackageDescriptor = resolvePackageDescriptor(name
-									.getParentName());
-						}
-						Node node = packageIndex
-								.get(Descriptor.FULLQUALIFIEDNAME,
-										fullQualifiedName).getSingle();
+						Node node = packageIndex.get(
+								Descriptor.FULLQUALIFIEDNAME,
+								name.getFullQualifiedName()).getSingle();
 						if (node != null) {
-							return new PackageDescriptorImpl(node,
-									parentPackageDescriptor);
+							return new PackageDescriptorImpl(node);
 						}
-						Node packageNode = createNode(fullQualifiedName);
+						node = createNode(name.getFullQualifiedName());
 						PackageDescriptorImpl packageDescriptor = new PackageDescriptorImpl(
-								packageNode, parentPackageDescriptor);
-						initDescriptor(packageDescriptor,
-								parentPackageDescriptor, name,
+								node);
+						initDescriptor(packageDescriptor, name,
 								NodeType.PACKAGE, packageIndex);
 						return packageDescriptor;
 					}
@@ -119,41 +84,64 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 	}
 
 	@Override
+	public ClassDescriptorImpl resolveClassDescriptor(
+			final PackageDescriptor packageDescriptor, final String className) {
+		final Name name = new Name(packageDescriptor, '.', className);
+		return classCache.get(name.getFullQualifiedName(),
+				new DescriptorFactory<ClassDescriptorImpl>() {
+
+					@Override
+					public ClassDescriptorImpl create() {
+						Node node = classIndex.get(
+								Descriptor.FULLQUALIFIEDNAME,
+								name.getFullQualifiedName()).getSingle();
+						if (node != null) {
+							return new ClassDescriptorImpl(node);
+						}
+						node = createNode(name.getFullQualifiedName());
+						ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(
+								node);
+						initDescriptor(classDescriptor, name, NodeType.CLASS,
+								classIndex);
+						return classDescriptor;
+					}
+				});
+	}
+
+	@Override
 	public MethodDescriptorImpl resolveMethodDescriptor(
-			final String fullQualifiedName) {
-		return methodCache.get(fullQualifiedName,
+			final ClassDescriptor classDescriptor, String methodName) {
+		final Name name = new Name(classDescriptor, '#', methodName);
+		return methodCache.get(name.getFullQualifiedName(),
 				new DescriptorFactory<MethodDescriptorImpl>() {
 
 					@Override
 					public MethodDescriptorImpl create() {
-						Name name = getName(fullQualifiedName, '#');
-						ClassDescriptorImpl classDescriptor = resolveClassDescriptor(name
-								.getParentName());
-						Node methodNode = createNode(fullQualifiedName);
+						Node methodNode = createNode(name
+								.getFullQualifiedName());
 						MethodDescriptorImpl methodDescriptor = new MethodDescriptorImpl(
 								methodNode);
-						initDescriptor(methodDescriptor, classDescriptor, name,
-								NodeType.METHOD, null);
+						initDescriptor(methodDescriptor, name, NodeType.METHOD,
+								null);
 						return methodDescriptor;
 					}
 				});
 	}
 
 	@Override
-	public FieldDescriptor resolveFieldDescriptor(final String fullQualifiedName) {
-		return fieldCache.get(fullQualifiedName,
+	public FieldDescriptor resolveFieldDescriptor(
+			final ClassDescriptor classDescriptor, String fieldName) {
+		final Name name = new Name(classDescriptor, '#', fieldName);
+		return fieldCache.get(name.getFullQualifiedName(),
 				new DescriptorFactory<FieldDescriptorImpl>() {
 
 					@Override
 					public FieldDescriptorImpl create() {
-						Name name = getName(fullQualifiedName, '#');
-						ClassDescriptorImpl classDescriptor = resolveClassDescriptor(name
-								.getParentName());
-						Node fieldNode = createNode(fullQualifiedName);
+						Node fieldNode = createNode(name.getFullQualifiedName());
 						FieldDescriptorImpl fieldDescriptor = new FieldDescriptorImpl(
 								fieldNode);
-						initDescriptor(fieldDescriptor, classDescriptor, name,
-								NodeType.FIELD, null);
+						initDescriptor(fieldDescriptor, name, NodeType.FIELD,
+								null);
 						return fieldDescriptor;
 					}
 				});
@@ -165,33 +153,13 @@ public abstract class AbstractInVMGraphStore extends AbstractGraphStore {
 		return node;
 	}
 
-	private void initDescriptor(AbstractDescriptor descriptor,
-			AbstractParentDescriptor parent, Name name, NodeType type,
-			Index<Node> index) {
+	private void initDescriptor(AbstractDescriptor descriptor, Name name,
+			NodeType type, Index<Node> index) {
 		descriptor.setFullQualifiedName(name.getFullQualifiedName());
 		descriptor.setType(type.name().toLowerCase());
 		if (index != null) {
 			index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
 					name.getFullQualifiedName());
 		}
-		if (parent != null) {
-			parent.addChild(descriptor);
-		}
 	}
-
-	private Name getName(String fullQualifiedName, char localNameSeparator) {
-		int n = fullQualifiedName.lastIndexOf(localNameSeparator);
-		String localName;
-		String parentName;
-		if (n > -1) {
-			localName = fullQualifiedName.substring(n + 1,
-					fullQualifiedName.length());
-			parentName = fullQualifiedName.substring(0, n);
-		} else {
-			localName = fullQualifiedName;
-			parentName = null;
-		}
-		return new Name(parentName, localName, fullQualifiedName);
-	}
-
 }

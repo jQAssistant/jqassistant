@@ -1,4 +1,4 @@
-package com.jqassistant.scanner.test;
+package com.buschmais.jqassistant.scanner.test;
 
 import org.junit.After;
 import org.junit.Before;

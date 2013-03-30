@@ -42,6 +42,7 @@ public class ClassVisitor extends AbstractVisitor implements
 			final String desc, final String signature, final Object value) {
 		FieldDescriptor fieldDescriptor = getFielDescriptor(classDescriptor,
 				name, desc);
+		classDescriptor.addChild(fieldDescriptor);
 		if (signature == null) {
 			addDependency(fieldDescriptor, getType((desc)));
 		} else {
@@ -60,6 +61,7 @@ public class ClassVisitor extends AbstractVisitor implements
 			final String desc, final String signature, final String[] exceptions) {
 		MethodDescriptor methodDescriptor = getMethodDescriptor(
 				classDescriptor, name, desc);
+		classDescriptor.addChild(methodDescriptor);
 		if (signature == null) {
 			addMethodDesc(desc);
 		} else {
@@ -120,19 +122,15 @@ public class ClassVisitor extends AbstractVisitor implements
 
 	protected MethodDescriptor getMethodDescriptor(
 			ClassDescriptor classDescriptor, String name, String desc) {
-		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
-				+ getMethodSignature(name, desc);
 		MethodDescriptor methodDescriptor = getStore().resolveMethodDescriptor(
-				fullQualifiedName);
+				classDescriptor, getMethodSignature(name, desc));
 		return methodDescriptor;
 	}
 
 	protected FieldDescriptor getFielDescriptor(
 			ClassDescriptor classDescriptor, String name, String desc) {
-		String fullQualifiedName = classDescriptor.getFullQualifiedName() + "#"
-				+ getFieldSignature(name, desc);
 		FieldDescriptor fieldDescriptor = getStore().resolveFieldDescriptor(
-				fullQualifiedName);
+				classDescriptor, getFieldSignature(name, desc));
 		return fieldDescriptor;
 	}
 
