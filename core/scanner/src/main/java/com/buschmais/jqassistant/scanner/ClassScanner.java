@@ -46,16 +46,17 @@ import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.scanner.visitor.ClassVisitor;
 import com.buschmais.jqassistant.store.api.Store;
 
-public class DependencyScanner {
+public class ClassScanner {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DependencyScanner.class);
+			.getLogger(ClassScanner.class);
 
 	private final Store store;
 
-	public DependencyScanner(Store graphStore) {
+	public ClassScanner(Store graphStore) {
 		this.store = graphStore;
 	}
 

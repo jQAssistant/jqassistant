@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scanner;
+package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Type;
@@ -14,7 +14,7 @@ public class ClassVisitor extends AbstractVisitor implements
 
 	private ClassDescriptor classDescriptor;
 
-	protected ClassVisitor(Store store) {
+	public ClassVisitor(Store store) {
 		super(store);
 	}
 

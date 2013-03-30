@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.buschmais.jqassistant.scanner.DependencyScanner;
+import com.buschmais.jqassistant.scanner.ClassScanner;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
@@ -22,7 +22,7 @@ public abstract class AbstractScannerTest {
 	@Mock
 	protected Store store;
 
-	protected DependencyScanner scanner;
+	protected ClassScanner scanner;
 
 	private final Map<String, PackageDescriptor> packageCache = new HashMap<String, PackageDescriptor>();
 
@@ -31,7 +31,7 @@ public abstract class AbstractScannerTest {
 
 	@Before
 	public void createScanner() {
-		scanner = new DependencyScanner(store);
+		scanner = new ClassScanner(store);
 		this.javaLangObject = stubClass(Object.class);
 		this._void = stubClass("void");
 	}
