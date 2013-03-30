@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 
-import com.buschmais.jqassistant.scanner.DependencyScanner;
+import com.buschmais.jqassistant.scanner.ClassScanner;
 import com.buschmais.jqassistant.store.api.Store;
 
 /**
@@ -32,7 +32,7 @@ public class AnalyzeMojo extends AbstractJQAssistantMojo {
 
 	@Override
 	protected void execute(Store store) throws MojoExecutionException {
-		DependencyScanner scanner = new DependencyScanner(store);
+		ClassScanner scanner = new ClassScanner(store);
 		try {
 			scanner.scanDirectory(classesDirectory);
 		} catch (IOException e) {

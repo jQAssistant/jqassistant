@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scanner;
+package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.signature.SignatureVisitor;
 

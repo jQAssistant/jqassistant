@@ -11,6 +11,14 @@ import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 public abstract class AbstractJQAssistantMojo extends AbstractMojo {
 
 	/**
+	 * The artifactId.
+	 * 
+	 * @parameter expression="${project.artifactId}"
+	 * @readonly
+	 */
+	protected String artifactId;
+
+	/**
 	 * The build directory.
 	 * 
 	 * @parameter expression="${project.build.directory}"
