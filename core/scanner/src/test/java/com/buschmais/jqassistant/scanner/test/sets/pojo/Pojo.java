@@ -1,4 +1,4 @@
-package com.jqassistant.scanner.test.sets.pojo;
+package com.buschmais.jqassistant.scanner.test.sets.pojo;
 
 import java.io.IOException;
 

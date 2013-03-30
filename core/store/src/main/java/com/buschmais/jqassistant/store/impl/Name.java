@@ -1,26 +1,25 @@
 package com.buschmais.jqassistant.store.impl;
 
+import com.buschmais.jqassistant.store.api.model.Descriptor;
+
 public class Name {
 
-	private final String parentName;
-
-	private final String localName;
+	private final String name;
 
 	private final String fullQualifiedName;
 
-	public Name(String parentName, String localName, String fullQualifiedName) {
-		super();
-		this.parentName = parentName;
-		this.localName = localName;
-		this.fullQualifiedName = fullQualifiedName;
+	public Name(Descriptor parent, char separator, String name) {
+		this.name = name;
+		if (parent != null) {
+			this.fullQualifiedName = parent.getFullQualifiedName() + separator
+					+ name;
+		} else {
+			this.fullQualifiedName = name;
+		}
 	}
 
-	public String getParentName() {
-		return parentName;
-	}
-
-	public String getLocalName() {
-		return localName;
+	public String getName() {
+		return name;
 	}
 
 	public String getFullQualifiedName() {
