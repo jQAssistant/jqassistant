@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.Attribute;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 
 public class FieldVisitor extends AbstractVisitor implements
@@ -10,14 +10,16 @@ public class FieldVisitor extends AbstractVisitor implements
 
 	private final FieldDescriptor fieldDescriptor;
 
-	protected FieldVisitor(Store store, FieldDescriptor fieldDescriptor) {
-		super(store);
+	protected FieldVisitor(FieldDescriptor fieldDescriptor,
+			DescriptorResolverFactory resolverFactory) {
+		super(resolverFactory);
 		this.fieldDescriptor = fieldDescriptor;
 	}
 
 	@Override
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
-		return new AnnotationVisitor(getStore(), fieldDescriptor);
+		return new AnnotationVisitor(fieldDescriptor,
+				getClassDescriptorResolver());
 	}
 
 	@Override

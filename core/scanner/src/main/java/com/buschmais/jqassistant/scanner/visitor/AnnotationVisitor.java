@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.Type;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
 
 public class AnnotationVisitor extends AbstractVisitor implements
@@ -10,9 +10,9 @@ public class AnnotationVisitor extends AbstractVisitor implements
 
 	private final DependentDescriptor parentDescriptor;
 
-	protected AnnotationVisitor(Store store,
-			DependentDescriptor parentDescriptor) {
-		super(store);
+	protected AnnotationVisitor(DependentDescriptor parentDescriptor,
+			DescriptorResolverFactory resolverFactory) {
+		super(resolverFactory);
 		this.parentDescriptor = parentDescriptor;
 	}
 

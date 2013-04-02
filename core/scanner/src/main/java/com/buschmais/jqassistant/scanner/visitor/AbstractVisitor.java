@@ -2,44 +2,31 @@ package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.Type;
 
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 
 public abstract class AbstractVisitor {
 
-	private final Store store;
+	private final DescriptorResolverFactory resolverFactory;
 
-	protected AbstractVisitor(Store store) {
-		this.store = store;
+	protected AbstractVisitor(DescriptorResolverFactory resolverFactory) {
+		this.resolverFactory = resolverFactory;
+	}
+
+	protected DescriptorResolverFactory getClassDescriptorResolver() {
+		return resolverFactory;
 	}
 
 	protected Store getStore() {
-		return store;
+		return resolverFactory.getStore();
 	}
 
 	protected ClassDescriptor getClassDescriptor(String typeName) {
 		String fullQualifiedName = Type.getObjectType(typeName).getClassName();
-		// determine package descriptor
-		String[] parts = fullQualifiedName.split("\\.");
-		PackageDescriptor parentPackageDescriptor = null;
-		int i = 0;
-		for (; i < parts.length - 1; i++) {
-			PackageDescriptor packageDescriptor = store
-					.resolvePackageDescriptor(parentPackageDescriptor, parts[i]);
-			if (parentPackageDescriptor != null) {
-				parentPackageDescriptor.addChild(packageDescriptor);
-			}
-			parentPackageDescriptor = packageDescriptor;
-		}
-		// get class descriptor
-		ClassDescriptor classDescriptor = store.resolveClassDescriptor(
-				parentPackageDescriptor, parts[i]);
-		if (parentPackageDescriptor != null) {
-			parentPackageDescriptor.addChild(classDescriptor);
-		}
-		return classDescriptor;
+		return resolverFactory.getClassDescriptorResolver().resolve(
+				fullQualifiedName);
 	}
 
 	protected void addDependency(DependentDescriptor depentendDescriptor,
@@ -48,15 +35,6 @@ public abstract class AbstractVisitor {
 			ClassDescriptor dependency = getClassDescriptor(typeName);
 			depentendDescriptor.addDependency(dependency);
 		}
-	}
-
-	// utility methods
-
-	protected String getInternalName(final String name) {
-		if (name != null) {
-			return getType(Type.getObjectType(name));
-		}
-		return null;
 	}
 
 	protected String getType(final String desc) {

@@ -46,6 +46,7 @@ import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.scanner.visitor.ClassVisitor;
 import com.buschmais.jqassistant.store.api.Store;
 
@@ -65,8 +66,7 @@ public class ClassScanner {
 			LOGGER.warn("Archive '{}' not found, skipping.",
 					archive.getAbsolutePath());
 		} else {
-			LOGGER.info("Scanning archive '{}'.",
-					archive.getAbsolutePath());
+			LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
 			long start = System.currentTimeMillis();
 			ZipFile zipFile = new ZipFile(archive);
 			final Enumeration<? extends ZipEntry> zipEntries = zipFile
@@ -80,7 +80,7 @@ public class ClassScanner {
 			}
 			long end = System.currentTimeMillis();
 			LOGGER.info("Scanned archive '{}' in {}ms.",
-					archive.getAbsolutePath(), Long.valueOf(end-start));
+					archive.getAbsolutePath(), Long.valueOf(end - start));
 		}
 	}
 
@@ -121,7 +121,9 @@ public class ClassScanner {
 			throws IOException {
 		LOGGER.info("Scanning " + name);
 		store.beginTransaction();
-		ClassVisitor visitor = new ClassVisitor(store);
+		DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(
+				store);
+		ClassVisitor visitor = new ClassVisitor(resolverFactory);
 		new ClassReader(inputStream).accept(visitor, 0);
 		store.endTransaction();
 	}
