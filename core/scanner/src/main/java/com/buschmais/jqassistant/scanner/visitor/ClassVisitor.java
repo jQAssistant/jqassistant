@@ -33,7 +33,7 @@ public class ClassVisitor extends AbstractVisitor implements
 			}
 		} else {
 			new SignatureReader(signature).accept(new ClassSignatureVisitor(
-					classDescriptor, getClassDescriptorResolver()));
+					classDescriptor, getResolverFactory()));
 		}
 	}
 
@@ -48,12 +48,12 @@ public class ClassVisitor extends AbstractVisitor implements
 		} else {
 			new SignatureReader(signature)
 					.accept(new DependentSignatureVisitor<FieldDescriptor>(
-							fieldDescriptor, getClassDescriptorResolver()));
+							fieldDescriptor, getResolverFactory()));
 		}
 		if (value instanceof Type) {
 			addDependency(fieldDescriptor, getType((Type) value));
 		}
-		return new FieldVisitor(fieldDescriptor, getClassDescriptorResolver());
+		return new FieldVisitor(fieldDescriptor, getResolverFactory());
 	}
 
 	@Override
@@ -67,14 +67,14 @@ public class ClassVisitor extends AbstractVisitor implements
 		} else {
 			new SignatureReader(signature)
 					.accept(new DependentSignatureVisitor<MethodDescriptor>(
-							methodDescriptor, getClassDescriptorResolver()));
+							methodDescriptor, getResolverFactory()));
 		}
 		for (int i = 0; exceptions != null && i < exceptions.length; i++) {
 			ClassDescriptor exception = getClassDescriptor(Type.getObjectType(
 					exceptions[i]).getClassName());
 			methodDescriptor.addThrows(exception);
 		}
-		return new MethodVisitor(methodDescriptor, getClassDescriptorResolver());
+		return new MethodVisitor(methodDescriptor, getResolverFactory());
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class ClassVisitor extends AbstractVisitor implements
 			final boolean visible) {
 		addDependency(classDescriptor, getType(desc));
 		return new AnnotationVisitor(classDescriptor,
-				getClassDescriptorResolver());
+				getResolverFactory());
 	}
 
 	@Override

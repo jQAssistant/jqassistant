@@ -25,7 +25,7 @@ public class MethodVisitor extends AbstractVisitor implements
 			final String desc, final boolean visible) {
 		addDependency(methodDescriptor, getType(desc));
 		return new AnnotationVisitor(methodDescriptor,
-				getClassDescriptorResolver());
+				getResolverFactory());
 	}
 
 	@Override
@@ -66,14 +66,14 @@ public class MethodVisitor extends AbstractVisitor implements
 		if (signature != null) {
 			new SignatureReader(signature)
 					.accept(new DependentSignatureVisitor<DependentDescriptor>(
-							methodDescriptor, getClassDescriptorResolver()));
+							methodDescriptor, getResolverFactory()));
 		}
 	}
 
 	@Override
 	public AnnotationVisitor visitAnnotationDefault() {
 		return new AnnotationVisitor(methodDescriptor,
-				getClassDescriptorResolver());
+				getResolverFactory());
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class MethodVisitor extends AbstractVisitor implements
 			final boolean visible) {
 		addDependency(methodDescriptor, getType(desc));
 		return new AnnotationVisitor(methodDescriptor,
-				getClassDescriptorResolver());
+				getResolverFactory());
 	}
 
 	private void addMethodDesc(final String desc) {
