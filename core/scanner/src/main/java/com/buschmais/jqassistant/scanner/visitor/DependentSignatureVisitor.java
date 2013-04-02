@@ -95,7 +95,7 @@ public class DependentSignatureVisitor<T extends DependentDescriptor> extends
 
 	private SignatureVisitor getTypeVisitor() {
 		return new DependentSignatureVisitor<T>(dependentDescriptor,
-				getClassDescriptorResolver()) {
+				getResolverFactory()) {
 
 			@Override
 			public void visitClassType(String name) {

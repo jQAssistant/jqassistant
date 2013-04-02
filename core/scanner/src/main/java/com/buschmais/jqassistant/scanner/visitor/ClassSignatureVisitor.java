@@ -16,7 +16,7 @@ public class ClassSignatureVisitor extends
 	@Override
 	public SignatureVisitor visitSuperclass() {
 		return new DependentSignatureVisitor<ClassDescriptor>(
-				getDependentDescriptor(), getClassDescriptorResolver()) {
+				getDependentDescriptor(), getResolverFactory()) {
 
 			@Override
 			public void visitClassType(String name) {
@@ -36,7 +36,7 @@ public class ClassSignatureVisitor extends
 	@Override
 	public SignatureVisitor visitInterface() {
 		return new DependentSignatureVisitor<ClassDescriptor>(
-				getDependentDescriptor(), getClassDescriptorResolver()) {
+				getDependentDescriptor(), getResolverFactory()) {
 
 			@Override
 			public void visitClassType(String name) {

@@ -19,7 +19,7 @@ public class FieldVisitor extends AbstractVisitor implements
 	@Override
 	public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
 		return new AnnotationVisitor(fieldDescriptor,
-				getClassDescriptorResolver());
+				getResolverFactory());
 	}
 
 	@Override

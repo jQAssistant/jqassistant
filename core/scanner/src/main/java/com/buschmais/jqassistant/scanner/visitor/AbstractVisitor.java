@@ -15,7 +15,7 @@ public abstract class AbstractVisitor {
 		this.resolverFactory = resolverFactory;
 	}
 
-	protected DescriptorResolverFactory getClassDescriptorResolver() {
+	protected DescriptorResolverFactory getResolverFactory() {
 		return resolverFactory;
 	}
 

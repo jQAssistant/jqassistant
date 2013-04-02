@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scanner.test.sets.pojo;
 
-import java.io.IOException;
-
 public class Pojo<X> {
 
 	private String stringValue;
@@ -12,7 +10,7 @@ public class Pojo<X> {
 		return stringValue;
 	}
 
-	public void setStringValue(String stringValue) throws IOException {
+	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
 	}
 
