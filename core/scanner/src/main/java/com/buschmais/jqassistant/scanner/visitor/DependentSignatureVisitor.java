@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.signature.SignatureVisitor;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
 
 public class DependentSignatureVisitor<T extends DependentDescriptor> extends
@@ -10,8 +10,9 @@ public class DependentSignatureVisitor<T extends DependentDescriptor> extends
 
 	private final T dependentDescriptor;
 
-	public DependentSignatureVisitor(Store store, T dependentDescriptor) {
-		super(store);
+	public DependentSignatureVisitor(T dependentDescriptor,
+			DescriptorResolverFactory resolverFactory) {
+		super(resolverFactory);
 		this.dependentDescriptor = dependentDescriptor;
 	}
 
@@ -93,7 +94,8 @@ public class DependentSignatureVisitor<T extends DependentDescriptor> extends
 	}
 
 	private SignatureVisitor getTypeVisitor() {
-		return new DependentSignatureVisitor<T>(getStore(), dependentDescriptor) {
+		return new DependentSignatureVisitor<T>(dependentDescriptor,
+				getClassDescriptorResolver()) {
 
 			@Override
 			public void visitClassType(String name) {

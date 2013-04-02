@@ -5,7 +5,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.model.DependentDescriptor;
 import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 
@@ -14,8 +14,9 @@ public class MethodVisitor extends AbstractVisitor implements
 
 	private final MethodDescriptor methodDescriptor;
 
-	protected MethodVisitor(Store store, MethodDescriptor methodDescriptor) {
-		super(store);
+	protected MethodVisitor(MethodDescriptor methodDescriptor,
+			DescriptorResolverFactory resolverFactory) {
+		super(resolverFactory);
 		this.methodDescriptor = methodDescriptor;
 	}
 
@@ -23,7 +24,8 @@ public class MethodVisitor extends AbstractVisitor implements
 	public AnnotationVisitor visitParameterAnnotation(final int parameter,
 			final String desc, final boolean visible) {
 		addDependency(methodDescriptor, getType(desc));
-		return new AnnotationVisitor(getStore(), methodDescriptor);
+		return new AnnotationVisitor(methodDescriptor,
+				getClassDescriptorResolver());
 	}
 
 	@Override
@@ -34,14 +36,14 @@ public class MethodVisitor extends AbstractVisitor implements
 	@Override
 	public void visitFieldInsn(final int opcode, final String owner,
 			final String name, final String desc) {
-		addDependency(methodDescriptor, getInternalName(owner));
+		addDependency(methodDescriptor, owner);
 		addDependency(methodDescriptor, getType(desc));
 	}
 
 	@Override
 	public void visitMethodInsn(final int opcode, final String owner,
 			final String name, final String desc) {
-		addDependency(methodDescriptor, getInternalName(owner));
+		addDependency(methodDescriptor, owner);
 		addMethodDesc(desc);
 	}
 
@@ -64,13 +66,14 @@ public class MethodVisitor extends AbstractVisitor implements
 		if (signature != null) {
 			new SignatureReader(signature)
 					.accept(new DependentSignatureVisitor<DependentDescriptor>(
-							getStore(), methodDescriptor));
+							methodDescriptor, getClassDescriptorResolver()));
 		}
 	}
 
 	@Override
 	public AnnotationVisitor visitAnnotationDefault() {
-		return new AnnotationVisitor(getStore(), methodDescriptor);
+		return new AnnotationVisitor(methodDescriptor,
+				getClassDescriptorResolver());
 	}
 
 	@Override
@@ -119,7 +122,7 @@ public class MethodVisitor extends AbstractVisitor implements
 	@Override
 	public void visitTryCatchBlock(final Label start, final Label end,
 			final Label handler, final String type) {
-		addDependency(methodDescriptor, getInternalName(type));
+		addDependency(methodDescriptor, type);
 	}
 
 	@Override
@@ -134,7 +137,8 @@ public class MethodVisitor extends AbstractVisitor implements
 	public AnnotationVisitor visitAnnotation(final String desc,
 			final boolean visible) {
 		addDependency(methodDescriptor, getType(desc));
-		return new AnnotationVisitor(getStore(), methodDescriptor);
+		return new AnnotationVisitor(methodDescriptor,
+				getClassDescriptorResolver());
 	}
 
 	private void addMethodDesc(final String desc) {

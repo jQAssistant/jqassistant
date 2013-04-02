@@ -2,20 +2,21 @@ package com.buschmais.jqassistant.scanner.visitor;
 
 import org.objectweb.asm.signature.SignatureVisitor;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 
 public class ClassSignatureVisitor extends
 		DependentSignatureVisitor<ClassDescriptor> implements SignatureVisitor {
 
-	protected ClassSignatureVisitor(Store store, ClassDescriptor classDescriptor) {
-		super(store, classDescriptor);
+	protected ClassSignatureVisitor(ClassDescriptor classDescriptor,
+			DescriptorResolverFactory resolverFactory) {
+		super(classDescriptor, resolverFactory);
 	}
 
 	@Override
 	public SignatureVisitor visitSuperclass() {
-		return new DependentSignatureVisitor<ClassDescriptor>(getStore(),
-				getDependentDescriptor()) {
+		return new DependentSignatureVisitor<ClassDescriptor>(
+				getDependentDescriptor(), getClassDescriptorResolver()) {
 
 			@Override
 			public void visitClassType(String name) {
@@ -34,8 +35,8 @@ public class ClassSignatureVisitor extends
 
 	@Override
 	public SignatureVisitor visitInterface() {
-		return new DependentSignatureVisitor<ClassDescriptor>(getStore(),
-				getDependentDescriptor()) {
+		return new DependentSignatureVisitor<ClassDescriptor>(
+				getDependentDescriptor(), getClassDescriptorResolver()) {
 
 			@Override
 			public void visitClassType(String name) {

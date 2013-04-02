@@ -4,7 +4,7 @@ import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
@@ -14,8 +14,8 @@ public class ClassVisitor extends AbstractVisitor implements
 
 	private ClassDescriptor classDescriptor;
 
-	public ClassVisitor(Store store) {
-		super(store);
+	public ClassVisitor(DescriptorResolverFactory resolverFactory) {
+		super(resolverFactory);
 	}
 
 	@Override
@@ -29,11 +29,11 @@ public class ClassVisitor extends AbstractVisitor implements
 			}
 			for (int i = 0; interfaces != null && i < interfaces.length; i++) {
 				classDescriptor
-						.addImplements(getClassDescriptor(getInternalName(interfaces[i])));
+						.addImplements(getClassDescriptor(interfaces[i]));
 			}
 		} else {
 			new SignatureReader(signature).accept(new ClassSignatureVisitor(
-					getStore(), classDescriptor));
+					classDescriptor, getClassDescriptorResolver()));
 		}
 	}
 
@@ -48,12 +48,12 @@ public class ClassVisitor extends AbstractVisitor implements
 		} else {
 			new SignatureReader(signature)
 					.accept(new DependentSignatureVisitor<FieldDescriptor>(
-							getStore(), fieldDescriptor));
+							fieldDescriptor, getClassDescriptorResolver()));
 		}
 		if (value instanceof Type) {
 			addDependency(fieldDescriptor, getType((Type) value));
 		}
-		return new FieldVisitor(getStore(), fieldDescriptor);
+		return new FieldVisitor(fieldDescriptor, getClassDescriptorResolver());
 	}
 
 	@Override
@@ -67,14 +67,14 @@ public class ClassVisitor extends AbstractVisitor implements
 		} else {
 			new SignatureReader(signature)
 					.accept(new DependentSignatureVisitor<MethodDescriptor>(
-							getStore(), methodDescriptor));
+							methodDescriptor, getClassDescriptorResolver()));
 		}
 		for (int i = 0; exceptions != null && i < exceptions.length; i++) {
 			ClassDescriptor exception = getClassDescriptor(Type.getObjectType(
 					exceptions[i]).getClassName());
 			methodDescriptor.addThrows(exception);
 		}
-		return new MethodVisitor(getStore(), methodDescriptor);
+		return new MethodVisitor(methodDescriptor, getClassDescriptorResolver());
 	}
 
 	@Override
@@ -109,7 +109,8 @@ public class ClassVisitor extends AbstractVisitor implements
 	public AnnotationVisitor visitAnnotation(final String desc,
 			final boolean visible) {
 		addDependency(classDescriptor, getType(desc));
-		return new AnnotationVisitor(getStore(), classDescriptor);
+		return new AnnotationVisitor(classDescriptor,
+				getClassDescriptorResolver());
 	}
 
 	@Override
