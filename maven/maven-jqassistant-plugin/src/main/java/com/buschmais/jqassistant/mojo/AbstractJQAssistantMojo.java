@@ -35,6 +35,14 @@ public abstract class AbstractJQAssistantMojo extends AbstractMojo {
 	protected File classesDirectory;
 
 	/**
+	 * The classes directory.
+	 * 
+	 * @parameter expression="${project.build.testOutputDirectory}"
+	 * @readonly
+	 */
+	protected File testClassesDirectory;
+
+	/**
 	 * The build directory.
 	 * 
 	 * @parameter expression="${jqassistant.store.directory}"

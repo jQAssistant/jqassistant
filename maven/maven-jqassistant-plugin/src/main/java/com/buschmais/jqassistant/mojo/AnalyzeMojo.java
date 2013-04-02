@@ -16,6 +16,7 @@
 
 package com.buschmais.jqassistant.mojo;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,11 +33,18 @@ public class AnalyzeMojo extends AbstractJQAssistantMojo {
 
 	@Override
 	protected void execute(Store store) throws MojoExecutionException {
+		scanDirectory(store, classesDirectory);
+		scanDirectory(store, testClassesDirectory);
+	}
+
+	private void scanDirectory(Store store, File directory)
+			throws MojoExecutionException {
 		ClassScanner scanner = new ClassScanner(store);
 		try {
-			scanner.scanDirectory(classesDirectory);
+			scanner.scanDirectory(directory);
 		} catch (IOException e) {
-			throw new MojoExecutionException("Cannot scan classes.", e);
+			throw new MojoExecutionException("Cannot scan classes in "
+					+ directory, e);
 		}
 	}
 }
