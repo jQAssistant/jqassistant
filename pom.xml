@@ -6,6 +6,35 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
+	<url>https://github.com/buschmais/jqassistant</url>
+	<description>Framework for structural analysis of Java applications.</description>
+
+	<organization>
+		<name>buschmais GbR</name>
+		<url>http://www.buschmais.com</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git://github.com/buschmais/jqassistant.git</connection>
+		<developerConnection>scm:git:git@github.com:buschmais/jqassistant.git</developerConnection>
+		<url>https://github.com/buschmais/jqassistant</url>
+	</scm>
+
+	<developers>
+		<developer>
+			<id>dirk-mahler</id>
+			<name>Dirk Mahler</name>
+			<email>dirk.mahler@buschmais.com</email>
+		</developer>
+	</developers>
+
 	<repositories>
 		<repository>
 			<id>neo4j-release-repository</id>
@@ -19,6 +48,21 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<distributionManagement>
+		<repository>
+			<id>nexus</id>
+			<url>http://nexus.buschmais.com/content/repositories/releases/</url>
+		</repository>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://nexus.buschmais.com/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 	<build>
 		<plugins>
