@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.AbstractGraphStore;
+import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.store.impl.Server;
 
 /**
@@ -32,7 +32,7 @@ public class ServerMojo extends AbstractJQAssistantMojo {
 
 	@Override
 	protected void execute(Store store) throws MojoExecutionException {
-		Server server = new Server((AbstractGraphStore) store);
+		Server server = new Server((EmbeddedGraphStore) store);
 		server.start();
 		try {
 			getLog().info("Press <Enter> to finish.");
