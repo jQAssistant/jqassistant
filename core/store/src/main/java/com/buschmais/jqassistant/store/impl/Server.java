@@ -5,11 +5,11 @@ import org.neo4j.server.WrappingNeoServerBootstrapper;
 
 public class Server {
 
-	private AbstractGraphStore graphStore;
+	private final EmbeddedGraphStore graphStore;
 
 	private WrappingNeoServerBootstrapper server;
 
-	public Server(AbstractGraphStore graphStore) {
+	public Server(EmbeddedGraphStore graphStore) {
 		this.graphStore = graphStore;
 	}
 

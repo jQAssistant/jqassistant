@@ -66,6 +66,7 @@
 	</dependencyManagement>
 
 	<modules>
+		<module>analysis</module>
 		<module>scanner</module>
 		<module>store</module>
 	</modules>
