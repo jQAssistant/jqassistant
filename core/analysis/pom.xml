@@ -6,26 +6,12 @@
 		<artifactId>jqassistant.core</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>jqassistant.core.store</artifactId>
+	<artifactId>jqassistant.core.analysis</artifactId>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-			<classifier>static-web</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-rest-graphdb</artifactId>
-			<version>1.8.1</version>
+			<groupId>com.buschmais.jqassistant.core</groupId>
+			<artifactId>jqassistant.core.store</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

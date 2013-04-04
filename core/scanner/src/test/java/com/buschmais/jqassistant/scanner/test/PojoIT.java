@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.scanner.test.sets.pojo.Pojo;
 
-public class PojoTest extends AbstractScannerIT {
+public class PojoIT extends AbstractScannerIT {
 
 	@Test
 	public void attributes() throws IOException {
