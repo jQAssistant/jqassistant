@@ -1,0 +1,24 @@
+<jqassistant xmlns="http://www.buschmais.com/jqassistant/rules/schema/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.buschmais.com/jqassistant/rules/schema/1.0 jqassistant-rules-1.0.xsd ">
+	<!-- Queries -->
+	<query id="InheritanceHierarchies">
+		<cypher><![CDATA[
+			START c=node:classes("*:*")
+			MATCH h=(c)-[:INHERITS_FROM*]->(s)
+			RETURN length(h) as depth, extract (n in nodes(h):n.fullQualifiedName)
+		]]></cypher>
+		<description>Determines the inheritance hierarchy and its depth for each class.</description>
+		<parameter name="maximumDepth" />	 
+	</query>
+
+	<!-- Constraints -->
+	<constraint id="LimitInheritanceDepth" queryId="InheritanceHierarchies" />
+
+	<!-- Constraint Groups -->
+	<constraintGroup id="continuous">
+		<useConstraint refId="limitInheritanceDepth" />
+	</constraintGroup>
+	<constraintGroup id="integration">
+		<useConstraintGroup refId="continuous" />
+	</constraintGroup>
+</jqassistant>

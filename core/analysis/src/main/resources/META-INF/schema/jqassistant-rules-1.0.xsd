@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/rules/schema/1.0"
+	targetNamespace="http://www.buschmais.com/jqassistant/rules/schema/1.0" elementFormDefault="qualified">
+
+	<xs:element name="jqassistant">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="query" type="jqassistant-rules:queryType" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="constraintGroup" type="jqassistant-rules:constraintGroupType" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="queryType">
+		<xs:sequence>
+			<xs:element name="cypher" type="xs:string" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+	</xs:complexType>
+
+	<xs:complexType name="parameterType">
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="default" type="xs:anySimpleType" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="constraintType">
+		<xs:attribute name="queryId" type="xs:string" use="required" />
+		<xs:attribute name="id" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="constraintGroupType">
+		<xs:sequence>
+			<xs:element name="useConstraint" type="jqassistant-rules:useConstraintType" minOccurs="0" />
+			<xs:element name="useConstraintGroup" type="jqassistant-rules:useConstraintGroupType" minOccurs="0" />
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="useConstraintType">
+		<xs:attribute name="refId" type="xs:string" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="useConstraintGroupType">
+		<xs:attribute name="refId" type="xs:string" use="required" />
+	</xs:complexType>
+
+</xs:schema>
