@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/rules/schema/1.0"
-	targetNamespace="http://www.buschmais.com/jqassistant/rules/schema/1.0" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/schema/v1.0"
+	targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/schema/v1.0" elementFormDefault="qualified">
 
-	<xs:element name="jqassistant">
+	<xs:element name="rules">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="query" type="jqassistant-rules:queryType" minOccurs="0" maxOccurs="unbounded" />
