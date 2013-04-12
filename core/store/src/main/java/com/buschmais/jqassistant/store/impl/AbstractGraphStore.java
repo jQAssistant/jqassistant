@@ -1,6 +1,12 @@
 package com.buschmais.jqassistant.store.impl;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
@@ -13,6 +19,7 @@ import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.Descriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.store.api.model.QueryResult;
 import com.buschmais.jqassistant.store.impl.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.impl.model.ClassDescriptorImpl;
 import com.buschmais.jqassistant.store.impl.model.FieldDescriptorImpl;
@@ -104,6 +111,48 @@ public abstract class AbstractGraphStore implements Store {
 		FieldDescriptorImpl fieldDescriptor = new FieldDescriptorImpl(fieldNode);
 		initDescriptor(fieldDescriptor, name, NodeType.FIELD, null);
 		return fieldDescriptor;
+	}
+
+	public QueryResult executeQuery(String query, Map<String, Object> parameters) {
+		ExecutionResult result = executionEngine.execute(query, parameters);
+		final Iterator<Map<String, Object>> iterator = result.iterator();
+		Iterable<Map<String, Object>> rowIterable = new Iterable<Map<String, Object>>() {
+
+			@Override
+			public Iterator<Map<String, Object>> iterator() {
+				return new Iterator<Map<String, Object>>() {
+
+					@Override
+					public boolean hasNext() {
+						return iterator.hasNext();
+					}
+
+					@Override
+					public Map<String, Object> next() {
+						Map<String, Object> row = new HashMap<String, Object>();
+						for (Entry<String, Object> entry : iterator.next()
+								.entrySet()) {
+							String name = entry.getKey();
+							Object value = entry.getValue();
+							Object decodedValue = value;
+							// if (value instanceof Node) {
+							//
+							// } else {
+							// decodedValue = value;
+							// }
+							row.put(name, decodedValue);
+						}
+						return iterator.next();
+					}
+
+					@Override
+					public void remove() {
+						iterator.remove();
+					}
+				};
+			}
+		};
+		return new QueryResult(result.columns(), rowIterable);
 	}
 
 	private Node createNode(String fullQualifiedName) {
