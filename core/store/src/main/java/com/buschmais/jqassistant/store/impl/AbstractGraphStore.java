@@ -113,6 +113,7 @@ public abstract class AbstractGraphStore implements Store {
 		return fieldDescriptor;
 	}
 
+	@Override
 	public QueryResult executeQuery(String query, Map<String, Object> parameters) {
 		ExecutionResult result = executionEngine.execute(query, parameters);
 		final Iterator<Map<String, Object>> iterator = result.iterator();
@@ -134,21 +135,47 @@ public abstract class AbstractGraphStore implements Store {
 								.entrySet()) {
 							String name = entry.getKey();
 							Object value = entry.getValue();
-							Object decodedValue = value;
-							// if (value instanceof Node) {
-							//
-							// } else {
-							// decodedValue = value;
-							// }
+							Object decodedValue = decodeValue(value);
 							row.put(name, decodedValue);
 						}
-						return iterator.next();
+						return row;
 					}
 
 					@Override
 					public void remove() {
 						iterator.remove();
 					}
+
+					private Object decodeValue(Object value) {
+						Object decodedValue;
+						if (value instanceof Node) {
+							Node node = (Node) value;
+							NodeType type = NodeType.valueOf(node.getProperty(
+									Descriptor.TYPE).toString());
+							switch (type) {
+							case PACKAGE:
+								decodedValue = new PackageDescriptorImpl(node);
+								break;
+							case CLASS:
+								decodedValue = new ClassDescriptorImpl(node);
+								break;
+							case METHOD:
+								decodedValue = new MethodDescriptorImpl(node);
+								break;
+							case FIELD:
+								decodedValue = new FieldDescriptorImpl(node);
+								break;
+							default:
+								throw new IllegalArgumentException(
+										"Query returned unknown node type: "
+												+ type.name());
+							}
+						} else {
+							decodedValue = value;
+						}
+						return decodedValue;
+					}
+
 				};
 			}
 		};
@@ -164,7 +191,7 @@ public abstract class AbstractGraphStore implements Store {
 	private void initDescriptor(AbstractDescriptor descriptor, Name name,
 			NodeType type, Index<Node> index) {
 		descriptor.setFullQualifiedName(name.getFullQualifiedName());
-		descriptor.setType(type.name().toLowerCase());
+		descriptor.setType(type);
 		if (index != null) {
 			index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
 					name.getFullQualifiedName());

@@ -1,9 +1,12 @@
 package com.buschmais.jqassistant.store.api;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.store.api.model.QueryResult;
 
 public interface Store {
 
@@ -29,4 +32,5 @@ public interface Store {
 	FieldDescriptor resolveFieldDescriptor(ClassDescriptor classDescriptor,
 			String fieldName);
 
+	QueryResult executeQuery(String query, Map<String, Object> parameters);
 }

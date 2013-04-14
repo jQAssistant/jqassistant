@@ -34,12 +34,12 @@ public abstract class AbstractDescriptor implements Descriptor {
 	}
 
 	@Override
-	public String getType() {
-		return (String) node.getProperty("type");
+	public NodeType getType() {
+		return NodeType.valueOf(node.getProperty(TYPE).toString());
 	}
 
-	public void setType(String type) {
-		node.setProperty("type", type);
+	public void setType(NodeType type) {
+		node.setProperty(TYPE, type.name());
 	}
 
 	@Override
