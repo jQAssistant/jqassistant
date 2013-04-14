@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 
 public abstract class AbstractScannerIT {
 
-	private Store store;
+	protected Store store;
 
 	protected ClassScanner scanner;
 
