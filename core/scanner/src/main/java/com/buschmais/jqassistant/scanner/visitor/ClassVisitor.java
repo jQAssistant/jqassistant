@@ -25,11 +25,11 @@ public class ClassVisitor extends AbstractVisitor implements
 		classDescriptor = getClassDescriptor(name);
 		if (signature == null) {
 			if (superName != null) {
-				classDescriptor.addSuperClass(getClassDescriptor(superName));
+				classDescriptor.setSuperClass(getClassDescriptor(superName));
 			}
 			for (int i = 0; interfaces != null && i < interfaces.length; i++) {
-				classDescriptor
-						.addImplements(getClassDescriptor(interfaces[i]));
+				classDescriptor.getInterfaces().add(
+						getClassDescriptor(interfaces[i]));
 			}
 		} else {
 			new SignatureReader(signature).accept(new ClassSignatureVisitor(
@@ -42,7 +42,7 @@ public class ClassVisitor extends AbstractVisitor implements
 			final String desc, final String signature, final Object value) {
 		FieldDescriptor fieldDescriptor = getFielDescriptor(classDescriptor,
 				name, desc);
-		classDescriptor.addChild(fieldDescriptor);
+		classDescriptor.getContains().add(fieldDescriptor);
 		if (signature == null) {
 			addDependency(fieldDescriptor, getType((desc)));
 		} else {
@@ -61,7 +61,7 @@ public class ClassVisitor extends AbstractVisitor implements
 			final String desc, final String signature, final String[] exceptions) {
 		MethodDescriptor methodDescriptor = getMethodDescriptor(
 				classDescriptor, name, desc);
-		classDescriptor.addChild(methodDescriptor);
+		classDescriptor.getContains().add(methodDescriptor);
 		if (signature == null) {
 			addMethodDesc(desc);
 		} else {
@@ -72,7 +72,7 @@ public class ClassVisitor extends AbstractVisitor implements
 		for (int i = 0; exceptions != null && i < exceptions.length; i++) {
 			ClassDescriptor exception = getClassDescriptor(Type.getObjectType(
 					exceptions[i]).getClassName());
-			methodDescriptor.addThrows(exception);
+			methodDescriptor.getDeclaredThrowables().add(exception);
 		}
 		return new MethodVisitor(methodDescriptor, getResolverFactory());
 	}
@@ -109,8 +109,7 @@ public class ClassVisitor extends AbstractVisitor implements
 	public AnnotationVisitor visitAnnotation(final String desc,
 			final boolean visible) {
 		addDependency(classDescriptor, getType(desc));
-		return new AnnotationVisitor(classDescriptor,
-				getResolverFactory());
+		return new AnnotationVisitor(classDescriptor, getResolverFactory());
 	}
 
 	@Override

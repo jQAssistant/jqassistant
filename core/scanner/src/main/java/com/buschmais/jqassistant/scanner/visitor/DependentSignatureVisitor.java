@@ -99,12 +99,14 @@ public class DependentSignatureVisitor<T extends DependentDescriptor> extends
 
 			@Override
 			public void visitClassType(String name) {
-				dependentDescriptor.addDependency(getClassDescriptor(name));
+				dependentDescriptor.getDependencies().add(
+						getClassDescriptor(name));
 			}
 
 			@Override
 			public void visitInnerClassType(String name) {
-				dependentDescriptor.addDependency(getClassDescriptor(name));
+				dependentDescriptor.getDependencies().add(
+						getClassDescriptor(name));
 			}
 
 		};

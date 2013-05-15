@@ -33,7 +33,7 @@ public abstract class AbstractVisitor {
 			String typeName) {
 		if (typeName != null) {
 			ClassDescriptor dependency = getClassDescriptor(typeName);
-			depentendDescriptor.addDependency(dependency);
+			depentendDescriptor.getDependencies().add(dependency);
 		}
 	}
 

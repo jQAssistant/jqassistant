@@ -15,7 +15,7 @@ public class PackageDescriptorResolver extends
 		PackageDescriptor packageDescriptor = getStore()
 				.resolvePackageDescriptor(parent, name);
 		if (parent != null) {
-			parent.addChild(packageDescriptor);
+			parent.getContains().add(packageDescriptor);
 		}
 		return packageDescriptor;
 	}

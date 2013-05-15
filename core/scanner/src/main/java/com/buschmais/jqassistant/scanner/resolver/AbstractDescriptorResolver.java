@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.Descriptor;
+import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 
-public abstract class AbstractDescriptorResolver<P extends Descriptor, T extends Descriptor> {
+public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T extends AbstractDescriptor> {
 
 	private final Store store;
 
