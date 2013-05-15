@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
@@ -51,7 +50,7 @@ public abstract class AbstractScannerTest {
 			} else {
 				name = fullQualifiedName;
 			}
-			packageDescriptor = mock(PackageDescriptor.class);
+			packageDescriptor = new PackageDescriptor();
 			when(store.resolvePackageDescriptor(parentDescriptor, name))
 					.thenReturn(packageDescriptor);
 			packageCache.put(fullQualifiedName, packageDescriptor);
@@ -65,7 +64,7 @@ public abstract class AbstractScannerTest {
 	}
 
 	protected ClassDescriptor stubClass(String className) {
-		ClassDescriptor classDescriptor = mock(ClassDescriptor.class);
+		ClassDescriptor classDescriptor = new ClassDescriptor();
 		when(store.resolveClassDescriptor(null, className)).thenReturn(
 				classDescriptor);
 		return classDescriptor;
@@ -73,10 +72,9 @@ public abstract class AbstractScannerTest {
 
 	protected ClassDescriptor stubClass(PackageDescriptor packageDescriptor,
 			String className) {
-		ClassDescriptor classDescriptor = mock(ClassDescriptor.class);
+		ClassDescriptor classDescriptor = new ClassDescriptor();
 		when(store.resolveClassDescriptor(packageDescriptor, className))
 				.thenReturn(classDescriptor);
 		return classDescriptor;
 	}
-
 }

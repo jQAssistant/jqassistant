@@ -21,13 +21,13 @@ public class ClassSignatureVisitor extends
 			@Override
 			public void visitClassType(String name) {
 				getDependentDescriptor()
-						.addSuperClass(getClassDescriptor(name));
+						.setSuperClass(getClassDescriptor(name));
 			}
 
 			@Override
 			public void visitInnerClassType(String name) {
 				getDependentDescriptor()
-						.addSuperClass(getClassDescriptor(name));
+						.setSuperClass(getClassDescriptor(name));
 			}
 
 		};
@@ -40,14 +40,14 @@ public class ClassSignatureVisitor extends
 
 			@Override
 			public void visitClassType(String name) {
-				getDependentDescriptor()
-						.addImplements(getClassDescriptor(name));
+				getDependentDescriptor().getInterfaces().add(
+						getClassDescriptor(name));
 			}
 
 			@Override
 			public void visitInnerClassType(String name) {
-				getDependentDescriptor()
-						.addImplements(getClassDescriptor(name));
+				getDependentDescriptor().getInterfaces().add(
+						getClassDescriptor(name));
 			}
 		};
 	}

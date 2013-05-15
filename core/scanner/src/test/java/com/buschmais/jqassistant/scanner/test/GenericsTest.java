@@ -1,7 +1,8 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -22,57 +23,57 @@ public class GenericsTest extends AbstractScannerTest {
 	@Test
 	public void genericType() throws IOException {
 		ClassDescriptor genericType = stubClass(GenericType.class);
-		MethodDescriptor constructor = mock(MethodDescriptor.class);
+		MethodDescriptor constructor = new MethodDescriptor();
 		when(store.resolveMethodDescriptor(genericType, "void <init>()"))
 				.thenReturn(constructor);
 
 		scanner.scanClass(GenericType.class);
 
-		verify(genericType).addSuperClass(javaLangObject);
-		verify(genericType).addChild(constructor);
-		verify(constructor).addDependency(_void);
+		assertThat(genericType.getSuperClass(), equalTo(javaLangObject));
+		assertThat(genericType.getContains(), hasItem(constructor));
+		assertThat(genericType.getDependencies(), hasItem(_void));
 	}
 
 	@Test
 	public void boundGenericType() throws IOException {
 		ClassDescriptor boundGenericType = stubClass(BoundGenericType.class);
 		ClassDescriptor javaLangNumber = stubClass(Number.class);
-		MethodDescriptor constructor = mock(MethodDescriptor.class);
+		MethodDescriptor constructor = new MethodDescriptor();
 		when(store.resolveMethodDescriptor(boundGenericType, "void <init>()"))
 				.thenReturn(constructor);
 
 		scanner.scanClass(BoundGenericType.class);
 
-		verify(boundGenericType).addSuperClass(javaLangObject);
-		verify(boundGenericType).addChild(constructor);
-		verify(boundGenericType).addDependency(javaLangNumber);
-		verify(constructor).addDependency(_void);
+		assertThat(boundGenericType.getSuperClass(), equalTo(javaLangObject));
+		assertThat(boundGenericType.getContains(), hasItem(constructor));
+		assertThat(boundGenericType.getDependencies(), hasItem(javaLangNumber));
+		assertThat(constructor.getDependencies(), hasItem(_void));
 	}
 
 	@Test
 	public void nestedGenericType() throws IOException {
 		ClassDescriptor nestedGenericType = stubClass(NestedGenericType.class);
 		ClassDescriptor genericType = stubClass(GenericType.class);
-		MethodDescriptor constructor = mock(MethodDescriptor.class);
+		MethodDescriptor constructor = new MethodDescriptor();
 		when(store.resolveMethodDescriptor(nestedGenericType, "void <init>()"))
 				.thenReturn(constructor);
 
 		scanner.scanClass(NestedGenericType.class);
 
-		verify(nestedGenericType).addSuperClass(javaLangObject);
-		verify(nestedGenericType).addChild(constructor);
-		verify(nestedGenericType).addDependency(genericType);
-		verify(constructor).addDependency(_void);
+		assertThat(nestedGenericType.getSuperClass(), equalTo(javaLangObject));
+		assertThat(nestedGenericType.getContains(), hasItem(constructor));
+		assertThat(nestedGenericType.getDependencies(), hasItem(genericType));
+		assertThat(constructor.getDependencies(), hasItem(_void));
 	}
 
 	@Test
 	public void nestedGenericMethod() throws IOException {
 		ClassDescriptor nestedGenericType = stubClass(NestedGenericMethod.class);
 		ClassDescriptor genericType = stubClass(GenericType.class);
-		MethodDescriptor constructor = mock(MethodDescriptor.class);
+		MethodDescriptor constructor = new MethodDescriptor();
 		when(store.resolveMethodDescriptor(nestedGenericType, "void <init>()"))
 				.thenReturn(constructor);
-		MethodDescriptor get = mock(MethodDescriptor.class);
+		MethodDescriptor get = new MethodDescriptor();
 		when(
 				store.resolveMethodDescriptor(
 						nestedGenericType,
@@ -81,10 +82,10 @@ public class GenericsTest extends AbstractScannerTest {
 
 		scanner.scanClass(NestedGenericMethod.class);
 
-		verify(nestedGenericType).addSuperClass(javaLangObject);
-		verify(nestedGenericType).addChild(constructor);
-		verify(constructor).addDependency(_void);
-		verify(get).addDependency(genericType);
+		assertThat(nestedGenericType.getSuperClass(), equalTo(javaLangObject));
+		assertThat(nestedGenericType.getContains(), hasItem(constructor));
+		assertThat(constructor.getDependencies(), hasItem(_void));
+		assertThat(get.getDependencies(), hasItem(genericType));
 	}
 
 	@Test
@@ -92,17 +93,18 @@ public class GenericsTest extends AbstractScannerTest {
 		ClassDescriptor extendsGenericClass = stubClass(ExtendsGenericClass.class);
 		ClassDescriptor genericType = stubClass(GenericType.class);
 		ClassDescriptor javaLangNumber = stubClass(Number.class);
-		MethodDescriptor constructor = mock(MethodDescriptor.class);
+		MethodDescriptor constructor = new MethodDescriptor();
 		when(
 				store.resolveMethodDescriptor(extendsGenericClass,
 						"void <init>()")).thenReturn(constructor);
 
 		scanner.scanClass(ExtendsGenericClass.class);
 
-		verify(extendsGenericClass).addSuperClass(genericType);
-		verify(extendsGenericClass).addDependency(javaLangNumber);
-		verify(extendsGenericClass).addChild(constructor);
-		verify(constructor).addDependency(_void);
+		assertThat(extendsGenericClass.getSuperClass(), equalTo(genericType));
+		assertThat(extendsGenericClass.getDependencies(),
+				hasItem(javaLangNumber));
+		assertThat(extendsGenericClass.getContains(), hasItem(constructor));
+		assertThat(constructor.getDependencies(), hasItem(_void));
 	}
 
 	@Test
@@ -110,17 +112,18 @@ public class GenericsTest extends AbstractScannerTest {
 		ClassDescriptor extendsGenericClass = stubClass(ImplementsGenericInterface.class);
 		ClassDescriptor javaUtilIterable = stubClass(Iterable.class);
 		ClassDescriptor javaLangNumber = stubClass(Number.class);
-		MethodDescriptor constructor = mock(MethodDescriptor.class);
+		MethodDescriptor constructor = new MethodDescriptor();
 		when(
 				store.resolveMethodDescriptor(extendsGenericClass,
 						"void <init>()")).thenReturn(constructor);
 
 		scanner.scanClass(ImplementsGenericInterface.class);
 
-		verify(extendsGenericClass).addImplements(javaUtilIterable);
-		verify(extendsGenericClass).addDependency(javaLangNumber);
-		verify(extendsGenericClass).addChild(constructor);
-		verify(constructor).addDependency(_void);
-
+		assertThat(extendsGenericClass.getInterfaces(),
+				hasItem(javaUtilIterable));
+		assertThat(extendsGenericClass.getDependencies(),
+				hasItem(javaLangNumber));
+		assertThat(extendsGenericClass.getContains(), hasItem(constructor));
+		assertThat(constructor.getDependencies(), hasItem(_void));
 	}
 }

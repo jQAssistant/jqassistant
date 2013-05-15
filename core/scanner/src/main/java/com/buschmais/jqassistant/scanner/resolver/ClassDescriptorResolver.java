@@ -17,7 +17,7 @@ public class ClassDescriptorResolver extends
 		ClassDescriptor classDescriptor = getStore().resolveClassDescriptor(
 				parent, name);
 		if (parent != null) {
-			parent.addChild(classDescriptor);
+			parent.getContains().add(classDescriptor);
 		}
 		return classDescriptor;
 	}

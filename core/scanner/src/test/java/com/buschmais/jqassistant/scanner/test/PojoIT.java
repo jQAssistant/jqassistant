@@ -14,8 +14,8 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.scanner.test.sets.pojo.Pojo;
+import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.QueryResult;
-import com.buschmais.jqassistant.store.impl.model.ClassDescriptorImpl;
 
 public class PojoIT extends AbstractScannerIT {
 
@@ -31,7 +31,7 @@ public class PojoIT extends AbstractScannerIT {
 		for (Map<String, Object> row : result.getRows()) {
 			assertThat(row.keySet(), everyItem(equalTo("class")));
 			assertThat(row.values(),
-					everyItem(instanceOf(ClassDescriptorImpl.class)));
+					everyItem(instanceOf(ClassDescriptor.class)));
 		}
 	}
 }

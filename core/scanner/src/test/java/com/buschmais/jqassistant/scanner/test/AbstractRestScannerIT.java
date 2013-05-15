@@ -11,13 +11,13 @@ import com.buschmais.jqassistant.store.impl.Server;
 
 public abstract class AbstractRestScannerIT {
 
-	private Store store;
+	protected Store store;
+
+	protected ClassScanner scanner;
 
 	private Server server;
 
 	private EmbeddedGraphStore embeddedStore;
-
-	protected ClassScanner scanner;
 
 	@Before
 	public void startStore() {

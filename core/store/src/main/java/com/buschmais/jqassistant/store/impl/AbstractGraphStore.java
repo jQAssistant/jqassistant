@@ -1,55 +1,68 @@
 package com.buschmais.jqassistant.store.impl;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.GraphDatabaseAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.Descriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.store.api.model.QueryResult;
-import com.buschmais.jqassistant.store.impl.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.impl.model.ClassDescriptorImpl;
-import com.buschmais.jqassistant.store.impl.model.FieldDescriptorImpl;
-import com.buschmais.jqassistant.store.impl.model.MethodDescriptorImpl;
-import com.buschmais.jqassistant.store.impl.model.NodeType;
-import com.buschmais.jqassistant.store.impl.model.PackageDescriptorImpl;
+import com.buschmais.jqassistant.store.impl.dao.DescriptorAdapterRegistry;
+import com.buschmais.jqassistant.store.impl.dao.DescriptorDAOImpl;
+import com.buschmais.jqassistant.store.impl.dao.mapper.ClassDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.FieldDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.MethodDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.PackageDescriptorMapper;
 
+/**
+ * Abstract base implementation of a {@link Store}.
+ * <p>
+ * Provides methods for managing the life cycle of a store, transactions,
+ * resolving descriptors and executing CYPHER queries.
+ * </p>
+ */
 public abstract class AbstractGraphStore implements Store {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(AbstractGraphStore.class);
-
+	/**
+	 * The {@link GraphDatabaseService} to use.
+	 */
 	protected GraphDatabaseService database;
 
-	protected ExecutionEngine executionEngine;
+	/**
+	 * The registry of {@link DescriptorMapper}s. These are used to resolve
+	 * required metadata.
+	 */
+	private DescriptorAdapterRegistry adapterRegistry;
 
-	protected Index<Node> packageIndex;
-	protected Index<Node> classIndex;
+	/**
+	 * The {@link DescriptorDAO} instance to use.
+	 */
+	private DescriptorDAO descriptorDAO;
 
 	@Override
 	public void start() {
 		database = startDatabase();
-		executionEngine = new ExecutionEngine(database);
-		classIndex = database.index().forNodes("classes");
-		packageIndex = database.index().forNodes("packages");
+		adapterRegistry = new DescriptorAdapterRegistry();
+		Index<Node> packageIndex = database.index().forNodes("packages");
+		adapterRegistry.registerDAO(new PackageDescriptorMapper(packageIndex));
+		Index<Node> classIndex = database.index().forNodes("classes");
+		adapterRegistry.registerDAO(new ClassDescriptorMapper(classIndex));
+		adapterRegistry.registerDAO(new MethodDescriptorMapper());
+		adapterRegistry.registerDAO(new FieldDescriptorMapper());
+		descriptorDAO = new DescriptorDAOImpl(adapterRegistry, database);
 	}
 
 	@Override
 	public void stop() {
-		executionEngine = null;
+		adapterRegistry = null;
 		stopDatabase(database);
 	}
 
@@ -61,45 +74,41 @@ public abstract class AbstractGraphStore implements Store {
 	}
 
 	@Override
-	public PackageDescriptorImpl resolvePackageDescriptor(
+	public PackageDescriptor resolvePackageDescriptor(
 			final PackageDescriptor parentPackageDescriptor,
 			final String packageName) {
 		final Name name = new Name(parentPackageDescriptor, '.', packageName);
-		Node node = packageIndex.get(Descriptor.FULLQUALIFIEDNAME,
-				name.getFullQualifiedName()).getSingle();
-		if (node != null) {
-			return new PackageDescriptorImpl(node);
+		PackageDescriptor packageDescriptor = descriptorDAO.find(
+				PackageDescriptor.class, name.getFullQualifiedName());
+		if (packageDescriptor == null) {
+			packageDescriptor = new PackageDescriptor();
+			packageDescriptor.setFullQualifiedName(name.getFullQualifiedName());
+			descriptorDAO.persist(packageDescriptor);
 		}
-		node = createNode(name.getFullQualifiedName());
-		PackageDescriptorImpl packageDescriptor = new PackageDescriptorImpl(
-				node);
-		initDescriptor(packageDescriptor, name, NodeType.PACKAGE, packageIndex);
 		return packageDescriptor;
 	}
 
 	@Override
-	public ClassDescriptorImpl resolveClassDescriptor(
+	public ClassDescriptor resolveClassDescriptor(
 			final PackageDescriptor packageDescriptor, final String className) {
 		final Name name = new Name(packageDescriptor, '.', className);
-		Node node = classIndex.get(Descriptor.FULLQUALIFIEDNAME,
-				name.getFullQualifiedName()).getSingle();
-		if (node != null) {
-			return new ClassDescriptorImpl(node);
+		ClassDescriptor classDescriptor = descriptorDAO.find(
+				ClassDescriptor.class, name.getFullQualifiedName());
+		if (classDescriptor == null) {
+			classDescriptor = new ClassDescriptor();
+			classDescriptor.setFullQualifiedName(name.getFullQualifiedName());
+			descriptorDAO.persist(classDescriptor);
 		}
-		node = createNode(name.getFullQualifiedName());
-		ClassDescriptorImpl classDescriptor = new ClassDescriptorImpl(node);
-		initDescriptor(classDescriptor, name, NodeType.CLASS, classIndex);
 		return classDescriptor;
 	}
 
 	@Override
-	public MethodDescriptorImpl resolveMethodDescriptor(
+	public MethodDescriptor resolveMethodDescriptor(
 			final ClassDescriptor classDescriptor, String methodName) {
 		final Name name = new Name(classDescriptor, '#', methodName);
-		Node methodNode = createNode(name.getFullQualifiedName());
-		MethodDescriptorImpl methodDescriptor = new MethodDescriptorImpl(
-				methodNode);
-		initDescriptor(methodDescriptor, name, NodeType.METHOD, null);
+		MethodDescriptor methodDescriptor = new MethodDescriptor();
+		methodDescriptor.setFullQualifiedName(name.getFullQualifiedName());
+		descriptorDAO.persist(methodDescriptor);
 		return methodDescriptor;
 	}
 
@@ -107,99 +116,38 @@ public abstract class AbstractGraphStore implements Store {
 	public FieldDescriptor resolveFieldDescriptor(
 			final ClassDescriptor classDescriptor, String fieldName) {
 		final Name name = new Name(classDescriptor, '#', fieldName);
-		Node fieldNode = createNode(name.getFullQualifiedName());
-		FieldDescriptorImpl fieldDescriptor = new FieldDescriptorImpl(fieldNode);
-		initDescriptor(fieldDescriptor, name, NodeType.FIELD, null);
+		FieldDescriptor fieldDescriptor = new FieldDescriptor();
+		fieldDescriptor.setFullQualifiedName(name.getFullQualifiedName());
+		descriptorDAO.persist(fieldDescriptor);
 		return fieldDescriptor;
 	}
 
 	@Override
 	public QueryResult executeQuery(String query, Map<String, Object> parameters) {
-		ExecutionResult result = executionEngine.execute(query, parameters);
-		final Iterator<Map<String, Object>> iterator = result.iterator();
-		Iterable<Map<String, Object>> rowIterable = new Iterable<Map<String, Object>>() {
-
-			@Override
-			public Iterator<Map<String, Object>> iterator() {
-				return new Iterator<Map<String, Object>>() {
-
-					@Override
-					public boolean hasNext() {
-						return iterator.hasNext();
-					}
-
-					@Override
-					public Map<String, Object> next() {
-						Map<String, Object> row = new HashMap<String, Object>();
-						for (Entry<String, Object> entry : iterator.next()
-								.entrySet()) {
-							String name = entry.getKey();
-							Object value = entry.getValue();
-							Object decodedValue = decodeValue(value);
-							row.put(name, decodedValue);
-						}
-						return row;
-					}
-
-					@Override
-					public void remove() {
-						iterator.remove();
-					}
-
-					private Object decodeValue(Object value) {
-						Object decodedValue;
-						if (value instanceof Node) {
-							Node node = (Node) value;
-							NodeType type = NodeType.valueOf(node.getProperty(
-									Descriptor.TYPE).toString());
-							switch (type) {
-							case PACKAGE:
-								decodedValue = new PackageDescriptorImpl(node);
-								break;
-							case CLASS:
-								decodedValue = new ClassDescriptorImpl(node);
-								break;
-							case METHOD:
-								decodedValue = new MethodDescriptorImpl(node);
-								break;
-							case FIELD:
-								decodedValue = new FieldDescriptorImpl(node);
-								break;
-							default:
-								throw new IllegalArgumentException(
-										"Query returned unknown node type: "
-												+ type.name());
-							}
-						} else {
-							decodedValue = value;
-						}
-						return decodedValue;
-					}
-
-				};
-			}
-		};
-		return new QueryResult(result.columns(), rowIterable);
+		return descriptorDAO.executeQuery(query, parameters);
 	}
 
-	private Node createNode(String fullQualifiedName) {
-		LOGGER.debug("Creating node for '{}'.", fullQualifiedName);
-		Node node = database.createNode();
-		return node;
+	@Override
+	public void beginTransaction() {
 	}
 
-	private void initDescriptor(AbstractDescriptor descriptor, Name name,
-			NodeType type, Index<Node> index) {
-		descriptor.setFullQualifiedName(name.getFullQualifiedName());
-		descriptor.setType(type);
-		if (index != null) {
-			index.add(descriptor.getNode(), Descriptor.FULLQUALIFIEDNAME,
-					name.getFullQualifiedName());
-		}
+	@Override
+	public void endTransaction() {
+		descriptorDAO.flush();
 	}
 
+	/**
+	 * Delegates to the sub class to start the database.
+	 * 
+	 * @return The {@link GraphDatabaseService} instance to use.
+	 */
 	protected abstract GraphDatabaseService startDatabase();
 
+	/**
+	 * Delegates to the sub class to stop the database.
+	 * 
+	 * @param database
+	 *            The used {@link GraphDatabaseService} instance.
+	 */
 	protected abstract void stopDatabase(GraphDatabaseService database);
-
 }
