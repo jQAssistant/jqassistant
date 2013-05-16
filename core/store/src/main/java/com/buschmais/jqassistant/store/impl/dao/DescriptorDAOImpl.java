@@ -234,6 +234,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			// find adapter and create instance
 			DescriptorMapper<T> adapter = registry.getDescriptorAdapter(type);
 			descriptor = adapter.createInstance();
+			adapter.setId(descriptor, Long.valueOf(node.getId()));
 			descriptorCache.put(descriptor, node);
 			descriptor.setFullQualifiedName((String) node
 					.getProperty(NodeProperty.FQN.name()));

@@ -41,6 +41,10 @@ public abstract class AbstractDescriptorMapper<T extends AbstractDescriptor>
 
 	@Override
 	public void setId(T descriptor, Long id) {
+		if (id == null) {
+			throw new IllegalArgumentException(
+					"Cannot set id which is null for descriptor " + descriptor);
+		}
 		descriptor.setId(id);
 	}
 
