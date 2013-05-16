@@ -72,9 +72,9 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 			relationShip.delete();
 		}
 		for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
-			node.delete();
 			getAdapterRegistry().getDescriptorAdapter(node).getIndex()
 					.remove(node);
+			node.delete();
 		}
 	}
 }
