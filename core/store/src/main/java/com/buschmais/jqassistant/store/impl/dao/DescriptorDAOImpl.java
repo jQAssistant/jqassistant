@@ -61,9 +61,9 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 		if (index != null) {
 			index.add(node, NodeProperty.FQN.name(),
 					descriptor.getFullQualifiedName());
+			indexCache.put(descriptor.getFullQualifiedName(), descriptor);
 		}
 		descriptorCache.put(descriptor, node);
-		indexCache.put(descriptor.getFullQualifiedName(), descriptor);
 		newDescriptors.add(descriptor);
 	}
 
@@ -73,20 +73,26 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			flushRelations(descriptor);
 		}
 		newDescriptors.clear();
+		indexCache.clear();
 	}
 
 	@Override
 	public <T extends AbstractDescriptor> T find(Class<T> type,
 			String fullQualifiedName) {
-		flush();
 		@SuppressWarnings("unchecked")
 		T descriptor = (T) indexCache.get(fullQualifiedName);
-		if (descriptor != null) {
-			Node node = findNode(descriptor);
-			if (node != null) {
-				descriptor = createFrom(type, node);
-				indexCache.put(fullQualifiedName, descriptor);
-				return descriptor;
+		if (descriptor == null) {
+			DescriptorMapper<AbstractDescriptor> adapter = registry
+					.getDescriptorAdapter(type);
+			Index<Node> index = adapter.getIndex();
+			if (index != null) {
+				Node node = index.get(NodeProperty.FQN.name(),
+						fullQualifiedName).getSingle();
+				if (node != null) {
+					descriptor = createFrom(type, node);
+					indexCache.put(fullQualifiedName, descriptor);
+					return descriptor;
+				}
 			}
 		}
 		return null;
@@ -94,7 +100,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
 	@Override
 	public QueryResult executeQuery(String query, Map<String, Object> parameters) {
-		flush();
 		ExecutionResult result = executionEngine.execute(query, parameters);
 		final Iterator<Map<String, Object>> iterator = result.iterator();
 		Iterable<Map<String, Object>> rowIterable = new Iterable<Map<String, Object>>() {
@@ -229,6 +234,9 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			// find adapter and create instance
 			DescriptorMapper<T> adapter = registry.getDescriptorAdapter(type);
 			descriptor = adapter.createInstance();
+			descriptorCache.put(descriptor, node);
+			descriptor.setFullQualifiedName((String) node
+					.getProperty(NodeProperty.FQN.name()));
 			// create outgoing relationships
 			for (Relationship relationship : node
 					.getRelationships(Direction.OUTGOING)) {
