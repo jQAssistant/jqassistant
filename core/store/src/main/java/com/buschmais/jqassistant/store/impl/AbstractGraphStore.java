@@ -136,6 +136,10 @@ public abstract class AbstractGraphStore implements Store {
 		descriptorDAO.flush();
 	}
 
+	protected DescriptorAdapterRegistry getAdapterRegistry() {
+		return adapterRegistry;
+	}
+
 	/**
 	 * Delegates to the sub class to start the database.
 	 * 
@@ -150,4 +154,5 @@ public abstract class AbstractGraphStore implements Store {
 	 *            The used {@link GraphDatabaseService} instance.
 	 */
 	protected abstract void stopDatabase(GraphDatabaseService database);
+
 }
