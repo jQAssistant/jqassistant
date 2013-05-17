@@ -45,8 +45,8 @@ public class FieldDescriptorMapper extends
 	}
 
 	@Override
-	public void setRelation(FieldDescriptor descriptor, RelationType relation,
-			AbstractDescriptor target) {
+	protected void setRelation(FieldDescriptor descriptor,
+			RelationType relation, AbstractDescriptor target) {
 		switch (relation) {
 		case DEPENDS_ON:
 			descriptor.getDependencies().add((ClassDescriptor) target);

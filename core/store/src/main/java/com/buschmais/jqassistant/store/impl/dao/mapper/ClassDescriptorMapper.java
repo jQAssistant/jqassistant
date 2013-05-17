@@ -54,8 +54,8 @@ public class ClassDescriptorMapper extends
 	}
 
 	@Override
-	public void setRelation(ClassDescriptor descriptor, RelationType relation,
-			AbstractDescriptor target) {
+	protected void setRelation(ClassDescriptor descriptor,
+			RelationType relation, AbstractDescriptor target) {
 		switch (relation) {
 		case CONTAINS:
 			descriptor.getContains().add(target);
