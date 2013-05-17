@@ -46,8 +46,8 @@ public class MethodDescriptorMapper extends
 	}
 
 	@Override
-	public void setRelation(MethodDescriptor descriptor, RelationType relation,
-			AbstractDescriptor target) {
+	protected void setRelation(MethodDescriptor descriptor,
+			RelationType relation, AbstractDescriptor target) {
 		switch (relation) {
 		case DEPENDS_ON:
 			descriptor.getDependencies().add((ClassDescriptor) target);

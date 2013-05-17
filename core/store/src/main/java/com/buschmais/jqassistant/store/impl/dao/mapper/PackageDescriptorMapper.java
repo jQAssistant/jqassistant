@@ -50,7 +50,7 @@ public class PackageDescriptorMapper extends
 	}
 
 	@Override
-	public void setRelation(PackageDescriptor descriptor,
+	protected void setRelation(PackageDescriptor descriptor,
 			RelationType relation, AbstractDescriptor target) {
 		switch (relation) {
 		case CONTAINS:

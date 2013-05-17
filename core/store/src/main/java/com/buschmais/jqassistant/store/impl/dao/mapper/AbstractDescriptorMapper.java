@@ -2,9 +2,12 @@ package com.buschmais.jqassistant.store.impl.dao.mapper;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
+import com.buschmais.jqassistant.store.impl.model.RelationType;
 
 /**
  * Abstract base implementation of a {@link DescriptorMapper}.
@@ -47,5 +50,19 @@ public abstract class AbstractDescriptorMapper<T extends AbstractDescriptor>
 		}
 		descriptor.setId(id);
 	}
+
+	@Override
+	public void setRelations(T descriptor,
+			Map<RelationType, Set<AbstractDescriptor>> relations) {
+		for (Entry<RelationType, Set<AbstractDescriptor>> entry : relations
+				.entrySet()) {
+			for (AbstractDescriptor target : entry.getValue()) {
+				setRelation(descriptor, entry.getKey(), target);
+			}
+		}
+	}
+
+	protected abstract void setRelation(T descriptor, RelationType relation,
+			AbstractDescriptor target);
 
 }

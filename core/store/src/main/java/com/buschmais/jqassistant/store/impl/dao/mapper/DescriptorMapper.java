@@ -54,24 +54,23 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
 	 * 
 	 * @param descriptor
 	 *            The descriptor.
-	 * @return The {@link Map}.
+	 * @return The relations {@link Map}.
 	 */
 	public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(
 			T descriptor);
 
 	/**
-	 * Set the outgoing relation for the given descriptor, {@link RelationType}
-	 * and target descriptor.
+	 * Set the outgoing relations for the given descriptor.
 	 * 
 	 * @param descriptor
 	 *            The descriptor.
-	 * @param relation
-	 *            The {@link RelationType}.
+	 * @param relations
+	 *            The relations map.
 	 * @param target
 	 *            The target descriptor.
 	 */
-	public void setRelation(T descriptor, RelationType relation,
-			AbstractDescriptor target);
+	public void setRelations(T descriptor,
+			Map<RelationType, Set<AbstractDescriptor>> relations);
 
 	/**
 	 * Return the id of the descriptor.

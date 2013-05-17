@@ -24,15 +24,13 @@ public class DescriptorAdapterRegistry {
 	@SuppressWarnings("unchecked")
 	public <T extends AbstractDescriptor> DescriptorMapper<T> getDescriptorAdapter(
 			Node node) {
-		NodeType nodeType = NodeType.valueOf((String) node
-				.getProperty(NodeProperty.TYPE.name()));
-		DescriptorMapper<T> adapter = (DescriptorMapper<T>) adaptersByNodeType
-				.get(nodeType);
-		if (adapter == null) {
-			throw new IllegalArgumentException(
-					"Cannot find adapter for node type " + nodeType);
+		String typeProperty = NodeProperty.TYPE.name();
+		if (node.hasProperty(typeProperty)) {
+			NodeType nodeType = NodeType.valueOf((String) node
+					.getProperty(NodeProperty.TYPE.name()));
+			return (DescriptorMapper<T>) adaptersByNodeType.get(nodeType);
 		}
-		return adapter;
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")

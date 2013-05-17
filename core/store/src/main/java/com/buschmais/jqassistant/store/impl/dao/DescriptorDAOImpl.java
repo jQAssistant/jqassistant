@@ -239,16 +239,22 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			descriptor.setFullQualifiedName((String) node
 					.getProperty(NodeProperty.FQN.name()));
 			// create outgoing relationships
+			Map<RelationType, Set<AbstractDescriptor>> relations = new HashMap<RelationType, Set<AbstractDescriptor>>();
 			for (Relationship relationship : node
 					.getRelationships(Direction.OUTGOING)) {
 				Node targetNode = relationship.getEndNode();
 				AbstractDescriptor targetDescriptor = createFrom(targetNode);
 				RelationType relationType = RelationType.valueOf(relationship
 						.getType().name());
-				adapter.setRelation(descriptor, relationType, targetDescriptor);
+				Set<AbstractDescriptor> set = relations.get(relationType);
+				if (set == null) {
+					set = new HashSet<AbstractDescriptor>();
+					relations.put(relationType, set);
+				}
+				set.add(targetDescriptor);
 			}
+			adapter.setRelations(descriptor, relations);
 		}
 		return descriptor;
 	}
-
 }
