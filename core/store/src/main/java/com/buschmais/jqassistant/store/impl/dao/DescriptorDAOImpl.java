@@ -28,15 +28,15 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DescriptorDAOImpl.class);
 
-	private final GraphDatabaseService database;
+	private GraphDatabaseService database;
 	private final DescriptorAdapterRegistry registry;
 	private final ExecutionEngine executionEngine;
 
 	private final Map<String, AbstractDescriptor> indexCache = new HashMap<String, AbstractDescriptor>();
 
-	private final Set<AbstractDescriptor> newDescriptors = new HashSet<AbstractDescriptor>();
-
 	private final DescriptorCache descriptorCache = new DescriptorCache();
+
+	private final Map<AbstractDescriptor, Node> descriptors = new HashMap<AbstractDescriptor, Node>();
 
 	public DescriptorDAOImpl(DescriptorAdapterRegistry registry,
 			GraphDatabaseService database) {
@@ -64,16 +64,15 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			indexCache.put(descriptor.getFullQualifiedName(), descriptor);
 		}
 		descriptorCache.put(descriptor, node);
-		newDescriptors.add(descriptor);
+		descriptors.put(descriptor, node);
 	}
 
 	@Override
 	public void flush() {
-		for (AbstractDescriptor descriptor : newDescriptors) {
+		for (AbstractDescriptor descriptor : descriptors.keySet()) {
 			flushRelations(descriptor);
 		}
-		newDescriptors.clear();
-		indexCache.clear();
+		descriptors.clear();
 	}
 
 	@Override
@@ -91,11 +90,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				if (node != null) {
 					descriptor = createFrom(type, node);
 					indexCache.put(fullQualifiedName, descriptor);
-					return descriptor;
 				}
 			}
 		}
-		return null;
+		return descriptor;
 	}
 
 	@Override
@@ -163,12 +161,22 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				.getRelations(descriptor);
 		for (Entry<RelationType, Set<? extends AbstractDescriptor>> relationEntry : relations
 				.entrySet()) {
+			RelationType relationType = relationEntry.getKey();
+			Set<Node> existingTargetNodes = new HashSet<Node>();
+			Iterable<Relationship> relationships = node.getRelationships(
+					relationType, Direction.OUTGOING);
+			if (relationships != null) {
+				for (Relationship relation : relationships) {
+					existingTargetNodes.add(relation.getEndNode());
+				}
+			}
 			Set<? extends AbstractDescriptor> targetDescriptors = relationEntry
 					.getValue();
 			for (AbstractDescriptor targetDescriptor : targetDescriptors) {
 				Node targetNode = findNode(targetDescriptor);
-				RelationType relationType = relationEntry.getKey();
-				node.createRelationshipTo(targetNode, relationType);
+				if (!existingTargetNodes.contains(targetNode)) {
+					node.createRelationshipTo(targetNode, relationType);
+				}
 			}
 		}
 	}
@@ -229,13 +237,13 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	 * @return The descriptor.
 	 */
 	private <T extends AbstractDescriptor> T createFrom(Class<T> type, Node node) {
-		T descriptor = descriptorCache.findBy(node);
+		T descriptor = this.descriptorCache.findBy(node);
 		if (descriptor == null) {
 			// find adapter and create instance
 			DescriptorMapper<T> adapter = registry.getDescriptorAdapter(type);
 			descriptor = adapter.createInstance();
 			adapter.setId(descriptor, Long.valueOf(node.getId()));
-			descriptorCache.put(descriptor, node);
+			this.descriptorCache.put(descriptor, node);
 			descriptor.setFullQualifiedName((String) node
 					.getProperty(NodeProperty.FQN.name()));
 			// create outgoing relationships
@@ -255,6 +263,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			}
 			adapter.setRelations(descriptor, relations);
 		}
+		this.descriptors.put(descriptor, node);
 		return descriptor;
 	}
 }
