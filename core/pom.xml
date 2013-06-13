@@ -10,7 +10,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<org.neo4j_version>1.8.2</org.neo4j_version>
+		<org.neo4j_version>1.9</org.neo4j_version>
 	</properties>
 
 	<dependencyManagement>
@@ -54,7 +54,7 @@
 			<dependency>
 				<groupId>org.neo4j</groupId>
 				<artifactId>neo4j-rest-graphdb</artifactId>
-				<version>1.8.1</version>
+				<version>${org.neo4j_version}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-io</groupId>

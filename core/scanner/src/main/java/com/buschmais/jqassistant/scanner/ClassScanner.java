@@ -120,11 +120,9 @@ public class ClassScanner {
 	public void scanInputStream(InputStream inputStream, String name)
 			throws IOException {
 		LOGGER.info("Scanning " + name);
-		store.beginTransaction();
 		DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(
 				store);
 		ClassVisitor visitor = new ClassVisitor(resolverFactory);
 		new ClassReader(inputStream).accept(visitor, 0);
-		store.endTransaction();
 	}
 }
