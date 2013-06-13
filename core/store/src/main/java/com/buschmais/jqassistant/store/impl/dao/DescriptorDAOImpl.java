@@ -36,8 +36,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
 	private final DescriptorCache descriptorCache = new DescriptorCache();
 
-	private final Map<AbstractDescriptor, Node> descriptors = new HashMap<AbstractDescriptor, Node>();
-
 	public DescriptorDAOImpl(DescriptorAdapterRegistry registry,
 			GraphDatabaseService database) {
 		this.registry = registry;
@@ -64,15 +62,13 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			indexCache.put(descriptor.getFullQualifiedName(), descriptor);
 		}
 		descriptorCache.put(descriptor, node);
-		descriptors.put(descriptor, node);
 	}
 
 	@Override
 	public void flush() {
-		for (AbstractDescriptor descriptor : descriptors.keySet()) {
+		for (AbstractDescriptor descriptor : descriptorCache.getDescriptors()) {
 			flushRelations(descriptor);
 		}
-		descriptors.clear();
 	}
 
 	@Override
@@ -263,7 +259,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			}
 			adapter.setRelations(descriptor, relations);
 		}
-		this.descriptors.put(descriptor, node);
 		return descriptor;
 	}
 }

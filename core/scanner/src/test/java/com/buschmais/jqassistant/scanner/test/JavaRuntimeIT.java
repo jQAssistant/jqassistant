@@ -16,7 +16,9 @@ public class JavaRuntimeIT extends AbstractScannerIT {
 		Assume.assumeTrue(
 				"Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(),
 				runtimeJar.exists());
+		store.beginTransaction();
 		scanner.scanArchive(runtimeJar);
+		store.endTransaction();
 	}
 
 }
