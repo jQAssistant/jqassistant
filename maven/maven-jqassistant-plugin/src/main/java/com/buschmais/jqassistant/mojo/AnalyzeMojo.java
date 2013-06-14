@@ -41,7 +41,9 @@ public class AnalyzeMojo extends AbstractJQAssistantMojo {
 			throws MojoExecutionException {
 		ClassScanner scanner = new ClassScanner(store);
 		try {
+			store.beginTransaction();
 			scanner.scanDirectory(directory);
+			store.endTransaction();
 		} catch (IOException e) {
 			throw new MojoExecutionException("Cannot scan classes in "
 					+ directory, e);

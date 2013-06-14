@@ -28,6 +28,8 @@ public class ResetMojo extends AbstractJQAssistantMojo {
 
 	@Override
 	protected void execute(Store store) throws MojoExecutionException {
+		store.beginTransaction();
 		store.reset();
+		store.endTransaction();
 	}
 }
