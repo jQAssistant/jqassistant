@@ -78,7 +78,11 @@
 									<goal>integration-test</goal>
 									<goal>verify</goal>
 								</goals>
-							</execution>
+								<configuration>
+									<argLine>-Xmx2048M</argLine>
+									<forkMode>always</forkMode>
+								</configuration>
+							</execution>							
 						</executions>
 					</plugin>
 				</plugins>
