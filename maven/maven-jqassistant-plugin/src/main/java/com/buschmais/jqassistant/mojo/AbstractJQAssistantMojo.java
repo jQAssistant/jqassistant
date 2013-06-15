@@ -6,7 +6,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 
 public abstract class AbstractJQAssistantMojo extends AbstractMojo {
 
@@ -50,6 +49,11 @@ public abstract class AbstractJQAssistantMojo extends AbstractMojo {
 	 */
 	protected File storeDirectory;
 
+	/**
+	 * @component
+	 */
+	protected StoreProvider storeProvider;
+
 	@Override
 	public final void execute() throws MojoExecutionException {
 		File databaseDirectory;
@@ -58,15 +62,8 @@ public abstract class AbstractJQAssistantMojo extends AbstractMojo {
 		} else {
 			databaseDirectory = new File(buildDirectory, "jqassistant");
 		}
-		Store store = new EmbeddedGraphStore(
-				databaseDirectory.getAbsolutePath());
-		store.start();
-		try {
-			execute(store);
-		} finally {
-			store.stop();
-		}
-
+		Store store = storeProvider.getStore(databaseDirectory);
+		execute(store);
 	}
 
 	protected abstract void execute(Store store) throws MojoExecutionException;
