@@ -28,7 +28,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(DescriptorDAOImpl.class);
 
-	private GraphDatabaseService database;
+	private final GraphDatabaseService database;
 	private final DescriptorAdapterRegistry registry;
 	private final ExecutionEngine executionEngine;
 
