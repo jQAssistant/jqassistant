@@ -14,14 +14,13 @@ public class StoreProvider {
 	public Store getStore(File databaseDirectory) {
 		if (store == null) {
 			store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
-			store.start();
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
 					store.stop();
 				}
 			});
-
+			store.start();
 		}
 		return store;
 	}
