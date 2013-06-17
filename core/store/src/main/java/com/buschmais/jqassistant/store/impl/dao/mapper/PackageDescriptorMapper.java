@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-
 import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
@@ -14,12 +11,6 @@ import com.buschmais.jqassistant.store.impl.model.RelationType;
 
 public class PackageDescriptorMapper extends
 		AbstractDescriptorMapper<PackageDescriptor> {
-
-	private final Index<Node> packageIndex;
-
-	public PackageDescriptorMapper(Index<Node> classIndex) {
-		this.packageIndex = classIndex;
-	}
 
 	@Override
 	public Class<PackageDescriptor> getJavaType() {
@@ -29,11 +20,6 @@ public class PackageDescriptorMapper extends
 	@Override
 	public CoreLabel getCoreLabel() {
 		return CoreLabel.PACKAGE;
-	}
-
-	@Override
-	public Index<Node> getIndex() {
-		return packageIndex;
 	}
 
 	@Override

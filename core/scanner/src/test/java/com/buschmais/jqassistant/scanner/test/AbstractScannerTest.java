@@ -36,6 +36,9 @@ public abstract class AbstractScannerTest {
 	}
 
 	protected PackageDescriptor stubPackage(String fullQualifiedName) {
+		if (fullQualifiedName == null) {
+			return null;
+		}
 		PackageDescriptor packageDescriptor = packageCache
 				.get(fullQualifiedName);
 		if (packageDescriptor == null) {
@@ -51,6 +54,7 @@ public abstract class AbstractScannerTest {
 				name = fullQualifiedName;
 			}
 			packageDescriptor = new PackageDescriptor();
+			packageDescriptor.setFullQualifiedName(fullQualifiedName);
 			when(store.resolvePackageDescriptor(parentDescriptor, name))
 					.thenReturn(packageDescriptor);
 			packageCache.put(fullQualifiedName, packageDescriptor);
@@ -64,15 +68,22 @@ public abstract class AbstractScannerTest {
 	}
 
 	protected ClassDescriptor stubClass(String className) {
-		ClassDescriptor classDescriptor = new ClassDescriptor();
-		when(store.resolveClassDescriptor(null, className)).thenReturn(
-				classDescriptor);
-		return classDescriptor;
+		return stubClass((String) null, className);
+	}
+
+	protected ClassDescriptor stubClass(String packageName, String className) {
+		return stubClass(stubPackage(packageName), className);
 	}
 
 	protected ClassDescriptor stubClass(PackageDescriptor packageDescriptor,
 			String className) {
 		ClassDescriptor classDescriptor = new ClassDescriptor();
+		if (packageDescriptor != null) {
+			classDescriptor.setFullQualifiedName(packageDescriptor
+					.getFullQualifiedName() + "." + className);
+		} else {
+			classDescriptor.setFullQualifiedName(className);
+		}
 		when(store.resolveClassDescriptor(packageDescriptor, className))
 				.thenReturn(classDescriptor);
 		return classDescriptor;

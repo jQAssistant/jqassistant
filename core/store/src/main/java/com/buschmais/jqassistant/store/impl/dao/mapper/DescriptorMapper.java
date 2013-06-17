@@ -3,9 +3,6 @@ package com.buschmais.jqassistant.store.impl.dao.mapper;
 import java.util.Map;
 import java.util.Set;
 
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-
 import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.impl.model.NodeType;
@@ -33,13 +30,6 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
 	 * @return The {@link NodeType}.
 	 */
 	public CoreLabel getCoreLabel();
-
-	/**
-	 * Get the {@link Node} {@link Index} to lookup instances.
-	 * 
-	 * @return {@link Node} {@link Index} .
-	 */
-	public Index<Node> getIndex();
 
 	/**
 	 * Creates a descriptor instance.

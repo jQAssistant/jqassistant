@@ -4,9 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
-
 import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
@@ -24,11 +21,6 @@ public class MethodDescriptorMapper extends
 	@Override
 	public CoreLabel getCoreLabel() {
 		return CoreLabel.METHOD;
-	}
-
-	@Override
-	public Index<Node> getIndex() {
-		return null;
 	}
 
 	@Override
