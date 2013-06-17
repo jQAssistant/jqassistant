@@ -5,12 +5,9 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.tooling.GlobalGraphOperations;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -75,14 +72,6 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 			relationShip.delete();
 		}
 		for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
-			DescriptorMapper<AbstractDescriptor> mapper = getAdapterRegistry()
-					.getDescriptorAdapter(node);
-			if (mapper != null) {
-				Index<Node> index = mapper.getIndex();
-				if (index != null) {
-					index.remove(node);
-				}
-			}
 			node.delete();
 		}
 	}

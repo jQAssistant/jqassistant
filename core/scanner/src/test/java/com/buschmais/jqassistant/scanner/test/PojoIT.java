@@ -24,7 +24,7 @@ public class PojoIT extends AbstractScannerIT {
 		store.beginTransaction();
 		scanner.scanClass(Pojo.class);
 		store.endTransaction();
-		String query = "START c=node:classes('*:*') RETURN c as class";
+		String query = "MATCH (c:CLASS) RETURN c as class";
 		Map<String, Object> parameters = Collections.emptyMap();
 		QueryResult result = store.executeQuery(query, parameters);
 		List<String> columns = result.getColumns();

@@ -13,7 +13,8 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.ResourceIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +33,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	private final DescriptorAdapterRegistry registry;
 	private final ExecutionEngine executionEngine;
 
-	private final Map<String, AbstractDescriptor> indexCache = new HashMap<String, AbstractDescriptor>();
-
 	private final DescriptorCache descriptorCache = new DescriptorCache();
 
 	public DescriptorDAOImpl(DescriptorAdapterRegistry registry,
@@ -50,17 +49,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				descriptor.getFullQualifiedName());
 		DescriptorMapper<T> adapter = registry.getDescriptorAdapter(descriptor
 				.getClass());
-		node = database.createNode();
+		node = database.createNode(adapter.getCoreLabel());
 		adapter.setId(descriptor, Long.valueOf(node.getId()));
-		node.addLabel(adapter.getCoreLabel());
 		node.setProperty(NodeProperty.FQN.name(),
 				descriptor.getFullQualifiedName());
-		Index<Node> index = adapter.getIndex();
-		if (index != null) {
-			index.add(node, NodeProperty.FQN.name(),
-					descriptor.getFullQualifiedName());
-			indexCache.put(descriptor.getFullQualifiedName(), descriptor);
-		}
 		descriptorCache.put(descriptor, node);
 	}
 
@@ -74,22 +66,13 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	@Override
 	public <T extends AbstractDescriptor> T find(Class<T> type,
 			String fullQualifiedName) {
-		@SuppressWarnings("unchecked")
-		T descriptor = (T) indexCache.get(fullQualifiedName);
-		if (descriptor == null) {
-			DescriptorMapper<AbstractDescriptor> mapper = registry
-					.getDescriptorAdapter(type);
-			Index<Node> index = mapper.getIndex();
-			if (index != null) {
-				Node node = index.get(NodeProperty.FQN.name(),
-						fullQualifiedName).getSingle();
-				if (node != null) {
-					descriptor = createFrom(type, node);
-					indexCache.put(fullQualifiedName, descriptor);
-				}
-			}
+		DescriptorMapper<AbstractDescriptor> mapper = registry
+				.getDescriptorAdapter(type);
+		Node node = find(mapper, fullQualifiedName);
+		if (node != null) {
+			return createFrom(node);
 		}
-		return descriptor;
+		return null;
 	}
 
 	@Override
@@ -177,6 +160,22 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 		}
 	}
 
+	private <T extends AbstractDescriptor> Node find(
+			DescriptorMapper<T> mapper, String fullQualifiedName) {
+		ResourceIterable<Node> nodesByLabelAndProperty = database
+				.findNodesByLabelAndProperty(mapper.getCoreLabel(),
+						NodeProperty.FQN.name(), fullQualifiedName);
+		ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
+		try {
+			if (iterator.hasNext()) {
+				return iterator.next();
+			}
+		} finally {
+			iterator.close();
+		}
+		return null;
+	}
+
 	/**
 	 * Find the {@link Node} which represents the given descriptor.
 	 * 
@@ -185,21 +184,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	 * @return The {@link Node}.
 	 */
 	private <T extends AbstractDescriptor> Node findNode(T descriptor) {
-		DescriptorMapper<T> adapter = registry.getDescriptorAdapter(descriptor
+		DescriptorMapper<T> mapper = registry.getDescriptorAdapter(descriptor
 				.getClass());
-		Long id = adapter.getId(descriptor);
-		Node node = this.descriptorCache.findBy(id);
-		if (node == null) {
-			Index<Node> index = adapter.getIndex();
-			if (index != null) {
-				node = index.get(NodeProperty.FQN.name(),
-						descriptor.getFullQualifiedName()).getSingle();
-				if (node != null) {
-					descriptorCache.put(descriptor, node);
-				}
-			}
-		}
-		return node;
+		Long id = mapper.getId(descriptor);
+		return database.getNodeById(id);
 	}
 
 	/**

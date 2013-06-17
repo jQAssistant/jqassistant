@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.store.impl;
 import java.util.Map;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.index.Index;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
 import com.buschmais.jqassistant.store.api.DescriptorDAO;
@@ -51,10 +49,8 @@ public abstract class AbstractGraphStore implements Store {
 	public void start() {
 		database = startDatabase();
 		adapterRegistry = new DescriptorAdapterRegistry();
-		Index<Node> packageIndex = database.index().forNodes("packages");
-		adapterRegistry.registerDAO(new PackageDescriptorMapper(packageIndex));
-		Index<Node> classIndex = database.index().forNodes("classes");
-		adapterRegistry.registerDAO(new ClassDescriptorMapper(classIndex));
+		adapterRegistry.registerDAO(new PackageDescriptorMapper());
+		adapterRegistry.registerDAO(new ClassDescriptorMapper());
 		adapterRegistry.registerDAO(new MethodDescriptorMapper());
 		adapterRegistry.registerDAO(new FieldDescriptorMapper());
 		descriptorDAO = new DescriptorDAOImpl(adapterRegistry, database);
