@@ -52,7 +52,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				.getClass());
 		node = database.createNode();
 		adapter.setId(descriptor, Long.valueOf(node.getId()));
-		node.setProperty(NodeProperty.TYPE.name(), adapter.getNodeType().name());
+		node.addLabel(adapter.getCoreLabel());
 		node.setProperty(NodeProperty.FQN.name(),
 				descriptor.getFullQualifiedName());
 		Index<Node> index = adapter.getIndex();
@@ -77,9 +77,9 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 		@SuppressWarnings("unchecked")
 		T descriptor = (T) indexCache.get(fullQualifiedName);
 		if (descriptor == null) {
-			DescriptorMapper<AbstractDescriptor> adapter = registry
+			DescriptorMapper<AbstractDescriptor> mapper = registry
 					.getDescriptorAdapter(type);
-			Index<Node> index = adapter.getIndex();
+			Index<Node> index = mapper.getIndex();
 			if (index != null) {
 				Node node = index.get(NodeProperty.FQN.name(),
 						fullQualifiedName).getSingle();
@@ -236,9 +236,9 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 		T descriptor = this.descriptorCache.findBy(node);
 		if (descriptor == null) {
 			// find adapter and create instance
-			DescriptorMapper<T> adapter = registry.getDescriptorAdapter(type);
-			descriptor = adapter.createInstance();
-			adapter.setId(descriptor, Long.valueOf(node.getId()));
+			DescriptorMapper<T> mapper = registry.getDescriptorAdapter(type);
+			descriptor = mapper.createInstance();
+			mapper.setId(descriptor, Long.valueOf(node.getId()));
 			this.descriptorCache.put(descriptor, node);
 			descriptor.setFullQualifiedName((String) node
 					.getProperty(NodeProperty.FQN.name()));
@@ -257,7 +257,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				}
 				set.add(targetDescriptor);
 			}
-			adapter.setRelations(descriptor, relations);
+			mapper.setRelations(descriptor, relations);
 		}
 		return descriptor;
 	}

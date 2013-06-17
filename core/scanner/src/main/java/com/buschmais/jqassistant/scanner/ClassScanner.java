@@ -69,14 +69,18 @@ public class ClassScanner {
 			LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
 			long start = System.currentTimeMillis();
 			ZipFile zipFile = new ZipFile(archive);
-			final Enumeration<? extends ZipEntry> zipEntries = zipFile
-					.entries();
-			while (zipEntries.hasMoreElements()) {
-				ZipEntry e = zipEntries.nextElement();
-				String name = e.getName();
-				if (name.endsWith(".class")) {
-					scanInputStream(zipFile.getInputStream(e), name);
+			try {
+				final Enumeration<? extends ZipEntry> zipEntries = zipFile
+						.entries();
+				while (zipEntries.hasMoreElements()) {
+					ZipEntry e = zipEntries.nextElement();
+					String name = e.getName();
+					if (name.endsWith(".class")) {
+						scanInputStream(zipFile.getInputStream(e), name);
+					}
 				}
+			} finally {
+				zipFile.close();
 			}
 			long end = System.currentTimeMillis();
 			LOGGER.info("Scanned archive '{}' in {}ms.",

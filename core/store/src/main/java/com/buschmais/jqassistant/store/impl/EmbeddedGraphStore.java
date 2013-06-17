@@ -75,10 +75,10 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 			relationShip.delete();
 		}
 		for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
-			DescriptorMapper<AbstractDescriptor> adapter = getAdapterRegistry()
+			DescriptorMapper<AbstractDescriptor> mapper = getAdapterRegistry()
 					.getDescriptorAdapter(node);
-			if (adapter != null) {
-				Index<Node> index = adapter.getIndex();
+			if (mapper != null) {
+				Index<Node> index = mapper.getIndex();
 				if (index != null) {
 					index.remove(node);
 				}
