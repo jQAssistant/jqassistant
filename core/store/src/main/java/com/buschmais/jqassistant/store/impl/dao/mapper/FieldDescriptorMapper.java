@@ -7,10 +7,10 @@ import java.util.Set;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 
+import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.store.impl.model.NodeType;
 import com.buschmais.jqassistant.store.impl.model.RelationType;
 
 public class FieldDescriptorMapper extends
@@ -22,8 +22,8 @@ public class FieldDescriptorMapper extends
 	}
 
 	@Override
-	public NodeType getNodeType() {
-		return NodeType.FIELD;
+	public CoreLabel getCoreLabel() {
+		return CoreLabel.FIELD;
 	}
 
 	@Override

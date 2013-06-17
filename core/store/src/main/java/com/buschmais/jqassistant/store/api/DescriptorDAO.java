@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.store.api;
 
 import java.util.Map;
 
+import org.neo4j.graphdb.Label;
+
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.model.QueryResult;
 
@@ -11,11 +13,23 @@ import com.buschmais.jqassistant.store.api.model.QueryResult;
 public interface DescriptorDAO {
 
 	/**
+	 * The supported core node labels.
+	 */
+	public enum CoreLabel implements Label {
+		/** Package */
+		PACKAGE,
+		/** Class */
+		CLASS,
+		/** Method */
+		METHOD,
+		/** Field */
+		FIELD;
+	}
+
+	/**
 	 * The supported node properties.
 	 */
 	public enum NodeProperty {
-		/** Type */
-		TYPE,
 		/** Full Qualified Name */
 		FQN;
 	}
