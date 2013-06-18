@@ -34,6 +34,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	private final ExecutionEngine executionEngine;
 
 	private final DescriptorCache descriptorCache = new DescriptorCache();
+	private final Map<String, Node> nodeCache = new HashMap<String, Node>();
 
 	public DescriptorDAOImpl(DescriptorAdapterRegistry registry,
 			GraphDatabaseService database) {
@@ -44,16 +45,16 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
 	@Override
 	public <T extends AbstractDescriptor> void persist(T descriptor) {
-		Node node;
 		LOGGER.debug("Creating node for '{}'.",
 				descriptor.getFullQualifiedName());
 		DescriptorMapper<T> adapter = registry.getDescriptorAdapter(descriptor
 				.getClass());
-		node = database.createNode(adapter.getCoreLabel());
+		Node node = database.createNode(adapter.getCoreLabel());
 		adapter.setId(descriptor, Long.valueOf(node.getId()));
 		node.setProperty(NodeProperty.FQN.name(),
 				descriptor.getFullQualifiedName());
 		descriptorCache.put(descriptor, node);
+		nodeCache.put(descriptor.getFullQualifiedName(), node);
 	}
 
 	@Override
@@ -68,7 +69,22 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			String fullQualifiedName) {
 		DescriptorMapper<AbstractDescriptor> mapper = registry
 				.getDescriptorAdapter(type);
-		Node node = find(mapper, fullQualifiedName);
+		Node node = nodeCache.get(fullQualifiedName);
+		if (node == null) {
+			ResourceIterable<Node> nodesByLabelAndProperty = database
+					.findNodesByLabelAndProperty(mapper.getCoreLabel(),
+							NodeProperty.FQN.name(), fullQualifiedName);
+			ResourceIterator<Node> iterator = nodesByLabelAndProperty
+					.iterator();
+			try {
+				if (node == null && iterator.hasNext()) {
+					node = iterator.next();
+					nodeCache.put(fullQualifiedName, node);
+				}
+			} finally {
+				iterator.close();
+			}
+		}
 		if (node != null) {
 			return createFrom(node);
 		}
@@ -160,22 +176,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 		}
 	}
 
-	private <T extends AbstractDescriptor> Node find(
-			DescriptorMapper<T> mapper, String fullQualifiedName) {
-		ResourceIterable<Node> nodesByLabelAndProperty = database
-				.findNodesByLabelAndProperty(mapper.getCoreLabel(),
-						NodeProperty.FQN.name(), fullQualifiedName);
-		ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
-		try {
-			if (iterator.hasNext()) {
-				return iterator.next();
-			}
-		} finally {
-			iterator.close();
-		}
-		return null;
-	}
-
 	/**
 	 * Find the {@link Node} which represents the given descriptor.
 	 * 
@@ -203,31 +203,14 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 	 */
 	@SuppressWarnings("unchecked")
 	private <T extends AbstractDescriptor> T createFrom(Node node) {
-		return (T) createFrom(
-				registry.getDescriptorAdapter(node).getJavaType(), node);
-	}
-
-	/**
-	 * Creates a descriptor instance from the given {@link Node}.
-	 * <p>
-	 * A new descriptor instance is created if no matching one can be found in
-	 * the {@link #descriptorCache}.
-	 * </p>
-	 * 
-	 * @param type
-	 *            The class type of the descriptor.
-	 * @param node
-	 *            The {@link Node}.
-	 * @return The descriptor.
-	 */
-	private <T extends AbstractDescriptor> T createFrom(Class<T> type, Node node) {
 		T descriptor = this.descriptorCache.findBy(node);
 		if (descriptor == null) {
 			// find adapter and create instance
+			Class<T> type = (Class<T>) registry.getDescriptorAdapter(node)
+					.getJavaType();
 			DescriptorMapper<T> mapper = registry.getDescriptorAdapter(type);
 			descriptor = mapper.createInstance();
 			mapper.setId(descriptor, Long.valueOf(node.getId()));
-			this.descriptorCache.put(descriptor, node);
 			descriptor.setFullQualifiedName((String) node
 					.getProperty(NodeProperty.FQN.name()));
 			// create outgoing relationships
@@ -246,6 +229,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				set.add(targetDescriptor);
 			}
 			mapper.setRelations(descriptor, relations);
+			this.descriptorCache.put(descriptor, node);
+			this.nodeCache.put(descriptor.getFullQualifiedName(), node);
 		}
 		return descriptor;
 	}
