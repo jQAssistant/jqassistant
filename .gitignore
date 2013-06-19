@@ -3,3 +3,7 @@ target
 .shell_history
 .project
 .classpath
+
+/.idea
+
+*.iml
