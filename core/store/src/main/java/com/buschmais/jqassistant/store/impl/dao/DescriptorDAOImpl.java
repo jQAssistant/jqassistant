@@ -213,6 +213,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 			mapper.setId(descriptor, Long.valueOf(node.getId()));
 			descriptor.setFullQualifiedName((String) node
 					.getProperty(NodeProperty.FQN.name()));
+            this.descriptorCache.put(descriptor, node);
+            this.nodeCache.put(descriptor.getFullQualifiedName(), node);
 			// create outgoing relationships
 			Map<RelationType, Set<AbstractDescriptor>> relations = new HashMap<RelationType, Set<AbstractDescriptor>>();
 			for (Relationship relationship : node
@@ -229,8 +231,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 				set.add(targetDescriptor);
 			}
 			mapper.setRelations(descriptor, relations);
-			this.descriptorCache.put(descriptor, node);
-			this.nodeCache.put(descriptor.getFullQualifiedName(), node);
 		}
 		return descriptor;
 	}
