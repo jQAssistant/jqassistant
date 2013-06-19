@@ -35,7 +35,7 @@
 	</dependencyManagement>
 
 	<modules>
-		<module>maven-jqassistant-plugin</module>
+		<module>jqassistant-maven-plugin</module>
 	</modules>
 
 </project>

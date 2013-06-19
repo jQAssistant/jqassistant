@@ -6,7 +6,7 @@
 		<artifactId>jqassistant.maven</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>maven-jqassistant-plugin</artifactId>
+	<artifactId>jqassistant-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 
 	<dependencies>
