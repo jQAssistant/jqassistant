@@ -1,26 +1,44 @@
-<jqassistant xmlns="http://www.buschmais.com/jqassistant/rules/schema/1.0"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.buschmais.com/jqassistant/rules/schema/1.0 jqassistant-rules-1.0.xsd ">
-    <!-- Queries -->
-    <query id="inheritanceHierarchies">
-        <description>Determines the inheritance hierarchy and its depth for each class.</description>
-        <cypher><![CDATA[
+<jqassistant xmlns="http://www.buschmais.com/jqassistant/rules/schema/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.buschmais.com/jqassistant/rules/schema/1.0 jqassistant-rules-1.0.xsd ">
+	<!-- Queries -->
+	<queryDefinition id="inheritanceHierarchies">
+		<description>Determines and limits the inheritance hierarchy depths.</description>
+		<cypher><![CDATA[
 			MATCH h=(c:CLASS)-[:INHERITS_FROM*]->(s:CLASS)
 			WHERE length(h) > {maxdepth}
 			RETURN length(h) as depth, extract (n in nodes(h):n.FQN)
 		]]></cypher>
-    </query>
+	</queryDefinition>
 
-    <!-- Constraints -->
-    <constraint id="limitInheritanceDepth" queryId="inheritanceHierarchies">
-        <parameter name="maxdepth">5</parameter>
-    </constraint>
+	<!-- Concepts -->
+	<concept>
+		<description>Labels all classes annotated with javax.persistence.Entity as JPA ENTITY</description>
+		<cypher><![CDATA[
+			MATCH (e:CLASS)-[:DEPENDS_ON*]->(a:CLASS)
+			WHERE a.FQN="javax.persistence.Entity"
+			SET e :ENTITY :JPA
+		]]></cypher>		
+	</concept>
 
-    <!-- Constraint Groups -->
-    <constraintGroup id="continuous">
-        <useConstraint refId="limitInheritanceDepth"/>
-    </constraintGroup>
-    <constraintGroup id="integration">
-        <useConstraintGroup refId="continuous"/>
-    </constraintGroup>
+	<!-- Constraints -->
+	<constraint id="limitInheritanceDepth">
+		<useQuery refId="inheritanceHierarchies" />
+		<query>
+			<description>Determines the inheritance hierarchy and its depth for each class.</description>
+			<cypher><![CDATA[
+			MATCH h=(c:CLASS)-[:INHERITS_FROM*]->(s:CLASS)
+			WHERE length(h) > {maxdepth}
+			RETURN length(h) as depth, extract (n in nodes(h):n.FQN)
+		]]></cypher>
+		</query>
+		<parameter name="maxdepth">5</parameter>
+	</constraint>
+
+	<!-- Constraint Groups -->
+	<constraintGroup id="continuous">
+		<useConstraint refId="limitInheritanceDepth" />
+	</constraintGroup>
+	<constraintGroup id="integration">
+		<useConstraintGroup refId="continuous" />
+	</constraintGroup>
 </jqassistant>
