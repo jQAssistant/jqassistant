@@ -1,45 +1,78 @@
-<jqassistant xmlns="http://www.buschmais.com/jqassistant/rules/schema/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.buschmais.com/jqassistant/rules/schema/1.0 jqassistant-rules-1.0.xsd ">
-	<!-- Queries -->
-	<queryDefinition id="inheritanceHierarchies">
-		<description>Determines and limits the inheritance hierarchy depths.</description>
-		<cypher><![CDATA[
-			MATCH h=(c:CLASS)-[:INHERITS_FROM*]->(s:CLASS)
-			WHERE length(h) > {maxdepth}
-			RETURN length(h) as depth, extract (n in nodes(h):n.FQN)
-		]]></cypher>
-        <parameterDefinition name="maxdepth" />
-	</queryDefinition>
+<jq:jqassistant-rules xmlns:jq="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-	<!-- Concepts -->
-	<concept>
-		<description>Labels all classes annotated with javax.persistence.Entity as JPA ENTITY</description>
-		<cypher><![CDATA[
-			MATCH (e:CLASS)-[:DEPENDS_ON*]->(a:CLASS)
-			WHERE a.FQN="javax.persistence.Entity"
-			SET e :ENTITY :JPA
-		]]></cypher>		
-	</concept>
+	<!-- Queries -->
+    <queryDefinition id="queryDefinition">
+        <description>A query definition</description>
+        <cypher>A pre-defined cypher query</cypher>
+        <parameterDefinition name="parameter0" type="int" default="5" />
+        <parameterDefinition name="parameter1" type="string" default="defaultValue" />
+    </queryDefinition>
+
+    <!-- Concepts -->
+    <concept id="conceptUsingQueryDefinitionAndDefaultParameters">
+        <description>A concept which references the query definition.</description>
+        <useQueryDefinition refId="queryDefinition" />
+    </concept>
+
+    <concept id="conceptUsingQueryDefinitionAndCustomParameters">
+        <description>A concept which references the query definition using custom parameters.</description>
+        <useQueryDefinition refId="queryDefinition" />
+        <parameter name="parameter0" type="int" value="10" />
+        <parameter name="parameter1" type="string" value="customValue" />
+    </concept>
+
+    <concept id="conceptUsingCustomQuery">
+        <description>A concept which uses a custom query.</description>
+        <cypher>customQuery</cypher>
+        <parameter name="parameter0" type="int" value="15" />
+        <parameter name="parameter1" type="string" value="value" />
+    </concept>
+
+    <concept id="conceptRequiringConcept">
+        <requiresConcept refId="conceptUsingCustomQuery" />
+        <description>A concept which requires another concept.</description>
+        <cypher>customQuery</cypher>
+        <parameter name="parameter0" type="int" value="15" />
+        <parameter name="parameter1" type="string" value="value" />
+    </concept>
 
 	<!-- Constraints -->
-	<constraint id="limitInheritanceDepth">
-		<useQuery refId="inheritanceHierarchies" />
-		<query>
-			<description>Determines the inheritance hierarchy and its depth for each class.</description>
-			<cypher><![CDATA[
-			MATCH h=(c:CLASS)-[:INHERITS_FROM*]->(s:CLASS)
-			WHERE length(h) > {maxdepth}
-			RETURN length(h) as depth, extract (n in nodes(h):n.FQN)
-		]]></cypher>
-		</query>
-		<parameter name="maxdepth" type="int">5</parameter>
-	</constraint>
 
-	<!-- Constraint Groups -->
+    <constraint id="constraintUsingQueryDefinitionAndDefaultParameters">
+        <description>A constraint which references the query definition.</description>
+        <useQueryDefinition refId="queryDefinition" />
+    </constraint>
+
+    <constraint id="constraintUsingQueryDefinitionAndCustomParameters">
+        <description>A constraint which references the query definition using custom parameters.</description>
+        <useQueryDefinition refId="queryDefinition" />
+        <parameter name="parameter0" type="int" value="10" />
+        <parameter name="parameter1" type="string" value="customValue" />
+    </constraint>
+
+    <constraint id="constraintUsingCustomQuery">
+        <description>A constraint which uses a custom query.</description>
+        <cypher>customQuery</cypher>
+        <parameter name="parameter0" type="int" value="15" />
+        <parameter name="parameter1" type="string" value="value" />
+    </constraint>
+
+    <constraint id="constraintRequiringConcept">
+        <requiresConcept refId="conceptUsingCustomQuery" />
+        <description>A constraint which requires a concept.</description>
+        <cypher>customQuery</cypher>
+        <parameter name="parameter0" type="int" value="15" />
+        <parameter name="parameter1" type="string" value="value" />
+    </constraint>
+
+    <!-- Constraint Groups -->
+
 	<constraintGroup id="continuous">
-		<useConstraint refId="limitInheritanceDepth" />
+		<includeConstraint refId="constraintRequiringConcept" />
 	</constraintGroup>
+
 	<constraintGroup id="integration">
-		<useConstraintGroup refId="continuous" />
+		<includeConstraintGroup refId="continuous" />
 	</constraintGroup>
-</jqassistant>
+
+</jq:jqassistant-rules>
