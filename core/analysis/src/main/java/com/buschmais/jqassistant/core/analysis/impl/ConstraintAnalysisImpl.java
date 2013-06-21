@@ -1,13 +1,14 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
 import com.buschmais.jqassistant.core.analysis.api.model.Concept;
 import com.buschmais.jqassistant.core.analysis.api.model.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.model.ConstraintGroup;
-import com.buschmais.jqassistant.core.analysis.schema.v1.*;
 import com.buschmais.jqassistant.store.api.Store;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ConstraintAnalysisImpl implements ConstraintAnalyzer {
 
