@@ -8,6 +8,7 @@
 			WHERE length(h) > {maxdepth}
 			RETURN length(h) as depth, extract (n in nodes(h):n.FQN)
 		]]></cypher>
+        <parameterDefinition name="maxdepth" />
 	</queryDefinition>
 
 	<!-- Concepts -->
@@ -31,7 +32,7 @@
 			RETURN length(h) as depth, extract (n in nodes(h):n.FQN)
 		]]></cypher>
 		</query>
-		<parameter name="maxdepth">5</parameter>
+		<parameter name="maxdepth" type="int">5</parameter>
 	</constraint>
 
 	<!-- Constraint Groups -->
