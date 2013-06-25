@@ -1,7 +1,7 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="junit4:TestMethodsAndClasses">
-        <description>Labels all test methods annotated by "org.junit.Test" with TEST and JUNIT4 and applies these labels also to the surrounding classes.</description>
+        <description>Labels all test methods annotated by "org.junit.Test" with TEST and JUNIT4 and applys these labels also to the surrounding classes.</description>
         <cypher><![CDATA[
             MATCH (t:CLASS)-[:CONTAINS]->(m:METHOD)-[:DEPENDS_ON]->(a:CLASS)
             WHERE a.FQN="org.junit.Test"
