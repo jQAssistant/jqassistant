@@ -28,7 +28,7 @@ import com.buschmais.jqassistant.store.impl.model.RelationType;
 
 public class DescriptorDAOImpl implements DescriptorDAO {
 
-    private final class RowIterable implements Iterable<Map<String, Object>>, AutoCloseable {
+    private final class RowIterable implements Iterable<Map<String, Object>>, Closeable {
 
         private ResourceIterator<Map<String, Object>> iterator;
 

@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Represents the result of a CYPHER query.
  */
-public class QueryResult implements AutoCloseable, Closeable {
+public class QueryResult implements Closeable {
 
     /**
      * The column names returned by the query.

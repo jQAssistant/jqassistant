@@ -183,7 +183,7 @@ public class RulesReaderImpl implements RulesReader {
 
     private Query createQueryFromDefinition(String id, List<ParameterType> parameterTypes, Map<String, QueryDefinitionType> queryDefinitionTypes) {
         QueryDefinitionType queryDefinitionType = queryDefinitionTypes.get(id);
-        if (id == null) {
+        if (queryDefinitionType == null) {
             throw new IllegalArgumentException("Cannot resolve used query definition: " + id);
         }
         Map<String, Object> defaultValues = new HashMap<String, Object>();
