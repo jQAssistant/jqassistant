@@ -1,0 +1,30 @@
+<jq:jqassistant-rules xmlns:jq="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="StatelessSessionBean">
+        <description>Labels all classes annotated with javax.ejb.Stateless with "EJB" and "STATELESS".</description>
+        <cypher><![CDATA[
+            MATCH (c:CLASS)-[:DEPENDS_ON]->(d:CLASS)
+            WHERE d.FQN="javax.ejb.Stateless"
+            SET c:EJB, c:STATELESS
+        ]]></cypher>
+    </concept>
+
+    <concept id="StatefulSessionBean">
+        <description>Labels all classes annotated with javax.ejb.Stateful with "EJB" and "STATEFUL".</description>
+        <cypher><![CDATA[
+            MATCH (c:CLASS)-[:DEPENDS_ON]->(d:CLASS)
+            WHERE d.FQN="javax.ejb.Stateful"
+            SET c:EJB, c:STATEFUL
+        ]]></cypher>
+    </concept>
+
+    <concept id="MessageDrivenBean">
+        <description>Labels all classes annotated with javax.ejb.MessageDriven with "EJB" and "MESSAGEDRIVEN".</description>
+        <cypher><![CDATA[
+            MATCH (c:CLASS)-[:DEPENDS_ON]->(d:CLASS)
+            WHERE d.FQN="javax.ejb.MessageDriven"
+            SET c:EJB, c:MESSAGEDRIVEN
+        ]]></cypher>
+    </concept>
+
+</jq:jqassistant-rules>

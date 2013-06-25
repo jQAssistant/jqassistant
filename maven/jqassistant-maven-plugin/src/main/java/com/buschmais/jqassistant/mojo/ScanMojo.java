@@ -16,38 +16,40 @@
 
 package com.buschmais.jqassistant.mojo;
 
+import com.buschmais.jqassistant.scanner.ClassScanner;
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.store.impl.Server;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
- * @goal server
- * @requiresProject false
+ * @phase package
+ * @goal scan
+ * @requiresDependencyResolution test
  */
-public class ServerMojo extends AbstractStoreMojo {
+public class ScanMojo extends AbstractStoreMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        execute(new StoreOperation<Void>() {
+        scanDirectory(classesDirectory);
+        scanDirectory(testClassesDirectory);
+    }
+
+    private void scanDirectory(final File directory) throws MojoExecutionException {
+        getLog().info("Scanning directory: " + directory.getAbsolutePath());
+        super.executeInTransaction(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
-                Server server = new Server((EmbeddedGraphStore) store);
-                server.start();
+                ClassScanner scanner = new ClassScanner(store);
                 try {
-                    getLog().info("Press <Enter> to finish.");
-                    System.in.read();
+                    scanner.scanDirectory(directory);
                 } catch (IOException e) {
-                    throw new MojoExecutionException("Cannot read from System.in.", e);
-                } finally {
-                    server.stop();
+                    throw new MojoExecutionException("Cannot scan classes in " + directory, e);
                 }
                 return null;
             }
         });
-
 
     }
 }

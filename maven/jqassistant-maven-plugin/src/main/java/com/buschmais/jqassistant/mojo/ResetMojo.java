@@ -24,12 +24,16 @@ import com.buschmais.jqassistant.store.api.Store;
  * @goal reset
  * @requiresProject false
  */
-public class ResetMojo extends AbstractJQAssistantMojo {
+public class ResetMojo extends AbstractStoreMojo {
 
 	@Override
-	protected void execute(Store store) throws MojoExecutionException {
-		store.beginTransaction();
-		store.reset();
-		store.endTransaction();
+	public void execute() throws MojoExecutionException {
+        executeInTransaction(new StoreOperation<Void>() {
+            @Override
+            public Void run(Store store) {
+                store.reset();
+                return null;
+            }
+        });
 	}
 }

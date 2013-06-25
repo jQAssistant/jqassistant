@@ -1,0 +1,12 @@
+<jq:jqassistant-rules xmlns:jq="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="JpaEntity">
+        <description>Labels all classes annotated with java.persistence.Entity with "JPA" and "ENTITY".</description>
+        <cypher><![CDATA[
+            MATCH (c:CLASS)-[:DEPENDS_ON]->(d:CLASS)
+            WHERE d.FQN="javax.persistence.Entity"
+            SET c:JPA, c:ENTITY
+        ]]></cypher>
+    </concept>
+
+</jq:jqassistant-rules>

@@ -52,4 +52,17 @@ public class Constraint {
         this.requiredConcepts = requiredConcepts;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Constraint constraint = (Constraint) o;
+        if (!id.equals(constraint.id)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }
