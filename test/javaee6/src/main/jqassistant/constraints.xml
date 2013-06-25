@@ -1,6 +1,6 @@
-<jq:jqassistant-rules xmlns:jq="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <queryDefinition id="ejbLocatedInPackageOrSubPackage">
+    <queryDefinition id="EjbLocatedInPackageOrSubPackage">
         <description>Returns the names of all EJB classes which are not contained in the specified package.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(b)
@@ -11,7 +11,7 @@
     </queryDefinition>
 
     <constraint id="JpaEntitiesInApiModelPackage">
-        <requiresConcept refId="JpaEntity" />
+        <requiresConcept refId="jpa:Entity" />
         <description>All JPA entities must be located in the package "persistence.api"</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(e)
@@ -22,18 +22,34 @@
     </constraint>
 
     <constraint id="EjbLocatedInImplementationPackage">
-        <requiresConcept refId="StatelessSessionBean" />
-        <requiresConcept refId="StatefulSessionBean" />
-        <requiresConcept refId="MessageDrivenBean" />
+        <requiresConcept refId="ejb3:StatelessSessionBean" />
+        <requiresConcept refId="ejb3:StatefulSessionBean" />
+        <requiresConcept refId="ejb3:MessageDrivenBean" />
+        <requiresConcept refId="ejb3:Singleton" />
         <description>All EJBs must be located in the package logic.impl or sub-packages.</description>
-        <useQueryDefinition refId="ejbLocatedInPackageOrSubPackage" />
+        <useQueryDefinition refId="EjbLocatedInPackageOrSubPackage" />
         <parameter name="packageExpression" type="string" value=".*\.logic\.impl" />
+    </constraint>
+
+    <constraint id="TestClassNameHasTestSuffix">
+        <requiresConcept refId="junit4:TestMethodsAndClasses" />
+        <description>The name of all test classes must have the suffix "Test".</description>
+        <cypher><![CDATA[
+            MATCH (c:CLASS)
+            WHERE c:TEST and NOT(c.FQN =~ {suffixExpression})
+            RETURN c.FQN as className
+        ]]></cypher>
+        <parameter name="suffixExpression" type="string" value=".*Test" />
     </constraint>
 
     <!-- Constraint Groups -->
 	<constraintGroup id="continuous">
         <includeConstraint refId="JpaEntitiesInApiModelPackage" />
 		<includeConstraint refId="EjbLocatedInImplementationPackage" />
+        <includeConstraint refId="TestClassNameHasTestSuffix" />
+        <includeConstraint refId="layer:ApiMustNotDependOnImplementation" />
+        <includeConstraint refId="layer:PersistenceAndLogicMustNotDependOnUi" />
+        <includeConstraint refId="layer:PersistenceMustNotDependOnLogic" />
 	</constraintGroup>
 
-</jq:jqassistant-rules>
+</jqa:jqassistant-rules>
