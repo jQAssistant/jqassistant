@@ -51,4 +51,18 @@ public class Concept {
     public void setQuery(Query query) {
         this.query = query;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Concept concept = (Concept) o;
+        if (!id.equals(concept.id)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

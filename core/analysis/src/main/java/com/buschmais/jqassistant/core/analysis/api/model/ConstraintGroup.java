@@ -14,7 +14,7 @@ public class ConstraintGroup {
 
     private String id;
 
-    private Set<Constraint> constraints=new HashSet<Constraint>();
+    private Set<Constraint> constraints = new HashSet<Constraint>();
 
     private Set<ConstraintGroup> constraintGroups = new HashSet<ConstraintGroup>();
 
@@ -40,5 +40,19 @@ public class ConstraintGroup {
 
     public void setConstraintGroups(Set<ConstraintGroup> constraintGroups) {
         this.constraintGroups = constraintGroups;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConstraintGroup that = (ConstraintGroup) o;
+        if (!id.equals(that.id)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

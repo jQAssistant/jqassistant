@@ -21,6 +21,10 @@
 			<groupId>com.buschmais.jqassistant.core</groupId>
 			<artifactId>jqassistant.core.store</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
