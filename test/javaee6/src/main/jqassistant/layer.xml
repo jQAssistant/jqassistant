@@ -58,6 +58,7 @@
             MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
             WHERE a:API AND i:IMPL
             RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
         ]]></cypher>
     </constraint>
 
@@ -69,6 +70,7 @@
             MATCH p=shortestPath((c:CLASS)-[:CONTAINS|DEPENDS_ON|INHERITS_FROM|IMPLEMENTS*]->(l:CLASS))
             WHERE c:PERSISTENCE AND l:LOGIC
             RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
         ]]></cypher>
     </constraint>
 
@@ -81,6 +83,7 @@
             MATCH p=shortestPath((c:CLASS)-[:CONTAINS|DEPENDS_ON|INHERITS_FROM|IMPLEMENTS*]->(u:CLASS))
             WHERE (c:PERSISTENCE OR c:LOGIC) AND u:UI
             RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
         ]]></cypher>
     </constraint>
 </jqa:jqassistant-rules>
