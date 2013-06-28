@@ -38,9 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @phase verify
  * @goal verify
- * @requiresDependencyResolution test
+ * @phase verify
+ * @requiresProject false
  */
 public class VerifyMojo extends AbstractStoreMojo {
 
