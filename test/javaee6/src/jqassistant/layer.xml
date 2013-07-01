@@ -1,0 +1,89 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="layer:ImplementationClasses">
+        <description>Labels all classes in .impl packages as IMPL.</description>
+        <cypher><![CDATA[
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            WHERE p.FQN =~ {packageExpression}
+            SET c:IMPL
+        ]]></cypher>
+        <parameter name="packageExpression" type="string" value=".*\.impl" />
+    </concept>
+
+    <concept id="layer:ApiClasses">
+        <cypher><![CDATA[
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            WHERE p.FQN =~ {packageExpression}
+            SET c:API
+        ]]></cypher>
+        <parameter name="packageExpression" type="string" value=".*\.api" />
+    </concept>
+
+    <concept id="layer:UiClasses">
+        <description>Labels all classes in .ui packages as UI.</description>
+        <cypher><![CDATA[
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            WHERE p.FQN =~ {packageExpression}
+            SET c:UI
+        ]]></cypher>
+        <parameter name="packageExpression" type="string" value=".*\.ui" />
+    </concept>
+
+    <concept id="layer:LogicClasses">
+        <description>Labels all classes in .logic packages as LOGIC.</description>
+        <cypher><![CDATA[
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            WHERE p.FQN =~ {packageExpression}
+            SET c:LOGIC
+        ]]></cypher>
+        <parameter name="packageExpression" type="string" value=".*\.logic" />
+    </concept>
+
+    <concept id="layer:PersistenceClasses">
+        <description>Labels all classes in .persistence packages as PERSISTENCE.</description>
+        <cypher><![CDATA[
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            WHERE p.FQN =~ {packageExpression}
+            SET c:PERSISTENCE
+        ]]></cypher>
+        <parameter name="packageExpression" type="string" value=".*\.persistence" />
+    </concept>
+
+    <!-- Constraints -->
+    <constraint id="layer:ApiMustNotDependOnImplementation">
+        <requiresConcept refId="layer:ApiClasses" />
+        <requiresConcept refId="layer:ImplementationClasses" />
+        <description>API classes must not have dependencies on implementation classes.</description>
+        <cypher><![CDATA[
+            MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
+            WHERE a:API AND i:IMPL
+            RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="layer:PersistenceMustNotDependOnLogic">
+        <requiresConcept refId="layer:LogicClasses" />
+        <requiresConcept refId="layer:PersistenceClasses" />
+        <description>Persistence classes must not depend on logic classes.</description>
+        <cypher><![CDATA[
+            MATCH p=shortestPath((c:CLASS)-[:CONTAINS|DEPENDS_ON|INHERITS_FROM|IMPLEMENTS*]->(l:CLASS))
+            WHERE c:PERSISTENCE AND l:LOGIC
+            RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="layer:PersistenceAndLogicMustNotDependOnUi">
+        <requiresConcept refId="layer:UiClasses" />
+        <requiresConcept refId="layer:LogicClasses" />
+        <requiresConcept refId="layer:PersistenceClasses" />
+        <description>Logic classes must not depend on ui classes.</description>
+        <cypher><![CDATA[
+            MATCH p=shortestPath((c:CLASS)-[:CONTAINS|DEPENDS_ON|INHERITS_FROM|IMPLEMENTS*]->(u:CLASS))
+            WHERE (c:PERSISTENCE OR c:LOGIC) AND u:UI
+            RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
+        ]]></cypher>
+    </constraint>
+</jqa:jqassistant-rules>
