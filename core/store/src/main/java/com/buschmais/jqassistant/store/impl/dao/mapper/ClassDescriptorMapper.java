@@ -34,7 +34,7 @@ public class ClassDescriptorMapper extends
 		relations.put(RelationType.CONTAINS, descriptor.getContains());
 		relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
 		relations.put(RelationType.IMPLEMENTS, descriptor.getInterfaces());
-		relations.put(RelationType.INHERITS_FROM,
+		relations.put(RelationType.EXTENDS,
 				asSet(descriptor.getSuperClass()));
 		return relations;
 	}
@@ -52,7 +52,7 @@ public class ClassDescriptorMapper extends
 		case IMPLEMENTS:
 			descriptor.getInterfaces().add((ClassDescriptor) target);
 			break;
-		case INHERITS_FROM:
+		case EXTENDS:
 			descriptor.setSuperClass((ClassDescriptor) target);
 			break;
 		default:
