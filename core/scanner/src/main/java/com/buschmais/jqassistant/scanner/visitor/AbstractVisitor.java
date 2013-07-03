@@ -29,11 +29,11 @@ public abstract class AbstractVisitor {
 				fullQualifiedName);
 	}
 
-	protected void addDependency(DependentDescriptor depentendDescriptor,
+	protected void addDependency(DependentDescriptor dependentDescriptor,
 			String typeName) {
 		if (typeName != null) {
 			ClassDescriptor dependency = getClassDescriptor(typeName);
-			depentendDescriptor.getDependencies().add(dependency);
+			dependentDescriptor.getDependencies().add(dependency);
 		}
 	}
 
