@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
+import com.buschmais.jqassistant.test.javaee6_web.user.persistence.api.model.User;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -22,7 +21,8 @@ public class Cart {
     private Long id;
 
     @NotNull
-    private String name;
+    @ManyToOne
+    private User user;
 
     public Long getId() {
         return id;
@@ -32,11 +32,11 @@ public class Cart {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public User getUser() {
+        return user;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

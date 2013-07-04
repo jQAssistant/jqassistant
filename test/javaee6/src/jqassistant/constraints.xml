@@ -51,12 +51,14 @@
 
     <!-- Constraint Groups -->
 	<constraintGroup id="continuous">
+        <includeConstraint refId="slice:User" />
+        <includeConstraint refId="slice:Cart" />
+        <includeConstraint refId="layer:PersistenceAndLogicMustNotDependOnUi" />
+        <includeConstraint refId="layer:PersistenceMustNotDependOnLogic" />
         <includeConstraint refId="JpaEntitiesInApiModelPackage" />
 		<includeConstraint refId="EjbLocatedInImplementationPackage" />
         <includeConstraint refId="TestClassNameHasTestSuffix" />
         <includeConstraint refId="ApiMustNotDependOnImplementation" />
-        <includeConstraint refId="layer:PersistenceAndLogicMustNotDependOnUi" />
-        <includeConstraint refId="layer:PersistenceMustNotDependOnLogic" />
 	</constraintGroup>
 
 </jqa:jqassistant-rules>
