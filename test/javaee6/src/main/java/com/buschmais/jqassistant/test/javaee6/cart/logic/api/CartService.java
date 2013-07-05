@@ -1,6 +1,6 @@
-package com.buschmais.jqassistant.test.javaee6_web.cart.logic.api;
+package com.buschmais.jqassistant.test.javaee6.cart.logic.api;
 
-import com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.model.Cart;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
 
 import java.io.Serializable;
 import java.util.List;

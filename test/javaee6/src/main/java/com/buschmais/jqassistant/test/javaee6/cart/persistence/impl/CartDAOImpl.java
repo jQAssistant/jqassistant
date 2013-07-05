@@ -1,7 +1,7 @@
-package com.buschmais.jqassistant.test.javaee6_web.cart.persistence.impl;
+package com.buschmais.jqassistant.test.javaee6.cart.persistence.impl;
 
-import com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.CartDAO;
-import com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.model.Cart;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.CartDAO;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

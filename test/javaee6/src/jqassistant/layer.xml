@@ -1,58 +1,80 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="layer:UiClasses">
-        <description>Labels all classes in .ui packages as UI.</description>
+    <concept id="layer:UI">
+        <description>Labels all .ui packages packages as LAYER and UI.</description>
         <cypher><![CDATA[
-            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
-            WHERE p.FQN =~ {packageExpression}
-            SET c:UI
+            MATCH (p:PACKAGE)
+            WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.ui"
+            SET p:LAYER:UI
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.ui" />
     </concept>
 
-    <concept id="layer:LogicClasses">
-        <description>Labels all classes in .logic packages as LOGIC.</description>
+    <concept id="layer:Logic">
+        <description>Labels all .logic packages packages as LAYER and LOGIC.</description>
         <cypher><![CDATA[
-            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
-            WHERE p.FQN =~ {packageExpression}
-            SET c:LOGIC
+            MATCH (p:PACKAGE)
+            WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.logic"
+            SET p:LAYER:LOGIC
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.logic" />
     </concept>
 
-    <concept id="layer:PersistenceClasses">
-        <description>Labels all classes in .persistence packages as PERSISTENCE.</description>
+    <concept id="layer:Persistence">
+        <description>Labels all .persistence packages packages as LAYER and PERSISTENCE.</description>
         <cypher><![CDATA[
-            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
-            WHERE p.FQN =~ {packageExpression}
-            SET c:PERSISTENCE
+            MATCH (p:PACKAGE)
+            WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.persistence"
+            SET p:LAYER:PERSISTENCE
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.persistence" />
     </concept>
 
-    <constraint id="layer:PersistenceMustNotDependOnLogic">
-        <requiresConcept refId="layer:LogicClasses" />
-        <requiresConcept refId="layer:PersistenceClasses" />
-        <description>Persistence classes must not depend on logic classes.</description>
+    <constraint id="layer:UI">
+        <requiresConcept refId="layer:UI" />
+        <requiresConcept refId="layer:Logic" />
+        <requiresConcept refId="layer:Persistence" />
+        <description>Packages in layer UI must have only dependencies to classes in layer UI, LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
-            MATCH p=shortestPath((c:CLASS)-[:CONTAINS|DEPENDS_ON|INHERITS_FROM|IMPLEMENTS*]->(l:CLASS))
-            WHERE c:PERSISTENCE AND l:LOGIC
-            RETURN extract(c in nodes(p) : c.FQN) as Path
-            ORDER BY length(p) DESC
-        ]]></cypher>
+            MATCH
+              (package:PACKAGE:LAYER:UI)-[:CONTAINS*]->(classFieldOrMethod)-[:IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
+            WHERE NOT (
+              dependencyPackage:UI
+              OR dependencyPackage:LOGIC
+              OR dependencyPackage:PERSISTENCE
+            )
+            RETURN classFieldOrMethod.FQN AS element, dependencyPackage.FQN AS dependency
+         ]]></cypher>
     </constraint>
 
-    <constraint id="layer:PersistenceAndLogicMustNotDependOnUi">
-        <requiresConcept refId="layer:UiClasses" />
-        <requiresConcept refId="layer:LogicClasses" />
-        <requiresConcept refId="layer:PersistenceClasses" />
-        <description>Persistence or logic classes must not depend on ui classes.</description>
+    <constraint id="layer:Logic">
+        <requiresConcept refId="layer:UI" />
+        <requiresConcept refId="layer:Logic" />
+        <requiresConcept refId="layer:Persistence" />
+        <description>Packages in layer Logic must have only dependencies to classes in layer LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
-            MATCH p=shortestPath((c:CLASS)-[:CONTAINS|DEPENDS_ON|INHERITS_FROM|IMPLEMENTS*]->(u:CLASS))
-            WHERE (c:PERSISTENCE OR c:LOGIC) AND u:UI
-            RETURN extract(c in nodes(p) : c.FQN) as Path
-            ORDER BY length(p) DESC
-        ]]></cypher>
+            MATCH
+              (package:PACKAGE:LAYER:LOGIC)-[:CONTAINS*]->(classFieldOrMethod)-[:IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
+            WHERE NOT (
+              dependencyPackage:LOGIC
+              OR dependencyPackage:PERSISTENCE
+            )
+            RETURN classFieldOrMethod.FQN AS element, dependencyPackage.FQN AS dependency
+         ]]></cypher>
     </constraint>
 
+    <constraint id="layer:Persistence">
+        <requiresConcept refId="layer:UI" />
+        <requiresConcept refId="layer:Logic" />
+        <requiresConcept refId="layer:Persistence" />
+        <description>Packages in layer Persistence must have only dependencies to classes in layer PERSISTENCE.</description>
+        <cypher><![CDATA[
+            MATCH
+              (package:PACKAGE:LAYER:PERSISTENCE)-[:CONTAINS*]->(classFieldOrMethod)-[:IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
+            WHERE NOT (
+              dependencyPackage:PERSISTENCE
+            )
+            RETURN classFieldOrMethod.FQN AS element, dependencyPackage.FQN AS dependency
+         ]]></cypher>
+    </constraint>
 </jqa:jqassistant-rules>

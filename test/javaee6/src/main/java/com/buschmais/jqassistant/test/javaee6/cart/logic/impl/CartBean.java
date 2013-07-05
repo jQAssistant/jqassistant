@@ -1,8 +1,8 @@
-package com.buschmais.jqassistant.test.javaee6_web.cart.logic.impl;
+package com.buschmais.jqassistant.test.javaee6.cart.logic.impl;
 
-import com.buschmais.jqassistant.test.javaee6_web.cart.logic.api.CartService;
-import com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.CartDAO;
-import com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.model.Cart;
+import com.buschmais.jqassistant.test.javaee6.cart.logic.api.CartService;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.CartDAO;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;

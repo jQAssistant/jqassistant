@@ -1,6 +1,6 @@
-package com.buschmais.jqassistant.test.javaee6_web.user.persistence.api;
+package com.buschmais.jqassistant.test.javaee6.user.persistence.api;
 
-import com.buschmais.jqassistant.test.javaee6_web.user.persistence.api.model.User;
+import com.buschmais.jqassistant.test.javaee6.user.persistence.api.model.User;
 
 import java.util.List;
 

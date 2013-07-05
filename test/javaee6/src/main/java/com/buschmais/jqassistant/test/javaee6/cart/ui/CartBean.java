@@ -1,7 +1,7 @@
-package com.buschmais.jqassistant.test.javaee6_web.cart.ui;
+package com.buschmais.jqassistant.test.javaee6.cart.ui;
 
-import com.buschmais.jqassistant.test.javaee6_web.cart.logic.api.CartService;
-import com.buschmais.jqassistant.test.javaee6_web.cart.persistence.api.model.Cart;
+import com.buschmais.jqassistant.test.javaee6.cart.logic.api.CartService;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;

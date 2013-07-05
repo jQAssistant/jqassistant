@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.test.javaee6_web.user.persistence.api.model;
+package com.buschmais.jqassistant.test.javaee6.user.persistence.api.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

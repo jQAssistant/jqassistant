@@ -1,7 +1,7 @@
-package com.buschmais.jqassistant.test.javaee6_web.user.persistence.impl;
+package com.buschmais.jqassistant.test.javaee6.user.persistence.impl;
 
-import com.buschmais.jqassistant.test.javaee6_web.user.persistence.api.UserDAO;
-import com.buschmais.jqassistant.test.javaee6_web.user.persistence.api.model.User;
+import com.buschmais.jqassistant.test.javaee6.user.persistence.api.UserDAO;
+import com.buschmais.jqassistant.test.javaee6.user.persistence.api.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
