@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class JavaRuntimeIT extends AbstractScannerIT {
 
 	@Test
+	@Ignore
 	public void javaRuntime() throws IOException {
 		String javaHome = System.getProperty("java.home");
 		Assume.assumeNotNull("java.home is not set.", javaHome);
