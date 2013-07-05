@@ -80,7 +80,7 @@
                                     <goal>verify</goal>
                                 </goals>
                                 <configuration>
-                                    <argLine>-Xmx3072M</argLine>
+                                    <argLine>-Xmx512M</argLine>
                                     <forkMode>always</forkMode>
                                 </configuration>
                             </execution>
