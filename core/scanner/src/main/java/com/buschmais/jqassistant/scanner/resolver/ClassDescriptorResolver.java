@@ -4,26 +4,23 @@ import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
 
-public class ClassDescriptorResolver extends
-		AbstractDescriptorResolver<PackageDescriptor, ClassDescriptor> {
+public class ClassDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, ClassDescriptor> {
 
-	public ClassDescriptorResolver(Store store,
-			PackageDescriptorResolver parentResolver) {
-		super(store, parentResolver);
-	}
+    public ClassDescriptorResolver(Store store, PackageDescriptorResolver parentResolver) {
+        super(store, parentResolver);
+    }
 
-	@Override
-	public ClassDescriptor create(PackageDescriptor parent, String name) {
-		ClassDescriptor classDescriptor = getStore().resolveClassDescriptor(
-				parent, name);
-		if (parent != null) {
-			parent.getContains().add(classDescriptor);
-		}
-		return classDescriptor;
-	}
+    @Override
+    public ClassDescriptor create(PackageDescriptor parent, String name) {
+        ClassDescriptor classDescriptor = getStore().resolveClassDescriptor(parent, name);
+        if (parent != null) {
+            parent.getContains().add(classDescriptor);
+        }
+        return classDescriptor;
+    }
 
-	@Override
-	protected char getSeparator() {
-		return '.';
-	}
+    @Override
+    protected char getSeparator() {
+        return '.';
+    }
 }

@@ -1,9 +1,9 @@
 <component-set>
-	<components>
-		<component>
-			<role>com.buschmais.jqassistant.mojo.StoreProvider</role>
-			<implementation>com.buschmais.jqassistant.mojo.StoreProvider</implementation>
-			<instantiation-strategy>singleton</instantiation-strategy>
-		</component>
-	</components>
+    <components>
+        <component>
+            <role>com.buschmais.jqassistant.mojo.StoreProvider</role>
+            <implementation>com.buschmais.jqassistant.mojo.StoreProvider</implementation>
+            <instantiation-strategy>singleton</instantiation-strategy>
+        </component>
+    </components>
 </component-set>

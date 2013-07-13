@@ -7,7 +7,7 @@
             WHERE p.FQN =~ {packageExpression}
             SET c:IMPL
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.impl" />
+        <parameter name="packageExpression" type="string" value=".*\.impl"/>
     </concept>
 
     <concept id="abstractness:ApiClasses">
@@ -16,7 +16,7 @@
             WHERE p.FQN =~ {packageExpression}
             SET c:API
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.api" />
+        <parameter name="packageExpression" type="string" value=".*\.api"/>
     </concept>
 
 </jqa:jqassistant-rules>

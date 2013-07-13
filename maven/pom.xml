@@ -1,41 +1,41 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>com.buschmais.jqassistant</groupId>
-		<artifactId>jqassistant</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
-	<groupId>com.buschmais.jqassistant.maven</groupId>
-	<artifactId>jqassistant.maven</artifactId>
-	<packaging>pom</packaging>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>jqassistant</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <groupId>com.buschmais.jqassistant.maven</groupId>
+    <artifactId>jqassistant.maven</artifactId>
+    <packaging>pom</packaging>
 
-	<properties>
-		<org.apache.maven_version>3.0.5</org.apache.maven_version>
-	</properties>
+    <properties>
+        <org.apache.maven_version>3.0.5</org.apache.maven_version>
+    </properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-plugin-api</artifactId>
-				<version>${org.apache.maven_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-core</artifactId>
-				<version>${org.apache.maven_version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-artifact</artifactId>
-				<version>${org.apache.maven_version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${org.apache.maven_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${org.apache.maven_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-artifact</artifactId>
+                <version>${org.apache.maven_version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<modules>
-		<module>jqassistant-maven-plugin</module>
-	</modules>
+    <modules>
+        <module>jqassistant-maven-plugin</module>
+    </modules>
 
 </project>

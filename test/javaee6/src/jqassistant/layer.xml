@@ -28,9 +28,9 @@
     </concept>
 
     <constraint id="layer:UI">
-        <requiresConcept refId="layer:UI" />
-        <requiresConcept refId="layer:Logic" />
-        <requiresConcept refId="layer:Persistence" />
+        <requiresConcept refId="layer:UI"/>
+        <requiresConcept refId="layer:Logic"/>
+        <requiresConcept refId="layer:Persistence"/>
         <description>Packages in layer UI must have only dependencies to classes in layer UI, LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
@@ -46,9 +46,9 @@
     </constraint>
 
     <constraint id="layer:Logic">
-        <requiresConcept refId="layer:UI" />
-        <requiresConcept refId="layer:Logic" />
-        <requiresConcept refId="layer:Persistence" />
+        <requiresConcept refId="layer:UI"/>
+        <requiresConcept refId="layer:Logic"/>
+        <requiresConcept refId="layer:Persistence"/>
         <description>Packages in layer Logic must have only dependencies to classes in layer LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
@@ -63,9 +63,9 @@
     </constraint>
 
     <constraint id="layer:Persistence">
-        <requiresConcept refId="layer:UI" />
-        <requiresConcept refId="layer:Logic" />
-        <requiresConcept refId="layer:Persistence" />
+        <requiresConcept refId="layer:UI"/>
+        <requiresConcept refId="layer:Logic"/>
+        <requiresConcept refId="layer:Persistence"/>
         <description>Packages in layer Persistence must have only dependencies to classes in layer PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH

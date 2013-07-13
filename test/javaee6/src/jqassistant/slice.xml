@@ -7,7 +7,7 @@
             WHERE p.FQN =~ {packageExpression}
             SET c:SLICE:USER
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.user" />
+        <parameter name="packageExpression" type="string" value=".*\.user"/>
     </concept>
 
     <concept id="slice:Cart">
@@ -17,12 +17,12 @@
             WHERE p.FQN =~ {packageExpression}
             SET c:SLICE:CART
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.cart" />
+        <parameter name="packageExpression" type="string" value=".*\.cart"/>
     </concept>
 
     <constraint id="slice:User">
-        <requiresConcept refId="slice:User" />
-        <requiresConcept refId="slice:Cart" />
+        <requiresConcept refId="slice:User"/>
+        <requiresConcept refId="slice:Cart"/>
         <description>Classes in slice User must have only dependencies to classes in slice User.</description>
         <cypher><![CDATA[
             MATCH p=shortestPath((c:CLASS:SLICE:USER)-[*]->(d:CLASS:SLICE))
@@ -34,8 +34,8 @@
     </constraint>
 
     <constraint id="slice:Cart">
-        <requiresConcept refId="slice:User" />
-        <requiresConcept refId="slice:Cart" />
+        <requiresConcept refId="slice:User"/>
+        <requiresConcept refId="slice:Cart"/>
         <description>Classes in slice Cart must have only dependencies to classes in slices Cart or User.</description>
         <cypher><![CDATA[
             MATCH p=shortestPath((c:CLASS:SLICE:CART)-[*]->(d:CLASS:SLICE))

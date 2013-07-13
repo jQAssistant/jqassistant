@@ -16,9 +16,8 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.buschmais.jqassistant.store.api.Store;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * @goal reset
@@ -26,8 +25,8 @@ import com.buschmais.jqassistant.store.api.Store;
  */
 public class ResetMojo extends AbstractStoreMojo {
 
-	@Override
-	public void execute() throws MojoExecutionException {
+    @Override
+    public void execute() throws MojoExecutionException {
         executeInTransaction(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) {
@@ -35,5 +34,5 @@ public class ResetMojo extends AbstractStoreMojo {
                 return null;
             }
         });
-	}
+    }
 }

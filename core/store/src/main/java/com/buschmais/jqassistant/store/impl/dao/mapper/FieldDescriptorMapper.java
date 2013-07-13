@@ -1,52 +1,48 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.store.impl.model.RelationType;
 
-public class FieldDescriptorMapper extends
-		AbstractDescriptorMapper<FieldDescriptor> {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-	@Override
-	public Class<FieldDescriptor> getJavaType() {
-		return FieldDescriptor.class;
-	}
+public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescriptor> {
 
-	@Override
-	public CoreLabel getCoreLabel() {
-		return CoreLabel.FIELD;
-	}
+    @Override
+    public Class<FieldDescriptor> getJavaType() {
+        return FieldDescriptor.class;
+    }
 
-	@Override
-	public FieldDescriptor createInstance() {
-		return new FieldDescriptor();
-	}
+    @Override
+    public CoreLabel getCoreLabel() {
+        return CoreLabel.FIELD;
+    }
 
-	@Override
-	public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(
-			FieldDescriptor descriptor) {
-		Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
-		relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
-		return relations;
-	}
+    @Override
+    public FieldDescriptor createInstance() {
+        return new FieldDescriptor();
+    }
 
-	@Override
-	protected void setRelation(FieldDescriptor descriptor,
-			RelationType relation, AbstractDescriptor target) {
-		switch (relation) {
-		case DEPENDS_ON:
-			descriptor.getDependencies().add((ClassDescriptor) target);
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported relation type "
-					+ relation);
-		}
-	}
+    @Override
+    public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(FieldDescriptor descriptor) {
+        Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
+        relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
+        return relations;
+    }
+
+    @Override
+    protected void setRelation(FieldDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
+        switch (relation) {
+            case DEPENDS_ON:
+                descriptor.getDependencies().add((ClassDescriptor) target);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported relation type " + relation);
+        }
+    }
 
 }

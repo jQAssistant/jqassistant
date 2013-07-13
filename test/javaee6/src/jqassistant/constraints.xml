@@ -2,8 +2,8 @@
 
     <!-- Constraints -->
     <constraint id="ApiMustNotDependOnImplementation">
-        <requiresConcept refId="abstractness:ApiClasses" />
-        <requiresConcept refId="abstractness:ImplementationClasses" />
+        <requiresConcept refId="abstractness:ApiClasses"/>
+        <requiresConcept refId="abstractness:ImplementationClasses"/>
         <description>API classes must not have dependencies on implementation classes.</description>
         <cypher><![CDATA[
             MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
@@ -14,52 +14,52 @@
     </constraint>
 
     <constraint id="JpaEntitiesInApiModelPackage">
-        <requiresConcept refId="jpa:Entity" />
+        <requiresConcept refId="jpa:Entity"/>
         <description>All JPA entities must be located in the package "persistence.api"</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(e)
             WHERE e:JPA AND e:ENTITY AND NOT(p.FQN =~ {packageExpression})
             RETURN e.FQN as className
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.persistence\.api\.model" />
+        <parameter name="packageExpression" type="string" value=".*\.persistence\.api\.model"/>
     </constraint>
 
     <constraint id="EjbLocatedInImplementationPackage">
-        <requiresConcept refId="ejb3:StatelessSessionBean" />
-        <requiresConcept refId="ejb3:StatefulSessionBean" />
-        <requiresConcept refId="ejb3:MessageDrivenBean" />
-        <requiresConcept refId="ejb3:Singleton" />
+        <requiresConcept refId="ejb3:StatelessSessionBean"/>
+        <requiresConcept refId="ejb3:StatefulSessionBean"/>
+        <requiresConcept refId="ejb3:MessageDrivenBean"/>
+        <requiresConcept refId="ejb3:Singleton"/>
         <description>All EJBs must be located in the package logic.impl or sub-packages.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(b)
             WHERE b:EJB AND NOT(p.FQN =~ {packageExpression})
             RETURN b.FQN as className
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.logic\.impl" />
+        <parameter name="packageExpression" type="string" value=".*\.logic\.impl"/>
     </constraint>
 
     <constraint id="TestClassNameHasTestSuffix">
-        <requiresConcept refId="junit4:TestMethodsAndClasses" />
+        <requiresConcept refId="junit4:TestMethodsAndClasses"/>
         <description>The name of all test classes must have the suffix "Test".</description>
         <cypher><![CDATA[
             MATCH (c:CLASS)
             WHERE c:TEST and NOT(c.FQN =~ {suffixExpression})
             RETURN c.FQN as className
         ]]></cypher>
-        <parameter name="suffixExpression" type="string" value=".*Test" />
+        <parameter name="suffixExpression" type="string" value=".*Test"/>
     </constraint>
 
     <!-- Constraint Groups -->
-	<constraintGroup id="continuous">
-        <includeConstraint refId="slice:User" />
-        <includeConstraint refId="slice:Cart" />
-        <includeConstraint refId="layer:UI" />
-        <includeConstraint refId="layer:Logic" />
-        <includeConstraint refId="layer:Persistence" />
-        <includeConstraint refId="JpaEntitiesInApiModelPackage" />
-		<includeConstraint refId="EjbLocatedInImplementationPackage" />
-        <includeConstraint refId="TestClassNameHasTestSuffix" />
-        <includeConstraint refId="ApiMustNotDependOnImplementation" />
-	</constraintGroup>
+    <constraintGroup id="continuous">
+        <includeConstraint refId="slice:User"/>
+        <includeConstraint refId="slice:Cart"/>
+        <includeConstraint refId="layer:UI"/>
+        <includeConstraint refId="layer:Logic"/>
+        <includeConstraint refId="layer:Persistence"/>
+        <includeConstraint refId="JpaEntitiesInApiModelPackage"/>
+        <includeConstraint refId="EjbLocatedInImplementationPackage"/>
+        <includeConstraint refId="TestClassNameHasTestSuffix"/>
+        <includeConstraint refId="ApiMustNotDependOnImplementation"/>
+    </constraintGroup>
 
 </jqa:jqassistant-rules>

@@ -28,7 +28,8 @@
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
                     <xs:group ref="jqassistant-rules:queryGroup"/>
-                    <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType" minOccurs="0"
+                                maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

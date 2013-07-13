@@ -9,28 +9,27 @@ import java.util.Set;
  */
 public abstract class ParentDescriptor extends AbstractDescriptor {
 
-	/**
-	 * The contained descriptors.
-	 */
-	private Set<AbstractDescriptor> contains = new HashSet<AbstractDescriptor>();
+    /**
+     * The contained descriptors.
+     */
+    private Set<AbstractDescriptor> contains = new HashSet<AbstractDescriptor>();
 
-	/**
-	 * Return the contained descriptors.
-	 * 
-	 * @return The contained descriptors.
-	 */
-	public Set<AbstractDescriptor> getContains() {
-		return contains;
-	}
+    /**
+     * Return the contained descriptors.
+     *
+     * @return The contained descriptors.
+     */
+    public Set<AbstractDescriptor> getContains() {
+        return contains;
+    }
 
-	/**
-	 * Set the contained descriptors.
-	 * 
-	 * @param contains
-	 *            The contained descriptors.
-	 */
-	public void setContains(Set<AbstractDescriptor> contains) {
-		this.contains = contains;
-	}
+    /**
+     * Set the contained descriptors.
+     *
+     * @param contains The contained descriptors.
+     */
+    public void setContains(Set<AbstractDescriptor> contains) {
+        this.contains = contains;
+    }
 
 }

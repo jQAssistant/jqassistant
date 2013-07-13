@@ -24,8 +24,7 @@ public class AnonymousInnerClassTest extends AbstractScannerTest {
         ClassDescriptor innerClassType = stubClass(AnonymousInnerClass.class.getPackage().getName(), AnonymousInnerClass.class.getSimpleName() + "$1");
         ClassDescriptor iteratorType = stubClass(Iterator.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(outerClassType, "void <init>()"))
-                .thenReturn(constructor);
+        when(store.resolveMethodDescriptor(outerClassType, "void <init>()")).thenReturn(constructor);
         MethodDescriptor iterator = new MethodDescriptor();
         when(store.resolveMethodDescriptor(outerClassType, "java.util.Iterator iterator()")).thenReturn(iterator);
 
@@ -52,7 +51,7 @@ public class AnonymousInnerClassTest extends AbstractScannerTest {
         MethodDescriptor remove = new MethodDescriptor();
         when(store.resolveMethodDescriptor(outerClassType, "void remove()")).thenReturn(remove);
         FieldDescriptor this_0 = new FieldDescriptor();
-        when(store.resolveFieldDescriptor(innerClassType,AnonymousInnerClass.class.getName() + " this$0")).thenReturn(this_0);
+        when(store.resolveFieldDescriptor(innerClassType, AnonymousInnerClass.class.getName() + " this$0")).thenReturn(this_0);
 
         String resourceName = "/" + AnonymousInnerClass.class.getName().replace(".", "/") + "$1.class";
         InputStream is = AnonymousInnerClassTest.class.getResourceAsStream(resourceName);

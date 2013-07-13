@@ -31,7 +31,7 @@ public class RulesReaderTest {
         List<Source> rules = new ArrayList<Source>();
         rules.add(new StreamSource(is));
         RulesReader reader = new RulesReaderImpl();
-        constraintGroupMap=reader.read(rules);
+        constraintGroupMap = reader.read(rules);
     }
 
     @Test

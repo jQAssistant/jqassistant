@@ -67,7 +67,7 @@ public class VerifyMojo extends AbstractStoreMojo {
                 for (Map<String, Object> columns : constraintViolation.getViolations()) {
                     StringBuilder message = new StringBuilder();
                     for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                        if (message.length()>0) {
+                        if (message.length() > 0) {
                             message.append(", ");
                         }
                         message.append(entry.getKey());
