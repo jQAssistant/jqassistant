@@ -8,19 +8,18 @@ import java.util.Set;
  */
 public interface DependentDescriptor {
 
-	/**
-	 * Return the classes this descriptor depends on.
-	 * 
-	 * @return The classes this descriptor depends on.
-	 */
-	Set<ClassDescriptor> getDependencies();
+    /**
+     * Return the classes this descriptor depends on.
+     *
+     * @return The classes this descriptor depends on.
+     */
+    Set<ClassDescriptor> getDependencies();
 
-	/**
-	 * Set the classes this descriptor depends on.
-	 * 
-	 * @param dependencies
-	 *            The classes this descriptor depends on.
-	 */
-	void setDependencies(Set<ClassDescriptor> dependencies);
+    /**
+     * Set the classes this descriptor depends on.
+     *
+     * @param dependencies The classes this descriptor depends on.
+     */
+    void setDependencies(Set<ClassDescriptor> dependencies);
 
 }

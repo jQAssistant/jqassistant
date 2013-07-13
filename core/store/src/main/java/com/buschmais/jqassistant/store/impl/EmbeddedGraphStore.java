@@ -54,10 +54,10 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     public void endTransaction() {
-        super.endTransaction();
         if (transaction == null) {
             throw new IllegalStateException("There is no existing transaction.");
         }
+        flush();
         transaction.success();
         transaction.finish();
         transaction = null;

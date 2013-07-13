@@ -29,11 +29,15 @@
  */
 package com.buschmais.jqassistant.scanner;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.scanner.visitor.ClassVisitor;
+import com.buschmais.jqassistant.store.api.Store;
+import org.apache.commons.io.DirectoryWalker;
+import org.objectweb.asm.ClassReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -41,92 +45,79 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.apache.commons.io.DirectoryWalker;
-import org.objectweb.asm.ClassReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.scanner.visitor.ClassVisitor;
-import com.buschmais.jqassistant.store.api.Store;
-
 public class ClassScanner {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ClassScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassScanner.class);
 
-	private final Store store;
+    private final Store store;
 
-	public ClassScanner(Store graphStore) {
-		this.store = graphStore;
-	}
+    public ClassScanner(Store graphStore) {
+        this.store = graphStore;
+    }
 
-	public void scanArchive(File archive) throws IOException {
-		if (!archive.exists()) {
-			LOGGER.warn("Archive '{}' not found, skipping.",
-					archive.getAbsolutePath());
-		} else {
-			LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
-			long start = System.currentTimeMillis();
-			ZipFile zipFile = new ZipFile(archive);
-			try {
-				final Enumeration<? extends ZipEntry> zipEntries = zipFile
-						.entries();
-				while (zipEntries.hasMoreElements()) {
-					ZipEntry e = zipEntries.nextElement();
-					String name = e.getName();
-					if (name.endsWith(".class")) {
-						scanInputStream(zipFile.getInputStream(e), name);
-					}
-				}
-			} finally {
-				zipFile.close();
-			}
-			long end = System.currentTimeMillis();
-			LOGGER.info("Scanned archive '{}' in {}ms.",
-					archive.getAbsolutePath(), Long.valueOf(end - start));
-		}
-	}
+    public void scanArchive(File archive) throws IOException {
+        if (!archive.exists()) {
+            LOGGER.warn("Archive '{}' not found, skipping.", archive.getAbsolutePath());
+        } else {
+            LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
+            long start = System.currentTimeMillis();
+            ZipFile zipFile = new ZipFile(archive);
+            try {
+                final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+                String lastDirectory = null;
+                while (zipEntries.hasMoreElements()) {
+                    ZipEntry e = zipEntries.nextElement();
+                    String name = e.getName();
+                    String currentDirectory = name.substring(0, name.lastIndexOf('/'));
+                    if (!currentDirectory.equals(lastDirectory)) {
+                        store.flush();
+                        lastDirectory = currentDirectory;
+                    }
+                    if (name.endsWith(".class")) {
+                        scanInputStream(zipFile.getInputStream(e), name);
+                    }
+                }
+            } finally {
+                zipFile.close();
+            }
+            long end = System.currentTimeMillis();
+            LOGGER.info("Scanned archive '{}' in {}ms.", archive.getAbsolutePath(), Long.valueOf(end - start));
+        }
+    }
 
-	public void scanDirectory(File directory) throws IOException {
-		final List<File> classFiles = new ArrayList<File>();
-		new DirectoryWalker<File>() {
+    public void scanDirectory(File directory) throws IOException {
+        final List<File> classFiles = new ArrayList<File>();
+        new DirectoryWalker<File>() {
 
-			@Override
-			protected void handleFile(File file, int depth,
-					Collection<File> results) throws IOException {
-				if (!file.isDirectory() && file.getName().endsWith(".class")) {
-					results.add(file);
-				}
-			}
+            @Override
+            protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
+                if (!file.isDirectory() && file.getName().endsWith(".class")) {
+                    results.add(file);
+                }
+            }
 
-			public void scan(File directory) throws IOException {
-				super.walk(directory, classFiles);
-			}
-		}.scan(directory);
-		for (File classFile : classFiles) {
-			scanFile(classFile);
-		}
-	}
+            public void scan(File directory) throws IOException {
+                super.walk(directory, classFiles);
+            }
+        }.scan(directory);
+        for (File classFile : classFiles) {
+            scanFile(classFile);
+        }
+    }
 
-	public void scanFile(File file) throws IOException {
-		scanInputStream(new BufferedInputStream(new FileInputStream(file)),
-				file.getName());
-	}
+    public void scanFile(File file) throws IOException {
+        scanInputStream(new BufferedInputStream(new FileInputStream(file)), file.getName());
+    }
 
-	public void scanClass(Class<?> classType) throws IOException {
-		String resourceName = "/" + classType.getName().replace('.', '/')
-				+ ".class";
-		scanInputStream(classType.getResourceAsStream(resourceName),
-				resourceName);
-	}
+    public void scanClass(Class<?> classType) throws IOException {
+        String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
+        scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
+    }
 
-	public void scanInputStream(InputStream inputStream, String name)
-			throws IOException {
-		LOGGER.info("Scanning " + name);
-		DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(
-				store);
-		ClassVisitor visitor = new ClassVisitor(resolverFactory);
-		new ClassReader(inputStream).accept(visitor, 0);
-	}
+    public void scanInputStream(InputStream inputStream, String name) throws IOException {
+        LOGGER.info("Scanning " + name);
+        DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
+        ClassVisitor visitor = new ClassVisitor(resolverFactory);
+        new ClassReader(inputStream).accept(visitor, 0);
+    }
 }

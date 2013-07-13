@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.analysis.api;
 import com.buschmais.jqassistant.core.analysis.api.model.ConstraintGroup;
 
 import javax.xml.transform.Source;
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
