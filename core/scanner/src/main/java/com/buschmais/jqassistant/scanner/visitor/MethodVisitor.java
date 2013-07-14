@@ -19,7 +19,7 @@ public class MethodVisitor extends AbstractVisitor implements org.objectweb.asm.
 
     @Override
     public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
-        addDependency(methodDescriptor, getType(desc));
+        addAnnotation(methodDescriptor, getType(desc));
         return new AnnotationVisitor(methodDescriptor, getResolverFactory());
     }
 
@@ -119,7 +119,7 @@ public class MethodVisitor extends AbstractVisitor implements org.objectweb.asm.
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        addDependency(methodDescriptor, getType(desc));
+        addAnnotation(methodDescriptor, getType(desc));
         return new AnnotationVisitor(methodDescriptor, getResolverFactory());
     }
 

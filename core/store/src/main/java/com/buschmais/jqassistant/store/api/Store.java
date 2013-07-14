@@ -118,6 +118,17 @@ public interface Store {
     /**
      * Executes a CYPHER query.
      * <p>
+     * This method delegates to {@link DescriptorDAO#executeQuery(String, Map)} using Collections#emptyMap as parameters.
+     * </p>
+     *
+     * @param query The CYPHER query.
+     * @return The {@link QueryResult}.
+     */
+    QueryResult executeQuery(String query);
+
+    /**
+     * Executes a CYPHER query.
+     * <p>
      * This method delegates to {@link DescriptorDAO#executeQuery(String, Map)}.
      * </p>
      *

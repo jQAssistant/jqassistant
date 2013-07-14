@@ -90,7 +90,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        addDependency(classDescriptor, getType(desc));
+        addAnnotation(classDescriptor, getType(desc));
         return new AnnotationVisitor(classDescriptor, getResolverFactory());
     }
 

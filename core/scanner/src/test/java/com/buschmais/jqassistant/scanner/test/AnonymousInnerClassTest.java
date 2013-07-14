@@ -28,7 +28,7 @@ public class AnonymousInnerClassTest extends AbstractScannerTest {
         MethodDescriptor iterator = new MethodDescriptor();
         when(store.resolveMethodDescriptor(outerClassType, "java.util.Iterator iterator()")).thenReturn(iterator);
 
-        scanner.scanClass(AnonymousInnerClass.class);
+        scanner.scanClasses(AnonymousInnerClass.class);
 
         assertThat(outerClassType.getSuperClass(), equalTo(javaLangObject));
         assertThat(outerClassType.getContains(), hasItem(constructor));

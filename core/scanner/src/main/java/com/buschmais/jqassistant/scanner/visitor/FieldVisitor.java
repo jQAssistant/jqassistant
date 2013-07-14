@@ -15,6 +15,7 @@ public class FieldVisitor extends AbstractVisitor implements org.objectweb.asm.F
 
     @Override
     public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
+        addAnnotation(fieldDescriptor, getType(arg0));
         return new AnnotationVisitor(fieldDescriptor, getResolverFactory());
     }
 

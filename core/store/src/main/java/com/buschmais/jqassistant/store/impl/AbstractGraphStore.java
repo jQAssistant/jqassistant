@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.store.impl.dao.mapper.*;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -100,6 +101,11 @@ public abstract class AbstractGraphStore implements Store {
         fieldDescriptor.setFullQualifiedName(name.getFullQualifiedName());
         descriptorDAO.persist(fieldDescriptor);
         return fieldDescriptor;
+    }
+
+    @Override
+    public QueryResult executeQuery(String query) {
+        return descriptorDAO.executeQuery(query, Collections.<String, Object>emptyMap());
     }
 
     @Override

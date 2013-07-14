@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Describes a Java class.
  */
-public class ClassDescriptor extends ParentDescriptor implements DependentDescriptor {
+public class ClassDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor {
 
     /**
      * The super class.
@@ -22,6 +22,11 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
      * The classes this class depends on.
      */
     private Set<ClassDescriptor> dependencies = new HashSet<ClassDescriptor>();
+
+    /**
+     * The classes this class is annotated by.
+     */
+    private Set<ClassDescriptor> annotations = new HashSet<ClassDescriptor>();
 
     /**
      * Return the super class.
@@ -67,5 +72,15 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
     @Override
     public void setDependencies(Set<ClassDescriptor> dependencies) {
         this.dependencies = dependencies;
+    }
+
+    @Override
+    public Set<ClassDescriptor> getAnnotatedBy() {
+        return annotations;
+    }
+
+    @Override
+    public void setAnnotatedBy(Set<ClassDescriptor> annotations) {
+        this.annotations = annotations;
     }
 }

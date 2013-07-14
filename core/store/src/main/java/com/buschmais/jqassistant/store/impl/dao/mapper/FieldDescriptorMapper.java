@@ -30,6 +30,7 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     @Override
     public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(FieldDescriptor descriptor) {
         Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
+        relations.put(RelationType.ANNOTATED_BY, descriptor.getAnnotatedBy());
         relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
         return relations;
     }
@@ -37,6 +38,9 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     @Override
     protected void setRelation(FieldDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
         switch (relation) {
+            case ANNOTATED_BY:
+                descriptor.getAnnotatedBy().add((ClassDescriptor) target);
+                break;
             case DEPENDS_ON:
                 descriptor.getDependencies().add((ClassDescriptor) target);
                 break;

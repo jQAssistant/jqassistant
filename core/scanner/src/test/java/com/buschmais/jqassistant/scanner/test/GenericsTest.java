@@ -20,7 +20,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.resolveMethodDescriptor(genericType, "void <init>()")).thenReturn(constructor);
 
-        scanner.scanClass(GenericType.class);
+        scanner.scanClasses(GenericType.class);
 
         assertThat(genericType.getSuperClass(), equalTo(javaLangObject));
         assertThat(genericType.getContains(), hasItem(constructor));
@@ -34,7 +34,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.resolveMethodDescriptor(boundGenericType, "void <init>()")).thenReturn(constructor);
 
-        scanner.scanClass(BoundGenericType.class);
+        scanner.scanClasses(BoundGenericType.class);
 
         assertThat(boundGenericType.getSuperClass(), equalTo(javaLangObject));
         assertThat(boundGenericType.getContains(), hasItem(constructor));
@@ -49,7 +49,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.resolveMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
 
-        scanner.scanClass(NestedGenericType.class);
+        scanner.scanClasses(NestedGenericType.class);
 
         assertThat(nestedGenericType.getSuperClass(), equalTo(javaLangObject));
         assertThat(nestedGenericType.getContains(), hasItem(constructor));
@@ -66,7 +66,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor get = new MethodDescriptor();
         when(store.resolveMethodDescriptor(nestedGenericType, "java.lang.Object get(com.buschmais.jqassistant.scanner.test.sets.generics.GenericType)")).thenReturn(get);
 
-        scanner.scanClass(NestedGenericMethod.class);
+        scanner.scanClasses(NestedGenericMethod.class);
 
         assertThat(nestedGenericType.getSuperClass(), equalTo(javaLangObject));
         assertThat(nestedGenericType.getContains(), hasItem(constructor));
@@ -82,7 +82,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.resolveMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
 
-        scanner.scanClass(ExtendsGenericClass.class);
+        scanner.scanClasses(ExtendsGenericClass.class);
 
         assertThat(extendsGenericClass.getSuperClass(), equalTo(genericType));
         assertThat(extendsGenericClass.getDependencies(), hasItem(javaLangNumber));
@@ -98,7 +98,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.resolveMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
 
-        scanner.scanClass(ImplementsGenericInterface.class);
+        scanner.scanClasses(ImplementsGenericInterface.class);
 
         assertThat(extendsGenericClass.getInterfaces(), hasItem(javaUtilIterable));
         assertThat(extendsGenericClass.getDependencies(), hasItem(javaLangNumber));
