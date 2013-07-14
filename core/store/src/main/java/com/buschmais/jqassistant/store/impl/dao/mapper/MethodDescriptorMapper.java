@@ -30,6 +30,7 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     @Override
     public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(MethodDescriptor descriptor) {
         Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
+        relations.put(RelationType.ANNOTATED_BY, descriptor.getAnnotatedBy());
         relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
         relations.put(RelationType.THROWS, descriptor.getDeclaredThrowables());
         return relations;
@@ -38,6 +39,9 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     @Override
     protected void setRelation(MethodDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
         switch (relation) {
+            case ANNOTATED_BY:
+                descriptor.getAnnotatedBy().add((ClassDescriptor) target);
+                break;
             case DEPENDS_ON:
                 descriptor.getDependencies().add((ClassDescriptor) target);
                 break;

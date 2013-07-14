@@ -29,6 +29,7 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
     @Override
     public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(ClassDescriptor descriptor) {
         Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
+        relations.put(RelationType.ANNOTATED_BY, descriptor.getAnnotatedBy());
         relations.put(RelationType.CONTAINS, descriptor.getContains());
         relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
         relations.put(RelationType.IMPLEMENTS, descriptor.getInterfaces());
@@ -39,6 +40,9 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
     @Override
     protected void setRelation(ClassDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
         switch (relation) {
+            case ANNOTATED_BY:
+                descriptor.getAnnotatedBy().add((ClassDescriptor) target);
+                break;
             case CONTAINS:
                 descriptor.getContains().add(target);
                 break;

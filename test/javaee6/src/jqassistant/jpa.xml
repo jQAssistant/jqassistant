@@ -3,7 +3,7 @@
     <concept id="jpa:Entity">
         <description>Labels all classes annotated with java.persistence.Entity with JPA and ENTITY.</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)-[:DEPENDS_ON]->(a:CLASS)
+            MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="javax.persistence.Entity"
             SET c:JPA:ENTITY
         ]]></cypher>

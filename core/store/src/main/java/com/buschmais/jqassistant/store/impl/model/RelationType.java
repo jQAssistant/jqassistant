@@ -4,5 +4,5 @@ import org.neo4j.graphdb.RelationshipType;
 
 public enum RelationType implements RelationshipType {
 
-    DEPENDS_ON, CONTAINS, EXTENDS, IMPLEMENTS, THROWS;
+    ANNOTATED_BY, DEPENDS_ON, CONTAINS, EXTENDS, IMPLEMENTS, THROWS;
 }

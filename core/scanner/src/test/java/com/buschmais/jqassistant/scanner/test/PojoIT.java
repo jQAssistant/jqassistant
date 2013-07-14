@@ -19,11 +19,10 @@ public class PojoIT extends AbstractScannerIT {
     @Test
     public void attributes() throws IOException {
         store.beginTransaction();
-        scanner.scanClass(Pojo.class);
+        scanner.scanClasses(Pojo.class);
         store.endTransaction();
         String query = "MATCH (c:CLASS) RETURN c as class";
-        Map<String, Object> parameters = Collections.emptyMap();
-        QueryResult result = store.executeQuery(query, parameters);
+        QueryResult result = store.executeQuery(query);
         List<String> columns = result.getColumns();
         assertEquals(1, columns.size());
         assertEquals("class", columns.get(0));

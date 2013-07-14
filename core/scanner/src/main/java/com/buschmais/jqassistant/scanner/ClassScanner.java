@@ -109,9 +109,11 @@ public class ClassScanner {
         scanInputStream(new BufferedInputStream(new FileInputStream(file)), file.getName());
     }
 
-    public void scanClass(Class<?> classType) throws IOException {
-        String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
-        scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
+    public void scanClasses(Class<?>... classTypes) throws IOException {
+        for (Class<?> classType : classTypes) {
+            String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
+            scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
+        }
     }
 
     public void scanInputStream(InputStream inputStream, String name) throws IOException {

@@ -13,11 +13,12 @@ import java.util.Map;
 public class DescriptorAdapterRegistry {
 
     private final Map<Class<? extends AbstractDescriptor>, DescriptorMapper<?>> adaptersByJavaType = new HashMap<Class<? extends AbstractDescriptor>, DescriptorMapper<?>>();
-    private final Map<CoreLabel, DescriptorMapper<?>> adaptersByCoreLabel = new HashMap<CoreLabel, DescriptorMapper<?>>();
+    private final Map<String, DescriptorMapper<?>> adaptersByCoreLabel = new HashMap<String, DescriptorMapper<?>>();
+
 
     public void registerDAO(DescriptorMapper<? extends AbstractDescriptor> adapter) {
         this.adaptersByJavaType.put(adapter.getJavaType(), adapter);
-        this.adaptersByCoreLabel.put(adapter.getCoreLabel(), adapter);
+        this.adaptersByCoreLabel.put(adapter.getCoreLabel().name(), adapter);
     }
 
     @SuppressWarnings("unchecked")
@@ -26,8 +27,7 @@ public class DescriptorAdapterRegistry {
         try {
             while (labels.hasNext()) {
                 Label label = labels.next();
-                CoreLabel coreLabel = CoreLabel.valueOf(label.name());
-                DescriptorMapper<T> mapper = (DescriptorMapper<T>) adaptersByCoreLabel.get(coreLabel);
+                DescriptorMapper<T> mapper = (DescriptorMapper<T>) adaptersByCoreLabel.get(label.name());
                 if (mapper != null) {
                     return mapper;
                 }

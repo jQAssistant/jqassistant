@@ -5,7 +5,7 @@
             surrounding classes.
         </description>
         <cypher><![CDATA[
-            MATCH (t:CLASS)-[:CONTAINS]->(m:METHOD)-[:DEPENDS_ON]->(a:CLASS)
+            MATCH (t:CLASS)-[:CONTAINS]->(m:METHOD)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="org.junit.Test"
             SET m:TEST:JUNIT4, t:TEST:JUNIT4
         ]]></cypher>

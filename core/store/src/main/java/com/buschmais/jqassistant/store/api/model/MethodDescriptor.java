@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Describes a method of a Java class.
  */
-public class MethodDescriptor extends AbstractDescriptor implements DependentDescriptor {
+public class MethodDescriptor extends AbstractDescriptor implements DependentDescriptor, AnnotatedDescriptor {
 
     /**
      * The declared throwables.
@@ -17,6 +17,11 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
      * The classes the method depends on.
      */
     private Set<ClassDescriptor> dependencies = new HashSet<ClassDescriptor>();
+
+    /**
+     * The classes this class is annotated by.
+     */
+    private Set<ClassDescriptor> annotations = new HashSet<ClassDescriptor>();
 
     /**
      * Return the declared throwables.
@@ -45,4 +50,15 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
     public void setDependencies(Set<ClassDescriptor> dependencies) {
         this.dependencies = dependencies;
     }
+
+    @Override
+    public Set<ClassDescriptor> getAnnotatedBy() {
+        return annotations;
+    }
+
+    @Override
+    public void setAnnotatedBy(Set<ClassDescriptor> annotations) {
+        this.annotations = annotations;
+    }
+
 }

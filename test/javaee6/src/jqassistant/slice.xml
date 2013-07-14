@@ -11,7 +11,7 @@
     </concept>
 
     <concept id="slice:Cart">
-        <description>Labels all classes in .cart packages as SLICE AND CART.</description>
+        <description>Labels all classes in .cart packages as SLICE and CART.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
