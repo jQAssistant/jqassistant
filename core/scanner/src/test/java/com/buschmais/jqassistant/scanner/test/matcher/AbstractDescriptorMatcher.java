@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -14,9 +13,12 @@ import org.hamcrest.TypeSafeMatcher;
  */
 public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends TypeSafeMatcher<T> {
 
+    private Class<T> type;
+
     private String fullQualifiedName;
 
-    public AbstractDescriptorMatcher(String fullQualifiedName) {
+    public AbstractDescriptorMatcher(Class<T> type, String fullQualifiedName) {
+        this.type = type;
         this.fullQualifiedName = fullQualifiedName;
     }
 
@@ -27,6 +29,6 @@ public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends Typ
 
     @Override
     public void describeTo(Description description) {
-
+        description.appendText(type.getName()).appendText("(").appendText(fullQualifiedName).appendText(")");
     }
 }

@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 
 public class DescriptorDAOImpl implements DescriptorDAO {
 
-    private final class RowIterable implements Iterable<Map<String, Object>>, Closeable {
+    private final class RowIterable implements Iterable<QueryResult.Row>, Closeable {
 
         private ResourceIterator<Map<String, Object>> iterator;
 
@@ -27,9 +27,9 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         }
 
         @Override
-        public Iterator<Map<String, Object>> iterator() {
+        public Iterator<QueryResult.Row> iterator() {
 
-            return new Iterator<Map<String, Object>>() {
+            return new Iterator<QueryResult.Row>() {
 
                 @Override
                 public boolean hasNext() {
@@ -37,7 +37,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 }
 
                 @Override
-                public Map<String, Object> next() {
+                public QueryResult.Row next() {
                     Map<String, Object> row = new HashMap<String, Object>();
                     for (Entry<String, Object> entry : iterator.next().entrySet()) {
                         String name = entry.getKey();
@@ -45,7 +45,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                         Object decodedValue = decodeValue(value);
                         row.put(name, decodedValue);
                     }
-                    return row;
+                    return new QueryResult.Row(row);
                 }
 
                 @Override
@@ -134,7 +134,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     @Override
     public QueryResult executeQuery(String query, Map<String, Object> parameters) {
         ExecutionResult result = executionEngine.execute(query, parameters);
-        Iterable<Map<String, Object>> rowIterable = new RowIterable(result.iterator());
+        Iterable<QueryResult.Row> rowIterable = new RowIterable(result.iterator());
         return new QueryResult(result.columns(), rowIterable);
     }
 

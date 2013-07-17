@@ -11,12 +11,8 @@ import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
  */
 public class ClassDescriptorMatcher extends AbstractDescriptorMatcher<ClassDescriptor> {
 
-    public ClassDescriptorMatcher(String fullQualifiedName) {
-        super(fullQualifiedName);
-    }
-
     public ClassDescriptorMatcher(Class<?> type) {
-        super(type.getName());
+        super(ClassDescriptor.class, type.getName());
     }
 
     public static ClassDescriptorMatcher classDescriptor(Class<?> type) {

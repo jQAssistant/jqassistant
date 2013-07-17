@@ -12,6 +12,26 @@ import java.util.Map;
 public class QueryResult implements Closeable {
 
     /**
+     * Describes one row of a query result containing named columns and value.
+     */
+    public static class Row {
+
+        private Map<String, Object> row;
+
+        public Row(Map<String, Object> row) {
+            this.row = row;
+        }
+
+        public <T> T get(String column) {
+            return (T) row.get(column);
+        }
+
+        public Map<String, Object> get() {
+            return row;
+        }
+    }
+
+    /**
      * The column names returned by the query.
      */
     private final List<String> columns;
@@ -20,17 +40,19 @@ public class QueryResult implements Closeable {
      * The Iterable which can be used to scroll through the rows returned by the
      * query.
      * <p>
-     * Each row contains a {@link Map} where the key is one of the column names
-     * as defined by {@link #columns} and the value is the value returned by the
-     * query. Where applicable the values are transformed to instances of the
+     * Where applicable the values of a row are transformed to instances of the
      * corresponding classes, e.g. nodes will be made available as instances of
      * the according {@link AbstractDescriptor}s.
      * </p>
      */
-    private final Iterable<Map<String, Object>> rows;
+    private final Iterable<Row> rows;
 
-    public QueryResult(List<String> columns, Iterable<Map<String, Object>> rows) {
-        super();
+    /**
+     * Constructor.
+     * @param columns A list containing the names of the returned columns.
+     * @param rows The rows.
+     */
+    public QueryResult(List<String> columns, Iterable<Row> rows) {
         this.columns = columns;
         this.rows = rows;
     }
@@ -49,15 +71,14 @@ public class QueryResult implements Closeable {
      *
      * @return The {@link Iterable} to be used to scroll through the rows.
      */
-    public Iterable<Map<String, Object>> getRows() {
+    public Iterable<Row> getRows() {
         return rows;
     }
 
     @Override
     public void close() {
-        if (this.getRows() instanceof Closeable) {
+        if (this.rows instanceof Closeable) {
             IOUtils.closeQuietly((Closeable) rows);
-
         }
     }
 }
