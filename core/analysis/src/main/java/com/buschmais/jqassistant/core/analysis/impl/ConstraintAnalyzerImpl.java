@@ -59,8 +59,8 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
             List<Map<String, Object>> violations = new ArrayList<Map<String, Object>>();
             try {
                 queryResult = executeQuery(constraint.getQuery());
-                for (Map<String, Object> row : queryResult.getRows()) {
-                    violations.add(row);
+                for (QueryResult.Row row : queryResult.getRows()) {
+                    violations.add(row.get());
                 }
             } finally {
                 IOUtils.closeQuietly(queryResult);

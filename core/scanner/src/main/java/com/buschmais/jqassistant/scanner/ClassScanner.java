@@ -38,10 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -64,18 +61,26 @@ public class ClassScanner {
             ZipFile zipFile = new ZipFile(archive);
             try {
                 final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-                String lastDirectory = null;
+                Map<String, List<ZipEntry>> entries = new TreeMap<String, List<ZipEntry>>();
                 while (zipEntries.hasMoreElements()) {
                     ZipEntry e = zipEntries.nextElement();
                     String name = e.getName();
-                    String currentDirectory = name.substring(0, name.lastIndexOf('/'));
-                    if (!currentDirectory.equals(lastDirectory)) {
-                        store.flush();
-                        lastDirectory = currentDirectory;
+                    if (!e.isDirectory() && name.endsWith(".class")) {
+                        String packageDirectory = name.substring(0, name.lastIndexOf('/'));
+                        List<ZipEntry> packageEntries = entries.get(packageDirectory);
+                        if (packageEntries == null) {
+                            packageEntries = new ArrayList<ZipEntry>();
+                            entries.put(packageDirectory, packageEntries);
+                        }
+                        packageEntries.add(e);
                     }
-                    if (name.endsWith(".class")) {
-                        scanInputStream(zipFile.getInputStream(e), name);
+                }
+
+                for (List<ZipEntry> packageEntries : entries.values()) {
+                    for (ZipEntry zipEntry : packageEntries) {
+                        scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
                     }
+                    store.flush();
                 }
             } finally {
                 zipFile.close();
