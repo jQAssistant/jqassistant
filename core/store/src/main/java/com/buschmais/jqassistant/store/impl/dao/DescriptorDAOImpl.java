@@ -150,18 +150,20 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Map<RelationType, Set<? extends AbstractDescriptor>> relations = adapter.getRelations(descriptor);
         for (Entry<RelationType, Set<? extends AbstractDescriptor>> relationEntry : relations.entrySet()) {
             RelationType relationType = relationEntry.getKey();
-            Set<Node> existingTargetNodes = new HashSet<Node>();
-            Iterable<Relationship> relationships = node.getRelationships(relationType, Direction.OUTGOING);
-            if (relationships != null) {
-                for (Relationship relation : relationships) {
-                    existingTargetNodes.add(relation.getEndNode());
-                }
-            }
             Set<? extends AbstractDescriptor> targetDescriptors = relationEntry.getValue();
-            for (AbstractDescriptor targetDescriptor : targetDescriptors) {
-                Node targetNode = findNode(targetDescriptor);
-                if (!existingTargetNodes.contains(targetNode)) {
-                    node.createRelationshipTo(targetNode, relationType);
+            if (!targetDescriptors.isEmpty()) {
+                Set<Node> existingTargetNodes = new HashSet<Node>();
+                Iterable<Relationship> relationships = node.getRelationships(relationType, Direction.OUTGOING);
+                if (relationships != null) {
+                    for (Relationship relation : relationships) {
+                        existingTargetNodes.add(relation.getEndNode());
+                    }
+                }
+                for (AbstractDescriptor targetDescriptor : targetDescriptors) {
+                    Node targetNode = findNode(targetDescriptor);
+                    if (!existingTargetNodes.contains(targetNode)) {
+                        node.createRelationshipTo(targetNode, relationType);
+                    }
                 }
             }
         }
