@@ -75,12 +75,14 @@ public class ClassScanner {
                         packageEntries.add(e);
                     }
                 }
-
-                for (List<ZipEntry> packageEntries : entries.values()) {
-                    for (ZipEntry zipEntry : packageEntries) {
+                int packageCount = 0;
+                for (Map.Entry<String, List<ZipEntry>> e : entries.entrySet()) {
+                    LOGGER.info("Scanning " + e.getKey() + " (" + packageCount + "/" + entries.size() + ")");
+                    for (ZipEntry zipEntry : e.getValue()) {
                         scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
                     }
                     store.flush();
+                    packageCount++;
                 }
             } finally {
                 zipFile.close();
