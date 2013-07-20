@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.model.QueryResult;
 import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
 import com.buschmais.jqassistant.store.impl.model.RelationType;
+import org.apache.commons.collections.map.LRUMap;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.*;
@@ -80,7 +81,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     private final ExecutionEngine executionEngine;
 
     private final DescriptorCache descriptorCache = new DescriptorCache();
-    private final Map<String, Node> nodeCache = new HashMap<String, Node>();
+    private final Map<String, Node> nodeCache = new LRUMap();
 
     public DescriptorDAOImpl(DescriptorAdapterRegistry registry, GraphDatabaseService database) {
         this.registry = registry;
@@ -95,7 +96,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Node node = database.createNode(adapter.getCoreLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         node.setProperty(NodeProperty.FQN.name(), descriptor.getFullQualifiedName());
-        descriptorCache.put(descriptor, node);
+        descriptorCache.put(descriptor);
         nodeCache.put(descriptor.getFullQualifiedName(), node);
     }
 
@@ -106,7 +107,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             flushRelations(descriptor);
         }
         this.descriptorCache.clear();
-        this.nodeCache.clear();
     }
 
     @Override
@@ -117,7 +117,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getCoreLabel(), NodeProperty.FQN.name(), fullQualifiedName);
             ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
             try {
-                if (node == null && iterator.hasNext()) {
+                if (iterator.hasNext()) {
                     node = iterator.next();
                     nodeCache.put(fullQualifiedName, node);
                 }
@@ -193,7 +193,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      */
     @SuppressWarnings("unchecked")
     private <T extends AbstractDescriptor> T getDescriptor(Node node) {
-        T descriptor = this.descriptorCache.findBy(node);
+        T descriptor = this.descriptorCache.findBy(node.getId());
         if (descriptor == null) {
             // find adapter and create instance
             Class<T> type = (Class<T>) registry.getDescriptorAdapter(node).getJavaType();
@@ -201,7 +201,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             descriptor = mapper.createInstance();
             mapper.setId(descriptor, Long.valueOf(node.getId()));
             descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
-            this.descriptorCache.put(descriptor, node);
+            this.descriptorCache.put(descriptor);
             this.nodeCache.put(descriptor.getFullQualifiedName(), node);
             // create outgoing relationships
             Map<RelationType, Set<AbstractDescriptor>> relations = new HashMap<RelationType, Set<AbstractDescriptor>>();

@@ -44,6 +44,11 @@ import java.util.zip.ZipFile;
 
 public class ClassScanner {
 
+    /**
+     * Defines the number of classes to be scanned before the store is flushed.
+     */
+    public static final int FLUSH_THRESHOLD = 256;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassScanner.class);
 
     private final Store store;
@@ -76,12 +81,18 @@ public class ClassScanner {
                     }
                 }
                 int packageCount = 0;
+                int classCount = 0;
+                LOGGER.info("Archive '{}' contains {} packages.", archive.getAbsolutePath(), entries.size());
                 for (Map.Entry<String, List<ZipEntry>> e : entries.entrySet()) {
                     LOGGER.info("Scanning " + e.getKey() + " (" + packageCount + "/" + entries.size() + ")");
                     for (ZipEntry zipEntry : e.getValue()) {
                         scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
+                        classCount++;
                     }
-                    store.flush();
+                    if (classCount > FLUSH_THRESHOLD) {
+                        store.flush();
+                        classCount = 0;
+                    }
                     packageCount++;
                 }
             } finally {
@@ -107,6 +118,7 @@ public class ClassScanner {
                 super.walk(directory, classFiles);
             }
         }.scan(directory);
+        int classCount = 0;
         for (File classFile : classFiles) {
             scanFile(classFile);
         }
