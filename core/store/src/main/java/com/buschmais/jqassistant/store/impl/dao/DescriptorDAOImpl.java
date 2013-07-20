@@ -92,7 +92,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     @Override
     public <T extends AbstractDescriptor> void persist(T descriptor) {
         LOGGER.debug("Creating node for '{}'.", descriptor.getFullQualifiedName());
-        DescriptorMapper<T> adapter = registry.getDescriptorAdapter(descriptor.getClass());
+        DescriptorMapper<T> adapter = registry.getDescriptorMapper(descriptor.getClass());
         Node node = database.createNode(adapter.getCoreLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         node.setProperty(NodeProperty.FQN.name(), descriptor.getFullQualifiedName());
@@ -111,7 +111,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
     @Override
     public <T extends AbstractDescriptor> T find(Class<T> type, String fullQualifiedName) {
-        DescriptorMapper<AbstractDescriptor> mapper = registry.getDescriptorAdapter(type);
+        DescriptorMapper<AbstractDescriptor> mapper = registry.getDescriptorMapper(type);
         Node node = nodeCache.get(fullQualifiedName);
         if (node == null) {
             ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getCoreLabel(), NodeProperty.FQN.name(), fullQualifiedName);
@@ -146,7 +146,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      */
     private <T extends AbstractDescriptor> void flushRelations(T descriptor) {
         Node node = findNode(descriptor);
-        DescriptorMapper<T> adapter = registry.getDescriptorAdapter(descriptor.getClass());
+        DescriptorMapper<T> adapter = registry.getDescriptorMapper(descriptor.getClass());
         Map<RelationType, Set<? extends AbstractDescriptor>> relations = adapter.getRelations(descriptor);
         for (Entry<RelationType, Set<? extends AbstractDescriptor>> relationEntry : relations.entrySet()) {
             RelationType relationType = relationEntry.getKey();
@@ -176,7 +176,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @return The {@link Node}.
      */
     private <T extends AbstractDescriptor> Node findNode(T descriptor) {
-        DescriptorMapper<T> mapper = registry.getDescriptorAdapter(descriptor.getClass());
+        DescriptorMapper<T> mapper = registry.getDescriptorMapper(descriptor.getClass());
         Long id = mapper.getId(descriptor);
         return database.getNodeById(id);
     }
@@ -196,8 +196,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         T descriptor = this.descriptorCache.findBy(node.getId());
         if (descriptor == null) {
             // find adapter and create instance
-            Class<T> type = (Class<T>) registry.getDescriptorAdapter(node).getJavaType();
-            DescriptorMapper<T> mapper = registry.getDescriptorAdapter(type);
+            Class<T> type = (Class<T>) registry.getDescriptorMapper(node).getJavaType();
+            DescriptorMapper<T> mapper = registry.getDescriptorMapper(type);
             descriptor = mapper.createInstance();
             mapper.setId(descriptor, Long.valueOf(node.getId()));
             descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));

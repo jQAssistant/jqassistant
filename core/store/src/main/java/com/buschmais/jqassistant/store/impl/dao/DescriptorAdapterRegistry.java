@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
-import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.graphdb.Label;
@@ -12,22 +11,21 @@ import java.util.Map;
 
 public class DescriptorAdapterRegistry {
 
-    private final Map<Class<? extends AbstractDescriptor>, DescriptorMapper<?>> adaptersByJavaType = new HashMap<Class<? extends AbstractDescriptor>, DescriptorMapper<?>>();
-    private final Map<String, DescriptorMapper<?>> adaptersByCoreLabel = new HashMap<String, DescriptorMapper<?>>();
+    private final Map<Class<? extends AbstractDescriptor>, DescriptorMapper<?>> mappersByJavaType = new HashMap<Class<? extends AbstractDescriptor>, DescriptorMapper<?>>();
+    private final Map<String, DescriptorMapper<?>> mappersByCoreLabel = new HashMap<String, DescriptorMapper<?>>();
 
-
-    public void registerDAO(DescriptorMapper<? extends AbstractDescriptor> adapter) {
-        this.adaptersByJavaType.put(adapter.getJavaType(), adapter);
-        this.adaptersByCoreLabel.put(adapter.getCoreLabel().name(), adapter);
+    public void register(DescriptorMapper<? extends AbstractDescriptor> mapper) {
+        this.mappersByJavaType.put(mapper.getJavaType(), mapper);
+        this.mappersByCoreLabel.put(mapper.getCoreLabel().name(), mapper);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends AbstractDescriptor> DescriptorMapper<T> getDescriptorAdapter(Node node) {
+    public <T extends AbstractDescriptor> DescriptorMapper<T> getDescriptorMapper(Node node) {
         ResourceIterator<Label> labels = node.getLabels().iterator();
         try {
             while (labels.hasNext()) {
                 Label label = labels.next();
-                DescriptorMapper<T> mapper = (DescriptorMapper<T>) adaptersByCoreLabel.get(label.name());
+                DescriptorMapper<T> mapper = (DescriptorMapper<T>) mappersByCoreLabel.get(label.name());
                 if (mapper != null) {
                     return mapper;
                 }
@@ -39,8 +37,8 @@ public class DescriptorAdapterRegistry {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends AbstractDescriptor> DescriptorMapper<T> getDescriptorAdapter(Class<?> javaType) {
-        DescriptorMapper<T> adapter = (DescriptorMapper<T>) adaptersByJavaType.get(javaType);
+    public <T extends AbstractDescriptor> DescriptorMapper<T> getDescriptorMapper(Class<?> javaType) {
+        DescriptorMapper<T> adapter = (DescriptorMapper<T>) mappersByJavaType.get(javaType);
         if (adapter == null) {
             throw new IllegalArgumentException("Cannot find mapper for java type " + javaType);
         }
