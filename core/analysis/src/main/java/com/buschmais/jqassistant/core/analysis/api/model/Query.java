@@ -13,6 +13,7 @@ import java.util.Map;
 public class Query {
 
     private String cypher;
+
     private Map<String, Object> parameters = new HashMap<String, Object>();
 
     public String getCypher() {
