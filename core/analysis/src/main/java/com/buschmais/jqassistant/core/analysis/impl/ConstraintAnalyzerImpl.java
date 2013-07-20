@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+/**
+ * Implementation of the ConstraintAnalyzer.
+ */
 public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintAnalyzerImpl.class);
@@ -22,17 +25,32 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
 
     private Set<ConstraintGroup> executedConstraintGroups = new HashSet<ConstraintGroup>();
 
-    private List<ConstraintViolations> constraintViolations = new ArrayList<ConstraintViolations>();
+    private List<Result<Concept>> conceptResults = new ArrayList<Result<Concept>>();
 
+    private List<Result<Constraint>> constraintViolations = new ArrayList<Result<Constraint>>();
+
+    /**
+     * Constructor.
+     * @param store The Store to use.
+     */
     public ConstraintAnalyzerImpl(Store store) {
         this.store = store;
     }
 
     @Override
-    public List<ConstraintViolations> validateConstraints(Iterable<ConstraintGroup> constraintGroups) {
+    public void validateConstraints(Iterable<ConstraintGroup> constraintGroups) {
         for (ConstraintGroup constraintGroup : constraintGroups) {
             validateConstraintGroup(constraintGroup);
         }
+    }
+
+    @Override
+    public List<Result<Concept>> getConceptResults() {
+        return conceptResults;
+    }
+
+    @Override
+    public List<Result<Constraint>> getConstraintViolations() {
         return constraintViolations;
     }
 
@@ -55,19 +73,10 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
                 applyConcept(requiredConcept);
             }
             LOGGER.info("Validating constraint '{}'", constraint.getId());
-            QueryResult queryResult = null;
-            List<Map<String, Object>> violations = new ArrayList<Map<String, Object>>();
-            try {
-                queryResult = executeQuery(constraint.getQuery());
-                for (QueryResult.Row row : queryResult.getRows()) {
-                    violations.add(row.get());
-                }
-            } finally {
-                IOUtils.closeQuietly(queryResult);
-            }
+            List<Map<String, Object>> violations = execute(constraint);
             if (!violations.isEmpty()) {
                 LOGGER.warn("Found {} violations for constraint '{}'.", violations.size(), constraint.getId());
-                this.constraintViolations.add(new ConstraintViolations(constraint, violations));
+                this.constraintViolations.add(new Result(constraint, violations));
             }
             executedConstraints.add(constraint);
         }
@@ -79,16 +88,29 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
                 applyConcept(requiredConcept);
             }
             LOGGER.info("Applying concept '{}'.", concept.getId());
-            QueryResult queryResult = null;
             store.beginTransaction();
             try {
-                queryResult = executeQuery(concept.getQuery());
+                List<Map<String, Object>> conceptRows = execute(concept);
+                conceptResults.add(new Result(concept, conceptRows));
             } finally {
-                IOUtils.closeQuietly(queryResult);
                 store.endTransaction();
             }
             executedConcepts.add(concept);
         }
+    }
+
+    private List<Map<String, Object>> execute(AbstractExecutable executable) {
+        List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+        QueryResult queryResult = null;
+        try {
+            queryResult = executeQuery(executable.getQuery());
+            for (QueryResult.Row row : queryResult.getRows()) {
+                rows.add(row.get());
+            }
+        } finally {
+            IOUtils.closeQuietly(queryResult);
+        }
+        return rows;
     }
 
     private QueryResult executeQuery(Query query) {

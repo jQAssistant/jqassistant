@@ -35,6 +35,11 @@
                         <goals>
                             <goal>verify</goal>
                         </goals>
+                        <configuration>
+                            <constraintGroups>
+                                <constraintGroup>continuous</constraintGroup>
+                            </constraintGroups>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -6,6 +6,7 @@
             MATCH (p:PACKAGE)
             WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.ui"
             SET p:LAYER:UI
+            RETURN p
         ]]></cypher>
     </concept>
 
@@ -15,6 +16,7 @@
             MATCH (p:PACKAGE)
             WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.logic"
             SET p:LAYER:LOGIC
+            RETURN p
         ]]></cypher>
     </concept>
 
@@ -24,6 +26,7 @@
             MATCH (p:PACKAGE)
             WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.persistence"
             SET p:LAYER:PERSISTENCE
+            RETURN p
         ]]></cypher>
     </concept>
 
@@ -34,7 +37,7 @@
         <description>Packages in layer UI must have only dependencies to classes in layer UI, LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:UI)-[:CONTAINS*]->(classFieldOrMethod)-[:IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (package:PACKAGE:LAYER:UI)-[:CONTAINS*]->(classFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
               (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
             WHERE NOT (
               dependencyPackage:UI
@@ -52,7 +55,7 @@
         <description>Packages in layer Logic must have only dependencies to classes in layer LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:LOGIC)-[:CONTAINS*]->(classFieldOrMethod)-[:IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (package:PACKAGE:LAYER:LOGIC)-[:CONTAINS*]->(classFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
               (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
             WHERE NOT (
               dependencyPackage:LOGIC
@@ -69,7 +72,7 @@
         <description>Packages in layer Persistence must have only dependencies to classes in layer PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:PERSISTENCE)-[:CONTAINS*]->(classFieldOrMethod)-[:IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (package:PACKAGE:LAYER:PERSISTENCE)-[:CONTAINS*]->(classFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
               (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
             WHERE NOT (
               dependencyPackage:PERSISTENCE

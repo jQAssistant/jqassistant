@@ -6,6 +6,7 @@
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
             SET c:IMPL
+            RETURN c
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.impl"/>
     </concept>
@@ -15,8 +16,22 @@
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
             SET c:API
+            RETURN c
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.api"/>
     </concept>
+
+    <!-- Constraints -->
+    <constraint id="abstractness:ApiMustNotDependOnImplementation">
+        <requiresConcept refId="abstractness:ApiClasses"/>
+        <requiresConcept refId="abstractness:ImplementationClasses"/>
+        <description>API classes must not have dependencies on implementation classes.</description>
+        <cypher><![CDATA[
+            MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
+            WHERE a:API AND i:IMPL
+            RETURN extract(c in nodes(p) : c.FQN) as Path
+            ORDER BY length(p) DESC
+        ]]></cypher>
+    </constraint>
 
 </jqa:jqassistant-rules>

@@ -6,6 +6,7 @@
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
             SET c:SLICE:USER
+            RETURN c
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.user"/>
     </concept>
@@ -16,6 +17,7 @@
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
             SET c:SLICE:CART
+            RETURN c
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.cart"/>
     </concept>

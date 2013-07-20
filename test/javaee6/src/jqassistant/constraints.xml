@@ -1,18 +1,5 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <!-- Constraints -->
-    <constraint id="ApiMustNotDependOnImplementation">
-        <requiresConcept refId="abstractness:ApiClasses"/>
-        <requiresConcept refId="abstractness:ImplementationClasses"/>
-        <description>API classes must not have dependencies on implementation classes.</description>
-        <cypher><![CDATA[
-            MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
-            WHERE a:API AND i:IMPL
-            RETURN extract(c in nodes(p) : c.FQN) as Path
-            ORDER BY length(p) DESC
-        ]]></cypher>
-    </constraint>
-
     <constraint id="JpaEntitiesInApiModelPackage">
         <requiresConcept refId="jpa:Entity"/>
         <description>All JPA entities must be located in the package "persistence.api"</description>
@@ -56,10 +43,10 @@
         <includeConstraint refId="layer:UI"/>
         <includeConstraint refId="layer:Logic"/>
         <includeConstraint refId="layer:Persistence"/>
+        <includeConstraint refId="abstractness:ApiMustNotDependOnImplementation"/>
         <includeConstraint refId="JpaEntitiesInApiModelPackage"/>
         <includeConstraint refId="EjbLocatedInImplementationPackage"/>
         <includeConstraint refId="TestClassNameHasTestSuffix"/>
-        <includeConstraint refId="ApiMustNotDependOnImplementation"/>
     </constraintGroup>
 
 </jqa:jqassistant-rules>

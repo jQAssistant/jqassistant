@@ -18,8 +18,7 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
-import com.buschmais.jqassistant.core.analysis.api.model.ConstraintGroup;
-import com.buschmais.jqassistant.core.analysis.api.model.ConstraintViolations;
+import com.buschmais.jqassistant.core.analysis.api.model.*;
 import com.buschmais.jqassistant.core.analysis.impl.ConstraintAnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import com.buschmais.jqassistant.store.api.Store;
@@ -50,35 +49,69 @@ public class VerifyMojo extends AbstractStoreMojo {
      */
     protected Rules rules;
 
+    /**
+     * The list of constraint group names to be executed.
+     *
+     * @parameter
+     */
+    protected List<String> constraintGroups;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final Map<String, ConstraintGroup> constraintGroups = readRules();
+        final Map<String, ConstraintGroup> availableConstraintGroups = readRules();
+        final List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(availableConstraintGroups);
 
-        List<ConstraintViolations> constraintViolations = execute(new StoreOperation<List<ConstraintViolations>>() {
+        execute(new StoreOperation<Void, MojoFailureException>() {
             @Override
-            public List<ConstraintViolations> run(Store store) throws MojoExecutionException {
+            public Void run(Store store) throws MojoFailureException {
                 ConstraintAnalyzer analyzer = new ConstraintAnalyzerImpl(store);
-                return analyzer.validateConstraints(constraintGroups.values());
+                analyzer.validateConstraints(selectedConstraintGroups);
+                // Log a warning for each concept which did not return a result (i.e. has not been applied)
+                List<Result<Concept>> conceptResults = analyzer.getConceptResults();
+                for (Result<Concept> conceptResult : conceptResults) {
+                    if (conceptResult.getRows().isEmpty()) {
+                        getLog().warn("Concept '" + conceptResult.getExecutable().getId() + "' did not return a result.");
+                    }
+                }
+                List<Result<Constraint>> constraintViolations = analyzer.getConstraintViolations();
+                if (!constraintViolations.isEmpty()) {
+                    for (Result<Constraint> constraintViolation : constraintViolations) {
+                        AbstractExecutable constraint = constraintViolation.getExecutable();
+                        getLog().error(constraint.getId() + ": " + constraint.getDescription());
+                        for (Map<String, Object> columns : constraintViolation.getRows()) {
+                            StringBuilder message = new StringBuilder();
+                            for (Map.Entry<String, Object> entry : columns.entrySet()) {
+                                if (message.length() > 0) {
+                                    message.append(", ");
+                                }
+                                message.append(entry.getKey());
+                                message.append('=');
+                                message.append(entry.getValue());
+                            }
+                            getLog().error("  " + message.toString());
+                        }
+                    }
+                    throw new MojoFailureException(constraintViolations.size() + " constraints have been violated!");
+                }
+                return null;
             }
         });
-        if (!constraintViolations.isEmpty()) {
-            for (ConstraintViolations constraintViolation : constraintViolations) {
-                getLog().error(constraintViolation.getConstraint().getId() + ": " + constraintViolation.getConstraint().getDescription());
-                for (Map<String, Object> columns : constraintViolation.getViolations()) {
-                    StringBuilder message = new StringBuilder();
-                    for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                        if (message.length() > 0) {
-                            message.append(", ");
-                        }
-                        message.append(entry.getKey());
-                        message.append('=');
-                        message.append(entry.getValue());
-                    }
-                    getLog().error("  " + message.toString());
+    }
+
+    private List<ConstraintGroup> getSelectedConstraintGroups(Map<String, ConstraintGroup> availableConstraintGroups) throws MojoExecutionException {
+        final List<ConstraintGroup> selectedConstraintGroups = new ArrayList<ConstraintGroup>();
+        if (constraintGroups != null) {
+            for (String constraintGroup : constraintGroups) {
+                ConstraintGroup group = availableConstraintGroups.get(constraintGroup);
+                if (group == null) {
+                    throw new MojoExecutionException("The constraint group '" + constraintGroup + "' is not defined.");
                 }
+                selectedConstraintGroups.add(group);
             }
-            throw new MojoFailureException(constraintViolations.size() + " constraints have been violated!");
+        } else {
+            selectedConstraintGroups.addAll(availableConstraintGroups.values());
         }
+        return selectedConstraintGroups;
     }
 
     private Map<String, ConstraintGroup> readRules() throws MojoExecutionException {

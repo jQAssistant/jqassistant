@@ -4,11 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
- * User: dimahler
- * Date: 6/21/13
- * Time: 3:13 PM
- * To change this template use File | Settings | File Templates.
+ * Defines a constraint group.
  */
 public class ConstraintGroup {
 
@@ -54,5 +50,10 @@ public class ConstraintGroup {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "Constraint Group " + id;
     }
 }

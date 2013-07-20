@@ -38,7 +38,7 @@ public class ScanMojo extends AbstractStoreMojo {
 
     private void scanDirectory(final File directory) throws MojoExecutionException {
         getLog().info("Scanning directory: " + directory.getAbsolutePath());
-        super.executeInTransaction(new StoreOperation<Void>() {
+        super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
                 ClassScanner scanner = new ClassScanner(store);

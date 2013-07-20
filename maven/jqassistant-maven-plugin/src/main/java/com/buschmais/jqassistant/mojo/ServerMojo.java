@@ -31,7 +31,7 @@ public class ServerMojo extends AbstractStoreMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        execute(new StoreOperation<Void>() {
+        execute(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
                 Server server = new Server((EmbeddedGraphStore) store);

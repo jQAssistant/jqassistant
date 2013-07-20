@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.store.api.Store;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
@@ -9,8 +10,8 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
 
     public static final String DEFAULT_STORE_DIRECTORY = "jqassistant";
 
-    protected static interface StoreOperation<T> {
-        public T run(Store store) throws MojoExecutionException;
+    protected static interface StoreOperation<T, E extends AbstractMojoExecutionException> {
+        public T run(Store store) throws E;
     }
 
     /**
@@ -67,7 +68,7 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
      */
     protected StoreProvider storeProvider;
 
-    protected <T> T executeInTransaction(StoreOperation<T> operation) throws MojoExecutionException {
+    protected <T, E extends AbstractMojoExecutionException> T executeInTransaction(StoreOperation<T, E> operation) throws E {
         final Store store = getStore();
         store.beginTransaction();
         try {
@@ -77,7 +78,7 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
         }
     }
 
-    protected <T> T execute(StoreOperation<T> operation) throws MojoExecutionException {
+    protected <T, E extends AbstractMojoExecutionException> T execute(StoreOperation<T, E> operation) throws E {
         return operation.run(getStore());
     }
 
