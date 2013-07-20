@@ -12,6 +12,8 @@ import org.neo4j.kernel.GraphDatabaseAPI;
 import java.util.Collections;
 import java.util.Map;
 
+import static com.buschmais.jqassistant.store.api.DescriptorDAO.NodeProperty.FQN;
+
 /**
  * Abstract base implementation of a {@link Store}.
  * <p>
@@ -40,11 +42,15 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start() {
         database = startDatabase();
+        for (DescriptorDAO.CoreLabel label : DescriptorDAO.CoreLabel.values()) {
+            database.schema().indexFor(label).on(FQN.name());
+        }
         adapterRegistry = new DescriptorAdapterRegistry();
-        adapterRegistry.registerDAO(new PackageDescriptorMapper());
-        adapterRegistry.registerDAO(new ClassDescriptorMapper());
-        adapterRegistry.registerDAO(new MethodDescriptorMapper());
-        adapterRegistry.registerDAO(new FieldDescriptorMapper());
+        adapterRegistry.register(new PackageDescriptorMapper());
+        adapterRegistry.register(new ClassDescriptorMapper());
+        adapterRegistry.register(new MethodDescriptorMapper());
+        adapterRegistry.register(new FieldDescriptorMapper());
+
         descriptorDAO = new DescriptorDAOImpl(adapterRegistry, database);
     }
 
