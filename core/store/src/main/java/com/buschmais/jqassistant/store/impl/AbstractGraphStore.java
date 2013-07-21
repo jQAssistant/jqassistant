@@ -50,7 +50,6 @@ public abstract class AbstractGraphStore implements Store {
         adapterRegistry.register(new ClassDescriptorMapper());
         adapterRegistry.register(new MethodDescriptorMapper());
         adapterRegistry.register(new FieldDescriptorMapper());
-
         descriptorDAO = new DescriptorDAOImpl(adapterRegistry, database);
     }
 
@@ -68,45 +67,33 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public PackageDescriptor resolvePackageDescriptor(final PackageDescriptor parentPackageDescriptor, final String packageName) {
-        final Name name = new Name(parentPackageDescriptor, '.', packageName);
-        PackageDescriptor packageDescriptor = descriptorDAO.find(PackageDescriptor.class, name.getFullQualifiedName());
-        if (packageDescriptor == null) {
-            packageDescriptor = new PackageDescriptor();
-            packageDescriptor.setFullQualifiedName(name.getFullQualifiedName());
-            descriptorDAO.persist(packageDescriptor);
-        }
-        return packageDescriptor;
+    public PackageDescriptor createPackageDescriptor(final PackageDescriptor parentPackageDescriptor, final String packageName) {
+        return persist(new PackageDescriptor(), new Name(parentPackageDescriptor, '.', packageName));
     }
 
     @Override
-    public ClassDescriptor resolveClassDescriptor(final PackageDescriptor packageDescriptor, final String className) {
-        final Name name = new Name(packageDescriptor, '.', className);
-        ClassDescriptor classDescriptor = descriptorDAO.find(ClassDescriptor.class, name.getFullQualifiedName());
-        if (classDescriptor == null) {
-            classDescriptor = new ClassDescriptor();
-            classDescriptor.setFullQualifiedName(name.getFullQualifiedName());
-            descriptorDAO.persist(classDescriptor);
-        }
-        return classDescriptor;
+    public PackageDescriptor findPackageDescriptor(String fullQualifiedName) {
+        return descriptorDAO.find(PackageDescriptor.class, fullQualifiedName);
     }
 
     @Override
-    public MethodDescriptor resolveMethodDescriptor(final ClassDescriptor classDescriptor, String methodName) {
-        final Name name = new Name(classDescriptor, '#', methodName);
-        MethodDescriptor methodDescriptor = new MethodDescriptor();
-        methodDescriptor.setFullQualifiedName(name.getFullQualifiedName());
-        descriptorDAO.persist(methodDescriptor);
-        return methodDescriptor;
+    public ClassDescriptor createClassDescriptor(final PackageDescriptor packageDescriptor, final String className) {
+        return persist(new ClassDescriptor(), new Name(packageDescriptor, '.', className));
     }
 
     @Override
-    public FieldDescriptor resolveFieldDescriptor(final ClassDescriptor classDescriptor, String fieldName) {
-        final Name name = new Name(classDescriptor, '#', fieldName);
-        FieldDescriptor fieldDescriptor = new FieldDescriptor();
-        fieldDescriptor.setFullQualifiedName(name.getFullQualifiedName());
-        descriptorDAO.persist(fieldDescriptor);
-        return fieldDescriptor;
+    public ClassDescriptor findClassDescriptor(String fullQualifiedName) {
+        return descriptorDAO.find(ClassDescriptor.class, fullQualifiedName);
+    }
+
+    @Override
+    public MethodDescriptor createMethodDescriptor(final ClassDescriptor classDescriptor, String methodName) {
+        return persist(new MethodDescriptor(), new Name(classDescriptor, '#', methodName));
+    }
+
+    @Override
+    public FieldDescriptor createFieldDescriptor(final ClassDescriptor classDescriptor, String fieldName) {
+        return persist(new FieldDescriptor(), new Name(classDescriptor, '#', fieldName));
     }
 
     @Override
@@ -141,5 +128,11 @@ public abstract class AbstractGraphStore implements Store {
      * @param database The used {@link GraphDatabaseService} instance.
      */
     protected abstract void stopDatabase(GraphDatabaseService database);
+
+    private <T extends AbstractDescriptor> T persist(T descriptor, Name name) {
+        descriptor.setFullQualifiedName(name.getFullQualifiedName());
+        descriptorDAO.persist(descriptor);
+        return descriptor;
+    }
 
 }

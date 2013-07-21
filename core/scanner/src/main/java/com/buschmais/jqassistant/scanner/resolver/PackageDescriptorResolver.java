@@ -11,11 +11,16 @@ public class PackageDescriptorResolver extends AbstractDescriptorResolver<Packag
 
     @Override
     public PackageDescriptor create(PackageDescriptor parent, String name) {
-        PackageDescriptor packageDescriptor = getStore().resolvePackageDescriptor(parent, name);
+        PackageDescriptor packageDescriptor = getStore().createPackageDescriptor(parent, name);
         if (parent != null) {
             parent.getContains().add(packageDescriptor);
         }
         return packageDescriptor;
+    }
+
+    @Override
+    protected PackageDescriptor find(String fullQualifiedName) {
+        return getStore().findPackageDescriptor(fullQualifiedName);
     }
 
     @Override

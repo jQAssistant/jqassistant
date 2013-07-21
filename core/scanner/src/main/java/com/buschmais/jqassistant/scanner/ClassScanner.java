@@ -44,17 +44,41 @@ import java.util.zip.ZipFile;
 
 public class ClassScanner {
 
+    public abstract static class ScanListener {
+
+        public void beforePackage() {
+        }
+
+        public void afterPackage() {
+        }
+
+        public void beforeClass() {
+        }
+
+        public void afterClass() {
+        }
+    }
+
     /**
      * Defines the number of classes to be scanned before the store is flushed.
      */
-    public static final int FLUSH_THRESHOLD = 256;
+    public static final int FLUSH_THRESHOLD = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassScanner.class);
 
     private final Store store;
 
+    private final ScanListener scanListener;
+
+    public ClassScanner(Store graphStore, ScanListener listener) {
+        this.store = graphStore;
+        this.scanListener = listener;
+    }
+
     public ClassScanner(Store graphStore) {
         this.store = graphStore;
+        this.scanListener = new ScanListener() {
+        };
     }
 
     public void scanArchive(File archive) throws IOException {
@@ -64,36 +88,47 @@ public class ClassScanner {
             LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
             long start = System.currentTimeMillis();
             ZipFile zipFile = new ZipFile(archive);
+            int totalClasses = 0;
+            int totalPackages = 0;
             try {
                 final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-                Map<String, List<ZipEntry>> entries = new TreeMap<String, List<ZipEntry>>();
+                Map<String, SortedSet<ZipEntry>> entries = new TreeMap<String, SortedSet<ZipEntry>>();
+                Comparator<ZipEntry> zipEntryComparator = new Comparator<ZipEntry>() {
+                    @Override
+                    public int compare(ZipEntry o1, ZipEntry o2) {
+                        return o1.getName().compareTo(o2.getName());
+                    }
+                };
                 while (zipEntries.hasMoreElements()) {
                     ZipEntry e = zipEntries.nextElement();
                     String name = e.getName();
                     if (!e.isDirectory() && name.endsWith(".class")) {
                         String packageDirectory = name.substring(0, name.lastIndexOf('/'));
-                        List<ZipEntry> packageEntries = entries.get(packageDirectory);
+                        SortedSet<ZipEntry> packageEntries = entries.get(packageDirectory);
                         if (packageEntries == null) {
-                            packageEntries = new ArrayList<ZipEntry>();
+                            packageEntries = new TreeSet<ZipEntry>(zipEntryComparator);
                             entries.put(packageDirectory, packageEntries);
+                            totalPackages++;
                         }
                         packageEntries.add(e);
+                        totalClasses++;
                     }
                 }
-                int packageCount = 0;
-                int classCount = 0;
+                int currentPackages = 0;
+                int currentClasses = 0;
                 LOGGER.info("Archive '{}' contains {} packages.", archive.getAbsolutePath(), entries.size());
-                for (Map.Entry<String, List<ZipEntry>> e : entries.entrySet()) {
-                    LOGGER.info("Scanning " + e.getKey() + " (" + packageCount + "/" + entries.size() + ")");
-                    for (ZipEntry zipEntry : e.getValue()) {
-                        scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
-                        classCount++;
+                for (Map.Entry<String, SortedSet<ZipEntry>> e : entries.entrySet()) {
+                    LOGGER.info("Scanning " + e.getKey() + " (" + currentPackages + "/" + totalPackages + " packages, " + currentClasses + "/" + totalClasses + " classes)");
+                    scanListener.beforePackage();
+                    try {
+                        for (ZipEntry zipEntry : e.getValue()) {
+                            scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
+                            currentClasses++;
+                        }
+                    } finally {
+                        scanListener.afterPackage();
                     }
-                    if (classCount > FLUSH_THRESHOLD) {
-                        store.flush();
-                        classCount = 0;
-                    }
-                    packageCount++;
+                    currentPackages++;
                 }
             } finally {
                 zipFile.close();
@@ -138,7 +173,12 @@ public class ClassScanner {
     public void scanInputStream(InputStream inputStream, String name) throws IOException {
         LOGGER.info("Scanning " + name);
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
-        ClassVisitor visitor = new ClassVisitor(resolverFactory);
-        new ClassReader(inputStream).accept(visitor, 0);
+        scanListener.beforeClass();
+        try {
+            ClassVisitor visitor = new ClassVisitor(resolverFactory);
+            new ClassReader(inputStream).accept(visitor, 0);
+        } finally {
+            scanListener.afterClass();
+        }
     }
 }

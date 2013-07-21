@@ -18,7 +18,7 @@ public class GenericsTest extends AbstractScannerTest {
     public void genericType() throws IOException {
         ClassDescriptor genericType = stubClass(GenericType.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(genericType, "void <init>()")).thenReturn(constructor);
+        when(store.createMethodDescriptor(genericType, "void <init>()")).thenReturn(constructor);
 
         scanner.scanClasses(GenericType.class);
 
@@ -32,7 +32,7 @@ public class GenericsTest extends AbstractScannerTest {
         ClassDescriptor boundGenericType = stubClass(BoundGenericType.class);
         ClassDescriptor javaLangNumber = stubClass(Number.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(boundGenericType, "void <init>()")).thenReturn(constructor);
+        when(store.createMethodDescriptor(boundGenericType, "void <init>()")).thenReturn(constructor);
 
         scanner.scanClasses(BoundGenericType.class);
 
@@ -47,7 +47,7 @@ public class GenericsTest extends AbstractScannerTest {
         ClassDescriptor nestedGenericType = stubClass(NestedGenericType.class);
         ClassDescriptor genericType = stubClass(GenericType.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
+        when(store.createMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
 
         scanner.scanClasses(NestedGenericType.class);
 
@@ -62,9 +62,9 @@ public class GenericsTest extends AbstractScannerTest {
         ClassDescriptor nestedGenericType = stubClass(NestedGenericMethod.class);
         ClassDescriptor genericType = stubClass(GenericType.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
+        when(store.createMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
         MethodDescriptor get = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(nestedGenericType, "java.lang.Object get(com.buschmais.jqassistant.scanner.test.sets.generics.GenericType)")).thenReturn(get);
+        when(store.createMethodDescriptor(nestedGenericType, "java.lang.Object get(com.buschmais.jqassistant.scanner.test.sets.generics.GenericType)")).thenReturn(get);
 
         scanner.scanClasses(NestedGenericMethod.class);
 
@@ -80,7 +80,7 @@ public class GenericsTest extends AbstractScannerTest {
         ClassDescriptor genericType = stubClass(GenericType.class);
         ClassDescriptor javaLangNumber = stubClass(Number.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
+        when(store.createMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
 
         scanner.scanClasses(ExtendsGenericClass.class);
 
@@ -96,7 +96,7 @@ public class GenericsTest extends AbstractScannerTest {
         ClassDescriptor javaUtilIterable = stubClass(Iterable.class);
         ClassDescriptor javaLangNumber = stubClass(Number.class);
         MethodDescriptor constructor = new MethodDescriptor();
-        when(store.resolveMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
+        when(store.createMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
 
         scanner.scanClasses(ImplementsGenericInterface.class);
 

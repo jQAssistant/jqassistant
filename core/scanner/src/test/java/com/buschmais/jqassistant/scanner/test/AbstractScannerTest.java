@@ -52,7 +52,7 @@ public abstract class AbstractScannerTest {
             }
             packageDescriptor = new PackageDescriptor();
             packageDescriptor.setFullQualifiedName(fullQualifiedName);
-            when(store.resolvePackageDescriptor(parentDescriptor, name)).thenReturn(packageDescriptor);
+            when(store.createPackageDescriptor(parentDescriptor, name)).thenReturn(packageDescriptor);
             packageCache.put(fullQualifiedName, packageDescriptor);
         }
         return packageDescriptor;
@@ -77,7 +77,7 @@ public abstract class AbstractScannerTest {
         } else {
             classDescriptor.setFullQualifiedName(className);
         }
-        when(store.resolveClassDescriptor(packageDescriptor, className)).thenReturn(classDescriptor);
+        when(store.createClassDescriptor(packageDescriptor, className)).thenReturn(classDescriptor);
         return classDescriptor;
     }
 }

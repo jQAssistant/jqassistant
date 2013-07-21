@@ -3,16 +3,11 @@ package com.buschmais.jqassistant.scanner.resolver;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T extends AbstractDescriptor> {
 
     private final Store store;
 
     private final AbstractDescriptorResolver<?, P> parentResolver;
-
-    private final Map<String, T> cachedDescriptors = new HashMap<String, T>();
 
     protected AbstractDescriptorResolver(Store store, AbstractDescriptorResolver<?, P> parentResolver) {
         this.store = store;
@@ -26,7 +21,7 @@ public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T
     }
 
     public T resolve(String fullQualifiedName) {
-        T descriptor = cachedDescriptors.get(fullQualifiedName);
+        T descriptor = find(fullQualifiedName);
         if (descriptor == null) {
             String name;
             P parent = null;
@@ -39,7 +34,6 @@ public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T
                 parent = parentResolver.resolve(parentName);
             }
             descriptor = this.create(parent, name);
-            this.cachedDescriptors.put(fullQualifiedName, descriptor);
         }
         return descriptor;
     }
@@ -51,4 +45,6 @@ public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T
     protected abstract char getSeparator();
 
     protected abstract T create(P parent, String name);
+
+    protected abstract T find(String fullQualifiedName);
 }

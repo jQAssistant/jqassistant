@@ -12,11 +12,16 @@ public class ClassDescriptorResolver extends AbstractDescriptorResolver<PackageD
 
     @Override
     public ClassDescriptor create(PackageDescriptor parent, String name) {
-        ClassDescriptor classDescriptor = getStore().resolveClassDescriptor(parent, name);
+        ClassDescriptor classDescriptor = getStore().createClassDescriptor(parent, name);
         if (parent != null) {
             parent.getContains().add(classDescriptor);
         }
         return classDescriptor;
+    }
+
+    @Override
+    protected ClassDescriptor find(String fullQualifiedName) {
+        return getStore().findClassDescriptor(fullQualifiedName);
     }
 
     @Override
