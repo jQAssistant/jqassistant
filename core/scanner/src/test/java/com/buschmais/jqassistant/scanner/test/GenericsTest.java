@@ -24,7 +24,7 @@ public class GenericsTest extends AbstractScannerTest {
 
         assertThat(genericType.getSuperClass(), equalTo(javaLangObject));
         assertThat(genericType.getContains(), hasItem(constructor));
-        assertThat(genericType.getDependencies(), hasItem(_void));
+        assertThat(constructor.getDependencies(), hasItem(_void));
     }
 
     @Test

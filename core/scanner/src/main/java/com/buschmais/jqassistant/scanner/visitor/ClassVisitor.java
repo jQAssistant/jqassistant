@@ -51,7 +51,11 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
         MethodDescriptor methodDescriptor = getMethodDescriptor(classDescriptor, name, desc);
         classDescriptor.getContains().add(methodDescriptor);
         if (signature == null) {
-            addMethodDesc(desc);
+            addDependency(methodDescriptor, getType(Type.getReturnType(desc)));
+            Type[] types = Type.getArgumentTypes(desc);
+            for (int i = 0; i < types.length; i++) {
+                addDependency(methodDescriptor, getType(types[i]));
+            }
         } else {
             new SignatureReader(signature).accept(new DependentSignatureVisitor<MethodDescriptor>(methodDescriptor, getResolverFactory()));
         }
@@ -79,14 +83,6 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
     }
 
     // ---------------------------------------------
-
-    private void addMethodDesc(final String desc) {
-        addDependency(classDescriptor, getType(Type.getReturnType(desc)));
-        Type[] types = Type.getArgumentTypes(desc);
-        for (int i = 0; i < types.length; i++) {
-            addDependency(classDescriptor, getType(types[i]));
-        }
-    }
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
