@@ -103,12 +103,12 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
     }
 
     protected MethodDescriptor getMethodDescriptor(ClassDescriptor classDescriptor, String name, String desc) {
-        MethodDescriptor methodDescriptor = getStore().resolveMethodDescriptor(classDescriptor, getMethodSignature(name, desc));
+        MethodDescriptor methodDescriptor = getStore().createMethodDescriptor(classDescriptor, getMethodSignature(name, desc));
         return methodDescriptor;
     }
 
     protected FieldDescriptor getFielDescriptor(ClassDescriptor classDescriptor, String name, String desc) {
-        FieldDescriptor fieldDescriptor = getStore().resolveFieldDescriptor(classDescriptor, getFieldSignature(name, desc));
+        FieldDescriptor fieldDescriptor = getStore().createFieldDescriptor(classDescriptor, getFieldSignature(name, desc));
         return fieldDescriptor;
     }
 

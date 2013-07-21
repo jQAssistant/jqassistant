@@ -15,7 +15,7 @@ public abstract class AbstractScannerIT {
     @Before
     public void startStore() {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        scanner = new ClassScanner(store);
+        scanner = new ClassScanner(store, getScanListener());
         store.start();
         store.beginTransaction();
         store.reset();
@@ -25,6 +25,10 @@ public abstract class AbstractScannerIT {
     @After
     public void stopStore() {
         store.stop();
+    }
+
+    protected ClassScanner.ScanListener getScanListener() {
+        return new ClassScanner.ScanListener() {};
     }
 
 }

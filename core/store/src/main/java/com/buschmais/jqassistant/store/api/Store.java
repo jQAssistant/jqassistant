@@ -68,7 +68,16 @@ public interface Store {
      * @param packageName             The name of the package.
      * @return The resolved {@link PackageDescriptor}.
      */
-    PackageDescriptor resolvePackageDescriptor(PackageDescriptor parentPackageDescriptor, String packageName);
+    PackageDescriptor createPackageDescriptor(PackageDescriptor parentPackageDescriptor, String packageName);
+
+
+    /**
+     * Finds a {@link ClassDescriptor} by it's full qualified name.
+     *
+     * @param fullQualifiedName The full qualified name.
+     * @return The {@link ClassDescriptor} or <code>null</code> if it does not exist.
+     */
+    PackageDescriptor findPackageDescriptor(String fullQualifiedName);
 
     /**
      * Resolves a {@link ClassDescriptor}.
@@ -83,7 +92,15 @@ public interface Store {
      * @param className         The name of the class.
      * @return The resolved {@link ClassDescriptor}.
      */
-    ClassDescriptor resolveClassDescriptor(PackageDescriptor packageDescriptor, String className);
+    ClassDescriptor createClassDescriptor(PackageDescriptor packageDescriptor, String className);
+
+    /**
+     * Finds a {@link ClassDescriptor} by it's full qualified name.
+     *
+     * @param fullQualifiedName The full qualified name.
+     * @return The {@link ClassDescriptor} or <code>null</code> if it does not exist.
+     */
+    ClassDescriptor findClassDescriptor(String fullQualifiedName);
 
     /**
      * Resolves a {@link MethodDescriptor}.
@@ -98,7 +115,7 @@ public interface Store {
      * @param methodName      The name of the method.
      * @return The resolved {@link ClassDescriptor}.
      */
-    MethodDescriptor resolveMethodDescriptor(ClassDescriptor classDescriptor, String methodName);
+    MethodDescriptor createMethodDescriptor(ClassDescriptor classDescriptor, String methodName);
 
     /**
      * Resolves a {@link FieldDescriptor}.
@@ -113,7 +130,7 @@ public interface Store {
      * @param fieldName       The name of the field.
      * @return The resolved {@link FieldDescriptor}.
      */
-    FieldDescriptor resolveFieldDescriptor(ClassDescriptor classDescriptor, String fieldName);
+    FieldDescriptor createFieldDescriptor(ClassDescriptor classDescriptor, String fieldName);
 
     /**
      * Executes a CYPHER query.
