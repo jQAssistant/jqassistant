@@ -24,7 +24,7 @@ public abstract class AbstractVisitor {
     }
 
     protected ClassDescriptor getClassDescriptor(String typeName) {
-        String fullQualifiedName = Type.getObjectType(typeName).getClassName();
+        String fullQualifiedName = getType(Type.getObjectType(typeName));
         return resolverFactory.getClassDescriptorResolver().resolve(fullQualifiedName);
     }
 
