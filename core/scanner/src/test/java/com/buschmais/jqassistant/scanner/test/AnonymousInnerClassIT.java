@@ -18,7 +18,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
     @Test
     public void outerClass() throws IOException {
         scanClasses(AnonymousInnerClass.class);
-        QueryResult result = store.executeQuery("MATCH (outerClass:CLASS) RETURN c");
+        QueryResult result = store.executeQuery("MATCH (outerClass:CLASS) RETURN outerClass");
         Iterable<QueryResult.Row> rows = result.getRows();
         QueryResult.Row row = rows.iterator().next();
         ClassDescriptor outerClass = row.get("outerClass");
