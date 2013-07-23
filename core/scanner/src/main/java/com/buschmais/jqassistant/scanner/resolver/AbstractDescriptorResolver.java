@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scanner.resolver;
 
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
 
 public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T extends AbstractDescriptor> {
 

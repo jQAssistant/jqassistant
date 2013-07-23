@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
 import com.buschmais.jqassistant.core.analysis.api.model.*;
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.QueryResult;
+import com.buschmais.jqassistant.store.api.QueryResult;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

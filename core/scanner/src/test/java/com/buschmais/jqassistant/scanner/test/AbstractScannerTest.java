@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.scanner.ClassScanner;
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

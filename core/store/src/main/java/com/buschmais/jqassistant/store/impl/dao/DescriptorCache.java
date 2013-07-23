@@ -1,12 +1,9 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import org.neo4j.graphdb.Node;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public class DescriptorCache {
 

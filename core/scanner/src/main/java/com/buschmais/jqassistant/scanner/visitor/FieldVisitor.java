@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scanner.visitor;
 
 import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor;
 import org.objectweb.asm.Attribute;
 
 public class FieldVisitor extends AbstractVisitor implements org.objectweb.asm.FieldVisitor {

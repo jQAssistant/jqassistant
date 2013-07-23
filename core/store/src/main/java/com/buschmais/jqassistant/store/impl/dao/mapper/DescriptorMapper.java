@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.impl.model.NodeType;
-import com.buschmais.jqassistant.store.impl.model.RelationType;
+import com.buschmais.jqassistant.store.api.model.graph.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.graph.Relation;
 
 import java.util.Map;
 import java.util.Set;
@@ -24,11 +23,11 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
     public Class<T> getJavaType();
 
     /**
-     * Return the {@link NodeType}.
+     * Return the {@link com.buschmais.jqassistant.store.api.model.graph.NodeLabel}.
      *
-     * @return The {@link NodeType}.
+     * @return The {@link com.buschmais.jqassistant.store.api.model.graph.NodeLabel}.
      */
-    public CoreLabel getCoreLabel();
+    public NodeLabel getCoreLabel();
 
     /**
      * Creates a descriptor instance.
@@ -39,13 +38,13 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
 
     /**
      * Return a {@link Map} containing all outgoing relations with the
-     * {@link RelationType} as key and the target descriptors as value for the
+     * {@link com.buschmais.jqassistant.store.api.model.graph.Relation} as key and the target descriptors as value for the
      * given descriptor.
      *
      * @param descriptor The descriptor.
      * @return The relations {@link Map}.
      */
-    public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(T descriptor);
+    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(T descriptor);
 
     /**
      * Set the outgoing relations for the given descriptor.
@@ -54,7 +53,7 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
      * @param relations  The relations map.
      * @param target     The target descriptor.
      */
-    public void setRelations(T descriptor, Map<RelationType, Set<AbstractDescriptor>> relations);
+    public void setRelations(T descriptor, Map<Relation, Set<AbstractDescriptor>> relations);
 
     /**
      * Return the id of the descriptor.

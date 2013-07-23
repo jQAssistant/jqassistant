@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.scanner.test.sets.annotation.AnnotatedType;
 import com.buschmais.jqassistant.scanner.test.sets.annotation.Annotation;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.QueryResult;
+import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.QueryResult;
 import org.junit.Test;
 
 import java.io.IOException;
