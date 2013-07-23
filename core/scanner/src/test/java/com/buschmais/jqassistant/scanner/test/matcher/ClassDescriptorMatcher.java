@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
 
 /**
  * Created with IntelliJ IDEA.

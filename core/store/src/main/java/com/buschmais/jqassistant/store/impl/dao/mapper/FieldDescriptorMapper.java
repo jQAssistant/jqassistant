@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.store.impl.model.RelationType;
+import com.buschmais.jqassistant.store.api.model.graph.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.store.api.model.graph.Relation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +18,8 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     }
 
     @Override
-    public CoreLabel getCoreLabel() {
-        return CoreLabel.FIELD;
+    public NodeLabel getCoreLabel() {
+        return NodeLabel.FIELD;
     }
 
     @Override
@@ -28,15 +28,15 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     }
 
     @Override
-    public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(FieldDescriptor descriptor) {
-        Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
-        relations.put(RelationType.ANNOTATED_BY, descriptor.getAnnotatedBy());
-        relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
+    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(FieldDescriptor descriptor) {
+        Map<Relation, Set<? extends AbstractDescriptor>> relations = new HashMap<Relation, Set<? extends AbstractDescriptor>>();
+        relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
+        relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
         return relations;
     }
 
     @Override
-    protected void setRelation(FieldDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
+    protected void setRelation(FieldDescriptor descriptor, Relation relation, AbstractDescriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
                 descriptor.getAnnotatedBy().add((ClassDescriptor) target);

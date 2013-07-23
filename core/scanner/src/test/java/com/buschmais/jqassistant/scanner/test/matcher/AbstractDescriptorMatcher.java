@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 

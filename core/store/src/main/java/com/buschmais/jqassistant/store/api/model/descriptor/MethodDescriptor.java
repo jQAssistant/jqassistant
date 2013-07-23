@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.store.api.model;
+package com.buschmais.jqassistant.store.api.model.descriptor;
 
 import java.util.HashSet;
 import java.util.Set;

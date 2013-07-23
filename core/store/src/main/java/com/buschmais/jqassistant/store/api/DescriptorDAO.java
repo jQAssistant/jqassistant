@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.store.api;
 
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.QueryResult;
-import org.neo4j.graphdb.Label;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
 
 import java.util.Map;
 
@@ -10,38 +8,6 @@ import java.util.Map;
  * Interface definition for a Descriptor DAO.
  */
 public interface DescriptorDAO {
-
-    /**
-     * The supported core node labels.
-     */
-    public enum CoreLabel implements Label {
-        /**
-         * Package
-         */
-        PACKAGE,
-        /**
-         * Class
-         */
-        CLASS,
-        /**
-         * Method
-         */
-        METHOD,
-        /**
-         * Field
-         */
-        FIELD;
-    }
-
-    /**
-     * The supported node properties.
-     */
-    public enum NodeProperty {
-        /**
-         * Full Qualified Name
-         */
-        FQN;
-    }
 
     /**
      * Find a {@link AbstractDescriptor} by the full qualified name.

@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
-import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
 
 import java.lang.reflect.Method;
 

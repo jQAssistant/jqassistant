@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.scanner.test.sets.generics.*;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
 import org.junit.Test;
 
 import java.io.IOException;

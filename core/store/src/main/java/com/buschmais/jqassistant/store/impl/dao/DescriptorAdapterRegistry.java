@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;

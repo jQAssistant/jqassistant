@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.ClassDescriptor;
-import com.buschmais.jqassistant.store.impl.model.RelationType;
+import com.buschmais.jqassistant.store.api.model.graph.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.graph.Relation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +17,8 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
     }
 
     @Override
-    public CoreLabel getCoreLabel() {
-        return CoreLabel.CLASS;
+    public NodeLabel getCoreLabel() {
+        return NodeLabel.CLASS;
     }
 
     @Override
@@ -27,18 +27,18 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
     }
 
     @Override
-    public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(ClassDescriptor descriptor) {
-        Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
-        relations.put(RelationType.ANNOTATED_BY, descriptor.getAnnotatedBy());
-        relations.put(RelationType.CONTAINS, descriptor.getContains());
-        relations.put(RelationType.DEPENDS_ON, descriptor.getDependencies());
-        relations.put(RelationType.IMPLEMENTS, descriptor.getInterfaces());
-        relations.put(RelationType.EXTENDS, asSet(descriptor.getSuperClass()));
+    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(ClassDescriptor descriptor) {
+        Map<Relation, Set<? extends AbstractDescriptor>> relations = new HashMap<Relation, Set<? extends AbstractDescriptor>>();
+        relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
+        relations.put(Relation.CONTAINS, descriptor.getContains());
+        relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
+        relations.put(Relation.IMPLEMENTS, descriptor.getInterfaces());
+        relations.put(Relation.EXTENDS, asSet(descriptor.getSuperClass()));
         return relations;
     }
 
     @Override
-    protected void setRelation(ClassDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
+    protected void setRelation(ClassDescriptor descriptor, Relation relation, AbstractDescriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
                 descriptor.getAnnotatedBy().add((ClassDescriptor) target);

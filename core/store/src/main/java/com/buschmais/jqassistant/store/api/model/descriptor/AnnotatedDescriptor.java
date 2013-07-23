@@ -1,10 +1,10 @@
-package com.buschmais.jqassistant.store.api.model;
+package com.buschmais.jqassistant.store.api.model.descriptor;
 
 import java.util.Set;
 
 /**
- * Interface describing an {@link com.buschmais.jqassistant.store.api.model.AbstractDescriptor} which is annotated by other
- * {@link com.buschmais.jqassistant.store.api.model.ClassDescriptor}s.
+ * Interface describing an {@link AbstractDescriptor} which is annotated by other
+ * {@link ClassDescriptor}s.
  */
 public interface AnnotatedDescriptor {
 

@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.store.api.DescriptorDAO.CoreLabel;
-import com.buschmais.jqassistant.store.api.model.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.PackageDescriptor;
-import com.buschmais.jqassistant.store.impl.model.RelationType;
+import com.buschmais.jqassistant.store.api.model.graph.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.store.api.model.graph.Relation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,8 +17,8 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     }
 
     @Override
-    public CoreLabel getCoreLabel() {
-        return CoreLabel.PACKAGE;
+    public NodeLabel getCoreLabel() {
+        return NodeLabel.PACKAGE;
     }
 
     @Override
@@ -27,14 +27,14 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     }
 
     @Override
-    public Map<RelationType, Set<? extends AbstractDescriptor>> getRelations(PackageDescriptor descriptor) {
-        Map<RelationType, Set<? extends AbstractDescriptor>> relations = new HashMap<RelationType, Set<? extends AbstractDescriptor>>();
-        relations.put(RelationType.CONTAINS, descriptor.getContains());
+    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(PackageDescriptor descriptor) {
+        Map<Relation, Set<? extends AbstractDescriptor>> relations = new HashMap<Relation, Set<? extends AbstractDescriptor>>();
+        relations.put(Relation.CONTAINS, descriptor.getContains());
         return relations;
     }
 
     @Override
-    protected void setRelation(PackageDescriptor descriptor, RelationType relation, AbstractDescriptor target) {
+    protected void setRelation(PackageDescriptor descriptor, Relation relation, AbstractDescriptor target) {
         switch (relation) {
             case CONTAINS:
                 descriptor.getContains().add(target);
