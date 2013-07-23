@@ -110,7 +110,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     private String getMethodSignature(String name, String desc) {
         StringBuffer signature = new StringBuffer();
-        String returnType = getType(Type.getReturnType(desc));
+        String returnType = Type.getReturnType(desc).getClassName();
         if (returnType != null) {
             signature.append(returnType);
             signature.append(' ');
@@ -122,7 +122,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
             if (i > 0) {
                 signature.append(',');
             }
-            signature.append(getType(types[i]));
+            signature.append(types[i].getClassName());
         }
         signature.append(')');
         return signature.toString();
@@ -130,7 +130,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     private String getFieldSignature(String name, String desc) {
         StringBuffer signature = new StringBuffer();
-        String returnType = getType(Type.getReturnType(desc));
+        String returnType = Type.getReturnType(desc).getClassName();
         signature.append(returnType);
         signature.append(' ');
         signature.append(name);
