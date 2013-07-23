@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class JavaRuntimeIT extends AbstractScannerIT {
+public class JavaRuntimePT extends AbstractScannerIT {
 
     @Test
     public void javaRuntime() throws IOException {
