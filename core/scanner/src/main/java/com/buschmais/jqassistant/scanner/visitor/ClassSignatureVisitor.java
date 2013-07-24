@@ -14,14 +14,18 @@ public class ClassSignatureVisitor extends DependentSignatureVisitor<ClassDescri
     public SignatureVisitor visitSuperclass() {
         return new DependentSignatureVisitor<ClassDescriptor>(getDependentDescriptor(), getResolverFactory()) {
 
+            private ClassDescriptor classDescriptor;
+
             @Override
             public void visitClassType(String name) {
-                getDependentDescriptor().setSuperClass(getClassDescriptor(name));
+                classDescriptor = getClassDescriptor(name);
+                getDependentDescriptor().setSuperClass(classDescriptor);
             }
 
             @Override
             public void visitInnerClassType(String name) {
-                getDependentDescriptor().setSuperClass(getClassDescriptor(name));
+                String innerClassName = classDescriptor.getFullQualifiedName() + "$" + name;
+                getDependentDescriptor().setSuperClass(getClassDescriptor(innerClassName));
             }
 
         };
@@ -31,14 +35,18 @@ public class ClassSignatureVisitor extends DependentSignatureVisitor<ClassDescri
     public SignatureVisitor visitInterface() {
         return new DependentSignatureVisitor<ClassDescriptor>(getDependentDescriptor(), getResolverFactory()) {
 
+            private ClassDescriptor classDescriptor;
+
             @Override
             public void visitClassType(String name) {
-                getDependentDescriptor().getInterfaces().add(getClassDescriptor(name));
+                classDescriptor = getClassDescriptor(name);
+                getDependentDescriptor().getInterfaces().add(classDescriptor);
             }
 
             @Override
             public void visitInnerClassType(String name) {
-                getDependentDescriptor().getInterfaces().add(getClassDescriptor(name));
+                String innerClassName = classDescriptor.getFullQualifiedName() + "$" + name;
+                getDependentDescriptor().getInterfaces().add(getClassDescriptor(innerClassName));
             }
         };
     }
