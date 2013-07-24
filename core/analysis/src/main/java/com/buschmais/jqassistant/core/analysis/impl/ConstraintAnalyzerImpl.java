@@ -72,7 +72,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
             }
-            LOGGER.info("Validating constraint '{}'", constraint.getId());
+            LOGGER.info("Validating constraint '{}'.", constraint.getId());
             List<Map<String, Object>> violations = execute(constraint);
             if (!violations.isEmpty()) {
                 LOGGER.warn("Found {} violations for constraint '{}'.", violations.size(), constraint.getId());
