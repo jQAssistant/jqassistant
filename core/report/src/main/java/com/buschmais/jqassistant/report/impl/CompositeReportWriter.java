@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.model.api.Constraint;
 import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.report.api.ReportWriter;
+import com.buschmais.jqassistant.report.api.ReportWriterException;
 
 /**
  * A {@link ReportWriter} implementation which  delegates all method calls to the {@link ReportWriter}s  provided by the {@link Iterable} constructor argument.
@@ -12,7 +13,7 @@ import com.buschmais.jqassistant.report.api.ReportWriter;
 public class CompositeReportWriter implements ReportWriter {
 
     private static interface DelegateOperation {
-        void run(ReportWriter reportWriter);
+        void run(ReportWriter reportWriter) throws ReportWriterException;
     }
 
     private Iterable<ReportWriter> reportWriters;
@@ -22,96 +23,96 @@ public class CompositeReportWriter implements ReportWriter {
     }
 
     @Override
-    public void begin() {
+    public void begin() throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.begin();
             }
         });
     }
 
     @Override
-    public void end() {
+    public void end() throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.end();
             }
         });
     }
 
     @Override
-    public void beginConcept(final Concept concept) {
+    public void beginConcept(final Concept concept) throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.beginConcept(concept);
             }
         });
     }
 
     @Override
-    public void endConcept() {
+    public void endConcept() throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.endConcept();
             }
         });
     }
 
     @Override
-    public void beginConstraintGroup(final ConstraintGroup constraintGroup) {
+    public void beginConstraintGroup(final ConstraintGroup constraintGroup) throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.beginConstraintGroup(constraintGroup);
             }
         });
     }
 
     @Override
-    public void endConstraintGroup() {
+    public void endConstraintGroup() throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
-                reportWriter.endConstraint();
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
+                reportWriter.endConstraintGroup();
             }
         });
     }
 
     @Override
-    public void beginConstraint(final Constraint constraint) {
+    public void beginConstraint(final Constraint constraint) throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.beginConstraint(constraint);
             }
         });
     }
 
     @Override
-    public void endConstraint() {
+    public void endConstraint() throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.endConstraint();
             }
         });
     }
 
     @Override
-    public void setResult(final Result result) {
+    public void setResult(final Result result) throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
-            public void run(ReportWriter reportWriter) {
+            public void run(ReportWriter reportWriter) throws ReportWriterException {
                 reportWriter.setResult(result);
             }
         });
     }
 
-    private void run(DelegateOperation operation) {
+    private void run(DelegateOperation operation) throws ReportWriterException {
         for (ReportWriter reportWriter : reportWriters) {
             operation.run(reportWriter);
         }

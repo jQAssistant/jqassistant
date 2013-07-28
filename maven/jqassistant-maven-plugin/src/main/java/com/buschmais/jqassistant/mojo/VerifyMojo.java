@@ -22,11 +22,14 @@ import com.buschmais.jqassistant.core.analysis.impl.ConstraintAnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import com.buschmais.jqassistant.core.model.api.*;
 import com.buschmais.jqassistant.report.api.ReportWriter;
+import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -57,26 +60,59 @@ public class VerifyMojo extends AbstractStoreMojo {
      */
     protected List<String> constraintGroups;
 
+    /**
+     * The file to write the XML report to.
+     *
+     * @parameter expression="${jqassistant.report.file}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
+     */
+    protected File reportFile;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Map<String, ConstraintGroup> availableConstraintGroups = readRules();
         final List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(availableConstraintGroups);
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
+        FileWriter xmlReportFileWriter;
+        try {
+            xmlReportFileWriter = new FileWriter(reportFile);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Cannot create XML report file.", e);
+        }
+        XmlReportWriter xmlReportWriter;
+        try {
+            xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
+        } catch (ReportWriterException e) {
+            throw new MojoExecutionException("Cannot create XML report file writer.", e);
+        }
         List<ReportWriter> reportWriters = new LinkedList<ReportWriter>();
         reportWriters.add(inMemoryReportWriter);
-        final CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-        execute(new StoreOperation<Void, MojoFailureException>() {
-            @Override
-            public Void run(Store store) throws MojoFailureException {
-                ConstraintAnalyzer analyzer = new ConstraintAnalyzerImpl(store, reportWriter);
-                analyzer.validateConstraints(selectedConstraintGroups);
-                return null;
-            }
-        });
+        reportWriters.add(xmlReportWriter);
+        try {
+            final CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
+            execute(new StoreOperation<Void, AbstractMojoExecutionException>() {
+                @Override
+                public Void run(Store store) throws AbstractMojoExecutionException {
+                    ConstraintAnalyzer analyzer = new ConstraintAnalyzerImpl(store, reportWriter);
+                    try {
+                        analyzer.validateConstraints(selectedConstraintGroups);
+                    } catch (ReportWriterException e) {
+                        throw new MojoExecutionException("Cannot create report.", e);
+                    }
+                    return null;
+                }
+            });
+        } catch (MojoFailureException e) {
+            throw e;
+        } catch (MojoExecutionException e) {
+            throw e;
+        } catch (AbstractMojoExecutionException e) {
+            throw new MojoExecutionException("Caught an unsupported exception.", e);
+        } finally {
+            IOUtils.closeQuietly(xmlReportFileWriter);
+        }
         verifyConceptResults(inMemoryReportWriter);
         verifyConstraintViolations(inMemoryReportWriter);
     }
-
 
     private List<ConstraintGroup> getSelectedConstraintGroups(Map<String, ConstraintGroup> availableConstraintGroups) throws MojoExecutionException {
         final List<ConstraintGroup> selectedConstraintGroups = new ArrayList<ConstraintGroup>();
@@ -98,7 +134,7 @@ public class VerifyMojo extends AbstractStoreMojo {
         File rulesDirectory = null;
         List<URL> urls = null;
         if (rules != null) {
-            rulesDirectory = rules.getDirectory();
+            rulesDirectory = rules.getRulesDirectory();
             urls = rules.getUrls();
         }
 
@@ -142,9 +178,9 @@ public class VerifyMojo extends AbstractStoreMojo {
 
     private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
-            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
+            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
         }
-        getLog().info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
+        getLog().info("Reading rules from rulesDirectory " + rulesDirectory.getAbsolutePath());
         final List<File> ruleFiles = new ArrayList<File>();
         try {
             new DirectoryWalker<File>() {
@@ -162,7 +198,7 @@ public class VerifyMojo extends AbstractStoreMojo {
             }.scan(rulesDirectory);
             return ruleFiles;
         } catch (IOException e) {
-            throw new MojoExecutionException("Cannot read directory: " + rulesDirectory.getAbsolutePath(), e);
+            throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
         }
     }
 
@@ -208,5 +244,10 @@ public class VerifyMojo extends AbstractStoreMojo {
             }
             throw new MojoFailureException(constraintViolations.size() + " constraints have been violated!");
         }
+    }
+
+    private File getReportFile() {
+        reportFile.getParentFile().mkdirs();
+        return reportFile;
     }
 }

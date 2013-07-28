@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.Store;
 import org.apache.commons.io.IOUtils;
@@ -40,7 +41,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
     }
 
     @Override
-    public void validateConstraints(Iterable<ConstraintGroup> constraintGroups) {
+    public void validateConstraints(Iterable<ConstraintGroup> constraintGroups) throws ReportWriterException {
         reportWriter.begin();
         try {
             for (ConstraintGroup constraintGroup : constraintGroups) {
@@ -51,7 +52,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
         }
     }
 
-    private void validateConstraintGroup(ConstraintGroup constraintGroup) {
+    private void validateConstraintGroup(ConstraintGroup constraintGroup) throws ReportWriterException {
         if (!executedConstraintGroups.contains(constraintGroup)) {
             LOGGER.info("Executing constraint group '{}'", constraintGroup.getId());
             for (ConstraintGroup includedConstraintGroup : constraintGroup.getConstraintGroups()) {
@@ -69,7 +70,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
         }
     }
 
-    private void validateConstraint(Constraint constraint) {
+    private void validateConstraint(Constraint constraint) throws ReportWriterException {
         if (!executedConstraints.contains(constraint)) {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
@@ -89,7 +90,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
         }
     }
 
-    private void applyConcept(Concept concept) {
+    private void applyConcept(Concept concept) throws ReportWriterException {
         if (!executedConcepts.contains(concept)) {
             for (Concept requiredConcept : concept.getRequiredConcepts()) {
                 applyConcept(requiredConcept);

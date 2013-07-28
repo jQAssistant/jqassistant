@@ -16,5 +16,9 @@
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.model</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
     </dependencies>
 </project>

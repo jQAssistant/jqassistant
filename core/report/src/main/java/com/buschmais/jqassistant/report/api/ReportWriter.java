@@ -14,22 +14,22 @@ import com.buschmais.jqassistant.core.model.api.Result;
  */
 public interface ReportWriter {
 
-    void begin();
+    void begin() throws ReportWriterException;
 
-    void end();
+    void end() throws ReportWriterException;
 
-    void beginConcept(Concept concept);
+    void beginConcept(Concept concept) throws ReportWriterException;
 
-    void endConcept();
+    void endConcept() throws ReportWriterException;
 
-    void beginConstraintGroup(ConstraintGroup constraintGroup);
+    void beginConstraintGroup(ConstraintGroup constraintGroup) throws ReportWriterException;
 
-    void endConstraintGroup();
+    void endConstraintGroup() throws ReportWriterException;
 
-    void beginConstraint(Constraint constraint);
+    void beginConstraint(Constraint constraint) throws ReportWriterException;
 
-    void endConstraint();
+    void endConstraint() throws ReportWriterException;
 
-    void setResult(Result result);
+    void setResult(Result result) throws ReportWriterException;
 
 }
