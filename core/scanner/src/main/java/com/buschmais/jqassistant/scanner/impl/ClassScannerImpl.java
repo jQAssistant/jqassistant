@@ -27,10 +27,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.buschmais.jqassistant.scanner;
+package com.buschmais.jqassistant.scanner.impl;
 
-import com.buschmais.jqassistant.scanner.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.scanner.visitor.ClassVisitor;
+import com.buschmais.jqassistant.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.scanner.impl.visitor.ClassVisitor;
 import com.buschmais.jqassistant.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
 import org.objectweb.asm.ClassReader;
@@ -42,45 +43,31 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-public class ClassScanner {
-
-    public abstract static class ScanListener {
-
-        public void beforePackage() {
-        }
-
-        public void afterPackage() {
-        }
-
-        public void beforeClass() {
-        }
-
-        public void afterClass() {
-        }
-    }
+public class ClassScannerImpl implements ClassScanner {
 
     /**
      * Defines the number of classes to be scanned before the store is flushed.
      */
     public static final int FLUSH_THRESHOLD = 50;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassScanner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassScannerImpl.class);
 
     private final Store store;
 
     private final ScanListener scanListener;
 
-    public ClassScanner(Store graphStore, ScanListener listener) {
+    public ClassScannerImpl(Store graphStore, ScanListener listener) {
         this.store = graphStore;
         this.scanListener = listener;
     }
 
-    public ClassScanner(Store graphStore) {
+    public ClassScannerImpl(Store graphStore) {
         this.store = graphStore;
         this.scanListener = new ScanListener() {
         };
     }
 
+    @Override
     public void scanArchive(File archive) throws IOException {
         if (!archive.exists()) {
             LOGGER.warn("Archive '{}' not found, skipping.", archive.getAbsolutePath());
@@ -138,6 +125,7 @@ public class ClassScanner {
         }
     }
 
+    @Override
     public void scanDirectory(File directory) throws IOException {
         final List<File> classFiles = new ArrayList<File>();
         new DirectoryWalker<File>() {
@@ -159,10 +147,12 @@ public class ClassScanner {
         }
     }
 
+    @Override
     public void scanFile(File file) throws IOException {
         scanInputStream(new BufferedInputStream(new FileInputStream(file)), file.getName());
     }
 
+    @Override
     public void scanClasses(Class<?>... classTypes) throws IOException {
         for (Class<?> classType : classTypes) {
             String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
@@ -170,6 +160,7 @@ public class ClassScanner {
         }
     }
 
+    @Override
     public void scanInputStream(InputStream inputStream, String name) throws IOException {
         LOGGER.info("Scanning " + name);
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);

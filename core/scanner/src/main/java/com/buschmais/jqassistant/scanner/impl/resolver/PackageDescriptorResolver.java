@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scanner.resolver;
+package com.buschmais.jqassistant.scanner.impl.resolver;
 
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor;

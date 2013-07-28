@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.analysis.api.model;
+package com.buschmais.jqassistant.core.model.api;
 
 import java.util.HashMap;
 import java.util.Map;
