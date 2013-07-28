@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.store.api.model.descriptor.DependentDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;

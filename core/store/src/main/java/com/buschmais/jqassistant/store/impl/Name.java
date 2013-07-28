@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.store.impl;
 
-import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 
 /**
  * A hierarchical name of a descriptor.

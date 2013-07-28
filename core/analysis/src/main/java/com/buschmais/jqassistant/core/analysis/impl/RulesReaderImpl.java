@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.buschmais.jqassistant.core.model.api.Concept;
 import com.buschmais.jqassistant.core.model.api.Constraint;
 import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.Query;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;

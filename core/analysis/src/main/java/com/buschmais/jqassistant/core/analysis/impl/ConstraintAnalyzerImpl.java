@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
-import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.Store;
@@ -78,11 +78,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
             LOGGER.info("Validating constraint '{}'.", constraint.getId());
             reportWriter.beginConstraint(constraint);
             try {
-                List<Map<String, Object>> violations = execute(constraint);
-                if (!violations.isEmpty()) {
-                    LOGGER.warn("Found {} violations for constraint '{}'.", violations.size(), constraint.getId());
-                    reportWriter.setResult(new Result(constraint, violations));
-                }
+                reportWriter.setResult(execute(constraint));
                 executedConstraints.add(constraint);
             } finally {
                 reportWriter.endConstraint();
@@ -100,8 +96,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
             try {
                 store.beginTransaction();
                 try {
-                    List<Map<String, Object>> conceptRows = execute(concept);
-                    reportWriter.setResult(new Result(concept, conceptRows));
+                    reportWriter.setResult(execute(concept));
                 } finally {
                     store.endTransaction();
                 }
@@ -112,7 +107,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
         }
     }
 
-    private List<Map<String, Object>> execute(AbstractExecutable executable) {
+    private <T extends AbstractExecutable> Result<T> execute(T executable) {
         List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         QueryResult queryResult = null;
         try {
@@ -123,7 +118,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
         } finally {
             IOUtils.closeQuietly(queryResult);
         }
-        return rows;
+        return new Result<T>(executable, queryResult.getColumns(), rows);
     }
 
     private QueryResult executeQuery(Query query) {

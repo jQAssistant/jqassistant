@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
-import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 
 import java.lang.reflect.Method;
 
@@ -25,9 +25,9 @@ public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDes
         name.append(' ');
         name.append(method.getName());
         name.append('(');
-        int parameterCount=0;
+        int parameterCount = 0;
         for (Class<?> parameterType : method.getParameterTypes()) {
-            if (parameterCount>0) {
+            if (parameterCount > 0) {
                 name.append(',');
             }
             name.append(parameterType.getCanonicalName());

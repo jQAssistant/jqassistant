@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.store.api.model.descriptor.DependentDescriptor;
 import org.objectweb.asm.Type;
 
 public class AnnotationVisitor extends AbstractVisitor implements org.objectweb.asm.AnnotationVisitor {

@@ -1,6 +1,4 @@
-package com.buschmais.jqassistant.store.api.model.graph;
-
-import org.neo4j.graphdb.Label;
+package com.buschmais.jqassistant.store.api.model;
 
 /**
  * The node labels created by the scanner.

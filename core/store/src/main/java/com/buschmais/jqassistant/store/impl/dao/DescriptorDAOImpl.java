@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.DescriptorDAO;
-import com.buschmais.jqassistant.store.api.model.graph.NodeProperty;
-import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.QueryResult;
+import com.buschmais.jqassistant.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.store.api.model.Relation;
 import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
-import com.buschmais.jqassistant.store.api.model.graph.Relation;
 import org.apache.commons.collections.map.LRUMap;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;

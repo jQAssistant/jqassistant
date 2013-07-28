@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;

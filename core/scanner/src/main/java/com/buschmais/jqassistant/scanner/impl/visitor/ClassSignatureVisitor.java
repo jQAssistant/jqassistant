@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 public class ClassSignatureVisitor extends DependentSignatureVisitor<ClassDescriptor> implements SignatureVisitor {

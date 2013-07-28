@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.report.impl;
 
 import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -13,11 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Dirk Mahler
- * Date: 28.07.13
- * Time: 14:32
- * To change this template use File | Settings | File Templates.
+ * Implementation of a {@link ReportWriter} which writes the results of an analysis to an XML file.
  */
 public class XmlReportWriter implements ReportWriter {
 
@@ -74,11 +71,24 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginConstraintGroup(ConstraintGroup constraintGroup) throws ReportWriterException {
+    public void beginConstraintGroup(final ConstraintGroup constraintGroup) throws ReportWriterException {
+        run(new XmlOperation() {
+            @Override
+            public void run() throws XMLStreamException {
+                xmlStreamWriter.writeStartElement("constraintGroup");
+                xmlStreamWriter.writeAttribute("id", constraintGroup.getId());
+            }
+        });
     }
 
     @Override
     public void endConstraintGroup() throws ReportWriterException {
+        run(new XmlOperation() {
+            @Override
+            public void run() throws XMLStreamException {
+                xmlStreamWriter.writeEndElement();
+            }
+        });
     }
 
     @Override
@@ -90,7 +100,7 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void setResult(Result result) throws ReportWriterException {
+    public void setResult(final Result result) throws ReportWriterException {
         final AbstractExecutable executable = result.getExecutable();
         final String elementName;
         if (executable instanceof Concept) {
@@ -104,26 +114,31 @@ public class XmlReportWriter implements ReportWriter {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
-                if (rows.isEmpty()) {
-                    xmlStreamWriter.writeEmptyElement(elementName);
-                    xmlStreamWriter.writeAttribute("id", executable.getId());
-                } else {
-                    xmlStreamWriter.writeStartElement(elementName);
-                    xmlStreamWriter.writeAttribute("id", executable.getId());
+                xmlStreamWriter.writeStartElement(elementName);
+                xmlStreamWriter.writeAttribute("id", executable.getId());
+                xmlStreamWriter.writeStartElement("description");
+                xmlStreamWriter.writeCharacters(executable.getDescription());
+                xmlStreamWriter.writeEndElement();
+                if (!rows.isEmpty()) {
+                    xmlStreamWriter.writeStartElement("result");
+                    xmlStreamWriter.writeAttribute("rows", Integer.toString(rows.size()));
+                    xmlStreamWriter.writeAttribute("columnsPerRow", Integer.toString(result.getColumnNames().size()));
                     for (Map<String, Object> row : rows) {
                         xmlStreamWriter.writeStartElement("row");
                         for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
                             String columnName = rowEntry.getKey();
                             Object value = rowEntry.getValue();
+                            String stringValue = value instanceof AbstractDescriptor ? ((AbstractDescriptor) value).getFullQualifiedName() : value.toString();
                             xmlStreamWriter.writeStartElement("column");
                             xmlStreamWriter.writeAttribute("name", columnName);
-                            xmlStreamWriter.writeCharacters(value.toString());
+                            xmlStreamWriter.writeCharacters(stringValue);
                             xmlStreamWriter.writeEndElement();
                         }
                         xmlStreamWriter.writeEndElement();
                     }
                     xmlStreamWriter.writeEndElement();
                 }
+                xmlStreamWriter.writeEndElement();
             }
         });
     }

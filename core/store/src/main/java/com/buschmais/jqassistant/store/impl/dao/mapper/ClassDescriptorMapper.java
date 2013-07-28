@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.store.api.model.graph.NodeLabel;
-import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.graph.Relation;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.store.api.model.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.Relation;
 
 import java.util.HashMap;
 import java.util.Map;

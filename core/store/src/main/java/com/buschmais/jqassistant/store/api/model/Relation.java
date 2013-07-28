@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.store.api.model.graph;
+package com.buschmais.jqassistant.store.api.model;
 
 import org.neo4j.graphdb.RelationshipType;
 

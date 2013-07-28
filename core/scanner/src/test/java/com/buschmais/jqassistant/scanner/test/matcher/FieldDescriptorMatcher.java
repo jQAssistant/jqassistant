@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
-import com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 
 import java.lang.reflect.Field;
 

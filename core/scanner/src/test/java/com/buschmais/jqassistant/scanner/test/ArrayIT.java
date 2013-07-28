@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scanner.test;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.scanner.test.sets.array.Array;
-import com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import org.junit.Test;
 
