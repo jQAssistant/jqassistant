@@ -14,9 +14,7 @@ public class PojoIT extends AbstractScannerIT {
 
     @Test
     public void attributes() throws IOException {
-        store.beginTransaction();
-        scanner.scanClasses(Pojo.class);
-        store.endTransaction();
+        scanClasses(Pojo.class);
         String query = "MATCH (c:CLASS) WHERE c.FQN =~ '.*Pojo' RETURN c as class";
         QueryResult result = store.executeQuery(query);
         for (QueryResult.Row row : result.getRows()) {

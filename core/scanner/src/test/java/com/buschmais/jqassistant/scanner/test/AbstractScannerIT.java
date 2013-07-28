@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scanner.test;
 
+import com.buschmais.jqassistant.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
@@ -12,12 +13,9 @@ public abstract class AbstractScannerIT {
 
     protected Store store;
 
-    protected ClassScannerImpl scanner;
-
     @Before
     public void startStore() {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        scanner = new ClassScannerImpl(store, getScanListener());
         store.start();
         store.beginTransaction();
         store.reset();
@@ -27,6 +25,10 @@ public abstract class AbstractScannerIT {
     @After
     public void stopStore() {
         store.stop();
+    }
+
+    protected ClassScanner getScanner() {
+        return new ClassScannerImpl(store, getScanListener());
     }
 
     /**
@@ -48,7 +50,7 @@ public abstract class AbstractScannerIT {
      */
     protected void scanClasses(Class<?>... classes) throws IOException {
         store.beginTransaction();
-        scanner.scanClasses(classes);
+        getScanner().scanClasses(classes);
         store.endTransaction();
     }
 

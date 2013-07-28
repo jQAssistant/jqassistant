@@ -28,7 +28,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
         String resourceName = "/" + AnonymousInnerClass.class.getName().replace(".", "/") + "$1.class";
         InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
         store.beginTransaction();
-        scanner.scanInputStream(is, resourceName);
+        getScanner().scanInputStream(is, resourceName);
         store.endTransaction();
     }
 }
