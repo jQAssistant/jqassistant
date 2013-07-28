@@ -63,9 +63,9 @@ public class VerifyMojo extends AbstractStoreMojo {
     /**
      * The file to write the XML report to.
      *
-     * @parameter expression="${jqassistant.report.file}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
+     * @parameter expression="${jqassistant.report.xml}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
      */
-    protected File reportFile;
+    protected File xmlReportFile;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -74,7 +74,7 @@ public class VerifyMojo extends AbstractStoreMojo {
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
-            xmlReportFileWriter = new FileWriter(reportFile);
+            xmlReportFileWriter = new FileWriter(xmlReportFile);
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot create XML report file.", e);
         }
@@ -250,8 +250,8 @@ public class VerifyMojo extends AbstractStoreMojo {
         }
     }
 
-    private File getReportFile() {
-        reportFile.getParentFile().mkdirs();
-        return reportFile;
+    private File getXmlReportFile() {
+        xmlReportFile.getParentFile().mkdirs();
+        return xmlReportFile;
     }
 }
