@@ -43,7 +43,7 @@ public class JavaRuntimePT extends AbstractScannerIT {
         Assume.assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
         Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
-        scanner.scanArchive(runtimeJar);
+        getScanner().scanArchive(runtimeJar);
         //Assert.assertThat(, CoreMatchers.equalTo(scanListener.scannedClasses));
     }
 
