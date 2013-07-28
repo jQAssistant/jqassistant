@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.analysis.test;
 
 
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
-import com.buschmais.jqassistant.core.analysis.api.model.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;

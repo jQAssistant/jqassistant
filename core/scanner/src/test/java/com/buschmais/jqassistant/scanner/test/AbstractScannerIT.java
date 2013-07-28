@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import com.buschmais.jqassistant.scanner.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 import org.junit.After;
@@ -12,12 +12,12 @@ public abstract class AbstractScannerIT {
 
     protected Store store;
 
-    protected ClassScanner scanner;
+    protected ClassScannerImpl scanner;
 
     @Before
     public void startStore() {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        scanner = new ClassScanner(store, getScanListener());
+        scanner = new ClassScannerImpl(store, getScanListener());
         store.start();
         store.beginTransaction();
         store.reset();
@@ -30,13 +30,13 @@ public abstract class AbstractScannerIT {
     }
 
     /**
-     * Return the {@link com.buschmais.jqassistant.scanner.ClassScanner.ScanListener} to be used for scanning.
+     * Return the {@link com.buschmais.jqassistant.scanner.impl.ClassScannerImpl.ScanListener} to be used for scanning.
      * <p>The default implementation returns a listener without any functionality, a class may override this method to return a listener implementing specific behavior.</p>
      *
-     * @return The {@link com.buschmais.jqassistant.scanner.ClassScanner.ScanListener}.
+     * @return The {@link com.buschmais.jqassistant.scanner.impl.ClassScannerImpl.ScanListener}.
      */
-    protected ClassScanner.ScanListener getScanListener() {
-        return new ClassScanner.ScanListener() {
+    protected ClassScannerImpl.ScanListener getScanListener() {
+        return new ClassScannerImpl.ScanListener() {
         };
     }
 

@@ -76,6 +76,8 @@
     </dependencyManagement>
 
     <modules>
+        <module>model</module>
+        <module>report</module>
         <module>analysis</module>
         <module>scanner</module>
         <module>store</module>

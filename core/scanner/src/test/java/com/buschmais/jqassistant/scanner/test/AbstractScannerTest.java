@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import com.buschmais.jqassistant.scanner.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
 import com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor;
@@ -20,7 +20,7 @@ public abstract class AbstractScannerTest {
     @Mock
     protected Store store;
 
-    protected ClassScanner scanner;
+    protected ClassScannerImpl scanner;
 
     private final Map<String, PackageDescriptor> packageCache = new HashMap<String, PackageDescriptor>();
 
@@ -29,7 +29,7 @@ public abstract class AbstractScannerTest {
 
     @Before
     public void createScanner() {
-        scanner = new ClassScanner(store);
+        scanner = new ClassScannerImpl(store);
         this.javaLangObject = stubClass(Object.class);
         this._void = stubClass("void");
     }
