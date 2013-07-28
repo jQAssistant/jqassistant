@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.scanner.test.sets.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
  * Created with IntelliJ IDEA.

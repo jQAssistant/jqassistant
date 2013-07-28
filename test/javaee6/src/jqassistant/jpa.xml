@@ -6,7 +6,7 @@
             MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="javax.persistence.Entity"
             SET c:JPA:ENTITY
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
     </concept>
 

@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.AnnotatedDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.api.model.descriptor.AnnotatedDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.DependentDescriptor;
 import org.objectweb.asm.Type;
 
 public abstract class AbstractVisitor {

@@ -6,7 +6,7 @@
             MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="javax.ejb.Stateless"
             SET c:EJB:STATELESS
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
     </concept>
 
@@ -16,7 +16,7 @@
             MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="javax.ejb.Stateful"
             SET c:EJB:STATEFUL
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
     </concept>
 
@@ -26,7 +26,7 @@
             MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="javax.ejb.MessageDriven"
             SET c:EJB:MESSAGEDRIVEN
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
     </concept>
 
@@ -36,7 +36,7 @@
             MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="javax.ejb.Singleton"
             SET c:EJB:SINGLETON
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
     </concept>
 

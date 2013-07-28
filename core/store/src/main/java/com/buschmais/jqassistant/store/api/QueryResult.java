@@ -42,15 +42,16 @@ public class QueryResult implements Closeable {
      * <p>
      * Where applicable the values of a row are transformed to instances of the
      * corresponding classes, e.g. nodes will be made available as instances of
-     * the according {@link com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor}s.
+     * the according {@link com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor}s.
      * </p>
      */
     private final Iterable<Row> rows;
 
     /**
      * Constructor.
+     *
      * @param columns A list containing the names of the returned columns.
-     * @param rows The rows.
+     * @param rows    The rows.
      */
     public QueryResult(List<String> columns, Iterable<Row> rows) {
         this.columns = columns;

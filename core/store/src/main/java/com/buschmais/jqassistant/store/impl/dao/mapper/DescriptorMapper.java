@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.store.api.model.graph.NodeLabel;
-import com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.graph.Relation;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.Relation;
 
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +38,7 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
 
     /**
      * Return a {@link Map} containing all outgoing relations with the
-     * {@link com.buschmais.jqassistant.store.api.model.graph.Relation} as key and the target descriptors as value for the
+     * {@link com.buschmais.jqassistant.store.api.model.Relation} as key and the target descriptors as value for the
      * given descriptor.
      *
      * @param descriptor The descriptor.

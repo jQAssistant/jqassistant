@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.store.api.model.descriptor;
+package com.buschmais.jqassistant.core.model.api.descriptor;
 
 /**
  * Describes a Java package.

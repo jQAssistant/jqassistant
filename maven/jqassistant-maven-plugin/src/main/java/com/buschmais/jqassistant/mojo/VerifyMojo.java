@@ -225,8 +225,9 @@ public class VerifyMojo extends AbstractStoreMojo {
      */
     private void verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws MojoFailureException {
         List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
-        if (!constraintViolations.isEmpty()) {
-            for (Result<Constraint> constraintViolation : constraintViolations) {
+        int violations = 0;
+        for (Result<Constraint> constraintViolation : constraintViolations) {
+            if (!constraintViolation.isEmpty()) {
                 AbstractExecutable constraint = constraintViolation.getExecutable();
                 getLog().error(constraint.getId() + ": " + constraint.getDescription());
                 for (Map<String, Object> columns : constraintViolation.getRows()) {
@@ -241,8 +242,11 @@ public class VerifyMojo extends AbstractStoreMojo {
                     }
                     getLog().error("  " + message.toString());
                 }
+                violations++;
             }
-            throw new MojoFailureException(constraintViolations.size() + " constraints have been violated!");
+        }
+        if (violations > 0) {
+            throw new MojoFailureException(violations + " constraints have been violated!");
         }
     }
 

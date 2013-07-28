@@ -1,32 +1,32 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="layer:UI">
-        <description>Labels all .ui packages packages as LAYER and UI.</description>
+        <description>Labels all .ui packages as LAYER and UI.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)
             WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.ui"
             SET p:LAYER:UI
-            RETURN p
+            RETURN p AS package
         ]]></cypher>
     </concept>
 
     <concept id="layer:Logic">
-        <description>Labels all .logic packages packages as LAYER and LOGIC.</description>
+        <description>Labels all .logic packages as LAYER and LOGIC.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)
             WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.logic"
             SET p:LAYER:LOGIC
-            RETURN p
+            RETURN p AS package
         ]]></cypher>
     </concept>
 
     <concept id="layer:Persistence">
-        <description>Labels all .persistence packages packages as LAYER and PERSISTENCE.</description>
+        <description>Labels all .persistence packages as LAYER and PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)
             WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.persistence"
             SET p:LAYER:PERSISTENCE
-            RETURN p
+            RETURN p AS package
         ]]></cypher>
     </concept>
 
@@ -44,7 +44,7 @@
               OR dependencyPackage:LOGIC
               OR dependencyPackage:PERSISTENCE
             )
-            RETURN classFieldOrMethod.FQN AS element, dependencyPackage.FQN AS dependency
+            RETURN classFieldOrMethod AS element, dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 
@@ -61,7 +61,7 @@
               dependencyPackage:LOGIC
               OR dependencyPackage:PERSISTENCE
             )
-            RETURN classFieldOrMethod.FQN AS element, dependencyPackage.FQN AS dependency
+            RETURN classFieldOrMethod AS element, dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 
@@ -77,7 +77,7 @@
             WHERE NOT (
               dependencyPackage:PERSISTENCE
             )
-            RETURN classFieldOrMethod.FQN AS element, dependencyPackage.FQN AS dependency
+            RETURN classFieldOrMethod AS element, dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 </jqa:jqassistant-rules>

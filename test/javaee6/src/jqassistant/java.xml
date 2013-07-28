@@ -7,7 +7,7 @@
             CREATE UNIQUE
                 (c)-[:ASSIGNABLE_FROM]->(c),
                 (s)-[:ASSIGNABLE_FROM]->(c)
-            RETURN count(c)
+            RETURN count(c) AS assignableClasses
         ]]></cypher>
     </concept>
 
@@ -18,7 +18,7 @@
               (c:CLASS)-[:CONTAINS]->(fieldOrMethod),
               (fieldOrMethod)-[:DEPENDS_ON|THROWS|ANNOTATED_BY]->(d)
             RETURN
-              c, c.FQN, count(DISTINCT d) as count
+              c AS class, COUNT(DISTINCT d) as count
         ]]></cypher>
     </concept>
 
