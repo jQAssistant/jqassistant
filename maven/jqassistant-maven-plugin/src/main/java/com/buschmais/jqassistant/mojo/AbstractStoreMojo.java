@@ -53,9 +53,9 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
     protected File testClassesDirectory;
 
     /**
-     * The build rulesDirectory.
+     * The store directory.
      *
-     * @parameter expression="${jqassistant.store.rulesDirectory}" default-value="${project.build.directory}/jqassistant/store"
+     * @parameter expression="${jqassistant.store.directory}" default-value="${project.build.directory}/jqassistant/store"
      * @readonly
      */
     protected File storeDirectory;
