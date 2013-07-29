@@ -27,6 +27,14 @@ public class XmlReportWriter implements ReportWriter {
 
     private XMLStreamWriter xmlStreamWriter;
 
+    private AbstractExecutable executable;
+
+    private Result<? extends AbstractExecutable> result;
+
+    private long constraintGroupBeginTime;
+
+    private long executableBeginTime;
+
     public XmlReportWriter(Writer writer) throws ReportWriterException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         try {
@@ -63,11 +71,13 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginConcept(final Concept concept) throws ReportWriterException {
+    public void beginConcept(Concept concept) throws ReportWriterException {
+        beginExecutable(concept);
     }
 
     @Override
     public void endConcept() throws ReportWriterException {
+        endExecutable();
     }
 
     @Override
@@ -79,6 +89,7 @@ public class XmlReportWriter implements ReportWriter {
                 xmlStreamWriter.writeAttribute("id", constraintGroup.getId());
             }
         });
+        this.constraintGroupBeginTime = System.currentTimeMillis();
     }
 
     @Override
@@ -86,21 +97,34 @@ public class XmlReportWriter implements ReportWriter {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
+                writeDuration(constraintGroupBeginTime);
                 xmlStreamWriter.writeEndElement();
             }
         });
     }
 
     @Override
-    public void beginConstraint(final Constraint constraint) throws ReportWriterException {
+    public void beginConstraint(Constraint constraint) throws ReportWriterException {
+        beginExecutable(constraint);
     }
 
     @Override
     public void endConstraint() throws ReportWriterException {
+        endExecutable();
     }
 
     @Override
     public void setResult(final Result result) throws ReportWriterException {
+        this.result = result;
+    }
+
+    private void beginExecutable(AbstractExecutable executable) {
+        this.executable = executable;
+        this.executableBeginTime = System.currentTimeMillis();
+    }
+
+    private void endExecutable() throws ReportWriterException {
+        final long duration = (System.currentTimeMillis() - this.executableBeginTime);
         final AbstractExecutable executable = result.getExecutable();
         final String elementName;
         if (executable instanceof Concept) {
@@ -118,7 +142,7 @@ public class XmlReportWriter implements ReportWriter {
                 xmlStreamWriter.writeAttribute("id", executable.getId());
                 xmlStreamWriter.writeStartElement("description");
                 xmlStreamWriter.writeCharacters(executable.getDescription());
-                xmlStreamWriter.writeEndElement();
+                xmlStreamWriter.writeEndElement(); //description
                 if (!result.isEmpty()) {
                     xmlStreamWriter.writeStartElement("result");
                     xmlStreamWriter.writeStartElement("columns");
@@ -148,9 +172,16 @@ public class XmlReportWriter implements ReportWriter {
                     xmlStreamWriter.writeEndElement(); // rows
                     xmlStreamWriter.writeEndElement(); //result
                 }
+                writeDuration(executableBeginTime);
                 xmlStreamWriter.writeEndElement(); // concept|constraint
             }
         });
+    }
+
+    private void writeDuration(long beginTime) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement("duration");
+        xmlStreamWriter.writeCharacters(Long.toString(System.currentTimeMillis() - beginTime));
+        xmlStreamWriter.writeEndElement(); // duration
     }
 
     private void run(XmlOperation operation) throws ReportWriterException {
