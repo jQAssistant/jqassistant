@@ -59,6 +59,12 @@
 
     <xsl:template match="jqa-report:result">
         <div>
+            <xsl:apply-templates select="jqa-report:rows"/>
+        </div>
+    </xsl:template>
+
+    <xsl:template match="jqa-report:rows">
+        <div>
             <xsl:apply-templates select="jqa-report:row"/>
         </div>
     </xsl:template>
