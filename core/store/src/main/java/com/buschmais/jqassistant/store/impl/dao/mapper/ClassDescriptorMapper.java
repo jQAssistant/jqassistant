@@ -56,7 +56,6 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
                 descriptor.setSuperClass((ClassDescriptor) target);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported relation type " + relation);
         }
     }
 

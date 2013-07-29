@@ -40,7 +40,6 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
                 descriptor.getContains().add(target);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported relation type " + relation);
         }
     }
 
