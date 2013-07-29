@@ -16,7 +16,7 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.scanner.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -37,11 +37,11 @@ public class ScanMojo extends AbstractStoreMojo {
     }
 
     private void scanDirectory(final File directory) throws MojoExecutionException {
-        getLog().info("Scanning directory: " + directory.getAbsolutePath());
+        getLog().info("Scanning rulesDirectory: " + directory.getAbsolutePath());
         super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
-                ClassScanner scanner = new ClassScanner(store);
+                ClassScannerImpl scanner = new ClassScannerImpl(store);
                 try {
                     scanner.scanDirectory(directory);
                 } catch (IOException e) {

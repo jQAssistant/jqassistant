@@ -18,12 +18,18 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
-import com.buschmais.jqassistant.core.analysis.api.model.*;
 import com.buschmais.jqassistant.core.analysis.impl.ConstraintAnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
+import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.report.api.ReportWriter;
+import com.buschmais.jqassistant.report.api.ReportWriterException;
+import com.buschmais.jqassistant.report.impl.CompositeReportWriter;
+import com.buschmais.jqassistant.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -31,10 +37,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @goal verify
@@ -44,6 +47,7 @@ import java.util.Map;
 public class VerifyMojo extends AbstractStoreMojo {
 
     public static final String DEFAULT_RULES_DIRECTORY = "src/jqassistant";
+
     /**
      * @parameter
      */
@@ -56,46 +60,58 @@ public class VerifyMojo extends AbstractStoreMojo {
      */
     protected List<String> constraintGroups;
 
+    /**
+     * The file to write the XML report to.
+     *
+     * @parameter expression="${jqassistant.report.xml}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
+     */
+    protected File xmlReportFile;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final Map<String, ConstraintGroup> availableConstraintGroups = readRules();
         final List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(availableConstraintGroups);
-
-        execute(new StoreOperation<Void, MojoFailureException>() {
-            @Override
-            public Void run(Store store) throws MojoFailureException {
-                ConstraintAnalyzer analyzer = new ConstraintAnalyzerImpl(store);
-                analyzer.validateConstraints(selectedConstraintGroups);
-                // Log a warning for each concept which did not return a result (i.e. has not been applied)
-                List<Result<Concept>> conceptResults = analyzer.getConceptResults();
-                for (Result<Concept> conceptResult : conceptResults) {
-                    if (conceptResult.getRows().isEmpty()) {
-                        getLog().warn("Concept '" + conceptResult.getExecutable().getId() + "' did not return a result.");
+        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
+        FileWriter xmlReportFileWriter;
+        try {
+            xmlReportFileWriter = new FileWriter(xmlReportFile);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Cannot create XML report file.", e);
+        }
+        XmlReportWriter xmlReportWriter;
+        try {
+            xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
+        } catch (ReportWriterException e) {
+            throw new MojoExecutionException("Cannot create XML report file writer.", e);
+        }
+        List<ReportWriter> reportWriters = new LinkedList<ReportWriter>();
+        reportWriters.add(inMemoryReportWriter);
+        reportWriters.add(xmlReportWriter);
+        try {
+            final CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
+            execute(new StoreOperation<Void, AbstractMojoExecutionException>() {
+                @Override
+                public Void run(Store store) throws AbstractMojoExecutionException {
+                    ConstraintAnalyzer analyzer = new ConstraintAnalyzerImpl(store, reportWriter);
+                    try {
+                        analyzer.validateConstraints(selectedConstraintGroups);
+                    } catch (ReportWriterException e) {
+                        throw new MojoExecutionException("Cannot create report.", e);
                     }
+                    return null;
                 }
-                List<Result<Constraint>> constraintViolations = analyzer.getConstraintViolations();
-                if (!constraintViolations.isEmpty()) {
-                    for (Result<Constraint> constraintViolation : constraintViolations) {
-                        AbstractExecutable constraint = constraintViolation.getExecutable();
-                        getLog().error(constraint.getId() + ": " + constraint.getDescription());
-                        for (Map<String, Object> columns : constraintViolation.getRows()) {
-                            StringBuilder message = new StringBuilder();
-                            for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                                if (message.length() > 0) {
-                                    message.append(", ");
-                                }
-                                message.append(entry.getKey());
-                                message.append('=');
-                                message.append(entry.getValue());
-                            }
-                            getLog().error("  " + message.toString());
-                        }
-                    }
-                    throw new MojoFailureException(constraintViolations.size() + " constraints have been violated!");
-                }
-                return null;
-            }
-        });
+            });
+        } catch (MojoFailureException e) {
+            throw e;
+        } catch (MojoExecutionException e) {
+            throw e;
+        } catch (AbstractMojoExecutionException e) {
+            throw new MojoExecutionException("Caught an unsupported exception.", e);
+        } finally {
+            IOUtils.closeQuietly(xmlReportFileWriter);
+        }
+        verifyConceptResults(inMemoryReportWriter);
+        verifyConstraintViolations(inMemoryReportWriter);
     }
 
     private List<ConstraintGroup> getSelectedConstraintGroups(Map<String, ConstraintGroup> availableConstraintGroups) throws MojoExecutionException {
@@ -118,7 +134,7 @@ public class VerifyMojo extends AbstractStoreMojo {
         File rulesDirectory = null;
         List<URL> urls = null;
         if (rules != null) {
-            rulesDirectory = rules.getDirectory();
+            rulesDirectory = rules.getRulesDirectory();
             urls = rules.getUrls();
         }
 
@@ -162,9 +178,9 @@ public class VerifyMojo extends AbstractStoreMojo {
 
     private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
-            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
+            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
         }
-        getLog().info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
+        getLog().info("Reading rules from rulesDirectory " + rulesDirectory.getAbsolutePath());
         final List<File> ruleFiles = new ArrayList<File>();
         try {
             new DirectoryWalker<File>() {
@@ -182,7 +198,60 @@ public class VerifyMojo extends AbstractStoreMojo {
             }.scan(rulesDirectory);
             return ruleFiles;
         } catch (IOException e) {
-            throw new MojoExecutionException("Cannot read directory: " + rulesDirectory.getAbsolutePath(), e);
+            throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
         }
+    }
+
+    /**
+     * Verifies the concept results returned by the {@link InMemoryReportWriter}.
+     * <p>A warning is logged for each concept which did not return a result (i.e. has not been applied).</p>
+     *
+     * @param inMemoryReportWriter The {@link InMemoryReportWriter}.
+     */
+    private void verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
+        List<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults();
+        for (Result<Concept> conceptResult : conceptResults) {
+            if (conceptResult.getRows().isEmpty()) {
+                getLog().warn("Concept '" + conceptResult.getExecutable().getId() + "' returned an empty result.");
+            }
+        }
+    }
+
+    /**
+     * Verifies the constraint violations returned by the {@link InMemoryReportWriter}.
+     *
+     * @param inMemoryReportWriter The {@link InMemoryReportWriter}.
+     * @throws MojoFailureException If constraint violations are detected.
+     */
+    private void verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws MojoFailureException {
+        List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
+        int violations = 0;
+        for (Result<Constraint> constraintViolation : constraintViolations) {
+            if (!constraintViolation.isEmpty()) {
+                AbstractExecutable constraint = constraintViolation.getExecutable();
+                getLog().error(constraint.getId() + ": " + constraint.getDescription());
+                for (Map<String, Object> columns : constraintViolation.getRows()) {
+                    StringBuilder message = new StringBuilder();
+                    for (Map.Entry<String, Object> entry : columns.entrySet()) {
+                        if (message.length() > 0) {
+                            message.append(", ");
+                        }
+                        message.append(entry.getKey());
+                        message.append('=');
+                        message.append(entry.getValue());
+                    }
+                    getLog().error("  " + message.toString());
+                }
+                violations++;
+            }
+        }
+        if (violations > 0) {
+            throw new MojoFailureException(violations + " constraints have been violated!");
+        }
+    }
+
+    private File getXmlReportFile() {
+        xmlReportFile.getParentFile().mkdirs();
+        return xmlReportFile;
     }
 }

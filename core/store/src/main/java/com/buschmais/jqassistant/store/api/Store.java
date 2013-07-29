@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.store.api;
 
-import com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 
 import java.util.Map;
 
 /**
- * Defines the store for {@link com.buschmais.jqassistant.store.api.model.descriptor.AbstractDescriptor}s.
+ * Defines the store for {@link com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor}s.
  */
 public interface Store {
 
@@ -59,41 +59,41 @@ public interface Store {
     void endTransaction();
 
     /**
-     * Resolves a {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor}.
+     * Resolves a {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}.
      * <p>
-     * The {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor} is resolved using a parent
-     * {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor} and the name of the contained package. If no
-     * matching {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor} can be found in the store a new
-     * {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor} will be created.
+     * The {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor} is resolved using a parent
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor} and the name of the contained package. If no
+     * matching {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor} can be found in the store a new
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor} will be created.
      * </p>
      *
-     * @param parentPackageDescriptor The {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor} containing the package.
+     * @param parentPackageDescriptor The {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor} containing the package.
      * @param packageName             The name of the package.
-     * @return The resolved {@link com.buschmais.jqassistant.store.api.model.descriptor.PackageDescriptor}.
+     * @return The resolved {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}.
      */
     PackageDescriptor createPackageDescriptor(PackageDescriptor parentPackageDescriptor, String packageName);
 
 
     /**
-     * Finds a {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor} by it's full qualified name.
+     * Finds a {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} by it's full qualified name.
      *
      * @param fullQualifiedName The full qualified name.
-     * @return The {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor} or <code>null</code> if it does not exist.
+     * @return The {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} or <code>null</code> if it does not exist.
      */
     PackageDescriptor findPackageDescriptor(String fullQualifiedName);
 
     /**
-     * Resolves a {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor}.
+     * Resolves a {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}.
      * <p>
-     * The {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor} is resolved using a parent
+     * The {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} is resolved using a parent
      * {@link PackageDescriptor} and the name of the contained class. If no
-     * matching {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor} can be found in the store a new
-     * {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor} will be created.
+     * matching {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} can be found in the store a new
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} will be created.
      * </p>
      *
      * @param packageDescriptor The {@link PackageDescriptor} containing the package.
      * @param className         The name of the class.
-     * @return The resolved {@link com.buschmais.jqassistant.store.api.model.descriptor.ClassDescriptor}.
+     * @return The resolved {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}.
      */
     ClassDescriptor createClassDescriptor(PackageDescriptor packageDescriptor, String className);
 
@@ -106,12 +106,12 @@ public interface Store {
     ClassDescriptor findClassDescriptor(String fullQualifiedName);
 
     /**
-     * Resolves a {@link com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor}.
+     * Resolves a {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor}.
      * <p>
-     * The {@link com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor} is resolved using a parent
+     * The {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor} is resolved using a parent
      * {@link ClassDescriptor} and the name of the contained method. If no
-     * matching {@link com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor} can be found in the store a new
-     * {@link com.buschmais.jqassistant.store.api.model.descriptor.MethodDescriptor} will be created.
+     * matching {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor} can be found in the store a new
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor} will be created.
      * </p>
      *
      * @param classDescriptor The {@link ClassDescriptor} containing the method.
@@ -121,17 +121,17 @@ public interface Store {
     MethodDescriptor createMethodDescriptor(ClassDescriptor classDescriptor, String methodName);
 
     /**
-     * Resolves a {@link com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor}.
+     * Resolves a {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}.
      * <p>
-     * The {@link com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor} is resolved using a parent
+     * The {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor} is resolved using a parent
      * {@link ClassDescriptor} and the name of the contained field. If no
-     * matching {@link com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor} can be found in the store a new
-     * {@link com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor} will be created.
+     * matching {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor} can be found in the store a new
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor} will be created.
      * </p>
      *
      * @param classDescriptor The {@link ClassDescriptor} containing the method.
      * @param fieldName       The name of the field.
-     * @return The resolved {@link com.buschmais.jqassistant.store.api.model.descriptor.FieldDescriptor}.
+     * @return The resolved {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}.
      */
     FieldDescriptor createFieldDescriptor(ClassDescriptor classDescriptor, String fieldName);
 

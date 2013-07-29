@@ -72,10 +72,17 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>1.6.2</version>
             </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.2.8-b01</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
+        <module>model</module>
+        <module>report</module>
         <module>analysis</module>
         <module>scanner</module>
         <module>store</module>

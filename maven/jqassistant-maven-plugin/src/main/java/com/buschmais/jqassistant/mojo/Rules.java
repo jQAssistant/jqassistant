@@ -23,9 +23,9 @@ public class Rules {
     /**
      * The directory to scan for rules.
      *
-     * @parameter expression="${jqassistant.rules.directory}"
+     * @parameter expression="${jqassistant.rules.rulesDirectory}"
      */
-    protected File directory;
+    protected File rulesDirectory;
 
     public List<URL> getUrls() {
         return urls;
@@ -35,11 +35,11 @@ public class Rules {
         this.urls = urls;
     }
 
-    public File getDirectory() {
-        return directory;
+    public File getRulesDirectory() {
+        return rulesDirectory;
     }
 
-    public void setDirectory(File directory) {
-        this.directory = directory;
+    public void setRulesDirectory(File rulesDirectory) {
+        this.rulesDirectory = rulesDirectory;
     }
 }

@@ -6,7 +6,7 @@
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
             SET c:IMPL
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.impl"/>
     </concept>
@@ -16,7 +16,7 @@
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}
             SET c:API
-            RETURN c
+            RETURN c AS class
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.api"/>
     </concept>
@@ -25,7 +25,7 @@
     <constraint id="abstractness:ApiMustNotDependOnImplementation">
         <requiresConcept refId="abstractness:ApiClasses"/>
         <requiresConcept refId="abstractness:ImplementationClasses"/>
-        <description>API classes must not have dependencies on implementation classes.</description>
+        <description>API classes must not have dependencies to implementation classes.</description>
         <cypher><![CDATA[
             MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
             WHERE a:API AND i:IMPL

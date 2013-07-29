@@ -2,13 +2,10 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.store.api.Store;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
 
 public abstract class AbstractStoreMojo extends org.apache.maven.plugin.AbstractMojo {
-
-    public static final String DEFAULT_STORE_DIRECTORY = "jqassistant";
 
     protected static interface StoreOperation<T, E extends AbstractMojoExecutionException> {
         public T run(Store store) throws E;
@@ -24,7 +21,7 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
 
 
     /**
-     * The project directory.
+     * The project rulesDirectory.
      *
      * @parameter expression="${basedir}"
      * @readonly
@@ -32,15 +29,15 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
     protected File basedir;
 
     /**
-     * The build directory.
+     * The build rulesDirectory.
      *
-     * @parameter expression="${project.build.directory}"
+     * @parameter expression="${project.build.rulesDirectory}"
      * @readonly
      */
     protected File buildDirectory;
 
     /**
-     * The classes directory.
+     * The classes rulesDirectory.
      *
      * @parameter expression="${project.build.outputDirectory}"
      * @readonly
@@ -48,7 +45,7 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
     protected File classesDirectory;
 
     /**
-     * The classes directory.
+     * The classes rulesDirectory.
      *
      * @parameter expression="${project.build.testOutputDirectory}"
      * @readonly
@@ -56,9 +53,9 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
     protected File testClassesDirectory;
 
     /**
-     * The build directory.
+     * The build rulesDirectory.
      *
-     * @parameter expression="${jqassistant.store.directory}"
+     * @parameter expression="${jqassistant.store.rulesDirectory}" default-value="${project.build.directory}/jqassistant/store"
      * @readonly
      */
     protected File storeDirectory;
@@ -83,13 +80,8 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
     }
 
     private Store getStore() {
-        File databaseDirectory;
-        if (storeDirectory != null) {
-            databaseDirectory = storeDirectory;
-        } else {
-            databaseDirectory = new File(buildDirectory, DEFAULT_STORE_DIRECTORY);
-        }
-        return storeProvider.getStore(databaseDirectory);
+        storeDirectory.getParentFile().mkdirs();
+        return storeProvider.getStore(storeDirectory);
     }
 
 }

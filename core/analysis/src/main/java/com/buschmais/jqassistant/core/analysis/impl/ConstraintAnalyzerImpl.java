@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
-import com.buschmais.jqassistant.core.analysis.api.model.*;
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.report.api.ReportWriter;
+import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.store.api.QueryResult;
+import com.buschmais.jqassistant.store.api.Store;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,87 +21,93 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
 
     private Store store;
 
+    private ReportWriter reportWriter;
+
     private Set<Concept> executedConcepts = new HashSet<Concept>();
 
     private Set<Constraint> executedConstraints = new HashSet<Constraint>();
 
     private Set<ConstraintGroup> executedConstraintGroups = new HashSet<ConstraintGroup>();
 
-    private List<Result<Concept>> conceptResults = new ArrayList<Result<Concept>>();
-
-    private List<Result<Constraint>> constraintViolations = new ArrayList<Result<Constraint>>();
 
     /**
      * Constructor.
+     *
      * @param store The Store to use.
      */
-    public ConstraintAnalyzerImpl(Store store) {
+    public ConstraintAnalyzerImpl(Store store, ReportWriter reportWriter) {
         this.store = store;
+        this.reportWriter = reportWriter;
     }
 
     @Override
-    public void validateConstraints(Iterable<ConstraintGroup> constraintGroups) {
-        for (ConstraintGroup constraintGroup : constraintGroups) {
-            validateConstraintGroup(constraintGroup);
+    public void validateConstraints(Iterable<ConstraintGroup> constraintGroups) throws ReportWriterException {
+        reportWriter.begin();
+        try {
+            for (ConstraintGroup constraintGroup : constraintGroups) {
+                validateConstraintGroup(constraintGroup);
+            }
+        } finally {
+            reportWriter.end();
         }
     }
 
-    @Override
-    public List<Result<Concept>> getConceptResults() {
-        return conceptResults;
-    }
-
-    @Override
-    public List<Result<Constraint>> getConstraintViolations() {
-        return constraintViolations;
-    }
-
-    private void validateConstraintGroup(ConstraintGroup constraintGroup) {
+    private void validateConstraintGroup(ConstraintGroup constraintGroup) throws ReportWriterException {
         if (!executedConstraintGroups.contains(constraintGroup)) {
             LOGGER.info("Executing constraint group '{}'", constraintGroup.getId());
             for (ConstraintGroup includedConstraintGroup : constraintGroup.getConstraintGroups()) {
                 validateConstraintGroup(includedConstraintGroup);
             }
-            for (Constraint constraint : constraintGroup.getConstraints()) {
-                validateConstraint(constraint);
+            reportWriter.beginConstraintGroup(constraintGroup);
+            try {
+                for (Constraint constraint : constraintGroup.getConstraints()) {
+                    validateConstraint(constraint);
+                }
+                executedConstraintGroups.add(constraintGroup);
+            } finally {
+                reportWriter.endConstraintGroup();
             }
-            executedConstraintGroups.add(constraintGroup);
         }
     }
 
-    private void validateConstraint(Constraint constraint) {
+    private void validateConstraint(Constraint constraint) throws ReportWriterException {
         if (!executedConstraints.contains(constraint)) {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
             }
             LOGGER.info("Validating constraint '{}'.", constraint.getId());
-            List<Map<String, Object>> violations = execute(constraint);
-            if (!violations.isEmpty()) {
-                LOGGER.warn("Found {} violations for constraint '{}'.", violations.size(), constraint.getId());
-                this.constraintViolations.add(new Result(constraint, violations));
+            reportWriter.beginConstraint(constraint);
+            try {
+                reportWriter.setResult(execute(constraint));
+                executedConstraints.add(constraint);
+            } finally {
+                reportWriter.endConstraint();
             }
-            executedConstraints.add(constraint);
         }
     }
 
-    private void applyConcept(Concept concept) {
+    private void applyConcept(Concept concept) throws ReportWriterException {
         if (!executedConcepts.contains(concept)) {
             for (Concept requiredConcept : concept.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
             }
             LOGGER.info("Applying concept '{}'.", concept.getId());
-            store.beginTransaction();
+            reportWriter.beginConcept(concept);
             try {
-                List<Map<String, Object>> conceptRows = execute(concept);
-                conceptResults.add(new Result(concept, conceptRows));
+                store.beginTransaction();
+                try {
+                    reportWriter.setResult(execute(concept));
+                } finally {
+                    store.endTransaction();
+                }
+                executedConcepts.add(concept);
             } finally {
-                store.endTransaction();
+                reportWriter.endConcept();
             }
-            executedConcepts.add(concept);
         }
     }
 
-    private List<Map<String, Object>> execute(AbstractExecutable executable) {
+    private <T extends AbstractExecutable> Result<T> execute(T executable) {
         List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         QueryResult queryResult = null;
         try {
@@ -110,7 +118,7 @@ public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
         } finally {
             IOUtils.closeQuietly(queryResult);
         }
-        return rows;
+        return new Result<T>(executable, queryResult.getColumns(), rows);
     }
 
     private QueryResult executeQuery(Query query) {
