@@ -110,7 +110,7 @@ public class XmlReportWriter implements ReportWriter {
         } else {
             throw new ReportWriterException("Cannot write report for unsupported executable " + executable);
         }
-        final List<Map<String, Object>> rows = result.getRows();
+        final List<String> columnNames = result.getColumnNames();
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -119,10 +119,19 @@ public class XmlReportWriter implements ReportWriter {
                 xmlStreamWriter.writeStartElement("description");
                 xmlStreamWriter.writeCharacters(executable.getDescription());
                 xmlStreamWriter.writeEndElement();
-                if (!rows.isEmpty()) {
+                if (!result.isEmpty()) {
                     xmlStreamWriter.writeStartElement("result");
-                    xmlStreamWriter.writeAttribute("rows", Integer.toString(rows.size()));
-                    xmlStreamWriter.writeAttribute("columnsPerRow", Integer.toString(result.getColumnNames().size()));
+                    xmlStreamWriter.writeStartElement("columns");
+                    xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
+                    for (String column : columnNames) {
+                        xmlStreamWriter.writeStartElement("column");
+                        xmlStreamWriter.writeCharacters(column);
+                        xmlStreamWriter.writeEndElement(); //column
+                    }
+                    xmlStreamWriter.writeEndElement(); //columns
+                    xmlStreamWriter.writeStartElement("rows");
+                    List<Map<String, Object>> rows = result.getRows();
+                    xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
                     for (Map<String, Object> row : rows) {
                         xmlStreamWriter.writeStartElement("row");
                         for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
@@ -132,13 +141,14 @@ public class XmlReportWriter implements ReportWriter {
                             xmlStreamWriter.writeStartElement("column");
                             xmlStreamWriter.writeAttribute("name", columnName);
                             xmlStreamWriter.writeCharacters(stringValue);
-                            xmlStreamWriter.writeEndElement();
+                            xmlStreamWriter.writeEndElement(); //column
                         }
                         xmlStreamWriter.writeEndElement();
                     }
-                    xmlStreamWriter.writeEndElement();
+                    xmlStreamWriter.writeEndElement(); // rows
+                    xmlStreamWriter.writeEndElement(); //result
                 }
-                xmlStreamWriter.writeEndElement();
+                xmlStreamWriter.writeEndElement(); // concept|constraint
             }
         });
     }
