@@ -1,0 +1,48 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="java:ClassDependency">
+        <description />
+        <cypher><![CDATA[
+            MATCH
+				c1:CLASS-[:CONTAINS]->fom-[:DEPENDS_ON]->c2:CLASS
+			CREATE UNIQUE
+				(c1)-[:DEPENDS_ON]->(c2)
+			RETURN
+				c1.FQN, c2.FQN
+        ]]></cypher>
+    </concept>
+	
+    <concept id="java:PackageDependency">
+		<requiresConcept refId="java:ClassDependency"/>
+        <description />
+        <cypher><![CDATA[
+			MATCH
+				(p1:PACKAGE)-[:CONTAINS]->(c1:CLASS),
+				(c1)-[:DEPENDS_ON]->(c2:CLASS),
+				(p2:PACKAGE)-[:CONTAINS]->(c2)
+			WHERE
+				c1<>c2 AND p1<>p2
+			CREATE UNIQUE
+				(p1)-[:DEPENDS_ON]->(p2)
+			RETURN
+				COUNT(p1) as count
+        ]]></cypher>
+    </concept>
+
+   <constraint id="java:CyclicPackageDependency">
+        <requiresConcept refId="java:PackageDependency"/>
+        <description>There must be no cyclic package dependencies.</description>
+        <cypher><![CDATA[
+			MATCH
+				p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE,
+				path2=shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
+			WHERE
+				p1<>p2
+			RETURN
+				p1.FQN as package, extract(p in nodes(path2) : p.FQN) as Path
+			ORDER BY
+				package	
+        ]]></cypher>
+    </constraint>
+	
+</jqa:jqassistant-rules>
