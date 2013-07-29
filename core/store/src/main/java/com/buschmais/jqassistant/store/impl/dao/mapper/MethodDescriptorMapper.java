@@ -49,7 +49,6 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
                 descriptor.getDeclaredThrowables().add((ClassDescriptor) target);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported relation type " + relation);
         }
     }
 

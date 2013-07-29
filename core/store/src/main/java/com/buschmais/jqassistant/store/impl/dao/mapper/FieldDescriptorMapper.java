@@ -45,7 +45,6 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
                 descriptor.getDependencies().add((ClassDescriptor) target);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported relation type " + relation);
         }
     }
 

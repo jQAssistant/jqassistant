@@ -4,11 +4,13 @@
         <description />
         <cypher><![CDATA[
             MATCH
-				c1:CLASS-[:CONTAINS]->fom-[:DEPENDS_ON]->c2:CLASS
+				(c1:CLASS)-[:CONTAINS]->fom-[:DEPENDS_ON]->(c2:CLASS)
 			CREATE UNIQUE
 				(c1)-[:DEPENDS_ON]->(c2)
+            WHERE
+                c1<>c2
 			RETURN
-				c1.FQN, c2.FQN
+				COUNT(c1) as count
         ]]></cypher>
     </concept>
 	
