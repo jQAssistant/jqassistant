@@ -4,7 +4,7 @@
         <description />
         <cypher><![CDATA[
             MATCH 
-            	c1:CLASS-[:CONTAINS]->fom-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->c2:CLASS
+            	c1:CLASS-[:CONTAINS*0..1]->fom-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->c2:CLASS
 			WHERE 
 				c1<>c2
 			CREATE UNIQUE 
@@ -48,6 +48,7 @@
 	<constraint id="java:CyclicClassDependency">
         <requiresConcept refId="java:ClassDependency"/>
         <description>There must be no cyclic class dependencies.</description>
+        <!--
         <cypher><![CDATA[
 	        MATCH 
 	        	p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE, 
@@ -61,6 +62,23 @@
 			RETURN  
 				c1 as class, extract(p in tail(nodes(cpath2)) : p.FQN) as path
 			LIMIT 100
+        ]]></cypher>
+        -->
+        <cypher><![CDATA[
+            MATCH
+                p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE,
+                shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
+            WITH
+                p1, p2
+            MATCH
+                p1-[:CONTAINS]->c1:CLASS,
+                p2-[:CONTAINS]->c2:CLASS,
+                c1-[:DEPENDS_ON]->c2,
+                path=shortestPath(c2-[:DEPENDS_ON*]->c1)
+            WHERE
+                c1<>c2
+            RETURN
+                length(path) as length, extract(p in nodes(path) : p.FQN) as cycle
         ]]></cypher>
     </constraint>
     

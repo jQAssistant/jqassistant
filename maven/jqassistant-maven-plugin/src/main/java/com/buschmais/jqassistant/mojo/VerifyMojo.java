@@ -46,7 +46,7 @@ import java.util.*;
  */
 public class VerifyMojo extends AbstractStoreMojo {
 
-    public static final String DEFAULT_RULES_DIRECTORY = "src/jqassistant";
+    public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
 
     /**
      * @parameter
