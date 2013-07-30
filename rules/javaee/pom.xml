@@ -2,19 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>jqassistant</artifactId>
+        <artifactId>jqassistant.rules</artifactId>
         <groupId>com.buschmais.jqassistant</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>jqassistant.rules</artifactId>
-    <packaging>pom</packaging>
+    <modelVersion>4.0.0</modelVersion>
 
-    <modules>
-        <module>java</module>
-        <module>javaee</module>
-        <module>junit4</module>
-    </modules>
+    <artifactId>jqassistant.rules.javaee</artifactId>
 
 </project>

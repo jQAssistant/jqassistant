@@ -1,0 +1,7 @@
+<v1:jqassistant-catalog xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/catalog/schema/v1.0">
+    <rules>
+        <resources>
+            <resource>junit4.xml</resource>
+        </resources>
+    </rules>
+</v1:jqassistant-catalog>
