@@ -11,16 +11,4 @@
         ]]></cypher>
     </concept>
 
-    <concept id="java:ApplyMethodOrFieldDependenciesToDeclaringClass">
-        <description>Creates a relationship ASSIGNABLE_FROM between CLASS labeled nodes if two classes are assignable.</description>
-        <cypher><![CDATA[
-            MATCH
-              (c:CLASS)-[:CONTAINS]->(fieldOrMethod),
-              (fieldOrMethod)-[:DEPENDS_ON|THROWS|ANNOTATED_BY]->(d)
-            RETURN
-              c AS class, COUNT(DISTINCT d) as count
-        ]]></cypher>
-    </concept>
-
-
 </jqa:jqassistant-rules>

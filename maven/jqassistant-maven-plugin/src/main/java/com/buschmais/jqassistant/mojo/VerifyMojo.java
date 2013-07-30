@@ -16,8 +16,13 @@
 
 package com.buschmais.jqassistant.mojo;
 
+import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ResourcesType;
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.RulesType;
+import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.ConstraintAnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import com.buschmais.jqassistant.core.model.api.*;
@@ -32,10 +37,15 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -48,11 +58,14 @@ public class VerifyMojo extends AbstractStoreMojo {
 
     public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
 
-    /**
-     * @parameter
-     */
-    protected Rules rules;
+    private static final Logger LOGGER = LoggerFactory.getLogger(VerifyMojo.class);
 
+    /**
+     * The directory to scan for rules.
+     *
+     * @parameter expression="${jqassistant.rules.rulesDirectory}"
+     */
+    protected File rulesDirectory;
     /**
      * The list of constraint group names to be executed.
      *
@@ -66,6 +79,8 @@ public class VerifyMojo extends AbstractStoreMojo {
      * @parameter expression="${jqassistant.report.xml}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
      */
     protected File xmlReportFile;
+
+    private CatalogReader catalogReader = new CatalogReaderImpl();
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -114,6 +129,13 @@ public class VerifyMojo extends AbstractStoreMojo {
         verifyConstraintViolations(inMemoryReportWriter);
     }
 
+    /**
+     * Return the selected constraint groups.
+     *
+     * @param availableConstraintGroups The available constraint groups as defined by the rules.
+     * @return The selected constraint groups.
+     * @throws MojoExecutionException If an undefined group is referenced.
+     */
     private List<ConstraintGroup> getSelectedConstraintGroups(Map<String, ConstraintGroup> availableConstraintGroups) throws MojoExecutionException {
         final List<ConstraintGroup> selectedConstraintGroups = new ArrayList<ConstraintGroup>();
         if (constraintGroups != null) {
@@ -130,52 +152,61 @@ public class VerifyMojo extends AbstractStoreMojo {
         return selectedConstraintGroups;
     }
 
+    /**
+     * Reads the available rules from the rules directory and deployed catalogs.
+     *
+     * @return A {@link Map} containing {@link ConstraintGroup}s identified by their id.
+     * @throws MojoExecutionException If the rules cannot be read.
+     */
     private Map<String, ConstraintGroup> readRules() throws MojoExecutionException {
-        File rulesDirectory = null;
-        List<URL> urls = null;
-        if (rules != null) {
-            rulesDirectory = rules.getRulesDirectory();
-            urls = rules.getUrls();
-        }
-
         if (rulesDirectory == null) {
             rulesDirectory = new File(basedir.getAbsoluteFile() + File.separator + DEFAULT_RULES_DIRECTORY);
         }
-
-        List<InputStream> ruleStreams = new ArrayList<InputStream>();
-        try {
-            List<File> ruleFiles = readRulesDirectory(rulesDirectory);
-            for (File ruleFile : ruleFiles) {
-                getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-                try {
-                    ruleStreams.add(new BufferedInputStream(new FileInputStream(ruleFile)));
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Cannot open rule file: " + ruleFile.getAbsolutePath(), e);
-                }
-            }
-            if (urls != null) {
-                for (URL url : urls) {
-                    getLog().debug("Adding rules from URL " + url.toString());
-                    try {
-                        InputStream ruleStream = url.openStream();
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Cannot open rule URL: " + url.toString(), e);
+        List<Source> sources = new ArrayList<Source>();
+        // read rules from rules directory
+        List<File> ruleFiles = readRulesDirectory(rulesDirectory);
+        for (File ruleFile : ruleFiles) {
+            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
+            sources.add(new StreamSource(ruleFile));
+        }
+        CatalogReader catalogReader = new CatalogReaderImpl();
+        for (JqassistantCatalog catalog : catalogReader.readCatalogs()) {
+            for (RulesType rulesType : catalog.getRules()) {
+                for (ResourcesType resourcesType : rulesType.getResources()) {
+                    String directory = resourcesType.getDirectory();
+                    for (String resource : resourcesType.getResource()) {
+                        StringBuffer fullResource = new StringBuffer();
+                        if (directory != null) {
+                            fullResource.append(directory);
+                        }
+                        fullResource.append(resource);
+                        URL url = VerifyMojo.class.getResource(fullResource.toString());
+                        if (url != null) {
+                            try {
+                                LOGGER.debug("Adding rules from " + url.toString());
+                                InputStream ruleStream = url.openStream();
+                                sources.add(new StreamSource(ruleStream));
+                            } catch (IOException e) {
+                                throw new MojoExecutionException("Cannot open rule URL: " + url.toString(), e);
+                            }
+                        } else {
+                            LOGGER.warn("Cannot read rules from resource '{}'" + resource);
+                        }
                     }
                 }
             }
-            List<Source> sources = new ArrayList<Source>();
-            for (InputStream ruleStream : ruleStreams) {
-                sources.add(new StreamSource(ruleStream));
-            }
-            RulesReader rulesReader = new RulesReaderImpl();
-            return rulesReader.read(sources);
-        } finally {
-            for (InputStream ruleStream : ruleStreams) {
-                IOUtils.closeQuietly(ruleStream);
-            }
         }
+        RulesReader rulesReader = new RulesReaderImpl();
+        return rulesReader.read(sources);
     }
 
+    /**
+     * Retrieves the list of available rules from the rules directory.
+     *
+     * @param rulesDirectory The rules directory.
+     * @return The {@link List} of available rule {@link File}s.
+     * @throws MojoExecutionException If the rules directory cannot be read.
+     */
     private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
@@ -250,6 +281,11 @@ public class VerifyMojo extends AbstractStoreMojo {
         }
     }
 
+    /**
+     * Returns the {@link File} to write the XML report to.
+     *
+     * @return The {@link File} to write the XML report to.
+     */
     private File getXmlReportFile() {
         xmlReportFile.getParentFile().mkdirs();
         return xmlReportFile;
