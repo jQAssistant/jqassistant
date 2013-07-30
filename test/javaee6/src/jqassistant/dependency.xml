@@ -3,13 +3,13 @@
     <concept id="java:ClassDependency">
         <description />
         <cypher><![CDATA[
-            MATCH
-				(c1:CLASS)-[:CONTAINS]->fom-[:DEPENDS_ON]->(c2:CLASS)
-			CREATE UNIQUE
+            MATCH 
+            	c1:CLASS-[:CONTAINS]->fom-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->c2:CLASS
+			WHERE 
+				c1<>c2
+			CREATE UNIQUE 
 				(c1)-[:DEPENDS_ON]->(c2)
-            WHERE
-                c1<>c2
-			RETURN
+			RETURN 
 				COUNT(c1) as count
         ]]></cypher>
     </concept>
@@ -18,15 +18,13 @@
 		<requiresConcept refId="java:ClassDependency"/>
         <description />
         <cypher><![CDATA[
-			MATCH
-				(p1:PACKAGE)-[:CONTAINS]->(c1:CLASS),
-				(c1)-[:DEPENDS_ON]->(c2:CLASS),
-				(p2:PACKAGE)-[:CONTAINS]->(c2)
-			WHERE
+			MATCH  
+				(p1:PACKAGE)-[:CONTAINS]->(c1:CLASS)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(c2:CLASS)<-[:CONTAINS]-(p2:PACKAGE)
+			WHERE 
 				c1<>c2 AND p1<>p2
-			CREATE UNIQUE
+			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
-			RETURN
+			RETURN 
 				COUNT(p1) as count
         ]]></cypher>
     </concept>
@@ -47,4 +45,23 @@
         ]]></cypher>
     </constraint>
 	
+	<constraint id="java:CyclicClassDependency">
+        <requiresConcept refId="java:ClassDependency"/>
+        <description>There must be no cyclic class dependencies.</description>
+        <cypher><![CDATA[
+	        MATCH 
+	        	p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE, 
+	        	shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
+			WITH 
+				p1, p2
+			MATCH  
+				p1-[:CONTAINS]->c1:CLASS, 
+				c1-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->c2, 
+				cpath2=shortestPath(c2-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS*]->c1)
+			RETURN  
+				c1 as class, extract(p in tail(nodes(cpath2)) : p.FQN) as path
+			LIMIT 100
+        ]]></cypher>
+    </constraint>
+    
 </jqa:jqassistant-rules>
