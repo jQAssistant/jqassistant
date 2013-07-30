@@ -47,11 +47,12 @@
 	
 	<constraint id="java:CyclicClassDependency">
         <requiresConcept refId="java:ClassDependency"/>
+        <requiresConcept refId="java:PackageDependency"/>
         <description>There must be no cyclic class dependencies.</description>
         <!--
         <cypher><![CDATA[
 	        MATCH 
-	        	p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE, 
+	        	p1:PACKAGE-[:DEPENDS_ON*0..1]->p2:PACKAGE, 
 	        	shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
 			WITH 
 				p1, p2
@@ -59,8 +60,10 @@
 				p1-[:CONTAINS]->c1:CLASS, 
 				c1-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->c2, 
 				cpath2=shortestPath(c2-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS*]->c1)
+			WHERE 
+            	c1<>c2
 			RETURN  
-				c1 as class, extract(p in tail(nodes(cpath2)) : p.FQN) as path
+				c1.FQN as class, extract(p in nodes(cpath2) : p.FQN) as path
 			LIMIT 100
         ]]></cypher>
         -->
