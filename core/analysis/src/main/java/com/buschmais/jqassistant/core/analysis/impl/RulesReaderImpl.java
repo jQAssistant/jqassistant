@@ -18,26 +18,26 @@ import javax.xml.validation.SchemaFactory;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: dirk.mahler
- * Date: 21.06.13
- * Time: 21:08
- * To change this template use File | Settings | File Templates.
+ * A {@link RulesReader} implementation.
  */
 public class RulesReaderImpl implements RulesReader {
 
-    public Map<String, ConstraintGroup> read(List<Source> sources) {
-        JAXBContext jaxbContext;
+    private JAXBContext jaxbContext;
+
+    public RulesReaderImpl() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot create JAXB context.", e);
         }
+    }
+
+    public Map<String, ConstraintGroup> read(List<Source> sources) {
         List<JqassistantRules> rules = new ArrayList<JqassistantRules>();
         for (Source source : sources) {
             try {
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-                unmarshaller.setSchema(getSchema());
+                unmarshaller.setSchema(JaxbHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
                 rules.add(unmarshaller.unmarshal(source, JqassistantRules.class).getValue());
             } catch (JAXBException e) {
                 throw new IllegalArgumentException("Cannot read rules : " + source.toString(), e);
@@ -46,16 +46,6 @@ public class RulesReaderImpl implements RulesReader {
         return convert(rules);
     }
 
-    private Schema getSchema() {
-        Schema schema;
-        try {
-            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            schema = schemaFactory.newSchema(RulesReader.class.getResource("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
-        } catch (SAXException e) {
-            throw new IllegalStateException("Cannot read rules schema.", e);
-        }
-        return schema;
-    }
 
 
     private Map<String, ConstraintGroup> convert(List<JqassistantRules> rules) {
