@@ -69,7 +69,7 @@
         -->
         <cypher><![CDATA[
             MATCH
-                p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE,
+                p1:PACKAGE-[:DEPENDS_ON*0..1]->p2:PACKAGE,
                 shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
             WITH
                 p1, p2
