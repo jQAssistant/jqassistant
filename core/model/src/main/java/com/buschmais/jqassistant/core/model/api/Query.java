@@ -4,11 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: dimahler
- * Date: 6/21/13
- * Time: 3:12 PM
- * To change this template use File | Settings | File Templates.
+ * A CYPHER query including all parameters.
  */
 public class Query {
 
@@ -26,9 +22,5 @@ public class Query {
 
     public Map<String, Object> getParameters() {
         return parameters;
-    }
-
-    public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
     }
 }

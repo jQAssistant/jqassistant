@@ -6,11 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: dirk.mahler
- * Date: 24.06.13
- * Time: 13:07
- * To change this template use File | Settings | File Templates.
+ * The result of a {@link Query} using an {@link  AbstractExecutable}.
  */
 public class Result<T extends AbstractExecutable> {
 
