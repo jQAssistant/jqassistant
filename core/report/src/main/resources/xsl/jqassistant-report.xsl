@@ -61,7 +61,7 @@
                 	}
                 	
                 	.concept_warn  * .ruleName:after{
-                		content:" [not executed]";
+                		content:" ?";
                 	}
                 </style>
 				<script type="text/javascript">
@@ -123,6 +123,7 @@
         		</tr>
 	            <xsl:apply-templates select="jqa-report:constraint">
 	            	<xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
+	            	<xsl:sort select="@id" order="ascending" />
             	</xsl:apply-templates>
             </table>
         </div>
@@ -136,6 +137,7 @@
 	           	</tr>
             	<xsl:apply-templates select="jqa-report:concept">
 	            	<xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
+	            	<xsl:sort select="@id" order="ascending" />
             	</xsl:apply-templates>
             </table>
         </div>
@@ -192,7 +194,6 @@
 	<!-- RESULT PART -->
     <xsl:template match="jqa-report:result">
 		<div class="result">
-			<h4>Results</h4>
 			<p><xsl:value-of select="../jqa-report:description/text()"/></p>			
 	    	<table>
 	    		<tr>

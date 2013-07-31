@@ -7,7 +7,7 @@
             MATCH (t:CLASS)-[:CONTAINS]->(m:METHOD)-[:ANNOTATED_BY]->(a:CLASS)
             WHERE a.FQN="org.junit.Test"
             SET m:TEST:JUNIT4, t:TEST:JUNIT4
-            RETURN t AS method
+            RETURN t AS class
         ]]></cypher>
     </concept>
 
