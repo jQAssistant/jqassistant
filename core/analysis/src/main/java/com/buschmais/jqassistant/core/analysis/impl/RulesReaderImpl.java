@@ -6,6 +6,8 @@ import com.buschmais.jqassistant.core.model.api.Concept;
 import com.buschmais.jqassistant.core.model.api.Constraint;
 import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -22,6 +24,8 @@ import java.util.*;
  */
 public class RulesReaderImpl implements RulesReader {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RulesReaderImpl.class);
+
     private JAXBContext jaxbContext;
 
     public RulesReaderImpl() {
@@ -33,6 +37,7 @@ public class RulesReaderImpl implements RulesReader {
     }
 
     public Map<String, ConstraintGroup> read(List<Source> sources) {
+        LOGGER.debug("Reading rules from {} sources.", Integer.toString(sources.size()));
         List<JqassistantRules> rules = new ArrayList<JqassistantRules>();
         for (Source source : sources) {
             try {
@@ -45,8 +50,6 @@ public class RulesReaderImpl implements RulesReader {
         }
         return convert(rules);
     }
-
-
 
     private Map<String, ConstraintGroup> convert(List<JqassistantRules> rules) {
         Map<String, QueryDefinitionType> queryDefinitionTypes = new HashMap<String, QueryDefinitionType>();
