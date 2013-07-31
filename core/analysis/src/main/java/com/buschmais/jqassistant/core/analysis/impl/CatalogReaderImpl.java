@@ -53,7 +53,7 @@ public class CatalogReaderImpl implements CatalogReader {
         List<JqassistantCatalog> catalogs = new ArrayList<JqassistantCatalog>();
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            LOGGER.info("Reading catalog from URL '{}'.", url);
+            LOGGER.debug("Reading catalog from URL '{}'.", url);
             catalogs.add(readCatalog(url));
         }
         return catalogs;
