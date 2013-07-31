@@ -7,11 +7,12 @@ import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ResourcesType;
 import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.RulesType;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
-import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Concept;
+import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -22,7 +23,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Abstract base implementation for analysis MOJOs.
@@ -30,8 +30,6 @@ import java.util.Map;
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
     public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalysisMojo.class);
 
     /**
      * The directory to scan for rules.
@@ -54,23 +52,23 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * Return the selected constraint groups.
      *
-     * @param availableConstraintGroups The available constraint groups as defined by the rules.
+     * @param ruleSet The {@link RuleSet}.
      * @return The selected constraint groups.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined group is referenced.
      */
-    protected List<ConstraintGroup> getSelectedConstraintGroups(Map<String, ConstraintGroup> availableConstraintGroups) throws MojoExecutionException {
+    protected List<ConstraintGroup> getSelectedConstraintGroups(RuleSet ruleSet) throws MojoExecutionException {
         final List<ConstraintGroup> selectedConstraintGroups = new ArrayList<ConstraintGroup>();
         if (constraintGroups != null) {
             for (String constraintGroup : constraintGroups) {
-                ConstraintGroup group = availableConstraintGroups.get(constraintGroup);
+                ConstraintGroup group = ruleSet.getConstraintGroups().get(constraintGroup);
                 if (group == null) {
                     throw new MojoExecutionException("The constraint group '" + constraintGroup + "' is not defined.");
                 }
                 selectedConstraintGroups.add(group);
             }
         } else {
-            selectedConstraintGroups.addAll(availableConstraintGroups.values());
+            selectedConstraintGroups.addAll(ruleSet.getConstraintGroups().values());
         }
         return selectedConstraintGroups;
     }
@@ -78,11 +76,11 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
-     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.ConstraintGroup}s identified by their id.
+     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup}s identified by their id.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the rules cannot be read.
      */
-    protected Map<String, ConstraintGroup> readRules() throws MojoExecutionException {
+    protected RuleSet readRules() throws MojoExecutionException {
         if (rulesDirectory == null) {
             rulesDirectory = new File(basedir.getAbsoluteFile() + File.separator + DEFAULT_RULES_DIRECTORY);
         }
@@ -106,22 +104,20 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
                         URL url = VerifyMojo.class.getResource(fullResource.toString());
                         if (url != null) {
                             try {
-                                LOGGER.debug("Adding rules from " + url.toString());
+                                getLog().debug("Adding rules from " + url.toString());
                                 InputStream ruleStream = url.openStream();
                                 sources.add(new StreamSource(ruleStream));
                             } catch (IOException e) {
                                 throw new MojoExecutionException("Cannot open rule URL: " + url.toString(), e);
                             }
                         } else {
-                            LOGGER.warn("Cannot read rules from resource '{}'" + resource);
+                            getLog().warn("Cannot read rules from resource '{}'" + resource);
                         }
                     }
                 }
             }
         }
-        Map<String, ConstraintGroup> constraintGroups = rulesReader.read(sources);
-        LOGGER.info("Resolved constraint groups '{}' from available rules.", constraintGroups.keySet());
-        return constraintGroups;
+        return rulesReader.read(sources);
     }
 
     /**
@@ -155,6 +151,26 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
             return ruleFiles;
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
+        }
+    }
+
+    /**
+     * Logs the given {@link RuleSet} on level info.
+     *
+     * @param ruleSet The {@link RuleSet}.
+     */
+    protected void logRuleSet(RuleSet ruleSet) {
+        getLog().info("Constraint groups [" + ruleSet.getConstraintGroups().size() + "]");
+        for (ConstraintGroup constraintGroup : ruleSet.getConstraintGroups().values()) {
+            getLog().info("  " + constraintGroup.getId());
+        }
+        getLog().info("Constraints [" + ruleSet.getConstraints().size() + "]");
+        for (Constraint constraint : ruleSet.getConstraints().values()) {
+            getLog().info("  \"" + constraint.getId() + "\" - " + constraint.getDescription());
+        }
+        getLog().info("Concepts [" + ruleSet.getConcepts().size() + "]");
+        for (Concept concept : ruleSet.getConcepts().values()) {
+            getLog().info("  \"" + concept.getId() + "\" - " + concept.getDescription());
         }
     }
 }

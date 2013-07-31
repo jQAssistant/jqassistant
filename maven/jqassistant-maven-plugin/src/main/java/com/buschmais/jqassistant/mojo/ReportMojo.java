@@ -15,6 +15,7 @@ import java.io.File;
 
 /**
  * @goal report
+ * @phase site
  * @requiresProject false
  */
 public class ReportMojo extends AbstractMojo {
