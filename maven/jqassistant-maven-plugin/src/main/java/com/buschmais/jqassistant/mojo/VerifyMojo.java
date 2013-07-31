@@ -56,8 +56,6 @@ import java.util.*;
  */
 public class VerifyMojo extends AbstractAnalysisMojo {
 
-    public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(VerifyMojo.class);
 
     /**
@@ -66,8 +64,6 @@ public class VerifyMojo extends AbstractAnalysisMojo {
      * @parameter expression="${jqassistant.report.xml}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
      */
     protected File xmlReportFile;
-
-    private CatalogReader catalogReader = new CatalogReaderImpl();
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

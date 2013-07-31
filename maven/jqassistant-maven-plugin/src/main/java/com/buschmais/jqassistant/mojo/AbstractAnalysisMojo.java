@@ -29,7 +29,10 @@ import java.util.Map;
  */
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
+    public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalysisMojo.class);
+
     /**
      * The directory to scan for rules.
      *
@@ -43,6 +46,10 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      * @parameter
      */
     protected List<String> constraintGroups;
+
+    private CatalogReader catalogReader = new CatalogReaderImpl();
+
+    private RulesReader rulesReader = new RulesReaderImpl();
 
     /**
      * Return the selected constraint groups.
@@ -77,7 +84,7 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      */
     protected Map<String, ConstraintGroup> readRules() throws MojoExecutionException {
         if (rulesDirectory == null) {
-            rulesDirectory = new File(basedir.getAbsoluteFile() + File.separator + VerifyMojo.DEFAULT_RULES_DIRECTORY);
+            rulesDirectory = new File(basedir.getAbsoluteFile() + File.separator + DEFAULT_RULES_DIRECTORY);
         }
         List<Source> sources = new ArrayList<Source>();
         // read rules from rules directory
@@ -86,7 +93,6 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
             getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new StreamSource(ruleFile));
         }
-        CatalogReader catalogReader = new CatalogReaderImpl();
         for (JqassistantCatalog catalog : catalogReader.readCatalogs()) {
             for (RulesType rulesType : catalog.getRules()) {
                 for (ResourcesType resourcesType : rulesType.getResources()) {
@@ -113,8 +119,9 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
                 }
             }
         }
-        RulesReader rulesReader = new RulesReaderImpl();
-        return rulesReader.read(sources);
+        Map<String, ConstraintGroup> constraintGroups = rulesReader.read(sources);
+        LOGGER.info("Resolved constraint groups '{}' from available rules.", constraintGroups.keySet());
+        return constraintGroups;
     }
 
     /**
