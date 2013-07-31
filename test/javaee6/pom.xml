@@ -42,6 +42,23 @@
                         </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>jqassistant.rules.java</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>jqassistant.rules.javaee</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>jqassistant.rules.junit4</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
