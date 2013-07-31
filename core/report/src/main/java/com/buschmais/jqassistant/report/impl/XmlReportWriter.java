@@ -1,17 +1,24 @@
 package com.buschmais.jqassistant.report.impl;
 
-import com.buschmais.jqassistant.core.model.api.*;
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.report.api.ReportWriter;
-import com.buschmais.jqassistant.report.api.ReportWriterException;
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import java.io.Writer;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.Writer;
-import java.util.List;
-import java.util.Map;
+
+import com.buschmais.jqassistant.core.model.api.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.Concept;
+import com.buschmais.jqassistant.core.model.api.Constraint;
+import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.report.api.ReportWriter;
+import com.buschmais.jqassistant.report.api.ReportWriterException;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * Implementation of a {@link ReportWriter} which writes the results of an analysis to an XML file.
@@ -82,14 +89,17 @@ public class XmlReportWriter implements ReportWriter {
 
     @Override
     public void beginConstraintGroup(final ConstraintGroup constraintGroup) throws ReportWriterException {
-        run(new XmlOperation() {
+		final Date now = new Date();
+		run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
                 xmlStreamWriter.writeStartElement("constraintGroup");
                 xmlStreamWriter.writeAttribute("id", constraintGroup.getId());
+				xmlStreamWriter.writeAttribute("date", DateFormat
+						.getInstance().format(now));
             }
         });
-        this.constraintGroupBeginTime = System.currentTimeMillis();
+		this.constraintGroupBeginTime = now.getTime();
     }
 
     @Override
