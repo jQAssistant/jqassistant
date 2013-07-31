@@ -1,7 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
-import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.core.model.api.Query;
+import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rules.Concept;
+import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.store.api.QueryResult;
@@ -13,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 /**
- * Implementation of the ConstraintAnalyzer.
+ * Implementation of the {@link ConstraintAnalyzer).
  */
 public class ConstraintAnalyzerImpl implements ConstraintAnalyzer {
 

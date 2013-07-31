@@ -10,10 +10,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.buschmais.jqassistant.core.model.api.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.Concept;
-import com.buschmais.jqassistant.core.model.api.Constraint;
-import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rules.Concept;
+import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.report.api.ReportWriter;

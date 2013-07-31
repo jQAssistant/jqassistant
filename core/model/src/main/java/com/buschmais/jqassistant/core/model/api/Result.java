@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.model.api;
 
+import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
+
 import java.util.List;
 import java.util.Map;
 
