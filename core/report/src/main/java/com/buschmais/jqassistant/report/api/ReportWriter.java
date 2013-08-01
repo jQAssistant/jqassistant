@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.report.api;
 
-import com.buschmais.jqassistant.core.model.api.Concept;
-import com.buschmais.jqassistant.core.model.api.Constraint;
-import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Concept;
+import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.Result;
 
 /**

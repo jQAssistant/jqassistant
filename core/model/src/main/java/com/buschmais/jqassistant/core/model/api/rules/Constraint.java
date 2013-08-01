@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.model.api;
+package com.buschmais.jqassistant.core.model.api.rules;
 
 
 /**
