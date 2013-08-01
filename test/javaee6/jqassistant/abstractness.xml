@@ -12,6 +12,7 @@
     </concept>
 
     <concept id="abstractness:ApiClasses">
+        <description>Label all classes in .api packages as API.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
             WHERE p.FQN =~ {packageExpression}

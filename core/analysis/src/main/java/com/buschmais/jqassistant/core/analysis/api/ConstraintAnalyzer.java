@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
-import com.buschmais.jqassistant.core.model.api.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 
 /**

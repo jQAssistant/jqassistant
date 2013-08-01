@@ -16,23 +16,16 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
 import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
-import com.buschmais.jqassistant.core.analysis.api.RulesReader;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ResourcesType;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.RulesType;
-import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.ConstraintAnalyzerImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
-import com.buschmais.jqassistant.core.model.api.*;
+import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.rules.*;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.store.api.Store;
-import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,14 +33,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @goal verify
@@ -55,8 +46,6 @@ import java.util.*;
  * @requiresProject false
  */
 public class VerifyMojo extends AbstractAnalysisMojo {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(VerifyMojo.class);
 
     /**
      * The file to write the XML report to.
@@ -67,8 +56,8 @@ public class VerifyMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        final Map<String, ConstraintGroup> availableConstraintGroups = readRules();
-        final List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(availableConstraintGroups);
+        RuleSet ruleSet = readRules();
+        final List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(ruleSet);
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {

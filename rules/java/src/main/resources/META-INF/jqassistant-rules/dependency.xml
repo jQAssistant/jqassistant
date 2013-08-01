@@ -1,7 +1,7 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="java:ClassDependency">
-        <description />
+    <concept id="dependency:ClassDependency">
+        <description>Creates a DEPENDS_ON relationship between classes if there are field or method dependencies between them.</description>
         <cypher><![CDATA[
             MATCH 
             	c1:CLASS-[:CONTAINS*0..1]->(classFieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->c2:CLASS
@@ -13,10 +13,10 @@
 				COUNT(c1) as count
         ]]></cypher>
     </concept>
-	
-    <concept id="java:PackageDependency">
-		<requiresConcept refId="java:ClassDependency"/>
-        <description />
+
+    <concept id="dependency:PackageDependency">
+        <requiresConcept refId="dependency:ClassDependency"/>
+        <description>Creates a DEPENDS_ON relationship between packages if there are class dependencies between them.</description>
         <cypher><![CDATA[
 			MATCH  
 				(p1:PACKAGE)-[:CONTAINS]->(c1:CLASS)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(c2:CLASS)<-[:CONTAINS]-(p2:PACKAGE)
@@ -29,44 +29,26 @@
         ]]></cypher>
     </concept>
 
-   <constraint id="java:CyclicPackageDependency">
-        <requiresConcept refId="java:PackageDependency"/>
+    <constraint id="dependency:CyclicPackageDependency">
+        <requiresConcept refId="dependency:PackageDependency"/>
         <description>There must be no cyclic package dependencies.</description>
         <cypher><![CDATA[
 			MATCH
 				p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE,
-				path2=shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
+				path=shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
 			WHERE
 				p1<>p2
 			RETURN
-				p1.FQN as package, extract(p in nodes(path2) : p.FQN) as Path
+				p1 as package, extract(p in nodes(path) : p.FQN) as cycle
 			ORDER BY
 				package	
         ]]></cypher>
     </constraint>
-	
-	<constraint id="java:CyclicClassDependency">
-        <requiresConcept refId="java:ClassDependency"/>
-        <requiresConcept refId="java:PackageDependency"/>
+
+    <constraint id="dependency:CyclicClassDependency">
+        <requiresConcept refId="dependency:ClassDependency"/>
+        <requiresConcept refId="dependency:PackageDependency"/>
         <description>There must be no cyclic class dependencies.</description>
-        <!--
-        <cypher><![CDATA[
-	        MATCH 
-	        	p1:PACKAGE-[:DEPENDS_ON*0..1]->p2:PACKAGE, 
-	        	shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
-			WITH 
-				p1, p2
-			MATCH  
-				p1-[:CONTAINS]->c1:CLASS, 
-				c1-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->c2, 
-				cpath2=shortestPath(c2-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS*]->c1)
-			WHERE 
-            	c1<>c2
-			RETURN  
-				c1.FQN as class, extract(p in nodes(cpath2) : p.FQN) as path
-			LIMIT 100
-        ]]></cypher>
-        -->
         <cypher><![CDATA[
             MATCH
                 p1:PACKAGE-[:DEPENDS_ON*0..1]->p2:PACKAGE,
@@ -84,5 +66,5 @@
                 length(path) as length, extract(p in nodes(path) : p.FQN) as cycle
         ]]></cypher>
     </constraint>
-    
+
 </jqa:jqassistant-rules>

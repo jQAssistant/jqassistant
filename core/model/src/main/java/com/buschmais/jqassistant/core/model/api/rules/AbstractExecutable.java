@@ -1,4 +1,6 @@
-package com.buschmais.jqassistant.core.model.api;
+package com.buschmais.jqassistant.core.model.api.rules;
+
+import com.buschmais.jqassistant.core.model.api.Query;
 
 import java.util.HashSet;
 import java.util.Set;

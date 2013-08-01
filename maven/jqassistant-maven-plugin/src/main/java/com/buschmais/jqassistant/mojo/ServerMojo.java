@@ -47,7 +47,5 @@ public class ServerMojo extends AbstractStoreMojo {
                 return null;
             }
         });
-
-
     }
 }

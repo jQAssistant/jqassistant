@@ -26,7 +26,7 @@
     </constraint>
 
     <constraint id="TestClassNameHasTestSuffix">
-        <requiresConcept refId="junit4:TestMethodsAndClasses"/>
+        <requiresConcept refId="junit4:TestClass"/>
         <description>The name of all test classes must have the suffix "Test".</description>
         <cypher><![CDATA[
             MATCH (c:CLASS)
@@ -47,7 +47,7 @@
         <includeConstraint refId="JpaEntitiesInApiModelPackage"/>
         <includeConstraint refId="EjbLocatedInImplementationPackage"/>
         <includeConstraint refId="TestClassNameHasTestSuffix"/>
-        <includeConstraint refId="java:CyclicClassDependency"/>
+        <includeConstraint refId="dependency:CyclicClassDependency"/>
     </constraintGroup>
 
 </jqa:jqassistant-rules>
