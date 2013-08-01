@@ -19,6 +19,8 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,11 +104,17 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
                         }
                         fullResource.append(resource);
                         URL url = VerifyMojo.class.getResource(fullResource.toString());
+                        String systemId = null;
+                        try {
+                            systemId = url.toURI().toString();
+                        } catch (URISyntaxException e) {
+                            throw new MojoExecutionException("Cannot create URI from url: " + url.toString());
+                        }
                         if (url != null) {
                             try {
                                 getLog().debug("Adding rules from " + url.toString());
                                 InputStream ruleStream = url.openStream();
-                                sources.add(new StreamSource(ruleStream));
+                                sources.add(new StreamSource(ruleStream, systemId));
                             } catch (IOException e) {
                                 throw new MojoExecutionException("Cannot open rule URL: " + url.toString(), e);
                             }
