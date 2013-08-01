@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.report.impl;
 
 import java.io.Writer;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,9 @@ public class XmlReportWriter implements ReportWriter {
     private long constraintGroupBeginTime;
 
     private long executableBeginTime;
+
+	private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat(
+			"yyyy-MM-dd'T'HH:mm:ss");
 
     public XmlReportWriter(Writer writer) throws ReportWriterException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -95,8 +99,8 @@ public class XmlReportWriter implements ReportWriter {
             public void run() throws XMLStreamException {
                 xmlStreamWriter.writeStartElement("constraintGroup");
                 xmlStreamWriter.writeAttribute("id", constraintGroup.getId());
-				xmlStreamWriter.writeAttribute("date", DateFormat
-						.getInstance().format(now));
+				xmlStreamWriter.writeAttribute("date",
+						XML_DATE_FORMAT.format(now));
             }
         });
 		this.constraintGroupBeginTime = now.getTime();
