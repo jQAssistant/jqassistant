@@ -1,13 +1,15 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.Relation;
-
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.store.api.model.Relation;
 
 /**
  * Abstract base implementation of a {@link DescriptorMapper}.
@@ -57,5 +59,30 @@ public abstract class AbstractDescriptorMapper<T extends AbstractDescriptor> imp
     }
 
     protected abstract void setRelation(T descriptor, Relation relation, AbstractDescriptor target);
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<NodeProperty, Object> getProperties(T descriptor) {
+		Map<NodeProperty, Object> properties = new HashMap<NodeProperty, Object>();
+		properties.put(NodeProperty.FQN, descriptor.getFullQualifiedName());
+		return properties;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setProperty(T descriptor, NodeProperty property, Object value) {
+		switch (property) {
+		case FQN:
+			descriptor.setFullQualifiedName((String) value);
+			break;
+		default:
+			break;
+		}
+
+	}
 
 }

@@ -16,12 +16,16 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
-import com.buschmais.jqassistant.store.api.Store;
-import org.apache.maven.plugin.MojoExecutionException;
-
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+
+import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.store.api.Store;
 
 /**
  * @phase package
@@ -29,6 +33,13 @@ import java.io.IOException;
  * @requiresDependencyResolution test
  */
 public class ScanMojo extends AbstractStoreMojo {
+
+	/**
+	 * @parameter default-value="${project}"
+	 * @required
+	 * @readonly
+	 */
+	protected MavenProject project;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -38,10 +49,13 @@ public class ScanMojo extends AbstractStoreMojo {
 
     private void scanDirectory(final File directory) throws MojoExecutionException {
         getLog().info("Scanning rulesDirectory: " + directory.getAbsolutePath());
+		Artifact artifact = project.getArtifact();
+		final ArtifactInformation infos = new ArtifactInformation(artifact.getGroupId(), artifact.getGroupId(),
+				artifact.getVersion());
         super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
-                ClassScannerImpl scanner = new ClassScannerImpl(store);
+				ClassScannerImpl scanner = new ClassScannerImpl(store, infos);
                 try {
                     scanner.scanDirectory(directory);
                 } catch (IOException e) {
@@ -50,6 +64,5 @@ public class ScanMojo extends AbstractStoreMojo {
                 return null;
             }
         });
-
     }
 }

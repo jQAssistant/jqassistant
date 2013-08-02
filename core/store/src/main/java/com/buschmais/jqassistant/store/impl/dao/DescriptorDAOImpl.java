@@ -1,22 +1,32 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.apache.commons.collections.map.LRUMap;
+import org.neo4j.cypher.javacompat.ExecutionEngine;
+import org.neo4j.cypher.javacompat.ExecutionResult;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.ResourceIterable;
+import org.neo4j.graphdb.ResourceIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.store.api.model.Relation;
 import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
-import org.apache.commons.collections.map.LRUMap;
-import org.neo4j.cypher.javacompat.ExecutionEngine;
-import org.neo4j.cypher.javacompat.ExecutionResult;
-import org.neo4j.graphdb.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class DescriptorDAOImpl implements DescriptorDAO {
 
@@ -96,7 +106,12 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         DescriptorMapper<T> adapter = registry.getDescriptorMapper(descriptor.getClass());
         Node node = database.createNode(adapter.getCoreLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
-        node.setProperty(NodeProperty.FQN.name(), descriptor.getFullQualifiedName());
+		// Set properties
+		Map<NodeProperty, Object> properties = adapter.getProperties(descriptor);
+		for (Entry<NodeProperty, Object> entry : properties.entrySet()) {
+			node.setProperty(entry.getKey().name(), entry.getValue());
+		}
+
         descriptorCache.put(descriptor);
         nodeCache.put(descriptor.getFullQualifiedName(), node);
     }
@@ -219,6 +234,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 set.add(targetDescriptor);
             }
             mapper.setRelations(descriptor, relations);
+			// Set properties
+			for (String key : node.getPropertyKeys()) {
+				mapper.setProperty(descriptor, NodeProperty.valueOf(key), node.getProperty(key));
+			}
         }
         return descriptor;
     }

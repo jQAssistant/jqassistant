@@ -29,26 +29,35 @@
  */
 package com.buschmais.jqassistant.scanner.impl;
 
-import com.buschmais.jqassistant.scanner.api.ClassScanner;
-import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.scanner.impl.visitor.ClassVisitor;
-import com.buschmais.jqassistant.store.api.Store;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
 import org.apache.commons.io.DirectoryWalker;
 import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
+import com.buschmais.jqassistant.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.scanner.impl.visitor.ClassVisitor;
+import com.buschmais.jqassistant.store.api.Store;
 
 public class ClassScannerImpl implements ClassScanner {
-
-    /**
-     * Defines the number of classes to be scanned before the store is flushed.
-     */
-    public static final int FLUSH_THRESHOLD = 50;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassScannerImpl.class);
 
@@ -56,18 +65,20 @@ public class ClassScannerImpl implements ClassScanner {
 
     private final ScanListener scanListener;
 
-    public ClassScannerImpl(Store graphStore, ScanListener listener) {
+	private final ArtifactInformation artifactInfos;
+
+	public ClassScannerImpl(Store graphStore, ArtifactInformation artifactInfos, ScanListener listener) {
         this.store = graphStore;
+		this.artifactInfos = artifactInfos;
         this.scanListener = listener;
     }
 
-    public ClassScannerImpl(Store graphStore) {
-        this.store = graphStore;
-        this.scanListener = new ScanListener() {
-        };
+	public ClassScannerImpl(Store graphStore, ArtifactInformation artifactInfos) {
+		this(graphStore, artifactInfos, new ScanListener() {
+		});
     }
 
-    @Override
+	@Override
     public void scanArchive(File archive) throws IOException {
         if (!archive.exists()) {
             LOGGER.warn("Archive '{}' not found, skipping.", archive.getAbsolutePath());
@@ -141,7 +152,6 @@ public class ClassScannerImpl implements ClassScanner {
                 super.walk(directory, classFiles);
             }
         }.scan(directory);
-        int classCount = 0;
         for (File classFile : classFiles) {
             scanFile(classFile);
         }
