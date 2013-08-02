@@ -61,7 +61,7 @@ public class VerifyMojo extends AbstractAnalysisMojo {
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
-            xmlReportFileWriter = new FileWriter(xmlReportFile);
+            xmlReportFileWriter = new FileWriter(getXmlReportFile());
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot create XML report file.", e);
         }

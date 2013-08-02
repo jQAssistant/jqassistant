@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
@@ -9,6 +11,8 @@ import java.io.File;
  * A provider for a singleton store.
  */
 public class StoreProvider {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreProvider.class);
 
     private Store store = null;
 
@@ -20,10 +24,12 @@ public class StoreProvider {
      */
     public Store getStore(File databaseDirectory) {
         if (store == null) {
+            LOGGER.info("Initializing store using directory {}.", databaseDirectory.getAbsolutePath());
             store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
+                    LOGGER.info("Shutting down store.");
                     store.stop();
                 }
             });
@@ -31,5 +37,4 @@ public class StoreProvider {
         }
         return store;
     }
-
 }
