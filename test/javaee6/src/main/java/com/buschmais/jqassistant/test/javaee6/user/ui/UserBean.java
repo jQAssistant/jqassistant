@@ -1,14 +1,15 @@
 package com.buschmais.jqassistant.test.javaee6.user.ui;
 
-import com.buschmais.jqassistant.test.javaee6.user.logic.api.UserService;
-import com.buschmais.jqassistant.test.javaee6.user.persistence.api.model.User;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
-import java.util.List;
+
+import com.buschmais.jqassistant.test.javaee6.user.logic.api.UserService;
+import com.buschmais.jqassistant.test.javaee6.user.persistence.api.model.User;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +22,9 @@ import java.util.List;
 @ConversationScoped
 public class UserBean implements Serializable {
 
-    @Inject
+	private static final long serialVersionUID = 1L;
+
+	@Inject
     private UserService userService;
 
     @Inject

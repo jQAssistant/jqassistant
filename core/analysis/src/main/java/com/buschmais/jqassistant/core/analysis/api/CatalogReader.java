@@ -2,9 +2,6 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
 
-import java.net.URL;
-import java.util.List;
-
 /**
  * Defines the interface for catalog readers.
  */

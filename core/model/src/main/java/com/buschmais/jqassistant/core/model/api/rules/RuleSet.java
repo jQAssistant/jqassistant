@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.model.api.rules;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 

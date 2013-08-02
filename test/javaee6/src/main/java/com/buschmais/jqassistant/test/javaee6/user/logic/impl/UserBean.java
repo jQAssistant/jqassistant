@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.test.javaee6.user.logic.impl;
 
-import com.buschmais.jqassistant.test.javaee6.user.logic.api.UserService;
-import com.buschmais.jqassistant.test.javaee6.user.persistence.api.UserDAO;
-import com.buschmais.jqassistant.test.javaee6.user.persistence.api.model.User;
+import java.util.List;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import java.util.List;
+
+import com.buschmais.jqassistant.test.javaee6.user.logic.api.UserService;
+import com.buschmais.jqassistant.test.javaee6.user.persistence.api.UserDAO;
+import com.buschmais.jqassistant.test.javaee6.user.persistence.api.model.User;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +20,8 @@ import java.util.List;
 @Local(UserService.class)
 public class UserBean implements UserService {
 
-    private UserDAO userDAO;
+	private static final long serialVersionUID = 1L;
+	private UserDAO userDAO;
 
     @Override
     public void create(User user) {

@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.report.impl;
 
+import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
-import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 
@@ -103,7 +104,7 @@ public class CompositeReportWriter implements ReportWriter {
     }
 
     @Override
-    public void setResult(final Result result) throws ReportWriterException {
+	public void setResult(final Result<? extends AbstractExecutable> result) throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
             public void run(ReportWriter reportWriter) throws ReportWriterException {

@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.test.javaee6.cart.logic.impl;
 
-import com.buschmais.jqassistant.test.javaee6.cart.logic.api.CartService;
-import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.CartDAO;
-import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
+import java.util.List;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
-import java.util.List;
+
+import com.buschmais.jqassistant.test.javaee6.cart.logic.api.CartService;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.CartDAO;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +20,8 @@ import java.util.List;
 @Local(CartService.class)
 public class CartBean implements CartService {
 
-    private CartDAO cartDAO;
+	private static final long serialVersionUID = 1L;
+	private CartDAO cartDAO;
 
     @Override
     public void create(Cart cart) {

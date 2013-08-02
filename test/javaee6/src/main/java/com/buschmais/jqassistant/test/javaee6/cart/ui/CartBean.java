@@ -1,14 +1,15 @@
 package com.buschmais.jqassistant.test.javaee6.cart.ui;
 
-import com.buschmais.jqassistant.test.javaee6.cart.logic.api.CartService;
-import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
+import java.io.Serializable;
+import java.util.List;
 
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.io.Serializable;
-import java.util.List;
+
+import com.buschmais.jqassistant.test.javaee6.cart.logic.api.CartService;
+import com.buschmais.jqassistant.test.javaee6.cart.persistence.api.model.Cart;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +22,9 @@ import java.util.List;
 @ConversationScoped
 public class CartBean implements Serializable {
 
-    @Inject
+	private static final long serialVersionUID = 1L;
+
+	@Inject
     private CartService cartService;
 
     @Inject

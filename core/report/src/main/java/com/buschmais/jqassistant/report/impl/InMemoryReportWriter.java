@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.report.impl;
 
-import com.buschmais.jqassistant.core.model.api.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A {@link ReportWriter} implementation collection the concept results and constraint violations in-memory.
@@ -21,7 +21,7 @@ public class InMemoryReportWriter implements ReportWriter {
     private List<Result<Constraint>> constraintViolations = new ArrayList<Result<Constraint>>();
 
 
-    private Result currentResult;
+	private Result currentResult;
 
     @Override
     public void begin() throws ReportWriterException {

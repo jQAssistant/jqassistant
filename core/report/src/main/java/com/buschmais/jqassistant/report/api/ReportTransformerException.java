@@ -5,7 +5,9 @@ package com.buschmais.jqassistant.report.api;
  */
 public class ReportTransformerException extends Exception {
 
-    public ReportTransformerException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public ReportTransformerException(String message) {
         super(message);
     }
 

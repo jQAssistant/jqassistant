@@ -92,7 +92,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     private final ExecutionEngine executionEngine;
 
     private final DescriptorCache descriptorCache = new DescriptorCache();
-    private final Map<String, Node> nodeCache = new LRUMap(256);
+	@SuppressWarnings("unchecked")
+	private final Map<String, Node> nodeCache = new LRUMap(256);
 
     public DescriptorDAOImpl(DescriptorAdapterRegistry registry, GraphDatabaseService database) {
         this.registry = registry;

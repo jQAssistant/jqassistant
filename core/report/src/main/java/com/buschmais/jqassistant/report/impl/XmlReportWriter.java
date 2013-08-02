@@ -11,12 +11,12 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
-import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -35,7 +35,7 @@ public class XmlReportWriter implements ReportWriter {
 
     private XMLStreamWriter xmlStreamWriter;
 
-    private AbstractExecutable executable;
+	private AbstractExecutable executable;
 
     private Result<? extends AbstractExecutable> result;
 
@@ -128,7 +128,7 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void setResult(final Result result) throws ReportWriterException {
+	public void setResult(final Result<? extends AbstractExecutable> result) throws ReportWriterException {
         this.result = result;
     }
 
@@ -138,7 +138,6 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     private void endExecutable() throws ReportWriterException {
-        final long duration = (System.currentTimeMillis() - this.executableBeginTime);
         final AbstractExecutable executable = result.getExecutable();
         final String elementName;
         if (executable instanceof Concept) {

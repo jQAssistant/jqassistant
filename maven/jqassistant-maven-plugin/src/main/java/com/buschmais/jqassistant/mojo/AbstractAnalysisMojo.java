@@ -1,5 +1,20 @@
 package com.buschmais.jqassistant.mojo;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.maven.plugin.MojoExecutionException;
+
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
@@ -11,20 +26,6 @@ import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.maven.plugin.MojoExecutionException;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Abstract base implementation for analysis MOJOs.
@@ -105,19 +106,17 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
                         fullResource.append(resource);
                         URL url = VerifyMojo.class.getResource(fullResource.toString());
                         String systemId = null;
-                        try {
-                            systemId = url.toURI().toString();
-                        } catch (URISyntaxException e) {
-                            throw new MojoExecutionException("Cannot create URI from url: " + url.toString());
-                        }
                         if (url != null) {
                             try {
+								systemId = url.toURI().toString();
                                 getLog().debug("Adding rules from " + url.toString());
                                 InputStream ruleStream = url.openStream();
                                 sources.add(new StreamSource(ruleStream, systemId));
                             } catch (IOException e) {
                                 throw new MojoExecutionException("Cannot open rule URL: " + url.toString(), e);
-                            }
+							} catch (URISyntaxException e) {
+								throw new MojoExecutionException("Cannot create URI from url: " + url.toString());
+							}
                         } else {
                             getLog().warn("Cannot read rules from resource '{}'" + resource);
                         }
