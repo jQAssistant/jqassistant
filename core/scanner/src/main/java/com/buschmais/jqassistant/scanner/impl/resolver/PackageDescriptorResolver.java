@@ -5,13 +5,13 @@ import com.buschmais.jqassistant.store.api.Store;
 
 public class PackageDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, PackageDescriptor> {
 
-    public PackageDescriptorResolver(Store store) {
+	public PackageDescriptorResolver(Store store) {
         super(store);
     }
 
     @Override
     public PackageDescriptor create(PackageDescriptor parent, String name) {
-        PackageDescriptor packageDescriptor = getStore().createPackageDescriptor(parent, name);
+		PackageDescriptor packageDescriptor = getStore().createPackageDescriptor(parent, name);
         if (parent != null) {
             parent.getContains().add(packageDescriptor);
         }

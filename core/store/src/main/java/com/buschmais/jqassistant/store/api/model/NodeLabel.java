@@ -19,5 +19,9 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Field
      */
-    FIELD;
+	FIELD,
+	/**
+	 * Maven artifact.
+	 */
+	ARTIFACT;
 }

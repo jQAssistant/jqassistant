@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.store.api.model.NodeLabel;
-import com.buschmais.jqassistant.store.api.model.Relation;
-
 import java.util.Map;
 import java.util.Set;
+
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.store.api.model.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.store.api.model.Relation;
 
 /**
  * Defines an interface to map an {@link AbstractDescriptor} to nodes and
@@ -70,4 +71,25 @@ public interface DescriptorMapper<T extends AbstractDescriptor> {
      * @param id         The id.
      */
     public void setId(T descriptor, Long id);
+
+	/**
+	 * Returns a {@link Map} with all properties of this descriptor.
+	 *
+	 * @param descriptor
+	 *            The properties of this descriptor will be returned.
+	 * @return a {@link Map} with all properties.
+	 */
+	public Map<NodeProperty, Object> getProperties(T descriptor);
+
+	/**
+	 * Set the property on the passed descriptor.
+	 *
+	 * @param descriptor
+	 *            the target descriptor
+	 * @param property
+	 *            the property name
+	 * @param value
+	 *            the value of the property
+	 */
+	public void setProperty(T descriptor, NodeProperty property, Object value);
 }

@@ -1,20 +1,31 @@
 package com.buschmais.jqassistant.store.impl;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import static com.buschmais.jqassistant.store.api.model.NodeProperty.FQN;
+
+import java.util.Collections;
+import java.util.Map;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.GraphDatabaseAPI;
+
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.store.impl.dao.DescriptorAdapterRegistry;
 import com.buschmais.jqassistant.store.impl.dao.DescriptorDAOImpl;
-import com.buschmais.jqassistant.store.impl.dao.mapper.*;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.GraphDatabaseAPI;
-
-import java.util.Collections;
-import java.util.Map;
-
-import static com.buschmais.jqassistant.store.api.model.NodeProperty.FQN;
+import com.buschmais.jqassistant.store.impl.dao.mapper.ArtifactDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.ClassDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.DescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.FieldDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.MethodDescriptorMapper;
+import com.buschmais.jqassistant.store.impl.dao.mapper.PackageDescriptorMapper;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -48,6 +59,7 @@ public abstract class AbstractGraphStore implements Store {
             database.schema().indexFor(label).on(FQN.name());
         }
         adapterRegistry = new DescriptorAdapterRegistry();
+		adapterRegistry.register(new ArtifactDescriptorMapper());
         adapterRegistry.register(new PackageDescriptorMapper());
         adapterRegistry.register(new ClassDescriptorMapper());
         adapterRegistry.register(new MethodDescriptorMapper());
@@ -69,6 +81,23 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+	public ArtifactDescriptor createArtifactDescriptor(final String groupId,
+			final String artifactId, final String version) {
+		return persist(new ArtifactDescriptor(), new Name(groupId + ":" + artifactId + ":" + version));
+	}
+
+	@Override
+	public ArtifactDescriptor findArtifactDescriptor(String fullQualifiedName) {
+		return descriptorDAO.find(ArtifactDescriptor.class, fullQualifiedName);
+	}
+
+	@Override
+	public PackageDescriptor createPackageDescriptor(final ArtifactDescriptor parentArtifactDescriptor,
+			final String packageName) {
+		return persist(new PackageDescriptor(), new Name(parentArtifactDescriptor, '/', packageName));
+	}
+
+	@Override
     public PackageDescriptor createPackageDescriptor(final PackageDescriptor parentPackageDescriptor, final String packageName) {
         return persist(new PackageDescriptor(), new Name(parentPackageDescriptor, '.', packageName));
     }
@@ -79,6 +108,11 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+	public ClassDescriptor createClassDescriptor(final ArtifactDescriptor artifactDescriptor, final String className) {
+		return persist(new ClassDescriptor(), new Name(artifactDescriptor, '/', className));
+	}
+
+	@Override
     public ClassDescriptor createClassDescriptor(final PackageDescriptor packageDescriptor, final String className) {
         return persist(new ClassDescriptor(), new Name(packageDescriptor, '.', className));
     }
@@ -132,8 +166,8 @@ public abstract class AbstractGraphStore implements Store {
     protected abstract void stopDatabase(GraphDatabaseService database);
 
     private <T extends AbstractDescriptor> T persist(T descriptor, Name name) {
-        descriptor.setFullQualifiedName(name.getFullQualifiedName());
-        descriptorDAO.persist(descriptor);
+		descriptor.setFullQualifiedName(name.getFullQualifiedName());
+		descriptorDAO.persist(descriptor);
         return descriptor;
     }
 

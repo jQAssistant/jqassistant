@@ -33,6 +33,17 @@ public class Name {
         }
     }
 
+	/**
+	 * Constructor for root nodes.
+	 *
+	 * @param name
+	 *            The name.
+	 */
+	public Name(String name) {
+		this.name = name;
+		this.fullQualifiedName = name;
+	}
+
     /**
      * Return the name.
      *

@@ -1,18 +1,20 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
-import com.buschmais.jqassistant.store.api.Store;
+import static org.mockito.Mockito.when;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.when;
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.store.api.Store;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractScannerTest {
@@ -29,7 +31,7 @@ public abstract class AbstractScannerTest {
 
     @Before
     public void createScanner() {
-        scanner = new ClassScannerImpl(store);
+		scanner = new ClassScannerImpl(store, new ArtifactInformation());
         this.javaLangObject = stubClass(Object.class);
         this._void = stubClass("void");
     }

@@ -1,13 +1,15 @@
 package com.buschmais.jqassistant.scanner.test;
 
+import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+
+import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
 import com.buschmais.jqassistant.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
-import org.junit.After;
-import org.junit.Before;
-
-import java.io.IOException;
 
 public abstract class AbstractScannerIT {
 
@@ -28,7 +30,7 @@ public abstract class AbstractScannerIT {
     }
 
     protected ClassScanner getScanner() {
-        return new ClassScannerImpl(store, getScanListener());
+		return new ClassScannerImpl(store, new ArtifactInformation(), getScanListener());
     }
 
     /**
