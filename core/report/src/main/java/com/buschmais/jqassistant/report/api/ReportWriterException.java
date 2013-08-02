@@ -5,7 +5,9 @@ package com.buschmais.jqassistant.report.api;
  */
 public class ReportWriterException extends Exception {
 
-    public ReportWriterException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public ReportWriterException(String message) {
         super(message);
     }
 

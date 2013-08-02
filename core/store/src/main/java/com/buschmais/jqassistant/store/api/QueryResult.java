@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.store.api;
 
-import org.apache.commons.io.IOUtils;
-
 import java.io.Closeable;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * Represents the result of a CYPHER query.
@@ -22,7 +22,8 @@ public class QueryResult implements Closeable {
             this.row = row;
         }
 
-        public <T> T get(String column) {
+		@SuppressWarnings("unchecked")
+		public <T> T get(String column) {
             return (T) row.get(column);
         }
 

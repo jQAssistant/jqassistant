@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.report.api;
 
+import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
-import com.buschmais.jqassistant.core.model.api.Result;
 
 /**
  * Created with IntelliJ IDEA.
@@ -30,6 +31,6 @@ public interface ReportWriter {
 
     void endConstraint() throws ReportWriterException;
 
-    void setResult(Result result) throws ReportWriterException;
+	void setResult(Result<? extends AbstractExecutable> result) throws ReportWriterException;
 
 }

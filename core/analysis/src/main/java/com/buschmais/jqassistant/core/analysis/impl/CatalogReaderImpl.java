@@ -1,21 +1,23 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ObjectFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ObjectFactory;
 
 /**
  * Catalog reader implementation.
@@ -54,20 +56,6 @@ public class CatalogReaderImpl implements CatalogReader {
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
             LOGGER.debug("Reading catalog from URL '{}'.", url);
-            catalogs.add(readCatalog(url));
-        }
-        return catalogs;
-    }
-
-    /**
-     * Reads the catalogs from the {@link URL}s provided by the given {@link Iterable}.
-     *
-     * @param urls The {@link URL}s.
-     * @return The {@link JqassistantCatalog}s.
-     */
-    private List<JqassistantCatalog> readCatalogs(Iterable<URL> urls) {
-        List<JqassistantCatalog> catalogs = new ArrayList<JqassistantCatalog>();
-        for (URL url : urls) {
             catalogs.add(readCatalog(url));
         }
         return catalogs;

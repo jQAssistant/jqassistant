@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 
 public class DescriptorCache {
 
@@ -14,7 +14,8 @@ public class DescriptorCache {
         this.cache.put(key, descriptor);
     }
 
-    public <T extends AbstractDescriptor> T findBy(Long id) {
+	@SuppressWarnings("unchecked")
+	public <T extends AbstractDescriptor> T findBy(Long id) {
         return (T) cache.get(id);
     }
 
