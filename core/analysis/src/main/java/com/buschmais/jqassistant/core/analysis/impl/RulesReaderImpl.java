@@ -38,15 +38,15 @@ public class RulesReaderImpl implements RulesReader {
 
     @Override
     public RuleSet read(List<Source> sources) {
-        LOGGER.debug("Reading rules from {} sources.", Integer.toString(sources.size()));
         List<JqassistantRules> rules = new ArrayList<JqassistantRules>();
         for (Source source : sources) {
             try {
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
                 unmarshaller.setSchema(JaxbHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
+                LOGGER.info("Reading rules from '{}'.", source.getSystemId());
                 rules.add(unmarshaller.unmarshal(source, JqassistantRules.class).getValue());
             } catch (JAXBException e) {
-                throw new IllegalArgumentException("Cannot read rules : " + source.toString(), e);
+                throw new IllegalArgumentException("Cannot read rules from " + source.getSystemId(), e);
             }
         }
         return convert(rules);
