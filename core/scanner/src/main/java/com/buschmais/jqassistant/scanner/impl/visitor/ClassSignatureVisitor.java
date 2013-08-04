@@ -4,28 +4,45 @@ import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.signature.SignatureVisitor;
 
-public class ClassSignatureVisitor extends DependentSignatureVisitor<ClassDescriptor> implements SignatureVisitor {
+public class ClassSignatureVisitor extends AbstractVisitor implements SignatureVisitor {
+
+    private ClassDescriptor classDescriptor;
 
     protected ClassSignatureVisitor(ClassDescriptor classDescriptor, DescriptorResolverFactory resolverFactory) {
-        super(classDescriptor, resolverFactory);
+        super(resolverFactory);
+        this.classDescriptor = classDescriptor;
+    }
+
+    @Override
+    public void visitFormalTypeParameter(String name) {
+    }
+
+    @Override
+    public SignatureVisitor visitClassBound() {
+        return new DependentTypeSignatureVisitor(classDescriptor, getResolverFactory());
+    }
+
+    @Override
+    public SignatureVisitor visitInterfaceBound() {
+        return new DependentTypeSignatureVisitor(classDescriptor, getResolverFactory());
     }
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new DependentSignatureVisitor<ClassDescriptor>(getDependentDescriptor(), getResolverFactory()) {
-
-            private ClassDescriptor classDescriptor;
-
+        return new AbstractTypeSignatureVisitor(classDescriptor, getResolverFactory()) {
             @Override
-            public void visitClassType(String name) {
-                classDescriptor = getClassDescriptor(name);
-                getDependentDescriptor().setSuperClass(classDescriptor);
+            public SignatureVisitor visitArrayType() {
+                return new DependentTypeSignatureVisitor(classDescriptor, getResolverFactory());
             }
 
             @Override
-            public void visitInnerClassType(String name) {
-                String innerClassName = classDescriptor.getFullQualifiedName() + "$" + name;
-                getDependentDescriptor().setSuperClass(getClassDescriptor(innerClassName));
+            public SignatureVisitor visitTypeArgument(char wildcard) {
+                return new DependentTypeSignatureVisitor(classDescriptor, getResolverFactory());
+            }
+
+            @Override
+            public void visitEnd(ClassDescriptor resolvedClassDescriptor) {
+                classDescriptor.setSuperClass(resolvedClassDescriptor);
             }
 
         };
@@ -33,22 +50,76 @@ public class ClassSignatureVisitor extends DependentSignatureVisitor<ClassDescri
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new DependentSignatureVisitor<ClassDescriptor>(getDependentDescriptor(), getResolverFactory()) {
-
-            private ClassDescriptor classDescriptor;
+        return new AbstractTypeSignatureVisitor(classDescriptor, getResolverFactory()) {
 
             @Override
-            public void visitClassType(String name) {
-                classDescriptor = getClassDescriptor(name);
-                getDependentDescriptor().getInterfaces().add(classDescriptor);
+            public SignatureVisitor visitArrayType() {
+                return new DependentTypeSignatureVisitor(classDescriptor, getResolverFactory());
             }
 
             @Override
-            public void visitInnerClassType(String name) {
-                String innerClassName = classDescriptor.getFullQualifiedName() + "$" + name;
-                getDependentDescriptor().getInterfaces().add(getClassDescriptor(innerClassName));
+            public SignatureVisitor visitTypeArgument(char wildcard) {
+                return new DependentTypeSignatureVisitor(classDescriptor, getResolverFactory());
+            }
+
+            @Override
+            public void visitEnd(ClassDescriptor resolvedClassDescriptor) {
+                classDescriptor.getInterfaces().add(resolvedClassDescriptor);
             }
         };
     }
 
+    @Override
+    public SignatureVisitor visitParameterType() {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public SignatureVisitor visitReturnType() {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public SignatureVisitor visitExceptionType() {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public void visitBaseType(char descriptor) {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public void visitTypeVariable(String name) {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public SignatureVisitor visitArrayType() {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public void visitClassType(String name) {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public void visitInnerClassType(String name) {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public void visitTypeArgument() {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public SignatureVisitor visitTypeArgument(char wildcard) {
+        throw new UnsupportedOperationException("Method is not implemented.");
+    }
+
+    @Override
+    public void visitEnd() {
+    }
 }

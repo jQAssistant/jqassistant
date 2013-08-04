@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.model.api.descriptor;
 import java.util.Set;
 
 /**
- * Interface describing an {@link AbstractDescriptor} which depends on other
+ * Interface describing a {@link Descriptor} which depends on other
  * {@link ClassDescriptor}s.
  */
-public interface DependentDescriptor {
+public interface DependentDescriptor extends Descriptor {
 
     /**
      * Return the classes this descriptor depends on.

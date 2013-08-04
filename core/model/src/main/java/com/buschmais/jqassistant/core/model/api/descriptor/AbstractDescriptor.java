@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.model.api.descriptor;
 /**
  * Abstract implementation of a descriptor.
  */
-public abstract class AbstractDescriptor {
+public abstract class AbstractDescriptor implements Descriptor {
 
     /**
      * The unique id of this descriptor.
@@ -20,6 +20,7 @@ public abstract class AbstractDescriptor {
      *
      * @return The unique id.
      */
+    @Override
     public Long getId() {
         return id;
     }
@@ -38,6 +39,7 @@ public abstract class AbstractDescriptor {
      *
      * @return The full qualified name.
      */
+    @Override
     public String getFullQualifiedName() {
         return fullQualifiedName;
     }

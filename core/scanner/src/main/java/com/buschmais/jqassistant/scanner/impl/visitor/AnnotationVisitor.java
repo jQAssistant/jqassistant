@@ -4,13 +4,23 @@ import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.Type;
 
+/**
+ * An annotation visitor.
+ * <p>Adds a dependency from the annotated type to the types of the annotation values.</p>
+ */
 public class AnnotationVisitor extends AbstractVisitor implements org.objectweb.asm.AnnotationVisitor {
 
     private final DependentDescriptor parentDescriptor;
 
-    protected AnnotationVisitor(DependentDescriptor parentDescriptor, DescriptorResolverFactory resolverFactory) {
+    /**
+     * Constructor.
+     *
+     * @param dependentDescriptor The descriptor which annotated (e.g. class, field or method.)
+     * @param resolverFactory     The .{@link DescriptorResolverFactory}.
+     */
+    protected AnnotationVisitor(DependentDescriptor dependentDescriptor, DescriptorResolverFactory resolverFactory) {
         super(resolverFactory);
-        this.parentDescriptor = parentDescriptor;
+        this.parentDescriptor = dependentDescriptor;
     }
 
     @Override
