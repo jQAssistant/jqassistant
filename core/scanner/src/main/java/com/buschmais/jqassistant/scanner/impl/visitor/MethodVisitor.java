@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.Attribute;
@@ -55,7 +54,7 @@ public class MethodVisitor extends AbstractVisitor implements org.objectweb.asm.
     @Override
     public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
         if (signature != null) {
-            new SignatureReader(signature).accept(new DependentSignatureVisitor<DependentDescriptor>(methodDescriptor, getResolverFactory()));
+            new SignatureReader(signature).accept(new DependentTypeSignatureVisitor(methodDescriptor, getResolverFactory()));
         }
     }
 

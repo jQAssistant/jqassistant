@@ -7,6 +7,9 @@ import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory
 import com.buschmais.jqassistant.store.api.Store;
 import org.objectweb.asm.Type;
 
+/**
+ * Abstract implementation of an ASM visitor.
+ */
 public abstract class AbstractVisitor {
 
     private final DescriptorResolverFactory resolverFactory;

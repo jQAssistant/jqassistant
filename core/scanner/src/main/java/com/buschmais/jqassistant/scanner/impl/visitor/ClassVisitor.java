@@ -38,7 +38,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
         if (signature == null) {
             addDependency(fieldDescriptor, getType((desc)));
         } else {
-            new SignatureReader(signature).accept(new DependentSignatureVisitor<FieldDescriptor>(fieldDescriptor, getResolverFactory()));
+            new SignatureReader(signature).accept(new DependentTypeSignatureVisitor(fieldDescriptor, getResolverFactory()));
         }
         if (value instanceof Type) {
             addDependency(fieldDescriptor, getType((Type) value));
@@ -57,7 +57,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
                 addDependency(methodDescriptor, getType(types[i]));
             }
         } else {
-            new SignatureReader(signature).accept(new DependentSignatureVisitor<MethodDescriptor>(methodDescriptor, getResolverFactory()));
+            new SignatureReader(signature).accept(new MethodSignatureVisitor(methodDescriptor, getResolverFactory()));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
             ClassDescriptor exception = getClassDescriptor(Type.getObjectType(exceptions[i]).getClassName());
