@@ -50,9 +50,9 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
 	@Override
 	public Map<NodeProperty, Object> getProperties(ArtifactDescriptor descriptor) {
 		Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-		properties.put(NodeProperty.GROUP_ID, descriptor.getGroup());
-		properties.put(NodeProperty.ARTIFACT_ID, descriptor.getArtifact());
-		properties.put(NodeProperty.ARTIFACT_VERSION, descriptor.getVersion());
+		properties.put(NodeProperty.GROUP, descriptor.getGroup());
+		properties.put(NodeProperty.NAME, descriptor.getName());
+		properties.put(NodeProperty.VERSION, descriptor.getVersion());
 		return properties;
 	}
 
@@ -64,13 +64,13 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
 		super.setProperty(descriptor, property, value);
 
 		switch (property) {
-		case GROUP_ID:
+		case GROUP:
 			descriptor.setGroup((String) value);
 			break;
-		case ARTIFACT_ID:
-			descriptor.setArtifact((String) value);
+		case NAME:
+			descriptor.setName((String) value);
 			break;
-		case ARTIFACT_VERSION:
+		case VERSION:
 			descriptor.setVersion((String) value);
 			break;
 		default:

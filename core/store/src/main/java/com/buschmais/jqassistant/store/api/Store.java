@@ -1,12 +1,8 @@
 package com.buschmais.jqassistant.store.api;
 
-import java.util.Map;
+import com.buschmais.jqassistant.core.model.api.descriptor.*;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
+import java.util.Map;
 
 /**
  * Defines the store for {@link com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor}s.
@@ -60,82 +56,75 @@ public interface Store {
     void endTransaction();
 
     /**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 * is resolved using artifact information (groupId, artifactId, version).
-	 * </p>
-	 * 
-	 * @param artifactIdentifier
-	 *            The identifier of the artifact. Pattern
-	 *            "<group>:<artifact>:<version>"
-	 * @return The resolved
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 *         .
-	 */
-	ArtifactDescriptor createArtifactDescriptor(String artifactIdentifier);
+     * Resolves a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     * .
+     * <p>
+     * The
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     * is resolved using artifact information (groupId, artifactId, version).
+     * </p>
+     *
+     * @param fullQualifiedName The identifier of the artifact. Pattern
+     *                          "<group>:<artifact>:<version>"
+     * @return The resolved
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     *         .
+     */
+    ArtifactDescriptor createArtifactDescriptor(String fullQualifiedName);
 
-	/**
-	 * Finds a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 * by it's full qualified name.
-	 *
-	 * @param fullQualifiedName
-	 *            The full qualified name.
-	 * @return The
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 *         or <code>null</code> if it does not exist.
-	 */
-	ArtifactDescriptor findArtifactDescriptor(String fullQualifiedName);
+    /**
+     * Finds a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     * by it's full qualified name.
+     *
+     * @param fullQualifiedName The full qualified name.
+     * @return The
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     *         or <code>null</code> if it does not exist.
+     */
+    ArtifactDescriptor findArtifactDescriptor(String fullQualifiedName);
 
-	/**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 * is resolved using a parent
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 * and the name of the contained package.
-	 * </p>
-	 *
-	 * @param parentArtifactDescriptor
-	 *            The
-	 *            {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
-	 *            containing the package.
-	 * @param packageName
-	 *            The name of the package.
-	 * @return The resolved
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 */
-	PackageDescriptor createPackageDescriptor(final ArtifactDescriptor parentArtifactDescriptor,
-			final String packageName);
+    /**
+     * Resolves a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     * .
+     * <p>
+     * The
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     * is resolved using a parent
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     * and the name of the contained package.
+     * </p>
+     *
+     * @param parentArtifactDescriptor The
+     *                                 {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
+     *                                 containing the package.
+     * @param packageName              The name of the package.
+     * @return The resolved
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     */
+    PackageDescriptor createPackageDescriptor(final ArtifactDescriptor parentArtifactDescriptor, final String packageName);
 
-	/**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 * is resolved using a parent
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 * and the name of the contained package.
-	 * </p>
-	 *
-	 * @param parentPackageDescriptor
-	 *            The
-	 *            {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 *            containing the package.
-	 * @param packageName
-	 *            The name of the package.
-	 * @return The resolved
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
-	 */
+    /**
+     * Resolves a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     * .
+     * <p>
+     * The
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     * is resolved using a parent
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     * and the name of the contained package.
+     * </p>
+     *
+     * @param parentPackageDescriptor The
+     *                                {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     *                                containing the package.
+     * @param packageName             The name of the package.
+     * @return The resolved
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor}
+     */
     PackageDescriptor createPackageDescriptor(PackageDescriptor parentPackageDescriptor, String packageName);
 
 
@@ -148,45 +137,22 @@ public interface Store {
     PackageDescriptor findPackageDescriptor(String fullQualifiedName);
 
     /**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
-	 * is resolved using a parent {@link ArtifactDescriptor} and the name of the
-	 * contained class.
-	 * </p>
-	 *
-	 * @param artifactDescriptor
-	 *            The {@link ArtifactDescriptor} containing the package.
-	 * @param className
-	 *            The name of the class.
-	 * @return The resolved
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
-	 *         .
-	 */
-	ClassDescriptor createClassDescriptor(ArtifactDescriptor artifactDescriptor, String className);
-
-	/**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
-	 * is resolved using a parent {@link PackageDescriptor} and the name of the
-	 * contained class.
-	 * </p>
-	 *
-	 * @param packageDescriptor
-	 *            The {@link PackageDescriptor} containing the package.
-	 * @param className
-	 *            The name of the class.
-	 * @return The resolved
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
-	 *         .
-	 */
+     * Resolves a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
+     * .
+     * <p>
+     * The
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
+     * is resolved using a parent {@link PackageDescriptor} and the name of the
+     * contained class.
+     * </p>
+     *
+     * @param packageDescriptor The {@link PackageDescriptor} containing the package.
+     * @param className         The name of the class.
+     * @return The resolved
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
+     *         .
+     */
     ClassDescriptor createClassDescriptor(PackageDescriptor packageDescriptor, String className);
 
     /**
@@ -198,43 +164,39 @@ public interface Store {
     ClassDescriptor findClassDescriptor(String fullQualifiedName);
 
     /**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor}
-	 * is resolved using a parent {@link ClassDescriptor} and the name of the
-	 * contained method.
-	 * </p>
-	 *
-	 * @param classDescriptor
-	 *            The {@link ClassDescriptor} containing the method.
-	 * @param methodName
-	 *            The name of the method.
-	 * @return The resolved {@link ClassDescriptor}.
-	 */
+     * Resolves a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor}
+     * .
+     * <p>
+     * The
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor}
+     * is resolved using a parent {@link ClassDescriptor} and the name of the
+     * contained method.
+     * </p>
+     *
+     * @param classDescriptor The {@link ClassDescriptor} containing the method.
+     * @param methodName      The name of the method.
+     * @return The resolved {@link ClassDescriptor}.
+     */
     MethodDescriptor createMethodDescriptor(ClassDescriptor classDescriptor, String methodName);
 
     /**
-	 * Resolves a
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
-	 * .
-	 * <p>
-	 * The
-	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
-	 * is resolved using a parent {@link ClassDescriptor} and the name of the
-	 * contained field.
-	 * </p>
-	 *
-	 * @param classDescriptor
-	 *            The {@link ClassDescriptor} containing the method.
-	 * @param fieldName
-	 *            The name of the field.
-	 * @return The resolved
-	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
-	 *         .
-	 */
+     * Resolves a
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
+     * .
+     * <p>
+     * The
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
+     * is resolved using a parent {@link ClassDescriptor} and the name of the
+     * contained field.
+     * </p>
+     *
+     * @param classDescriptor The {@link ClassDescriptor} containing the method.
+     * @param fieldName       The name of the field.
+     * @return The resolved
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
+     *         .
+     */
     FieldDescriptor createFieldDescriptor(ClassDescriptor classDescriptor, String fieldName);
 
     /**

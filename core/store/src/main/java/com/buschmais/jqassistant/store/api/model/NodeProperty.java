@@ -1,19 +1,43 @@
 package com.buschmais.jqassistant.store.api.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The supported node properties.
  */
 public enum NodeProperty {
 
-	/** Full Qualified Name */
-	FQN,
+    /**
+     * Full Qualified Name
+     */
+    FQN,
 
-	/** Maven artifact groupId */
-	GROUP_ID,
+    /**
+     * Artifact group
+     */
+    GROUP,
 
-	/** Maven artifact artifactId */
-	ARTIFACT_ID,
+    /**
+     * Artifact name
+     */
+    NAME,
 
-	/** Maven artifact version */
-	ARTIFACT_VERSION;
+    /**
+     * Artifact version
+     */
+    VERSION;
+
+    private static Map<String, NodeProperty> nodeProperties;
+
+    static {
+        nodeProperties = new HashMap<String, NodeProperty>();
+        for (NodeProperty property : NodeProperty.values()) {
+            nodeProperties.put(property.name(), property);
+        }
+    }
+
+    public static NodeProperty getProperty(String name) {
+        return nodeProperties.get(name);
+    }
 }

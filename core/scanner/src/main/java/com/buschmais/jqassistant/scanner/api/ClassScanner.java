@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scanner.api;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,15 +17,21 @@ public interface ClassScanner {
 
     void scanArchive(File archive) throws IOException;
 
-	void scanDirectory(File directory, String artifactIdentifier) throws IOException;
+    void scanArchive(ArtifactDescriptor artifactDescriptor, File archive) throws IOException;
 
-	void scanFile(File file, String artifactIdentifier) throws IOException;
+    void scanDirectory(File directory) throws IOException;
+
+    void scanDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException;
+
+    void scanFile(File file) throws IOException;
+
+    void scanFile(ArtifactDescriptor artifactDescriptor, File file) throws IOException;
 
     void scanClasses(Class<?>... classTypes) throws IOException;
 
-	void scanInputStream(InputStream inputStream, String name) throws IOException;
+    void scanInputStream(InputStream inputStream, String name) throws IOException;
 
-	void scanInputStream(InputStream inputStream, String name, String artifactIdentifier) throws IOException;
+    void scanInputStream(ArtifactDescriptor artifactDescriptor, InputStream inputStream, String name) throws IOException;
 
     public abstract static class ScanListener {
 

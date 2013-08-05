@@ -29,32 +29,20 @@
  */
 package com.buschmais.jqassistant.scanner.impl;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
+import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.scanner.impl.visitor.ClassVisitor;
+import com.buschmais.jqassistant.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
 import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.scanner.api.ClassScanner;
-import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.scanner.impl.visitor.ClassVisitor;
-import com.buschmais.jqassistant.store.api.Store;
+import java.io.*;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class ClassScannerImpl implements ClassScanner {
 
@@ -64,18 +52,23 @@ public class ClassScannerImpl implements ClassScanner {
 
     private final ScanListener scanListener;
 
-	public ClassScannerImpl(Store graphStore, ScanListener listener) {
+    public ClassScannerImpl(Store graphStore, ScanListener listener) {
         this.store = graphStore;
         this.scanListener = listener;
     }
 
-	public ClassScannerImpl(Store graphStore) {
-		this(graphStore, new ScanListener() {
-		});
+    public ClassScannerImpl(Store graphStore) {
+        this(graphStore, new ScanListener() {
+        });
     }
 
-	@Override
+    @Override
     public void scanArchive(File archive) throws IOException {
+        scanArchive(null, archive);
+    }
+
+    @Override
+    public void scanArchive(ArtifactDescriptor artifactDescriptor, File archive) throws IOException {
         if (!archive.exists()) {
             LOGGER.warn("Archive '{}' not found, skipping.", archive.getAbsolutePath());
         } else {
@@ -116,7 +109,7 @@ public class ClassScannerImpl implements ClassScanner {
                     scanListener.beforePackage();
                     try {
                         for (ZipEntry zipEntry : e.getValue()) {
-                            scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
+                            scanInputStream(artifactDescriptor, zipFile.getInputStream(zipEntry), zipEntry.getName());
                             currentClasses++;
                         }
                     } finally {
@@ -133,7 +126,12 @@ public class ClassScannerImpl implements ClassScanner {
     }
 
     @Override
-	public void scanDirectory(File directory, String artifactIdentifier) throws IOException {
+    public void scanDirectory(File directory) throws IOException {
+        scanDirectory(null, directory);
+    }
+
+    @Override
+    public void scanDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException {
         final List<File> classFiles = new ArrayList<File>();
         new DirectoryWalker<File>() {
 
@@ -149,13 +147,18 @@ public class ClassScannerImpl implements ClassScanner {
             }
         }.scan(directory);
         for (File classFile : classFiles) {
-			scanFile(classFile, artifactIdentifier);
+            scanFile(artifactDescriptor, classFile);
         }
     }
 
     @Override
-	public void scanFile(File file, String artifactIdentifier) throws IOException {
-		scanInputStream(new BufferedInputStream(new FileInputStream(file)), file.getName(), artifactIdentifier);
+    public void scanFile(File file) throws IOException {
+        scanFile(null, file);
+    }
+
+    @Override
+    public void scanFile(ArtifactDescriptor artifactDescriptor, File file) throws IOException {
+        scanInputStream(artifactDescriptor, new BufferedInputStream(new FileInputStream(file)), file.getName());
     }
 
     @Override
@@ -167,17 +170,17 @@ public class ClassScannerImpl implements ClassScanner {
     }
 
     @Override
-	public void scanInputStream(InputStream inputStream, String name) throws IOException {
-		scanInputStream(inputStream, name, null);
-	}
+    public void scanInputStream(InputStream inputStream, String name) throws IOException {
+        scanInputStream(null, inputStream, name);
+    }
 
-	@Override
-	public void scanInputStream(InputStream inputStream, String name, String artifactIdentifier) throws IOException {
+    @Override
+    public void scanInputStream(ArtifactDescriptor artifactDescriptor, InputStream inputStream, String name) throws IOException {
         LOGGER.info("Scanning " + name);
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
         scanListener.beforeClass();
         try {
-			ClassVisitor visitor = new ClassVisitor(resolverFactory, artifactIdentifier);
+            ClassVisitor visitor = new ClassVisitor(resolverFactory, artifactDescriptor);
             new ClassReader(inputStream).accept(visitor, 0);
         } finally {
             scanListener.afterClass();
