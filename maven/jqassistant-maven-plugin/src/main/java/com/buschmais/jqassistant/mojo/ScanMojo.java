@@ -58,6 +58,8 @@ public class ScanMojo extends AbstractStoreMojo {
                     descriptor.setGroup(artifact.getGroupId());
                     descriptor.setName(artifact.getArtifactId());
                     descriptor.setVersion(artifact.getVersion());
+                    descriptor.setClassifier(artifact.getClassifier());
+                    descriptor.setType(artifact.getType());
                 }
                 ClassScannerImpl scanner = new ClassScannerImpl(store);
                 try {
