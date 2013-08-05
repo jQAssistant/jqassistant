@@ -1,36 +1,35 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.signature.SignatureReader;
-
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
+import org.objectweb.asm.Attribute;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.signature.SignatureReader;
 
 public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.ClassVisitor {
 
     private ClassDescriptor classDescriptor;
-	private String artifactIdentifier;
+    private ArtifactDescriptor artifactDescriptor;
 
-	public ClassVisitor(DescriptorResolverFactory resolverFactory, String artifactIdentifier) {
+    public ClassVisitor(DescriptorResolverFactory resolverFactory) {
+        this(resolverFactory, null);
+    }
+
+    public ClassVisitor(DescriptorResolverFactory resolverFactory, ArtifactDescriptor artifactDescriptor) {
         super(resolverFactory);
-		this.artifactIdentifier = artifactIdentifier;
+        this.artifactDescriptor = artifactDescriptor;
     }
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         classDescriptor = getClassDescriptor(name);
 
-		if (artifactIdentifier != null) {
-			ArtifactDescriptor descriptor = getStore().findArtifactDescriptor(artifactIdentifier);
-			if (descriptor == null) {
-				descriptor = getStore().createArtifactDescriptor(artifactIdentifier);
-			}
-			descriptor.getContains().add(classDescriptor);
-		}
+        if (this.artifactDescriptor != null) {
+            artifactDescriptor.getContains().add(classDescriptor);
+        }
 
         if (signature == null) {
             if (superName != null) {
