@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.scanner.test.matcher;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import org.hamcrest.Matcher;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +16,7 @@ public class ClassDescriptorMatcher extends AbstractDescriptorMatcher<ClassDescr
         super(ClassDescriptor.class, type.getName());
     }
 
-    public static ClassDescriptorMatcher classDescriptor(Class<?> type) {
+    public static Matcher<ClassDescriptor> classDescriptor(Class<?> type) {
         return new ClassDescriptorMatcher(type);
     }
 
