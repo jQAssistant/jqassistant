@@ -94,36 +94,8 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
             getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new StreamSource(ruleFile));
         }
-        for (JqassistantCatalog catalog : catalogReader.readCatalogs()) {
-            for (RulesType rulesType : catalog.getRules()) {
-                for (ResourcesType resourcesType : rulesType.getResources()) {
-                    String directory = resourcesType.getDirectory();
-                    for (String resource : resourcesType.getResource()) {
-                        StringBuffer fullResource = new StringBuffer();
-                        if (directory != null) {
-                            fullResource.append(directory);
-                        }
-                        fullResource.append(resource);
-                        URL url = VerifyMojo.class.getResource(fullResource.toString());
-                        String systemId = null;
-                        if (url != null) {
-                            try {
-								systemId = url.toURI().toString();
-                                getLog().debug("Adding rules from " + url.toString());
-                                InputStream ruleStream = url.openStream();
-                                sources.add(new StreamSource(ruleStream, systemId));
-                            } catch (IOException e) {
-                                throw new MojoExecutionException("Cannot open rule URL: " + url.toString(), e);
-							} catch (URISyntaxException e) {
-								throw new MojoExecutionException("Cannot create URI from url: " + url.toString());
-							}
-                        } else {
-                            getLog().warn("Cannot read rules from resource '{}'" + resource);
-                        }
-                    }
-                }
-            }
-        }
+        sources.addAll(catalogReader.readCatalogs());
+
         return rulesReader.read(sources);
     }
 

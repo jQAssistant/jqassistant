@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scanner.test.sets.annotation;
+package com.buschmais.jqassistant.scanner.test.set.annotation;
 
 /**
  * Created with IntelliJ IDEA.

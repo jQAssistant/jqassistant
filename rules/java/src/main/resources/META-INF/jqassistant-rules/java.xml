@@ -3,7 +3,7 @@
     <concept id="java:AssignableFrom">
         <description>Creates a relationship ASSIGNABLE_FROM between CLASS labeled nodes if two classes are assignable.</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)-[:IMPLEMENTS|INHERITS*]->(s)
+            MATCH (c:CLASS)-[:IMPLEMENTS|EXTENDS*]->(s)
             CREATE UNIQUE
                 (c)-[:ASSIGNABLE_FROM]->(c),
                 (s)-[:ASSIGNABLE_FROM]->(c)

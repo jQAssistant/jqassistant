@@ -149,7 +149,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -160,6 +159,11 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
         </plugins>
     </build>
 
@@ -168,6 +172,12 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.scanner</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.scanner</artifactId>
+                <type>test-jar</type>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -188,6 +198,12 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.analysis</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.analysis</artifactId>
+                <type>test-jar</type>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

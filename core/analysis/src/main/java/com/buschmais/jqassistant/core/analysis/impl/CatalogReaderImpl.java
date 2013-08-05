@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -10,8 +11,11 @@ import java.util.List;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ResourcesType;
+import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.RulesType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +49,7 @@ public class CatalogReaderImpl implements CatalogReader {
      * @return The catalogs which can be resolved from the current classpath.
      */
     @Override
-    public Iterable<JqassistantCatalog> readCatalogs() {
+    public List<Source> readCatalogs() {
         final Enumeration<URL> resources;
         try {
             resources = CatalogReaderImpl.class.getClassLoader().getResources(CATALOG_RESOURCE);
@@ -58,7 +62,7 @@ public class CatalogReaderImpl implements CatalogReader {
             LOGGER.debug("Reading catalog from URL '{}'.", url);
             catalogs.add(readCatalog(url));
         }
-        return catalogs;
+        return convert(catalogs);
     }
 
     /**
@@ -81,5 +85,40 @@ public class CatalogReaderImpl implements CatalogReader {
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot read catalog from URL " + catalogUrl.toString(), e);
         }
+    }
+
+    public List<Source> convert(Iterable<JqassistantCatalog> catalogs) {
+        List<Source> sources = new ArrayList<Source>();
+        for (JqassistantCatalog catalog : catalogs) {
+            for (RulesType rulesType : catalog.getRules()) {
+                for (ResourcesType resourcesType : rulesType.getResources()) {
+                    String directory = resourcesType.getDirectory();
+                    for (String resource : resourcesType.getResource()) {
+                        StringBuffer fullResource = new StringBuffer();
+                        if (directory != null) {
+                            fullResource.append(directory);
+                        }
+                        fullResource.append(resource);
+                        URL url = CatalogReaderImpl.class.getResource(fullResource.toString());
+                        String systemId = null;
+                        if (url != null) {
+                            try {
+                                systemId = url.toURI().toString();
+                                LOGGER.debug("Adding rules from " + url.toString());
+                                InputStream ruleStream = url.openStream();
+                                sources.add(new StreamSource(ruleStream, systemId));
+                            } catch (IOException e) {
+                                throw new IllegalStateException("Cannot open rule URL: " + url.toString(), e);
+                            } catch (URISyntaxException e) {
+                                throw new IllegalStateException("Cannot create URI from url: " + url.toString());
+                            }
+                        } else {
+                            LOGGER.warn("Cannot read rules from resource '{}'" + resource);
+                        }
+                    }
+                }
+            }
+        }
+        return sources;
     }
 }

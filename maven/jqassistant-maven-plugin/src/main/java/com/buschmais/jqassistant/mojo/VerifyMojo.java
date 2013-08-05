@@ -23,13 +23,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import com.buschmais.jqassistant.core.analysis.api.ConstraintAnalyzer;
-import com.buschmais.jqassistant.core.analysis.impl.ConstraintAnalyzerImpl;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
@@ -82,9 +82,9 @@ public class VerifyMojo extends AbstractAnalysisMojo {
             execute(new StoreOperation<Void, AbstractMojoExecutionException>() {
                 @Override
                 public Void run(Store store) throws AbstractMojoExecutionException {
-                    ConstraintAnalyzer analyzer = new ConstraintAnalyzerImpl(store, reportWriter);
+                    Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
                     try {
-                        analyzer.validateConstraints(selectedConstraintGroups);
+                        analyzer.validateConstraintGroups(selectedConstraintGroups);
                     } catch (ReportWriterException e) {
                         throw new MojoExecutionException("Cannot create report.", e);
                     }

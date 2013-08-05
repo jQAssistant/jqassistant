@@ -1,6 +1,6 @@
-package com.buschmais.jqassistant.scanner.test.sets.pojo;
+package com.buschmais.jqassistant.scanner.test.set.pojo;
 
-public class Pojo<X> {
+public class Pojo {
 
     private String stringValue;
 

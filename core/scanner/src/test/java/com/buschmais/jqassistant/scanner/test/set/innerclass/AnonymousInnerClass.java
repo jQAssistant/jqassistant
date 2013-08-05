@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scanner.test.sets.innerclass;
+package com.buschmais.jqassistant.scanner.test.set.innerclass;
 
 import java.util.Iterator;
 

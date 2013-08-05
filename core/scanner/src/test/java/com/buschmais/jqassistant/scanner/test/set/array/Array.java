@@ -1,11 +1,7 @@
-package com.buschmais.jqassistant.scanner.test.sets.array;
+package com.buschmais.jqassistant.scanner.test.set.array;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Dirk Mahler
- * Date: 22.07.13
- * Time: 22:21
- * To change this template use File | Settings | File Templates.
+ * A type containing a string array.
  */
 public class Array {
 
