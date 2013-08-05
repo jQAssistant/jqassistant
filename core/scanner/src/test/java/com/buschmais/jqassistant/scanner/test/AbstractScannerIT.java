@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.junit.After;
 import org.junit.Before;
 
-import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
 import com.buschmais.jqassistant.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
@@ -30,7 +29,7 @@ public abstract class AbstractScannerIT {
     }
 
     protected ClassScanner getScanner() {
-		return new ClassScannerImpl(store, new ArtifactInformation(), getScanListener());
+		return new ClassScannerImpl(store, getScanListener());
     }
 
     /**

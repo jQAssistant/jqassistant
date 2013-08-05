@@ -68,19 +68,15 @@ public interface Store {
 	 * {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
 	 * is resolved using artifact information (groupId, artifactId, version).
 	 * </p>
-	 *
-	 * @param groupId
-	 *            The groupId of the artifact.
-	 * @param artifactId
-	 *            The artifactId of the artifact.
-	 * @param version
-	 *            The version of the artifact.
+	 * 
+	 * @param artifactIdentifier
+	 *            The identifier of the artifact. Pattern
+	 *            "<group>:<artifact>:<version>"
 	 * @return The resolved
 	 *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor}
 	 *         .
 	 */
-	ArtifactDescriptor createArtifactDescriptor(String groupId,
-			String artifactId, String version);
+	ArtifactDescriptor createArtifactDescriptor(String artifactIdentifier);
 
 	/**
 	 * Finds a
@@ -161,7 +157,7 @@ public interface Store {
 	 * is resolved using a parent {@link ArtifactDescriptor} and the name of the
 	 * contained class.
 	 * </p>
-	 * 
+	 *
 	 * @param artifactDescriptor
 	 *            The {@link ArtifactDescriptor} containing the package.
 	 * @param className
@@ -182,7 +178,7 @@ public interface Store {
 	 * is resolved using a parent {@link PackageDescriptor} and the name of the
 	 * contained class.
 	 * </p>
-	 * 
+	 *
 	 * @param packageDescriptor
 	 *            The {@link PackageDescriptor} containing the package.
 	 * @param className

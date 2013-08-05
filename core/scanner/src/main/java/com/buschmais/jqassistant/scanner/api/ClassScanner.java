@@ -15,13 +15,15 @@ public interface ClassScanner {
 
     void scanArchive(File archive) throws IOException;
 
-    void scanDirectory(File directory) throws IOException;
+	void scanDirectory(File directory, String artifactIdentifier) throws IOException;
 
-    void scanFile(File file) throws IOException;
+	void scanFile(File file, String artifactIdentifier) throws IOException;
 
     void scanClasses(Class<?>... classTypes) throws IOException;
 
-    void scanInputStream(InputStream inputStream, String name) throws IOException;
+	void scanInputStream(InputStream inputStream, String name) throws IOException;
+
+	void scanInputStream(InputStream inputStream, String name, String artifactIdentifier) throws IOException;
 
     public abstract static class ScanListener {
 
