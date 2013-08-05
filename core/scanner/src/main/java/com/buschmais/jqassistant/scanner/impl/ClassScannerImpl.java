@@ -51,7 +51,6 @@ import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
 import com.buschmais.jqassistant.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.scanner.impl.visitor.ClassVisitor;
@@ -65,16 +64,13 @@ public class ClassScannerImpl implements ClassScanner {
 
     private final ScanListener scanListener;
 
-	private final ArtifactInformation artifactInfos;
-
-	public ClassScannerImpl(Store graphStore, ArtifactInformation artifactInfos, ScanListener listener) {
+	public ClassScannerImpl(Store graphStore, ScanListener listener) {
         this.store = graphStore;
-		this.artifactInfos = artifactInfos;
         this.scanListener = listener;
     }
 
-	public ClassScannerImpl(Store graphStore, ArtifactInformation artifactInfos) {
-		this(graphStore, artifactInfos, new ScanListener() {
+	public ClassScannerImpl(Store graphStore) {
+		this(graphStore, new ScanListener() {
 		});
     }
 
@@ -137,7 +133,7 @@ public class ClassScannerImpl implements ClassScanner {
     }
 
     @Override
-    public void scanDirectory(File directory) throws IOException {
+	public void scanDirectory(File directory, String artifactIdentifier) throws IOException {
         final List<File> classFiles = new ArrayList<File>();
         new DirectoryWalker<File>() {
 
@@ -153,13 +149,13 @@ public class ClassScannerImpl implements ClassScanner {
             }
         }.scan(directory);
         for (File classFile : classFiles) {
-            scanFile(classFile);
+			scanFile(classFile, artifactIdentifier);
         }
     }
 
     @Override
-    public void scanFile(File file) throws IOException {
-        scanInputStream(new BufferedInputStream(new FileInputStream(file)), file.getName());
+	public void scanFile(File file, String artifactIdentifier) throws IOException {
+		scanInputStream(new BufferedInputStream(new FileInputStream(file)), file.getName(), artifactIdentifier);
     }
 
     @Override
@@ -171,12 +167,17 @@ public class ClassScannerImpl implements ClassScanner {
     }
 
     @Override
-    public void scanInputStream(InputStream inputStream, String name) throws IOException {
+	public void scanInputStream(InputStream inputStream, String name) throws IOException {
+		scanInputStream(inputStream, name, null);
+	}
+
+	@Override
+	public void scanInputStream(InputStream inputStream, String name, String artifactIdentifier) throws IOException {
         LOGGER.info("Scanning " + name);
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
         scanListener.beforeClass();
         try {
-            ClassVisitor visitor = new ClassVisitor(resolverFactory);
+			ClassVisitor visitor = new ClassVisitor(resolverFactory, artifactIdentifier);
             new ClassReader(inputStream).accept(visitor, 0);
         } finally {
             scanListener.afterClass();

@@ -12,7 +12,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
 import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 
@@ -31,7 +30,7 @@ public abstract class AbstractScannerTest {
 
     @Before
     public void createScanner() {
-		scanner = new ClassScannerImpl(store, new ArtifactInformation());
+		scanner = new ClassScannerImpl(store);
         this.javaLangObject = stubClass(Object.class);
         this._void = stubClass("void");
     }
