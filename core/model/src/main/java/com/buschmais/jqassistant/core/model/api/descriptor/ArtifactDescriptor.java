@@ -7,53 +7,53 @@ package com.buschmais.jqassistant.core.model.api.descriptor;
  */
 public class ArtifactDescriptor extends ParentDescriptor {
 
-	private String groupIdProperty;
-	private String artifactIdProperty;
-	private String versionProperty;
+	private String group;
+	private String artifact;
+	private String version;
 
 	/**
 	 * @return the groupIdProperty
 	 */
-	public String getGroupIdProperty() {
-		return groupIdProperty;
+	public String getGroup() {
+		return group;
 	}
 
 	/**
-	 * @param groupIdProperty
+	 * @param group
 	 *            the groupIdProperty to set
 	 */
-	public void setGroupIdProperty(String groupIdProperty) {
-		this.groupIdProperty = groupIdProperty;
+	public void setGroup(String group) {
+		this.group = group;
 	}
 
 	/**
 	 * @return the artifactIdProperty
 	 */
-	public String getArtifactIdProperty() {
-		return artifactIdProperty;
+	public String getArtifact() {
+		return artifact;
 	}
 
 	/**
-	 * @param artifactIdProperty
+	 * @param artifact
 	 *            the artifactIdProperty to set
 	 */
-	public void setArtifactIdProperty(String artifactIdProperty) {
-		this.artifactIdProperty = artifactIdProperty;
+	public void setArtifact(String artifact) {
+		this.artifact = artifact;
 	}
 
 	/**
 	 * @return the versionProperty
 	 */
-	public String getVersionProperty() {
-		return versionProperty;
+	public String getVersion() {
+		return version;
 	}
 
 	/**
-	 * @param versionProperty
+	 * @param version
 	 *            the versionProperty to set
 	 */
-	public void setVersionProperty(String versionProperty) {
-		this.versionProperty = versionProperty;
+	public void setVersion(String version) {
+		this.version = version;
 	}
 
 }

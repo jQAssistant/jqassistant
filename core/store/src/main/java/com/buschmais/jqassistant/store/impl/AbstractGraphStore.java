@@ -81,9 +81,17 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-	public ArtifactDescriptor createArtifactDescriptor(final String groupId,
-			final String artifactId, final String version) {
-		return persist(new ArtifactDescriptor(), new Name(groupId + ":" + artifactId + ":" + version));
+	public ArtifactDescriptor createArtifactDescriptor(final String artifactIdentifier) {
+		String[] artifactInfos = artifactIdentifier.split(":");
+		if (artifactInfos.length != 3) {
+			throw new IllegalArgumentException("artifactInfos must match the pattern '<group>:<artifact>:<version>'");
+		}
+
+		ArtifactDescriptor descriptor = new ArtifactDescriptor();
+		descriptor.setGroup(artifactInfos[0]);
+		descriptor.setArtifact(artifactInfos[1]);
+		descriptor.setVersion(artifactInfos[2]);
+		return persist(descriptor, new Name(artifactIdentifier));
 	}
 
 	@Override
