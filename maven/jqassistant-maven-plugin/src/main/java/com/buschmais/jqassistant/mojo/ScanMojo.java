@@ -16,15 +16,15 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
-import java.io.IOException;
-
+import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.store.api.Store;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
-import com.buschmais.jqassistant.store.api.Store;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @phase package
@@ -33,12 +33,12 @@ import com.buschmais.jqassistant.store.api.Store;
  */
 public class ScanMojo extends AbstractStoreMojo {
 
-	/**
-	 * @parameter default-value="${project}"
-	 * @required
-	 * @readonly
-	 */
-	protected MavenProject project;
+    /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    protected MavenProject project;
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -48,15 +48,20 @@ public class ScanMojo extends AbstractStoreMojo {
 
     private void scanDirectory(final File directory) throws MojoExecutionException {
         getLog().info("Scanning rulesDirectory: " + directory.getAbsolutePath());
-		Artifact artifact = project.getArtifact();
-		final String artifactIdentifier = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
-				+ artifact.getVersion();
         super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
-				ClassScannerImpl scanner = new ClassScannerImpl(store);
+                Artifact artifact = project.getArtifact();
+                ArtifactDescriptor descriptor = store.findArtifactDescriptor(artifact.getId());
+                if (descriptor == null) {
+                    descriptor = store.createArtifactDescriptor(artifact.getId());
+                    descriptor.setGroup(artifact.getGroupId());
+                    descriptor.setName(artifact.getArtifactId());
+                    descriptor.setVersion(artifact.getVersion());
+                }
+                ClassScannerImpl scanner = new ClassScannerImpl(store);
                 try {
-					scanner.scanDirectory(directory, artifactIdentifier);
+                    scanner.scanDirectory(descriptor, directory);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot scan classes in " + directory, e);
                 }
