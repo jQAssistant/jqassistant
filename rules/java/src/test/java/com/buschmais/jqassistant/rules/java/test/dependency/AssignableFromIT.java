@@ -7,6 +7,7 @@ import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.scanner.test.set.pojo.Pojo;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ public class AssignableFromIT extends AbstractAnalysisIT {
             ClassDescriptor c = row.get("c");
             descriptors.add(c);
         }
-        assertThat(descriptors, CoreMatchers.hasItems(classDescriptor(Pojo.class), classDescriptor(Object.class)));
+        Matcher<Iterable<ClassDescriptor>> matcher = CoreMatchers.hasItems(classDescriptor(Pojo.class), classDescriptor(Object.class));
+        assertThat(descriptors, matcher);
     }
 }
