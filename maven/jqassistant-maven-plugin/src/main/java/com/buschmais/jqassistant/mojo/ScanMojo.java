@@ -63,7 +63,7 @@ public class ScanMojo extends AbstractStoreMojo {
                 }
                 ClassScannerImpl scanner = new ClassScannerImpl(store);
                 try {
-                    scanner.scanDirectory(descriptor, directory);
+                    scanner.scanClassDirectory(descriptor, directory);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot scan classes in " + directory, e);
                 }

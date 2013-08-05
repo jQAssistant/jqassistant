@@ -126,12 +126,12 @@ public class ClassScannerImpl implements ClassScanner {
     }
 
     @Override
-    public void scanDirectory(File directory) throws IOException {
-        scanDirectory(null, directory);
+    public void scanClassDirectory(File directory) throws IOException {
+        scanClassDirectory(null, directory);
     }
 
     @Override
-    public void scanDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException {
+    public void scanClassDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException {
         final List<File> classFiles = new ArrayList<File>();
         new DirectoryWalker<File>() {
 
@@ -147,17 +147,17 @@ public class ClassScannerImpl implements ClassScanner {
             }
         }.scan(directory);
         for (File classFile : classFiles) {
-            scanFile(artifactDescriptor, classFile);
+            scanClassFile(artifactDescriptor, classFile);
         }
     }
 
     @Override
-    public void scanFile(File file) throws IOException {
-        scanFile(null, file);
+    public void scanClassFile(File file) throws IOException {
+        scanClassFile(null, file);
     }
 
     @Override
-    public void scanFile(ArtifactDescriptor artifactDescriptor, File file) throws IOException {
+    public void scanClassFile(ArtifactDescriptor artifactDescriptor, File file) throws IOException {
         scanInputStream(artifactDescriptor, new BufferedInputStream(new FileInputStream(file)), file.getName());
     }
 
