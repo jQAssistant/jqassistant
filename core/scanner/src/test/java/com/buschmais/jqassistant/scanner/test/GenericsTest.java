@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.scanner.test.sets.generics.*;
+import com.buschmais.jqassistant.scanner.test.set.generics.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class GenericsTest extends AbstractScannerTest {
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
         MethodDescriptor get = new MethodDescriptor();
-        when(store.createMethodDescriptor(nestedGenericType, "java.lang.Object get(com.buschmais.jqassistant.scanner.test.sets.generics.GenericType)")).thenReturn(get);
+        when(store.createMethodDescriptor(nestedGenericType, "java.lang.Object get(" + GenericType.class.getName() + ")")).thenReturn(get);
 
         scanner.scanClasses(NestedGenericMethod.class);
 

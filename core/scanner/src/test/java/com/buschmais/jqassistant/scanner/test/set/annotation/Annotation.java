@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scanner.test.sets.annotation;
+package com.buschmais.jqassistant.scanner.test.set.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.scanner.test.sets.innerclass.AnonymousInnerClass;
+import com.buschmais.jqassistant.scanner.test.set.innerclass.AnonymousInnerClass;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import org.junit.Test;
 
