@@ -23,7 +23,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.scanner.api.ArtifactInformation;
 import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
 
@@ -50,14 +49,14 @@ public class ScanMojo extends AbstractStoreMojo {
     private void scanDirectory(final File directory) throws MojoExecutionException {
         getLog().info("Scanning rulesDirectory: " + directory.getAbsolutePath());
 		Artifact artifact = project.getArtifact();
-		final ArtifactInformation infos = new ArtifactInformation(artifact.getGroupId(), artifact.getGroupId(),
-				artifact.getVersion());
+		final String artifactIdentifier = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
+				+ artifact.getVersion();
         super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
-				ClassScannerImpl scanner = new ClassScannerImpl(store, infos);
+				ClassScannerImpl scanner = new ClassScannerImpl(store);
                 try {
-                    scanner.scanDirectory(directory);
+					scanner.scanDirectory(directory, artifactIdentifier);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot scan classes in " + directory, e);
                 }
