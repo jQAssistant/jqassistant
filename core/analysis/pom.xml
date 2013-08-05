@@ -36,6 +36,11 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.scanner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.scanner</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
