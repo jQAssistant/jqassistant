@@ -26,7 +26,17 @@ public enum NodeProperty {
     /**
      * Artifact version
      */
-    VERSION;
+    VERSION,
+
+    /**
+     * Artifact classifier
+     */
+    CLASSIFIER,
+
+    /**
+     * Artifact type
+     */
+    TYPE;
 
     private static Map<String, NodeProperty> nodeProperties;
 

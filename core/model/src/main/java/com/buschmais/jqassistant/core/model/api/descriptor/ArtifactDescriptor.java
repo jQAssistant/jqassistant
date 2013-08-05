@@ -10,6 +10,8 @@ public class ArtifactDescriptor extends ParentDescriptor {
     private String group;
     private String name;
     private String version;
+    private String classifier;
+    private String type;
 
     /**
      * @return the group
@@ -53,4 +55,19 @@ public class ArtifactDescriptor extends ParentDescriptor {
         this.version = version;
     }
 
+    public String getClassifier() {
+        return classifier;
+    }
+
+    public void setClassifier(String classifier) {
+        this.classifier = classifier;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
