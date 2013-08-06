@@ -1,31 +1,38 @@
 package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.scanner.test.matcher.ClassDescriptorMatcher;
 import com.buschmais.jqassistant.scanner.test.set.innerclass.AnonymousInnerClass;
 import com.buschmais.jqassistant.store.api.QueryResult;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import static com.buschmais.jqassistant.scanner.test.matcher.ClassDescriptorMatcher.classDescriptor;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 public class AnonymousInnerClassIT extends AbstractScannerIT {
 
+    private static final String INNERCLASS_NAME = AnonymousInnerClass.class.getName() + "$1";
+
     @Test
     public void outerClass() throws IOException {
         scanClasses(AnonymousInnerClass.class);
-        QueryResult result = store.executeQuery("MATCH (outerClass:CLASS) RETURN outerClass");
-        Iterable<QueryResult.Row> rows = result.getRows();
-        QueryResult.Row row = rows.iterator().next();
-        ClassDescriptor outerClass = row.get("outerClass");
+        TestResult testResult = executeQuery("MATCH (outerClass:CLASS) RETURN outerClass");
+        Map<String,Object> row = testResult.getRows().get(0);
+        ClassDescriptor outerClass = (ClassDescriptor) row.get("outerClass");
         assertThat(outerClass, classDescriptor(AnonymousInnerClass.class));
+        assertThat(outerClass.getContains(), hasItem(classDescriptor(INNERCLASS_NAME)));
     }
 
     @Test
     public void innerClass() throws IOException {
-        String resourceName = "/" + AnonymousInnerClass.class.getName().replace(".", "/") + "$1.class";
+        String resourceName = "/" + INNERCLASS_NAME.replace(".", "/") + ".class";
         InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
         store.beginTransaction();
         getScanner().scanInputStream(is, resourceName);
