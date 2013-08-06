@@ -27,37 +27,6 @@ import java.util.Map;
  */
 public class AbstractAnalysisIT extends AbstractScannerIT {
 
-    /**
-     * Represents a test result which allows fetching values by row or columns.
-     */
-    protected class TestResult {
-        private List<Map<String, Object>> rows;
-        private Map<String, List<Object>> columns;
-
-        TestResult(List<Map<String, Object>> rows, Map<String, List<Object>> columns) {
-            this.rows = rows;
-            this.columns = columns;
-        }
-
-        /**
-         * Return all rows.
-         *
-         * @return All rows.
-         */
-        public List<Map<String, Object>> getRows() {
-            return rows;
-        }
-
-        /**
-         * Return all columns identified by their name.
-         *
-         * @return All columns.
-         */
-        public Map<String, List<Object>> getColumns() {
-            return columns;
-        }
-    }
-
     protected static RuleSet ruleSet;
 
     protected Analyzer analyzer;
@@ -90,27 +59,4 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
         analyzer.applyConcept(concept);
     }
 
-    /**
-     * Executes a CYPHER query and returns a {@link TestResult}.
-     *
-     * @param query The query.
-     * @return The  {@link TestResult}.
-     */
-    protected TestResult executeQuery(String query) {
-        QueryResult queryResult = store.executeQuery(query);
-        List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
-        Map<String, List<Object>> columns = new HashMap<String, List<Object>>();
-        for (String column : queryResult.getColumns()) {
-            columns.put(column, new ArrayList<Object>());
-        }
-        for (QueryResult.Row row : queryResult.getRows()) {
-            Map<String, Object> rowData = (Map<String, Object>) row.get();
-            rows.add(rowData);
-            for (Map.Entry<String, ?> entry : rowData.entrySet()) {
-                List<Object> column = columns.get(entry.getKey());
-                column.add(entry.getValue());
-            }
-        }
-        return new TestResult(rows, columns);
-    }
 }
