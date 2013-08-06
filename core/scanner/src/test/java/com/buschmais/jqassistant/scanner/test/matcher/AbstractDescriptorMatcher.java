@@ -5,11 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Dirk Mahler
- * Date: 14.07.13
- * Time: 17:06
- * To change this template use File | Settings | File Templates.
+ * Abstract base class for descriptor matchers.
  */
 public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends TypeSafeMatcher<T> {
 
@@ -17,7 +13,12 @@ public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends Typ
 
     private String fullQualifiedName;
 
-    public AbstractDescriptorMatcher(Class<T> type, String fullQualifiedName) {
+    /**
+     * Constructor.
+     * @param type The descriptor type.
+     * @param fullQualifiedName The expected full qualified name.
+     */
+    protected AbstractDescriptorMatcher(Class<T> type, String fullQualifiedName) {
         this.type = type;
         this.fullQualifiedName = fullQualifiedName;
     }

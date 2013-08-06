@@ -5,18 +5,25 @@ import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 import java.lang.reflect.Field;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Dirk Mahler
- * Date: 14.07.13
- * Time: 17:10
- * To change this template use File | Settings | File Templates.
+ * A matcher for {@FieldDescriptor}s.
  */
 public class FieldDescriptorMatcher extends AbstractDescriptorMatcher<FieldDescriptor> {
 
-    public FieldDescriptorMatcher(Field field) {
+    /**
+     * Constructor.
+     *
+     * @param field The expected field.
+     */
+    protected FieldDescriptorMatcher(Field field) {
         super(FieldDescriptor.class, field.getDeclaringClass().getName() + "#" + field.getType().getCanonicalName() + " " + field.getName());
     }
 
+    /**
+     * Return a {@link FieldDescriptorMatcher}.
+     *
+     * @param field The expected field.
+     * @return The {@link FieldDescriptorMatcher}.
+     */
     public static FieldDescriptorMatcher fieldDescriptor(Field field) {
         return new FieldDescriptorMatcher(field);
     }
