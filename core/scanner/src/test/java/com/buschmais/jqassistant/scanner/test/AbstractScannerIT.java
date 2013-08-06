@@ -9,15 +9,22 @@ import org.junit.After;
 import org.junit.Before;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 
+/**
+ * Abstract base class for test using the class scanner.
+ */
 public abstract class AbstractScannerIT {
 
+    /**
+     * The store.
+     */
     protected Store store;
 
+    /**
+     * Initializes and resets the store.
+     */
     @Before
     public void startStore() {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
@@ -27,11 +34,19 @@ public abstract class AbstractScannerIT {
         store.endTransaction();
     }
 
+    /**
+     * Stops the store.
+     */
     @After
     public void stopStore() {
         store.stop();
     }
 
+    /**
+     * Return an initialized class scanner instance.
+     *
+     * @return The class scanner instance.
+     */
     protected ClassScanner getScanner() {
         return new ClassScannerImpl(store, getScanListener());
     }
@@ -60,13 +75,39 @@ public abstract class AbstractScannerIT {
     }
 
     /**
+     * Scans the classes given as resource names (e.g. for anonymous inner classes).
+     *
+     * @param resourceNames The classes.
+     * @throws IOException If scanning fails.
+     */
+    protected void scanClasses(String... resourceNames) throws IOException {
+        store.beginTransaction();
+        for (String resourceName : resourceNames) {
+            InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
+            getScanner().scanInputStream(is, resourceName);
+        }
+        store.endTransaction();
+    }
+
+    /**
      * Executes a CYPHER query and returns a {@link com.buschmais.jqassistant.scanner.test.AbstractScannerIT.TestResult}.
      *
      * @param query The query.
      * @return The  {@link com.buschmais.jqassistant.scanner.test.AbstractScannerIT.TestResult}.
      */
     protected TestResult executeQuery(String query) {
-        QueryResult queryResult = store.executeQuery(query);
+        return executeQuery(query, Collections.<String, Object>emptyMap());
+    }
+
+    /**
+     * Executes a CYPHER query and returns a {@link com.buschmais.jqassistant.scanner.test.AbstractScannerIT.TestResult}.
+     *
+     * @param query      The query.
+     * @param parameters The query parameters.
+     * @return The  {@link com.buschmais.jqassistant.scanner.test.AbstractScannerIT.TestResult}.
+     */
+    protected TestResult executeQuery(String query, Map<String, Object> parameters) {
+        QueryResult queryResult = store.executeQuery(query, parameters);
         List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         Map<String, List<Object>> columns = new HashMap<String, List<Object>>();
         for (String column : queryResult.getColumns()) {
