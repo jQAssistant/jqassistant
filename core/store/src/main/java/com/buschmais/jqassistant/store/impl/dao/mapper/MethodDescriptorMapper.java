@@ -1,14 +1,16 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.store.api.model.NodeLabel;
-import com.buschmais.jqassistant.store.api.model.Relation;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
+import com.buschmais.jqassistant.store.api.model.NodeLabel;
+import com.buschmais.jqassistant.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.store.api.model.Relation;
 
 public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescriptor> {
 
@@ -51,5 +53,57 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
             default:
         }
     }
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<NodeProperty, Object> getProperties(MethodDescriptor descriptor) {
+		Map<NodeProperty, Object> properties = super.getProperties(descriptor);
+		properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
+		if (descriptor.getVisibility() != null) {
+			properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
+		}
+		if (descriptor.isStatic() != null) {
+			properties.put(NodeProperty.STATIC, descriptor.isStatic());
+		}
+		if (descriptor.isFinal() != null) {
+			properties.put(NodeProperty.FINAL, descriptor.isFinal());
+		}
+		if (descriptor.isNative() != null) {
+			properties.put(NodeProperty.NATIVE, descriptor.isNative());
+		}
+		return properties;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setProperty(MethodDescriptor descriptor, NodeProperty property, Object value) {
+		if (value != null) {
+			super.setProperty(descriptor, property, value);
+			switch (property) {
+			case NATIVE:
+				descriptor.setNative((Boolean) value);
+				break;
+			case ABSTRACT:
+				descriptor.setAbstract((Boolean) value);
+				break;
+			case STATIC:
+				descriptor.setStatic((Boolean) value);
+				break;
+			case FINAL:
+				descriptor.setFinal((Boolean) value);
+				break;
+			case VISIBILITY:
+				descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
+				break;
+			default:
+				break;
+			}
+		}
+	}
 
 }
