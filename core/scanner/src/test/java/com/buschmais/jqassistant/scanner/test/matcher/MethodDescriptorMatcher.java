@@ -5,18 +5,25 @@ import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import java.lang.reflect.Method;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Dirk Mahler
- * Date: 14.07.13
- * Time: 17:10
- * To change this template use File | Settings | File Templates.
+ * A matcher for {@link MethodDescriptorMatcher}s.
  */
 public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDescriptor> {
 
-    public MethodDescriptorMatcher(String fqn) {
+    /**
+     * Constructor.
+     *
+     * @param fqn The expected full qualified name.
+     */
+    protected MethodDescriptorMatcher(String fqn) {
         super(MethodDescriptor.class, fqn);
     }
 
+    /**
+     * Return a {@link MethodDescriptorMatcher}.
+     *
+     * @param method The expected method.
+     * @return The {@link MethodDescriptorMatcher}.
+     */
     public static MethodDescriptorMatcher methodDescriptor(Method method) {
         StringBuffer name = new StringBuffer();
         name.append(method.getDeclaringClass().getName());

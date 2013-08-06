@@ -61,7 +61,9 @@
                 c1-[:DEPENDS_ON]->c2,
                 path=shortestPath(c2-[:DEPENDS_ON*]->c1)
             WHERE
-                c1<>c2
+                NOT(
+                  c1=c2 AND (c1)-[:CONTAINS]-(c2)
+                )
             RETURN
                 length(path) as length, extract(p in nodes(path) : p.FQN) as cycle
         ]]></cypher>
