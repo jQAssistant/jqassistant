@@ -23,11 +23,12 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
     @Test
     public void outerClass() throws IOException {
         scanClasses(AnonymousInnerClass.class);
-        TestResult testResult = executeQuery("MATCH (outerClass:CLASS) RETURN outerClass");
+        TestResult testResult = executeQuery("MATCH (outerClass:CLASS)-[:CONTAINS]->(innerClass:CLASS) RETURN outerClass");
         Map<String,Object> row = testResult.getRows().get(0);
         ClassDescriptor outerClass = (ClassDescriptor) row.get("outerClass");
         assertThat(outerClass, classDescriptor(AnonymousInnerClass.class));
-        assertThat(outerClass.getContains(), hasItem(classDescriptor(INNERCLASS_NAME)));
+        Matcher<Iterable<? super ClassDescriptor>> matcher = hasItem(classDescriptor(INNERCLASS_NAME));
+        assertThat(outerClass.getContains(), matcher);
     }
 
     @Test
