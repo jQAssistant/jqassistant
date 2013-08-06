@@ -6,7 +6,8 @@ import java.util.Set;
 /**
  * Describes a Java class.
  */
-public class ClassDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor {
+public class ClassDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor,
+		AccessModifierDescriptor {
 
     /**
      * The super class.
@@ -29,10 +30,30 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
     private Set<ClassDescriptor> annotations = new HashSet<ClassDescriptor>();
 
     /**
-     * Return the super class.
-     *
-     * @return The super class.
-     */
+	 * <code>true</code> if this class is abstract.
+	 */
+	private Boolean abstractClass;
+
+	/**
+	 * Visibility of this class.
+	 */
+	private VisibilityModifier visbility;
+
+	/**
+	 * <code>true</code> if this class is static, otherwise <code>false</code>.
+	 */
+	private Boolean staticClass;
+
+	/**
+	 * <code>true</code> if this class is final, otherwise <code>false</code>.
+	 */
+	private Boolean finalClass;
+
+	/**
+	 * Return the super class.
+	 *
+	 * @return The super class.
+	 */
     public ClassDescriptor getSuperClass() {
         return superClass;
     }
@@ -83,4 +104,67 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
     public void setAnnotatedBy(Set<ClassDescriptor> annotations) {
         this.annotations = annotations;
     }
+
+	/**
+	 * @return the abstractClass
+	 */
+	public Boolean isAbstract() {
+		return abstractClass;
+	}
+
+	/**
+	 * @param abstractClass the abstractClass to set
+	 */
+	public void setAbstract(boolean abstractClass) {
+		this.abstractClass = abstractClass;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public VisibilityModifier getVisibility() {
+		return visbility;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setVisibility(VisibilityModifier visibilityModifier) {
+		visbility = visibilityModifier;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean isStatic() {
+		return staticClass;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setStatic(Boolean s) {
+		staticClass = s;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Boolean isFinal() {
+		return finalClass;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setFinal(Boolean f) {
+		finalClass = f;
+	}
+
 }
