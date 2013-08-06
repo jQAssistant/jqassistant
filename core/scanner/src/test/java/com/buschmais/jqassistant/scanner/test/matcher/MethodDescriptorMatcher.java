@@ -21,6 +21,18 @@ public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDes
     /**
      * Return a {@link MethodDescriptorMatcher}.
      *
+     * @param type           The class containing the expected method.
+     * @param method         The name of the expected method.
+     * @param parameterTypes The parameter types of the expected method.
+     * @return The {@link MethodDescriptorMatcher}.
+     */
+    public static MethodDescriptorMatcher methodDescriptor(Class<?> type, String method, Class<?>... parameterTypes) throws NoSuchMethodException {
+        return methodDescriptor(type.getDeclaredMethod(method, parameterTypes));
+    }
+
+    /**
+     * Return a {@link MethodDescriptorMatcher}.
+     *
      * @param method The expected method.
      * @return The {@link MethodDescriptorMatcher}.
      */

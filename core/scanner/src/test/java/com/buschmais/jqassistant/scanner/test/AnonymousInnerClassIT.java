@@ -6,7 +6,6 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import static com.buschmais.jqassistant.scanner.test.matcher.ClassDescriptorMatcher.classDescriptor;
@@ -40,10 +39,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
     @Test
     public void innerClass() throws IOException {
         String resourceName = "/" + INNERCLASS_NAME.replace(".", "/") + ".class";
-        InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
-        store.beginTransaction();
-        getScanner().scanInputStream(is, resourceName);
-        store.endTransaction();
+        scanClasses(resourceName);
         assertOuterClassContainsInnerClass();
     }
 
