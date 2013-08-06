@@ -89,6 +89,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
+        getClassDescriptor(owner).getContains().add(classDescriptor);
     }
 
     // ---------------------------------------------
