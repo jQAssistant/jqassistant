@@ -1,19 +1,18 @@
 package com.buschmais.jqassistant.scanner.test;
 
+import com.buschmais.jqassistant.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.store.api.QueryResult;
+import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
+import org.junit.After;
+import org.junit.Before;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.buschmais.jqassistant.store.api.QueryResult;
-import org.junit.After;
-import org.junit.Before;
-
-import com.buschmais.jqassistant.scanner.api.ClassScanner;
-import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
-import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
 
 public abstract class AbstractScannerIT {
 
@@ -34,7 +33,7 @@ public abstract class AbstractScannerIT {
     }
 
     protected ClassScanner getScanner() {
-		return new ClassScannerImpl(store, getScanListener());
+        return new ClassScannerImpl(store, getScanListener());
     }
 
     /**
@@ -74,7 +73,7 @@ public abstract class AbstractScannerIT {
             columns.put(column, new ArrayList<Object>());
         }
         for (QueryResult.Row row : queryResult.getRows()) {
-            Map<String, Object> rowData = (Map<String, Object>) row.get();
+            Map<String, Object> rowData = row.get();
             rows.add(rowData);
             for (Map.Entry<String, ?> entry : rowData.entrySet()) {
                 List<Object> column = columns.get(entry.getKey());
