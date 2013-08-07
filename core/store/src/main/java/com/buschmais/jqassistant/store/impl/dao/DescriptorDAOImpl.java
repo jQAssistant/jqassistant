@@ -110,6 +110,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             DescriptorMapper mapper = registry.getDescriptorMapper(descriptor.getClass());
             flushRelations(descriptor, node, mapper);
             flushProperties(descriptor, node, mapper);
+            flushLabels(descriptor, node, mapper);
         }
         this.descriptorCache.clear();
     }
@@ -196,6 +197,21 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     }
 
     /**
+     * Flushes the labels of the given descriptor to the {@link Node} it
+     * represents.
+     *
+     * @param descriptor The descriptor.
+     * @param node       The node.
+     * @param mapper     The mapper.
+     */
+    private <T extends Descriptor> void flushLabels(T descriptor, Node node, DescriptorMapper<T> mapper) {
+        Set<Label> labels = mapper.getLabels(descriptor);
+        for (Label label : labels) {
+            node.addLabel(label);
+        }
+    }
+
+    /**
      * Find the {@link Node} which represents the given descriptor.
      *
      * @param descriptor The descriptor.
@@ -251,6 +267,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 if (nodeProperty != null) {
                     mapper.setProperty(descriptor, nodeProperty, node.getProperty(name));
                 }
+            }
+            // Set labels
+            for (Label label : node.getLabels()) {
+                mapper.setLabel(descriptor, label);
             }
         }
         return descriptor;

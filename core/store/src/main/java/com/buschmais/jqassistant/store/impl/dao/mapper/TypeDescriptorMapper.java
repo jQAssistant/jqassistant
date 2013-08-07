@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.JavaType;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.store.api.model.Relation;
@@ -43,7 +46,7 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    protected void setRelation(TypeDescriptor descriptor, Relation relation,Descriptor target) {
+    protected void setRelation(TypeDescriptor descriptor, Relation relation, Descriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
                 descriptor.getAnnotatedBy().add((TypeDescriptor) target);
@@ -110,14 +113,17 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    public Set<Label> getLabels(final TypeDescriptor descriptor) {
+    public Set<Label> getLabels(TypeDescriptor descriptor) {
         Set<Label> labels = new HashSet<Label>();
-        labels.add(new Label() {
-            @Override
-            public String name() {
-                return descriptor.getJavaType().name();
-            }
-        });
+        final JavaType javaType = descriptor.getJavaType();
+        if (javaType != null) {
+            labels.add(new Label() {
+                @Override
+                public String name() {
+                    return javaType.name();
+                }
+            });
+        }
         return labels;
     }
 
