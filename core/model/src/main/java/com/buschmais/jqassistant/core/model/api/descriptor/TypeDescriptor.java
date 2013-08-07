@@ -6,8 +6,7 @@ import java.util.Set;
 /**
  * Describes a Java class.
  */
-public class TypeDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor,
-		AccessModifierDescriptor {
+public class TypeDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
      * The super class.
@@ -30,30 +29,35 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
 
     /**
-	 * <code>true</code> if this class is abstract.
-	 */
-	private Boolean abstractClass;
+     * The java type.
+     */
+    private JavaType javaType;
 
-	/**
-	 * Visibility of this class.
-	 */
-	private VisibilityModifier visbility;
+    /**
+     * <code>true</code> if this class is abstract.
+     */
+    private Boolean abstractClass;
 
-	/**
-	 * <code>true</code> if this class is static, otherwise <code>false</code>.
-	 */
-	private Boolean staticClass;
+    /**
+     * Visibility of this class.
+     */
+    private VisibilityModifier visbility;
 
-	/**
-	 * <code>true</code> if this class is final, otherwise <code>false</code>.
-	 */
-	private Boolean finalClass;
+    /**
+     * <code>true</code> if this class is static, otherwise <code>false</code>.
+     */
+    private Boolean staticClass;
 
-	/**
-	 * Return the super class.
-	 *
-	 * @return The super class.
-	 */
+    /**
+     * <code>true</code> if this class is final, otherwise <code>false</code>.
+     */
+    private Boolean finalClass;
+
+    /**
+     * Return the super class.
+     *
+     * @return The super class.
+     */
     public TypeDescriptor getSuperClass() {
         return superClass;
     }
@@ -105,66 +109,83 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
         this.annotations = annotations;
     }
 
-	/**
-	 * @return the abstractClass
-	 */
-	public Boolean isAbstract() {
-		return abstractClass;
-	}
+    /**
+     * @return the abstractClass
+     */
+    public Boolean isAbstract() {
+        return abstractClass;
+    }
 
-	/**
-	 * @param abstractClass the abstractClass to set
-	 */
-	public void setAbstract(boolean abstractClass) {
-		this.abstractClass = abstractClass;
-	}
+    /**
+     * @param abstractClass the abstractClass to set
+     */
+    public void setAbstract(boolean abstractClass) {
+        this.abstractClass = abstractClass;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public VisibilityModifier getVisibility() {
-		return visbility;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public VisibilityModifier getVisibility() {
+        return visbility;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setVisibility(VisibilityModifier visibilityModifier) {
-		visbility = visibilityModifier;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setVisibility(VisibilityModifier visibilityModifier) {
+        visbility = visibilityModifier;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Boolean isStatic() {
-		return staticClass;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isStatic() {
+        return staticClass;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setStatic(Boolean s) {
-		staticClass = s;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setStatic(Boolean s) {
+        staticClass = s;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Boolean isFinal() {
-		return finalClass;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean isFinal() {
+        return finalClass;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setFinal(Boolean f) {
-		finalClass = f;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFinal(Boolean f) {
+        finalClass = f;
+    }
 
+    /**
+     * Return the java type.
+     *
+     * @return The java type.
+     */
+    public JavaType getJavaType() {
+        return javaType;
+    }
+
+    /**
+     * Set the java type.
+     *
+     * @param javaType The java type.
+     */
+    public void setJavaType(JavaType javaType) {
+        this.javaType = javaType;
+    }
 }
