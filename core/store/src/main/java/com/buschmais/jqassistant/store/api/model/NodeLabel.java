@@ -5,6 +5,10 @@ package com.buschmais.jqassistant.store.api.model;
  */
 public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
+     * Artifact.
+     */
+    ARTIFACT,
+    /**
      * Package
      */
     PACKAGE,
@@ -19,9 +23,5 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Field
      */
-    FIELD,
-    /**
-     * Maven artifact.
-     */
-    ARTIFACT;
+    FIELD;
 }

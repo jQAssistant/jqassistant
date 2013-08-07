@@ -5,7 +5,7 @@ import com.buschmais.jqassistant.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
-import com.buschmais.jqassistant.store.impl.dao.DescriptorAdapterRegistry;
+import com.buschmais.jqassistant.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.store.impl.dao.mapper.*;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -34,7 +34,7 @@ public abstract class AbstractGraphStore implements Store {
      * The registry of {@link DescriptorMapper}s. These are used to resolve
      * required metadata.
      */
-    private DescriptorAdapterRegistry adapterRegistry;
+    private DescriptorMapperRegistry mapperRegistry;
 
     /**
      * The {@link DescriptorDAO} instance to use.
@@ -47,18 +47,18 @@ public abstract class AbstractGraphStore implements Store {
         for (NodeLabel label : NodeLabel.values()) {
             database.schema().indexFor(label).on(FQN.name());
         }
-        adapterRegistry = new DescriptorAdapterRegistry();
-        adapterRegistry.register(new ArtifactDescriptorMapper());
-        adapterRegistry.register(new PackageDescriptorMapper());
-        adapterRegistry.register(new TypeDescriptorMapper());
-        adapterRegistry.register(new MethodDescriptorMapper());
-        adapterRegistry.register(new FieldDescriptorMapper());
-        descriptorDAO = new DescriptorDAOImpl(adapterRegistry, database);
+        mapperRegistry = new DescriptorMapperRegistry();
+        mapperRegistry.register(new ArtifactDescriptorMapper());
+        mapperRegistry.register(new PackageDescriptorMapper());
+        mapperRegistry.register(new TypeDescriptorMapper());
+        mapperRegistry.register(new MethodDescriptorMapper());
+        mapperRegistry.register(new FieldDescriptorMapper());
+        descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
     }
 
     @Override
     public void stop() {
-        adapterRegistry = null;
+        mapperRegistry = null;
         stopDatabase(database);
     }
 
@@ -129,8 +129,8 @@ public abstract class AbstractGraphStore implements Store {
         descriptorDAO.flush();
     }
 
-    protected DescriptorAdapterRegistry getAdapterRegistry() {
-        return adapterRegistry;
+    protected DescriptorMapperRegistry getMapperRegistry() {
+        return mapperRegistry;
     }
 
     /**

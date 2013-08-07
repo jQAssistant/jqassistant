@@ -12,14 +12,14 @@ public abstract class ParentDescriptor extends AbstractDescriptor {
     /**
      * The contained descriptors.
      */
-    private Set<AbstractDescriptor> contains = new HashSet<AbstractDescriptor>();
+    private Set<Descriptor> contains = new HashSet<Descriptor>();
 
     /**
      * Return the contained descriptors.
      *
      * @return The contained descriptors.
      */
-    public Set<AbstractDescriptor> getContains() {
+    public Set<Descriptor> getContains() {
         return contains;
     }
 
@@ -28,7 +28,7 @@ public abstract class ParentDescriptor extends AbstractDescriptor {
      *
      * @param contains The contained descriptors.
      */
-    public void setContains(Set<AbstractDescriptor> contains) {
+    public void setContains(Set<Descriptor> contains) {
         this.contains = contains;
     }
 

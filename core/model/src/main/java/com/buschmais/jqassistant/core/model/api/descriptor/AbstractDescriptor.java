@@ -30,6 +30,7 @@ public abstract class AbstractDescriptor implements Descriptor {
      *
      * @param id The unique id.
      */
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -49,6 +50,7 @@ public abstract class AbstractDescriptor implements Descriptor {
      *
      * @param fullQualifiedName The full qualified name.
      */
+    @Override
     public void setFullQualifiedName(String fullQualifiedName) {
         this.fullQualifiedName = fullQualifiedName;
     }

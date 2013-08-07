@@ -5,6 +5,7 @@ package com.buschmais.jqassistant.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.store.api.model.Relation;
@@ -89,8 +90,8 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      * {@inheritDoc}
      */
     @Override
-    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(ArtifactDescriptor descriptor) {
-        Map<Relation, Set<? extends AbstractDescriptor>> relations = new HashMap<Relation, Set<? extends AbstractDescriptor>>();
+    public Map<Relation, Set<? extends Descriptor>> getRelations(ArtifactDescriptor descriptor) {
+        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<Relation, Set<? extends Descriptor>>();
         relations.put(Relation.CONTAINS, descriptor.getContains());
         return relations;
     }
@@ -99,7 +100,7 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      * {@inheritDoc}
      */
     @Override
-    protected void setRelation(ArtifactDescriptor descriptor, Relation relation, AbstractDescriptor target) {
+    protected void setRelation(ArtifactDescriptor descriptor, Relation relation, Descriptor target) {
         switch (relation) {
             case CONTAINS:
                 descriptor.getContains().add(target);
