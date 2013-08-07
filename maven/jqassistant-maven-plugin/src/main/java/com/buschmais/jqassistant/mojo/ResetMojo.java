@@ -27,6 +27,7 @@ public class ResetMojo extends AbstractStoreMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
+        getLog().info("Resetting store.");
         executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) {

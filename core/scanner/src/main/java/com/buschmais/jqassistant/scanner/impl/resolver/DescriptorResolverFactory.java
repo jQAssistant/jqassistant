@@ -8,12 +8,12 @@ public class DescriptorResolverFactory {
 
     private final PackageDescriptorResolver packageDescriptorResolver;
 
-    private final ClassDescriptorResolver classDescriptorResolver;
+    private final TypeDescriptorResolver typeDescriptorResolver;
 
     public DescriptorResolverFactory(Store store) {
         this.store = store;
         packageDescriptorResolver = new PackageDescriptorResolver(store);
-        classDescriptorResolver = new ClassDescriptorResolver(store, packageDescriptorResolver);
+        typeDescriptorResolver = new TypeDescriptorResolver(store, packageDescriptorResolver);
     }
 
     public Store getStore() {
@@ -24,8 +24,8 @@ public class DescriptorResolverFactory {
         return packageDescriptorResolver;
     }
 
-    public ClassDescriptorResolver getClassDescriptorResolver() {
-        return classDescriptorResolver;
+    public TypeDescriptorResolver getTypeDescriptorResolver() {
+        return typeDescriptorResolver;
     }
 
 }

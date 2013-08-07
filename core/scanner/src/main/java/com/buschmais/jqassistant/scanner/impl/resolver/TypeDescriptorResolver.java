@@ -4,9 +4,9 @@ import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.store.api.Store;
 
-public class ClassDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, TypeDescriptor> {
+public class TypeDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, TypeDescriptor> {
 
-    public ClassDescriptorResolver(Store store, PackageDescriptorResolver parentResolver) {
+    public TypeDescriptorResolver(Store store, PackageDescriptorResolver parentResolver) {
         super(store, parentResolver);
     }
 

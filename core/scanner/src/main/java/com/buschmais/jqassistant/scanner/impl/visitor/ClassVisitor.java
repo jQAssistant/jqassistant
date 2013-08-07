@@ -26,22 +26,23 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
-        typeDescriptor = getClassDescriptor(name);
+        typeDescriptor = getTypeDescriptor(name);
 
         if (this.artifactDescriptor != null) {
             artifactDescriptor.getContains().add(typeDescriptor);
         }
 
-        typeDescriptor.setJavaType(getJavaType(access));
+        JavaType javaType = getJavaType(access);
+        typeDescriptor.setJavaType(javaType);
         typeDescriptor.setAbstract(hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE));
         setAccessModifier(access, typeDescriptor);
 
         if (signature == null) {
             if (superName != null) {
-                typeDescriptor.setSuperClass(getClassDescriptor(superName));
+                typeDescriptor.setSuperClass(getTypeDescriptor(superName));
             }
             for (int i = 0; interfaces != null && i < interfaces.length; i++) {
-                typeDescriptor.getInterfaces().add(getClassDescriptor(interfaces[i]));
+                typeDescriptor.getInterfaces().add(getTypeDescriptor(interfaces[i]));
             }
         } else {
             new SignatureReader(signature).accept(new ClassSignatureVisitor(typeDescriptor, getResolverFactory()));
@@ -85,7 +86,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
             new SignatureReader(signature).accept(new MethodSignatureVisitor(methodDescriptor, getResolverFactory()));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-            TypeDescriptor exception = getClassDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
+            TypeDescriptor exception = getTypeDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
             methodDescriptor.getDeclaredThrowables().add(exception);
         }
         return new MethodVisitor(methodDescriptor, getResolverFactory());
@@ -103,12 +104,12 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
-        addInnerClass(typeDescriptor, getClassDescriptor(name));
+        addInnerClass(typeDescriptor, getTypeDescriptor(name));
     }
 
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
-        addInnerClass(getClassDescriptor(owner), typeDescriptor);
+        addInnerClass(getTypeDescriptor(owner), typeDescriptor);
     }
 
     // ---------------------------------------------
@@ -203,12 +204,12 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
      * @return The type label.
      */
     private JavaType getJavaType(int flags) {
-        if (hasFlag(flags, Opcodes.ACC_INTERFACE)) {
-            return JavaType.INTERFACE;
-        } else if (hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
+        if (hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
             return JavaType.ANNOTATION;
         } else if (hasFlag(flags, Opcodes.ACC_ENUM)) {
             return JavaType.ENUM;
+        } else if (hasFlag(flags, Opcodes.ACC_INTERFACE)) {
+            return JavaType.INTERFACE;
         }
         return JavaType.CLASS;
     }
