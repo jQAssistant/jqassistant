@@ -95,23 +95,23 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public ClassDescriptor createClassDescriptor(final PackageDescriptor packageDescriptor, final String className) {
-        return persist(new ClassDescriptor(), new Name(packageDescriptor, '.', className));
+    public TypeDescriptor createClassDescriptor(final PackageDescriptor packageDescriptor, final String className) {
+        return persist(new TypeDescriptor(), new Name(packageDescriptor, '.', className));
     }
 
     @Override
-    public ClassDescriptor findClassDescriptor(String fullQualifiedName) {
-        return descriptorDAO.find(ClassDescriptor.class, fullQualifiedName);
+    public TypeDescriptor findClassDescriptor(String fullQualifiedName) {
+        return descriptorDAO.find(TypeDescriptor.class, fullQualifiedName);
     }
 
     @Override
-    public MethodDescriptor createMethodDescriptor(final ClassDescriptor classDescriptor, String methodName) {
-        return persist(new MethodDescriptor(), new Name(classDescriptor, '#', methodName));
+    public MethodDescriptor createMethodDescriptor(final TypeDescriptor typeDescriptor, String methodName) {
+        return persist(new MethodDescriptor(), new Name(typeDescriptor, '#', methodName));
     }
 
     @Override
-    public FieldDescriptor createFieldDescriptor(final ClassDescriptor classDescriptor, String fieldName) {
-        return persist(new FieldDescriptor(), new Name(classDescriptor, '#', fieldName));
+    public FieldDescriptor createFieldDescriptor(final TypeDescriptor typeDescriptor, String fieldName) {
+        return persist(new FieldDescriptor(), new Name(typeDescriptor, '#', fieldName));
     }
 
     @Override

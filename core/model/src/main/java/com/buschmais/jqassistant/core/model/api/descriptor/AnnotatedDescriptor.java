@@ -4,7 +4,7 @@ import java.util.Set;
 
 /**
  * Interface describing an {@link AbstractDescriptor} which is annotated by other
- * {@link ClassDescriptor}s.
+ * {@link TypeDescriptor}s.
  */
 public interface AnnotatedDescriptor {
 
@@ -13,13 +13,13 @@ public interface AnnotatedDescriptor {
      *
      * @return The classes this descriptor is annotated by.
      */
-    Set<ClassDescriptor> getAnnotatedBy();
+    Set<TypeDescriptor> getAnnotatedBy();
 
     /**
      * Set the classes this descriptor is annotated by.
      *
      * @param annotations The classes this descriptor is annotated by.
      */
-    void setAnnotatedBy(Set<ClassDescriptor> annotations);
+    void setAnnotatedBy(Set<TypeDescriptor> annotations);
 
 }

@@ -13,7 +13,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassVisitor.class);
 
-    private ClassDescriptor classDescriptor;
+    private TypeDescriptor typeDescriptor;
     private ArtifactDescriptor artifactDescriptor;
 
     public ClassVisitor(DescriptorResolverFactory resolverFactory) {
@@ -27,31 +27,31 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
-        classDescriptor = getClassDescriptor(name);
+        typeDescriptor = getClassDescriptor(name);
 
         if (this.artifactDescriptor != null) {
-            artifactDescriptor.getContains().add(classDescriptor);
+            artifactDescriptor.getContains().add(typeDescriptor);
         }
 
-        classDescriptor.setAbstract(isFlagged(access, Opcodes.ACC_ABSTRACT) && !isFlagged(access, Opcodes.ACC_INTERFACE));
-        setAccessModifier(access, classDescriptor);
+        typeDescriptor.setAbstract(isFlagged(access, Opcodes.ACC_ABSTRACT) && !isFlagged(access, Opcodes.ACC_INTERFACE));
+        setAccessModifier(access, typeDescriptor);
 
         if (signature == null) {
             if (superName != null) {
-                classDescriptor.setSuperClass(getClassDescriptor(superName));
+                typeDescriptor.setSuperClass(getClassDescriptor(superName));
             }
             for (int i = 0; interfaces != null && i < interfaces.length; i++) {
-                classDescriptor.getInterfaces().add(getClassDescriptor(interfaces[i]));
+                typeDescriptor.getInterfaces().add(getClassDescriptor(interfaces[i]));
             }
         } else {
-            new SignatureReader(signature).accept(new ClassSignatureVisitor(classDescriptor, getResolverFactory()));
+            new SignatureReader(signature).accept(new ClassSignatureVisitor(typeDescriptor, getResolverFactory()));
         }
     }
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        FieldDescriptor fieldDescriptor = getFielDescriptor(classDescriptor, name, desc);
-        classDescriptor.getContains().add(fieldDescriptor);
+        FieldDescriptor fieldDescriptor = getFielDescriptor(typeDescriptor, name, desc);
+        typeDescriptor.getContains().add(fieldDescriptor);
         fieldDescriptor.setVolatile(isFlagged(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(isFlagged(access, Opcodes.ACC_TRANSIENT));
         setAccessModifier(access, fieldDescriptor);
@@ -69,8 +69,8 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
-        MethodDescriptor methodDescriptor = getMethodDescriptor(classDescriptor, name, desc);
-        classDescriptor.getContains().add(methodDescriptor);
+        MethodDescriptor methodDescriptor = getMethodDescriptor(typeDescriptor, name, desc);
+        typeDescriptor.getContains().add(methodDescriptor);
         methodDescriptor.setAbstract(isFlagged(access, Opcodes.ACC_ABSTRACT));
         methodDescriptor.setNative(isFlagged(access, Opcodes.ACC_NATIVE));
         setAccessModifier(access, methodDescriptor);
@@ -85,7 +85,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
             new SignatureReader(signature).accept(new MethodSignatureVisitor(methodDescriptor, getResolverFactory()));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-            ClassDescriptor exception = getClassDescriptor(Type.getObjectType(exceptions[i]).getClassName());
+            TypeDescriptor exception = getClassDescriptor(Type.getObjectType(exceptions[i]).getClassName());
             methodDescriptor.getDeclaredThrowables().add(exception);
         }
         return new MethodVisitor(methodDescriptor, getResolverFactory());
@@ -103,20 +103,20 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
 
     @Override
     public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
-        addInnerClass(classDescriptor, getClassDescriptor(name));
+        addInnerClass(typeDescriptor, getClassDescriptor(name));
     }
 
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
-        addInnerClass(getClassDescriptor(owner), classDescriptor);
+        addInnerClass(getClassDescriptor(owner), typeDescriptor);
     }
 
     // ---------------------------------------------
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        addAnnotation(classDescriptor, getType(desc));
-        return new AnnotationVisitor(classDescriptor, getResolverFactory());
+        addAnnotation(typeDescriptor, getType(desc));
+        return new AnnotationVisitor(typeDescriptor, getResolverFactory());
     }
 
     @Override
@@ -127,13 +127,13 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
     public void visitEnd() {
     }
 
-    protected MethodDescriptor getMethodDescriptor(ClassDescriptor classDescriptor, String name, String desc) {
-        MethodDescriptor methodDescriptor = getStore().createMethodDescriptor(classDescriptor, getMethodSignature(name, desc));
+    protected MethodDescriptor getMethodDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
+        MethodDescriptor methodDescriptor = getStore().createMethodDescriptor(typeDescriptor, getMethodSignature(name, desc));
         return methodDescriptor;
     }
 
-    protected FieldDescriptor getFielDescriptor(ClassDescriptor classDescriptor, String name, String desc) {
-        FieldDescriptor fieldDescriptor = getStore().createFieldDescriptor(classDescriptor, getFieldSignature(name, desc));
+    protected FieldDescriptor getFielDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
+        FieldDescriptor fieldDescriptor = getStore().createFieldDescriptor(typeDescriptor, getFieldSignature(name, desc));
         return fieldDescriptor;
     }
 
@@ -196,7 +196,7 @@ public class ClassVisitor extends AbstractVisitor implements org.objectweb.asm.C
         }
     }
 
-    private void addInnerClass(ClassDescriptor outerClass, ClassDescriptor innerClass) {
+    private void addInnerClass(TypeDescriptor outerClass, TypeDescriptor innerClass) {
         if (!innerClass.equals(outerClass)) {
             outerClass.getContains().add(innerClass);
         }

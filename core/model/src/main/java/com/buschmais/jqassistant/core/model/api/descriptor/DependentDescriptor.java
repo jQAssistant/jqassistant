@@ -4,7 +4,7 @@ import java.util.Set;
 
 /**
  * Interface describing a {@link Descriptor} which depends on other
- * {@link ClassDescriptor}s.
+ * {@link TypeDescriptor}s.
  */
 public interface DependentDescriptor extends Descriptor {
 
@@ -13,13 +13,13 @@ public interface DependentDescriptor extends Descriptor {
      *
      * @return The classes this descriptor depends on.
      */
-    Set<ClassDescriptor> getDependencies();
+    Set<TypeDescriptor> getDependencies();
 
     /**
      * Set the classes this descriptor depends on.
      *
      * @param dependencies The classes this descriptor depends on.
      */
-    void setDependencies(Set<ClassDescriptor> dependencies);
+    void setDependencies(Set<TypeDescriptor> dependencies);
 
 }

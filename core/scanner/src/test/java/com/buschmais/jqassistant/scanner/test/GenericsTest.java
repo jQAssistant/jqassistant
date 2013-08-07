@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.scanner.test.set.generics.*;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class GenericsTest extends AbstractScannerTest {
 
     @Test
     public void genericType() throws IOException {
-        ClassDescriptor genericType = stubClass(GenericType.class);
+        TypeDescriptor genericType = stubClass(GenericType.class);
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(genericType, "void <init>()")).thenReturn(constructor);
 
@@ -29,8 +29,8 @@ public class GenericsTest extends AbstractScannerTest {
 
     @Test
     public void boundGenericType() throws IOException {
-        ClassDescriptor boundGenericType = stubClass(BoundGenericType.class);
-        ClassDescriptor javaLangNumber = stubClass(Number.class);
+        TypeDescriptor boundGenericType = stubClass(BoundGenericType.class);
+        TypeDescriptor javaLangNumber = stubClass(Number.class);
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(boundGenericType, "void <init>()")).thenReturn(constructor);
 
@@ -44,8 +44,8 @@ public class GenericsTest extends AbstractScannerTest {
 
     @Test
     public void nestedGenericType() throws IOException {
-        ClassDescriptor nestedGenericType = stubClass(NestedGenericType.class);
-        ClassDescriptor genericType = stubClass(GenericType.class);
+        TypeDescriptor nestedGenericType = stubClass(NestedGenericType.class);
+        TypeDescriptor genericType = stubClass(GenericType.class);
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
 
@@ -59,8 +59,8 @@ public class GenericsTest extends AbstractScannerTest {
 
     @Test
     public void nestedGenericMethod() throws IOException {
-        ClassDescriptor nestedGenericType = stubClass(NestedGenericMethod.class);
-        ClassDescriptor genericType = stubClass(GenericType.class);
+        TypeDescriptor nestedGenericType = stubClass(NestedGenericMethod.class);
+        TypeDescriptor genericType = stubClass(GenericType.class);
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(nestedGenericType, "void <init>()")).thenReturn(constructor);
         MethodDescriptor get = new MethodDescriptor();
@@ -76,9 +76,9 @@ public class GenericsTest extends AbstractScannerTest {
 
     @Test
     public void extendsGenericClass() throws IOException {
-        ClassDescriptor extendsGenericClass = stubClass(ExtendsGenericClass.class);
-        ClassDescriptor genericType = stubClass(GenericType.class);
-        ClassDescriptor javaLangNumber = stubClass(Number.class);
+        TypeDescriptor extendsGenericClass = stubClass(ExtendsGenericClass.class);
+        TypeDescriptor genericType = stubClass(GenericType.class);
+        TypeDescriptor javaLangNumber = stubClass(Number.class);
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
 
@@ -92,9 +92,9 @@ public class GenericsTest extends AbstractScannerTest {
 
     @Test
     public void implementsGenericInterface() throws IOException {
-        ClassDescriptor extendsGenericClass = stubClass(ImplementsGenericInterface.class);
-        ClassDescriptor javaUtilIterable = stubClass(Iterable.class);
-        ClassDescriptor javaLangNumber = stubClass(Number.class);
+        TypeDescriptor extendsGenericClass = stubClass(ImplementsGenericInterface.class);
+        TypeDescriptor javaUtilIterable = stubClass(Iterable.class);
+        TypeDescriptor javaLangNumber = stubClass(Number.class);
         MethodDescriptor constructor = new MethodDescriptor();
         when(store.createMethodDescriptor(extendsGenericClass, "void <init>()")).thenReturn(constructor);
 

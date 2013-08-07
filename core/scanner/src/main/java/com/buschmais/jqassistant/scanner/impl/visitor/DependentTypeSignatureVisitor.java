@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -41,7 +41,7 @@ public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<
     }
 
     @Override
-    public void visitEnd(ClassDescriptor resolvedClassDescriptor) {
-        getUsingDescriptor().getDependencies().add(resolvedClassDescriptor);
+    public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
+        getUsingDescriptor().getDependencies().add(resolvedTypeDescriptor);
     }
 }

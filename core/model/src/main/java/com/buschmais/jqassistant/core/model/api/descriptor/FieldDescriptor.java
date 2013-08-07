@@ -12,12 +12,12 @@ public class FieldDescriptor extends ParentDescriptor implements DependentDescri
     /**
      * The classes the field depends on.
      */
-    private Set<ClassDescriptor> dependencies = new HashSet<ClassDescriptor>();
+    private Set<TypeDescriptor> dependencies = new HashSet<TypeDescriptor>();
 
     /**
      * The classes this class is annotated by.
      */
-    private Set<ClassDescriptor> annotations = new HashSet<ClassDescriptor>();
+    private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
 
 	/**
 	 * Visibility of this field.
@@ -46,22 +46,22 @@ public class FieldDescriptor extends ParentDescriptor implements DependentDescri
 
 
     @Override
-    public Set<ClassDescriptor> getDependencies() {
+    public Set<TypeDescriptor> getDependencies() {
         return dependencies;
     }
 
     @Override
-    public void setDependencies(Set<ClassDescriptor> dependencies) {
+    public void setDependencies(Set<TypeDescriptor> dependencies) {
         this.dependencies = dependencies;
     }
 
     @Override
-    public Set<ClassDescriptor> getAnnotatedBy() {
+    public Set<TypeDescriptor> getAnnotatedBy() {
         return annotations;
     }
 
     @Override
-    public void setAnnotatedBy(Set<ClassDescriptor> annotations) {
+    public void setAnnotatedBy(Set<TypeDescriptor> annotations) {
         this.annotations = annotations;
     }
 
