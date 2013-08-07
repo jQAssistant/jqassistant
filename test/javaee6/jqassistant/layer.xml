@@ -37,14 +37,14 @@
         <description>Packages in layer UI must have only dependencies to classes in layer UI, LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:UI)-[:CONTAINS*]->(classFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (package:PACKAGE:LAYER:UI)-[:CONTAINS*]->(typeFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:TYPE),
               (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
             WHERE NOT (
               dependencyPackage:UI
               OR dependencyPackage:LOGIC
               OR dependencyPackage:PERSISTENCE
             )
-            RETURN classFieldOrMethod AS element, dependencyPackage AS dependency
+            RETURN typeFieldOrMethod AS element, dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 
@@ -55,13 +55,13 @@
         <description>Packages in layer Logic must have only dependencies to classes in layer LOGIC or PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:LOGIC)-[:CONTAINS*]->(classFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (package:PACKAGE:LAYER:LOGIC)-[:CONTAINS*]->(typeFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:TYPE),
               (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
             WHERE NOT (
               dependencyPackage:LOGIC
               OR dependencyPackage:PERSISTENCE
             )
-            RETURN classFieldOrMethod AS element, dependencyPackage AS dependency
+            RETURN typeFieldOrMethod AS element, dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 
@@ -72,12 +72,12 @@
         <description>Packages in layer Persistence must have only dependencies to classes in layer PERSISTENCE.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:PERSISTENCE)-[:CONTAINS*]->(classFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:CLASS),
+              (package:PACKAGE:LAYER:PERSISTENCE)-[:CONTAINS*]->(typeFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:TYPE),
               (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
             WHERE NOT (
               dependencyPackage:PERSISTENCE
             )
-            RETURN classFieldOrMethod AS element, dependencyPackage AS dependency
+            RETURN typeFieldOrMethod AS element, dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 </jqa:jqassistant-rules>

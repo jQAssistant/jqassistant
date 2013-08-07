@@ -1,26 +1,26 @@
 package com.buschmais.jqassistant.scanner.impl.resolver;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.store.api.Store;
 
-public class ClassDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, ClassDescriptor> {
+public class ClassDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, TypeDescriptor> {
 
     public ClassDescriptorResolver(Store store, PackageDescriptorResolver parentResolver) {
         super(store, parentResolver);
     }
 
     @Override
-    public ClassDescriptor create(PackageDescriptor parent, String name) {
-        ClassDescriptor classDescriptor = getStore().createClassDescriptor(parent, name);
+    public TypeDescriptor create(PackageDescriptor parent, String name) {
+        TypeDescriptor typeDescriptor = getStore().createClassDescriptor(parent, name);
         if (parent != null) {
-            parent.getContains().add(classDescriptor);
+            parent.getContains().add(typeDescriptor);
         }
-        return classDescriptor;
+        return typeDescriptor;
     }
 
     @Override
-    protected ClassDescriptor find(String fullQualifiedName) {
+    protected TypeDescriptor find(String fullQualifiedName) {
         return getStore().findClassDescriptor(fullQualifiedName);
     }
 

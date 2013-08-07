@@ -6,28 +6,28 @@ import java.util.Set;
 /**
  * Describes a Java class.
  */
-public class ClassDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor,
+public class TypeDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor,
 		AccessModifierDescriptor {
 
     /**
      * The super class.
      */
-    private ClassDescriptor superClass;
+    private TypeDescriptor superClass;
 
     /**
      * The implemented interfaces.
      */
-    private Set<ClassDescriptor> interfaces = new HashSet<ClassDescriptor>();
+    private Set<TypeDescriptor> interfaces = new HashSet<TypeDescriptor>();
 
     /**
      * The classes this class depends on.
      */
-    private Set<ClassDescriptor> dependencies = new HashSet<ClassDescriptor>();
+    private Set<TypeDescriptor> dependencies = new HashSet<TypeDescriptor>();
 
     /**
      * The classes this class is annotated by.
      */
-    private Set<ClassDescriptor> annotations = new HashSet<ClassDescriptor>();
+    private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
 
     /**
 	 * <code>true</code> if this class is abstract.
@@ -54,7 +54,7 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
 	 *
 	 * @return The super class.
 	 */
-    public ClassDescriptor getSuperClass() {
+    public TypeDescriptor getSuperClass() {
         return superClass;
     }
 
@@ -63,7 +63,7 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
      *
      * @param superClass The super class.
      */
-    public void setSuperClass(ClassDescriptor superClass) {
+    public void setSuperClass(TypeDescriptor superClass) {
         this.superClass = superClass;
     }
 
@@ -72,7 +72,7 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
      *
      * @return The implemented interfaces.
      */
-    public Set<ClassDescriptor> getInterfaces() {
+    public Set<TypeDescriptor> getInterfaces() {
         return interfaces;
     }
 
@@ -81,27 +81,27 @@ public class ClassDescriptor extends ParentDescriptor implements DependentDescri
      *
      * @param interfaces The implemented interfaces.
      */
-    public void setInterfaces(Set<ClassDescriptor> interfaces) {
+    public void setInterfaces(Set<TypeDescriptor> interfaces) {
         this.interfaces = interfaces;
     }
 
     @Override
-    public Set<ClassDescriptor> getDependencies() {
+    public Set<TypeDescriptor> getDependencies() {
         return dependencies;
     }
 
     @Override
-    public void setDependencies(Set<ClassDescriptor> dependencies) {
+    public void setDependencies(Set<TypeDescriptor> dependencies) {
         this.dependencies = dependencies;
     }
 
     @Override
-    public Set<ClassDescriptor> getAnnotatedBy() {
+    public Set<TypeDescriptor> getAnnotatedBy() {
         return annotations;
     }
 
     @Override
-    public void setAnnotatedBy(Set<ClassDescriptor> annotations) {
+    public void setAnnotatedBy(Set<TypeDescriptor> annotations) {
         this.annotations = annotations;
     }
 

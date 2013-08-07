@@ -6,7 +6,7 @@
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(e)
             WHERE e:JPA AND e:ENTITY AND NOT(p.FQN =~ {packageExpression})
-            RETURN e AS class
+            RETURN e AS jpaEntity
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.persistence\.api\.model"/>
     </constraint>
@@ -29,9 +29,9 @@
         <requiresConcept refId="junit4:TestClass"/>
         <description>The name of all test classes must have the suffix "Test".</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)
-            WHERE c:TEST and NOT(c.FQN =~ {suffixExpression})
-            RETURN c AS class
+            MATCH (t:TYPE)
+            WHERE t:TEST and NOT(t.FQN =~ {suffixExpression})
+            RETURN t AS testClass
         ]]></cypher>
         <parameter name="suffixExpression" type="string" value=".*Test"/>
     </constraint>
@@ -47,7 +47,7 @@
         <includeConstraint refId="JpaEntitiesInApiModelPackage"/>
         <includeConstraint refId="EjbLocatedInImplementationPackage"/>
         <includeConstraint refId="TestClassNameHasTestSuffix"/>
-        <includeConstraint refId="dependency:CyclicClassDependency"/>
+        <includeConstraint refId="dependency:CyclicTypeDependency"/>
     </constraintGroup>
 
 </jqa:jqassistant-rules>

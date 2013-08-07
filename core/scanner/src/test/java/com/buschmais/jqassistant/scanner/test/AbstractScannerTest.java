@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.store.api.Store;
@@ -25,8 +25,8 @@ public abstract class AbstractScannerTest {
 
     private final Map<String, PackageDescriptor> packageCache = new HashMap<String, PackageDescriptor>();
 
-    protected ClassDescriptor javaLangObject;
-    protected ClassDescriptor _void;
+    protected TypeDescriptor javaLangObject;
+    protected TypeDescriptor _void;
 
     @Before
     public void createScanner() {
@@ -59,26 +59,26 @@ public abstract class AbstractScannerTest {
         return packageDescriptor;
     }
 
-    protected ClassDescriptor stubClass(Class<?> c) {
+    protected TypeDescriptor stubClass(Class<?> c) {
         return stubClass(stubPackage(c.getPackage().getName()), c.getSimpleName());
     }
 
-    protected ClassDescriptor stubClass(String className) {
+    protected TypeDescriptor stubClass(String className) {
         return stubClass((String) null, className);
     }
 
-    protected ClassDescriptor stubClass(String packageName, String className) {
+    protected TypeDescriptor stubClass(String packageName, String className) {
         return stubClass(stubPackage(packageName), className);
     }
 
-    protected ClassDescriptor stubClass(PackageDescriptor packageDescriptor, String className) {
-        ClassDescriptor classDescriptor = new ClassDescriptor();
+    protected TypeDescriptor stubClass(PackageDescriptor packageDescriptor, String className) {
+        TypeDescriptor typeDescriptor = new TypeDescriptor();
         if (packageDescriptor != null) {
-            classDescriptor.setFullQualifiedName(packageDescriptor.getFullQualifiedName() + "." + className);
+            typeDescriptor.setFullQualifiedName(packageDescriptor.getFullQualifiedName() + "." + className);
         } else {
-            classDescriptor.setFullQualifiedName(className);
+            typeDescriptor.setFullQualifiedName(className);
         }
-        when(store.createClassDescriptor(packageDescriptor, className)).thenReturn(classDescriptor);
-        return classDescriptor;
+        when(store.createClassDescriptor(packageDescriptor, className)).thenReturn(typeDescriptor);
+        return typeDescriptor;
     }
 }

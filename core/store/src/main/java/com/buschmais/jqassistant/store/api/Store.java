@@ -129,20 +129,20 @@ public interface Store {
 
 
     /**
-     * Finds a {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} by it's full qualified name.
+     * Finds a {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} by it's full qualified name.
      *
      * @param fullQualifiedName The full qualified name.
-     * @return The {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor} or <code>null</code> if it does not exist.
+     * @return The {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} or <code>null</code> if it does not exist.
      */
     PackageDescriptor findPackageDescriptor(String fullQualifiedName);
 
     /**
      * Resolves a
-     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor}
      * .
      * <p>
      * The
-     * {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
+     * {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor}
      * is resolved using a parent {@link PackageDescriptor} and the name of the
      * contained class.
      * </p>
@@ -150,18 +150,18 @@ public interface Store {
      * @param packageDescriptor The {@link PackageDescriptor} containing the package.
      * @param className         The name of the class.
      * @return The resolved
-     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor}
+     *         {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor}
      *         .
      */
-    ClassDescriptor createClassDescriptor(PackageDescriptor packageDescriptor, String className);
+    TypeDescriptor createClassDescriptor(PackageDescriptor packageDescriptor, String className);
 
     /**
-     * Finds a {@link ClassDescriptor} by it's full qualified name.
+     * Finds a {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} by it's full qualified name.
      *
      * @param fullQualifiedName The full qualified name.
-     * @return The {@link ClassDescriptor} or <code>null</code> if it does not exist.
+     * @return The {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} or <code>null</code> if it does not exist.
      */
-    ClassDescriptor findClassDescriptor(String fullQualifiedName);
+    TypeDescriptor findClassDescriptor(String fullQualifiedName);
 
     /**
      * Resolves a
@@ -170,15 +170,15 @@ public interface Store {
      * <p>
      * The
      * {@link com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor}
-     * is resolved using a parent {@link ClassDescriptor} and the name of the
+     * is resolved using a parent {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} and the name of the
      * contained method.
      * </p>
      *
-     * @param classDescriptor The {@link ClassDescriptor} containing the method.
+     * @param typeDescriptor The {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} containing the method.
      * @param methodName      The name of the method.
-     * @return The resolved {@link ClassDescriptor}.
+     * @return The resolved {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor}.
      */
-    MethodDescriptor createMethodDescriptor(ClassDescriptor classDescriptor, String methodName);
+    MethodDescriptor createMethodDescriptor(TypeDescriptor typeDescriptor, String methodName);
 
     /**
      * Resolves a
@@ -187,17 +187,17 @@ public interface Store {
      * <p>
      * The
      * {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
-     * is resolved using a parent {@link ClassDescriptor} and the name of the
+     * is resolved using a parent {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} and the name of the
      * contained field.
      * </p>
      *
-     * @param classDescriptor The {@link ClassDescriptor} containing the method.
+     * @param typeDescriptor The {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} containing the method.
      * @param fieldName       The name of the field.
      * @return The resolved
      *         {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
      *         .
      */
-    FieldDescriptor createFieldDescriptor(ClassDescriptor classDescriptor, String fieldName);
+    FieldDescriptor createFieldDescriptor(TypeDescriptor typeDescriptor, String fieldName);
 
     /**
      * Executes a CYPHER query.

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
@@ -41,10 +41,10 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     protected void setRelation(FieldDescriptor descriptor, Relation relation, AbstractDescriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((ClassDescriptor) target);
+                descriptor.getAnnotatedBy().add((TypeDescriptor) target);
                 break;
             case DEPENDS_ON:
-                descriptor.getDependencies().add((ClassDescriptor) target);
+                descriptor.getDependencies().add((TypeDescriptor) target);
                 break;
             default:
         }

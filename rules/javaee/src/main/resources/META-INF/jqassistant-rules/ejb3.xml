@@ -1,42 +1,42 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="ejb3:StatelessSessionBean">
-        <description>Labels all classes annotated with javax.ejb.Stateless with EJB and STATELESS.</description>
+        <description>Labels all types annotated with javax.ejb.Stateless with EJB and STATELESS.</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Stateless"
-            SET c:EJB:STATELESS
-            RETURN c AS class
+            SET t:EJB:STATELESS
+            RETURN t AS statelessEjb
         ]]></cypher>
     </concept>
 
     <concept id="ejb3:StatefulSessionBean">
-        <description>Labels all classes annotated with javax.ejb.Stateful with EJB and STATEFUL.</description>
+        <description>Labels all types annotated with javax.ejb.Stateful with EJB and STATEFUL.</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Stateful"
-            SET c:EJB:STATEFUL
-            RETURN c AS class
+            SET t:EJB:STATEFUL
+            RETURN t AS statefulEjb
         ]]></cypher>
     </concept>
 
     <concept id="ejb3:MessageDrivenBean">
-        <description>Labels all classes annotated with javax.ejb.MessageDriven with EJB and MESSAGEDRIVEN.</description>
+        <description>Labels all types annotated with javax.ejb.MessageDriven with EJB and MESSAGEDRIVEN.</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
             WHERE a.FQN="javax.ejb.MessageDriven"
-            SET c:EJB:MESSAGEDRIVEN
-            RETURN c AS class
+            SET t:EJB:MESSAGEDRIVEN
+            RETURN t AS messageDrivenBean
         ]]></cypher>
     </concept>
 
     <concept id="ejb3:Singleton">
         <description>Labels all classes annotated with javax.ejb.Singleton with EJB and SINGLETON.</description>
         <cypher><![CDATA[
-            MATCH (c:CLASS)-[:ANNOTATED_BY]->(a:CLASS)
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Singleton"
-            SET c:EJB:SINGLETON
-            RETURN c AS class
+            SET t:EJB:SINGLETON
+            RETURN t AS singletonEjb
         ]]></cypher>
     </concept>
 

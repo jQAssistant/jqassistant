@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AnnotatedDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.store.api.Store;
@@ -26,21 +26,21 @@ public abstract class AbstractVisitor {
         return resolverFactory.getStore();
     }
 
-    protected ClassDescriptor getClassDescriptor(String typeName) {
+    protected TypeDescriptor getClassDescriptor(String typeName) {
         String fullQualifiedName = getType(Type.getObjectType(typeName));
         return resolverFactory.getClassDescriptorResolver().resolve(fullQualifiedName);
     }
 
     protected void addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
-            ClassDescriptor dependency = getClassDescriptor(typeName);
+            TypeDescriptor dependency = getClassDescriptor(typeName);
             annotatedDescriptor.getAnnotatedBy().add(dependency);
         }
     }
 
     protected void addDependency(DependentDescriptor dependentDescriptor, String typeName) {
         if (typeName != null) {
-            ClassDescriptor dependency = getClassDescriptor(typeName);
+            TypeDescriptor dependency = getClassDescriptor(typeName);
             dependentDescriptor.getDependencies().add(dependency);
         }
     }

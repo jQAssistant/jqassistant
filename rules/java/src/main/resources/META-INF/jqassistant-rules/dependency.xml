@@ -1,27 +1,27 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="dependency:ClassDependency">
-        <description>Creates a DEPENDS_ON relationship between classes if there are field or method dependencies between them.</description>
+    <concept id="dependency:TypeDependency">
+        <description>Creates a DEPENDS_ON relationship between types if there are field or method dependencies between them.</description>
         <cypher><![CDATA[
             MATCH 
-            	c1:CLASS-[:CONTAINS*0..1]->(classFieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->c2:CLASS
+            	t1:TYPE-[:CONTAINS*0..1]->(typeFieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->t2:TYPE
 			WHERE 
-				c1<>c2
+				t1<>t2
 			CREATE UNIQUE 
-				(c1)-[:DEPENDS_ON]->(c2)
+				(t1)-[:DEPENDS_ON]->(t2)
 			RETURN 
-				COUNT(c1) as count
+				COUNT(t1) as count
         ]]></cypher>
     </concept>
 
     <concept id="dependency:PackageDependency">
-        <requiresConcept refId="dependency:ClassDependency"/>
-        <description>Creates a DEPENDS_ON relationship between packages if there are class dependencies between them.</description>
+        <requiresConcept refId="dependency:TypeDependency"/>
+        <description>Creates a DEPENDS_ON relationship between packages if there are type dependencies between them.</description>
         <cypher><![CDATA[
 			MATCH  
-				(p1:PACKAGE)-[:CONTAINS]->(c1:CLASS)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(c2:CLASS)<-[:CONTAINS]-(p2:PACKAGE)
+				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
 			WHERE 
-				c1<>c2 AND p1<>p2
+				t1<>t2 AND p1<>p2
 			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
 			RETURN 
@@ -45,10 +45,10 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="dependency:CyclicClassDependency">
-        <requiresConcept refId="dependency:ClassDependency"/>
+    <constraint id="dependency:CyclicTypeDependency">
+        <requiresConcept refId="dependency:TypeDependency"/>
         <requiresConcept refId="dependency:PackageDependency"/>
-        <description>There must be no cyclic class dependencies.</description>
+        <description>There must be no cyclic type dependencies.</description>
         <cypher><![CDATA[
             MATCH
                 p1:PACKAGE-[:DEPENDS_ON*0..1]->p2:PACKAGE,
@@ -56,13 +56,13 @@
             WITH
                 p1, p2
             MATCH
-                p1-[:CONTAINS]->c1:CLASS,
-                p2-[:CONTAINS]->c2:CLASS,
-                c1-[:DEPENDS_ON]->c2,
-                path=shortestPath(c2-[:DEPENDS_ON*]->c1)
+                p1-[:CONTAINS]->t1:TYPE,
+                p2-[:CONTAINS]->t2:TYPE,
+                t1-[:DEPENDS_ON]->t2,
+                path=shortestPath(t2-[:DEPENDS_ON*]->t1)
             WHERE
                 NOT(
-                  c1=c2 AND (c1)-[:CONTAINS]-(c2)
+                  t1=t2 OR (t1)-[:CONTAINS]-(t2)
                 )
             RETURN
                 length(path) as length, extract(p in nodes(path) : p.FQN) as cycle

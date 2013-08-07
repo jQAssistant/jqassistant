@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.test;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.scanner.test.set.innerclass.AnonymousInnerClass;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.buschmais.jqassistant.scanner.test.matcher.ClassDescriptorMatcher.classDescriptor;
+import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.classDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -47,12 +47,12 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
      * Asserts that the outer class can be fetched and contains a relation to the inner class.
      */
     private void assertOuterClassContainsInnerClass() {
-        TestResult testResult = executeQuery("MATCH (outerClass:CLASS)-[:CONTAINS]->(innerClass:CLASS) RETURN outerClass");
+        TestResult testResult = executeQuery("MATCH (outerClass:TYPE)-[:CONTAINS]->(innerClass:TYPE) RETURN outerClass");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
-        ClassDescriptor outerClass = (ClassDescriptor) row.get("outerClass");
+        TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");
         assertThat(outerClass, classDescriptor(AnonymousInnerClass.class));
-        Matcher<Iterable<? super ClassDescriptor>> matcher = hasItem(classDescriptor(INNERCLASS_NAME));
+        Matcher<Iterable<? super TypeDescriptor>> matcher = hasItem(classDescriptor(INNERCLASS_NAME));
         assertThat(outerClass.getContains(), matcher);
     }
 

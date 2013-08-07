@@ -11,7 +11,7 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Class
      */
-    CLASS,
+    TYPE,
     /**
      * Method
      */

@@ -3,10 +3,10 @@
     <concept id="abstractness:ImplementationClasses">
         <description>Labels all classes in .impl packages as IMPL.</description>
         <cypher><![CDATA[
-            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(t:TYPE)
             WHERE p.FQN =~ {packageExpression}
-            SET c:IMPL
-            RETURN c AS class
+            SET t:IMPL
+            RETURN t AS implementationCLass
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.impl"/>
     </concept>
@@ -14,10 +14,10 @@
     <concept id="abstractness:ApiClasses">
         <description>Label all classes in .api packages as API.</description>
         <cypher><![CDATA[
-            MATCH (p:PACKAGE)-[:CONTAINS*]->(c:CLASS)
+            MATCH (p:PACKAGE)-[:CONTAINS*]->(t:TYPE)
             WHERE p.FQN =~ {packageExpression}
-            SET c:API
-            RETURN c AS class
+            SET t:API
+            RETURN t AS apiClass
         ]]></cypher>
         <parameter name="packageExpression" type="string" value=".*\.api"/>
     </concept>
@@ -28,9 +28,9 @@
         <requiresConcept refId="abstractness:ImplementationClasses"/>
         <description>API classes must not have dependencies to implementation classes.</description>
         <cypher><![CDATA[
-            MATCH p=shortestPath((a:CLASS)-[:CONTAINS|DEPENDS_ON*]->(i:CLASS))
+            MATCH p=shortestPath((a:TYPE)-[:CONTAINS|DEPENDS_ON*]->(i:TYPE))
             WHERE a:API AND i:IMPL
-            RETURN extract(c in nodes(p) : c.FQN) as Path
+            RETURN extract(t in nodes(p) : t.FQN) as Path
             ORDER BY length(p) DESC
         ]]></cypher>
     </constraint>

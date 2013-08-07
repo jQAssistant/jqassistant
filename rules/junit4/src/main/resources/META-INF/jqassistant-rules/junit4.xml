@@ -3,20 +3,20 @@
     <concept id="junit4:TestMethod">
         <description>Labels all test methods annotated with "org.junit.@Test" with TEST and JUNIT4.</description>
         <cypher><![CDATA[
-            MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:CLASS)
+            MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:TYPE)
             WHERE a.FQN="org.junit.Test"
             SET m:TEST:JUNIT4
-            RETURN m as method
+            RETURN m as testMethod
         ]]></cypher>
     </concept>
 
     <concept id="junit4:TestClass">
         <requiresConcept refId="junit4:TestMethod" />
-        <description>Labels all classes containing test methods with TEST and JUNIT4.</description>
+        <description>Labels all types containing test methods with TEST and JUNIT4.</description>
         <cypher><![CDATA[
-            MATCH (t:CLASS)-[:CONTAINS]->(m:METHOD:TEST:JUNIT4)
+            MATCH (t:TYPE)-[:CONTAINS]->(m:METHOD:TEST:JUNIT4)
             SET t:TEST:JUNIT4
-            RETURN t AS class
+            RETURN t AS testClass
         ]]></cypher>
     </concept>
 </jqa:jqassistant-rules>

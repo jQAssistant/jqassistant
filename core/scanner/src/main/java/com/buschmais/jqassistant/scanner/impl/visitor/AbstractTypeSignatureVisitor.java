@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scanner.impl.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.signature.SignatureVisitor;
@@ -13,7 +13,7 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     /**
      * The resolved type descriptor.
      */
-    private ClassDescriptor resolvedClassDescriptor;
+    private TypeDescriptor resolvedTypeDescriptor;
 
     /**
      * The descriptor using the resolved type descriptor.
@@ -89,13 +89,13 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
 
     @Override
     public void visitClassType(String name) {
-        resolvedClassDescriptor = getClassDescriptor(name);
+        resolvedTypeDescriptor = getClassDescriptor(name);
     }
 
     @Override
     public void visitInnerClassType(String name) {
-        String innerClassName = resolvedClassDescriptor.getFullQualifiedName() + "$" + name;
-        resolvedClassDescriptor = getClassDescriptor(innerClassName);
+        String innerClassName = resolvedTypeDescriptor.getFullQualifiedName() + "$" + name;
+        resolvedTypeDescriptor = getClassDescriptor(innerClassName);
     }
 
     @Override
@@ -104,8 +104,8 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
 
     @Override
     public void visitEnd() {
-        visitEnd(resolvedClassDescriptor);
+        visitEnd(resolvedTypeDescriptor);
     }
 
-    public abstract void visitEnd(ClassDescriptor classDescriptor);
+    public abstract void visitEnd(TypeDescriptor typeDescriptor);
 }

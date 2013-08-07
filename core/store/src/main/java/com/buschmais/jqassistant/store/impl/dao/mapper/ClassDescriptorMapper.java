@@ -5,31 +5,31 @@ import java.util.Map;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ClassDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.store.api.model.Relation;
 
-public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescriptor> {
+public class ClassDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor> {
 
     @Override
-    public Class<ClassDescriptor> getJavaType() {
-        return ClassDescriptor.class;
+    public Class<TypeDescriptor> getJavaType() {
+        return TypeDescriptor.class;
     }
 
     @Override
     public NodeLabel getCoreLabel() {
-        return NodeLabel.CLASS;
+        return NodeLabel.TYPE;
     }
 
     @Override
-    public ClassDescriptor createInstance() {
-        return new ClassDescriptor();
+    public TypeDescriptor createInstance() {
+        return new TypeDescriptor();
     }
 
     @Override
-    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(ClassDescriptor descriptor) {
+    public Map<Relation, Set<? extends AbstractDescriptor>> getRelations(TypeDescriptor descriptor) {
         Map<Relation, Set<? extends AbstractDescriptor>> relations = new HashMap<Relation, Set<? extends AbstractDescriptor>>();
         relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
         relations.put(Relation.CONTAINS, descriptor.getContains());
@@ -40,22 +40,22 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
     }
 
     @Override
-    protected void setRelation(ClassDescriptor descriptor, Relation relation, AbstractDescriptor target) {
+    protected void setRelation(TypeDescriptor descriptor, Relation relation, AbstractDescriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((ClassDescriptor) target);
+                descriptor.getAnnotatedBy().add((TypeDescriptor) target);
                 break;
             case CONTAINS:
                 descriptor.getContains().add(target);
                 break;
             case DEPENDS_ON:
-                descriptor.getDependencies().add((ClassDescriptor) target);
+                descriptor.getDependencies().add((TypeDescriptor) target);
                 break;
             case IMPLEMENTS:
-                descriptor.getInterfaces().add((ClassDescriptor) target);
+                descriptor.getInterfaces().add((TypeDescriptor) target);
                 break;
             case EXTENDS:
-                descriptor.setSuperClass((ClassDescriptor) target);
+                descriptor.setSuperClass((TypeDescriptor) target);
                 break;
             default:
         }
@@ -65,7 +65,7 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Map<NodeProperty, Object> getProperties(ClassDescriptor descriptor) {
+	public Map<NodeProperty, Object> getProperties(TypeDescriptor descriptor) {
 		Map<NodeProperty, Object> properties = super.getProperties(descriptor);
 		properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
 		if (descriptor.getVisibility() != null) {
@@ -84,7 +84,7 @@ public class ClassDescriptorMapper extends AbstractDescriptorMapper<ClassDescrip
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setProperty(ClassDescriptor descriptor, NodeProperty property, Object value) {
+	public void setProperty(TypeDescriptor descriptor, NodeProperty property, Object value) {
 		if (value != null) {
 			super.setProperty(descriptor, property, value);
 			switch (property) {
