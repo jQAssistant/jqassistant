@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.store.api.model.Relation;
 
-public class ClassDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor> {
+public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor> {
 
     @Override
     public Class<TypeDescriptor> getJavaType() {

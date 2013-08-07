@@ -9,7 +9,7 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
      */
     PACKAGE,
     /**
-     * Class
+     * Type
      */
     TYPE,
     /**
@@ -19,9 +19,9 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Field
      */
-	FIELD,
-	/**
-	 * Maven artifact.
-	 */
-	ARTIFACT;
+    FIELD,
+    /**
+     * Maven artifact.
+     */
+    ARTIFACT;
 }

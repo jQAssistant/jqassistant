@@ -50,7 +50,7 @@ public abstract class AbstractGraphStore implements Store {
         adapterRegistry = new DescriptorAdapterRegistry();
         adapterRegistry.register(new ArtifactDescriptorMapper());
         adapterRegistry.register(new PackageDescriptorMapper());
-        adapterRegistry.register(new ClassDescriptorMapper());
+        adapterRegistry.register(new TypeDescriptorMapper());
         adapterRegistry.register(new MethodDescriptorMapper());
         adapterRegistry.register(new FieldDescriptorMapper());
         descriptorDAO = new DescriptorDAOImpl(adapterRegistry, database);
