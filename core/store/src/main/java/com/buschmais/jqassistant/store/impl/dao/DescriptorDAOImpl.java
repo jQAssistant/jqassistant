@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.store.impl.dao;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.model.NodeProperty;
@@ -78,14 +79,14 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(DescriptorDAOImpl.class);
 
     private final GraphDatabaseService database;
-    private final DescriptorAdapterRegistry registry;
+    private final DescriptorMapperRegistry registry;
     private final ExecutionEngine executionEngine;
 
     private final DescriptorCache descriptorCache = new DescriptorCache();
     @SuppressWarnings("unchecked")
     private final Map<String, Node> nodeCache = new LRUMap(256);
 
-    public DescriptorDAOImpl(DescriptorAdapterRegistry registry, GraphDatabaseService database) {
+    public DescriptorDAOImpl(DescriptorMapperRegistry registry, GraphDatabaseService database) {
         this.registry = registry;
         this.database = database;
         this.executionEngine = new ExecutionEngine(database);
@@ -104,7 +105,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     @Override
     public void flush() {
         LOGGER.debug("Flushing changes to database.");
-        for (AbstractDescriptor descriptor : descriptorCache.getDescriptors()) {
+        for (Descriptor descriptor : descriptorCache.getDescriptors()) {
             Node node = findNode(descriptor);
             DescriptorMapper mapper = registry.getDescriptorMapper(descriptor.getClass());
             flushRelations(descriptor, node, mapper);
@@ -151,11 +152,11 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node       The node.
      * @param mapper     The mapper.
      */
-    private <T extends AbstractDescriptor> void flushRelations(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        Map<Relation, Set<? extends AbstractDescriptor>> relations = mapper.getRelations(descriptor);
-        for (Entry<Relation, Set<? extends AbstractDescriptor>> relationEntry : relations.entrySet()) {
+    private <T extends Descriptor> void flushRelations(T descriptor, Node node, DescriptorMapper<T> mapper) {
+        Map<Relation, Set<? extends Descriptor>> relations = mapper.getRelations(descriptor);
+        for (Entry<Relation, Set<? extends Descriptor>> relationEntry : relations.entrySet()) {
             Relation relationType = relationEntry.getKey();
-            Set<? extends AbstractDescriptor> targetDescriptors = relationEntry.getValue();
+            Set<? extends Descriptor> targetDescriptors = relationEntry.getValue();
             if (!targetDescriptors.isEmpty()) {
                 Set<Node> existingTargetNodes = new HashSet<Node>();
                 Iterable<Relationship> relationships = node.getRelationships(relationType, Direction.OUTGOING);
@@ -164,7 +165,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                         existingTargetNodes.add(relation.getEndNode());
                     }
                 }
-                for (AbstractDescriptor targetDescriptor : targetDescriptors) {
+                for (Descriptor targetDescriptor : targetDescriptors) {
                     Node targetNode = findNode(targetDescriptor);
                     if (!existingTargetNodes.contains(targetNode)) {
                         node.createRelationshipTo(targetNode, relationType);
@@ -182,7 +183,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node       The node.
      * @param mapper     The mapper.
      */
-    private <T extends AbstractDescriptor> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
+    private <T extends Descriptor> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
         Map<NodeProperty, Object> properties = mapper.getProperties(descriptor);
         for (Entry<NodeProperty, Object> entry : properties.entrySet()) {
             NodeProperty property = entry.getKey();
@@ -200,7 +201,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param descriptor The descriptor.
      * @return The {@link Node}.
      */
-    private <T extends AbstractDescriptor> Node findNode(T descriptor) {
+    private <T extends Descriptor> Node findNode(T descriptor) {
         DescriptorMapper<T> mapper = registry.getDescriptorMapper(descriptor.getClass());
         Long id = mapper.getId(descriptor);
         return database.getNodeById(id);
@@ -217,7 +218,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @return The descriptor.
      */
     @SuppressWarnings("unchecked")
-    private <T extends AbstractDescriptor> T getDescriptor(Node node) {
+    private <T extends Descriptor> T getDescriptor(Node node) {
         T descriptor = this.descriptorCache.findBy(node.getId());
         if (descriptor == null) {
             // find adapter and create instance
@@ -229,15 +230,15 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             this.descriptorCache.put(descriptor);
             this.nodeCache.put(descriptor.getFullQualifiedName(), node);
             // create outgoing relationships
-            Map<Relation, Set<AbstractDescriptor>> relations = new HashMap<Relation, Set<AbstractDescriptor>>();
+            Map<Relation, Set<Descriptor>> relations = new HashMap<Relation, Set<Descriptor>>();
             for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
                 Relation relation = Relation.getRelation(relationship.getType().name());
                 if (relation != null) {
                     Node targetNode = relationship.getEndNode();
                     AbstractDescriptor targetDescriptor = getDescriptor(targetNode);
-                    Set<AbstractDescriptor> set = relations.get(relation);
+                    Set<Descriptor> set = relations.get(relation);
                     if (set == null) {
-                        set = new HashSet<AbstractDescriptor>();
+                        set = new HashSet<Descriptor>();
                         relations.put(relation, set);
                     }
                     set.add(targetDescriptor);
