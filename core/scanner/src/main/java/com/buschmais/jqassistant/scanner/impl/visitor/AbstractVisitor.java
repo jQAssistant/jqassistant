@@ -26,21 +26,21 @@ public abstract class AbstractVisitor {
         return resolverFactory.getStore();
     }
 
-    protected TypeDescriptor getClassDescriptor(String typeName) {
+    protected TypeDescriptor getTypeDescriptor(String typeName) {
         String fullQualifiedName = getType(Type.getObjectType(typeName));
-        return resolverFactory.getClassDescriptorResolver().resolve(fullQualifiedName);
+        return resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName);
     }
 
     protected void addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
-            TypeDescriptor dependency = getClassDescriptor(typeName);
+            TypeDescriptor dependency = getTypeDescriptor(typeName);
             annotatedDescriptor.getAnnotatedBy().add(dependency);
         }
     }
 
     protected void addDependency(DependentDescriptor dependentDescriptor, String typeName) {
         if (typeName != null) {
-            TypeDescriptor dependency = getClassDescriptor(typeName);
+            TypeDescriptor dependency = getTypeDescriptor(typeName);
             dependentDescriptor.getDependencies().add(dependency);
         }
     }

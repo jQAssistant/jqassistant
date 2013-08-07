@@ -20,7 +20,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
     /**
      * Constructor.
      *
-     * @param name The expected full qualified class name.
+     * @param name The expected full qualified type name.
      */
     protected TypeDescriptorMatcher(String name) {
         super(TypeDescriptor.class, name);
@@ -29,20 +29,20 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
     /**
      * Return a {@link TypeDescriptorMatcher} .
      *
-     * @param type The expected class.
+     * @param type The expected type.
      * @return The {@link TypeDescriptorMatcher}.
      */
-    public static Matcher<TypeDescriptor> classDescriptor(Class<?> type) {
+    public static Matcher<TypeDescriptor> typeDescriptor(Class<?> type) {
         return new TypeDescriptorMatcher(type);
     }
 
     /**
      * Return a {@link TypeDescriptorMatcher}.
      *
-     * @param name The expected full qualified class name.
+     * @param name The expected full qualified type name.
      * @return The {@link TypeDescriptorMatcher}.
      */
-    public static Matcher<TypeDescriptor> classDescriptor(String name) {
+    public static Matcher<TypeDescriptor> typeDescriptor(String name) {
         return new TypeDescriptorMatcher(name);
     }
 }

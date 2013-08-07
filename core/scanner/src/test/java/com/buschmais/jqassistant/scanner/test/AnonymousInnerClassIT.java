@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher;
 import com.buschmais.jqassistant.scanner.test.set.innerclass.AnonymousInnerClass;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -8,7 +9,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.classDescriptor;
+import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -51,8 +52,8 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");
-        assertThat(outerClass, classDescriptor(AnonymousInnerClass.class));
-        Matcher<Iterable<? super TypeDescriptor>> matcher = hasItem(classDescriptor(INNERCLASS_NAME));
+        assertThat(outerClass, TypeDescriptorMatcher.typeDescriptor(AnonymousInnerClass.class));
+        Matcher<Iterable<? super TypeDescriptor>> matcher = hasItem(typeDescriptor(INNERCLASS_NAME));
         assertThat(outerClass.getContains(), matcher);
     }
 
