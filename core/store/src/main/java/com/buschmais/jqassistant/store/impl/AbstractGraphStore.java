@@ -45,7 +45,9 @@ public abstract class AbstractGraphStore implements Store {
     public void start() {
         database = startDatabase();
         for (NodeLabel label : NodeLabel.values()) {
-            database.schema().indexFor(label).on(FQN.name());
+            if (label.isIndexed()) {
+                database.schema().indexFor(label).on(FQN.name());
+            }
         }
         mapperRegistry = new DescriptorMapperRegistry();
         mapperRegistry.register(new ArtifactDescriptorMapper());
