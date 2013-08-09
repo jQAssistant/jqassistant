@@ -27,6 +27,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * A Mojo which scans the compiled classes in the output directory and test output directory.
+ *
  * @phase package
  * @goal scan
  * @requiresDependencyResolution test
@@ -34,6 +36,8 @@ import java.io.IOException;
 public class ScanMojo extends AbstractStoreMojo {
 
     /**
+     * The current project.
+     *
      * @parameter default-value="${project}"
      * @required
      * @readonly
@@ -46,8 +50,14 @@ public class ScanMojo extends AbstractStoreMojo {
         scanDirectory(testClassesDirectory);
     }
 
+    /**
+     * Scan the given directory for classes.
+     *
+     * @param directory The directory.
+     * @throws MojoExecutionException If scanning fails.
+     */
     private void scanDirectory(final File directory) throws MojoExecutionException {
-        getLog().info("Scanning rulesDirectory: " + directory.getAbsolutePath());
+        getLog().info("Scanning classes directory: " + directory.getAbsolutePath());
         super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {

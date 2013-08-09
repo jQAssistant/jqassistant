@@ -20,6 +20,8 @@ import com.buschmais.jqassistant.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 
 /**
+ * A mojo which resets the store, i.e. deletes all nodes and relationships.
+ *
  * @goal reset
  * @requiresProject false
  */
