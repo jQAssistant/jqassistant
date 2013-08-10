@@ -31,7 +31,6 @@ import java.io.IOException;
  *
  * @phase package
  * @goal scan
- * @requiresDependencyResolution test
  */
 public class ScanMojo extends AbstractStoreMojo {
 

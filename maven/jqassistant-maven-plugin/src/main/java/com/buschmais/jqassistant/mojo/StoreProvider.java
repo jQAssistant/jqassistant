@@ -22,14 +22,14 @@ public class StoreProvider {
      * @param databaseDirectory The database directory to use.
      * @return The {@link Store} instance.
      */
-    public Store getStore(File databaseDirectory) {
+    public Store getStore(final File databaseDirectory) {
         if (store == null) {
             LOGGER.info("Initializing store using directory {}.", databaseDirectory.getAbsolutePath());
             store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    LOGGER.info("Shutting down store.");
+                    LOGGER.info("Shutting down store in directory {}.", databaseDirectory.getAbsolutePath());
                     store.stop();
                 }
             });
