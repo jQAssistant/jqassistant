@@ -110,6 +110,13 @@ public class AnalyzerImpl implements Analyzer {
         }
     }
 
+    /**
+     * Run the given executable and return a result which can be passed to a report writer.
+     *
+     * @param executable The executable.
+     * @param <T>        The type of the executable.
+     * @return The result.
+     */
     private <T extends AbstractExecutable> Result<T> execute(T executable) {
         List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         QueryResult queryResult = null;
@@ -126,6 +133,12 @@ public class AnalyzerImpl implements Analyzer {
         return new Result<T>(executable, queryResult.getColumns(), rows);
     }
 
+    /**
+     * Execute the given query.
+     *
+     * @param query The query.
+     * @return The query result.
+     */
     private QueryResult executeQuery(Query query) {
         String cypher = query.getCypher();
         Map<String, Object> parameters = query.getParameters();
