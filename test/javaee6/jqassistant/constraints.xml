@@ -48,6 +48,7 @@
         <includeConstraint refId="EjbLocatedInImplementationPackage"/>
         <includeConstraint refId="TestClassNameHasTestSuffix"/>
         <includeConstraint refId="dependency:CyclicTypeDependency"/>
+        <includeConstraint refId="dependency:CyclicArtifactDependency"/>
     </constraintGroup>
 
 </jqa:jqassistant-rules>

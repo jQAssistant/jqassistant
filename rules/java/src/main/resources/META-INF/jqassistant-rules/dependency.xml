@@ -1,10 +1,25 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="dependency:TypeDependency">
+    <concept id="dependency:FieldOrMethodDependency">
         <description>Creates a DEPENDS_ON relationship between types if there are field or method dependencies between them.</description>
         <cypher><![CDATA[
             MATCH 
-            	t1:TYPE-[:CONTAINS*0..1]->(typeFieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->t2:TYPE
+            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->(t2:TYPE)
+			WHERE 
+				t1<>t2
+			CREATE UNIQUE 
+				(t1)-[:DEPENDS_ON]->(t2)
+			RETURN 
+				COUNT(t1) as count
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:TypeDependency">
+        <requiresConcept refId="dependency:FieldOrMethodDependency"/>
+        <description>Creates a DEPENDS_ON relationship between types if there are dependencies between them.</description>
+        <cypher><![CDATA[
+            MATCH 
+            	(t1:TYPE)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(t2:TYPE)
 			WHERE 
 				t1<>t2
 			CREATE UNIQUE 
@@ -19,9 +34,9 @@
         <description>Creates a DEPENDS_ON relationship between packages if there are type dependencies between them.</description>
         <cypher><![CDATA[
 			MATCH  
-				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
+				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
 			WHERE 
-				t1<>t2 AND p1<>p2
+				p1<>p2
 			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
 			RETURN 
@@ -29,13 +44,44 @@
         ]]></cypher>
     </concept>
 
+    <concept id="dependency:ArtifactDependency">
+        <requiresConcept refId="dependency:TypeDependency"/>
+        <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.</description>
+        <cypher><![CDATA[
+			MATCH  
+				(a1:ARTIFACT)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(a2:ARTIFACT)
+			WHERE 
+				a1<>a2
+			CREATE UNIQUE 
+				(a1)-[:DEPENDS_ON]->(a2)
+			RETURN 
+				COUNT(a1) as count
+        ]]></cypher>
+    </concept>
+
+    <constraint id="dependency:CyclicArtifactDependency">
+        <requiresConcept refId="dependency:ArtifactDependency"/>
+        <description>There must be no cyclic artifact dependencies.</description>
+        <cypher><![CDATA[
+			MATCH
+				(a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT),
+				path=shortestPath((a2)-[:DEPENDS_ON*]->(a1:ARTIFACT))
+			WHERE
+				a1<>a2
+			RETURN
+				a1 as artifact, extract(a in nodes(path) : a.FQN) as cycle
+			ORDER BY
+				artifact	
+        ]]></cypher>
+    </constraint>
+
     <constraint id="dependency:CyclicPackageDependency">
         <requiresConcept refId="dependency:PackageDependency"/>
         <description>There must be no cyclic package dependencies.</description>
         <cypher><![CDATA[
 			MATCH
-				p1:PACKAGE-[:DEPENDS_ON]->p2:PACKAGE,
-				path=shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
+				(p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE),
+				path=shortestPath((p2)-[:DEPENDS_ON*]->(p1:PACKAGE))
 			WHERE
 				p1<>p2
 			RETURN
@@ -46,20 +92,19 @@
     </constraint>
 
     <constraint id="dependency:CyclicTypeDependency">
-        <requiresConcept refId="dependency:TypeDependency"/>
         <requiresConcept refId="dependency:PackageDependency"/>
         <description>There must be no cyclic type dependencies.</description>
         <cypher><![CDATA[
             MATCH
-                p1:PACKAGE-[:DEPENDS_ON*0..1]->p2:PACKAGE,
-                shortestPath(p2-[:DEPENDS_ON*]->p1:PACKAGE)
+                (p1:PACKAGE)-[:DEPENDS_ON*0..1]->(p2:PACKAGE),
+                shortestPath((p2)-[:DEPENDS_ON*]->(p1:PACKAGE))
             WITH
                 p1, p2
             MATCH
-                p1-[:CONTAINS]->t1:TYPE,
-                p2-[:CONTAINS]->t2:TYPE,
-                t1-[:DEPENDS_ON]->t2,
-                path=shortestPath(t2-[:DEPENDS_ON*]->t1)
+                (p1)-[:CONTAINS]->(t1:TYPE),
+                (p2)-[:CONTAINS]->(t2:TYPE),
+                (t1)-[:DEPENDS_ON]->(t2),
+                path=shortestPath((t2)-[:DEPENDS_ON*]->(t1))
             WHERE
                 NOT(
                   t1=t2 OR (t1)-[:CONTAINS]-(t2)
