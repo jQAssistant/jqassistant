@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -26,7 +27,7 @@ public class AssignableFromIT extends AbstractAnalysisIT {
         applyConcept("java:AssignableFrom");
         TestResult testResult = executeQuery("MATCH (pojo:TYPE)<-[:ASSIGNABLE_FROM]-(c) RETURN c");
         Map<String, List<Object>> columns = testResult.getColumns();
-        Matcher<Iterable<Object>> matcher = allOf(hasItem(TypeDescriptorMatcher.typeDescriptor(Object.class)), hasItem(TypeDescriptorMatcher.typeDescriptor(Pojo.class)));
+        Matcher<Iterable<Object>> matcher = allOf(hasItem(typeDescriptor(Object.class)), hasItem(typeDescriptor(Pojo.class)));
         assertThat(columns.get("c"), matcher);
     }
 }
