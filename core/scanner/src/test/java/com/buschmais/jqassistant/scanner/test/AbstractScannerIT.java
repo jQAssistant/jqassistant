@@ -107,6 +107,7 @@ public abstract class AbstractScannerIT {
      * @return The  {@link com.buschmais.jqassistant.scanner.test.AbstractScannerIT.TestResult}.
      */
     protected TestResult executeQuery(String query, Map<String, Object> parameters) {
+        store.beginTransaction();
         QueryResult queryResult = store.executeQuery(query, parameters);
         List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         Map<String, List<Object>> columns = new HashMap<String, List<Object>>();
@@ -121,6 +122,7 @@ public abstract class AbstractScannerIT {
                 column.add(entry.getValue());
             }
         }
+        store.endTransaction();
         return new TestResult(rows, columns);
     }
 
