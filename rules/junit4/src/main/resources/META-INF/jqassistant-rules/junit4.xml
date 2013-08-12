@@ -19,4 +19,26 @@
             RETURN t AS testClass
         ]]></cypher>
     </concept>
+
+    <concept id="junit4:IgnoreTestClass">
+        <requiresConcept refId="junit4:TestClass" />
+        <description>Labels all JUNIT4 and TEST test labelled classes annotated with "org.junit.@Ignore" with IGNORE.</description>
+        <cypher><![CDATA[
+            MATCH (t:TYPE:JUNIT4:TEST)-[:ANNOTATED_BY]->(a:TYPE)
+            WHERE a.FQN="org.junit.Ignore"
+            SET t:IGNORE
+            RETURN t as ignoreTestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:IgnoreTestMethod">
+        <requiresConcept refId="junit4:TestMethod" />
+        <description>Labels all JUNIT4 and TEST test labelled methods annotated with "org.junit.@Ignore" with IGNORE.</description>
+        <cypher><![CDATA[
+            MATCH (m:METHOD:JUNIT4:TEST)-[:ANNOTATED_BY]->(a:TYPE)
+            WHERE a.FQN="org.junit.Ignore"
+            SET m:IGNORE
+            RETURN m as ignoreTestMethod
+        ]]></cypher>
+    </concept>
 </jqa:jqassistant-rules>
