@@ -21,7 +21,7 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 /**
- * Tests for the concept java:AssignableFrom.
+ * Tests for Junit4 concepts.
  */
 public class JunitIT extends AbstractAnalysisIT {
 
