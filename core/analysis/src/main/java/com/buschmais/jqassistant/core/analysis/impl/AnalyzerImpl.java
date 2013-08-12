@@ -102,12 +102,7 @@ public class AnalyzerImpl implements Analyzer {
             LOGGER.info("Applying concept '{}'.", concept.getId());
             reportWriter.beginConcept(concept);
             try {
-                store.beginTransaction();
-                try {
-                    reportWriter.setResult(execute(concept));
-                } finally {
-                    store.endTransaction();
-                }
+                reportWriter.setResult(execute(concept));
                 executedConcepts.add(concept);
             } finally {
                 reportWriter.endConcept();
@@ -115,20 +110,35 @@ public class AnalyzerImpl implements Analyzer {
         }
     }
 
+    /**
+     * Run the given executable and return a result which can be passed to a report writer.
+     *
+     * @param executable The executable.
+     * @param <T>        The type of the executable.
+     * @return The result.
+     */
     private <T extends AbstractExecutable> Result<T> execute(T executable) {
         List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         QueryResult queryResult = null;
+        store.beginTransaction();
         try {
             queryResult = executeQuery(executable.getQuery());
             for (QueryResult.Row row : queryResult.getRows()) {
                 rows.add(row.get());
             }
         } finally {
+            store.endTransaction();
             IOUtils.closeQuietly(queryResult);
         }
         return new Result<T>(executable, queryResult.getColumns(), rows);
     }
 
+    /**
+     * Execute the given query.
+     *
+     * @param query The query.
+     * @return The query result.
+     */
     private QueryResult executeQuery(Query query) {
         String cypher = query.getCypher();
         Map<String, Object> parameters = query.getParameters();

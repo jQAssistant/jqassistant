@@ -7,7 +7,7 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Artifact.
      */
-    ARTIFACT(false),
+    ARTIFACT(true),
     /**
      * Package
      */
@@ -27,10 +27,21 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
 
     private boolean indexed;
 
+
+    /**
+     * Constructor   .
+     *
+     * @param indexed <code>true</code> if a schema index shall be used for this label.
+     */
     private NodeLabel(boolean indexed) {
         this.indexed = indexed;
     }
 
+    /**
+     * Return <code>true</code> if a schema index shall be used for this label.
+     *
+     * @return <code>true</code> if a schema index shall be used for this label.
+     */
     public boolean isIndexed() {
         return indexed;
     }

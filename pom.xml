@@ -35,20 +35,6 @@
         </developer>
     </developers>
 
-    <repositories>
-        <repository>
-            <id>neo4j-release-repository</id>
-            <name>Neo4j Maven 2 release repository</name>
-            <url>http://m2.neo4j.org/releases</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <repository>
             <id>nexus</id>
@@ -155,8 +141,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>

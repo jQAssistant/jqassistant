@@ -5,8 +5,8 @@ import com.buschmais.jqassistant.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.store.api.QueryResult;
 import com.buschmais.jqassistant.store.api.Store;
 import com.buschmais.jqassistant.store.api.model.NodeLabel;
-import com.buschmais.jqassistant.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.store.impl.dao.DescriptorDAOImpl;
+import com.buschmais.jqassistant.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.store.impl.dao.mapper.*;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
@@ -44,11 +44,6 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start() {
         database = startDatabase();
-        for (NodeLabel label : NodeLabel.values()) {
-            if (label.isIndexed()) {
-                database.schema().indexFor(label).on(FQN.name());
-            }
-        }
         mapperRegistry = new DescriptorMapperRegistry();
         mapperRegistry.register(new ArtifactDescriptorMapper());
         mapperRegistry.register(new PackageDescriptorMapper());
@@ -56,6 +51,13 @@ public abstract class AbstractGraphStore implements Store {
         mapperRegistry.register(new MethodDescriptorMapper());
         mapperRegistry.register(new FieldDescriptorMapper());
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
+        beginTransaction();
+        for (NodeLabel label : NodeLabel.values()) {
+            if (label.isIndexed()) {
+                database.schema().indexFor(label).on(FQN.name());
+            }
+        }
+        endTransaction();
     }
 
     @Override
