@@ -28,12 +28,28 @@ public interface Analyzer {
 
 
     /**
+     * Validates the given constraints.
+     *
+     * @param constraints The constraints.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException;
+
+    /**
      * Validates the given constraint.
      *
      * @param constraint The constraint.
      * @throws ReportWriterException If the report cannot be written.
      */
     void validateConstraint(Constraint constraint) throws ReportWriterException;
+
+    /**
+     * Applies given concepts.
+     *
+     * @param concepts The concept.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException;
 
     /**
      * Applies given concept.
