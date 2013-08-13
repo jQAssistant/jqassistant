@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
@@ -57,6 +58,18 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
         Concept concept = ruleSet.getConcepts().get(id);
         Assert.assertNotNull("Concept must not be null", concept);
         analyzer.applyConcept(concept);
+    }
+
+    /**
+     * Executes the analysis group identified by id.
+     *
+     * @param id The id.
+     * @throws ReportWriterException If the report writer reports an error.
+     */
+    protected void executeAnalysisGroup(String id) throws ReportWriterException {
+        AnalysisGroup analysisGroup = ruleSet.getAnalysisGroups().get(id);
+        Assert.assertNotNull("Analysis group must not be null", analysisGroup);
+        analyzer.executeAnalysisGroup(analysisGroup);
     }
 
 }

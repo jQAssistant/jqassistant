@@ -60,7 +60,7 @@ public class AnalyzerImpl implements Analyzer {
     @Override
     public void executeAnalysisGroup(AnalysisGroup analysisGroup) throws ReportWriterException {
         if (!executedAnalysisGroups.contains(analysisGroup)) {
-            LOGGER.info("Executing constraint group '{}'", analysisGroup.getId());
+            LOGGER.info("Executing analysis group '{}'", analysisGroup.getId());
             for (AnalysisGroup includedAnalysisGroup : analysisGroup.getAnalysisGroups()) {
                 executeAnalysisGroup(includedAnalysisGroup);
             }
