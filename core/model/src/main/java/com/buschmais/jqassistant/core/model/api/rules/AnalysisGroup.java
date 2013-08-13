@@ -6,13 +6,15 @@ import java.util.Set;
 /**
  * Defines a constraint group.
  */
-public class ConstraintGroup {
+public class AnalysisGroup {
 
     private String id;
 
+    private Set<Concept> concepts = new HashSet<>();
+
     private Set<Constraint> constraints = new HashSet<Constraint>();
 
-    private Set<ConstraintGroup> constraintGroups = new HashSet<ConstraintGroup>();
+    private Set<AnalysisGroup> analysisGroups = new HashSet<AnalysisGroup>();
 
     public String getId() {
         return id;
@@ -20,6 +22,14 @@ public class ConstraintGroup {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Set<Concept> getConcepts() {
+        return concepts;
+    }
+
+    public void setConcepts(Set<Concept> concepts) {
+        this.concepts = concepts;
     }
 
     public Set<Constraint> getConstraints() {
@@ -30,19 +40,19 @@ public class ConstraintGroup {
         this.constraints = constraints;
     }
 
-    public Set<ConstraintGroup> getConstraintGroups() {
-        return constraintGroups;
+    public Set<AnalysisGroup> getAnalysisGroups() {
+        return analysisGroups;
     }
 
-    public void setConstraintGroups(Set<ConstraintGroup> constraintGroups) {
-        this.constraintGroups = constraintGroups;
+    public void setAnalysisGroups(Set<AnalysisGroup> analysisGroups) {
+        this.analysisGroups = analysisGroups;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ConstraintGroup that = (ConstraintGroup) o;
+        AnalysisGroup that = (AnalysisGroup) o;
         if (!id.equals(that.id)) return false;
         return true;
     }
@@ -56,4 +66,6 @@ public class ConstraintGroup {
     public String toString() {
         return "Constraint Group " + id;
     }
+
+
 }

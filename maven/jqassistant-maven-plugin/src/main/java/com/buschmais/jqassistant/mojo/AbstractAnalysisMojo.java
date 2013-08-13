@@ -2,9 +2,6 @@ package com.buschmais.jqassistant.mojo;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,19 +9,16 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.JqassistantCatalog;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.ResourcesType;
-import com.buschmais.jqassistant.core.analysis.catalog.schema.v1.RulesType;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 
 /**
@@ -46,40 +40,40 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      *
      * @parameter
      */
-    protected List<String> constraintGroups;
+    protected List<String> analysisGroups;
 
     private CatalogReader catalogReader = new CatalogReaderImpl();
 
     private RulesReader rulesReader = new RulesReaderImpl();
 
     /**
-     * Return the selected constraint groups.
+     * Return the selected analysis groups.
      *
      * @param ruleSet The {@link RuleSet}.
      * @return The selected constraint groups.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined group is referenced.
      */
-    protected List<ConstraintGroup> getSelectedConstraintGroups(RuleSet ruleSet) throws MojoExecutionException {
-        final List<ConstraintGroup> selectedConstraintGroups = new ArrayList<ConstraintGroup>();
-        if (constraintGroups != null) {
-            for (String constraintGroup : constraintGroups) {
-                ConstraintGroup group = ruleSet.getConstraintGroups().get(constraintGroup);
+    protected List<AnalysisGroup> getSelectedAnalysisGroups(RuleSet ruleSet) throws MojoExecutionException {
+        final List<AnalysisGroup> selectedAnalysisGroups = new ArrayList<AnalysisGroup>();
+        if (analysisGroups != null) {
+            for (String analysisGroup : analysisGroups) {
+                AnalysisGroup group = ruleSet.getAnalysisGroups().get(analysisGroup);
                 if (group == null) {
-                    throw new MojoExecutionException("The constraint group '" + constraintGroup + "' is not defined.");
+                    throw new MojoExecutionException("The analysis group '" + analysisGroup + "' is not defined.");
                 }
-                selectedConstraintGroups.add(group);
+                selectedAnalysisGroups.add(group);
             }
         } else {
-            selectedConstraintGroups.addAll(ruleSet.getConstraintGroups().values());
+            selectedAnalysisGroups.addAll(ruleSet.getAnalysisGroups().values());
         }
-        return selectedConstraintGroups;
+        return selectedAnalysisGroups;
     }
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
-     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup}s identified by their id.
+     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}s identified by their id.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the rules cannot be read.
      */
@@ -139,9 +133,9 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      * @param ruleSet The {@link RuleSet}.
      */
     protected void logRuleSet(RuleSet ruleSet) {
-        getLog().info("Constraint groups [" + ruleSet.getConstraintGroups().size() + "]");
-        for (ConstraintGroup constraintGroup : ruleSet.getConstraintGroups().values()) {
-            getLog().info("  " + constraintGroup.getId());
+        getLog().info("Analysis groups [" + ruleSet.getAnalysisGroups().size() + "]");
+        for (AnalysisGroup analysisGroup : ruleSet.getAnalysisGroups().values()) {
+            getLog().info("  " + analysisGroup.getId());
         }
         getLog().info("Constraints [" + ruleSet.getConstraints().size() + "]");
         for (Constraint constraint : ruleSet.getConstraints().values()) {

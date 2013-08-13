@@ -10,7 +10,7 @@
                 <xs:element name="queryDefinition" type="jqassistant-rules:queryDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="constraintGroup" type="jqassistant-rules:constraintGroupType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="analysisGroup" type="jqassistant-rules:analysisGroupType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -94,12 +94,13 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="constraintGroupType">
+    <xs:complexType name="analysisGroupType">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
+                    <xs:element name="includeConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="includeConstraint" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="includeConstraintGroup" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="includeAnalysisGroup" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

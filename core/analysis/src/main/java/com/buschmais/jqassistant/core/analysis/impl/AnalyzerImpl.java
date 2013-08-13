@@ -4,9 +4,9 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.model.api.Query;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.store.api.QueryResult;
@@ -32,7 +32,7 @@ public class AnalyzerImpl implements Analyzer {
 
     private Set<Constraint> executedConstraints = new HashSet<Constraint>();
 
-    private Set<ConstraintGroup> executedConstraintGroups = new HashSet<ConstraintGroup>();
+    private Set<AnalysisGroup> executedAnalysisGroups = new HashSet<AnalysisGroup>();
 
 
     /**
@@ -46,11 +46,11 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void validateConstraintGroups(Iterable<ConstraintGroup> constraintGroups) throws ReportWriterException {
+    public void executeAnalysisGroups(Iterable<AnalysisGroup> analysisGroups) throws ReportWriterException {
         reportWriter.begin();
         try {
-            for (ConstraintGroup constraintGroup : constraintGroups) {
-                validateConstraintGroup(constraintGroup);
+            for (AnalysisGroup analysisGroup : analysisGroups) {
+                executeAnalysisGroup(analysisGroup);
             }
         } finally {
             reportWriter.end();
@@ -58,20 +58,23 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void validateConstraintGroup(ConstraintGroup constraintGroup) throws ReportWriterException {
-        if (!executedConstraintGroups.contains(constraintGroup)) {
-            LOGGER.info("Executing constraint group '{}'", constraintGroup.getId());
-            for (ConstraintGroup includedConstraintGroup : constraintGroup.getConstraintGroups()) {
-                validateConstraintGroup(includedConstraintGroup);
+    public void executeAnalysisGroup(AnalysisGroup analysisGroup) throws ReportWriterException {
+        if (!executedAnalysisGroups.contains(analysisGroup)) {
+            LOGGER.info("Executing constraint group '{}'", analysisGroup.getId());
+            for (AnalysisGroup includedAnalysisGroup : analysisGroup.getAnalysisGroups()) {
+                executeAnalysisGroup(includedAnalysisGroup);
             }
-            reportWriter.beginConstraintGroup(constraintGroup);
+            reportWriter.beginAnalysisGroup(analysisGroup);
             try {
-                for (Constraint constraint : constraintGroup.getConstraints()) {
+                for (Concept concept : analysisGroup.getConcepts()) {
+                    applyConcept(concept);
+                }
+                for (Constraint constraint : analysisGroup.getConstraints()) {
                     validateConstraint(constraint);
                 }
-                executedConstraintGroups.add(constraintGroup);
+                executedAnalysisGroups.add(analysisGroup);
             } finally {
-                reportWriter.endConstraintGroup();
+                reportWriter.endAnalysisGroup();
             }
         }
     }

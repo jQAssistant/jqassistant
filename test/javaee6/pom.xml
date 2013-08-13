@@ -36,9 +36,9 @@
                             <goal>verify</goal>
                         </goals>
                         <configuration>
-                            <constraintGroups>
-                                <constraintGroup>continuous</constraintGroup>
-                            </constraintGroups>
+                            <analysisGroups>
+                                <analysisGroup>continuous</analysisGroup>
+                            </analysisGroups>
                         </configuration>
                     </execution>
                     <execution>

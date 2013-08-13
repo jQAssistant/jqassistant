@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 
@@ -64,21 +64,21 @@ public class CompositeReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginConstraintGroup(final ConstraintGroup constraintGroup) throws ReportWriterException {
+    public void beginAnalysisGroup(final AnalysisGroup analysisGroup) throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
             public void run(ReportWriter reportWriter) throws ReportWriterException {
-                reportWriter.beginConstraintGroup(constraintGroup);
+                reportWriter.beginAnalysisGroup(analysisGroup);
             }
         });
     }
 
     @Override
-    public void endConstraintGroup() throws ReportWriterException {
+    public void endAnalysisGroup() throws ReportWriterException {
         run(new DelegateOperation() {
             @Override
             public void run(ReportWriter reportWriter) throws ReportWriterException {
-                reportWriter.endConstraintGroup();
+                reportWriter.endAnalysisGroup();
             }
         });
     }

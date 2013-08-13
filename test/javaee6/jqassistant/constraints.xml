@@ -37,7 +37,7 @@
     </constraint>
 
     <!-- Constraint Groups -->
-    <constraintGroup id="continuous">
+    <analysisGroup id="continuous">
         <includeConstraint refId="slice:User"/>
         <includeConstraint refId="slice:Cart"/>
         <includeConstraint refId="layer:UI"/>
@@ -49,6 +49,6 @@
         <includeConstraint refId="TestClassNameHasTestSuffix"/>
         <includeConstraint refId="dependency:CyclicTypeDependency"/>
         <includeConstraint refId="dependency:CyclicArtifactDependency"/>
-    </constraintGroup>
+    </analysisGroup>
 
 </jqa:jqassistant-rules>

@@ -19,12 +19,12 @@ package com.buschmais.jqassistant.mojo;
 import java.util.Collection;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 
 /**
@@ -38,18 +38,18 @@ public class EffectiveRulesMojo extends AbstractAnalysisMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         RuleSet ruleSet = readRules();
-        List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(ruleSet);
+        List<AnalysisGroup> selectedAnalysisGroups = getSelectedAnalysisGroups(ruleSet);
         RuleSet targetRuleSet = new RuleSet();
-        resolveConstraintGroups(selectedConstraintGroups, targetRuleSet);
+        resolveAnalysisGroups(selectedAnalysisGroups, targetRuleSet);
         logRuleSet(targetRuleSet);
     }
 
-    private void resolveConstraintGroups(Collection<ConstraintGroup> constraintGroups, RuleSet ruleSet) {
-        for (ConstraintGroup constraintGroup : constraintGroups) {
-            if (!ruleSet.getConstraintGroups().containsKey(constraintGroup.getId())) {
-                ruleSet.getConstraintGroups().put(constraintGroup.getId(), constraintGroup);
-                resolveConstraintGroups(constraintGroup.getConstraintGroups(), ruleSet);
-                resolveConstraints(constraintGroup.getConstraints(), ruleSet);
+    private void resolveAnalysisGroups(Collection<AnalysisGroup> analysisGroups, RuleSet ruleSet) {
+        for (AnalysisGroup analysisGroup : analysisGroups) {
+            if (!ruleSet.getAnalysisGroups().containsKey(analysisGroup.getId())) {
+                ruleSet.getAnalysisGroups().put(analysisGroup.getId(), analysisGroup);
+                resolveAnalysisGroups(analysisGroup.getAnalysisGroups(), ruleSet);
+                resolveConstraints(analysisGroup.getConstraints(), ruleSet);
             }
         }
     }

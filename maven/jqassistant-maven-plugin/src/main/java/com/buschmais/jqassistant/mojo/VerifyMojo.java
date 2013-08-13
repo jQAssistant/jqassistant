@@ -25,17 +25,14 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.model.api.rules.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
-import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.CompositeReportWriter;
@@ -60,7 +57,7 @@ public class VerifyMojo extends AbstractAnalysisMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         RuleSet ruleSet = readRules();
-        final List<ConstraintGroup> selectedConstraintGroups = getSelectedConstraintGroups(ruleSet);
+        final List<AnalysisGroup> selectedAnalysisGroups = getSelectedAnalysisGroups(ruleSet);
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
@@ -84,7 +81,7 @@ public class VerifyMojo extends AbstractAnalysisMojo {
                 public Void run(Store store) throws AbstractMojoExecutionException {
                     Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
                     try {
-                        analyzer.validateConstraintGroups(selectedConstraintGroups);
+                        analyzer.executeAnalysisGroups(selectedAnalysisGroups);
                     } catch (ReportWriterException e) {
                         throw new MojoExecutionException("Cannot create report.", e);
                     }
