@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.report.api;
 
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 
@@ -23,9 +23,9 @@ public interface ReportWriter {
 
     void endConcept() throws ReportWriterException;
 
-    void beginAnalysisGroup(AnalysisGroup analysisGroup) throws ReportWriterException;
+    void beginGroup(Group group) throws ReportWriterException;
 
-    void endAnalysisGroup() throws ReportWriterException;
+    void endGroup() throws ReportWriterException;
 
     void beginConstraint(Constraint constraint) throws ReportWriterException;
 

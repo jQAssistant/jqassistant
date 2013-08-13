@@ -60,13 +60,13 @@
         ]]></cypher>
     </concept>
 
-    <analysisGroup id="ejb3:EnterpriseJavaBean">
+    <group id="ejb3:EJB">
         <includeConcept refId="ejb3:StatelessSessionBean"/>
         <includeConcept refId="ejb3:StatefulSessionBean"/>
         <includeConcept refId="ejb3:MessageDrivenBean"/>
         <includeConcept refId="ejb3:SingletonBean"/>
         <includeConcept refId="ejb3:Local"/>
         <includeConcept refId="ejb3:Remote"/>
-    </analysisGroup>
+    </group>
 
 </jqa:jqassistant-rules>

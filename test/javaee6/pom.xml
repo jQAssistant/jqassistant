@@ -36,9 +36,9 @@
                             <goal>analyze</goal>
                         </goals>
                         <configuration>
-                            <analysisGroups>
-                                <analysisGroup>continuous</analysisGroup>
-                            </analysisGroups>
+                            <groups>
+                                <group>continuous</group>
+                            </groups>
                         </configuration>
                     </execution>
                     <execution>

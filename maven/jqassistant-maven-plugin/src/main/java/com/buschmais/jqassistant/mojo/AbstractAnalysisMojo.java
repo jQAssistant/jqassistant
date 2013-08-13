@@ -1,25 +1,23 @@
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.maven.plugin.MojoExecutionException;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract base implementation for analysis MOJOs.
@@ -50,14 +48,20 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     protected List<String> constraints;
 
     /**
-     * The list of analysis group names to be executed.
+     * The list of group names to be executed.
      *
-     * @parameter expression="${jqassistant.analysisGroups}"
+     * @parameter expression="${jqassistant.groups}"
      */
-    protected List<String> analysisGroups;
+    protected List<String> groups;
 
+    /**
+     * The catalog reader instance.
+     */
     private CatalogReader catalogReader = new CatalogReaderImpl();
 
+    /**
+     * The rules reader instance.
+     */
     private RulesReader rulesReader = new RulesReaderImpl();
 
     /**
@@ -105,33 +109,32 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     }
 
     /**
-     * Return the selected analysis groups.
+     * Return the selected groups.
      *
      * @param ruleSet The {@link RuleSet}.
-     * @return The selected analysis groups.
+     * @return The selected groups.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined group is referenced.
      */
-    protected List<AnalysisGroup> getSelectedAnalysisGroups(RuleSet ruleSet) throws MojoExecutionException {
-        final List<AnalysisGroup> selectedAnalysisGroups = new ArrayList<>();
-        if (analysisGroups != null) {
-            for (String analysisGroupName : analysisGroups) {
-                AnalysisGroup group = ruleSet.getAnalysisGroups().get(analysisGroupName);
+    protected List<Group> getSelectedGroups(RuleSet ruleSet) throws MojoExecutionException {
+        final List<Group> selectedGroups = new ArrayList<>();
+        if (groups != null) {
+            for (String groupName : groups) {
+                Group group = ruleSet.getGroups().get(groupName);
                 if (group == null) {
-                    throw new MojoExecutionException("The analysis group '" + analysisGroupName + "' is not defined.");
+                    throw new MojoExecutionException("The group '" + groupName + "' is not defined.");
                 }
-                selectedAnalysisGroups.add(group);
+                selectedGroups.add(group);
             }
         }
-        return selectedAnalysisGroups;
+        return selectedGroups;
     }
-
 
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
-     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}s identified by their id.
+     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rules.Group}s identified by their id.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the rules cannot be read.
      */
@@ -186,14 +189,76 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     }
 
     /**
+     * Resolves the effective rules.
+     *
+     * @return The resolved rule set.
+     * @throws MojoExecutionException If resolving fails.
+     */
+    protected RuleSet resolveEffectiveRules() throws MojoExecutionException {
+        RuleSet ruleSet = readRules();
+        RuleSet targetRuleSet = new RuleSet();
+        resolveConcepts(getSelectedConcepts(ruleSet), targetRuleSet);
+        resolveConstraints(getSelectedConstraints(ruleSet), targetRuleSet);
+        resolveGroups(getSelectedGroups(ruleSet), targetRuleSet);
+        return targetRuleSet;
+    }
+
+    /**
+     * Resolve the given selected groups names into the target rule set.
+     *
+     * @param groups        The selected group names.
+     * @param targetRuleSet The target rule set.
+     */
+    private void resolveGroups(Collection<Group> groups, RuleSet targetRuleSet) {
+        for (Group group : groups) {
+            if (!targetRuleSet.getGroups().containsKey(group.getId())) {
+                targetRuleSet.getGroups().put(group.getId(), group);
+                resolveGroups(group.getGroups(), targetRuleSet);
+                resolveConcepts(group.getConcepts(), targetRuleSet);
+                resolveConstraints(group.getConstraints(), targetRuleSet);
+            }
+        }
+    }
+
+    /**
+     * Resolve the given selected constraint names into the target rule set.
+     *
+     * @param constraints   The selected constraint names.
+     * @param targetRuleSet The target rule set.
+     */
+    private void resolveConstraints(Collection<Constraint> constraints, RuleSet targetRuleSet) {
+        for (Constraint constraint : constraints) {
+            if (!targetRuleSet.getConstraints().containsKey(constraint.getId())) {
+                targetRuleSet.getConstraints().put(constraint.getId(), constraint);
+                resolveConcepts(constraint.getRequiredConcepts(), targetRuleSet);
+            }
+        }
+    }
+
+    /**
+     * Resolve the given selected concept names into the target rule set.
+     *
+     * @param concepts      The selected concept names.
+     * @param targetRuleSet The target rule set.
+     */
+    private void resolveConcepts(Collection<Concept> concepts, RuleSet targetRuleSet) {
+        for (Concept concept : concepts) {
+            if (!targetRuleSet.getConcepts().containsKey(concept.getId())) {
+                targetRuleSet.getConcepts().put(concept.getId(), concept);
+                resolveConcepts(concept.getRequiredConcepts(), targetRuleSet);
+            }
+        }
+    }
+
+    /**
      * Logs the given {@link RuleSet} on level info.
      *
      * @param ruleSet The {@link RuleSet}.
      */
     protected void logRuleSet(RuleSet ruleSet) {
-        getLog().info("Analysis groups [" + ruleSet.getAnalysisGroups().size() + "]");
-        for (AnalysisGroup analysisGroup : ruleSet.getAnalysisGroups().values()) {
-            getLog().info("  " + analysisGroup.getId());
+        getLog().info("Groups [" + ruleSet.getGroups().size() + "]");
+        for (Group group : ruleSet.getGroups().values()) {
+            getLog().info("  \"" + group.getId() + "\"");
         }
         getLog().info("Constraints [" + ruleSet.getConstraints().size() + "]");
         for (Constraint constraint : ruleSet.getConstraints().values()) {

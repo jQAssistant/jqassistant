@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -92,13 +92,13 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginAnalysisGroup(final AnalysisGroup analysisGroup) throws ReportWriterException {
+    public void beginGroup(final Group group) throws ReportWriterException {
 		final Date now = new Date();
 		run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
-                xmlStreamWriter.writeStartElement("analysisGroup");
-                xmlStreamWriter.writeAttribute("id", analysisGroup.getId());
+                xmlStreamWriter.writeStartElement("group");
+                xmlStreamWriter.writeAttribute("id", group.getId());
 				xmlStreamWriter.writeAttribute("date",
 						XML_DATE_FORMAT.format(now));
             }
@@ -107,7 +107,7 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void endAnalysisGroup() throws ReportWriterException {
+    public void endGroup() throws ReportWriterException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {

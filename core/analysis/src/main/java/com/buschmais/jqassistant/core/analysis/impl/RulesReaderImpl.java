@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.buschmais.jqassistant.core.model.api.Query;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
@@ -62,17 +62,17 @@ public class RulesReaderImpl implements RulesReader {
         Map<String, QueryDefinitionType> queryDefinitionTypes = new HashMap<>();
         Map<String, ConceptType> conceptTypes = new HashMap<>();
         Map<String, ConstraintType> constraintTypes = new HashMap<>();
-        Map<String, AnalysisGroupType> analysisGroupTypes = new HashMap<>();
+        Map<String, GroupType> groupTypes = new HashMap<>();
         for (JqassistantRules rule : rules) {
             cacheXmlTypes(rule.getQueryDefinition(), queryDefinitionTypes);
             cacheXmlTypes(rule.getConcept(), conceptTypes);
             cacheXmlTypes(rule.getConstraint(), constraintTypes);
-            cacheXmlTypes(rule.getAnalysisGroup(), analysisGroupTypes);
+            cacheXmlTypes(rule.getGroup(), groupTypes);
         }
         RuleSet ruleSet = new RuleSet();
         readConcepts(queryDefinitionTypes, conceptTypes, ruleSet);
         readConstraints(queryDefinitionTypes, conceptTypes, constraintTypes, ruleSet);
-        readAnalysisGroups(conceptTypes, constraintTypes, analysisGroupTypes, ruleSet);
+        readGroups(conceptTypes, constraintTypes, groupTypes, ruleSet);
         return ruleSet;
     }
 
@@ -131,35 +131,35 @@ public class RulesReaderImpl implements RulesReader {
     }
 
     /**
-     * Reads {@link AnalysisGroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}s.
+     * Reads {@link GroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rules.Group}s.
      *
      * @param constraintTypes    The {@link ConstraintType}s.
-     * @param analysisGroupTypes The {@link AnalysisGroupType}s.
+     * @param groupTypes The {@link GroupType}s.
      * @param ruleSet            The {@link RuleSet}.
      */
-    private void readAnalysisGroups(Map<String, ConceptType> conceptTypes, Map<String, ConstraintType> constraintTypes, Map<String, AnalysisGroupType> analysisGroupTypes, RuleSet ruleSet) {
-        for (AnalysisGroupType analysisGroupType : analysisGroupTypes.values()) {
-            AnalysisGroup analysisGroup = getOrCreateAnalysisGroup(analysisGroupType.getId(), ruleSet.getAnalysisGroups());
-            for (ReferenceType referenceType : analysisGroupType.getIncludeConcept()) {
+    private void readGroups(Map<String, ConceptType> conceptTypes, Map<String, ConstraintType> constraintTypes, Map<String, GroupType> groupTypes, RuleSet ruleSet) {
+        for (GroupType groupType : groupTypes.values()) {
+            Group group = getOrCreateGroup(groupType.getId(), ruleSet.getGroups());
+            for (ReferenceType referenceType : groupType.getIncludeConcept()) {
                 ConceptType includedConceptType = conceptTypes.get(referenceType.getRefId());
                 if (includedConceptType == null) {
                     throw new IllegalArgumentException("Cannot resolve included constraint: " + referenceType.getRefId());
                 }
-                analysisGroup.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
+                group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
             }
-            for (ReferenceType referenceType : analysisGroupType.getIncludeConstraint()) {
+            for (ReferenceType referenceType : groupType.getIncludeConstraint()) {
                 ConstraintType includedConstraintType = constraintTypes.get(referenceType.getRefId());
                 if (includedConstraintType == null) {
                     throw new IllegalArgumentException("Cannot resolve included constraint: " + referenceType.getRefId());
                 }
-                analysisGroup.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
+                group.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
             }
-            for (ReferenceType referenceType : analysisGroupType.getIncludeAnalysisGroup()) {
-                AnalysisGroupType includedConstraintType = analysisGroupTypes.get(referenceType.getRefId());
+            for (ReferenceType referenceType : groupType.getIncludeGroup()) {
+                GroupType includedConstraintType = groupTypes.get(referenceType.getRefId());
                 if (includedConstraintType == null) {
-                    throw new IllegalArgumentException("Cannot resolve included analysis group: " + referenceType.getRefId());
+                    throw new IllegalArgumentException("Cannot resolve included group: " + referenceType.getRefId());
                 }
-                analysisGroup.getAnalysisGroups().add(getOrCreateAnalysisGroup(referenceType.getRefId(), ruleSet.getAnalysisGroups()));
+                group.getGroups().add(getOrCreateGroup(referenceType.getRefId(), ruleSet.getGroups()));
             }
         }
     }
@@ -199,20 +199,20 @@ public class RulesReaderImpl implements RulesReader {
     }
 
     /**
-     * Gets a {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup} from the cache or create a new instance if it does not exist yet.
+     * Gets a {@link com.buschmais.jqassistant.core.model.api.rules.Group} from the cache or create a new instance if it does not exist yet.
      *
      * @param id             The id.
-     * @param analysisGroups The {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}s.
-     * @return The {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}.
+     * @param groups The {@link com.buschmais.jqassistant.core.model.api.rules.Group}s.
+     * @return The {@link com.buschmais.jqassistant.core.model.api.rules.Group}.
      */
-    private AnalysisGroup getOrCreateAnalysisGroup(String id, Map<String, AnalysisGroup> analysisGroups) {
-        AnalysisGroup analysisGroup = analysisGroups.get(id);
-        if (analysisGroup == null) {
-            analysisGroup = new AnalysisGroup();
-            analysisGroup.setId(id);
-            analysisGroups.put(id, analysisGroup);
+    private Group getOrCreateGroup(String id, Map<String, Group> groups) {
+        Group group = groups.get(id);
+        if (group == null) {
+            group = new Group();
+            group.setId(id);
+            groups.put(id, group);
         }
-        return analysisGroup;
+        return group;
     }
 
     /**

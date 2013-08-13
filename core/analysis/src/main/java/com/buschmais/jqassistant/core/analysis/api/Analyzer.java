@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 
 /**
@@ -11,20 +11,20 @@ import com.buschmais.jqassistant.report.api.ReportWriterException;
 public interface Analyzer {
 
     /**
-     * Executes the given analysis groups.
+     * Executes the given groups.
      *
-     * @param analysisGroups The analysis groups.
+     * @param groups The groups.
      * @throws ReportWriterException If the report cannot be written.
      */
-    void executeAnalysisGroups(Iterable<AnalysisGroup> analysisGroups) throws ReportWriterException;
+    void executeGroups(Iterable<Group> groups) throws ReportWriterException;
 
     /**
-     * Execute the given analysis group.
+     * Execute the given group.
      *
-     * @param analysisGroup The analysis group.
+     * @param group The group.
      * @throws ReportWriterException If the report cannot be written.
      */
-    void executeAnalysisGroup(AnalysisGroup analysisGroup) throws ReportWriterException;
+    void executeGroup(Group group) throws ReportWriterException;
 
 
     /**

@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.rules.javaee.test;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.rules.javaee.test.set.ejb3.*;
-import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -114,7 +113,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     @Test
     public void enterpriseJavaBean() throws IOException, ReportWriterException {
         scanClasses(StatelessLocalBean.class, StatelessRemoteBean.class, StatefulBean.class, MessageDrivenBean.class);
-        executeAnalysisGroup("ejb3:EnterpriseJavaBean");
+        executeGroup("ejb3:EJB");
         assertThat(executeQuery("MATCH (ejb:TYPE:EJB) RETURN ejb").getColumns().get("ejb"), allOf(
                 hasItem(typeDescriptor(StatelessLocalBean.class)),
                 hasItem(typeDescriptor(StatelessRemoteBean.class)),

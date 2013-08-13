@@ -32,7 +32,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
 import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.CompositeReportWriter;
@@ -56,10 +56,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        RuleSet ruleSet = readRules();
-        final List<Concept> selectedConcepts = getSelectedConcepts(ruleSet);
-        final List<Constraint> selectedConstraints = getSelectedConstraints(ruleSet);
-        final List<AnalysisGroup> selectedAnalysisGroups = getSelectedAnalysisGroups(ruleSet);
+        final RuleSet ruleSet = resolveEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
@@ -83,9 +80,9 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                 public Void run(Store store) throws AbstractMojoExecutionException {
                     Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
                     try {
-                        analyzer.applyConcepts(selectedConcepts);
-                        analyzer.validateConstraints(selectedConstraints);
-                        analyzer.executeAnalysisGroups(selectedAnalysisGroups);
+                        analyzer.executeGroups(ruleSet.getGroups().values());
+                        analyzer.validateConstraints(ruleSet.getConstraints().values());
+                        analyzer.applyConcepts(ruleSet.getConcepts().values());
                     } catch (ReportWriterException e) {
                         throw new MojoExecutionException("Cannot create report.", e);
                     }
