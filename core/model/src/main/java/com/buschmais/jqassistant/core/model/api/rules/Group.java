@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Defines a constraint group.
+ * Defines a group.
  */
-public class AnalysisGroup {
+public class Group {
 
     private String id;
 
@@ -14,7 +14,7 @@ public class AnalysisGroup {
 
     private Set<Constraint> constraints = new HashSet<Constraint>();
 
-    private Set<AnalysisGroup> analysisGroups = new HashSet<AnalysisGroup>();
+    private Set<Group> groups = new HashSet<Group>();
 
     public String getId() {
         return id;
@@ -40,19 +40,19 @@ public class AnalysisGroup {
         this.constraints = constraints;
     }
 
-    public Set<AnalysisGroup> getAnalysisGroups() {
-        return analysisGroups;
+    public Set<Group> getGroups() {
+        return groups;
     }
 
-    public void setAnalysisGroups(Set<AnalysisGroup> analysisGroups) {
-        this.analysisGroups = analysisGroups;
+    public void setGroups(Set<Group> groups) {
+        this.groups = groups;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AnalysisGroup that = (AnalysisGroup) o;
+        Group that = (Group) o;
         if (!id.equals(that.id)) return false;
         return true;
     }

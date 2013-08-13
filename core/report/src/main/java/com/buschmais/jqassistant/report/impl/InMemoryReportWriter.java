@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.report.api.ReportWriter;
@@ -41,11 +41,11 @@ public class InMemoryReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginAnalysisGroup(AnalysisGroup analysisGroup) throws ReportWriterException {
+    public void beginGroup(Group group) throws ReportWriterException {
     }
 
     @Override
-    public void endAnalysisGroup() throws ReportWriterException {
+    public void endGroup() throws ReportWriterException {
     }
 
     @Override

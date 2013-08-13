@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.model.api.Query;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.report.api.ReportWriter;
@@ -32,7 +32,7 @@ public class AnalyzerImpl implements Analyzer {
 
     private Set<Constraint> executedConstraints = new HashSet<Constraint>();
 
-    private Set<AnalysisGroup> executedAnalysisGroups = new HashSet<AnalysisGroup>();
+    private Set<Group> executedGroups = new HashSet<Group>();
 
 
     /**
@@ -46,11 +46,11 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void executeAnalysisGroups(Iterable<AnalysisGroup> analysisGroups) throws ReportWriterException {
+    public void executeGroups(Iterable<Group> groups) throws ReportWriterException {
         reportWriter.begin();
         try {
-            for (AnalysisGroup analysisGroup : analysisGroups) {
-                executeAnalysisGroup(analysisGroup);
+            for (Group group : groups) {
+                executeGroup(group);
             }
         } finally {
             reportWriter.end();
@@ -58,19 +58,19 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void executeAnalysisGroup(AnalysisGroup analysisGroup) throws ReportWriterException {
-        if (!executedAnalysisGroups.contains(analysisGroup)) {
-            LOGGER.info("Executing analysis group '{}'", analysisGroup.getId());
-            for (AnalysisGroup includedAnalysisGroup : analysisGroup.getAnalysisGroups()) {
-                executeAnalysisGroup(includedAnalysisGroup);
+    public void executeGroup(Group group) throws ReportWriterException {
+        if (!executedGroups.contains(group)) {
+            LOGGER.info("Executing group '{}'", group.getId());
+            for (Group includedGroup : group.getGroups()) {
+                executeGroup(includedGroup);
             }
-            reportWriter.beginAnalysisGroup(analysisGroup);
+            reportWriter.beginGroup(group);
             try {
-                applyConcepts(analysisGroup.getConcepts());
-                validateConstraints(analysisGroup.getConstraints());
-                executedAnalysisGroups.add(analysisGroup);
+                applyConcepts(group.getConcepts());
+                validateConstraints(group.getConstraints());
+                executedGroups.add(group);
             } finally {
-                reportWriter.endAnalysisGroup();
+                reportWriter.endGroup();
             }
         }
     }

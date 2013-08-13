@@ -89,15 +89,15 @@
 				<div>
 			    	TOC:
 			    	<ul>
-		                <xsl:apply-templates select="*/jqa-report:analysisGroup" mode="toc"/>
+		                <xsl:apply-templates select="*/jqa-report:group" mode="toc"/>
 		            </ul>
 		        </div>
-                <xsl:apply-templates select="*/jqa-report:analysisGroup" mode="full"/>
+                <xsl:apply-templates select="*/jqa-report:group" mode="full"/>
             </body>
         </html>
     </xsl:template>
     
-    <xsl:template match="jqa-report:analysisGroup" mode="toc">
+    <xsl:template match="jqa-report:group" mode="toc">
 		<li><xsl:value-of select="@id"/>
 			<ul>
 				<li><a href="#{@id}_constraints">Constraints</a></li>
@@ -107,10 +107,10 @@
     </xsl:template>
     
 	<!-- ANALYSIS GROUP -->
-    <xsl:template match="jqa-report:analysisGroup" mode="full">
+    <xsl:template match="jqa-report:group" mode="full">
         <div>
             <h2>
-                Analysis Group: <xsl:value-of select="@id"/> (<xsl:value-of select="@date"/>)
+                Group: <xsl:value-of select="@id"/> (<xsl:value-of select="@date"/>)
             </h2>
         </div>
         <div>
