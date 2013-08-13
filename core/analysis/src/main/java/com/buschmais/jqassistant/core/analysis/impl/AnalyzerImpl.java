@@ -66,16 +66,19 @@ public class AnalyzerImpl implements Analyzer {
             }
             reportWriter.beginAnalysisGroup(analysisGroup);
             try {
-                for (Concept concept : analysisGroup.getConcepts()) {
-                    applyConcept(concept);
-                }
-                for (Constraint constraint : analysisGroup.getConstraints()) {
-                    validateConstraint(constraint);
-                }
+                applyConcepts(analysisGroup.getConcepts());
+                validateConstraints(analysisGroup.getConstraints());
                 executedAnalysisGroups.add(analysisGroup);
             } finally {
                 reportWriter.endAnalysisGroup();
             }
+        }
+    }
+
+    @Override
+    public void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException {
+        for (Constraint constraint : constraints) {
+            validateConstraint(constraint);
         }
     }
 
@@ -93,6 +96,13 @@ public class AnalyzerImpl implements Analyzer {
             } finally {
                 reportWriter.endConstraint();
             }
+        }
+    }
+
+    @Override
+    public void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException {
+        for (Concept concept : concepts) {
+            applyConcept(concept);
         }
     }
 

@@ -67,7 +67,8 @@
                                 </goals>
                                 <configuration>
                                     <argLine>-Xmx512M</argLine>
-                                    <forkMode>always</forkMode>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
                                 </configuration>
                             </execution>
                         </executions>
@@ -91,7 +92,8 @@
                                 </goals>
                                 <configuration>
                                     <argLine>-Xmx512M</argLine>
-                                    <forkMode>always</forkMode>
+                                    <forkCount>1</forkCount>
+                                    <reuseForks>true</reuseForks>
                                     <includes>
                                         <include>**/*PT.java</include>
                                     </includes>

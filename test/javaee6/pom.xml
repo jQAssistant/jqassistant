@@ -31,9 +31,9 @@
                         </goals>
                     </execution>
                     <execution>
-                        <id>verify</id>
+                        <id>analyze</id>
                         <goals>
-                            <goal>verify</goal>
+                            <goal>analyze</goal>
                         </goals>
                         <configuration>
                             <analysisGroups>

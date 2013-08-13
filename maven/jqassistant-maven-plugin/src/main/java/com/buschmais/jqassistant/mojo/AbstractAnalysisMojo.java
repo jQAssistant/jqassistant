@@ -31,14 +31,28 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * The directory to scan for rules.
      *
-     * @parameter expression="${jqassistant.rules.rulesDirectory}"
+     * @parameter expression="${jqassistant.rules.directory}"
      */
     protected File rulesDirectory;
 
     /**
-     * The list of constraint group names to be executed.
+     * The list of concept names to be applied.
      *
-     * @parameter
+     * @parameter expression="${jqassistant.concepts}"
+     */
+    protected List<String> concepts;
+
+    /**
+     * The list of constraint names to be validated.
+     *
+     * @parameter expression="${jqassistant.constraints}"
+     */
+    protected List<String> constraints;
+
+    /**
+     * The list of analysis group names to be executed.
+     *
+     * @parameter expression="${jqassistant.analysisGroups}"
      */
     protected List<String> analysisGroups;
 
@@ -47,28 +61,72 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     private RulesReader rulesReader = new RulesReaderImpl();
 
     /**
+     * Return the selected concepts.
+     *
+     * @param ruleSet The {@link RuleSet}.
+     * @return The selected concepts.
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          If an undefined concept  is referenced.
+     */
+    protected List<Concept> getSelectedConcepts(RuleSet ruleSet) throws MojoExecutionException {
+        final List<Concept> selectedConcepts = new ArrayList<>();
+        if (concepts != null) {
+            for (String conceptName : concepts) {
+                Concept concept = ruleSet.getConcepts().get(conceptName);
+                if (concept == null) {
+                    throw new MojoExecutionException("The concept '" + conceptName + "' is not defined.");
+                }
+                selectedConcepts.add(concept);
+            }
+        }
+        return selectedConcepts;
+    }
+
+    /**
+     * Return the selected constraints.
+     *
+     * @param ruleSet The {@link RuleSet}.
+     * @return The selected constraints.
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *          If an undefined constraint is referenced.
+     */
+    protected List<Constraint> getSelectedConstraints(RuleSet ruleSet) throws MojoExecutionException {
+        final List<Constraint> selectedConstraints = new ArrayList<>();
+        if (constraints != null) {
+            for (String constraintName : constraints) {
+                Constraint concept = ruleSet.getConstraints().get(constraintName);
+                if (concept == null) {
+                    throw new MojoExecutionException("The constraint '" + constraintName + "' is not defined.");
+                }
+                selectedConstraints.add(concept);
+            }
+        }
+        return selectedConstraints;
+    }
+
+    /**
      * Return the selected analysis groups.
      *
      * @param ruleSet The {@link RuleSet}.
-     * @return The selected constraint groups.
+     * @return The selected analysis groups.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined group is referenced.
      */
     protected List<AnalysisGroup> getSelectedAnalysisGroups(RuleSet ruleSet) throws MojoExecutionException {
-        final List<AnalysisGroup> selectedAnalysisGroups = new ArrayList<AnalysisGroup>();
+        final List<AnalysisGroup> selectedAnalysisGroups = new ArrayList<>();
         if (analysisGroups != null) {
-            for (String analysisGroup : analysisGroups) {
-                AnalysisGroup group = ruleSet.getAnalysisGroups().get(analysisGroup);
+            for (String analysisGroupName : analysisGroups) {
+                AnalysisGroup group = ruleSet.getAnalysisGroups().get(analysisGroupName);
                 if (group == null) {
-                    throw new MojoExecutionException("The analysis group '" + analysisGroup + "' is not defined.");
+                    throw new MojoExecutionException("The analysis group '" + analysisGroupName + "' is not defined.");
                 }
                 selectedAnalysisGroups.add(group);
             }
-        } else {
-            selectedAnalysisGroups.addAll(ruleSet.getAnalysisGroups().values());
         }
         return selectedAnalysisGroups;
     }
+
+
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -81,7 +139,7 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
         if (rulesDirectory == null) {
             rulesDirectory = new File(basedir.getAbsoluteFile() + File.separator + DEFAULT_RULES_DIRECTORY);
         }
-        List<Source> sources = new ArrayList<Source>();
+        List<Source> sources = new ArrayList<>();
         // read rules from rules directory
         List<File> ruleFiles = readRulesDirectory(rulesDirectory);
         for (File ruleFile : ruleFiles) {
