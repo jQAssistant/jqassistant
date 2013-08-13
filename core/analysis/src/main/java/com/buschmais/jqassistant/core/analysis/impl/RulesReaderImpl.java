@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.buschmais.jqassistant.core.model.api.Query;
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class RulesReaderImpl implements RulesReader {
 
     @Override
     public RuleSet read(List<Source> sources) {
-        List<JqassistantRules> rules = new ArrayList<JqassistantRules>();
+        List<JqassistantRules> rules = new ArrayList<>();
         for (Source source : sources) {
             try {
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -59,20 +59,20 @@ public class RulesReaderImpl implements RulesReader {
      * @return The corresponding {@link RuleSet}.
      */
     private RuleSet convert(List<JqassistantRules> rules) {
-        Map<String, QueryDefinitionType> queryDefinitionTypes = new HashMap<String, QueryDefinitionType>();
-        Map<String, ConceptType> conceptTypes = new HashMap<String, ConceptType>();
-        Map<String, ConstraintType> constraintTypes = new HashMap<String, ConstraintType>();
-        Map<String, ConstraintGroupType> constraintGroupTypes = new HashMap<String, ConstraintGroupType>();
+        Map<String, QueryDefinitionType> queryDefinitionTypes = new HashMap<>();
+        Map<String, ConceptType> conceptTypes = new HashMap<>();
+        Map<String, ConstraintType> constraintTypes = new HashMap<>();
+        Map<String, AnalysisGroupType> analysisGroupTypes = new HashMap<>();
         for (JqassistantRules rule : rules) {
             cacheXmlTypes(rule.getQueryDefinition(), queryDefinitionTypes);
             cacheXmlTypes(rule.getConcept(), conceptTypes);
             cacheXmlTypes(rule.getConstraint(), constraintTypes);
-            cacheXmlTypes(rule.getConstraintGroup(), constraintGroupTypes);
+            cacheXmlTypes(rule.getAnalysisGroup(), analysisGroupTypes);
         }
         RuleSet ruleSet = new RuleSet();
         readConcepts(queryDefinitionTypes, conceptTypes, ruleSet);
         readConstraints(queryDefinitionTypes, conceptTypes, constraintTypes, ruleSet);
-        readConstraintGroups(constraintTypes, constraintGroupTypes, ruleSet);
+        readAnalysisGroups(conceptTypes, constraintTypes, analysisGroupTypes, ruleSet);
         return ruleSet;
     }
 
@@ -131,28 +131,35 @@ public class RulesReaderImpl implements RulesReader {
     }
 
     /**
-     * Reads {@link ConstraintGroupType}s and converts them to {@link ConstraintGroup}s.
+     * Reads {@link AnalysisGroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}s.
      *
-     * @param constraintTypes      The {@link ConstraintType}s.
-     * @param constraintGroupTypes The {@link ConstraintGroupType}s.
-     * @param ruleSet              The {@link RuleSet}.
+     * @param constraintTypes    The {@link ConstraintType}s.
+     * @param analysisGroupTypes The {@link AnalysisGroupType}s.
+     * @param ruleSet            The {@link RuleSet}.
      */
-    private void readConstraintGroups(Map<String, ConstraintType> constraintTypes, Map<String, ConstraintGroupType> constraintGroupTypes, RuleSet ruleSet) {
-        for (ConstraintGroupType constraintGroupType : constraintGroupTypes.values()) {
-            ConstraintGroup constraintGroup = getOrCreateConstraintGroup(constraintGroupType.getId(), ruleSet.getConstraintGroups());
-            for (ReferenceType referenceType : constraintGroupType.getIncludeConstraint()) {
+    private void readAnalysisGroups(Map<String, ConceptType> conceptTypes, Map<String, ConstraintType> constraintTypes, Map<String, AnalysisGroupType> analysisGroupTypes, RuleSet ruleSet) {
+        for (AnalysisGroupType analysisGroupType : analysisGroupTypes.values()) {
+            AnalysisGroup analysisGroup = getOrCreateAnalysisGroup(analysisGroupType.getId(), ruleSet.getAnalysisGroups());
+            for (ReferenceType referenceType : analysisGroupType.getIncludeConcept()) {
+                ConceptType includedConceptType = conceptTypes.get(referenceType.getRefId());
+                if (includedConceptType == null) {
+                    throw new IllegalArgumentException("Cannot resolve included constraint: " + referenceType.getRefId());
+                }
+                analysisGroup.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
+            }
+            for (ReferenceType referenceType : analysisGroupType.getIncludeConstraint()) {
                 ConstraintType includedConstraintType = constraintTypes.get(referenceType.getRefId());
                 if (includedConstraintType == null) {
                     throw new IllegalArgumentException("Cannot resolve included constraint: " + referenceType.getRefId());
                 }
-                constraintGroup.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
+                analysisGroup.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
             }
-            for (ReferenceType referenceType : constraintGroupType.getIncludeConstraintGroup()) {
-                ConstraintGroupType includedConstraintType = constraintGroupTypes.get(referenceType.getRefId());
+            for (ReferenceType referenceType : analysisGroupType.getIncludeAnalysisGroup()) {
+                AnalysisGroupType includedConstraintType = analysisGroupTypes.get(referenceType.getRefId());
                 if (includedConstraintType == null) {
-                    throw new IllegalArgumentException("Cannot resolve included constraint group: " + referenceType.getRefId());
+                    throw new IllegalArgumentException("Cannot resolve included analysis group: " + referenceType.getRefId());
                 }
-                constraintGroup.getConstraintGroups().add(getOrCreateConstraintGroup(referenceType.getRefId(), ruleSet.getConstraintGroups()));
+                analysisGroup.getAnalysisGroups().add(getOrCreateAnalysisGroup(referenceType.getRefId(), ruleSet.getAnalysisGroups()));
             }
         }
     }
@@ -192,20 +199,20 @@ public class RulesReaderImpl implements RulesReader {
     }
 
     /**
-     * Gets a {@link ConstraintGroup} from the cache or create a new instance if it does not exist yet.
+     * Gets a {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup} from the cache or create a new instance if it does not exist yet.
      *
-     * @param id               The id.
-     * @param constraintGroups The {@link ConstraintGroup}s.
-     * @return The {@link ConstraintGroup}.
+     * @param id             The id.
+     * @param analysisGroups The {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}s.
+     * @return The {@link com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup}.
      */
-    private ConstraintGroup getOrCreateConstraintGroup(String id, Map<String, ConstraintGroup> constraintGroups) {
-        ConstraintGroup constraintGroup = constraintGroups.get(id);
-        if (constraintGroup == null) {
-            constraintGroup = new ConstraintGroup();
-            constraintGroup.setId(id);
-            constraintGroups.put(id, constraintGroup);
+    private AnalysisGroup getOrCreateAnalysisGroup(String id, Map<String, AnalysisGroup> analysisGroups) {
+        AnalysisGroup analysisGroup = analysisGroups.get(id);
+        if (analysisGroup == null) {
+            analysisGroup = new AnalysisGroup();
+            analysisGroup.setId(id);
+            analysisGroups.put(id, analysisGroup);
         }
-        return constraintGroup;
+        return analysisGroup;
     }
 
     /**

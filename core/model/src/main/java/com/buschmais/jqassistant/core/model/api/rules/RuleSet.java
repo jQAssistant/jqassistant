@@ -4,13 +4,13 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Defines a rules containing all resolved {@link Concept}s, {@link Constraint}s and {@link ConstraintGroup}s.
+ * Defines a rules containing all resolved {@link Concept}s, {@link Constraint}s and {@link AnalysisGroup}s.
  */
 public class RuleSet {
 
-    private Map<String, Concept> concepts = new TreeMap<String, Concept>();
-    private Map<String, Constraint> constraints = new TreeMap<String, Constraint>();
-    private Map<String, ConstraintGroup> constraintGroups = new TreeMap<String, ConstraintGroup>();
+    private Map<String, Concept> concepts = new TreeMap<>();
+    private Map<String, Constraint> constraints = new TreeMap<>();
+    private Map<String, AnalysisGroup> analysisGroups = new TreeMap<>();
 
     public Map<String, Concept> getConcepts() {
         return concepts;
@@ -20,7 +20,7 @@ public class RuleSet {
         return constraints;
     }
 
-    public Map<String, ConstraintGroup> getConstraintGroups() {
-        return constraintGroups;
+    public Map<String, AnalysisGroup> getAnalysisGroups() {
+        return analysisGroups;
     }
 }

@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.ConstraintGroup;
+import com.buschmais.jqassistant.core.model.api.rules.AnalysisGroup;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -39,7 +39,7 @@ public class XmlReportWriter implements ReportWriter {
 
     private Result<? extends AbstractExecutable> result;
 
-    private long constraintGroupBeginTime;
+    private long analysisGroupBeginTime;
 
     private long executableBeginTime;
 
@@ -92,26 +92,26 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginConstraintGroup(final ConstraintGroup constraintGroup) throws ReportWriterException {
+    public void beginAnalysisGroup(final AnalysisGroup analysisGroup) throws ReportWriterException {
 		final Date now = new Date();
 		run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
-                xmlStreamWriter.writeStartElement("constraintGroup");
-                xmlStreamWriter.writeAttribute("id", constraintGroup.getId());
+                xmlStreamWriter.writeStartElement("analysisGroup");
+                xmlStreamWriter.writeAttribute("id", analysisGroup.getId());
 				xmlStreamWriter.writeAttribute("date",
 						XML_DATE_FORMAT.format(now));
             }
         });
-		this.constraintGroupBeginTime = now.getTime();
+		this.analysisGroupBeginTime = now.getTime();
     }
 
     @Override
-    public void endConstraintGroup() throws ReportWriterException {
+    public void endAnalysisGroup() throws ReportWriterException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
-                writeDuration(constraintGroupBeginTime);
+                writeDuration(analysisGroupBeginTime);
                 xmlStreamWriter.writeEndElement();
             }
         });
