@@ -4,10 +4,6 @@ import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.rules.junit4.test.set.IgnoredTestClass;
 import com.buschmais.jqassistant.rules.junit4.test.set.TestClass;
-import com.buschmais.jqassistant.scanner.test.matcher.MethodDescriptorMatcher;
-import com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher;
-import com.buschmais.jqassistant.scanner.test.set.pojo.Pojo;
-import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,7 +12,6 @@ import java.util.Map;
 
 import static com.buschmais.jqassistant.scanner.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -36,8 +31,7 @@ public class JunitIT extends AbstractAnalysisIT {
     public void testMethod() throws IOException, ReportWriterException, NoSuchMethodException {
         scanClasses(TestClass.class);
         applyConcept("junit4:TestMethod");
-        TestResult testResult = executeQuery("MATCH m:METHOD:JUNIT4:TEST RETURN m");
-        Map<String, List<Object>> columns = testResult.getColumns();
+        Map<String, List<Object>> columns = executeQuery("MATCH m:METHOD:JUNIT4:TEST RETURN m").getColumns();
         assertThat(columns.get("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
     }
 
@@ -51,8 +45,7 @@ public class JunitIT extends AbstractAnalysisIT {
     public void testClass() throws IOException, ReportWriterException {
         scanClasses(TestClass.class);
         applyConcept("junit4:TestClass");
-        TestResult testResult = executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c");
-        Map<String, List<Object>> columns = testResult.getColumns();
+        Map<String, List<Object>> columns = executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c").getColumns();
         assertThat(columns.get("c"), hasItem(typeDescriptor(TestClass.class)));
     }
 
@@ -67,8 +60,7 @@ public class JunitIT extends AbstractAnalysisIT {
     public void ignoreTestMethod() throws IOException, ReportWriterException, NoSuchMethodException {
         scanClasses(IgnoredTestClass.class);
         applyConcept("junit4:IgnoreTestMethod");
-        TestResult testResult = executeQuery("MATCH m:METHOD:JUNIT4:TEST:IGNORE RETURN m");
-        Map<String, List<Object>> columns = testResult.getColumns();
+        Map<String, List<Object>> columns = executeQuery("MATCH m:METHOD:JUNIT4:TEST:IGNORE RETURN m").getColumns();
         assertThat(columns.get("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
     }
 
@@ -82,8 +74,7 @@ public class JunitIT extends AbstractAnalysisIT {
     public void ignoreTestClass() throws IOException, ReportWriterException {
         scanClasses(IgnoredTestClass.class);
         applyConcept("junit4:IgnoreTestClass");
-        TestResult testResult = executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST:IGNORE RETURN c");
-        Map<String, List<Object>> columns = testResult.getColumns();
+        Map<String, List<Object>> columns = executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST:IGNORE RETURN c").getColumns();
         assertThat(columns.get("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
     }
 }

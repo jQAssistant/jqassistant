@@ -15,7 +15,7 @@
         <requiresConcept refId="ejb3:StatelessSessionBean"/>
         <requiresConcept refId="ejb3:StatefulSessionBean"/>
         <requiresConcept refId="ejb3:MessageDrivenBean"/>
-        <requiresConcept refId="ejb3:Singleton"/>
+        <requiresConcept refId="ejb3:SingletonBean"/>
         <description>All EJBs must be located in the package logic.impl or sub-packages.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(b)

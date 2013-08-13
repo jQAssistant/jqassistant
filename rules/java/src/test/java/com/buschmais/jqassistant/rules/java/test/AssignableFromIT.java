@@ -1,9 +1,9 @@
-package com.buschmais.jqassistant.rules.java.test.dependency;
+package com.buschmais.jqassistant.rules.java.test;
 
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
-import com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher;
-import com.buschmais.jqassistant.scanner.test.set.pojo.Pojo;
+import com.buschmais.jqassistant.rules.java.test.set.java.ClassType;
+import com.buschmais.jqassistant.rules.java.test.set.java.InterfaceType;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
@@ -21,13 +21,17 @@ import static org.junit.Assert.assertThat;
  */
 public class AssignableFromIT extends AbstractAnalysisIT {
 
+    /**
+     * Verifies the concept "java:AssignableFrom".
+     * @throws IOException
+     * @throws ReportWriterException
+     */
     @Test
     public void assignableFrom() throws IOException, ReportWriterException {
-        scanClasses(Pojo.class);
+        scanClasses(ClassType.class);
         applyConcept("java:AssignableFrom");
-        TestResult testResult = executeQuery("MATCH (pojo:TYPE)<-[:ASSIGNABLE_FROM]-(c) RETURN c");
-        Map<String, List<Object>> columns = testResult.getColumns();
-        Matcher<Iterable<Object>> matcher = allOf(hasItem(typeDescriptor(Object.class)), hasItem(typeDescriptor(Pojo.class)));
-        assertThat(columns.get("c"), matcher);
+        Map<String, List<Object>> columns = executeQuery("MATCH (type:TYPE)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumns();
+        Matcher<Iterable<Object>> matcher = allOf(hasItem(typeDescriptor(ClassType.class)), hasItem(typeDescriptor(InterfaceType.class)), hasItem(typeDescriptor(Object.class)));
+        assertThat(columns.get("assignableType"), matcher);
     }
 }

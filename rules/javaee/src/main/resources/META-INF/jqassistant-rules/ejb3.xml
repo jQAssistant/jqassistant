@@ -20,6 +20,16 @@
         ]]></cypher>
     </concept>
 
+    <concept id="ejb3:SingletonBean">
+        <description>Labels all classes annotated with javax.ejb.Singleton with EJB and SINGLETON.</description>
+        <cypher><![CDATA[
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
+            WHERE a.FQN="javax.ejb.Singleton"
+            SET t:EJB:SINGLETON
+            RETURN t AS singletonEjb
+        ]]></cypher>
+    </concept>
+
     <concept id="ejb3:MessageDrivenBean">
         <description>Labels all types annotated with javax.ejb.MessageDriven with EJB and MESSAGEDRIVEN.</description>
         <cypher><![CDATA[
@@ -30,13 +40,23 @@
         ]]></cypher>
     </concept>
 
-    <concept id="ejb3:Singleton">
-        <description>Labels all classes annotated with javax.ejb.Singleton with EJB and SINGLETON.</description>
+    <concept id="ejb3:Local">
+        <description>Labels all types annotated with javax.ejb.Local with EJB and LOCAL.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.Singleton"
-            SET t:EJB:SINGLETON
-            RETURN t AS singletonEjb
+            WHERE a.FQN="javax.ejb.Local"
+            SET t:EJB:LOCAL
+            RETURN t AS localBean
+        ]]></cypher>
+    </concept>
+
+    <concept id="ejb3:Remote">
+        <description>Labels all types annotated with javax.ejb.Remote with EJB and REMOTE.</description>
+        <cypher><![CDATA[
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
+            WHERE a.FQN="javax.ejb.Remote"
+            SET t:EJB:REMOTE
+            RETURN t AS remoteBean
         ]]></cypher>
     </concept>
 

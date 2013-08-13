@@ -24,12 +24,12 @@ public class StoreProvider {
      */
     public Store getStore(final File databaseDirectory) {
         if (store == null) {
-            LOGGER.info("Initializing store using directory {}.", databaseDirectory.getAbsolutePath());
+            LOGGER.info("Opening store in directory '{}'.", databaseDirectory.getAbsolutePath());
             store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    LOGGER.info("Shutting down store in directory {}.", databaseDirectory.getAbsolutePath());
+                    LOGGER.info("Shutting down store in directory '{}'.", databaseDirectory.getAbsolutePath());
                     store.stop();
                 }
             });
