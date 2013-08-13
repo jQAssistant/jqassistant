@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.rules.javaee.test;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.rules.javaee.test.set.ejb3.*;
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -101,5 +103,27 @@ public class Ejb3IT extends AbstractAnalysisIT {
         applyConcept("ejb3:Remote");
         Map<String, List<Object>> columns = executeQuery("MATCH (ejb:TYPE:REMOTE) RETURN ejb").getColumns();
         assertThat(columns.get("ejb"), hasItem(typeDescriptor(StatelessRemoteBean.class)));
+    }
+
+    /**
+     * Verifies the analysis group "ejb3:EnterpriseJavaBean".
+     *
+     * @throws IOException           If the test fails.
+     * @throws ReportWriterException If the test fails.
+     */
+    @Test
+    public void enterpriseJavaBean() throws IOException, ReportWriterException {
+        scanClasses(StatelessLocalBean.class, StatelessRemoteBean.class, StatefulBean.class, MessageDrivenBean.class);
+        executeAnalysisGroup("ejb3:EnterpriseJavaBean");
+        assertThat(executeQuery("MATCH (ejb:TYPE:EJB) RETURN ejb").getColumns().get("ejb"), allOf(
+                hasItem(typeDescriptor(StatelessLocalBean.class)),
+                hasItem(typeDescriptor(StatelessRemoteBean.class)),
+                hasItem(typeDescriptor(StatefulBean.class)),
+                hasItem(typeDescriptor(MessageDrivenBean.class))
+        ));
+        assertThat(executeQuery("MATCH (ejb:TYPE:EJB:LOCAL) RETURN ejb").getColumns().get("ejb"),
+                hasItem(typeDescriptor(StatelessLocalBean.class)));
+        assertThat(executeQuery("MATCH (ejb:TYPE:EJB:REMOTE) RETURN ejb").getColumns().get("ejb"),
+                hasItem(typeDescriptor(StatelessRemoteBean.class)));
     }
 }
