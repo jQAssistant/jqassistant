@@ -39,7 +39,7 @@ public class XmlReportWriter implements ReportWriter {
 
     private Result<? extends AbstractExecutable> result;
 
-    private long analysisGroupBeginTime;
+    private long groupBeginTime;
 
     private long executableBeginTime;
 
@@ -103,7 +103,7 @@ public class XmlReportWriter implements ReportWriter {
 						XML_DATE_FORMAT.format(now));
             }
         });
-		this.analysisGroupBeginTime = now.getTime();
+		this.groupBeginTime = now.getTime();
     }
 
     @Override
@@ -111,7 +111,7 @@ public class XmlReportWriter implements ReportWriter {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
-                writeDuration(analysisGroupBeginTime);
+                writeDuration(groupBeginTime);
                 xmlStreamWriter.writeEndElement();
             }
         });

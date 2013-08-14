@@ -3,10 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.model.api.Query;
 import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.*;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.store.api.QueryResult;
@@ -28,12 +25,11 @@ public class AnalyzerImpl implements Analyzer {
 
     private ReportWriter reportWriter;
 
-    private Set<Concept> executedConcepts = new HashSet<Concept>();
+    private Set<Concept> executedConcepts = new HashSet<>();
 
-    private Set<Constraint> executedConstraints = new HashSet<Constraint>();
+    private Set<Constraint> executedConstraints = new HashSet<>();
 
-    private Set<Group> executedGroups = new HashSet<Group>();
-
+    private Set<Group> executedGroups = new HashSet<>();
 
     /**
      * Constructor.
@@ -46,19 +42,36 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void executeGroups(Iterable<Group> groups) throws ReportWriterException {
+    public void execute(RuleSet ruleSet) throws ReportWriterException {
         reportWriter.begin();
         try {
-            for (Group group : groups) {
-                executeGroup(group);
-            }
+            executeGroups(ruleSet.getGroups().values());
+            validateConstraints(ruleSet.getConstraints().values());
+            applyConcepts(ruleSet.getConcepts().values());
         } finally {
             reportWriter.end();
         }
     }
 
-    @Override
-    public void executeGroup(Group group) throws ReportWriterException {
+    /**
+     * Executes the given groups.
+     *
+     * @param groups The groups.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    private void executeGroups(Iterable<Group> groups) throws ReportWriterException {
+        for (Group group : groups) {
+            executeGroup(group);
+        }
+    }
+
+    /**
+     * Executes the given group.
+     *
+     * @param group The group.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    private void executeGroup(Group group) throws ReportWriterException {
         if (!executedGroups.contains(group)) {
             LOGGER.info("Executing group '{}'", group.getId());
             for (Group includedGroup : group.getGroups()) {
@@ -75,15 +88,25 @@ public class AnalyzerImpl implements Analyzer {
         }
     }
 
-    @Override
-    public void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException {
+    /**
+     * Validates the given constraints.
+     *
+     * @param constraints The constraints.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    private void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException {
         for (Constraint constraint : constraints) {
             validateConstraint(constraint);
         }
     }
 
-    @Override
-    public void validateConstraint(Constraint constraint) throws ReportWriterException {
+    /**
+     * Validates the given constraint.
+     *
+     * @param constraint The constraint.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    private void validateConstraint(Constraint constraint) throws ReportWriterException {
         if (!executedConstraints.contains(constraint)) {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
@@ -99,15 +122,25 @@ public class AnalyzerImpl implements Analyzer {
         }
     }
 
-    @Override
-    public void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException {
+    /**
+     * Applies the given concepts.
+     *
+     * @param concepts The concepts.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    private void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException {
         for (Concept concept : concepts) {
             applyConcept(concept);
         }
     }
 
-    @Override
-    public void applyConcept(Concept concept) throws ReportWriterException {
+    /**
+     * Applies the given concept.
+     *
+     * @param concept The concept.
+     * @throws ReportWriterException If the report cannot be written.
+     */
+    private void applyConcept(Concept concept) throws ReportWriterException {
         if (!executedConcepts.contains(concept)) {
             for (Concept requiredConcept : concept.getRequiredConcepts()) {
                 applyConcept(requiredConcept);

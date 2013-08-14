@@ -36,6 +36,9 @@
                             <goal>analyze</goal>
                         </goals>
                         <configuration>
+                            <concepts>
+                                <concept>ejb3:Local</concept>
+                            </concepts>
                             <groups>
                                 <group>continuous</group>
                             </groups>

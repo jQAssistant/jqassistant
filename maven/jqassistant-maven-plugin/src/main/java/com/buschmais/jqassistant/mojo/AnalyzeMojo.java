@@ -16,29 +16,30 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.model.api.rules.*;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.AbstractMojoExecutionException;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-
 import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
+import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rules.Concept;
+import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import com.buschmais.jqassistant.report.api.ReportWriter;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.store.api.Store;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.AbstractMojoExecutionException;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @goal analyze
@@ -70,7 +71,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
         } catch (ReportWriterException e) {
             throw new MojoExecutionException("Cannot create XML report file writer.", e);
         }
-        List<ReportWriter> reportWriters = new LinkedList<ReportWriter>();
+        List<ReportWriter> reportWriters = new LinkedList<>();
         reportWriters.add(inMemoryReportWriter);
         reportWriters.add(xmlReportWriter);
         try {
@@ -80,9 +81,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                 public Void run(Store store) throws AbstractMojoExecutionException {
                     Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
                     try {
-                        analyzer.executeGroups(ruleSet.getGroups().values());
-                        analyzer.validateConstraints(ruleSet.getConstraints().values());
-                        analyzer.applyConcepts(ruleSet.getConcepts().values());
+                        analyzer.execute(ruleSet);
                     } catch (ReportWriterException e) {
                         throw new MojoExecutionException("Cannot create report.", e);
                     }

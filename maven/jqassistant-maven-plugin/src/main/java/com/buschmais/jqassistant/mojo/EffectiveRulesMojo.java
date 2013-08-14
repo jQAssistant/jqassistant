@@ -24,7 +24,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * A Mojo which lists all effective rules.
  *
  * @goal effective-rules
- * @phase verify
+ * @phase validate
  * @requiresProject false
  */
 public class EffectiveRulesMojo extends AbstractAnalysisMojo {

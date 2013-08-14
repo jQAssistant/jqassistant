@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * A Mojo which lists all available rules.
  *
  * @goal available-rules
+ * @phase validate
  * @requiresProject false
  */
 public class AvailableRulesMojo extends AbstractAnalysisMojo {
