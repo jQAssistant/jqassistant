@@ -49,6 +49,7 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <phase>install</phase>
                     </execution>
                 </executions>
                 <dependencies>
