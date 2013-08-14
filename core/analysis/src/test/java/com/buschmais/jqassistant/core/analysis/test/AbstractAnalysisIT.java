@@ -6,8 +6,8 @@ import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.InMemoryReportWriter;
@@ -53,7 +53,9 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
     protected void applyConcept(String id) throws ReportWriterException {
         Concept concept = ruleSet.getConcepts().get(id);
         Assert.assertNotNull("The concept must not be null", concept);
-        analyzer.applyConcept(concept);
+        RuleSet targetRuleSet = new RuleSet();
+        targetRuleSet.getConcepts().put(concept.getId(), concept);
+        analyzer.execute(targetRuleSet);
     }
 
     /**
@@ -65,7 +67,9 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
     protected void executeGroup(String id) throws ReportWriterException {
         Group group = ruleSet.getGroups().get(id);
         Assert.assertNotNull("The group must not be null", group);
-        analyzer.executeGroup(group);
+        RuleSet targetRuleSet = new RuleSet();
+        targetRuleSet.getGroups().put(group.getId(), group);
+        analyzer.execute(targetRuleSet);
     }
 
 }

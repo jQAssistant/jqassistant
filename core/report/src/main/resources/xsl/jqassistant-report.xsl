@@ -86,61 +86,58 @@
             </head>
             <body onload="hideAll()">
                 <h1>jQAssistant Report</h1>
-				<div>
-			    	TOC:
-			    	<ul>
-		                <xsl:apply-templates select="*/jqa-report:group" mode="toc"/>
-		            </ul>
-		        </div>
-                <xsl:apply-templates select="*/jqa-report:group" mode="full"/>
+                <div>
+                    <h3>Groups</h3>
+                    <table>
+                        <tr>
+                            <th>Group Name</th>
+                            <th>Date</th>
+                        </tr>
+                        <xsl:apply-templates select="//jqa-report:group"/>
+                    </table>
+                </div>
+                <div>
+                    <h3>Constraints</h3>
+                    <table>
+                        <tr>
+                            <th>#</th>
+                            <th>Constraint Name</th>
+                            <th>Duration (in ms)</th>
+                        </tr>
+                        <xsl:apply-templates select="//jqa-report:constraint">
+                            <xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
+                            <xsl:sort select="@id" order="ascending" />
+                        </xsl:apply-templates>
+                    </table>
+                </div>
+                <div>
+                    <h3>Concepts</h3>
+                    <table>
+                        <tr>
+                            <th>#</th>
+                            <th>Concept Name</th>
+                            <th>Duration (in ms)</th>
+                        </tr>
+                        <xsl:apply-templates select="//jqa-report:concept">
+                            <xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
+                            <xsl:sort select="@id" order="ascending" />
+                        </xsl:apply-templates>
+                    </table>
+                </div>
             </body>
         </html>
     </xsl:template>
     
-    <xsl:template match="jqa-report:group" mode="toc">
-		<li><xsl:value-of select="@id"/>
-			<ul>
-				<li><a href="#{@id}_constraints">Constraints</a></li>
-				<li><a href="#{@id}_concepts">Concepts</a></li>
-			</ul>
-		</li>
-    </xsl:template>
-    
 	<!-- ANALYSIS GROUP -->
-    <xsl:template match="jqa-report:group" mode="full">
-        <div>
-            <h2>
-                Group: <xsl:value-of select="@id"/> (<xsl:value-of select="@date"/>)
-            </h2>
-        </div>
-        <div>
-            <h3><a name="{@id}_constraints">Constraints</a></h3>
-        	<table>
-        		<tr>
-        			<th>#</th>
-        			<th>Constraint Name</th>
-        			<th>Duration (in ms)</th>
-        		</tr>
-	            <xsl:apply-templates select="jqa-report:constraint">
-	            	<xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
-	            	<xsl:sort select="@id" order="ascending" />
-            	</xsl:apply-templates>
-            </table>
-        </div>
-        <div>
-            <h3><a name="{@id}_concepts">Concepts</a></h3>
-            <table>
-            	<tr>
-            		<th>#</th>
-            		<th>Concept Name</th>
-            		<th>Duration (in ms)</th>
-	           	</tr>
-            	<xsl:apply-templates select="jqa-report:concept">
-	            	<xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
-	            	<xsl:sort select="@id" order="ascending" />
-            	</xsl:apply-templates>
-            </table>
-        </div>
+    <xsl:template match="jqa-report:group">
+        <tr>
+            <td style="width:150px;">
+                <xsl:value-of select="@id"/>
+            </td>
+            <td class="right" style="width:150px;">
+                <xsl:value-of select="@date"/>
+            </td>
+        </tr>
     </xsl:template>
     
 	<!-- CONSTRAINT/CONCEPT TABLE -->
