@@ -7,42 +7,21 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Artifact.
      */
-    ARTIFACT(true),
+    ARTIFACT,
     /**
      * Package
      */
-    PACKAGE(true),
+    PACKAGE,
     /**
      * Type
      */
-    TYPE(true),
+    TYPE,
     /**
      * Method
      */
-    METHOD(false),
+    METHOD,
     /**
      * Field
      */
-    FIELD(false);
-
-    private boolean indexed;
-
-
-    /**
-     * Constructor   .
-     *
-     * @param indexed <code>true</code> if a schema index shall be used for this label.
-     */
-    private NodeLabel(boolean indexed) {
-        this.indexed = indexed;
-    }
-
-    /**
-     * Return <code>true</code> if a schema index shall be used for this label.
-     *
-     * @return <code>true</code> if a schema index shall be used for this label.
-     */
-    public boolean isIndexed() {
-        return indexed;
-    }
+    FIELD;
 }

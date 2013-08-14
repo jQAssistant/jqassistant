@@ -31,7 +31,7 @@ public abstract class AbstractScannerIT {
         store.start();
         store.beginTransaction();
         store.reset();
-        store.endTransaction();
+        store.commitTransaction();
     }
 
     /**
@@ -71,7 +71,7 @@ public abstract class AbstractScannerIT {
     protected void scanClasses(Class<?>... classes) throws IOException {
         store.beginTransaction();
         getScanner().scanClasses(classes);
-        store.endTransaction();
+        store.commitTransaction();
     }
 
     /**
@@ -86,7 +86,7 @@ public abstract class AbstractScannerIT {
             InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
             getScanner().scanInputStream(is, resourceName);
         }
-        store.endTransaction();
+        store.commitTransaction();
     }
 
     /**
@@ -122,7 +122,7 @@ public abstract class AbstractScannerIT {
                 column.add(entry.getValue());
             }
         }
-        store.endTransaction();
+        store.commitTransaction();
         return new TestResult(rows, columns);
     }
 

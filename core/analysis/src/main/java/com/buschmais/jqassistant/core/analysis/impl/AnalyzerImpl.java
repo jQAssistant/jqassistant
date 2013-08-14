@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.model.api.Query;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.*;
@@ -42,14 +43,18 @@ public class AnalyzerImpl implements Analyzer {
     }
 
     @Override
-    public void execute(RuleSet ruleSet) throws ReportWriterException {
-        reportWriter.begin();
+    public void execute(RuleSet ruleSet) throws AnalyzerException {
         try {
-            executeGroups(ruleSet.getGroups().values());
-            validateConstraints(ruleSet.getConstraints().values());
-            applyConcepts(ruleSet.getConcepts().values());
-        } finally {
-            reportWriter.end();
+            reportWriter.begin();
+            try {
+                executeGroups(ruleSet.getGroups().values());
+                validateConstraints(ruleSet.getConstraints().values());
+                applyConcepts(ruleSet.getConcepts().values());
+            } finally {
+                reportWriter.end();
+            }
+        } catch (ReportWriterException e) {
+            throw new AnalyzerException("Cannot write report.", e);
         }
     }
 
@@ -164,16 +169,19 @@ public class AnalyzerImpl implements Analyzer {
      * @return The result.
      */
     private <T extends AbstractExecutable> Result<T> execute(T executable) {
-        List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> rows = new ArrayList<>();
         QueryResult queryResult = null;
-        store.beginTransaction();
         try {
+            store.beginTransaction();
             queryResult = executeQuery(executable.getQuery());
             for (QueryResult.Row row : queryResult.getRows()) {
                 rows.add(row.get());
             }
+            store.commitTransaction();
+        } catch (RuntimeException e) {
+            store.rollbackTransaction();
+            LOGGER.error("Caught ex.", e);
         } finally {
-            store.endTransaction();
             IOUtils.closeQuietly(queryResult);
         }
         return new Result<T>(executable, queryResult.getColumns(), rows);
