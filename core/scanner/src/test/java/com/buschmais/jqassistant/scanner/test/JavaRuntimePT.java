@@ -26,7 +26,7 @@ public class JavaRuntimePT extends AbstractScannerIT {
 
         @Override
         public void afterPackage() {
-            store.endTransaction();
+            store.commitTransaction();
         }
     }
 

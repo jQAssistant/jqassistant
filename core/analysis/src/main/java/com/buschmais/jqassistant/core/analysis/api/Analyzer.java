@@ -14,6 +14,6 @@ public interface Analyzer {
      * @param ruleSet The rule set.
      * @throws ReportWriterException If the report cannot be written.
      */
-    void execute(RuleSet ruleSet) throws ReportWriterException;
+    void execute(RuleSet ruleSet) throws AnalyzerException;
 
 }

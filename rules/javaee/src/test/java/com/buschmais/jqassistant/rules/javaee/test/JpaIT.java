@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.rules.javaee.test;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.rules.javaee.test.set.ejb3.*;
@@ -22,11 +23,11 @@ public class JpaIT extends AbstractAnalysisIT {
     /**
      * Verifies the concept "jpa:Entity".
      *
-     * @throws java.io.IOException           If the test fails.
-     * @throws com.buschmais.jqassistant.report.api.ReportWriterException If the test fails.
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void jpaEntity() throws IOException, ReportWriterException {
+    public void jpaEntity() throws IOException, AnalyzerException {
         scanClasses(JpaEntity.class);
         applyConcept("jpa:Entity");
         Map<String, List<Object>> columns = executeQuery("MATCH (e:TYPE:ENTITY) RETURN e").getColumns();

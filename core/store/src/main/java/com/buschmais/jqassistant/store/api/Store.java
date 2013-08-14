@@ -47,13 +47,18 @@ public interface Store {
     void flush();
 
     /**
-     * End a transaction.
+     * Commit a transaction.
      * <p>
      * This method must be called to permanently store the changes of executed
      * write operations.
      * </p>
      */
-    void endTransaction();
+    void commitTransaction();
+
+    /**
+     * Rollback a transaction.
+     */
+    void rollbackTransaction();
 
     /**
      * Resolves a
@@ -175,7 +180,7 @@ public interface Store {
      * </p>
      *
      * @param typeDescriptor The {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} containing the method.
-     * @param methodName      The name of the method.
+     * @param methodName     The name of the method.
      * @return The resolved {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor}.
      */
     MethodDescriptor createMethodDescriptor(TypeDescriptor typeDescriptor, String methodName);
@@ -192,7 +197,7 @@ public interface Store {
      * </p>
      *
      * @param typeDescriptor The {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor} containing the method.
-     * @param fieldName       The name of the field.
+     * @param fieldName      The name of the field.
      * @return The resolved
      *         {@link com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor}
      *         .

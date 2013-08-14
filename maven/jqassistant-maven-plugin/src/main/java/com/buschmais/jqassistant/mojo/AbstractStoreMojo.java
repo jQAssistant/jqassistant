@@ -71,7 +71,7 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
         try {
             return operation.run(store);
         } finally {
-            store.endTransaction();
+            store.commitTransaction();
         }
     }
 

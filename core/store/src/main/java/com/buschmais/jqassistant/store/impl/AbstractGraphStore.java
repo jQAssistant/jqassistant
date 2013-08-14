@@ -53,11 +53,9 @@ public abstract class AbstractGraphStore implements Store {
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
         beginTransaction();
         for (NodeLabel label : NodeLabel.values()) {
-            if (label.isIndexed()) {
-                database.schema().indexFor(label).on(FQN.name());
-            }
+            database.schema().indexFor(label).on(FQN.name());
         }
-        endTransaction();
+        commitTransaction();
     }
 
     @Override

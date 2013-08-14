@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.rules.java.test;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.rules.java.test.set.java.ClassType;
@@ -24,10 +25,10 @@ public class AssignableFromIT extends AbstractAnalysisIT {
     /**
      * Verifies the concept "java:AssignableFrom".
      * @throws IOException
-     * @throws ReportWriterException
+     * @throws AnalyzerException
      */
     @Test
-    public void assignableFrom() throws IOException, ReportWriterException {
+    public void assignableFrom() throws IOException, AnalyzerException {
         scanClasses(ClassType.class);
         applyConcept("java:AssignableFrom");
         Map<String, List<Object>> columns = executeQuery("MATCH (type:TYPE)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumns();

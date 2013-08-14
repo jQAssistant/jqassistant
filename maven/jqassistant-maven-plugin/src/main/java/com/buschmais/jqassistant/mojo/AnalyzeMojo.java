@@ -17,6 +17,7 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
@@ -82,8 +83,8 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                     Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
                     try {
                         analyzer.execute(ruleSet);
-                    } catch (ReportWriterException e) {
-                        throw new MojoExecutionException("Cannot create report.", e);
+                    } catch (AnalyzerException e) {
+                        throw new MojoExecutionException("Cannot execute analyzer.", e);
                     }
                     return null;
                 }
