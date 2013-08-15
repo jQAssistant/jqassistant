@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.buschmais.jqassistant.core.model.api.Query;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,7 @@ public class RulesReaderImpl implements RulesReader {
             } else {
                 concept.setQuery(createQuery(conceptType.getCypher(), conceptType.getParameter()));
             }
-            concept.setRequiredConcepts(getRequiredConcepts(conceptType.getRequiresConcept(), conceptTypes, ruleSet.getConcepts()));
+            concept.setRequiredConcepts(getRequiredConcepts(conceptType.getRequiresConcept(), conceptTypes, ruleSet));
         }
     }
 
@@ -126,16 +126,16 @@ public class RulesReaderImpl implements RulesReader {
             } else {
                 constraint.setQuery(createQuery(constraintType.getCypher(), constraintType.getParameter()));
             }
-            constraint.setRequiredConcepts(getRequiredConcepts(constraintType.getRequiresConcept(), conceptTypes, ruleSet.getConcepts()));
+            constraint.setRequiredConcepts(getRequiredConcepts(constraintType.getRequiresConcept(), conceptTypes, ruleSet));
         }
     }
 
     /**
      * Reads {@link GroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rules.Group}s.
      *
-     * @param constraintTypes    The {@link ConstraintType}s.
-     * @param groupTypes The {@link GroupType}s.
-     * @param ruleSet            The {@link RuleSet}.
+     * @param constraintTypes The {@link ConstraintType}s.
+     * @param groupTypes      The {@link GroupType}s.
+     * @param ruleSet         The {@link RuleSet}.
      */
     private void readGroups(Map<String, ConceptType> conceptTypes, Map<String, ConstraintType> constraintTypes, Map<String, GroupType> groupTypes, RuleSet ruleSet) {
         for (GroupType groupType : groupTypes.values()) {
@@ -143,23 +143,26 @@ public class RulesReaderImpl implements RulesReader {
             for (ReferenceType referenceType : groupType.getIncludeConcept()) {
                 ConceptType includedConceptType = conceptTypes.get(referenceType.getRefId());
                 if (includedConceptType == null) {
-                    throw new IllegalArgumentException("Cannot resolve included concept: " + referenceType.getRefId());
+                    ruleSet.getMissingConcepts().add(referenceType.getRefId());
+                } else {
+                    group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
                 }
-                group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
             }
             for (ReferenceType referenceType : groupType.getIncludeConstraint()) {
                 ConstraintType includedConstraintType = constraintTypes.get(referenceType.getRefId());
                 if (includedConstraintType == null) {
-                    throw new IllegalArgumentException("Cannot resolve included constraint: " + referenceType.getRefId());
+                    ruleSet.getMissingConstraints().add(referenceType.getRefId());
+                } else {
+                    group.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
                 }
-                group.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
             }
             for (ReferenceType referenceType : groupType.getIncludeGroup()) {
                 GroupType includedConstraintType = groupTypes.get(referenceType.getRefId());
                 if (includedConstraintType == null) {
-                    throw new IllegalArgumentException("Cannot resolve included group: " + referenceType.getRefId());
+                    ruleSet.getMissingGroups().add(referenceType.getRefId());
+                } else {
+                    group.getGroups().add(getOrCreateGroup(referenceType.getRefId(), ruleSet.getGroups()));
                 }
-                group.getGroups().add(getOrCreateGroup(referenceType.getRefId(), ruleSet.getGroups()));
             }
         }
     }
@@ -201,7 +204,7 @@ public class RulesReaderImpl implements RulesReader {
     /**
      * Gets a {@link com.buschmais.jqassistant.core.model.api.rules.Group} from the cache or create a new instance if it does not exist yet.
      *
-     * @param id             The id.
+     * @param id     The id.
      * @param groups The {@link com.buschmais.jqassistant.core.model.api.rules.Group}s.
      * @return The {@link com.buschmais.jqassistant.core.model.api.rules.Group}.
      */
@@ -220,17 +223,17 @@ public class RulesReaderImpl implements RulesReader {
      *
      * @param referenceTypes The {@link ReferenceType}s.
      * @param conceptTypes   The {@link ConceptType}s.
-     * @param concepts       The {@link Concept}s.
+     * @param ruleSet        The {@link RuleSet}.
      * @return The required {@link Concept}s.
      */
-    private Set<Concept> getRequiredConcepts(List<ReferenceType> referenceTypes, Map<String, ConceptType> conceptTypes, Map<String, Concept> concepts) {
+    private Set<Concept> getRequiredConcepts(List<ReferenceType> referenceTypes, Map<String, ConceptType> conceptTypes, RuleSet ruleSet) {
         Set<Concept> requiredConcepts = new HashSet<Concept>();
         for (ReferenceType referenceType : referenceTypes) {
             ConceptType requiredConceptType = conceptTypes.get(referenceType.getRefId());
             if (requiredConceptType == null) {
                 throw new IllegalArgumentException("Cannot resolve required concept: " + referenceType.getRefId());
             }
-            requiredConcepts.add(getOrCreateConcept(referenceType.getRefId(), concepts));
+            requiredConcepts.add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
         }
         return requiredConcepts;
     }
