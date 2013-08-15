@@ -143,7 +143,7 @@ public class RulesReaderImpl implements RulesReader {
             for (ReferenceType referenceType : groupType.getIncludeConcept()) {
                 ConceptType includedConceptType = conceptTypes.get(referenceType.getRefId());
                 if (includedConceptType == null) {
-                    throw new IllegalArgumentException("Cannot resolve included constraint: " + referenceType.getRefId());
+                    throw new IllegalArgumentException("Cannot resolve included concept: " + referenceType.getRefId());
                 }
                 group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
             }
