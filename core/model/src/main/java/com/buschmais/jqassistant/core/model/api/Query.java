@@ -23,4 +23,9 @@ public class Query {
     public Map<String, Object> getParameters() {
         return parameters;
     }
+
+    @Override
+    public String toString() {
+        return "cypher='" + cypher + "', parameters=" + parameters + "]";
+    }
 }
