@@ -63,8 +63,9 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param groups The groups.
      * @throws ReportWriterException If the report cannot be written.
+     * @throws AnalyzerException     If the groups cannot be executed.
      */
-    private void executeGroups(Iterable<Group> groups) throws ReportWriterException {
+    private void executeGroups(Iterable<Group> groups) throws ReportWriterException, AnalyzerException {
         for (Group group : groups) {
             executeGroup(group);
         }
@@ -75,8 +76,9 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param group The group.
      * @throws ReportWriterException If the report cannot be written.
+     * @throws AnalyzerException     If the group cannot be executed.
      */
-    private void executeGroup(Group group) throws ReportWriterException {
+    private void executeGroup(Group group) throws ReportWriterException, AnalyzerException {
         if (!executedGroups.contains(group)) {
             LOGGER.info("Executing group '{}'", group.getId());
             for (Group includedGroup : group.getGroups()) {
@@ -98,8 +100,9 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param constraints The constraints.
      * @throws ReportWriterException If the report cannot be written.
+     * @throws AnalyzerException     If the constraints cannot be validated.
      */
-    private void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException {
+    private void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException, AnalyzerException {
         for (Constraint constraint : constraints) {
             validateConstraint(constraint);
         }
@@ -110,8 +113,9 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param constraint The constraint.
      * @throws ReportWriterException If the report cannot be written.
+     * @throws AnalyzerException     If the constraint cannot be validated.
      */
-    private void validateConstraint(Constraint constraint) throws ReportWriterException {
+    private void validateConstraint(Constraint constraint) throws ReportWriterException, AnalyzerException {
         if (!executedConstraints.contains(constraint)) {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
@@ -132,8 +136,9 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param concepts The concepts.
      * @throws ReportWriterException If the report cannot be written.
+     * @throws AnalyzerException     If the concepts cannot be applied.
      */
-    private void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException {
+    private void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException, AnalyzerException {
         for (Concept concept : concepts) {
             applyConcept(concept);
         }
@@ -144,8 +149,9 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param concept The concept.
      * @throws ReportWriterException If the report cannot be written.
+     * @throws AnalyzerException     If the concept cannot be applied.
      */
-    private void applyConcept(Concept concept) throws ReportWriterException {
+    private void applyConcept(Concept concept) throws ReportWriterException, AnalyzerException {
         if (!executedConcepts.contains(concept)) {
             for (Concept requiredConcept : concept.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
@@ -167,8 +173,9 @@ public class AnalyzerImpl implements Analyzer {
      * @param executable The executable.
      * @param <T>        The type of the executable.
      * @return The result.
+     * @throws AnalyzerException If query execution fails.
      */
-    private <T extends AbstractExecutable> Result<T> execute(T executable) {
+    private <T extends AbstractExecutable> Result<T> execute(T executable) throws AnalyzerException {
         List<Map<String, Object>> rows = new ArrayList<>();
         QueryResult queryResult = null;
         try {
@@ -178,13 +185,13 @@ public class AnalyzerImpl implements Analyzer {
                 rows.add(row.get());
             }
             store.commitTransaction();
+            return new Result<T>(executable, queryResult.getColumns(), rows);
         } catch (RuntimeException e) {
             store.rollbackTransaction();
-            LOGGER.error("Caught ex.", e);
+            throw new AnalyzerException("Cannot execute query: " + executable.getQuery(), e);
         } finally {
             IOUtils.closeQuietly(queryResult);
         }
-        return new Result<T>(executable, queryResult.getColumns(), rows);
     }
 
     /**
