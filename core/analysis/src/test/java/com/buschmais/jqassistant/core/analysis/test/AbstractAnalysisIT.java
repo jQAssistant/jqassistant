@@ -10,7 +10,6 @@ import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
-import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.scanner.test.AbstractScannerIT;
 import org.junit.Assert;
@@ -37,6 +36,9 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
         List<Source> sources = catalogReader.readCatalogs();
         RulesReader rulesReader = new RulesReaderImpl();
         ruleSet = rulesReader.read(sources);
+        Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
+        Assert.assertTrue("There must be no unresolved constraints.", ruleSet.getMissingConstraints().isEmpty());
+        Assert.assertTrue("There must be no unresolved groups.", ruleSet.getMissingGroups().isEmpty());
     }
 
     @Before

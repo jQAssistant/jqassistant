@@ -25,6 +25,7 @@ import java.util.List;
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
     public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
+    public static final String LOG_LINE_PREFIX = "  \"";
 
     /**
      * The directory to scan for rules.
@@ -196,11 +197,37 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      */
     protected RuleSet resolveEffectiveRules() throws MojoExecutionException {
         RuleSet ruleSet = readRules();
-        RuleSet targetRuleSet = new RuleSet();
-        resolveConcepts(getSelectedConcepts(ruleSet), targetRuleSet);
-        resolveConstraints(getSelectedConstraints(ruleSet), targetRuleSet);
-        resolveGroups(getSelectedGroups(ruleSet), targetRuleSet);
-        return targetRuleSet;
+        validateRuleSet(ruleSet);
+        RuleSet effectiveRuleSet = new RuleSet();
+        resolveConcepts(getSelectedConcepts(ruleSet), effectiveRuleSet);
+        resolveConstraints(getSelectedConstraints(ruleSet), effectiveRuleSet);
+        resolveGroups(getSelectedGroups(ruleSet), effectiveRuleSet);
+        return effectiveRuleSet;
+    }
+
+    /**
+     * Validates the given rule set for unresolved concepts, constraints or groups.
+     *
+     * @param ruleSet The rule set.
+     * @throws MojoExecutionException If there are unresolved concepts, constraints or groups.
+     */
+    private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {
+        StringBuffer message = new StringBuffer();
+        if (!ruleSet.getMissingConcepts().isEmpty()) {
+            message.append("\n  Concepts: ");
+            message.append(ruleSet.getMissingConcepts());
+        }
+        if (!ruleSet.getMissingConstraints().isEmpty()) {
+            message.append("\n  Constraints: ");
+            message.append(ruleSet.getMissingConstraints());
+        }
+        if (!ruleSet.getMissingGroups().isEmpty()) {
+            message.append("\n  Groups: ");
+            message.append(ruleSet.getMissingGroups());
+        }
+        if (message.length() > 0) {
+            throw new MojoExecutionException("The following rules are referenced but are not available;" + message);
+        }
     }
 
     /**
@@ -258,15 +285,33 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     protected void logRuleSet(RuleSet ruleSet) {
         getLog().info("Groups [" + ruleSet.getGroups().size() + "]");
         for (Group group : ruleSet.getGroups().values()) {
-            getLog().info("  \"" + group.getId() + "\"");
+            getLog().info(LOG_LINE_PREFIX + group.getId() + "\"");
         }
         getLog().info("Constraints [" + ruleSet.getConstraints().size() + "]");
         for (Constraint constraint : ruleSet.getConstraints().values()) {
-            getLog().info("  \"" + constraint.getId() + "\" - " + constraint.getDescription());
+            getLog().info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
         }
         getLog().info("Concepts [" + ruleSet.getConcepts().size() + "]");
         for (Concept concept : ruleSet.getConcepts().values()) {
-            getLog().info("  \"" + concept.getId() + "\" - " + concept.getDescription());
+            getLog().info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
+        }
+        if (!ruleSet.getMissingConcepts().isEmpty()) {
+            getLog().warn("Missing concepts [" + ruleSet.getMissingConcepts().size() + "]");
+            for (String missingConcept : ruleSet.getMissingConcepts()) {
+                getLog().warn(LOG_LINE_PREFIX + missingConcept);
+            }
+        }
+        if (!ruleSet.getMissingConstraints().isEmpty()) {
+            getLog().warn("Missing constraints [" + ruleSet.getMissingConstraints().size() + "]");
+            for (String missingConstraint : ruleSet.getMissingConstraints()) {
+                getLog().warn(LOG_LINE_PREFIX + missingConstraint);
+            }
+        }
+        if (!ruleSet.getMissingGroups().isEmpty()) {
+            getLog().warn("Missing groups [" + ruleSet.getMissingGroups().size() + "]");
+            for (String missingGroup : ruleSet.getMissingGroups()) {
+                getLog().warn(LOG_LINE_PREFIX + missingGroup);
+            }
         }
     }
 }
