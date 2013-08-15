@@ -49,14 +49,6 @@ public interface ClassScanner {
     /**
      * Scans a class file.
      *
-     * @param file The class file.
-     * @throws IOException If scanning fails.
-     */
-    void scanClassFile(File file) throws IOException;
-
-    /**
-     * Scans a class file.
-     *
      * @param artifactDescriptor The {@link ArtifactDescriptor} describing the artifact which contains the class file.
      * @param file               The class file.
      * @throws IOException If scanning fails.

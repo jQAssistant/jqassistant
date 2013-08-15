@@ -40,10 +40,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+/**
+ * Implementation of the {@link ClassScanner}.
+ */
 public class ClassScannerImpl implements ClassScanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassScannerImpl.class);
@@ -52,6 +56,12 @@ public class ClassScannerImpl implements ClassScanner {
 
     private final ScanListener scanListener;
 
+    /**
+     * Constructor.
+     *
+     * @param graphStore The store to use.
+     * @param listener   The listener to fire events to.
+     */
     public ClassScannerImpl(Store graphStore, ScanListener listener) {
         this.store = graphStore;
         this.scanListener = listener;
@@ -132,7 +142,7 @@ public class ClassScannerImpl implements ClassScanner {
 
     @Override
     public void scanClassDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException {
-        final List<File> classFiles = new ArrayList<File>();
+        final List<File> classFiles = new ArrayList<>();
         new DirectoryWalker<File>() {
 
             @Override
@@ -146,19 +156,20 @@ public class ClassScannerImpl implements ClassScanner {
                 super.walk(directory, classFiles);
             }
         }.scan(directory);
-        for (File classFile : classFiles) {
-            scanClassFile(artifactDescriptor, classFile);
+        if (classFiles.isEmpty()) {
+            LOGGER.info("Directory '{}' does not contain class files, skipping.", directory.getAbsolutePath(), classFiles.size());
+        } else {
+            LOGGER.info("Scanning directory '{}' [{} class files].", directory.getAbsolutePath(), classFiles.size());
+            URI directoryURI = directory.toURI();
+            for (File classFile : classFiles) {
+                scanInputStream(artifactDescriptor, new BufferedInputStream(new FileInputStream(classFile)), directoryURI.relativize(classFile.toURI()).toString());
+            }
         }
     }
 
     @Override
-    public void scanClassFile(File file) throws IOException {
-        scanClassFile(null, file);
-    }
-
-    @Override
     public void scanClassFile(ArtifactDescriptor artifactDescriptor, File file) throws IOException {
-        scanInputStream(artifactDescriptor, new BufferedInputStream(new FileInputStream(file)), file.getName());
+        scanInputStream(artifactDescriptor, new BufferedInputStream(new FileInputStream(file)), file.getAbsolutePath());
     }
 
     @Override
