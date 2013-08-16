@@ -1,0 +1,18 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="scanner:Module">
+        <requiresConcept refId="module:ModulePackage" />
+        <description>Labels the MODULE scanner as SCANNER</description>
+        <cypher><![CDATA[
+			MATCH
+				(package:PACKAGE:MODULE)
+			WHERE
+				package.FQN =~ ".*\\.scanner"
+			SET
+			    package:SCANNER
+			RETURN
+				package
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
