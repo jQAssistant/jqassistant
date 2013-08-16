@@ -9,7 +9,9 @@ import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
 import edu.emory.mathcs.backport.java.util.Arrays;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.DirectoryWalker;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import javax.xml.transform.Source;
@@ -72,15 +74,16 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * Return the selected concepts.
      *
-     * @param ruleSet The {@link RuleSet}.
+     * @param conceptNames The list of concept names.
+     * @param ruleSet      The {@link RuleSet}.
      * @return The selected concepts.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined concept  is referenced.
      */
-    protected List<Concept> getSelectedConcepts(RuleSet ruleSet) throws MojoExecutionException {
+    private List<Concept> getSelectedConcepts(List<String> conceptNames, RuleSet ruleSet) throws MojoExecutionException {
         final List<Concept> selectedConcepts = new ArrayList<>();
-        if (concepts != null) {
-            for (String conceptName : concepts) {
+        if (conceptNames != null) {
+            for (String conceptName : conceptNames) {
                 Concept concept = ruleSet.getConcepts().get(conceptName);
                 if (concept == null) {
                     throw new MojoExecutionException("The concept '" + conceptName + "' is not defined.");
@@ -94,15 +97,16 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * Return the selected constraints.
      *
-     * @param ruleSet The {@link RuleSet}.
+     * @param constraintNames The list of constraint names.
+     * @param ruleSet         The {@link RuleSet}.
      * @return The selected constraints.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined constraint is referenced.
      */
-    protected List<Constraint> getSelectedConstraints(RuleSet ruleSet) throws MojoExecutionException {
+    private List<Constraint> getSelectedConstraints(List<String> constraintNames, RuleSet ruleSet) throws MojoExecutionException {
         final List<Constraint> selectedConstraints = new ArrayList<>();
-        if (constraints != null) {
-            for (String constraintName : constraints) {
+        if (constraintNames != null) {
+            for (String constraintName : constraintNames) {
                 Constraint concept = ruleSet.getConstraints().get(constraintName);
                 if (concept == null) {
                     throw new MojoExecutionException("The constraint '" + constraintName + "' is not defined.");
@@ -116,15 +120,15 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * Return the selected groups.
      *
-     * @param ruleSet The {@link RuleSet}.
+     * @param groupNames The list of constraint names.
+     * @param ruleSet    The {@link RuleSet}.
      * @return The selected groups.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If an undefined group is referenced.
      */
-    protected List<Group> getSelectedGroups(RuleSet ruleSet) throws MojoExecutionException {
+    private List<Group> getSelectedGroups(List<String> groupNames, RuleSet ruleSet) throws MojoExecutionException {
         final List<Group> selectedGroups = new ArrayList<>();
-        List<String> selectedGroupNames = groups != null && !groups.isEmpty() ? groups : Arrays.asList(new String[]{DEFAULT_GROUP});
-        for (String groupName : selectedGroupNames) {
+        for (String groupName : groupNames) {
             Group group = ruleSet.getGroups().get(groupName);
             if (group == null) {
                 throw new MojoExecutionException("The group '" + groupName + "' is not defined.");
@@ -202,36 +206,19 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
         RuleSet ruleSet = readRules();
         validateRuleSet(ruleSet);
         RuleSet effectiveRuleSet = new RuleSet();
-        resolveConcepts(getSelectedConcepts(ruleSet), effectiveRuleSet);
-        resolveConstraints(getSelectedConstraints(ruleSet), effectiveRuleSet);
-        resolveGroups(getSelectedGroups(ruleSet), effectiveRuleSet);
+        // Use the default group if no group, constraint or concept is specified.
+        List<String> groupNames;
+        if (CollectionUtils.isEmpty(groups) && CollectionUtils.isEmpty(constraints) && CollectionUtils.isEmpty(concepts)) {
+            groupNames = Arrays.asList(new String[]{DEFAULT_GROUP});
+        } else {
+            groupNames = groups;
+        }
+        resolveConcepts(getSelectedConcepts(concepts, ruleSet), effectiveRuleSet);
+        resolveConstraints(getSelectedConstraints(constraints, ruleSet), effectiveRuleSet);
+        resolveGroups(getSelectedGroups(groupNames, ruleSet), effectiveRuleSet);
         return effectiveRuleSet;
     }
 
-    /**
-     * Validates the given rule set for unresolved concepts, constraints or groups.
-     *
-     * @param ruleSet The rule set.
-     * @throws MojoExecutionException If there are unresolved concepts, constraints or groups.
-     */
-    private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {
-        StringBuffer message = new StringBuffer();
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            message.append("\n  Concepts: ");
-            message.append(ruleSet.getMissingConcepts());
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            message.append("\n  Constraints: ");
-            message.append(ruleSet.getMissingConstraints());
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            message.append("\n  Groups: ");
-            message.append(ruleSet.getMissingGroups());
-        }
-        if (message.length() > 0) {
-            throw new MojoExecutionException("The following rules are referenced but are not available;" + message);
-        }
-    }
 
     /**
      * Resolve the given selected groups names into the target rule set.
@@ -277,6 +264,31 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
                 targetRuleSet.getConcepts().put(concept.getId(), concept);
                 resolveConcepts(concept.getRequiredConcepts(), targetRuleSet);
             }
+        }
+    }
+
+    /**
+     * Validates the given rule set for unresolved concepts, constraints or groups.
+     *
+     * @param ruleSet The rule set.
+     * @throws MojoExecutionException If there are unresolved concepts, constraints or groups.
+     */
+    private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {
+        StringBuffer message = new StringBuffer();
+        if (!ruleSet.getMissingConcepts().isEmpty()) {
+            message.append("\n  Concepts: ");
+            message.append(ruleSet.getMissingConcepts());
+        }
+        if (!ruleSet.getMissingConstraints().isEmpty()) {
+            message.append("\n  Constraints: ");
+            message.append(ruleSet.getMissingConstraints());
+        }
+        if (!ruleSet.getMissingGroups().isEmpty()) {
+            message.append("\n  Groups: ");
+            message.append(ruleSet.getMissingGroups());
+        }
+        if (message.length() > 0) {
+            throw new MojoExecutionException("The following rules are referenced but are not available;" + message);
         }
     }
 
