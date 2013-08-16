@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

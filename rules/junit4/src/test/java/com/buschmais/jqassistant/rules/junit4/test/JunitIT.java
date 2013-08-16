@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.rules.junit4.test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
-import com.buschmais.jqassistant.report.api.ReportWriterException;
 import com.buschmais.jqassistant.rules.junit4.test.set.IgnoredTestClass;
 import com.buschmais.jqassistant.rules.junit4.test.set.TestClass;
 import org.junit.Test;
@@ -11,8 +10,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.buschmais.jqassistant.scanner.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static com.buschmais.jqassistant.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.core.scanner.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static com.buschmais.jqassistant.core.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 

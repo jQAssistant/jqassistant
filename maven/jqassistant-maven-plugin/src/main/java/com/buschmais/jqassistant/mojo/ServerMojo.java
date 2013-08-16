@@ -16,9 +16,9 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.store.api.Store;
-import com.buschmais.jqassistant.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.store.impl.Server;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.impl.Server;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.IOException;

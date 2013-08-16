@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.report.api.ReportTransformer;
-import com.buschmais.jqassistant.report.api.ReportTransformerException;
-import com.buschmais.jqassistant.report.impl.HtmlReportTransformer;
+import com.buschmais.jqassistant.core.report.api.ReportTransformer;
+import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
+import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

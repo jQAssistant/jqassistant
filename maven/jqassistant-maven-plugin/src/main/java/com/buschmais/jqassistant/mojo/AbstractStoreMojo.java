@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
 
 import java.io.File;

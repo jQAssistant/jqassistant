@@ -17,8 +17,8 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.scanner.impl.ClassScannerImpl;
-import com.buschmais.jqassistant.store.api.Store;
+import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
