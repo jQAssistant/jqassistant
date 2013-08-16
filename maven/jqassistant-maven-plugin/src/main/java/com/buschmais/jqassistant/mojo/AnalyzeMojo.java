@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.model.api.Result;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
@@ -138,7 +139,8 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                         }
                         message.append(entry.getKey());
                         message.append('=');
-                        message.append(entry.getValue());
+                        Object value = entry.getValue();
+                        message.append(value instanceof Descriptor ? ((Descriptor) value).getFullQualifiedName() : value.toString());
                     }
                     getLog().error("  " + message.toString());
                 }

@@ -3,6 +3,8 @@
     <group id="default">
         <includeConstraint refId="dependency:CyclicPackageDependency"/>
         <includeConstraint refId="dependency:CyclicArtifactDependency"/>
+        <includeConstraint refId="package:PackageNameMustStartWithArtifactGroup"/>
+        <includeConstraint refId="package:PackageNameMustContainArtifactName"/>
     </group>
 
 </jqa:jqassistant-rules>

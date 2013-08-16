@@ -41,7 +41,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
                 @Override
                 public QueryResult.Row next() {
-                    Map<String, Object> row = new HashMap<String, Object>();
+                    Map<String, Object> row = new LinkedHashMap<>();
                     for (Entry<String, Object> entry : iterator.next().entrySet()) {
                         String name = entry.getKey();
                         Object value = entry.getValue();
@@ -93,7 +93,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     }
 
     @Override
-    public <T extends AbstractDescriptor> void persist(T descriptor) {
+    public <T extends Descriptor> void persist(T descriptor) {
         LOGGER.debug("Creating node for '{}'.", descriptor.getFullQualifiedName());
         DescriptorMapper<T> adapter = registry.getDescriptorMapper(descriptor.getClass());
         Node node = database.createNode(adapter.getCoreLabel());
@@ -116,8 +116,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     }
 
     @Override
-    public <T extends AbstractDescriptor> T find(Class<T> type, String fullQualifiedName) {
-        DescriptorMapper<AbstractDescriptor> mapper = registry.getDescriptorMapper(type);
+    public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
+        DescriptorMapper<Descriptor> mapper = registry.getDescriptorMapper(type);
         Node node = nodeCache.get(fullQualifiedName);
         if (node == null) {
             ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getCoreLabel(), NodeProperty.FQN.name(), fullQualifiedName);
@@ -233,7 +233,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node The {@link Node}.
      * @return The descriptor.
      */
-    @SuppressWarnings("unchecked")
     private <T extends Descriptor> T getDescriptor(Node node) {
         T descriptor = this.descriptorCache.findBy(node.getId());
         if (descriptor == null) {
@@ -251,7 +250,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 Relation relation = Relation.getRelation(relationship.getType().name());
                 if (relation != null) {
                     Node targetNode = relationship.getEndNode();
-                    AbstractDescriptor targetDescriptor = getDescriptor(targetNode);
+                    Descriptor targetDescriptor = getDescriptor(targetNode);
                     Set<Descriptor> set = relations.get(relation);
                     if (set == null) {
                         set = new HashSet<Descriptor>();

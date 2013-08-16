@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.store.api;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 
 import java.util.Map;
 
@@ -20,28 +21,28 @@ public interface DescriptorDAO {
      * @return The {@link AbstractDescriptor} or <code>null</code> if it does
      *         not exist.
      */
-    <T extends AbstractDescriptor> T find(Class<T> type, String fullQualifiedName);
+    <T extends Descriptor> T find(Class<T> type, String fullQualifiedName);
 
     /**
      * Persists an {@link AbstractDescriptor}.
      * <p>
      * A node is create in the store and the id is assigned to the descriptor.
      * Relations which are added to the descripter after calling
-     * {@link #persist(AbstractDescriptor)} will be stored by calling
+     * {@link #persist(Descriptor)} will be stored by calling
      * {@link #flush()}.
      * </p>
      *
      * @param <T>        The descriptor type.
      * @param descriptor The descriptor.
      */
-    <T extends AbstractDescriptor> void persist(T descriptor);
+    <T extends Descriptor> void persist(T descriptor);
 
     /**
      * Flushes all pending changes to the database.
      * <p/>
      * This currently only affects relations added to an
      * {@link AbstractDescriptor} after calling
-     * {@link #persist(AbstractDescriptor)} on it. The method is automatically
+     * {@link #persist(Descriptor)} on it. The method is automatically
      * called if {@link #find(Class, String)} or
      * {@link #executeQuery(String, Map)} are called.
      */
