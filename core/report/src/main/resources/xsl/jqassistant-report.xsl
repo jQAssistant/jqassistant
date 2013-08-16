@@ -90,8 +90,9 @@
                     <h3>Groups</h3>
                     <table>
                         <tr>
+                            <th style="width:30px;">#</th>
                             <th>Group Name</th>
-                            <th>Date</th>
+                            <th style="width:150px;">Date</th>
                         </tr>
                         <xsl:apply-templates select="//jqa-report:group"/>
                     </table>
@@ -100,9 +101,9 @@
                     <h3>Constraints</h3>
                     <table>
                         <tr>
-                            <th>#</th>
+                            <th style="width:30px;">#</th>
                             <th>Constraint Name</th>
-                            <th>Duration (in ms)</th>
+                            <th style="width:150px;">Duration (in ms)</th>
                         </tr>
                         <xsl:apply-templates select="//jqa-report:constraint">
                             <xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
@@ -116,7 +117,7 @@
                         <tr>
                             <th>#</th>
                             <th>Concept Name</th>
-                            <th>Duration (in ms)</th>
+                            <th style="width:150px;">Duration (in ms)</th>
                         </tr>
                         <xsl:apply-templates select="//jqa-report:concept">
                             <xsl:sort select="count(jqa-report:result)" order="descending" data-type="number" />
@@ -131,10 +132,13 @@
 	<!-- ANALYSIS GROUP -->
     <xsl:template match="jqa-report:group">
         <tr>
-            <td style="width:150px;">
+            <td>
+                <xsl:value-of select="position()"/>
+            </td>
+            <td>
                 <xsl:value-of select="@id"/>
             </td>
-            <td class="right" style="width:150px;">
+            <td>
                 <xsl:value-of select="@date"/>
             </td>
         </tr>
@@ -153,7 +157,7 @@
 				</xsl:choose>
 			</xsl:attribute>
 			
-			<td style="width:30px;">
+			<td>
 				<xsl:value-of select="position()"/>
 			</td>
 			<td>
@@ -167,7 +171,7 @@
 	            	<xsl:value-of select="@id"/>
             	</span>
             </td>
-            <td class="right" style="width:150px;">
+            <td class="right" >
             	<xsl:value-of select="jqa-report:duration/text()"/>
 	        </td>
 		</tr>
