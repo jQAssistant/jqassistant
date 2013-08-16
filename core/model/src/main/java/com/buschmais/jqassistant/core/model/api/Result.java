@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The result of a {@link Query} using an {@link  AbstractExecutable}.
+ * The result of a {@link com.buschmais.jqassistant.core.model.api.rules.Query} using an {@link  AbstractExecutable}.
  */
 public class Result<T extends AbstractExecutable> {
 

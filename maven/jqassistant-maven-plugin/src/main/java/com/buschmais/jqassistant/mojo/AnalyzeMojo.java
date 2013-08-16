@@ -84,7 +84,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                     try {
                         analyzer.execute(ruleSet);
                     } catch (AnalyzerException e) {
-                        throw new MojoExecutionException("Cannot execute analyzer.", e);
+                        throw new MojoExecutionException("Analysis failed.", e);
                     }
                     return null;
                 }

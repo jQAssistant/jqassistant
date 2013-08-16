@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.RulesReader;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
-import com.buschmais.jqassistant.core.model.api.Query;
+import com.buschmais.jqassistant.core.model.api.rules.Query;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.Group;

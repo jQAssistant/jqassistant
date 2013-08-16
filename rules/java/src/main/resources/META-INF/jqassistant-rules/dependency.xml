@@ -36,7 +36,7 @@
 			MATCH  
 				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
 			WHERE 
-				p1.id<>p2.id
+				p1<>p2
 			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
 			RETURN 
@@ -87,7 +87,7 @@
 			RETURN
 				p1 as package, extract(p in nodes(path) : p.FQN) as cycle
 			ORDER BY
-				package	
+				package.FQN
         ]]></cypher>
     </constraint>
 

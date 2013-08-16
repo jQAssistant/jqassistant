@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.model.api.Query;
+import com.buschmais.jqassistant.core.model.api.rules.Query;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rules.*;
 import com.buschmais.jqassistant.report.api.ReportWriter;
