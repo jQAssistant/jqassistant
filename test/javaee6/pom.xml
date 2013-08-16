@@ -22,53 +22,6 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant.maven</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>scan</id>
-                        <goals>
-                            <goal>scan</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>analyze</id>
-                        <goals>
-                            <goal>analyze</goal>
-                        </goals>
-                        <configuration>
-                            <concepts>
-                                <concept>ejb3:Local</concept>
-                            </concepts>
-                            <groups>
-                                <group>continuous</group>
-                            </groups>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <phase>install</phase>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>jqassistant.rules.java</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>jqassistant.rules.javaee</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.buschmais.jqassistant</groupId>
-                        <artifactId>jqassistant.rules.junit4</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>

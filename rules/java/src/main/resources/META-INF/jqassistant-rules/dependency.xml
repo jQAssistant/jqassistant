@@ -36,7 +36,7 @@
 			MATCH  
 				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
 			WHERE 
-				p1<>p2
+				p1.id<>p2.id
 			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
 			RETURN 

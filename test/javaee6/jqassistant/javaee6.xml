@@ -36,8 +36,8 @@
         <parameter name="suffixExpression" type="string" value=".*Test"/>
     </constraint>
 
-    <!-- Constraint Groups -->
-    <group id="continuous">
+    <!-- default group -->
+    <group id="default">
         <includeConstraint refId="slice:User"/>
         <includeConstraint refId="slice:Cart"/>
         <includeConstraint refId="layer:UI"/>

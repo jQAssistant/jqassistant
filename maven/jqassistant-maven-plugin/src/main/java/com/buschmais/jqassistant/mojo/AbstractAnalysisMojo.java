@@ -21,6 +21,7 @@ import java.util.List;
 
 /**
  * Abstract base implementation for analysis MOJOs.
+ * @aggregator true
  */
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
