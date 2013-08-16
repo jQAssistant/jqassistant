@@ -1,17 +1,17 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
-import com.buschmais.jqassistant.core.analysis.api.RulesReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolver;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSetResolverImpl;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
-import edu.emory.mathcs.backport.java.util.Arrays;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import javax.xml.transform.Source;
@@ -30,7 +30,7 @@ import java.util.List;
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
     public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
-    public static final String DEFAULT_GROUP = "default";
+
     public static final String LOG_LINE_PREFIX = "  \"";
 
     /**
@@ -69,75 +69,12 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * The rules reader instance.
      */
-    private RulesReader rulesReader = new RulesReaderImpl();
+    private RuleSetReader ruleSetReader = new RuleSetReaderImpl();
 
     /**
-     * Return the selected concepts.
-     *
-     * @param conceptNames The list of concept names.
-     * @param ruleSet      The {@link RuleSet}.
-     * @return The selected concepts.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If an undefined concept  is referenced.
+     * The rule set resolver.
      */
-    private List<Concept> getSelectedConcepts(List<String> conceptNames, RuleSet ruleSet) throws MojoExecutionException {
-        final List<Concept> selectedConcepts = new ArrayList<>();
-        if (conceptNames != null) {
-            for (String conceptName : conceptNames) {
-                Concept concept = ruleSet.getConcepts().get(conceptName);
-                if (concept == null) {
-                    throw new MojoExecutionException("The concept '" + conceptName + "' is not defined.");
-                }
-                selectedConcepts.add(concept);
-            }
-        }
-        return selectedConcepts;
-    }
-
-    /**
-     * Return the selected constraints.
-     *
-     * @param constraintNames The list of constraint names.
-     * @param ruleSet         The {@link RuleSet}.
-     * @return The selected constraints.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If an undefined constraint is referenced.
-     */
-    private List<Constraint> getSelectedConstraints(List<String> constraintNames, RuleSet ruleSet) throws MojoExecutionException {
-        final List<Constraint> selectedConstraints = new ArrayList<>();
-        if (constraintNames != null) {
-            for (String constraintName : constraintNames) {
-                Constraint concept = ruleSet.getConstraints().get(constraintName);
-                if (concept == null) {
-                    throw new MojoExecutionException("The constraint '" + constraintName + "' is not defined.");
-                }
-                selectedConstraints.add(concept);
-            }
-        }
-        return selectedConstraints;
-    }
-
-    /**
-     * Return the selected groups.
-     *
-     * @param groupNames The list of constraint names.
-     * @param ruleSet    The {@link RuleSet}.
-     * @return The selected groups.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *          If an undefined group is referenced.
-     */
-    private List<Group> getSelectedGroups(List<String> groupNames, RuleSet ruleSet) throws MojoExecutionException {
-        final List<Group> selectedGroups = new ArrayList<>();
-        for (String groupName : groupNames) {
-            Group group = ruleSet.getGroups().get(groupName);
-            if (group == null) {
-                throw new MojoExecutionException("The group '" + groupName + "' is not defined.");
-            }
-            selectedGroups.add(group);
-        }
-        return selectedGroups;
-    }
-
+    private RuleSetResolver ruleSetResolver = new RuleSetResolverImpl();
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -159,7 +96,7 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
         }
         sources.addAll(catalogReader.readCatalogs());
 
-        return rulesReader.read(sources);
+        return ruleSetReader.read(sources);
     }
 
     /**
@@ -205,65 +142,10 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     protected RuleSet resolveEffectiveRules() throws MojoExecutionException {
         RuleSet ruleSet = readRules();
         validateRuleSet(ruleSet);
-        RuleSet effectiveRuleSet = new RuleSet();
-        // Use the default group if no group, constraint or concept is specified.
-        List<String> groupNames;
-        if (CollectionUtils.isEmpty(groups) && CollectionUtils.isEmpty(constraints) && CollectionUtils.isEmpty(concepts)) {
-            groupNames = Arrays.asList(new String[]{DEFAULT_GROUP});
-        } else {
-            groupNames = groups;
-        }
-        resolveConcepts(getSelectedConcepts(concepts, ruleSet), effectiveRuleSet);
-        resolveConstraints(getSelectedConstraints(constraints, ruleSet), effectiveRuleSet);
-        resolveGroups(getSelectedGroups(groupNames, ruleSet), effectiveRuleSet);
-        return effectiveRuleSet;
-    }
-
-
-    /**
-     * Resolve the given selected groups names into the target rule set.
-     *
-     * @param groups        The selected group names.
-     * @param targetRuleSet The target rule set.
-     */
-    private void resolveGroups(Collection<Group> groups, RuleSet targetRuleSet) {
-        for (Group group : groups) {
-            if (!targetRuleSet.getGroups().containsKey(group.getId())) {
-                targetRuleSet.getGroups().put(group.getId(), group);
-                resolveGroups(group.getGroups(), targetRuleSet);
-                resolveConcepts(group.getConcepts(), targetRuleSet);
-                resolveConstraints(group.getConstraints(), targetRuleSet);
-            }
-        }
-    }
-
-    /**
-     * Resolve the given selected constraint names into the target rule set.
-     *
-     * @param constraints   The selected constraint names.
-     * @param targetRuleSet The target rule set.
-     */
-    private void resolveConstraints(Collection<Constraint> constraints, RuleSet targetRuleSet) {
-        for (Constraint constraint : constraints) {
-            if (!targetRuleSet.getConstraints().containsKey(constraint.getId())) {
-                targetRuleSet.getConstraints().put(constraint.getId(), constraint);
-                resolveConcepts(constraint.getRequiredConcepts(), targetRuleSet);
-            }
-        }
-    }
-
-    /**
-     * Resolve the given selected concept names into the target rule set.
-     *
-     * @param concepts      The selected concept names.
-     * @param targetRuleSet The target rule set.
-     */
-    private void resolveConcepts(Collection<Concept> concepts, RuleSet targetRuleSet) {
-        for (Concept concept : concepts) {
-            if (!targetRuleSet.getConcepts().containsKey(concept.getId())) {
-                targetRuleSet.getConcepts().put(concept.getId(), concept);
-                resolveConcepts(concept.getRequiredConcepts(), targetRuleSet);
-            }
+        try {
+            return ruleSetResolver.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
+        } catch (RuleSetResolverException e) {
+            throw new MojoExecutionException("Cannot resolve rules.", e);
         }
     }
 

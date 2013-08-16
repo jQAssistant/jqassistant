@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Defines the interface of the rules reader.
  */
-public interface RulesReader {
+public interface RuleSetReader {
 
     /**
      * Reads the given {@link Source}s and a returns {@link RuleSet}.
