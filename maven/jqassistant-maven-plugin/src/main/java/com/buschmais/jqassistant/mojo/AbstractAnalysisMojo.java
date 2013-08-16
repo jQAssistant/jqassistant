@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
 import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import edu.emory.mathcs.backport.java.util.Arrays;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -21,11 +22,13 @@ import java.util.List;
 
 /**
  * Abstract base implementation for analysis MOJOs.
+ *
  * @aggregator true
  */
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
     public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
+    public static final String DEFAULT_GROUP = "default";
     public static final String LOG_LINE_PREFIX = "  \"";
 
     /**
@@ -120,14 +123,13 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      */
     protected List<Group> getSelectedGroups(RuleSet ruleSet) throws MojoExecutionException {
         final List<Group> selectedGroups = new ArrayList<>();
-        if (groups != null) {
-            for (String groupName : groups) {
-                Group group = ruleSet.getGroups().get(groupName);
-                if (group == null) {
-                    throw new MojoExecutionException("The group '" + groupName + "' is not defined.");
-                }
-                selectedGroups.add(group);
+        List<String> selectedGroupNames = groups != null && !groups.isEmpty() ? groups : Arrays.asList(new String[]{DEFAULT_GROUP});
+        for (String groupName : selectedGroupNames) {
+            Group group = ruleSet.getGroups().get(groupName);
+            if (group == null) {
+                throw new MojoExecutionException("The group '" + groupName + "' is not defined.");
             }
+            selectedGroups.add(group);
         }
         return selectedGroups;
     }
