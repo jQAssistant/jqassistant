@@ -13,6 +13,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Constraint;
@@ -35,7 +36,7 @@ public class XmlReportWriter implements ReportWriter {
 
     private XMLStreamWriter xmlStreamWriter;
 
-	private AbstractExecutable executable;
+    private AbstractExecutable executable;
 
     private Result<? extends AbstractExecutable> result;
 
@@ -43,8 +44,7 @@ public class XmlReportWriter implements ReportWriter {
 
     private long executableBeginTime;
 
-	private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss");
+    private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public XmlReportWriter(Writer writer) throws ReportWriterException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
@@ -93,17 +93,17 @@ public class XmlReportWriter implements ReportWriter {
 
     @Override
     public void beginGroup(final Group group) throws ReportWriterException {
-		final Date now = new Date();
-		run(new XmlOperation() {
+        final Date now = new Date();
+        run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
                 xmlStreamWriter.writeStartElement("group");
                 xmlStreamWriter.writeAttribute("id", group.getId());
-				xmlStreamWriter.writeAttribute("date",
-						XML_DATE_FORMAT.format(now));
+                xmlStreamWriter.writeAttribute("date",
+                        XML_DATE_FORMAT.format(now));
             }
         });
-		this.groupBeginTime = now.getTime();
+        this.groupBeginTime = now.getTime();
     }
 
     @Override
@@ -128,7 +128,7 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-	public void setResult(final Result<? extends AbstractExecutable> result) throws ReportWriterException {
+    public void setResult(final Result<? extends AbstractExecutable> result) throws ReportWriterException {
         this.result = result;
     }
 
@@ -138,57 +138,59 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     private void endExecutable() throws ReportWriterException {
-        final AbstractExecutable executable = result.getExecutable();
-        final String elementName;
-        if (executable instanceof Concept) {
-            elementName = "concept";
-        } else if (executable instanceof Constraint) {
-            elementName = "constraint";
-        } else {
-            throw new ReportWriterException("Cannot write report for unsupported executable " + executable);
-        }
-        final List<String> columnNames = result.getColumnNames();
-        run(new XmlOperation() {
-            @Override
-            public void run() throws XMLStreamException {
-                xmlStreamWriter.writeStartElement(elementName);
-                xmlStreamWriter.writeAttribute("id", executable.getId());
-                xmlStreamWriter.writeStartElement("description");
-                xmlStreamWriter.writeCharacters(executable.getDescription());
-                xmlStreamWriter.writeEndElement(); //description
-                if (!result.isEmpty()) {
-                    xmlStreamWriter.writeStartElement("result");
-                    xmlStreamWriter.writeStartElement("columns");
-                    xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
-                    for (String column : columnNames) {
-                        xmlStreamWriter.writeStartElement("column");
-                        xmlStreamWriter.writeCharacters(column);
-                        xmlStreamWriter.writeEndElement(); //column
-                    }
-                    xmlStreamWriter.writeEndElement(); //columns
-                    xmlStreamWriter.writeStartElement("rows");
-                    List<Map<String, Object>> rows = result.getRows();
-                    xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
-                    for (Map<String, Object> row : rows) {
-                        xmlStreamWriter.writeStartElement("row");
-                        for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
-                            String columnName = rowEntry.getKey();
-                            Object value = rowEntry.getValue();
-                            String stringValue = value instanceof AbstractDescriptor ? ((AbstractDescriptor) value).getFullQualifiedName() : value.toString();
+        if (result != null) {
+            final AbstractExecutable executable = result.getExecutable();
+            final String elementName;
+            if (executable instanceof Concept) {
+                elementName = "concept";
+            } else if (executable instanceof Constraint) {
+                elementName = "constraint";
+            } else {
+                throw new ReportWriterException("Cannot write report for unsupported executable " + executable);
+            }
+            final List<String> columnNames = result.getColumnNames();
+            run(new XmlOperation() {
+                @Override
+                public void run() throws XMLStreamException {
+                    xmlStreamWriter.writeStartElement(elementName);
+                    xmlStreamWriter.writeAttribute("id", executable.getId());
+                    xmlStreamWriter.writeStartElement("description");
+                    xmlStreamWriter.writeCharacters(executable.getDescription());
+                    xmlStreamWriter.writeEndElement(); //description
+                    if (!result.isEmpty()) {
+                        xmlStreamWriter.writeStartElement("result");
+                        xmlStreamWriter.writeStartElement("columns");
+                        xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
+                        for (String column : columnNames) {
                             xmlStreamWriter.writeStartElement("column");
-                            xmlStreamWriter.writeAttribute("name", columnName);
-                            xmlStreamWriter.writeCharacters(stringValue);
+                            xmlStreamWriter.writeCharacters(column);
                             xmlStreamWriter.writeEndElement(); //column
                         }
-                        xmlStreamWriter.writeEndElement();
+                        xmlStreamWriter.writeEndElement(); //columns
+                        xmlStreamWriter.writeStartElement("rows");
+                        List<Map<String, Object>> rows = result.getRows();
+                        xmlStreamWriter.writeAttribute("count", Integer.toString(rows.size()));
+                        for (Map<String, Object> row : rows) {
+                            xmlStreamWriter.writeStartElement("row");
+                            for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
+                                String columnName = rowEntry.getKey();
+                                Object value = rowEntry.getValue();
+                                String stringValue = value instanceof Descriptor ? ((Descriptor) value).getFullQualifiedName() : value.toString();
+                                xmlStreamWriter.writeStartElement("column");
+                                xmlStreamWriter.writeAttribute("name", columnName);
+                                xmlStreamWriter.writeCharacters(stringValue);
+                                xmlStreamWriter.writeEndElement(); //column
+                            }
+                            xmlStreamWriter.writeEndElement();
+                        }
+                        xmlStreamWriter.writeEndElement(); // rows
+                        xmlStreamWriter.writeEndElement(); //result
                     }
-                    xmlStreamWriter.writeEndElement(); // rows
-                    xmlStreamWriter.writeEndElement(); //result
+                    writeDuration(executableBeginTime);
+                    xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
-                writeDuration(executableBeginTime);
-                xmlStreamWriter.writeEndElement(); // concept|constraint
-            }
-        });
+            });
+        }
     }
 
     private void writeDuration(long beginTime) throws XMLStreamException {
