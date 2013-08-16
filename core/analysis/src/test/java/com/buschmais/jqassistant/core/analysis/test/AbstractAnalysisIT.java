@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.analysis.test;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
-import com.buschmais.jqassistant.core.analysis.api.RulesReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RulesReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.model.api.rules.Concept;
 import com.buschmais.jqassistant.core.model.api.rules.Group;
 import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
@@ -34,8 +34,8 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
     public static void readRules() {
         CatalogReader catalogReader = new CatalogReaderImpl();
         List<Source> sources = catalogReader.readCatalogs();
-        RulesReader rulesReader = new RulesReaderImpl();
-        ruleSet = rulesReader.read(sources);
+        RuleSetReader ruleSetReader = new RuleSetReaderImpl();
+        ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
         Assert.assertTrue("There must be no unresolved constraints.", ruleSet.getMissingConstraints().isEmpty());
         Assert.assertTrue("There must be no unresolved groups.", ruleSet.getMissingGroups().isEmpty());

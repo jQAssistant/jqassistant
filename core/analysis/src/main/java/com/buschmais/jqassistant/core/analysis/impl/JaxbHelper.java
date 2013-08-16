@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.RulesReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
@@ -20,7 +20,7 @@ public class JaxbHelper {
         Schema schema;
         try {
             SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            schema = schemaFactory.newSchema(RulesReader.class.getResource(resource));
+            schema = schemaFactory.newSchema(RuleSetReader.class.getResource(resource));
         } catch (SAXException e) {
             throw new IllegalStateException("Cannot read rules schema.", e);
         }
