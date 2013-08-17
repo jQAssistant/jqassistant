@@ -1,15 +1,14 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="model:Module">
-        <requiresConcept refId="module:ModulePackage" />
-        <description>Labels the MODULE model as MODEL.</description>
+    <concept id="module-model:Module">
+        <description>Labels the module core.model as MODULE and MODEL.</description>
         <cypher><![CDATA[
 			MATCH
-				(package:PACKAGE:MODULE)
+				(package:PACKAGE)
 			WHERE
-				package.FQN =~ ".*\\.model"
+				package.FQN =~ ".*\\.core\\.model"
 			SET
-			    package:MODEL
+			    package:MODULE:MODEL
 			RETURN
 				package
         ]]></cypher>
