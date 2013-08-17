@@ -7,11 +7,12 @@
             	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->(t2:TYPE)
 			WHERE 
 				t1<>t2
-			CREATE UNIQUE 
+				AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)
+			CREATE UNIQUE
 				(t1)-[:DEPENDS_ON]->(t2)
-			RETURN 
-				COUNT(t1) as count
-        ]]></cypher>
+			RETURN
+				COUNT(DISTINCT t1) as types
+	    ]]></cypher>
     </concept>
 
     <concept id="dependency:TypeDependency">
@@ -25,7 +26,7 @@
 			CREATE UNIQUE 
 				(t1)-[:DEPENDS_ON]->(t2)
 			RETURN 
-				COUNT(t1) as count
+				COUNT(DISTINCT t1) as types
         ]]></cypher>
     </concept>
 
@@ -40,7 +41,7 @@
 			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
 			RETURN 
-				COUNT(p1) as count
+				COUNT(DISTINCT p1) as packages
         ]]></cypher>
     </concept>
 
@@ -55,25 +56,9 @@
 			CREATE UNIQUE 
 				(a1)-[:DEPENDS_ON]->(a2)
 			RETURN 
-				COUNT(a1) as count
+				COUNT(DISTINCT a1) as artifacts
         ]]></cypher>
     </concept>
-
-    <constraint id="dependency:CyclicArtifactDependency">
-        <requiresConcept refId="dependency:ArtifactDependency"/>
-        <description>There must be no cyclic artifact dependencies.</description>
-        <cypher><![CDATA[
-			MATCH
-				(a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT),
-				path=shortestPath((a2)-[:DEPENDS_ON*]->(a1:ARTIFACT))
-			WHERE
-				a1<>a2
-			RETURN
-				a1 as artifact, extract(a in nodes(path) : a.FQN) as cycle
-			ORDER BY
-				artifact	
-        ]]></cypher>
-    </constraint>
 
     <constraint id="dependency:CyclicPackageDependency">
         <requiresConcept refId="dependency:PackageDependency"/>
@@ -111,6 +96,22 @@
                 )
             RETURN
                 length(path) as length, extract(p in nodes(path) : p.FQN) as cycle
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="dependency:CyclicArtifactDependency">
+        <requiresConcept refId="dependency:ArtifactDependency"/>
+        <description>There must be no cyclic artifact dependencies.</description>
+        <cypher><![CDATA[
+			MATCH
+				(a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT),
+				path=shortestPath((a2)-[:DEPENDS_ON*]->(a1:ARTIFACT))
+			WHERE
+				a1<>a2
+			RETURN
+				a1 as artifact, extract(a in nodes(path) : a.FQN) as cycle
+			ORDER BY
+				artifact
         ]]></cypher>
     </constraint>
 
