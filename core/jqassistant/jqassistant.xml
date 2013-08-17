@@ -1,11 +1,11 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <group id="jqassistant:modules">
-        <includeConcept refId="model:Module"/>
-        <includeConcept refId="store:Module"/>
-        <includeConcept refId="scanner:Module"/>
-        <includeConcept refId="report:Module"/>
-        <includeConcept refId="analysis:Module"/>
+        <includeConcept refId="module-model:Module"/>
+        <includeConcept refId="module-store:Module"/>
+        <includeConcept refId="module-scanner:Module"/>
+        <includeConcept refId="module-report:Module"/>
+        <includeConcept refId="module-analysis:Module"/>
     </group>
 
     <group id="default">
