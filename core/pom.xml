@@ -22,6 +22,11 @@
                 <version>4.1</version>
             </dependency>
             <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-util</artifactId>
+                <version>4.1</version>
+            </dependency>
+            <dependency>
                 <groupId>org.neo4j</groupId>
                 <artifactId>server-api</artifactId>
                 <version>${org.neo4j_version}</version>
@@ -45,6 +50,12 @@
                 <groupId>org.neo4j.app</groupId>
                 <artifactId>neo4j-server</artifactId>
                 <version>${org.neo4j_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>asm</groupId>
+                        <artifactId>asm</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.neo4j.app</groupId>

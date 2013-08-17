@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
@@ -11,13 +12,15 @@ import org.objectweb.asm.signature.SignatureVisitor;
  * Time: 09:17
  * To change this template use File | Settings | File Templates.
  */
-public class MethodSignatureVisitor extends AbstractVisitor implements SignatureVisitor {
+public class MethodSignatureVisitor extends SignatureVisitor {
 
     private MethodDescriptor methodDescriptor;
+    private VisitorHelper visitorHelper;
 
-    MethodSignatureVisitor(MethodDescriptor methodDescriptor, DescriptorResolverFactory resolverFactory) {
-        super(resolverFactory);
+    MethodSignatureVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
+        super(Opcodes.ASM4);
         this.methodDescriptor = methodDescriptor;
+        this.visitorHelper = visitorHelper;
     }
 
     @Override
@@ -27,12 +30,12 @@ public class MethodSignatureVisitor extends AbstractVisitor implements Signature
 
     @Override
     public SignatureVisitor visitClassBound() {
-        return new DependentTypeSignatureVisitor(methodDescriptor,getResolverFactory());
+        return new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitInterfaceBound() {
-        return new DependentTypeSignatureVisitor(methodDescriptor,getResolverFactory());
+        return new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper);
     }
 
     @Override
@@ -47,17 +50,17 @@ public class MethodSignatureVisitor extends AbstractVisitor implements Signature
 
     @Override
     public SignatureVisitor visitParameterType() {
-        return new DependentTypeSignatureVisitor(methodDescriptor,getResolverFactory());
+        return new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitReturnType() {
-        return new DependentTypeSignatureVisitor(methodDescriptor,getResolverFactory());
+        return new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitExceptionType() {
-        return new DependentTypeSignatureVisitor(methodDescriptor,getResolverFactory());
+        return new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper);
     }
 
     @Override

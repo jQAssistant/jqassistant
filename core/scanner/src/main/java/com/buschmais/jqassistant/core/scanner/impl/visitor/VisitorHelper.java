@@ -10,16 +10,12 @@ import org.objectweb.asm.Type;
 /**
  * Abstract implementation of an ASM visitor.
  */
-public abstract class AbstractVisitor {
+public class VisitorHelper {
 
     private final DescriptorResolverFactory resolverFactory;
 
-    protected AbstractVisitor(DescriptorResolverFactory resolverFactory) {
+    public VisitorHelper(DescriptorResolverFactory resolverFactory) {
         this.resolverFactory = resolverFactory;
-    }
-
-    protected DescriptorResolverFactory getResolverFactory() {
-        return resolverFactory;
     }
 
     protected Store getStore() {

@@ -2,15 +2,19 @@ package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
-public class ClassSignatureVisitor extends AbstractVisitor implements SignatureVisitor {
+public class ClassSignatureVisitor extends SignatureVisitor {
 
     private TypeDescriptor typeDescriptor;
 
-    protected ClassSignatureVisitor(TypeDescriptor typeDescriptor, DescriptorResolverFactory resolverFactory) {
-        super(resolverFactory);
+    private VisitorHelper visitorHelper;
+
+    protected ClassSignatureVisitor(TypeDescriptor typeDescriptor, VisitorHelper visitorHelper) {
+        super(Opcodes.ASM4);
         this.typeDescriptor = typeDescriptor;
+        this.visitorHelper = visitorHelper;
     }
 
     @Override
@@ -19,25 +23,25 @@ public class ClassSignatureVisitor extends AbstractVisitor implements SignatureV
 
     @Override
     public SignatureVisitor visitClassBound() {
-        return new DependentTypeSignatureVisitor(typeDescriptor, getResolverFactory());
+        return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitInterfaceBound() {
-        return new DependentTypeSignatureVisitor(typeDescriptor, getResolverFactory());
+        return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new AbstractTypeSignatureVisitor(typeDescriptor, getResolverFactory()) {
+        return new AbstractTypeSignatureVisitor(typeDescriptor, visitorHelper) {
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(typeDescriptor, getResolverFactory());
+                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(typeDescriptor, getResolverFactory());
+                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
             }
 
             @Override
@@ -50,16 +54,16 @@ public class ClassSignatureVisitor extends AbstractVisitor implements SignatureV
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new AbstractTypeSignatureVisitor(typeDescriptor, getResolverFactory()) {
+        return new AbstractTypeSignatureVisitor(typeDescriptor, visitorHelper) {
 
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(typeDescriptor, getResolverFactory());
+                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(typeDescriptor, getResolverFactory());
+                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
             }
 
             @Override
