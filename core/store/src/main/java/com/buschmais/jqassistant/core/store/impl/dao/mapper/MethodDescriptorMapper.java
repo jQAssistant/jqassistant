@@ -1,11 +1,16 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
+import org.neo4j.graphdb.Label;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,14 +59,15 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
     public Map<NodeProperty, Object> getProperties(MethodDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
+        if (descriptor.isAbstract() != null) {
+            properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
+        }
         if (descriptor.getVisibility() != null) {
             properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
         }
@@ -73,6 +79,9 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
         }
         if (descriptor.isNative() != null) {
             properties.put(NodeProperty.NATIVE, descriptor.isNative());
+        }
+        if (descriptor.isSynthetic() != null) {
+            properties.put(NodeProperty.SYNTHETIC, descriptor.isSynthetic());
         }
         return properties;
     }
@@ -97,6 +106,9 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
                 case FINAL:
                     descriptor.setFinal((Boolean) value);
                     break;
+                case SYNTHETIC:
+                    descriptor.setSynthetic((Boolean) value);
+                    break;
                 case VISIBILITY:
                     descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
                     break;
@@ -105,4 +117,21 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
             }
         }
     }
+
+    @Override
+    public Set<Label> getLabels(MethodDescriptor descriptor) {
+        Set<Label> labels = new HashSet<>();
+        if (Boolean.TRUE.equals(descriptor.isConstructor())) {
+            labels.add(NodeLabel.CONSTRUCTOR);
+        }
+        return labels;
+    }
+
+    @Override
+    public void setLabel(MethodDescriptor descriptor, Label label) {
+        if (NodeLabel.CONSTRUCTOR.name().equals(label.name())) {
+            descriptor.setConstructor(Boolean.TRUE);
+        }
+    }
+
 }

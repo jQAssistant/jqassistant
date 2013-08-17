@@ -36,46 +36,51 @@ public enum NodeProperty {
     /**
      * Artifact type
      */
-	TYPE,
+    TYPE,
 
-	/**
-	 * <code>true</code> if the class or method is abstract, otherwise
-	 * <code>false</code>.
-	 */
-	ABSTRACT,
+    /**
+     * <code>true</code> if the class or method is abstract, otherwise
+     * <code>false</code>.
+     */
+    ABSTRACT,
 
-	/**
-	 * Access modifier of a class/method/field.
-	 */
-	VISIBILITY,
+    /**
+     * Access modifier of a class/method/field.
+     */
+    VISIBILITY,
 
-	/**
-	 * <code>true</code> if the class, method or field is static, otherwise
-	 * <code>false</code>.
-	 */
-	STATIC,
+    /**
+     * <code>true</code> if the class, method or field is static, otherwise
+     * <code>false</code>.
+     */
+    STATIC,
 
-	/**
-	 * <code>true</code> if the class, method or field is final, otherwise
-	 * <code>false</code>.
-	 */
-	FINAL,
+    /**
+     * <code>true</code> if the class, method or field is final, otherwise
+     * <code>false</code>.
+     */
+    FINAL,
 
-	/**
-	 * <code>true</code> if the method is native, otherwise <code>false</code>.
-	 */
-	NATIVE,
+    /**
+     * <code>true</code> if the class, field or method is synthetic, otherwise <code>false</code>.
+     */
+    SYNTHETIC,
 
-	/**
-	 * <code>true</code> if the field is transient, otherwise <code>false</code>
-	 * .
-	 */
-	TRANSIENT,
+    /**
+     * <code>true</code> if the method is native, otherwise <code>false</code>.
+     */
+    NATIVE,
 
-	/**
-	 * <code>true</code> if the field is volatile, otherwise <code>false</code>.
-	 */
-	VOLATILE;
+    /**
+     * <code>true</code> if the field is transient, otherwise <code>false</code>
+     * .
+     */
+    TRANSIENT,
+
+    /**
+     * <code>true</code> if the field is volatile, otherwise <code>false</code>.
+     */
+    VOLATILE;
 
     private static Map<String, NodeProperty> nodeProperties;
 

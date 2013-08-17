@@ -10,16 +10,19 @@ package com.buschmais.jqassistant.core.model.api.descriptor;
  */
 public interface AccessModifierDescriptor {
 
-	VisibilityModifier getVisibility();
+    VisibilityModifier getVisibility();
 
-	void setVisibility(VisibilityModifier visibilityModifier);
+    void setVisibility(VisibilityModifier visibilityModifier);
 
-	Boolean isStatic();
+    Boolean isStatic();
 
-	void setStatic(Boolean s);
+    void setStatic(Boolean s);
 
-	Boolean isFinal();
+    Boolean isFinal();
 
-	void setFinal(Boolean f);
+    void setFinal(Boolean f);
 
+    public Boolean isSynthetic();
+
+    public void setSynthetic(Boolean s);
 }
