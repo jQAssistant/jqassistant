@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -14,10 +14,10 @@ public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<
      * Constructor
      *
      * @param dependentDescriptor The descriptor which depends on the resolvedd type.
-     * @param resolverFactory     The {@link DescriptorResolverFactory}
+     * @param visitorHelper     The {@link VisitorHelper}
      */
-    DependentTypeSignatureVisitor(DependentDescriptor dependentDescriptor, DescriptorResolverFactory resolverFactory) {
-        super(dependentDescriptor, resolverFactory);
+    DependentTypeSignatureVisitor(DependentDescriptor dependentDescriptor, VisitorHelper visitorHelper) {
+        super(dependentDescriptor, visitorHelper);
     }
 
     @Override

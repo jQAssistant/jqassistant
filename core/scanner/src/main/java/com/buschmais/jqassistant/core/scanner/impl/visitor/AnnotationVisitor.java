@@ -1,43 +1,46 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
-import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 /**
  * An annotation visitor.
  * <p>Adds a dependency from the annotated type to the types of the annotation values.</p>
  */
-public class AnnotationVisitor extends AbstractVisitor implements org.objectweb.asm.AnnotationVisitor {
+public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 
     private final DependentDescriptor parentDescriptor;
+
+    private VisitorHelper visitorHelper;
 
     /**
      * Constructor.
      *
      * @param dependentDescriptor The descriptor which annotated (e.g. class, field or method.)
-     * @param resolverFactory     The .{@link DescriptorResolverFactory}.
+     * @param visitorHelper       The {@link VisitorHelper}.
      */
-    protected AnnotationVisitor(DependentDescriptor dependentDescriptor, DescriptorResolverFactory resolverFactory) {
-        super(resolverFactory);
+    protected AnnotationVisitor(DependentDescriptor dependentDescriptor, VisitorHelper visitorHelper) {
+        super(Opcodes.ASM4);
         this.parentDescriptor = dependentDescriptor;
+        this.visitorHelper = visitorHelper;
     }
 
     @Override
     public void visit(final String name, final Object value) {
         if (value instanceof Type) {
-            addDependency(parentDescriptor, getType((Type) value));
+            visitorHelper.addDependency(parentDescriptor, visitorHelper.getType((Type) value));
         }
     }
 
     @Override
     public void visitEnum(final String name, final String desc, final String value) {
-        addDependency(parentDescriptor, getType((desc)));
+        visitorHelper.addDependency(parentDescriptor, visitorHelper.getType((desc)));
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(final String name, final String desc) {
-        addDependency(parentDescriptor, getType((desc)));
+        visitorHelper.addDependency(parentDescriptor, visitorHelper.getType((desc)));
         return this;
     }
 
