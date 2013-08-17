@@ -37,7 +37,6 @@ import com.buschmais.jqassistant.core.scanner.impl.visitor.VisitorHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.util.TraceClassVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,7 +192,7 @@ public class ClassScannerImpl implements ClassScanner {
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
         scanListener.beforeClass();
         try {
-            ClassVisitor visitor = new ClassVisitor(artifactDescriptor, new VisitorHelper(resolverFactory));
+            ClassVisitor visitor = new ClassVisitor(artifactDescriptor, new VisitorHelper(store, resolverFactory));
             new ClassReader(inputStream).accept(visitor, 0);
         } finally {
             scanListener.afterClass();

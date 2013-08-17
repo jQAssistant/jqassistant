@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AnnotatedDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.objectweb.asm.Type;
@@ -12,14 +12,17 @@ import org.objectweb.asm.Type;
  */
 public class VisitorHelper {
 
-    private final DescriptorResolverFactory resolverFactory;
+    private DescriptorResolverFactory resolverFactory;
 
-    public VisitorHelper(DescriptorResolverFactory resolverFactory) {
+    private Store store;
+
+    public VisitorHelper(Store store, DescriptorResolverFactory resolverFactory) {
+        this.store = store;
         this.resolverFactory = resolverFactory;
     }
 
     protected Store getStore() {
-        return resolverFactory.getStore();
+        return store;
     }
 
     protected TypeDescriptor getTypeDescriptor(String typeName) {

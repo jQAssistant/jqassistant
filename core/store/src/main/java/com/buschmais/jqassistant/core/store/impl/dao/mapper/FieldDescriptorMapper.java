@@ -74,6 +74,9 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
         if (descriptor.isTransient() != null) {
             properties.put(NodeProperty.TRANSIENT, descriptor.isTransient());
         }
+        if (descriptor.isSynthetic() != null) {
+            properties.put(NodeProperty.SYNTHETIC, descriptor.isSynthetic());
+        }
         return properties;
     }
 
@@ -96,6 +99,9 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
                     break;
                 case TRANSIENT:
                     descriptor.setTransient((Boolean) value);
+                    break;
+                case SYNTHETIC:
+                    descriptor.setSynthetic((Boolean) value);
                     break;
                 case VISIBILITY:
                     descriptor.setVisibility(VisibilityModifier.valueOf((String) value));

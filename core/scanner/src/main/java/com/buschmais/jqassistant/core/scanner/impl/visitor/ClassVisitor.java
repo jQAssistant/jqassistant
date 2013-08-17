@@ -4,20 +4,17 @@ import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassVisitor.class);
+    /**
+     * The name of constructor methods.
+     */
+    private static final String CONSTRUCTOR_METHOD = "<init>";
 
     private TypeDescriptor typeDescriptor;
     private ArtifactDescriptor artifactDescriptor;
     private VisitorHelper visitorHelper;
-
-    public ClassVisitor(VisitorHelper visitorHelper) {
-        this(null, visitorHelper);
-    }
 
     public ClassVisitor(ArtifactDescriptor artifactDescriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM4);
@@ -28,16 +25,15 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         typeDescriptor = visitorHelper.getTypeDescriptor(name);
-
         if (this.artifactDescriptor != null) {
             artifactDescriptor.getContains().add(typeDescriptor);
         }
-
         JavaType javaType = getJavaType(access);
         typeDescriptor.setJavaType(javaType);
-        typeDescriptor.setAbstract(hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE));
+        if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
+            typeDescriptor.setAbstract(Boolean.TRUE);
+        }
         setAccessModifier(access, typeDescriptor);
-
         if (signature == null) {
             if (superName != null) {
                 typeDescriptor.setSuperClass(visitorHelper.getTypeDescriptor(superName));
@@ -57,7 +53,6 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
         setAccessModifier(access, fieldDescriptor);
-
         if (signature == null) {
             visitorHelper.addDependency(fieldDescriptor, visitorHelper.getType((desc)));
         } else {
@@ -73,30 +68,43 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         MethodDescriptor methodDescriptor = getMethodDescriptor(typeDescriptor, name, desc);
         typeDescriptor.getContains().add(methodDescriptor);
-        methodDescriptor.setAbstract(hasFlag(access, Opcodes.ACC_ABSTRACT));
-        methodDescriptor.setNative(hasFlag(access, Opcodes.ACC_NATIVE));
         setAccessModifier(access, methodDescriptor);
-
+        if (CONSTRUCTOR_METHOD.equals(name)) {
+            methodDescriptor.setConstructor(Boolean.TRUE);
+        }
+        if (hasFlag(access, Opcodes.ACC_ABSTRACT)) {
+            methodDescriptor.setAbstract(Boolean.TRUE);
+        }
+        if (hasFlag(access, Opcodes.ACC_NATIVE)) {
+            methodDescriptor.setNative(Boolean.TRUE);
+        }
         if (signature == null) {
             visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(org.objectweb.asm.Type.getReturnType(desc)));
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
                 visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(types[i]));
             }
+            for (int i = 0; exceptions != null && i < exceptions.length; i++) {
+                TypeDescriptor exception = visitorHelper.getTypeDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
+                methodDescriptor.getDeclaredThrowables().add(exception);
+            }
         } else {
             new SignatureReader(signature).accept(new MethodSignatureVisitor(methodDescriptor, visitorHelper));
-        }
-        for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-            TypeDescriptor exception = visitorHelper.getTypeDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
-            methodDescriptor.getDeclaredThrowables().add(exception);
         }
         return new MethodVisitor(methodDescriptor, visitorHelper);
     }
 
     private void setAccessModifier(final int access, AccessModifierDescriptor descriptor) {
         descriptor.setVisibility(getVisibility(access));
-        descriptor.setFinal(hasFlag(access, Opcodes.ACC_FINAL));
-        descriptor.setStatic(hasFlag(access, Opcodes.ACC_STATIC));
+        if (hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
+            descriptor.setSynthetic(Boolean.TRUE);
+        }
+        if (hasFlag(access, Opcodes.ACC_FINAL)) {
+            descriptor.setFinal(Boolean.TRUE);
+        }
+        if (hasFlag(access, Opcodes.ACC_STATIC)) {
+            descriptor.setStatic(Boolean.TRUE);
+        }
     }
 
     @Override

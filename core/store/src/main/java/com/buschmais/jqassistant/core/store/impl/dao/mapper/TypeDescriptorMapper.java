@@ -73,7 +73,9 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     @Override
     public Map<NodeProperty, Object> getProperties(TypeDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
+        if (descriptor.isAbstract() != null) {
+            properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
+        }
         if (descriptor.getVisibility() != null) {
             properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
         }
@@ -83,12 +85,12 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
         if (descriptor.isFinal() != null) {
             properties.put(NodeProperty.FINAL, descriptor.isFinal());
         }
+        if (descriptor.isSynthetic() != null) {
+            properties.put(NodeProperty.SYNTHETIC, descriptor.isSynthetic());
+        }
         return properties;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setProperty(TypeDescriptor descriptor, NodeProperty property, Object value) {
         if (value != null) {
@@ -102,6 +104,9 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
                     break;
                 case FINAL:
                     descriptor.setFinal((Boolean) value);
+                    break;
+                case SYNTHETIC:
+                    descriptor.setSynthetic((Boolean) value);
                     break;
                 case VISIBILITY:
                     descriptor.setVisibility(VisibilityModifier.valueOf((String) value));

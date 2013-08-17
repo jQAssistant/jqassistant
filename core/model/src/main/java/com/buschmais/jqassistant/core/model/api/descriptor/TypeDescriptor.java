@@ -54,6 +54,11 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     private Boolean finalClass;
 
     /**
+     * <code>true</code> if this class is synthetic, otherwise <code>false</code>.
+     */
+    private Boolean syntheticClass;
+
+    /**
      * Return the super class.
      *
      * @return The super class.
@@ -169,6 +174,16 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     @Override
     public void setFinal(Boolean f) {
         finalClass = f;
+    }
+
+    @Override
+    public Boolean isSynthetic() {
+        return syntheticClass;
+    }
+
+    @Override
+    public void setSynthetic(Boolean syntheticClass) {
+        this.syntheticClass = syntheticClass;
     }
 
     /**

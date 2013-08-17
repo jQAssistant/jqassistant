@@ -16,14 +16,6 @@ public class DescriptorResolverFactory {
         typeDescriptorResolver = new TypeDescriptorResolver(store, packageDescriptorResolver);
     }
 
-    public Store getStore() {
-        return store;
-    }
-
-    public PackageDescriptorResolver getPackageDescriptorResolver() {
-        return packageDescriptorResolver;
-    }
-
     public TypeDescriptorResolver getTypeDescriptorResolver() {
         return typeDescriptorResolver;
     }

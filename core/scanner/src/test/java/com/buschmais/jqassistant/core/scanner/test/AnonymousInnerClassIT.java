@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.scanner.test.matcher.TypeDescriptorMatcher;
 import com.buschmais.jqassistant.core.scanner.test.set.innerclass.AnonymousInnerClass;
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -52,7 +51,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");
-        assertThat(outerClass, TypeDescriptorMatcher.typeDescriptor(AnonymousInnerClass.class));
+        assertThat(outerClass, typeDescriptor(AnonymousInnerClass.class));
         Matcher<Iterable<? super TypeDescriptor>> matcher = hasItem(typeDescriptor(INNERCLASS_NAME));
         assertThat(outerClass.getContains(), matcher);
     }

@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.scanner.test.matcher;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
@@ -46,6 +47,43 @@ public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDes
         name.append('(');
         int parameterCount = 0;
         for (Class<?> parameterType : method.getParameterTypes()) {
+            if (parameterCount > 0) {
+                name.append(',');
+            }
+            name.append(parameterType.getCanonicalName());
+            parameterCount++;
+        }
+        name.append(')');
+        return new MethodDescriptorMatcher(name.toString());
+    }
+
+    /**
+     * Return a {@link MethodDescriptorMatcher} for constructors.
+     *
+     * @param type           The class containing the expected constructor.
+     * @param parameterTypes The parameter types of the expected constructor.
+     * @return The {@link MethodDescriptorMatcher}.
+     */
+    public static MethodDescriptorMatcher constructorDescriptor(Class<?> type, Class<?>... parameterTypes) throws NoSuchMethodException {
+        return methodDescriptor(type.getDeclaredConstructor(parameterTypes));
+    }
+
+    /**
+     * Return a {@link MethodDescriptorMatcher} for constructors.
+     *
+     * @param constructor The expected constructor.
+     * @return The {@link MethodDescriptorMatcher}.
+     */
+    public static MethodDescriptorMatcher methodDescriptor(Constructor constructor) {
+        StringBuffer name = new StringBuffer();
+        name.append(constructor.getDeclaringClass().getName());
+        name.append('#');
+        name.append("void");
+        name.append(' ');
+        name.append("<init>");
+        name.append('(');
+        int parameterCount = 0;
+        for (Class<?> parameterType : constructor.getParameterTypes()) {
             if (parameterCount > 0) {
                 name.append(',');
             }
