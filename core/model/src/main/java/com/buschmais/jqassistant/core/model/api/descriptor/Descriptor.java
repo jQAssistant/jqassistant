@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.model.api.descriptor;
 
 /**
- * Base interface for all type descriptors (e.g. classes, fields, methods, etc.)
+ * Base interface for all types descriptors (e.g. classes, fields, methods, etc.)
  */
 public interface Descriptor {
 

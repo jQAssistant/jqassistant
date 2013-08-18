@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 /**
  * Abstract base implementation of a {@link DescriptorMapper}.
  *
- * @param <T> The type.
+ * @param <T> The types.
  */
 public abstract class AbstractDescriptorMapper<T extends Descriptor> implements DescriptorMapper<T> {
 

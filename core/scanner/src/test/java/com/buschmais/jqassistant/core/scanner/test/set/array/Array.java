@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.test.set.array;
 
 /**
- * A type containing a string array.
+ * A types containing a string array.
  */
 public class Array {
 

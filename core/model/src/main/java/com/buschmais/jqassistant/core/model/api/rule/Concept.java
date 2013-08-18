@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.model.api.rules;
+package com.buschmais.jqassistant.core.model.api.rule;
 
 /**
  * Defines a concept which can be applied.

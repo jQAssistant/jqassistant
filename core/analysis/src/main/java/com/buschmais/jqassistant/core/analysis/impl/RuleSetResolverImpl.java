@@ -2,10 +2,10 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolver;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
-import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import com.buschmais.jqassistant.core.model.api.rule.Concept;
+import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.model.api.rule.Group;
+import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;

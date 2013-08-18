@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
-import com.buschmais.jqassistant.core.model.api.rules.Query;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
-import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import com.buschmais.jqassistant.core.model.api.rule.Query;
+import com.buschmais.jqassistant.core.model.api.rule.Concept;
+import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.model.api.rule.Group;
+import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +81,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
      *
      * @param list    The XML types.
      * @param typeMap The {@link Map}.
-     * @param <T>     The value type of the {@link Map}.
+     * @param <T>     The value types of the {@link Map}.
      */
     private <T extends ReferenceableType> void cacheXmlTypes(List<T> list, Map<String, T> typeMap) {
         for (T t : list) {
@@ -131,7 +131,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     /**
-     * Reads {@link GroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rules.Group}s.
+     * Reads {@link GroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rule.Group}s.
      *
      * @param constraintTypes The {@link ConstraintType}s.
      * @param groupTypes      The {@link GroupType}s.
@@ -202,11 +202,11 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     /**
-     * Gets a {@link com.buschmais.jqassistant.core.model.api.rules.Group} from the cache or create a new instance if it does not exist yet.
+     * Gets a {@link com.buschmais.jqassistant.core.model.api.rule.Group} from the cache or create a new instance if it does not exist yet.
      *
      * @param id     The id.
-     * @param groups The {@link com.buschmais.jqassistant.core.model.api.rules.Group}s.
-     * @return The {@link com.buschmais.jqassistant.core.model.api.rules.Group}.
+     * @param groups The {@link com.buschmais.jqassistant.core.model.api.rule.Group}s.
+     * @return The {@link com.buschmais.jqassistant.core.model.api.rule.Group}.
      */
     private Group getOrCreateGroup(String id, Map<String, Group> groups) {
         Group group = groups.get(id);
@@ -288,7 +288,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     /**
-     * Get a parameter value by its string representation and type.
+     * Get a parameter value by its string representation and types.
      *
      * @param type        The {@link ParameterType}.
      * @param stringValue The string representation.
@@ -304,7 +304,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
                 value = stringValue;
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported parameter type: " + type);
+                throw new IllegalArgumentException("Unsupported parameter types: " + type);
         }
         return value;
     }

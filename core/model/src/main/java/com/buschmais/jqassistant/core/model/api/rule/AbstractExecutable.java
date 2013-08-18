@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.model.api.rules;
+package com.buschmais.jqassistant.core.model.api.rule;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Defines an executable which is has an unique identifier and references a Query.
  */
-public class AbstractExecutable {
+public class AbstractExecutable implements Rule {
 
     private String id;
 

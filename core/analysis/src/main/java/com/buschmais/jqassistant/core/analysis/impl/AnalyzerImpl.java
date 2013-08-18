@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.model.api.rules.Query;
+import com.buschmais.jqassistant.core.model.api.rule.Query;
 import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rules.*;
+import com.buschmais.jqassistant.core.model.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportWriter;
 import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
@@ -171,7 +171,7 @@ public class AnalyzerImpl implements Analyzer {
      * Run the given executable and return a result which can be passed to a report writer.
      *
      * @param executable The executable.
-     * @param <T>        The type of the executable.
+     * @param <T>        The types of the executable.
      * @return The result.
      * @throws AnalyzerException If query execution fails.
      */

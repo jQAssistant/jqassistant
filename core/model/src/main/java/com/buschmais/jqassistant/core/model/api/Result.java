@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.core.model.api;
 
-import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * The result of a {@link com.buschmais.jqassistant.core.model.api.rules.Query} using an {@link  AbstractExecutable}.
+ * The result of a {@link com.buschmais.jqassistant.core.model.api.rule.Query} using an {@link  AbstractExecutable}.
  */
 public class Result<T extends AbstractExecutable> {
 

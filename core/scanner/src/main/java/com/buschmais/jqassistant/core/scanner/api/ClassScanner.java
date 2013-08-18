@@ -64,13 +64,13 @@ public interface ClassScanner {
     void scanClasses(Class<?>... classTypes) throws IOException;
 
     /**
-     * Scans an input stream representing a class.
+     * Scans the given classes by resolving their files as resources from the class path.
      *
-     * @param inputStream The input stream.
-     * @param name        The name (e.g. file name).
+     * @param artifact   The containing artifact.
+     * @param classTypes The classes.
      * @throws IOException If scanning fails.
      */
-    void scanInputStream(InputStream inputStream, String name) throws IOException;
+    void scanClasses(ArtifactDescriptor artifact, Class<?>... classTypes) throws IOException;
 
     /**
      * Scans an inputstream representing a class.

@@ -7,9 +7,10 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
-import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import com.buschmais.jqassistant.core.model.api.rule.Concept;
+import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.model.api.rule.Group;
+import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.test.AbstractScannerIT;
 import org.junit.Assert;
@@ -37,7 +38,7 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
-        Assert.assertTrue("There must be no unresolved constraints.", ruleSet.getMissingConstraints().isEmpty());
+        Assert.assertTrue("There must be no unresolved result.", ruleSet.getMissingConstraints().isEmpty());
         Assert.assertTrue("There must be no unresolved groups.", ruleSet.getMissingGroups().isEmpty());
     }
 
@@ -62,6 +63,20 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
     }
 
     /**
+     * Validates the constraint identified by id.
+     *
+     * @param id The id.
+     * @throws AnalyzerException If the analyzer reports an error.
+     */
+    protected void validateConstraint(String id) throws AnalyzerException {
+        Constraint constraint = ruleSet.getConstraints().get(id);
+        Assert.assertNotNull("The constraint must not be null", constraint);
+        RuleSet targetRuleSet = new RuleSet();
+        targetRuleSet.getConstraints().put(constraint.getId(), constraint);
+        analyzer.execute(targetRuleSet);
+    }
+
+    /**
      * Executes the group identified by id.
      *
      * @param id The id.
@@ -74,5 +89,4 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
         targetRuleSet.getGroups().put(group.getId(), group);
         analyzer.execute(targetRuleSet);
     }
-
 }

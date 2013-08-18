@@ -6,7 +6,7 @@ import org.objectweb.asm.Type;
 
 /**
  * An annotation visitor.
- * <p>Adds a dependency from the annotated type to the types of the annotation values.</p>
+ * <p>Adds a dependency from the annotated types to the types of the annotation values.</p>
  */
 public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 

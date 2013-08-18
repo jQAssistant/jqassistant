@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.buschmais.jqassistant.core.scanner.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
+import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.MethodDescriptorMatcher.constructorDescriptor;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;

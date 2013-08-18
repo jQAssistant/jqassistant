@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.buschmais.jqassistant.core.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -39,7 +39,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
     @Test
     public void innerClass() throws IOException {
         String resourceName = "/" + INNERCLASS_NAME.replace(".", "/") + ".class";
-        scanClasses(resourceName);
+        scanClassResources(resourceName);
         assertOuterClassContainsInnerClass();
     }
 

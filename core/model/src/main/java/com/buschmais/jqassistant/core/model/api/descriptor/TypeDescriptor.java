@@ -29,7 +29,7 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
 
     /**
-     * The java type.
+     * The java types.
      */
     private JavaType javaType;
 
@@ -187,18 +187,18 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     }
 
     /**
-     * Return the java type.
+     * Return the java types.
      *
-     * @return The java type.
+     * @return The java types.
      */
     public JavaType getJavaType() {
         return javaType;
     }
 
     /**
-     * Set the java type.
+     * Set the java types.
      *
-     * @param javaType The java type.
+     * @param javaType The java types.
      */
     public void setJavaType(JavaType javaType) {
         this.javaType = javaType;

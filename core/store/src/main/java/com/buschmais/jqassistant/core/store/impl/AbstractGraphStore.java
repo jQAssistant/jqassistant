@@ -19,7 +19,7 @@ import static com.buschmais.jqassistant.core.store.api.model.NodeProperty.FQN;
 /**
  * Abstract base implementation of a {@link Store}.
  * <p>
- * Provides methods for managing the life cycle of a store, transactions,
+ * Provides methods for managing the life packages of a store, transactions,
  * resolving descriptors and executing CYPHER queries.
  * </p>
  */

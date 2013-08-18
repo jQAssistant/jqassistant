@@ -13,14 +13,14 @@ import java.util.Set;
  * Defines an interface to map an {@link Descriptor} to nodes and
  * relationships.
  *
- * @param <T> The descriptor type.
+ * @param <T> The descriptor types.
  */
 public interface DescriptorMapper<T extends Descriptor> {
 
     /**
-     * Return the java type.
+     * Return the java types.
      *
-     * @return The java type.
+     * @return The java types.
      */
     public Class<T> getJavaType();
 
