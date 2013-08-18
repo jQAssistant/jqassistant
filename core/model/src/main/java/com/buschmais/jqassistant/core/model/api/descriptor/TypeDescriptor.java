@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Describes a Java class.
+ * Describes a Java type.
  */
 public class TypeDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
