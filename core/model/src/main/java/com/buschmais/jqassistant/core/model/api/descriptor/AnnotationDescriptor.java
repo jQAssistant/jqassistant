@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.model.api.descriptor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.value.PrimitiveValueDescriptor;
-
 import java.util.Set;
 
 /**
