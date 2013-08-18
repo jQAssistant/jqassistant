@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AnnotatedDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.objectweb.asm.Type;
@@ -28,6 +26,14 @@ public class VisitorHelper {
     protected TypeDescriptor getTypeDescriptor(String typeName) {
         String fullQualifiedName = getType(Type.getObjectType(typeName));
         return resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName);
+    }
+
+    protected MethodDescriptor getMethodDescriptor(TypeDescriptor type, String signature) {
+        return resolverFactory.getMethodDescriptorResolver().resolve(type, signature);
+    }
+
+    protected FieldDescriptor getFieldDescriptor(TypeDescriptor type, String signature) {
+        return resolverFactory.getFieldDescriptorResolver().resolve(type, signature);
     }
 
     protected void addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
@@ -56,5 +62,4 @@ public class VisitorHelper {
                 return t.getClassName();
         }
     }
-
 }

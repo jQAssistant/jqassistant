@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.core.scanner.impl.resolver;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 
-public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T extends AbstractDescriptor> {
+public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T extends AbstractDescriptor> {
 
     private final Store store;
 
@@ -20,20 +21,24 @@ public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T
         this.parentResolver = (AbstractDescriptorResolver<?, P>) this;
     }
 
+    public T resolve(P parent, String name) {
+        StringBuffer fullQualifiedName = new StringBuffer(parent.getFullQualifiedName());
+        fullQualifiedName.append(getSeparator());
+        fullQualifiedName.append(name);
+        return resolve(fullQualifiedName.toString());
+    }
+
     public T resolve(String fullQualifiedName) {
-        T descriptor = find(fullQualifiedName);
+        T descriptor = store.find(getType(), fullQualifiedName);
         if (descriptor == null) {
-            String name;
+            descriptor = store.create(getType(), fullQualifiedName);
             P parent = null;
             int separatorIndex = fullQualifiedName.lastIndexOf(getSeparator());
-            if (separatorIndex == -1) {
-                name = fullQualifiedName;
-            } else {
+            if (separatorIndex != -1) {
                 String parentName = fullQualifiedName.substring(0, separatorIndex);
-                name = fullQualifiedName.substring(separatorIndex + 1, fullQualifiedName.length());
                 parent = parentResolver.resolve(parentName);
+                parent.getContains().add(descriptor);
             }
-            descriptor = this.create(parent, name);
         }
         return descriptor;
     }
@@ -42,9 +47,7 @@ public abstract class AbstractDescriptorResolver<P extends AbstractDescriptor, T
         return store;
     }
 
+    protected abstract Class<T> getType();
+
     protected abstract char getSeparator();
-
-    protected abstract T create(P parent, String name);
-
-    protected abstract T find(String fullQualifiedName);
 }

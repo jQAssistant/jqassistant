@@ -48,7 +48,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        FieldDescriptor fieldDescriptor = getFielDescriptor(typeDescriptor, name, desc);
+        FieldDescriptor fieldDescriptor = getFieldDescriptor(typeDescriptor, name, desc);
         typeDescriptor.getContains().add(fieldDescriptor);
         fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
@@ -138,13 +138,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     protected MethodDescriptor getMethodDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
-        MethodDescriptor methodDescriptor = visitorHelper.getStore().createMethodDescriptor(typeDescriptor, getMethodSignature(name, desc));
-        return methodDescriptor;
+        return visitorHelper.getMethodDescriptor(typeDescriptor, getMethodSignature(name, desc));
     }
 
-    protected FieldDescriptor getFielDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
-        FieldDescriptor fieldDescriptor = visitorHelper.getStore().createFieldDescriptor(typeDescriptor, getFieldSignature(name, desc));
-        return fieldDescriptor;
+    protected FieldDescriptor getFieldDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
+        return visitorHelper.getFieldDescriptor(typeDescriptor, getFieldSignature(name, desc));
     }
 
     private String getMethodSignature(String name, String desc) {
