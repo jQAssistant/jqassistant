@@ -13,10 +13,10 @@ import javax.xml.stream.XMLStreamWriter;
 
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
+import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rule.Concept;
+import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.report.api.ReportWriter;
 import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -34,8 +34,6 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     private XMLStreamWriter xmlStreamWriter;
-
-    private AbstractExecutable executable;
 
     private Result<? extends AbstractExecutable> result;
 
@@ -82,7 +80,7 @@ public class XmlReportWriter implements ReportWriter {
 
     @Override
     public void beginConcept(Concept concept) throws ReportWriterException {
-        beginExecutable(concept);
+        beginExecutable();
     }
 
     @Override
@@ -118,7 +116,7 @@ public class XmlReportWriter implements ReportWriter {
 
     @Override
     public void beginConstraint(Constraint constraint) throws ReportWriterException {
-        beginExecutable(constraint);
+        beginExecutable();
     }
 
     @Override
@@ -131,8 +129,7 @@ public class XmlReportWriter implements ReportWriter {
         this.result = result;
     }
 
-    private void beginExecutable(AbstractExecutable executable) {
-        this.executable = executable;
+    private void beginExecutable() {
         this.executableBeginTime = System.currentTimeMillis();
     }
 

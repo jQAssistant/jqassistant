@@ -31,7 +31,7 @@ public class DescriptorMapperRegistry {
      * Return the mapper for a given node.
      *
      * @param node The node.
-     * @param <T>  The descriptor type.
+     * @param <T>  The descriptor types.
      * @return The mapper.
      */
     @SuppressWarnings("unchecked")
@@ -52,17 +52,17 @@ public class DescriptorMapperRegistry {
     }
 
     /**
-     * Return the mapper for the given java type.
+     * Return the mapper for the given java types.
      *
-     * @param javaType The java type.
-     * @param <T>      The descriptor type.
+     * @param javaType The java types.
+     * @param <T>      The descriptor types.
      * @return The mapper.
      */
     @SuppressWarnings("unchecked")
     public <T extends Descriptor> DescriptorMapper<T> getDescriptorMapper(Class<?> javaType) {
         DescriptorMapper<T> mapper = (DescriptorMapper<T>) mappersByJavaType.get(javaType);
         if (mapper == null) {
-            throw new IllegalArgumentException("Cannot find mapper for java type " + javaType);
+            throw new IllegalArgumentException("Cannot find mapper for java types " + javaType);
         }
         return mapper;
     }

@@ -1,10 +1,10 @@
-package com.buschmais.jqassistant.core.scanner.test.matcher;
+package com.buschmais.jqassistant.core.model.test.matcher.descriptor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import org.hamcrest.Matcher;
 
 /**
- * A matcher for {@link com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor}s.
+ * A matcher for {@link TypeDescriptor}s.
  */
 public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescriptor> {
 
@@ -20,7 +20,7 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
     /**
      * Constructor.
      *
-     * @param name The expected full qualified type name.
+     * @param name The expected full qualified types name.
      */
     protected TypeDescriptorMatcher(String name) {
         super(TypeDescriptor.class, name);
@@ -29,20 +29,20 @@ public class TypeDescriptorMatcher extends AbstractDescriptorMatcher<TypeDescrip
     /**
      * Return a {@link TypeDescriptorMatcher} .
      *
-     * @param type The expected type.
+     * @param type The expected types.
      * @return The {@link TypeDescriptorMatcher}.
      */
-    public static Matcher<TypeDescriptor> typeDescriptor(Class<?> type) {
+    public static Matcher<? super TypeDescriptor> typeDescriptor(Class<?> type) {
         return new TypeDescriptorMatcher(type);
     }
 
     /**
      * Return a {@link TypeDescriptorMatcher}.
      *
-     * @param name The expected full qualified type name.
+     * @param name The expected full qualified types name.
      * @return The {@link TypeDescriptorMatcher}.
      */
-    public static Matcher<TypeDescriptor> typeDescriptor(String name) {
+    public static Matcher<? super TypeDescriptor> typeDescriptor(String name) {
         return new TypeDescriptorMatcher(name);
     }
 }

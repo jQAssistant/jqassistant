@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.rules.java.test.set.java;
 
 /**
- * An interface type.
+ * An interface types.
  */
 public interface InterfaceType {
 }

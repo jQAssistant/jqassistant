@@ -175,15 +175,15 @@ public class ClassScannerImpl implements ClassScanner {
 
     @Override
     public void scanClasses(Class<?>... classTypes) throws IOException {
-        for (Class<?> classType : classTypes) {
-            String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
-            scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
-        }
+        this.scanClasses(null, classTypes);
     }
 
     @Override
-    public void scanInputStream(InputStream inputStream, String name) throws IOException {
-        scanInputStream(null, inputStream, name);
+    public void scanClasses(ArtifactDescriptor artifact, Class<?>... classTypes) throws IOException {
+        for (Class<?> classType : classTypes) {
+            String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
+            scanInputStream(artifact, classType.getResourceAsStream(resourceName), resourceName);
+        }
     }
 
     @Override

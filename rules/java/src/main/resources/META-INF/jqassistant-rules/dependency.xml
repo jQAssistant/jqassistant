@@ -111,7 +111,7 @@
 			RETURN
 				a1 as artifact, extract(a in nodes(path) : a.FQN) as cycle
 			ORDER BY
-				artifact
+				artifact.FQN
         ]]></cypher>
     </constraint>
 

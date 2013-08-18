@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.buschmais.jqassistant.core.scanner.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 

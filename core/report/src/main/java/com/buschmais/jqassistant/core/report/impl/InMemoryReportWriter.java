@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rules.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
+import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.model.api.rule.Group;
+import com.buschmais.jqassistant.core.model.api.rule.Concept;
+import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.report.api.ReportWriter;
 import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 

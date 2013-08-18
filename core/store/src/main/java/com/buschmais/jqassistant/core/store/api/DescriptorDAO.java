@@ -15,8 +15,8 @@ public interface DescriptorDAO {
      * <p/>
      * Only supported for {@link AbstractDescriptor}s which are indexed.
      *
-     * @param <T>               The descriptor type.
-     * @param type              The class type.
+     * @param <T>               The descriptor types.
+     * @param type              The class types.
      * @param fullQualifiedName The full qualified name.
      * @return The {@link AbstractDescriptor} or <code>null</code> if it does
      *         not exist.
@@ -32,7 +32,7 @@ public interface DescriptorDAO {
      * {@link #flush()}.
      * </p>
      *
-     * @param <T>        The descriptor type.
+     * @param <T>        The descriptor types.
      * @param descriptor The descriptor.
      */
     <T extends Descriptor> void persist(T descriptor);

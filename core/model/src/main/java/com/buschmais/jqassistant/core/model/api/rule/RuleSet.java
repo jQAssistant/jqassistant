@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.model.api.rules;
+package com.buschmais.jqassistant.core.model.api.rule;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,6 +1,7 @@
-package com.buschmais.jqassistant.core.scanner.test.matcher;
+package com.buschmais.jqassistant.core.model.test.matcher.descriptor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
+import org.hamcrest.Matcher;
 
 import java.lang.reflect.Field;
 
@@ -25,7 +26,7 @@ public class FieldDescriptorMatcher extends AbstractDescriptorMatcher<FieldDescr
      * @param field The name of the expected field.
      * @return The {@link FieldDescriptorMatcher}.
      */
-    public static FieldDescriptorMatcher fieldDescriptor(Class<?> type, String field) throws NoSuchFieldException {
+    public static Matcher<? super FieldDescriptor> fieldDescriptor(Class<?> type, String field) throws NoSuchFieldException {
         return fieldDescriptor(type.getDeclaredField(field));
     }
 
@@ -35,7 +36,7 @@ public class FieldDescriptorMatcher extends AbstractDescriptorMatcher<FieldDescr
      * @param field The expected field.
      * @return The {@link FieldDescriptorMatcher}.
      */
-    public static FieldDescriptorMatcher fieldDescriptor(Field field) {
+    public static Matcher<? super FieldDescriptor> fieldDescriptor(Field field) {
         return new FieldDescriptorMatcher(field);
     }
 

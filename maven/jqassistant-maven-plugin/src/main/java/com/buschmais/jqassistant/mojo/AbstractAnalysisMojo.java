@@ -7,10 +7,10 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetResolverImpl;
-import com.buschmais.jqassistant.core.model.api.rules.Concept;
-import com.buschmais.jqassistant.core.model.api.rules.Constraint;
-import com.buschmais.jqassistant.core.model.api.rules.Group;
-import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import com.buschmais.jqassistant.core.model.api.rule.Concept;
+import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.model.api.rule.Group;
+import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -79,7 +79,7 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
-     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rules.Group}s identified by their id.
+     * @return A {@link java.util.Map} containing {@link com.buschmais.jqassistant.core.model.api.rule.Group}s identified by their id.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the rules cannot be read.
      */

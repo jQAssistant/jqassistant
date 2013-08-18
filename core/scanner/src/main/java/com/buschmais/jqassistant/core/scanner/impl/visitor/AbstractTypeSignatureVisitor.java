@@ -7,17 +7,17 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
- * Abstract implementation of a type signature visitor.
+ * Abstract implementation of a types signature visitor.
  */
 public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends SignatureVisitor {
 
     /**
-     * The resolved type descriptor.
+     * The resolved types descriptor.
      */
     private TypeDescriptor resolvedTypeDescriptor;
 
     /**
-     * The descriptor using the resolved type descriptor.
+     * The descriptor using the resolved types descriptor.
      */
     private T usingDescriptor;
 
@@ -26,7 +26,7 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     /**
      * Constructor.
      *
-     * @param usingDescriptor The descriptor using the resolved type descriptor.
+     * @param usingDescriptor The descriptor using the resolved types descriptor.
      * @param visitorHelper The {@link VisitorHelper}.
      */
     protected AbstractTypeSignatureVisitor(T usingDescriptor, VisitorHelper visitorHelper) {
@@ -35,13 +35,12 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
         this.visitorHelper = visitorHelper;
     }
 
-    /**
-     * Returns the using descriptor.
-     *
-     * @return The using descriptor.
-     */
     protected T getUsingDescriptor() {
         return usingDescriptor;
+    }
+
+    protected VisitorHelper getVisitorHelper() {
+        return visitorHelper;
     }
 
     @Override

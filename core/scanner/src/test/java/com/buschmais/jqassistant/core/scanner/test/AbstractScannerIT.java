@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
@@ -62,6 +63,7 @@ public abstract class AbstractScannerIT {
         };
     }
 
+
     /**
      * Scans the given classes.
      *
@@ -69,8 +71,20 @@ public abstract class AbstractScannerIT {
      * @throws IOException If scanning fails.
      */
     protected void scanClasses(Class<?>... classes) throws IOException {
+        this.scanClasses(null, classes);
+    }
+
+    /**
+     * Scans the given classes.
+     *
+     * @param artifactId The id of the containing artifact.
+     * @param classes    The classes.
+     * @throws IOException If scanning fails.
+     */
+    protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
-        getScanner().scanClasses(classes);
+        ArtifactDescriptor artifact = artifactId != null ? store.createArtifactDescriptor(artifactId) : null;
+        getScanner().scanClasses(artifact, classes);
         store.commitTransaction();
     }
 
@@ -80,11 +94,11 @@ public abstract class AbstractScannerIT {
      * @param resourceNames The classes.
      * @throws IOException If scanning fails.
      */
-    protected void scanClasses(String... resourceNames) throws IOException {
+    protected void scanClassResources(String... resourceNames) throws IOException {
         store.beginTransaction();
         for (String resourceName : resourceNames) {
             InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
-            getScanner().scanInputStream(is, resourceName);
+            getScanner().scanInputStream(null, is, resourceName);
         }
         store.commitTransaction();
     }

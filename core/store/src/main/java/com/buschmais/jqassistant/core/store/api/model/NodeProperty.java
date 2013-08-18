@@ -34,7 +34,7 @@ public enum NodeProperty {
     CLASSIFIER,
 
     /**
-     * Artifact type
+     * Artifact types
      */
     TYPE,
 

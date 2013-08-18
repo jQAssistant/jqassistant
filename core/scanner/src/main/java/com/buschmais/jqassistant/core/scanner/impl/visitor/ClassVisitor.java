@@ -84,12 +84,12 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             for (int i = 0; i < types.length; i++) {
                 visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(types[i]));
             }
-            for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-                TypeDescriptor exception = visitorHelper.getTypeDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
-                methodDescriptor.getDeclaredThrowables().add(exception);
-            }
         } else {
             new SignatureReader(signature).accept(new MethodSignatureVisitor(methodDescriptor, visitorHelper));
+        }
+        for (int i = 0; exceptions != null && i < exceptions.length; i++) {
+            TypeDescriptor exception = visitorHelper.getTypeDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
+            methodDescriptor.getDeclaredThrowables().add(exception);
         }
         return new MethodVisitor(methodDescriptor, visitorHelper);
     }
@@ -207,10 +207,10 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     /**
-     * Determine the type label to be applied to a class node.
+     * Determine the types label to be applied to a class node.
      *
      * @param flags The access flags.
-     * @return The type label.
+     * @return The types label.
      */
     private JavaType getJavaType(int flags) {
         if (hasFlag(flags, Opcodes.ACC_ANNOTATION)) {

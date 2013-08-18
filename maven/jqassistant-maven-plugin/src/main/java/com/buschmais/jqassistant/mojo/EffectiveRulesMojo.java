@@ -16,7 +16,7 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.core.model.api.rules.RuleSet;
+import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 

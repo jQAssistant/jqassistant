@@ -209,6 +209,7 @@
                 <artifactId>jqassistant.core.scanner</artifactId>
                 <type>test-jar</type>
                 <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
@@ -219,6 +220,13 @@
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.model</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.model</artifactId>
+                <type>test-jar</type>
+                <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
@@ -235,6 +243,7 @@
                 <artifactId>jqassistant.core.analysis</artifactId>
                 <type>test-jar</type>
                 <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

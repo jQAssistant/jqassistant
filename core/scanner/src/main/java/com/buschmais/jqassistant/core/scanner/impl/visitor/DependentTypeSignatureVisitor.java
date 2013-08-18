@@ -2,19 +2,18 @@ package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
- * Type signature visitor which adds a dependency to a resolved type.
+ * Type signature visitor which adds a dependency to a resolved types.
  */
 public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<DependentDescriptor> {
 
     /**
      * Constructor
      *
-     * @param dependentDescriptor The descriptor which depends on the resolvedd type.
-     * @param visitorHelper     The {@link VisitorHelper}
+     * @param dependentDescriptor The descriptor which depends on the resolvedd types.
+     * @param visitorHelper       The {@link VisitorHelper}
      */
     DependentTypeSignatureVisitor(DependentDescriptor dependentDescriptor, VisitorHelper visitorHelper) {
         super(dependentDescriptor, visitorHelper);
@@ -22,22 +21,22 @@ public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return this;
+        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
     }
 
     @Override
     public SignatureVisitor visitInterface() {
-        return this;
+        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
     }
 
     @Override
     public SignatureVisitor visitArrayType() {
-        return this;
+        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
     }
 
     @Override
     public SignatureVisitor visitTypeArgument(char wildcard) {
-        return this;
+        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
     }
 
     @Override

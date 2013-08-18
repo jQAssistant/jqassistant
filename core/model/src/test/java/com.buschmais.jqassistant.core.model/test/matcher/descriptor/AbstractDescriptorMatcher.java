@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.scanner.test.matcher;
+package com.buschmais.jqassistant.core.model.test.matcher.descriptor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import org.hamcrest.Description;
@@ -15,7 +15,8 @@ public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends Typ
 
     /**
      * Constructor.
-     * @param type The descriptor type.
+     *
+     * @param type              The descriptor types.
      * @param fullQualifiedName The expected full qualified name.
      */
     protected AbstractDescriptorMatcher(Class<T> type, String fullQualifiedName) {
@@ -30,6 +31,11 @@ public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends Typ
 
     @Override
     public void describeTo(Description description) {
-        description.appendText(type.getName()).appendText("(").appendText(fullQualifiedName).appendText(")");
+        description.appendText(type.getSimpleName()).appendText("(").appendText(fullQualifiedName).appendText(")");
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        mismatchDescription.appendText(item.getClass().getSimpleName()).appendText("(").appendText(item.getFullQualifiedName()).appendText(")");
     }
 }
