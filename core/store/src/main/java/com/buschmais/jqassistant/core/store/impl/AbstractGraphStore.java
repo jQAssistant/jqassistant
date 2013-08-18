@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -72,48 +73,17 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public ArtifactDescriptor createArtifactDescriptor(final String fullQualifiedName) {
-        return persist(new ArtifactDescriptor(), new Name(fullQualifiedName));
+    public <T extends Descriptor> T create(Class<T> type, String fullQualifiedName) {
+        DescriptorMapper<T> mapper = mapperRegistry.getDescriptorMapper(type);
+        T descriptor = mapper.createInstance();
+        descriptor.setFullQualifiedName(fullQualifiedName);
+        descriptorDAO.persist(descriptor);
+        return descriptor;
     }
 
     @Override
-    public ArtifactDescriptor findArtifactDescriptor(String fullQualifiedName) {
-        return descriptorDAO.find(ArtifactDescriptor.class, fullQualifiedName);
-    }
-
-    @Override
-    public PackageDescriptor createPackageDescriptor(final ArtifactDescriptor parentArtifactDescriptor, final String packageName) {
-        return persist(new PackageDescriptor(), new Name(parentArtifactDescriptor, '/', packageName));
-    }
-
-    @Override
-    public PackageDescriptor createPackageDescriptor(final PackageDescriptor parentPackageDescriptor, final String packageName) {
-        return persist(new PackageDescriptor(), new Name(parentPackageDescriptor, '.', packageName));
-    }
-
-    @Override
-    public PackageDescriptor findPackageDescriptor(String fullQualifiedName) {
-        return descriptorDAO.find(PackageDescriptor.class, fullQualifiedName);
-    }
-
-    @Override
-    public TypeDescriptor createClassDescriptor(final PackageDescriptor packageDescriptor, final String className) {
-        return persist(new TypeDescriptor(), new Name(packageDescriptor, '.', className));
-    }
-
-    @Override
-    public TypeDescriptor findClassDescriptor(String fullQualifiedName) {
-        return descriptorDAO.find(TypeDescriptor.class, fullQualifiedName);
-    }
-
-    @Override
-    public MethodDescriptor createMethodDescriptor(final TypeDescriptor typeDescriptor, String methodName) {
-        return persist(new MethodDescriptor(), new Name(typeDescriptor, '#', methodName));
-    }
-
-    @Override
-    public FieldDescriptor createFieldDescriptor(final TypeDescriptor typeDescriptor, String fieldName) {
-        return persist(new FieldDescriptor(), new Name(typeDescriptor, '#', fieldName));
+    public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
+        return descriptorDAO.find(type, fullQualifiedName);
     }
 
     @Override
@@ -149,10 +119,5 @@ public abstract class AbstractGraphStore implements Store {
      */
     protected abstract void stopDatabase(GraphDatabaseService database);
 
-    private <T extends AbstractDescriptor> T persist(T descriptor, Name name) {
-        descriptor.setFullQualifiedName(name.getFullQualifiedName());
-        descriptorDAO.persist(descriptor);
-        return descriptor;
-    }
 
 }

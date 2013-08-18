@@ -83,7 +83,7 @@ public abstract class AbstractScannerIT {
      */
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
-        ArtifactDescriptor artifact = artifactId != null ? store.createArtifactDescriptor(artifactId) : null;
+        ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
         getScanner().scanClasses(artifact, classes);
         store.commitTransaction();
     }

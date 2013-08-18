@@ -11,17 +11,8 @@ public class TypeDescriptorResolver extends AbstractDescriptorResolver<PackageDe
     }
 
     @Override
-    public TypeDescriptor create(PackageDescriptor parent, String name) {
-        TypeDescriptor typeDescriptor = getStore().createClassDescriptor(parent, name);
-        if (parent != null) {
-            parent.getContains().add(typeDescriptor);
-        }
-        return typeDescriptor;
-    }
-
-    @Override
-    protected TypeDescriptor find(String fullQualifiedName) {
-        return getStore().findClassDescriptor(fullQualifiedName);
+    protected Class<TypeDescriptor> getType() {
+        return TypeDescriptor.class;
     }
 
     @Override

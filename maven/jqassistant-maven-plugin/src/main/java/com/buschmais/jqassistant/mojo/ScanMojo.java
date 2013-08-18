@@ -61,9 +61,9 @@ public class ScanMojo extends AbstractStoreMojo {
             @Override
             public Void run(Store store) throws MojoExecutionException {
                 Artifact artifact = project.getArtifact();
-                ArtifactDescriptor descriptor = store.findArtifactDescriptor(artifact.getId());
+                ArtifactDescriptor descriptor = store.find(ArtifactDescriptor.class, artifact.getId());
                 if (descriptor == null) {
-                    descriptor = store.createArtifactDescriptor(artifact.getId());
+                    descriptor = store.create(ArtifactDescriptor.class, artifact.getId());
                     descriptor.setGroup(artifact.getGroupId());
                     descriptor.setName(artifact.getArtifactId());
                     descriptor.setVersion(artifact.getVersion());
