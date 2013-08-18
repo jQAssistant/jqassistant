@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.model.api.descriptor.value;
+package com.buschmais.jqassistant.core.model.api.descriptor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 
