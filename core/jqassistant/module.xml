@@ -1,6 +1,6 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="module:modules">
+    <concept id="module:Modules">
         <requiresConcept refId="module-model:Module"/>
         <requiresConcept refId="module-store:Module"/>
         <requiresConcept refId="module-scanner:Module"/>
@@ -46,11 +46,11 @@
     </concept>
 
     <concept id="module:PackagesPerModule">
-        <requiresConcept refId="module:modules"/>
+        <requiresConcept refId="module:Modules"/>
         <description>Return the number of packages per module.</description>
         <cypher><![CDATA[
             MATCH
-                (module:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p)
+                (module:PACKAGE:MODULE)-[:CONTAINS*0..]->(p:PACKAGE)
             RETURN
                 module, COUNT(p) as packages
             ORDER BY
@@ -59,11 +59,11 @@
     </concept>
 
     <concept id="module:TypesPerModule">
-        <requiresConcept refId="module:modules"/>
+        <requiresConcept refId="module:Modules"/>
         <description>Return the number of types (i.e. classes, interfaces, enumerations and annotations) per module.</description>
         <cypher><![CDATA[
             MATCH
-                (module:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p),
+                (module:PACKAGE:MODULE)-[:CONTAINS*0..]->(p:PACKAGE),
                 (p)-[:CONTAINS]->(t:TYPE)
             RETURN
                 module, COUNT(t) as types
@@ -78,32 +78,33 @@
         <description>API packages must not have dependencies to implementation packages.</description>
         <cypher><![CDATA[
             MATCH
-                (a:PACKAGE:API)-[:CONTAINS*0..1]->(p1),
-                (i:PACKAGE:IMPLEMENTATION)-[:CONTAINS*0..1]->(p2),
+                (a:PACKAGE:API)-[:CONTAINS*0..]->(p1:PACKAGE),
+                (i:PACKAGE:IMPLEMENTATION)-[:CONTAINS*0..]->(p2:PACKAGE),
                 (p1)-[:DEPENDS_ON]->(p2)
             RETURN
-                p1 as apiPackage, p2 as implementationPackage
+                p1 as api, COLLECT(p2.FQN) as implementation
             ORDER BY
-                p1.FQN, p2.FQN
+                p1.FQN
         ]]></cypher>
     </constraint>
 
     <constraint id="module:ModuleMustDependOnApiOfOtherModule">
         <requiresConcept refId="module:API"/>
-        <requiresConcept refId="module:modules"/>
+        <requiresConcept refId="module:Modules"/>
         <description>A module must only have dependencies to API packages of other modules.</description>
         <cypher><![CDATA[
             MATCH
-                (module:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p1),
-                (otherModule:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p2),
+                r1=(module:PACKAGE:MODULE)-[:CONTAINS*0..]->(p1:PACKAGE),
+                r2=(otherModule:PACKAGE:MODULE)-[:CONTAINS*0..]->(p2:PACKAGE),
                 (p1)-[:DEPENDS_ON]->(p2)
             WHERE
                 module<>otherModule
-                AND NOT p2:API
+                AND NONE (p IN NODES(r2) WHERE p:API)
             RETURN
-                p1 as api, p2 as implementation
+              p1 as dependent,
+              COLLECT(p2.FQN) as dependencies
             ORDER BY
-                p1.FQN, p2.FQN
+              p1.FQN
         ]]></cypher>
     </constraint>
 
