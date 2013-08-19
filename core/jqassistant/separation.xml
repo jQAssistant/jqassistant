@@ -1,5 +1,22 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
+    <concept id="separation:modules">
+        <requiresConcept refId="module-model:Module"/>
+        <requiresConcept refId="module-store:Module"/>
+        <requiresConcept refId="module-scanner:Module"/>
+        <requiresConcept refId="module-report:Module"/>
+        <requiresConcept refId="module-analysis:Module"/>
+        <description>Returns all modules, i.e. all packages labelled with MODULE.</description>
+        <cypher><![CDATA[
+			MATCH
+				(package:MODULE)
+			RETURN
+				package
+			ORDER BY
+			    package.FQN
+        ]]></cypher>
+    </concept>
+
     <concept id="separation:API">
         <description>Labels all .api packages as API.</description>
         <cypher><![CDATA[
@@ -43,5 +60,25 @@
                 p1.FQN, p2.FQN
         ]]></cypher>
     </constraint>
+
+    <constraint id="separation:ModuleMustDependOnApiOfOtherModule">
+        <requiresConcept refId="separation:API"/>
+        <requiresConcept refId="separation:modules"/>
+        <description>A module must only have dependencies to API packages of other modules.</description>
+        <cypher><![CDATA[
+            MATCH
+                (module:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p1),
+                (otherModule:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p2),
+                (p1)-[:DEPENDS_ON]->(p2)
+            WHERE
+                module<>otherModule
+                AND NOT p2:API
+            RETURN
+                p1 as apiPackage, p2 as implementationPackage
+            ORDER BY
+                p1.FQN, p2.FQN
+        ]]></cypher>
+    </constraint>
+
 
 </jqa:jqassistant-rules>
