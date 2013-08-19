@@ -1,20 +1,12 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <group id="jqassistant:modules">
-        <includeConcept refId="module-model:Module"/>
-        <includeConcept refId="module-store:Module"/>
-        <includeConcept refId="module-scanner:Module"/>
-        <includeConcept refId="module-report:Module"/>
-        <includeConcept refId="module-analysis:Module"/>
-    </group>
-
     <group id="default">
         <includeConstraint refId="dependency:CyclicPackageDependency"/>
         <includeConstraint refId="dependency:CyclicArtifactDependency"/>
         <includeConstraint refId="package:PackageNameMustStartWithArtifactGroup"/>
         <includeConstraint refId="package:PackageNameMustContainArtifactName"/>
         <includeConstraint refId="separation:ApiMustNotDependOnImplementation"/>
-        <includeGroup refId="jqassistant:modules"/>
+        <includeConstraint refId="separation:ModuleMustDependOnApiOfOtherModule"/>
     </group>
 
 </jqa:jqassistant-rules>
