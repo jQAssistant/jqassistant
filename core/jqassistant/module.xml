@@ -1,6 +1,6 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="separation:modules">
+    <concept id="module:modules">
         <requiresConcept refId="module-model:Module"/>
         <requiresConcept refId="module-store:Module"/>
         <requiresConcept refId="module-scanner:Module"/>
@@ -17,7 +17,7 @@
         ]]></cypher>
     </concept>
 
-    <concept id="separation:API">
+    <concept id="module:API">
         <description>Labels all .api packages as API.</description>
         <cypher><![CDATA[
 			MATCH
@@ -31,7 +31,7 @@
         ]]></cypher>
     </concept>
 
-    <concept id="separation:Implementation">
+    <concept id="module:Implementation">
         <description>Labels all .impl packages as IMPLEMENTATION.</description>
         <cypher><![CDATA[
 			MATCH
@@ -45,9 +45,36 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="separation:ApiMustNotDependOnImplementation">
-        <requiresConcept refId="separation:API"/>
-        <requiresConcept refId="separation:Implementation"/>
+    <concept id="module:PackagesPerModule">
+        <requiresConcept refId="module:modules"/>
+        <description>Return the number of packages per module.</description>
+        <cypher><![CDATA[
+            MATCH
+                (module:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p)
+            RETURN
+                module, COUNT(p) as packages
+            ORDER BY
+                packages DESC, module.FQN ASC
+        ]]></cypher>
+    </concept>
+
+    <concept id="module:TypesPerModule">
+        <requiresConcept refId="module:modules"/>
+        <description>Return the number of types (i.e. classes, interfaces, enumerations and annotations) per module.</description>
+        <cypher><![CDATA[
+            MATCH
+                (module:PACKAGE:MODULE)-[:CONTAINS*0..1]->(p),
+                (p)-[:CONTAINS]->(t:TYPE)
+            RETURN
+                module, COUNT(t) as types
+            ORDER BY
+                types DESC, module.FQN ASC
+        ]]></cypher>
+    </concept>
+
+    <constraint id="module:ApiMustNotDependOnImplementation">
+        <requiresConcept refId="module:API"/>
+        <requiresConcept refId="module:Implementation"/>
         <description>API packages must not have dependencies to implementation packages.</description>
         <cypher><![CDATA[
             MATCH
@@ -61,9 +88,9 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="separation:ModuleMustDependOnApiOfOtherModule">
-        <requiresConcept refId="separation:API"/>
-        <requiresConcept refId="separation:modules"/>
+    <constraint id="module:ModuleMustDependOnApiOfOtherModule">
+        <requiresConcept refId="module:API"/>
+        <requiresConcept refId="module:modules"/>
         <description>A module must only have dependencies to API packages of other modules.</description>
         <cypher><![CDATA[
             MATCH
@@ -74,7 +101,7 @@
                 module<>otherModule
                 AND NOT p2:API
             RETURN
-                p1 as apiPackage, p2 as implementationPackage
+                p1 as api, p2 as implementation
             ORDER BY
                 p1.FQN, p2.FQN
         ]]></cypher>

@@ -99,6 +99,12 @@
                 </div>
                 <div>
                     <h3>Constraints</h3>
+                    <h6>
+                        <ul>
+                            <li>Move the mouse over a constraint to view a description.</li>
+                            <li>Click on a failed constraint to open a details view.</li>
+                        </ul>
+                    </h6>
                     <table>
                         <tr>
                             <th style="width:30px;">#</th>
@@ -113,6 +119,12 @@
                 </div>
                 <div>
                     <h3>Concepts</h3>
+                    <h6>
+                        <ul>
+                            <li>Move the mouse over a concept to view a description.</li>
+                            <li>Click on a concept to open a details view.</li>
+                        </ul>
+                    </h6>
                     <table>
                         <tr>
                             <th>#</th>
