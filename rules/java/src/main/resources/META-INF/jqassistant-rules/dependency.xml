@@ -56,7 +56,7 @@
 			CREATE UNIQUE 
 				(a1)-[:DEPENDS_ON]->(a2)
 			RETURN 
-				COUNT(DISTINCT a1) as artifacts
+				a1 AS artifact, COLLECT(DISTINCT a2.NAME) AS dependencies
         ]]></cypher>
     </concept>
 

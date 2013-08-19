@@ -57,6 +57,13 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
      */
     protected File xmlReportFile;
 
+    /**
+     * Indicates if the plugin shall fail if a constraint violation is detected.
+     *
+     * @parameter expression="${jqassistant.failOnConstraintViolations}" default-value="true"
+     */
+    protected boolean failOnConstraintViolations;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         final RuleSet ruleSet = resolveEffectiveRules();
@@ -147,7 +154,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                 violations++;
             }
         }
-        if (violations > 0) {
+        if (failOnConstraintViolations && violations > 0) {
             throw new MojoFailureException(violations + " constraints have been violated!");
         }
     }
