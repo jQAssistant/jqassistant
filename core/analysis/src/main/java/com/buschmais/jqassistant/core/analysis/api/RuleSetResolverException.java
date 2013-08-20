@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
 /**
- * Exception thrown by the {@link RuleSetResolver}.
+ * Exception thrown by the {@link RuleSelector}.
  */
 public class RuleSetResolverException extends Exception {
 
