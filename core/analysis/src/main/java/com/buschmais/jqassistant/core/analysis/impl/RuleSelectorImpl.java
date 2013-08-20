@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolver;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
@@ -14,9 +14,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Implementation of the {@link com.buschmais.jqassistant.core.analysis.api.RuleSetResolver}.
+ * Implementation of the {@link RuleSelector}.
  */
-public class RuleSetResolverImpl implements RuleSetResolver {
+public class RuleSelectorImpl implements RuleSelector {
     @Override
     public RuleSet getEffectiveRuleSet(RuleSet ruleSet, List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws RuleSetResolverException {
         RuleSet effectiveRuleSet = new RuleSet();

@@ -5,9 +5,9 @@ import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import java.util.List;
 
 /**
- * Defines the interface for resolving rule sets from given names.
+ * Defines the interface for selecting rule sets from given names.
  */
-public interface RuleSetResolver {
+public interface RuleSelector {
 
     String DEFAULT_GROUP = "default";
 

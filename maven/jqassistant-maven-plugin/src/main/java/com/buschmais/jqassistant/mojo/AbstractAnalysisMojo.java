@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolver;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetResolverImpl;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
@@ -72,9 +72,9 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     private RuleSetReader ruleSetReader = new RuleSetReaderImpl();
 
     /**
-     * The rule set resolver.
+     * The rule selector.
      */
-    private RuleSetResolver ruleSetResolver = new RuleSetResolverImpl();
+    private RuleSelector ruleSelector = new RuleSelectorImpl();
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -143,7 +143,7 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
         RuleSet ruleSet = readRules();
         validateRuleSet(ruleSet);
         try {
-            return ruleSetResolver.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
+            return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
         } catch (RuleSetResolverException e) {
             throw new MojoExecutionException("Cannot resolve rules.", e);
         }
