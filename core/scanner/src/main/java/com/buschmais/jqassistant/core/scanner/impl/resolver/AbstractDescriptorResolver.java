@@ -31,12 +31,14 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T e
     public T resolve(String fullQualifiedName) {
         T descriptor = store.find(getType(), fullQualifiedName);
         if (descriptor == null) {
-            descriptor = store.create(getType(), fullQualifiedName);
             P parent = null;
             int separatorIndex = fullQualifiedName.lastIndexOf(getSeparator());
             if (separatorIndex != -1) {
                 String parentName = fullQualifiedName.substring(0, separatorIndex);
                 parent = parentResolver.resolve(parentName);
+            }
+            descriptor = store.create(getType(), fullQualifiedName);
+            if (parent != null) {
                 parent.getContains().add(descriptor);
             }
         }
