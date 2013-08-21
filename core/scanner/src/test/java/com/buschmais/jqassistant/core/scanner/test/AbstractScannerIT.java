@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -9,9 +11,12 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import org.junit.After;
 import org.junit.Before;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+
+import static com.buschmais.jqassistant.core.scanner.api.ArtifactScanner.ScanListener;
 
 /**
  * Abstract base class for test using the class scanner.
@@ -48,18 +53,27 @@ public abstract class AbstractScannerIT {
      *
      * @return The class scanner instance.
      */
-    protected ClassScanner getScanner() {
-        return new ClassScannerImpl(store, getScanListener());
+    protected ClassScanner getClassScanner() {
+        return new ClassScannerImpl(store);
     }
 
     /**
-     * Return the {@link com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl.ScanListener} to be used for scanning.
+     * Return an initialized artifact scanner instance.
+     *
+     * @return The artifact scanner instance.
+     */
+    protected ArtifactScanner getArtifactScanner() {
+        return new ArtifactScannerImpl(getClassScanner(), getScanListener());
+    }
+
+    /**
+     * Return the {@link ScanListener} to be used for scanning.
      * <p>The default implementation returns a listener without any functionality, a class may override this method to return a listener implementing specific behavior.</p>
      *
-     * @return The {@link com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl.ScanListener}.
+     * @return The {@link ScanListener}.
      */
-    protected ClassScannerImpl.ScanListener getScanListener() {
-        return new ClassScannerImpl.ScanListener() {
+    protected ArtifactScanner.ScanListener getScanListener() {
+        return new ArtifactScanner.ScanListener() {
         };
     }
 
@@ -84,7 +98,7 @@ public abstract class AbstractScannerIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
-        getScanner().scanClasses(artifact, classes);
+        getClassScanner().scanClasses(artifact, classes);
         store.commitTransaction();
     }
 
@@ -98,7 +112,7 @@ public abstract class AbstractScannerIT {
         store.beginTransaction();
         for (String resourceName : resourceNames) {
             InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
-            getScanner().scanInputStream(null, is, resourceName);
+            getClassScanner().scanInputStream(null, is, resourceName);
         }
         store.commitTransaction();
     }

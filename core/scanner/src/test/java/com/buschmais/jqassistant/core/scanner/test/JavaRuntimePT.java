@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
-import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class JavaRuntimePT extends AbstractScannerIT {
 
-    public class JavaRuntimeScanListener extends ClassScannerImpl.ScanListener {
+    public class JavaRuntimeScanListener extends ArtifactScanner.ScanListener {
 
         private int scannedClasses = 0;
 
@@ -43,12 +43,11 @@ public class JavaRuntimePT extends AbstractScannerIT {
         Assume.assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
         Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
-        getScanner().scanArchive(runtimeJar);
-        //Assert.assertThat(, CoreMatchers.equalTo(scanListener.scannedClasses));
+        getArtifactScanner().scanArchive(runtimeJar);
     }
 
     @Override
-    protected ClassScannerImpl.ScanListener getScanListener() {
+    protected ArtifactScanner.ScanListener getScanListener() {
         return scanListener;
     }
 }

@@ -17,6 +17,8 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
+import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.artifact.Artifact;
@@ -70,7 +72,7 @@ public class ScanMojo extends AbstractStoreMojo {
                     descriptor.setClassifier(artifact.getClassifier());
                     descriptor.setType(artifact.getType());
                 }
-                ClassScannerImpl scanner = new ClassScannerImpl(store);
+                ArtifactScanner scanner = new ArtifactScannerImpl(new ClassScannerImpl(store));
                 try {
                     scanner.scanClassDirectory(descriptor, directory);
                 } catch (IOException e) {
