@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
@@ -13,6 +13,8 @@ import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -23,13 +25,13 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Abstract base implementation for analysis MOJOs.
- *
- * @aggregator true
+ * Abstract base implementation for analysis mojos.
  */
 public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
 
-    public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
+    public static final String RULES_DIRECTORY = "jqassistant";
+
+    public static final String REPORT_XML = "/jqassistant/jqassistant-report.xml";
 
     public static final String LOG_LINE_PREFIX = "  \"";
 
@@ -62,6 +64,14 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
     protected List<String> groups;
 
     /**
+     * The file to write the XML report to.
+     *
+     * @parameter expression="${jqassistant.report.xml}"
+     */
+    protected File xmlReportFile;
+
+
+    /**
      * The catalog reader instance.
      */
     private CatalogReader catalogReader = new CatalogReaderImpl();
@@ -76,6 +86,16 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
 
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        MavenProject lastProject = reactorProjects.get(reactorProjects.size() - 1);
+        if (project.equals(lastProject)) {
+            executeAnalysis();
+        }
+    }
+
+    protected abstract void executeAnalysis() throws MojoExecutionException, MojoFailureException;
+
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
@@ -84,19 +104,45 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
      *          If the rules cannot be read.
      */
     protected RuleSet readRules() throws MojoExecutionException {
-        if (rulesDirectory == null) {
-            rulesDirectory = new File(basedir.getAbsoluteFile() + File.separator + DEFAULT_RULES_DIRECTORY);
+        File selectedDirectory = null;
+        if (rulesDirectory != null) {
+            selectedDirectory = rulesDirectory;
+        } else {
+            MavenProject rulesProject = getRulesProject();
+            if (rulesProject != null) {
+                selectedDirectory = new File(rulesProject.getBasedir(), RULES_DIRECTORY);
+            }
         }
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
-        List<File> ruleFiles = readRulesDirectory(rulesDirectory);
-        for (File ruleFile : ruleFiles) {
-            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new StreamSource(ruleFile));
+        if (selectedDirectory != null) {
+            List<File> ruleFiles = readRulesDirectory(selectedDirectory);
+            for (File ruleFile : ruleFiles) {
+                getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
+                sources.add(new StreamSource(ruleFile));
+            }
         }
         sources.addAll(catalogReader.readCatalogs());
-
         return ruleSetReader.read(sources);
+    }
+
+    /**
+     * Return the {@link MavenProject} containing a rules directory.
+     *
+     * @return The {@link MavenProject} containing a rules directory.
+     */
+    protected MavenProject getRulesProject() {
+        MavenProject currentProject = project;
+        if (project != null) {
+            do {
+                File directory = new File(currentProject.getBasedir(), RULES_DIRECTORY);
+                if (directory.exists() && directory.isDirectory()) {
+                    return currentProject;
+                }
+                currentProject = currentProject.getParent();
+            } while (currentProject != null);
+        }
+        return null;
     }
 
     /**
@@ -210,5 +256,29 @@ public abstract class AbstractAnalysisMojo extends AbstractStoreMojo {
                 getLog().warn(LOG_LINE_PREFIX + missingGroup);
             }
         }
+    }
+
+    /**
+     * Determines a report file name.
+     *
+     * @param rulesProject The {@link MavenProject} where the rules are located.
+     * @param reportFile   The report file as specified in the pom.xml file or on the command line.
+     * @return The resolved {@link File}.
+     * @throws MojoExecutionException If the file cannot be determined.
+     */
+    protected File getReportFile(MavenProject rulesProject, File reportFile, String defaultFile) throws MojoExecutionException {
+        File selectedXmlReportFile;
+        if (reportFile != null) {
+            selectedXmlReportFile = reportFile;
+        } else if (rulesProject != null) {
+            String rulesProjectOutputDirectory = rulesProject.getBuild().getDirectory();
+            selectedXmlReportFile = new File(rulesProjectOutputDirectory + defaultFile);
+        } else if (project != null) {
+            String outputDirectory = project.getBuild().getDirectory();
+            selectedXmlReportFile = new File(outputDirectory + defaultFile);
+        } else {
+            throw new MojoExecutionException("Cannot determine report file.");
+        }
+        return selectedXmlReportFile;
     }
 }

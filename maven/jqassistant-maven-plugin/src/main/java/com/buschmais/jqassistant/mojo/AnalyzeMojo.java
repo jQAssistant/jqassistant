@@ -46,16 +46,8 @@ import java.util.Map;
 /**
  * @goal analyze
  * @phase verify
- * @requiresProject false
  */
 public class AnalyzeMojo extends AbstractAnalysisMojo {
-
-    /**
-     * The file to write the XML report to.
-     *
-     * @parameter expression="${jqassistant.report.xml}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
-     */
-    protected File xmlReportFile;
 
     /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
@@ -65,7 +57,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
     protected boolean failOnConstraintViolations;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeAnalysis() throws MojoExecutionException, MojoFailureException {
         final RuleSet ruleSet = resolveEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
@@ -163,9 +155,11 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
      * Returns the {@link File} to write the XML report to.
      *
      * @return The {@link File} to write the XML report to.
+     * @throws MojoExecutionException If the file cannot be determined.
      */
-    private File getXmlReportFile() {
-        xmlReportFile.getParentFile().mkdirs();
-        return xmlReportFile;
+    private File getXmlReportFile() throws MojoExecutionException {
+        File selectedXmlReportFile = getReportFile(getRulesProject(), xmlReportFile, REPORT_XML);
+        selectedXmlReportFile.getParentFile().mkdirs();
+        return selectedXmlReportFile;
     }
 }

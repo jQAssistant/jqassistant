@@ -25,12 +25,11 @@ import org.apache.maven.plugin.MojoFailureException;
  *
  * @goal effective-rules
  * @phase validate
- * @requiresProject false
  */
 public class EffectiveRulesMojo extends AbstractAnalysisMojo {
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeAnalysis() throws MojoExecutionException, MojoFailureException {
         RuleSet targetRuleSet = resolveEffectiveRules();
         logRuleSet(targetRuleSet);
     }

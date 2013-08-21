@@ -1,10 +1,16 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.store.api.Store;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.util.List;
 
+/**
+ * Abstract base class for mojos using the store.
+ */
 public abstract class AbstractStoreMojo extends org.apache.maven.plugin.AbstractMojo {
 
     protected static interface StoreOperation<T, E extends AbstractMojoExecutionException> {
@@ -59,6 +65,28 @@ public abstract class AbstractStoreMojo extends org.apache.maven.plugin.Abstract
      * @readonly
      */
     protected File storeDirectory;
+
+    /**
+     * The Maven project.
+     *
+     * @parameter expression="${project}"
+     */
+    protected MavenProject project;
+
+    /**
+     * The Maven Session Object
+     *
+     * @parameter expression="${session}"
+     * @readonly
+     */
+    protected MavenSession session;
+
+    /**
+     * Contains the full list of projects in the reactor.
+     *
+     * @parameter expression = "${reactorProjects}"
+     */
+    protected List<MavenProject> reactorProjects;
 
     /**
      * @component

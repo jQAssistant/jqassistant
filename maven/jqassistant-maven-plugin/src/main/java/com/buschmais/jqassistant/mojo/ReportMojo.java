@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.mojo;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -16,33 +16,33 @@ import java.io.File;
 /**
  * @goal report
  * @phase site
- * @requiresProject false
  */
-public class ReportMojo extends AbstractMojo {
+public class ReportMojo extends AbstractAnalysisMojo {
+
+    public static final String REPORT_HTML = "/jqassistant/jqassistant-report.html";
 
     /**
      * The file to write the XML report to.
      *
-     * @parameter expression="${jqassistant.report.xml}" default-value="${project.build.directory}/jqassistant/jqassistant-report.xml"
-     */
-    protected File xmlReportFile;
-
-    /**
-     * The file to write the XML report to.
-     *
-     * @parameter expression="${jqassistant.report.html}" default-value="${project.build.directory}/jqassistant/jqassistant-report.html"
+     * @parameter expression="${jqassistant.report.html}"
      */
     protected File htmlReportFile;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        if (!xmlReportFile.exists() || xmlReportFile.isDirectory()) {
-            throw new MojoExecutionException(xmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
+    public void executeAnalysis() throws MojoExecutionException, MojoFailureException {
+        MavenProject rulesProject = getRulesProject();
+        // Determine XML report file
+        File selectedXmlReportFile = getReportFile(rulesProject, xmlReportFile, REPORT_XML);
+        if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
+            throw new MojoExecutionException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
         }
-        htmlReportFile.getParentFile().mkdirs();
-        Source xmlSource = new StreamSource(xmlReportFile);
-        Result htmlTarget = new StreamResult(htmlReportFile);
-        getLog().info("Transforming " + xmlReportFile.getAbsolutePath() + " to " + htmlReportFile.getAbsolutePath() + ".");
+        // Determine HTML report file
+        File selectedHtmlReportFile = getReportFile(rulesProject, htmlReportFile, REPORT_HTML);
+        selectedHtmlReportFile.getParentFile().mkdirs();
+        // Transform
+        Source xmlSource = new StreamSource(selectedXmlReportFile);
+        Result htmlTarget = new StreamResult(selectedHtmlReportFile);
+        getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + " to " + selectedHtmlReportFile.getAbsolutePath() + ".");
         ReportTransformer transformer = new HtmlReportTransformer();
         try {
             transformer.transform(xmlSource, htmlTarget);
