@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  * @goal reset
  * @requiresProject false
  */
-public class ResetMojo extends AbstractStoreMojo {
+public class ResetMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException {

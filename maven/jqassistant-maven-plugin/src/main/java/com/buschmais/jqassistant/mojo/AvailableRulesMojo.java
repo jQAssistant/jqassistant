@@ -26,10 +26,10 @@ import org.apache.maven.plugin.MojoFailureException;
  * @goal available-rules
  * @phase validate
  */
-public class AvailableRulesMojo extends AbstractAnalysisMojo {
+public class AvailableRulesMojo extends AbstractAnalysisAggregatorMojo {
 
     @Override
-    public void executeAnalysis() throws MojoExecutionException, MojoFailureException {
+    public void aggregate() throws MojoExecutionException, MojoFailureException {
         RuleSet ruleSet = readRules();
         logRuleSet(ruleSet);
     }

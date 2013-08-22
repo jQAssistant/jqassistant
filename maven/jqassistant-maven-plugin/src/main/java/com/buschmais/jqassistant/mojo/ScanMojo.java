@@ -34,7 +34,7 @@ import java.io.IOException;
  * @phase package
  * @goal scan
  */
-public class ScanMojo extends AbstractStoreMojo {
+public class ScanMojo extends AbstractAnalysisMojo {
 
     /**
      * The current project.

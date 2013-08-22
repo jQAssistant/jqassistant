@@ -47,7 +47,7 @@ import java.util.Map;
  * @goal analyze
  * @phase verify
  */
-public class AnalyzeMojo extends AbstractAnalysisMojo {
+public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 
     /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
@@ -57,7 +57,7 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
     protected boolean failOnConstraintViolations;
 
     @Override
-    public void executeAnalysis() throws MojoExecutionException, MojoFailureException {
+    public void aggregate() throws MojoExecutionException, MojoFailureException {
         final RuleSet ruleSet = resolveEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;

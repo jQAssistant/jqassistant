@@ -17,7 +17,7 @@ import java.io.File;
  * @goal report
  * @phase site
  */
-public class ReportMojo extends AbstractAnalysisMojo {
+public class ReportMojo extends AbstractAnalysisAggregatorMojo {
 
     public static final String REPORT_HTML = "/jqassistant/jqassistant-report.html";
 
@@ -29,7 +29,7 @@ public class ReportMojo extends AbstractAnalysisMojo {
     protected File htmlReportFile;
 
     @Override
-    public void executeAnalysis() throws MojoExecutionException, MojoFailureException {
+    public void aggregate() throws MojoExecutionException, MojoFailureException {
         MavenProject rulesProject = getRulesProject();
         // Determine XML report file
         File selectedXmlReportFile = getReportFile(rulesProject, xmlReportFile, REPORT_XML);

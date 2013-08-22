@@ -27,7 +27,7 @@ import java.io.IOException;
  * @goal server
  * @requiresProject false
  */
-public class ServerMojo extends AbstractStoreMojo {
+public class ServerMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
