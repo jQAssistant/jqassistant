@@ -77,9 +77,9 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         reportWriters.add(xmlReportWriter);
         try {
             final CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            execute(new StoreOperation<Void, AbstractMojoExecutionException>() {
+            execute(new StoreOperation<Void>() {
                 @Override
-                public Void run(Store store) throws AbstractMojoExecutionException {
+                public Void run(Store store) throws MojoExecutionException {
                     Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
                     try {
                         analyzer.execute(ruleSet);
@@ -89,12 +89,6 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
                     return null;
                 }
             });
-        } catch (MojoFailureException e) {
-            throw e;
-        } catch (MojoExecutionException e) {
-            throw e;
-        } catch (AbstractMojoExecutionException e) {
-            throw new MojoExecutionException("Caught an unsupported exception.", e);
         } finally {
             IOUtils.closeQuietly(xmlReportFileWriter);
         }
@@ -158,7 +152,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
      * @throws MojoExecutionException If the file cannot be determined.
      */
     private File getXmlReportFile() throws MojoExecutionException {
-        File selectedXmlReportFile = getReportFile(getRulesProject(), xmlReportFile, REPORT_XML);
+        File selectedXmlReportFile = getReportFile(xmlReportFile, REPORT_XML);
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
     }

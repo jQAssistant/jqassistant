@@ -23,6 +23,7 @@ import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -36,17 +37,8 @@ import java.io.IOException;
  */
 public class ScanMojo extends AbstractAnalysisMojo {
 
-    /**
-     * The current project.
-     *
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
-    protected MavenProject project;
-
     @Override
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         scanDirectory(classesDirectory);
         scanDirectory(testClassesDirectory);
     }
@@ -57,9 +49,9 @@ public class ScanMojo extends AbstractAnalysisMojo {
      * @param directory The directory.
      * @throws MojoExecutionException If scanning fails.
      */
-    private void scanDirectory(final File directory) throws MojoExecutionException {
+    private void scanDirectory(final File directory) throws MojoExecutionException, MojoFailureException {
         getLog().info("Scanning classes directory: " + directory.getAbsolutePath());
-        super.executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
+        super.executeInTransaction(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
                 Artifact artifact = project.getArtifact();

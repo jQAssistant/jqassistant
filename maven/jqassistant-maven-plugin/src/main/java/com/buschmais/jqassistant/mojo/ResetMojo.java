@@ -18,6 +18,7 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * A mojo which resets the store, i.e. deletes all nodes and relationships.
@@ -28,9 +29,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 public class ResetMojo extends AbstractAnalysisMojo {
 
     @Override
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Resetting store.");
-        executeInTransaction(new StoreOperation<Void, MojoExecutionException>() {
+        executeInTransaction(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) {
                 store.reset();

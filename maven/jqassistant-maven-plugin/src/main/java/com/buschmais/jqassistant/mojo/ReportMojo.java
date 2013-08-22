@@ -30,14 +30,13 @@ public class ReportMojo extends AbstractAnalysisAggregatorMojo {
 
     @Override
     public void aggregate() throws MojoExecutionException, MojoFailureException {
-        MavenProject rulesProject = getRulesProject();
         // Determine XML report file
-        File selectedXmlReportFile = getReportFile(rulesProject, xmlReportFile, REPORT_XML);
+        File selectedXmlReportFile = getReportFile(xmlReportFile, REPORT_XML);
         if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
             throw new MojoExecutionException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
         }
         // Determine HTML report file
-        File selectedHtmlReportFile = getReportFile(rulesProject, htmlReportFile, REPORT_HTML);
+        File selectedHtmlReportFile = getReportFile(htmlReportFile, REPORT_HTML);
         selectedHtmlReportFile.getParentFile().mkdirs();
         // Transform
         Source xmlSource = new StreamSource(selectedXmlReportFile);

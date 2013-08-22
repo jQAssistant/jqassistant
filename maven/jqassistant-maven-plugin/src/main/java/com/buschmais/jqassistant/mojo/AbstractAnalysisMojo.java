@@ -88,8 +88,8 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * The rule selector.
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
-    protected static interface StoreOperation<T, E extends AbstractMojoExecutionException> {
-        public T run(Store store) throws E;
+    protected static interface StoreOperation<T> {
+        public T run(Store store) throws MojoExecutionException, MojoFailureException;
     }
 
     /**
@@ -168,7 +168,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected StoreProvider storeProvider;
 
-    protected <T, E extends AbstractMojoExecutionException> T executeInTransaction(StoreOperation<T, E> operation) throws E {
+    protected <T> T executeInTransaction(StoreOperation<T> operation) throws MojoExecutionException, MojoFailureException {
         final Store store = getStore();
         store.beginTransaction();
         try {
@@ -178,11 +178,12 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         }
     }
 
-    protected <T, E extends AbstractMojoExecutionException> T execute(StoreOperation<T, E> operation) throws E {
+    protected <T> T execute(StoreOperation<T> operation) throws MojoExecutionException, MojoFailureException {
         return operation.run(getStore());
     }
 
-    private Store getStore() {
+    private Store getStore() throws MojoExecutionException {
+        getBaseProject();
         storeDirectory.getParentFile().mkdirs();
         return storeProvider.getStore(storeDirectory);
     }
@@ -199,9 +200,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         if (rulesDirectory != null) {
             selectedDirectory = rulesDirectory;
         } else {
-            MavenProject rulesProject = getRulesProject();
-            if (rulesProject != null) {
-                selectedDirectory = new File(rulesProject.getBasedir(), RULES_DIRECTORY);
+            MavenProject baseProject = getBaseProject();
+            if (baseProject != null) {
+                selectedDirectory = new File(baseProject.getBasedir(), RULES_DIRECTORY);
             }
         }
         List<Source> sources = new ArrayList<>();
@@ -221,8 +222,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * Return the {@link MavenProject} containing a rules directory.
      *
      * @return The {@link MavenProject} containing a rules directory.
+     * @throws MojoExecutionException If the directory cannot be resolved.
      */
-    protected MavenProject getRulesProject() {
+    protected MavenProject getBaseProject() throws MojoExecutionException {
         MavenProject currentProject = project;
         if (project != null) {
             do {
@@ -230,10 +232,13 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
                 if (directory.exists() && directory.isDirectory()) {
                     return currentProject;
                 }
+                if (currentProject.getParent().getBasedir()== null) {
+                    return currentProject;
+                }
                 currentProject = currentProject.getParent();
             } while (currentProject != null);
         }
-        return null;
+        throw new MojoExecutionException("Cannot resolve base directory.");
     }
 
     /**
@@ -352,17 +357,17 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * Determines a report file name.
      *
-     * @param rulesProject The {@link MavenProject} where the rules are located.
      * @param reportFile   The report file as specified in the pom.xml file or on the command line.
      * @return The resolved {@link File}.
      * @throws MojoExecutionException If the file cannot be determined.
      */
-    protected File getReportFile(MavenProject rulesProject, File reportFile, String defaultFile) throws MojoExecutionException {
+    protected File getReportFile(File reportFile, String defaultFile) throws MojoExecutionException {
+        MavenProject baseProject = getBaseProject();
         File selectedXmlReportFile;
         if (reportFile != null) {
             selectedXmlReportFile = reportFile;
-        } else if (rulesProject != null) {
-            String rulesProjectOutputDirectory = rulesProject.getBuild().getDirectory();
+        } else if (baseProject != null) {
+            String rulesProjectOutputDirectory = baseProject.getBuild().getDirectory();
             selectedXmlReportFile = new File(rulesProjectOutputDirectory + defaultFile);
         } else if (project != null) {
             String outputDirectory = project.getBuild().getDirectory();
