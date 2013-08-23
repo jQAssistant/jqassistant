@@ -40,4 +40,13 @@ public class FieldDescriptorMatcher extends AbstractDescriptorMatcher<FieldDescr
         return new FieldDescriptorMatcher(field);
     }
 
+    /**
+     * Return a {@link FieldDescriptorMatcher} for an enumeration value.
+     *
+     * @param enumeration The expected enumeration.
+     * @return The {@link FieldDescriptorMatcher}.
+     */
+    public static Matcher<? super FieldDescriptor> fieldDescriptor(Enum<? extends Enum> enumeration) throws NoSuchFieldException {
+        return fieldDescriptor(enumeration.getClass(), enumeration.name());
+    }
 }

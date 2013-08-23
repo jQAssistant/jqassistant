@@ -13,7 +13,7 @@ public class AnnotatedType {
 
     @Annotation("method")
     public void annotatedMethod(@Annotation("parameter") String parameter) {
-        @Annotation("localField") String annotatedLocalField;
+        @Annotation("localField") String annotatedLocalField = "value";
     }
 
 }
