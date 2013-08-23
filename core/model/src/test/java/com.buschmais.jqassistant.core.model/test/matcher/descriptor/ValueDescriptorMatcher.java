@@ -14,10 +14,10 @@ import java.lang.annotation.Annotation;
 public class ValueDescriptorMatcher<T extends ValueDescriptor> extends TypeSafeMatcher<T> {
 
     private String expectedName;
-    private char separator;
-    private Matcher<?> valueMatcher;
+    private Character separator;
+    private Matcher<T> valueMatcher;
 
-    protected ValueDescriptorMatcher(String expectedName, char separator, Matcher<?> valueMatcher) {
+    protected ValueDescriptorMatcher(String expectedName, Character separator, Matcher<T> valueMatcher) {
         this.expectedName = expectedName;
         this.separator = separator;
         this.valueMatcher = valueMatcher;
@@ -25,13 +25,28 @@ public class ValueDescriptorMatcher<T extends ValueDescriptor> extends TypeSafeM
 
     @Override
     protected boolean matchesSafely(T item) {
-        String fullQualifiedName = item.getFullQualifiedName();
-        String name = fullQualifiedName.substring(fullQualifiedName.lastIndexOf(separator) + 1);
-        return expectedName.equals(name) && valueMatcher.matches(item.getValue());
+        String name;
+        if (separator != null) {
+            String fullQualifiedName = item.getFullQualifiedName();
+            name = fullQualifiedName.substring(fullQualifiedName.lastIndexOf(separator) + 1);
+        } else {
+            name = item.getName();
+        }
+        return (expectedName == null || expectedName.equals(name)) && valueMatcher.matches(item.getValue());
     }
 
     @Override
     public void describeTo(Description description) {
+        description.appendText("a value with name '").appendText(this.expectedName).appendText("' and value '");
+        valueMatcher.describeTo(description);
+        description.appendText("'");
+    }
+
+    @Override
+    protected void describeMismatchSafely(T item, Description mismatchDescription) {
+        mismatchDescription.appendText("a value with name '").appendText(separator != null ? item.getFullQualifiedName() : item.getName()).appendText("' and value '");
+        valueMatcher.describeMismatch(item, mismatchDescription);
+        mismatchDescription.appendText("'");
     }
 
     /**
@@ -42,7 +57,17 @@ public class ValueDescriptorMatcher<T extends ValueDescriptor> extends TypeSafeM
      * @return The {@link ValueDescriptorMatcher}.
      */
     public static Matcher<? super AnnotationValueDescriptor> annotationValueDescriptor(Class<? extends Annotation> annotation, Matcher<?> valueMatcher) throws NoSuchFieldException {
-        return new ValueDescriptorMatcher<AnnotationValueDescriptor>(annotation.getName(), '@', valueMatcher);
+        return new ValueDescriptorMatcher(annotation.getName(), '@', valueMatcher);
     }
 
+    /**
+     * Return a {@link ValueDescriptorMatcher} for a named valued.
+     *
+     * @param name         The expected name.
+     * @param valueMatcher The matcher for the value.
+     * @return The {@link ValueDescriptorMatcher}.
+     */
+    public static <T> Matcher<? super ValueDescriptor> valueDescriptor(String name, Matcher<T> valueMatcher) {
+        return new ValueDescriptorMatcher(name, null, valueMatcher);
+    }
 }

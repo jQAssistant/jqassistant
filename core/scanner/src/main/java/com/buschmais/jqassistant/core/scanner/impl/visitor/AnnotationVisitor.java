@@ -54,7 +54,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
     public void visitEnum(final String name, final String desc, final String value) {
         EnumerationValueDescriptor valueDescriptor = createValue(EnumerationValueDescriptor.class, name);
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(visitorHelper.getType(desc));
-        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, value);
+        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, visitorHelper.getFieldSignature(value, desc));
         valueDescriptor.setType(visitorHelper.getTypeDescriptor(Enum.class.getName()));
         valueDescriptor.setValue(fieldDescriptor);
         addValue(name, valueDescriptor);

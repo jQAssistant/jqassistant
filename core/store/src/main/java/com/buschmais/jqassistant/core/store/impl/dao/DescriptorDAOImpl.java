@@ -124,7 +124,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             try {
                 if (iterator.hasNext()) {
                     node = iterator.next();
-                    nodeCache.put(fullQualifiedName, node);
                 }
             } finally {
                 iterator.close();
