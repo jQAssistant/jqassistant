@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.model.api.descriptor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,12 +13,12 @@ public class FieldDescriptor extends ParentDescriptor implements DependentDescri
     /**
      * The classes the field depends on.
      */
-    private Set<TypeDescriptor> dependencies = new HashSet<TypeDescriptor>();
+    private Set<TypeDescriptor> dependencies = new HashSet<>();
 
     /**
-     * The classes this class is annotated by.
+     * The annotations this field is annotated by.
      */
-    private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
+    private Set<AnnotationValueDescriptor> annotations = new HashSet<>();
 
     /**
      * Visibility of this field.
@@ -59,12 +61,12 @@ public class FieldDescriptor extends ParentDescriptor implements DependentDescri
     }
 
     @Override
-    public Set<TypeDescriptor> getAnnotatedBy() {
+    public Set<AnnotationValueDescriptor> getAnnotatedBy() {
         return annotations;
     }
 
     @Override
-    public void setAnnotatedBy(Set<TypeDescriptor> annotations) {
+    public void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations) {
         this.annotations = annotations;
     }
 

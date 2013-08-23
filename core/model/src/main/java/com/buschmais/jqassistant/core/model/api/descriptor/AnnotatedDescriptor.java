@@ -1,25 +1,27 @@
 package com.buschmais.jqassistant.core.model.api.descriptor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
+
 import java.util.Set;
 
 /**
- * Interface describing an {@link AbstractDescriptor} which is annotated by other
- * {@link TypeDescriptor}s.
+ * Interface describing an {@link Descriptor} which is annotated by
+ * {@link AnnotationValueDescriptor}s.
  */
-public interface AnnotatedDescriptor {
+public interface AnnotatedDescriptor extends Descriptor {
 
     /**
-     * Return the classes this descriptor is annotated by.
+     * Return the annotations this descriptor is annotated by.
      *
-     * @return The classes this descriptor is annotated by.
+     * @return The annotations this descriptor is annotated by.
      */
-    Set<TypeDescriptor> getAnnotatedBy();
+    Set<AnnotationValueDescriptor> getAnnotatedBy();
 
     /**
-     * Set the classes this descriptor is annotated by.
+     * Set the annotations this descriptor is annotated by.
      *
-     * @param annotations The classes this descriptor is annotated by.
+     * @param annotations The annotations this descriptor is annotated by.
      */
-    void setAnnotatedBy(Set<TypeDescriptor> annotations);
+    void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations);
 
 }

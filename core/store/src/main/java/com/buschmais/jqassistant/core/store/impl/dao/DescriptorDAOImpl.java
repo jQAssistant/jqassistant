@@ -158,7 +158,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             Relation relationType = relationEntry.getKey();
             Set<? extends Descriptor> targetDescriptors = relationEntry.getValue();
             if (!targetDescriptors.isEmpty()) {
-                Set<Node> existingTargetNodes = new HashSet<Node>();
+                Set<Node> existingTargetNodes = new HashSet<>();
                 Iterable<Relationship> relationships = node.getRelationships(relationType, Direction.OUTGOING);
                 if (relationships != null) {
                     for (Relationship relation : relationships) {
@@ -166,9 +166,11 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                     }
                 }
                 for (Descriptor targetDescriptor : targetDescriptors) {
-                    Node targetNode = findNode(targetDescriptor);
-                    if (!existingTargetNodes.contains(targetNode)) {
-                        node.createRelationshipTo(targetNode, relationType);
+                    if (targetDescriptor != null) {
+                        Node targetNode = findNode(targetDescriptor);
+                        if (!existingTargetNodes.contains(targetNode)) {
+                            node.createRelationshipTo(targetNode, relationType);
+                        }
                     }
                 }
             }
@@ -236,9 +238,14 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         T descriptor = this.descriptorCache.findBy(node.getId());
         if (descriptor == null) {
             // find adapter and create instance
-            Class<T> type = (Class<T>) registry.getDescriptorMapper(node).getJavaType();
-            DescriptorMapper<T> mapper = registry.getDescriptorMapper(type);
-            descriptor = mapper.createInstance();
+            DescriptorMapper<T> mapper = registry.getDescriptorMapper(node);
+            // get labels from node.
+            Set<Label> labels = new HashSet<>();
+            for (Label label : node.getLabels()) {
+                labels.add(label);
+            }
+            // create instance
+            descriptor = mapper.createInstance(labels);
             mapper.setId(descriptor, Long.valueOf(node.getId()));
             descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
             this.descriptorCache.put(descriptor);
@@ -267,7 +274,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 }
             }
             // Set labels
-            for (Label label : node.getLabels()) {
+            for (Label label : labels) {
                 mapper.setLabel(descriptor, label);
             }
         }

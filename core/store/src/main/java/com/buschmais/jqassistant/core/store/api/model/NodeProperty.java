@@ -80,12 +80,17 @@ public enum NodeProperty {
     /**
      * <code>true</code> if the field is volatile, otherwise <code>false</code>.
      */
-    VOLATILE;
+    VOLATILE,
+
+    /**
+     * The value of a VALUE node.
+     */
+    VALUE;
 
     private static Map<String, NodeProperty> nodeProperties;
 
     static {
-        nodeProperties = new HashMap<String, NodeProperty>();
+        nodeProperties = new HashMap<>();
         for (NodeProperty property : NodeProperty.values()) {
             nodeProperties.put(property.name(), property);
         }

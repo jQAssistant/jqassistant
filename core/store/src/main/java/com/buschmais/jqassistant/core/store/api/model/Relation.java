@@ -7,12 +7,12 @@ import java.util.Map;
 
 public enum Relation implements RelationshipType {
 
-    ANNOTATED_BY, DEPENDS_ON, CONTAINS, EXTENDS, IMPLEMENTS, THROWS;
+    ANNOTATED_BY, DEPENDS_ON, CONTAINS, EXTENDS, IMPLEMENTS, THROWS, HAS, OF_TYPE;
 
     private static Map<String, Relation> relations;
 
     static {
-        relations = new HashMap<String, Relation>();
+        relations = new HashMap<>();
         for (Relation relation : Relation.values()) {
             relations.put(relation.name(), relation);
         }

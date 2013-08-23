@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
@@ -125,8 +126,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        visitorHelper.addAnnotation(typeDescriptor, visitorHelper.getType(desc));
-        return new AnnotationVisitor(typeDescriptor, visitorHelper);
+        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(typeDescriptor, visitorHelper.getType(desc));
+        return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
 
     @Override
@@ -138,40 +139,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     protected MethodDescriptor getMethodDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
-        return visitorHelper.getMethodDescriptor(typeDescriptor, getMethodSignature(name, desc));
+        return visitorHelper.getMethodDescriptor(typeDescriptor, visitorHelper.getMethodSignature(name, desc));
     }
 
     protected FieldDescriptor getFieldDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
-        return visitorHelper.getFieldDescriptor(typeDescriptor, getFieldSignature(name, desc));
-    }
-
-    private String getMethodSignature(String name, String desc) {
-        StringBuffer signature = new StringBuffer();
-        String returnType = org.objectweb.asm.Type.getReturnType(desc).getClassName();
-        if (returnType != null) {
-            signature.append(returnType);
-            signature.append(' ');
-        }
-        signature.append(name);
-        signature.append('(');
-        org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
-        for (int i = 0; i < types.length; i++) {
-            if (i > 0) {
-                signature.append(',');
-            }
-            signature.append(types[i].getClassName());
-        }
-        signature.append(')');
-        return signature.toString();
-    }
-
-    private String getFieldSignature(String name, String desc) {
-        StringBuffer signature = new StringBuffer();
-        String returnType = org.objectweb.asm.Type.getReturnType(desc).getClassName();
-        signature.append(returnType);
-        signature.append(' ');
-        signature.append(name);
-        return signature.toString();
+        return visitorHelper.getFieldDescriptor(typeDescriptor, visitorHelper.getFieldSignature(name, desc));
     }
 
     /**

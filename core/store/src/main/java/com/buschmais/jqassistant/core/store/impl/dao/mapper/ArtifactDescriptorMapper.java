@@ -8,10 +8,14 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
+import org.neo4j.graphdb.Label;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.ARTIFACT;
 
 /**
  * Maps the {@link ArtifactDescriptor} to nodes and relationships.
@@ -24,8 +28,10 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      * {@inheritDoc}
      */
     @Override
-    public Class<ArtifactDescriptor> getJavaType() {
-        return ArtifactDescriptor.class;
+    public Set<Class<? extends ArtifactDescriptor>> getJavaType() {
+        Set<Class<? extends ArtifactDescriptor>> javaTypes = new HashSet<>();
+        javaTypes.add(ArtifactDescriptor.class);
+        return javaTypes;
     }
 
     /**
@@ -33,14 +39,16 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      */
     @Override
     public NodeLabel getCoreLabel() {
-        return NodeLabel.ARTIFACT;
+        return ARTIFACT;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ArtifactDescriptor createInstance() {
+    public ArtifactDescriptor createInstance(Set<Label> labels) {
+        return new ArtifactDescriptor();
+    }
+
+    @Override
+    public ArtifactDescriptor createInstance(Class<? extends ArtifactDescriptor> type) {
         return new ArtifactDescriptor();
     }
 

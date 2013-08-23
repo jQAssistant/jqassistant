@@ -22,21 +22,31 @@ public interface DescriptorMapper<T extends Descriptor> {
      *
      * @return The java types.
      */
-    public Class<T> getJavaType();
+    public Set<Class<? extends T>> getJavaType();
 
     /**
-     * Return the {@link NodeLabel }.
+     * Return the {@link NodeLabel}s.
      *
-     * @return The {@link NodeLabel}.
+     * @return The {@link NodeLabel}s.
      */
     public NodeLabel getCoreLabel();
 
     /**
      * Creates a descriptor instance.
      *
+     * @param type The java type.
      * @return The descriptor instance.
      */
-    public T createInstance();
+    public T createInstance(Class<? extends T> type);
+
+    /**
+     * Creates a descriptor instance.
+     *
+     * @param labels The labels provided by a node.
+     * @return The descriptor instance.
+     */
+    public T createInstance(Set<Label> labels);
+
 
     /**
      * Return a {@link Map} containing all outgoing relations with the

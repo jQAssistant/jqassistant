@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.model.api.descriptor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,17 +18,17 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     /**
      * The implemented interfaces.
      */
-    private Set<TypeDescriptor> interfaces = new HashSet<TypeDescriptor>();
+    private Set<TypeDescriptor> interfaces = new HashSet<>();
 
     /**
      * The classes this class depends on.
      */
-    private Set<TypeDescriptor> dependencies = new HashSet<TypeDescriptor>();
+    private Set<TypeDescriptor> dependencies = new HashSet<>();
 
     /**
-     * The classes this class is annotated by.
+     * The annotations this class is annotated by.
      */
-    private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
+    private Set<AnnotationValueDescriptor> annotations = new HashSet<>();
 
     /**
      * The java types.
@@ -105,12 +107,12 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
     }
 
     @Override
-    public Set<TypeDescriptor> getAnnotatedBy() {
+    public Set<AnnotationValueDescriptor> getAnnotatedBy() {
         return annotations;
     }
 
     @Override
-    public void setAnnotatedBy(Set<TypeDescriptor> annotations) {
+    public void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations) {
         this.annotations = annotations;
     }
 

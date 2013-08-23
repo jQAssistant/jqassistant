@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.model.api.descriptor;
 
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,17 +13,17 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
     /**
      * The declared throwables.
      */
-    private Set<TypeDescriptor> declaredThrowables = new HashSet<TypeDescriptor>();
+    private Set<TypeDescriptor> declaredThrowables = new HashSet<>();
 
     /**
      * The classes the method depends on.
      */
-    private Set<TypeDescriptor> dependencies = new HashSet<TypeDescriptor>();
+    private Set<TypeDescriptor> dependencies = new HashSet<>();
 
     /**
-     * The classes this class is annotated by.
+     * The annotations this method is annotated by.
      */
-    private Set<TypeDescriptor> annotations = new HashSet<TypeDescriptor>();
+    private Set<AnnotationValueDescriptor> annotations = new HashSet<>();
 
     /**
      * <code>true</code> if this method is a constructorMethod.
@@ -77,12 +79,12 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
     }
 
     @Override
-    public Set<TypeDescriptor> getAnnotatedBy() {
+    public Set<AnnotationValueDescriptor> getAnnotatedBy() {
         return annotations;
     }
 
     @Override
-    public void setAnnotatedBy(Set<TypeDescriptor> annotations) {
+    public void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations) {
         this.annotations = annotations;
     }
 
