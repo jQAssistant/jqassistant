@@ -14,8 +14,8 @@ import java.util.Map;
  */
 public class DescriptorMapperRegistry {
 
-    private final Map<Class<? extends Descriptor>, DescriptorMapper<?>> mappersByJavaType = new HashMap<Class<? extends Descriptor>, DescriptorMapper<?>>();
-    private final Map<String, DescriptorMapper<?>> mappersByCoreLabel = new HashMap<String, DescriptorMapper<?>>();
+    private final Map<Class<? extends Descriptor>, DescriptorMapper<?>> mappersByJavaType = new HashMap<>();
+    private final Map<String, DescriptorMapper<?>> mappersByCoreLabel = new HashMap<>();
 
     /**
      * Register a mapper.
@@ -23,7 +23,9 @@ public class DescriptorMapperRegistry {
      * @param mapper The Mapper.
      */
     public void register(DescriptorMapper<? extends Descriptor> mapper) {
-        this.mappersByJavaType.put(mapper.getJavaType(), mapper);
+        for (Class<? extends Descriptor> javaType : mapper.getJavaType()) {
+            this.mappersByJavaType.put(javaType, mapper);
+        }
         this.mappersByCoreLabel.put(mapper.getCoreLabel().name(), mapper);
     }
 
@@ -62,7 +64,7 @@ public class DescriptorMapperRegistry {
     public <T extends Descriptor> DescriptorMapper<T> getDescriptorMapper(Class<?> javaType) {
         DescriptorMapper<T> mapper = (DescriptorMapper<T>) mappersByJavaType.get(javaType);
         if (mapper == null) {
-            throw new IllegalArgumentException("Cannot find mapper for java types " + javaType);
+            throw new IllegalArgumentException("Cannot find mapper for java type " + javaType);
         }
         return mapper;
     }

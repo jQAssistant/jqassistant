@@ -1,10 +1,27 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
+    <concept id="dependency:AnnotationDependency">
+        <description>Creates a DEPENDS_ON relationship between types if one is annotated by the other.</description>
+        <cypher><![CDATA[
+            MATCH
+            	(t1)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(t2:TYPE)
+			WHERE
+				t1:TYPE
+				OR t1:METHOD
+				OR t1:FIELD
+			CREATE UNIQUE
+				(t1)-[:DEPENDS_ON]->(t2)
+			RETURN
+				COUNT(DISTINCT t1) as types
+	    ]]></cypher>
+    </concept>
+
     <concept id="dependency:FieldOrMethodDependency">
+        <requiresConcept refId="dependency:AnnotationDependency"/>
         <description>Creates a DEPENDS_ON relationship between types if there are field or method dependencies between them.</description>
         <cypher><![CDATA[
             MATCH 
-            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|ANNOTATED_BY|THROWS]->(t2:TYPE)
+            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|THROWS]->(t2:TYPE)
 			WHERE 
 				t1<>t2
 				AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)
@@ -20,7 +37,7 @@
         <description>Creates a DEPENDS_ON relationship between types if there are dependencies between them.</description>
         <cypher><![CDATA[
             MATCH 
-            	(t1:TYPE)-[:DEPENDS_ON|ANNOTATED_BY|EXTENDS|IMPLEMENTS]->(t2:TYPE)
+            	(t1:TYPE)-[:DEPENDS_ON|EXTENDS|IMPLEMENTS]->(t2:TYPE)
 			WHERE 
 				t1<>t2
 			CREATE UNIQUE 

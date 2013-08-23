@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
+import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
@@ -14,23 +12,32 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.METHOD;
+
 /**
  * A mapper for {@link MethodDescriptor}s.
  */
 public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescriptor> {
 
     @Override
-    public Class<MethodDescriptor> getJavaType() {
-        return MethodDescriptor.class;
+    public Set<Class<? extends MethodDescriptor>> getJavaType() {
+        Set<Class<? extends MethodDescriptor>> javaTypes = new HashSet<>();
+        javaTypes.add(MethodDescriptor.class);
+        return javaTypes;
     }
 
     @Override
     public NodeLabel getCoreLabel() {
-        return NodeLabel.METHOD;
+        return METHOD;
     }
 
     @Override
-    public MethodDescriptor createInstance() {
+    public MethodDescriptor createInstance(Set<Label> labels) {
+        return new MethodDescriptor();
+    }
+
+    @Override
+    public MethodDescriptor createInstance(Class<? extends MethodDescriptor> type) {
         return new MethodDescriptor();
     }
 
@@ -47,7 +54,7 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     protected void setRelation(MethodDescriptor descriptor, Relation relation, Descriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((TypeDescriptor) target);
+                descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
                 break;
             case DEPENDS_ON:
                 descriptor.getDependencies().add((TypeDescriptor) target);

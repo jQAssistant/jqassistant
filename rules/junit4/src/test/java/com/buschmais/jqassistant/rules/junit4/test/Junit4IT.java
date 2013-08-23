@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Tests for Junit4 concepts.
  */
-public class JunitIT extends AbstractAnalysisIT {
+public class Junit4IT extends AbstractAnalysisIT {
 
     /**
      * Verifies the concept "junit4:TestMethod".

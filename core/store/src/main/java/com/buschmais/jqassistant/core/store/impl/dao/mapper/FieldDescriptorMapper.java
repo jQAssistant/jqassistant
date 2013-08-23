@@ -1,16 +1,18 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
+import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
+import org.neo4j.graphdb.Label;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.FIELD;
 
 /**
  * A mapper for {@link FieldDescriptor}s.
@@ -18,17 +20,25 @@ import java.util.Set;
 public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescriptor> {
 
     @Override
-    public Class<FieldDescriptor> getJavaType() {
-        return FieldDescriptor.class;
+    public Set<Class<? extends FieldDescriptor>> getJavaType() {
+        Set<Class<? extends FieldDescriptor>> javaTypes = new HashSet<>();
+        javaTypes.add(FieldDescriptor.class);
+        return javaTypes;
     }
 
     @Override
     public NodeLabel getCoreLabel() {
-        return NodeLabel.FIELD;
+        return FIELD;
+    }
+
+
+    @Override
+    public FieldDescriptor createInstance(Set<Label> labels) {
+        return new FieldDescriptor();
     }
 
     @Override
-    public FieldDescriptor createInstance() {
+    public FieldDescriptor createInstance(Class<? extends FieldDescriptor> type) {
         return new FieldDescriptor();
     }
 
@@ -44,7 +54,7 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     protected void setRelation(FieldDescriptor descriptor, Relation relation, Descriptor target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((TypeDescriptor) target);
+                descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
                 break;
             case DEPENDS_ON:
                 descriptor.getDependencies().add((TypeDescriptor) target);

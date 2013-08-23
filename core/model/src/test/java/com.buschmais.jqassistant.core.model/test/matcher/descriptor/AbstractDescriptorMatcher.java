@@ -1,13 +1,14 @@
 package com.buschmais.jqassistant.core.model.test.matcher.descriptor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
  * Abstract base class for descriptor matchers.
  */
-public class AbstractDescriptorMatcher<T extends AbstractDescriptor> extends TypeSafeMatcher<T> {
+public class AbstractDescriptorMatcher<T extends Descriptor> extends TypeSafeMatcher<T> {
 
     private Class<T> type;
 

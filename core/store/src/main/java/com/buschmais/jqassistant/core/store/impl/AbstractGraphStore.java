@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
@@ -10,6 +9,7 @@ import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.*;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
 import java.util.Collections;
@@ -51,10 +51,19 @@ public abstract class AbstractGraphStore implements Store {
         mapperRegistry.register(new TypeDescriptorMapper());
         mapperRegistry.register(new MethodDescriptorMapper());
         mapperRegistry.register(new FieldDescriptorMapper());
+        mapperRegistry.register(new ValueDescriptorMapper());
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
         beginTransaction();
         for (NodeLabel label : NodeLabel.values()) {
-            database.schema().indexFor(label).on(FQN.name());
+            if (label.isIndexed()) {
+                boolean hasIndex = false;
+                for (IndexDefinition indexDefinition : database.schema().getIndexes(label)) {
+                    hasIndex = true;
+                }
+                if (!hasIndex) {
+                    database.schema().indexFor(label).on(FQN.name()).create();
+                }
+            }
         }
         commitTransaction();
     }
@@ -74,8 +83,11 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <T extends Descriptor> T create(Class<T> type, String fullQualifiedName) {
+        if (fullQualifiedName == null) {
+            throw new IllegalArgumentException("FQN must not be null.");
+        }
         DescriptorMapper<T> mapper = mapperRegistry.getDescriptorMapper(type);
-        T descriptor = mapper.createInstance();
+        T descriptor = mapper.createInstance(type);
         descriptor.setFullQualifiedName(fullQualifiedName);
         descriptorDAO.persist(descriptor);
         return descriptor;

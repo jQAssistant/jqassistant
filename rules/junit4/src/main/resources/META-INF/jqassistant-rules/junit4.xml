@@ -3,7 +3,7 @@
     <concept id="junit4:TestMethod">
         <description>Labels all test methods annotated with "org.junit.@Test" with TEST and JUNIT4.</description>
         <cypher><![CDATA[
-            MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:TYPE)
+            MATCH (m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="org.junit.Test"
             SET m:TEST:JUNIT4
             RETURN m as testMethod
@@ -24,17 +24,18 @@
         <requiresConcept refId="junit4:TestMethod" />
         <description>Labels all JUNIT4 and TEST test labelled methods annotated with "org.junit.@Ignore" with IGNORE.</description>
         <cypher><![CDATA[
-            MATCH (m:METHOD:JUNIT4:TEST)-[:ANNOTATED_BY]->(a:TYPE)
+            MATCH (m:METHOD:JUNIT4:TEST)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="org.junit.Ignore"
             SET m:IGNORE
             RETURN m as ignoreTestMethod
         ]]></cypher>
     </concept>
+
     <concept id="junit4:IgnoreTestClass">
         <requiresConcept refId="junit4:TestClass" />
         <description>Labels all JUNIT4 and TEST test labelled classes annotated with "org.junit.@Ignore" with IGNORE.</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE:JUNIT4:TEST)-[:ANNOTATED_BY]->(a:TYPE)
+            MATCH (t:TYPE:JUNIT4:TEST)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="org.junit.Ignore"
             SET t:IGNORE
             RETURN t as ignoreTestClass

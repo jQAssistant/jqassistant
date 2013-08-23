@@ -1,16 +1,21 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
+import java.util.List;
+
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
-    private final MethodDescriptor methodDescriptor;
+    private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
+    private List<ValueDescriptor> annotationDefault;
 
     protected MethodVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM4);
@@ -20,8 +25,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
-        visitorHelper.addAnnotation(methodDescriptor, visitorHelper.getType(desc));
-        return new AnnotationVisitor(methodDescriptor, visitorHelper);
+        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(methodDescriptor, visitorHelper.getType(desc));
+        return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
 
     @Override
@@ -62,7 +67,9 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotationDefault() {
-        return new AnnotationVisitor(methodDescriptor, visitorHelper);
+        AnnotationValueDescriptor annotationDescriptor = new AnnotationValueDescriptor();
+        this.annotationDefault = annotationDescriptor.getValue();
+        return null;// new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
 
     @Override
@@ -120,8 +127,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        visitorHelper.addAnnotation(methodDescriptor, visitorHelper.getType(desc));
-        return new AnnotationVisitor(methodDescriptor, visitorHelper);
+        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(methodDescriptor, visitorHelper.getType(desc));
+        return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
 
     private void addMethodDesc(final String desc) {
@@ -138,5 +145,12 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitEnd() {
+    }
+
+    /**
+     * Return the default annotation value.
+     */
+    public ValueDescriptor getAnnotationDefault() {
+        return annotationDefault != null ? annotationDefault.iterator().next() : null;
     }
 }

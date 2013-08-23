@@ -16,21 +16,22 @@ import java.util.Map.Entry;
 public abstract class AbstractDescriptorMapper<T extends Descriptor> implements DescriptorMapper<T> {
 
     /**
-     * Converts a single descriptor instance to a {@link Set} of descriptors.
+     * Converts values to a {@link Set} of values.
      * <p>
      * This is a convenience method.
      * </p>
      *
-     * @param descriptor The descriptor.
-     * @return The {@link Set} containing the descriptor.
+     * @param values The values.
+     * @return The {@link Set} containing the values.
      */
-    protected Set<Descriptor> asSet(Descriptor descriptor) {
-        if (descriptor != null) {
-            Set<Descriptor> set = new HashSet<Descriptor>();
-            set.add(descriptor);
-            return set;
+    protected <T> Set<T> asSet(T... values) {
+        Set<T> set = new HashSet<>();
+        if (values != null) {
+            for (T value : values) {
+                set.add(value);
+            }
         }
-        return Collections.emptySet();
+        return set;
     }
 
     @Override
@@ -55,7 +56,7 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor> implements 
         }
     }
 
-    protected abstract void setRelation(T descriptor, Relation relation,Descriptor target);
+    protected abstract void setRelation(T descriptor, Relation relation, Descriptor target);
 
     /**
      * {@inheritDoc}

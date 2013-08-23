@@ -3,7 +3,7 @@
     <concept id="jpa:Entity">
         <description>Labels all types annotated with java.persistence.Entity with JPA and ENTITY.</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->(a:TYPE)
+            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.persistence.Entity"
             SET t:JPA:ENTITY
             RETURN t AS jpaEntity

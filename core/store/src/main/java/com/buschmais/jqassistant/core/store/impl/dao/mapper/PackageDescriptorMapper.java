@@ -4,10 +4,15 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
+import org.neo4j.graphdb.Label;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.ARTIFACT;
+import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.PACKAGE;
 
 /**
  * A mapper for {@link PackageDescriptor}s.
@@ -15,17 +20,24 @@ import java.util.Set;
 public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDescriptor> {
 
     @Override
-    public Class<PackageDescriptor> getJavaType() {
-        return PackageDescriptor.class;
+    public Set<Class<? extends PackageDescriptor>> getJavaType() {
+        Set<Class<? extends PackageDescriptor>> javaTypes = new HashSet<>();
+        javaTypes.add(PackageDescriptor.class);
+        return javaTypes;
     }
 
     @Override
     public NodeLabel getCoreLabel() {
-        return NodeLabel.PACKAGE;
+        return  PACKAGE;
     }
 
     @Override
-    public PackageDescriptor createInstance() {
+    public PackageDescriptor createInstance(Set<Label> labels) {
+        return new PackageDescriptor();
+    }
+
+    @Override
+    public PackageDescriptor createInstance(Class<? extends PackageDescriptor> type) {
         return new PackageDescriptor();
     }
 
