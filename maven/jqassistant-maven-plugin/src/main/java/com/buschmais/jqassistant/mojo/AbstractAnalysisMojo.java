@@ -88,6 +88,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * The rule selector.
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
+
     protected static interface StoreOperation<T> {
         public T run(Store store) throws MojoExecutionException, MojoFailureException;
     }
@@ -232,10 +233,11 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
                 if (directory.exists() && directory.isDirectory()) {
                     return currentProject;
                 }
-                if (currentProject.getParent().getBasedir()== null) {
+                MavenProject parent = currentProject.getParent();
+                if (parent == null || parent.getBasedir() == null) {
                     return currentProject;
                 }
-                currentProject = currentProject.getParent();
+                currentProject = parent;
             } while (currentProject != null);
         }
         throw new MojoExecutionException("Cannot resolve base directory.");
@@ -357,7 +359,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * Determines a report file name.
      *
-     * @param reportFile   The report file as specified in the pom.xml file or on the command line.
+     * @param reportFile The report file as specified in the pom.xml file or on the command line.
      * @return The resolved {@link File}.
      * @throws MojoExecutionException If the file cannot be determined.
      */
