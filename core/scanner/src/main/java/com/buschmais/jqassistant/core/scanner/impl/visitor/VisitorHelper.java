@@ -46,6 +46,7 @@ public class VisitorHelper {
         return resolverFactory.getMethodDescriptorResolver().resolve(type, signature);
     }
 
+
     /**
      * Return the field descriptor for the given type and field signature.
      *
@@ -77,6 +78,23 @@ public class VisitorHelper {
             return annotationDescriptor;
         }
         return null;
+    }
+
+    /**
+     * Return the parameter descriptor for the given methodDescriptor and parameter index.
+     *
+     * @param methodDescriptor The declaring methodDescriptor.
+     * @param index  The parameter index.
+     * @return The parameter descriptor.
+     */
+    ParameterDescriptor getParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
+        String fullQualifiedName = methodDescriptor.getFullQualifiedName() + "(" + index + ")";
+        ParameterDescriptor parameterDescriptor = store.find(ParameterDescriptor.class, fullQualifiedName);
+        if (parameterDescriptor == null) {
+            parameterDescriptor = store.create(ParameterDescriptor.class, fullQualifiedName);
+            methodDescriptor.getParameters().add(parameterDescriptor);
+        }
+        return parameterDescriptor;
     }
 
     /**

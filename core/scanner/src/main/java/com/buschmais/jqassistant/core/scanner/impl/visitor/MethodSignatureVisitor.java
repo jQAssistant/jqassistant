@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.core.model.api.descriptor.ParameterDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
@@ -16,6 +16,7 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
+    private int parameterIndex = 0;
 
     MethodSignatureVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM4);
@@ -25,7 +26,6 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     @Override
     public void visitFormalTypeParameter(String name) {
-
     }
 
     @Override
@@ -50,7 +50,9 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitParameterType() {
-        return new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper);
+        ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameterIndex);
+        parameterIndex++;
+        return new DependentTypeSignatureVisitor(parameterDescriptor, visitorHelper);
     }
 
     @Override

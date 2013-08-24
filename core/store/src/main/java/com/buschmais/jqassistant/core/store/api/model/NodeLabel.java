@@ -21,6 +21,10 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
      */
     METHOD(true),
     /**
+     * Parameter
+     */
+    PARAMETER,
+    /**
      * Constructor
      */
     CONSTRUCTOR,

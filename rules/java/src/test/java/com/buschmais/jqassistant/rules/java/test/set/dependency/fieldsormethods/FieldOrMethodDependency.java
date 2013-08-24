@@ -12,7 +12,7 @@ public class FieldOrMethodDependency {
     private List<String> values;
 
     @MethodAnnotation
-    public Iterator<Integer> iterator() throws Exception {
+    public Iterator<Integer> iterator(Number n) throws Exception {
         Double doubleValue = Double.valueOf(0d);
         Boolean.valueOf(true);
         return null;

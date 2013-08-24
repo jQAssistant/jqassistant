@@ -49,7 +49,7 @@ public class DependencyIT extends AbstractAnalysisIT {
         // field
         assertThat(testResult.getColumns().get("t2"), allOf(hasItem(typeDescriptor(List.class)), hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(FieldAnnotation.class))));
         // method
-        assertThat(testResult.getColumns().get("t2"), allOf(hasItem(typeDescriptor(Iterator.class)), hasItem(typeDescriptor(Integer.class)), hasItem(typeDescriptor(Exception.class)), hasItem(typeDescriptor(Double.class)), hasItem(typeDescriptor(Boolean.class)), hasItem(typeDescriptor(MethodAnnotation.class))));
+        assertThat(testResult.getColumns().get("t2"), allOf(hasItem(typeDescriptor(Iterator.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(Integer.class)), hasItem(typeDescriptor(Exception.class)), hasItem(typeDescriptor(Double.class)), hasItem(typeDescriptor(Boolean.class)), hasItem(typeDescriptor(MethodAnnotation.class))));
     }
 
     /**

@@ -44,23 +44,27 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     @Override
     public Map<Relation, Set<? extends Descriptor>> getRelations(MethodDescriptor descriptor) {
         Map<Relation, Set<? extends Descriptor>> relations = new HashMap<Relation, Set<? extends Descriptor>>();
+        relations.put(Relation.HAS, descriptor.getParameters());
+        relations.put(Relation.THROWS, descriptor.getDeclaredThrowables());
         relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
         relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
-        relations.put(Relation.THROWS, descriptor.getDeclaredThrowables());
         return relations;
     }
 
     @Override
     protected void setRelation(MethodDescriptor descriptor, Relation relation, Descriptor target) {
         switch (relation) {
+            case HAS:
+                descriptor.getParameters().add((ParameterDescriptor) target);
+                break;
+            case THROWS:
+                descriptor.getDeclaredThrowables().add((TypeDescriptor) target);
+                break;
             case ANNOTATED_BY:
                 descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
                 break;
             case DEPENDS_ON:
                 descriptor.getDependencies().add((TypeDescriptor) target);
-                break;
-            case THROWS:
-                descriptor.getDeclaredThrowables().add((TypeDescriptor) target);
                 break;
             default:
         }
@@ -140,5 +144,4 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
             descriptor.setConstructor(Boolean.TRUE);
         }
     }
-
 }

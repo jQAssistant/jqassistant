@@ -50,6 +50,7 @@ public abstract class AbstractGraphStore implements Store {
         mapperRegistry.register(new PackageDescriptorMapper());
         mapperRegistry.register(new TypeDescriptorMapper());
         mapperRegistry.register(new MethodDescriptorMapper());
+        mapperRegistry.register(new ParameterDescriptorMapper());
         mapperRegistry.register(new FieldDescriptorMapper());
         mapperRegistry.register(new ValueDescriptorMapper());
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
@@ -58,7 +59,11 @@ public abstract class AbstractGraphStore implements Store {
             if (label.isIndexed()) {
                 boolean hasIndex = false;
                 for (IndexDefinition indexDefinition : database.schema().getIndexes(label)) {
-                    hasIndex = true;
+                    for (String s : indexDefinition.getPropertyKeys()) {
+                        if (FQN.name().equals(s)) {
+                            hasIndex = true;
+                        }
+                    }
                 }
                 if (!hasIndex) {
                     database.schema().indexFor(label).on(FQN.name()).create();

@@ -63,18 +63,41 @@ public class AnnotationIT extends AbstractScannerIT {
     @Test
     public void annotatedMethod() throws IOException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
-        // verify annotation type
+        // verify annotation type on method level
         TestResult testResult = executeQuery("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
-        assertThat(testResult.getRows().size(), equalTo(2));
+        assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((MethodDescriptor) row.get("m"), methodDescriptor(AnnotatedType.class, "annotatedMethod", String.class));
         assertThat((AnnotationValueDescriptor) row.get("a"), annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"), typeDescriptor(Annotation.class));
-        // verify values
+        // verify values on method level
         testResult = executeQuery("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
-        assertThat(testResult.getRows().size(), equalTo(2));
+        assertThat(testResult.getRows().size(), equalTo(1));
         List<Object> values = testResult.getColumns().get("value");
-        assertThat(values, allOf(hasItem(valueDescriptor("value", is("method"))), hasItem(valueDescriptor("value", is("parameter")))));
+        assertThat(values, hasItem(valueDescriptor("value", is("method"))));
+        // ), hasItem(valueDescriptor("value", is("parameter"))))
+    }
+
+    /**
+     * Verifies an annotation on method parameter level.
+     *
+     * @throws IOException If the test fails.
+     */
+    @Test
+    public void annotatedMethodParameter() throws IOException, NoSuchFieldException, NoSuchMethodException {
+        scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
+        // verify annotation type on method parameter level
+        TestResult testResult = executeQuery("MATCH (m:METHOD)-[:HAS]->(p:PARAMETER)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        Map<String, Object> row = testResult.getRows().get(0);
+        assertThat((MethodDescriptor) row.get("m"), methodDescriptor(AnnotatedType.class, "annotatedMethod", String.class));
+        assertThat((AnnotationValueDescriptor) row.get("a"), annotationValueDescriptor(Annotation.class, anything()));
+        assertThat((TypeDescriptor) row.get("at"), typeDescriptor(Annotation.class));
+        // verify values on method parameter level
+        testResult = executeQuery("MATCH (m:METHOD)-[:HAS]->(p:PARAMETER)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        List<Object> values = testResult.getColumns().get("value");
+        assertThat(values, hasItem(valueDescriptor("value", is("parameter"))));
     }
 
     /**

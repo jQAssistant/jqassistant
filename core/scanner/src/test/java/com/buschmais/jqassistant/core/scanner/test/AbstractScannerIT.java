@@ -137,10 +137,10 @@ public abstract class AbstractScannerIT {
     protected TestResult executeQuery(String query, Map<String, Object> parameters) {
         store.beginTransaction();
         QueryResult queryResult = store.executeQuery(query, parameters);
-        List<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
-        Map<String, List<Object>> columns = new HashMap<String, List<Object>>();
+        List<Map<String, Object>> rows = new ArrayList<>();
+        Map<String, List<Object>> columns = new HashMap<>();
         for (String column : queryResult.getColumns()) {
-            columns.put(column, new ArrayList<Object>());
+            columns.put(column, new ArrayList<>());
         }
         for (QueryResult.Row row : queryResult.getRows()) {
             Map<String, Object> rowData = row.get();

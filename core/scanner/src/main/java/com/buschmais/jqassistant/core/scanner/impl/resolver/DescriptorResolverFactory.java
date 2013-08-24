@@ -30,5 +30,4 @@ public class DescriptorResolverFactory {
     public FieldDescriptorResolver getFieldDescriptorResolver() {
         return fieldDescriptorResolver;
     }
-
 }
