@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
@@ -11,7 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.ARTIFACT;
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.PACKAGE;
 
 /**
@@ -32,8 +32,8 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     }
 
     @Override
-    public PackageDescriptor createInstance(Set<Label> labels) {
-        return new PackageDescriptor();
+    public Class<? extends PackageDescriptor> getType(Set<Label> labels) {
+        return PackageDescriptor.class;
     }
 
     @Override

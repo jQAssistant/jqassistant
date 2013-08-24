@@ -43,8 +43,8 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
     }
 
     @Override
-    public ArtifactDescriptor createInstance(Set<Label> labels) {
-        return new ArtifactDescriptor();
+    public Class<? extends ArtifactDescriptor> getType(Set<Label> labels) {
+        return ArtifactDescriptor.class;
     }
 
     @Override

@@ -32,8 +32,8 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     }
 
     @Override
-    public MethodDescriptor createInstance(Set<Label> labels) {
-        return new MethodDescriptor();
+    public Class<? extends MethodDescriptor> getType(Set<Label> labels) {
+        return MethodDescriptor.class;
     }
 
     @Override
