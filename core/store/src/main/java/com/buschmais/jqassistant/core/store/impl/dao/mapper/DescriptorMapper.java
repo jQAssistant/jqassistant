@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
@@ -40,12 +41,13 @@ public interface DescriptorMapper<T extends Descriptor> {
     public T createInstance(Class<? extends T> type);
 
     /**
-     * Creates a descriptor instance.
+     * Return the java type.
+     *
      *
      * @param labels The labels provided by a node.
-     * @return The descriptor instance.
+     * @return The java type.
      */
-    public T createInstance(Set<Label> labels);
+    public Class<? extends T> getType(Set<Label> labels);
 
 
     /**

@@ -35,8 +35,8 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    public TypeDescriptor createInstance(Set<Label> labels) {
-        return new TypeDescriptor();
+    public Class<? extends TypeDescriptor> getType(Set<Label> labels) {
+        return TypeDescriptor.class;
     }
 
     @Override

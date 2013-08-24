@@ -37,21 +37,21 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
     }
 
     @Override
-    public ValueDescriptor createInstance(Set<Label> labels) {
+    public Class<? extends ValueDescriptor> getType(Set<Label> labels) {
         for (Label label : labels) {
             ValueLabel valueLabel = ValueLabel.getValueLabel(label.name());
             if (valueLabel != null) {
                 switch (valueLabel) {
                     case ARRAY:
-                        return new ArrayValueDescriptor();
+                        return ArrayValueDescriptor.class;
                     case ANNOTATION:
-                        return new AnnotationValueDescriptor();
+                        return AnnotationValueDescriptor.class;
                     case ENUM:
-                        return new EnumerationValueDescriptor();
+                        return EnumerationValueDescriptor.class;
                     case PRIMITIVE:
-                        return new PrimitiveValueDescriptor();
+                        return PrimitiveValueDescriptor.class;
                     case CLASS:
-                        return new ClassValueDescriptor();
+                        return ClassValueDescriptor.class;
                     default:
                         throw new IllegalStateException("Unsupported value label " + valueLabel);
                 }
@@ -177,7 +177,8 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
             throw new IllegalStateException("Unsupported value descriptor type " + descriptor.getClass().getName());
         }
         Set<Label> labels = new HashSet<>();
-        labels.add(new com.buschmais.jqassistant.core.store.impl.dao.mapper.Label(valueLabel)); return labels;
+        labels.add(new com.buschmais.jqassistant.core.store.impl.dao.mapper.Label(valueLabel));
+        return labels;
     }
 
     @Override

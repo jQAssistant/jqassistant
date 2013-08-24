@@ -244,7 +244,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 labels.add(label);
             }
             // create instance
-            descriptor = mapper.createInstance(labels);
+            Class<? extends T> type= mapper.getType(labels);
+            descriptor = mapper.createInstance(type);
             mapper.setId(descriptor, Long.valueOf(node.getId()));
             descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
             this.descriptorCache.put(descriptor);

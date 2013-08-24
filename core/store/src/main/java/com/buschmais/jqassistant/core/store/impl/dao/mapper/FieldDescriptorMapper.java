@@ -33,8 +33,8 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
 
 
     @Override
-    public FieldDescriptor createInstance(Set<Label> labels) {
-        return new FieldDescriptor();
+    public Class<? extends FieldDescriptor> getType(Set<Label> labels) {
+        return FieldDescriptor.class;
     }
 
     @Override
