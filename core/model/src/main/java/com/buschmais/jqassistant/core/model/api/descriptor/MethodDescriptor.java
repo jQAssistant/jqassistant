@@ -11,6 +11,11 @@ import java.util.Set;
 public class MethodDescriptor extends AbstractDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
+     * The parameters of this this method.
+     */
+    private Set<ParameterDescriptor> parameters = new HashSet<>();
+
+    /**
      * The declared throwables.
      */
     private Set<TypeDescriptor> declaredThrowables = new HashSet<>();
@@ -59,6 +64,14 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
      * <code>true</code> if this method is synthetic, otherwise <code>false</code>.
      */
     private Boolean syntheticMethod;
+
+    public Set<ParameterDescriptor> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Set<ParameterDescriptor> parameters) {
+        this.parameters = parameters;
+    }
 
     public Set<TypeDescriptor> getDeclaredThrowables() {
         return declaredThrowables;

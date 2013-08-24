@@ -6,7 +6,6 @@ import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
-import org.apache.commons.collections.map.LRUMap;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.*;
@@ -82,8 +81,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     private final ExecutionEngine executionEngine;
 
     private final DescriptorCache descriptorCache = new DescriptorCache();
-    @SuppressWarnings("unchecked")
-    private final Map<String, Node> nodeCache = new LRUMap(1024);
 
     public DescriptorDAOImpl(DescriptorMapperRegistry registry, GraphDatabaseService database) {
         this.registry = registry;
@@ -98,42 +95,39 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Node node = database.createNode(adapter.getCoreLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         descriptorCache.put(descriptor);
-        nodeCache.put(descriptor.getFullQualifiedName(), node);
     }
 
     @Override
     public void flush() {
         LOGGER.debug("Flushing changes to database.");
         for (Descriptor descriptor : descriptorCache.getDescriptors()) {
-            Node node = findNode(descriptor);
+            LOGGER.debug("Flushing descriptor '{}'.", descriptor.getFullQualifiedName());
+            Node node = getNode(descriptor);
             DescriptorMapper mapper = registry.getDescriptorMapper(descriptor.getClass());
             flushRelations(descriptor, node, mapper);
             flushProperties(descriptor, node, mapper);
             flushLabels(descriptor, node, mapper);
         }
-        this.descriptorCache.clear();
+        this.descriptorCache.flush();
     }
 
     @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
         DescriptorMapper<Descriptor> mapper = registry.getDescriptorMapper(type);
-        Node node = nodeCache.get(fullQualifiedName);
-        if (node == null) {
+        T descriptor = descriptorCache.findBy(fullQualifiedName);
+        if (descriptor == null) {
             ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getCoreLabel(), NodeProperty.FQN.name(), fullQualifiedName);
             ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
             try {
                 if (iterator.hasNext()) {
-                    node = iterator.next();
+                    Node node = iterator.next();
+                    descriptor = createDescriptor(node);
                 }
             } finally {
                 iterator.close();
             }
-
         }
-        if (node != null) {
-            return getDescriptor(node);
-        }
-        return null;
+        return descriptor;
     }
 
     @Override
@@ -166,7 +160,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                 }
                 for (Descriptor targetDescriptor : targetDescriptors) {
                     if (targetDescriptor != null) {
-                        Node targetNode = findNode(targetDescriptor);
+                        Node targetNode = getNode(targetDescriptor);
                         if (!existingTargetNodes.contains(targetNode)) {
                             node.createRelationshipTo(targetNode, relationType);
                         }
@@ -188,10 +182,23 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Map<NodeProperty, Object> properties = mapper.getProperties(descriptor);
         for (Entry<NodeProperty, Object> entry : properties.entrySet()) {
             NodeProperty property = entry.getKey();
+            String name = property.name();
             Object value = entry.getValue();
-            if (value != null) {
-                LOGGER.debug("Setting property '" + property + "' with value '" + value + "' on node '" + node.getId() + "'");
-                node.setProperty(property.name(), value);
+            if (value == null) {
+                if (node.hasProperty(name)) {
+                    node.removeProperty(name);
+                }
+            } else {
+                Object existingValue;
+                if (node.hasProperty(property.name())) {
+                    existingValue = node.getProperty(name);
+                } else {
+                    existingValue = null;
+                }
+                if (!value.equals(existingValue)) {
+                    LOGGER.debug("Updating property '" + property + "' with value '" + value + "' on node '" + node.getId() + "'");
+                    node.setProperty(name, value);
+                }
             }
         }
     }
@@ -204,23 +211,12 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node       The node.
      * @param mapper     The mapper.
      */
+
     private <T extends Descriptor> void flushLabels(T descriptor, Node node, DescriptorMapper<T> mapper) {
         Set<Label> labels = mapper.getLabels(descriptor);
         for (Label label : labels) {
             node.addLabel(label);
         }
-    }
-
-    /**
-     * Find the {@link Node} which represents the given descriptor.
-     *
-     * @param descriptor The descriptor.
-     * @return The {@link Node}.
-     */
-    private <T extends Descriptor> Node findNode(T descriptor) {
-        DescriptorMapper<T> mapper = registry.getDescriptorMapper(descriptor.getClass());
-        Long id = mapper.getId(descriptor);
-        return database.getNodeById(id);
     }
 
     /**
@@ -233,51 +229,74 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node The {@link Node}.
      * @return The descriptor.
      */
-    private <T extends Descriptor> T getDescriptor(Node node) {
-        T descriptor = this.descriptorCache.findBy(node.getId());
-        if (descriptor == null) {
-            // find adapter and create instance
-            DescriptorMapper<T> mapper = registry.getDescriptorMapper(node);
-            // get labels from node.
-            Set<Label> labels = new HashSet<>();
-            for (Label label : node.getLabels()) {
-                labels.add(label);
-            }
-            // create instance
-            Class<? extends T> type= mapper.getType(labels);
-            descriptor = mapper.createInstance(type);
-            mapper.setId(descriptor, Long.valueOf(node.getId()));
-            descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
-            this.descriptorCache.put(descriptor);
-            this.nodeCache.put(descriptor.getFullQualifiedName(), node);
-            // create outgoing relationships
-            Map<Relation, Set<Descriptor>> relations = new HashMap<Relation, Set<Descriptor>>();
-            for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
-                Relation relation = Relation.getRelation(relationship.getType().name());
-                if (relation != null) {
-                    Node targetNode = relationship.getEndNode();
-                    Descriptor targetDescriptor = getDescriptor(targetNode);
-                    Set<Descriptor> set = relations.get(relation);
-                    if (set == null) {
-                        set = new HashSet<Descriptor>();
-                        relations.put(relation, set);
-                    }
-                    set.add(targetDescriptor);
+    private <T extends Descriptor> T createDescriptor(Node node) {
+        DescriptorMapper<T> mapper = registry.getDescriptorMapper(node);
+        Class<T> type = getType(node);
+        T descriptor = mapper.createInstance(type);
+        mapper.setId(descriptor, Long.valueOf(node.getId()));
+        descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
+        this.descriptorCache.put(descriptor);
+        // create outgoing relationships
+        Map<Relation, Set<Descriptor>> relations = new HashMap<Relation, Set<Descriptor>>();
+        for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
+            Relation relation = Relation.getRelation(relationship.getType().name());
+            if (relation != null) {
+                Node targetNode = relationship.getEndNode();
+                Descriptor targetDescriptor = getDescriptor(targetNode);
+                Set<Descriptor> set = relations.get(relation);
+                if (set == null) {
+                    set = new HashSet<>();
+                    relations.put(relation, set);
                 }
-            }
-            mapper.setRelations(descriptor, relations);
-            // Set properties
-            for (String name : node.getPropertyKeys()) {
-                NodeProperty nodeProperty = NodeProperty.getProperty(name);
-                if (nodeProperty != null) {
-                    mapper.setProperty(descriptor, nodeProperty, node.getProperty(name));
-                }
-            }
-            // Set labels
-            for (Label label : labels) {
-                mapper.setLabel(descriptor, label);
+                set.add(targetDescriptor);
             }
         }
+        mapper.setRelations(descriptor, relations);
+        // Set properties
+        for (String name : node.getPropertyKeys()) {
+            NodeProperty nodeProperty = NodeProperty.getProperty(name);
+            if (nodeProperty != null) {
+                mapper.setProperty(descriptor, nodeProperty, node.getProperty(name));
+            }
+        }
+        // Set labels
+        for (Label label : node.getLabels()) {
+            mapper.setLabel(descriptor, label);
+        }
         return descriptor;
+    }
+
+    /**
+     * Get the {@link Node} which represents the given descriptor.
+     *
+     * @param descriptor The descriptor.
+     * @return The {@link Node}.
+     */
+    private <T extends Descriptor> Node getNode(T descriptor) {
+        DescriptorMapper<T> mapper = registry.getDescriptorMapper(descriptor.getClass());
+        Long id = mapper.getId(descriptor);
+        return database.getNodeById(id);
+    }
+
+    /**
+     * Get the {@link Descriptor} which represents the given node.
+     *
+     * @param node The node.
+     * @return The {@link Descriptor}.
+     */
+    private Descriptor getDescriptor(Node node) {
+        Class<Descriptor> type = getType(node);
+        return find(type, (String) node.getProperty(NodeProperty.FQN.name()));
+    }
+
+    private <T extends Descriptor> Class<T> getType(Node node) {
+        // find adapter and create instance
+        DescriptorMapper<T> mapper = registry.getDescriptorMapper(node);
+        // get labels from node.
+        Set<Label> labels = new HashSet<>();
+        for (Label label : node.getLabels()) {
+            labels.add(label);
+        }
+        return (Class<T>) mapper.getType(labels);
     }
 }

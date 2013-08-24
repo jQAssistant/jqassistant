@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.ParameterDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import org.objectweb.asm.Attribute;
@@ -25,7 +26,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
-        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(methodDescriptor, visitorHelper.getType(desc));
+        ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(this.methodDescriptor, parameter);
+        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(parameterDescriptor, visitorHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
 
