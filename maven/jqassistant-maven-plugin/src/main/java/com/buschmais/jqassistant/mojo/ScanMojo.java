@@ -37,14 +37,19 @@ import java.io.IOException;
  */
 public class ScanMojo extends AbstractAnalysisMojo {
 
+    /**
+     * The artifact type for test jars.
+     */
+    public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // reset the store if the current project is the base project (i.e. where the rules are located).
         if (project != null && project.equals(getBaseProject())) {
             reset();
         }
-        scanDirectory(classesDirectory);
-        scanDirectory(testClassesDirectory);
+        scanDirectory(classesDirectory, false);
+        scanDirectory(testClassesDirectory, true);
     }
 
     /**
@@ -66,20 +71,22 @@ public class ScanMojo extends AbstractAnalysisMojo {
      * @param directory The directory.
      * @throws MojoExecutionException If scanning fails.
      */
-    private void scanDirectory(final File directory) throws MojoExecutionException, MojoFailureException {
+    private void scanDirectory(final File directory, final boolean testJar) throws MojoExecutionException, MojoFailureException {
         getLog().info("Scanning classes directory: " + directory.getAbsolutePath());
         super.executeInTransaction(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
                 Artifact artifact = project.getArtifact();
-                ArtifactDescriptor descriptor = store.find(ArtifactDescriptor.class, artifact.getId());
+                String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
+                String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
+                ArtifactDescriptor descriptor = store.find(ArtifactDescriptor.class, id);
                 if (descriptor == null) {
-                    descriptor = store.create(ArtifactDescriptor.class, artifact.getId());
+                    descriptor = store.create(ArtifactDescriptor.class, id);
                     descriptor.setGroup(artifact.getGroupId());
                     descriptor.setName(artifact.getArtifactId());
                     descriptor.setVersion(artifact.getVersion());
                     descriptor.setClassifier(artifact.getClassifier());
-                    descriptor.setType(artifact.getType());
+                    descriptor.setType(type);
                 }
                 ArtifactScanner scanner = new ArtifactScannerImpl(new ClassScannerImpl(store));
                 try {
@@ -90,5 +97,31 @@ public class ScanMojo extends AbstractAnalysisMojo {
                 return null;
             }
         });
+    }
+
+    /**
+     * Creates the id of an artifact descriptor by the given items.
+     *
+     * @param group      The group.
+     * @param name       The name.
+     * @param type       The type.
+     * @param classifier The classifier (optional).
+     * @param version    The version.
+     * @return The id.
+     */
+    private String createArtifactDescriptorId(String group, String name, String type, String classifier, String version) {
+        StringBuffer id = new StringBuffer();
+        id.append(group);
+        id.append(':');
+        id.append(name);
+        id.append(':');
+        id.append(type);
+        if (classifier != null) {
+            id.append(':');
+            id.append(classifier);
+        }
+        id.append(':');
+        id.append(version);
+        return id.toString();
     }
 }
