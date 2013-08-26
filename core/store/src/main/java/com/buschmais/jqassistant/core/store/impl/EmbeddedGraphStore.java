@@ -7,11 +7,15 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.tooling.GlobalGraphOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
  */
 public class EmbeddedGraphStore extends AbstractGraphStore {
+
+    private static final Logger LOGGER= LoggerFactory.getLogger(EmbeddedGraphStore.class);
 
     /**
      * The directory of the database.
@@ -75,11 +79,13 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
 
     @Override
     public void reset() {
+        LOGGER.info("Resetting store in '{}'.", databaseDirectory);
         for (Relationship relationShip : GlobalGraphOperations.at(database).getAllRelationships()) {
             relationShip.delete();
         }
         for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
             node.delete();
         }
+        LOGGER.info("Reset finished.", databaseDirectory);
     }
 }

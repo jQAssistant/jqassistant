@@ -39,8 +39,21 @@ public class ScanMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        reset();
         scanDirectory(classesDirectory);
         scanDirectory(testClassesDirectory);
+    }
+
+    private void reset() throws MojoFailureException, MojoExecutionException {
+        if (project != null && project.equals(getBaseProject())) {
+            executeInTransaction(new StoreOperation<Void>() {
+                @Override
+                public Void run(Store store) throws MojoExecutionException, MojoFailureException {
+                    store.reset();
+                    return null;
+                }
+            });
+        }
     }
 
     /**

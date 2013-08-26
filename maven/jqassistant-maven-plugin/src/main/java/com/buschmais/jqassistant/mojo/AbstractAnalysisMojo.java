@@ -32,6 +32,15 @@ import java.util.List;
  */
 public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.AbstractMojo {
 
+    /**
+     * Defines the interface for an operation on the store.
+     *
+     * @param <T> The return type of the operation.
+     */
+    protected static interface StoreOperation<T> {
+        public T run(Store store) throws MojoExecutionException, MojoFailureException;
+    }
+
     public static final String RULES_DIRECTORY = "jqassistant";
 
     public static final String REPORT_XML = "/jqassistant/jqassistant-report.xml";
@@ -75,32 +84,12 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
 
     /**
-     * The catalog reader instance.
-     */
-    private CatalogReader catalogReader = new CatalogReaderImpl();
-
-    /**
-     * The rules reader instance.
-     */
-    private RuleSetReader ruleSetReader = new RuleSetReaderImpl();
-
-    /**
-     * The rule selector.
-     */
-    private RuleSelector ruleSelector = new RuleSelectorImpl();
-
-    protected static interface StoreOperation<T> {
-        public T run(Store store) throws MojoExecutionException, MojoFailureException;
-    }
-
-    /**
      * The artifactId.
      *
      * @parameter expression="${project.artifactId}"
      * @readonly
      */
     protected String artifactId;
-
 
     /**
      * The project rulesDirectory.
@@ -109,6 +98,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * @readonly
      */
     protected File basedir;
+
 
     /**
      * The build rulesDirectory.
@@ -137,7 +127,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * The store directory.
      *
-     * @parameter expression="${jqassistant.store.directory}" default-value="${project.build.directory}/jqassistant/store"
+     * @parameter expression="${jqassistant.store.directory}"
      * @readonly
      */
     protected File storeDirectory;
@@ -165,6 +155,21 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     protected List<MavenProject> reactorProjects;
 
     /**
+     * The catalog reader instance.
+     */
+    private CatalogReader catalogReader = new CatalogReaderImpl();
+
+    /**
+     * The rules reader instance.
+     */
+    private RuleSetReader ruleSetReader = new RuleSetReaderImpl();
+
+    /**
+     * The rule selector.
+     */
+    private RuleSelector ruleSelector = new RuleSelectorImpl();
+
+    /**
      * @component
      */
     protected StoreProvider storeProvider;
@@ -184,9 +189,13 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     }
 
     private Store getStore() throws MojoExecutionException {
-        getBaseProject();
-        storeDirectory.getParentFile().mkdirs();
-        return storeProvider.getStore(storeDirectory);
+        File directory;
+        if (storeDirectory != null) {
+            directory = storeDirectory;
+        } else {
+            directory = new File(getBaseProject().getBuild().getDirectory() + "/jqassistant/store");
+        }
+        return storeProvider.getStore(directory);
     }
 
     /**
