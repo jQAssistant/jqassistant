@@ -14,21 +14,25 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     private static final String CONSTRUCTOR_METHOD = "<init>";
 
     private TypeDescriptor typeDescriptor;
-    private ArtifactDescriptor artifactDescriptor;
     private VisitorHelper visitorHelper;
 
-    public ClassVisitor(ArtifactDescriptor artifactDescriptor, VisitorHelper visitorHelper) {
+    public ClassVisitor(VisitorHelper visitorHelper) {
         super(Opcodes.ASM4);
-        this.artifactDescriptor = artifactDescriptor;
         this.visitorHelper = visitorHelper;
+    }
+
+    /**
+     * Return the type descriptor created by visiting the class.
+     *
+     * @return The type descriptor.
+     */
+    public TypeDescriptor getTypeDescriptor() {
+        return typeDescriptor;
     }
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         typeDescriptor = visitorHelper.getTypeDescriptor(name);
-        if (this.artifactDescriptor != null) {
-            artifactDescriptor.getContains().add(typeDescriptor);
-        }
         JavaType javaType = getJavaType(access);
         typeDescriptor.setJavaType(javaType);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
@@ -205,5 +209,4 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             outerClass.getContains().add(innerClass);
         }
     }
-
 }
