@@ -39,21 +39,25 @@ public class ScanMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        reset();
+        // reset the store if the current project is the base project (i.e. where the rules are located).
+        if (project != null && project.equals(getBaseProject())) {
+            reset();
+        }
         scanDirectory(classesDirectory);
         scanDirectory(testClassesDirectory);
     }
 
+    /**
+     * Reset the store.
+     */
     private void reset() throws MojoFailureException, MojoExecutionException {
-        if (project != null && project.equals(getBaseProject())) {
-            executeInTransaction(new StoreOperation<Void>() {
-                @Override
-                public Void run(Store store) throws MojoExecutionException, MojoFailureException {
-                    store.reset();
-                    return null;
-                }
-            });
-        }
+        executeInTransaction(new StoreOperation<Void>() {
+            @Override
+            public Void run(Store store) throws MojoExecutionException, MojoFailureException {
+                store.reset();
+                return null;
+            }
+        });
     }
 
     /**

@@ -229,7 +229,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     }
 
     /**
-     * Return the {@link MavenProject} containing a rules directory.
+     * Return the {@link MavenProject} which is the base project for scanning and analysis.
+     * <p>The base project is by searching with the project tree starting from the current project over its parents until
+     * a project is found containing a directory "jqassistant" or no parent can be determined.</p>
      *
      * @return The {@link MavenProject} containing a rules directory.
      * @throws MojoExecutionException If the directory cannot be resolved.
