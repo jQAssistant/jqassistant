@@ -23,7 +23,7 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
     /**
      * Parameter
      */
-    PARAMETER,
+    PARAMETER(true),
     /**
      * Constructor
      */
@@ -43,7 +43,7 @@ public enum NodeLabel implements org.neo4j.graphdb.Label {
      * Default constructor.
      */
     NodeLabel() {
-        this(true);
+        this(false);
     }
 
     /**

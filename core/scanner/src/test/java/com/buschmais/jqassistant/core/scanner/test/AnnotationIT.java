@@ -75,7 +75,6 @@ public class AnnotationIT extends AbstractScannerIT {
         assertThat(testResult.getRows().size(), equalTo(1));
         List<Object> values = testResult.getColumns().get("value");
         assertThat(values, hasItem(valueDescriptor("value", is("method"))));
-        // ), hasItem(valueDescriptor("value", is("parameter"))))
     }
 
     /**

@@ -6,9 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Describes a method of a Java class.
+ * Describes a parameter of a method.
  */
-public class ParameterDescriptor extends AbstractDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class ParameterDescriptor extends AbstractDescriptor implements DependentDescriptor, AnnotatedDescriptor {
 
     /**
      * The classes the method depends on.
@@ -43,45 +43,5 @@ public class ParameterDescriptor extends AbstractDescriptor implements Dependent
     @Override
     public void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations) {
         this.annotations = annotations;
-    }
-
-    @Override
-    public VisibilityModifier getVisibility() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setVisibility(VisibilityModifier visibilityModifier) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Boolean isStatic() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setStatic(Boolean s) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Boolean isFinal() {
-        return finalParameter;
-    }
-
-    @Override
-    public void setFinal(Boolean f) {
-        finalParameter = f;
-    }
-
-    @Override
-    public Boolean isSynthetic() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSynthetic(Boolean syntheticMethod) {
-        throw new UnsupportedOperationException();
     }
 }
