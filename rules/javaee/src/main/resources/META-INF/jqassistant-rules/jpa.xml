@@ -1,7 +1,7 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="jpa:Entity">
-        <description>Labels all types annotated with java.persistence.Entity with JPA and ENTITY.</description>
+        <description>Labels all types annotated with @javax.persistence.Entity with JPA and ENTITY.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.persistence.Entity"

@@ -26,7 +26,7 @@
     </constraint>
 
     <constraint id="TestClassNameHasTestSuffix">
-        <requiresConcept refId="junit4:TestClass"/>
+        <requiresConcept refId="junit4:TestClassOrMethod"/>
         <description>The name of all test classes must have the suffix "Test".</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)

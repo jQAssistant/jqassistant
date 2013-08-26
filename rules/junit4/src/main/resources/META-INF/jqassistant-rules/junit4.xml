@@ -1,46 +1,23 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="junit4:TestMethod">
-        <description>Labels all test methods annotated with "org.junit.@Test" with TEST and JUNIT4.</description>
+    <concept id="junit4:TestClassOrMethod">
+        <description>Finds test methods (i.e.annotated with "@org.junit.Test") and labels them and their containing classes with TEST and JUNIT4.</description>
         <cypher><![CDATA[
-            MATCH (m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+            MATCH (c:TYPE:CLASS)-[:CONTAINS]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="org.junit.Test"
-            SET m:TEST:JUNIT4
+            SET c:TEST:JUNIT4, m:TEST:JUNIT4
             RETURN m as testMethod
         ]]></cypher>
     </concept>
 
-    <concept id="junit4:TestClass">
-        <requiresConcept refId="junit4:TestMethod" />
-        <description>Labels all types containing test methods with TEST and JUNIT4.</description>
+    <concept id="junit4:IgnoreTestClassOrMethod">
+        <description>Labels all classes or methods annotated with "@org.junit.Ignore" with JUNIT4 and IGNORE.</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:CONTAINS]->(m:METHOD:TEST:JUNIT4)
-            SET t:TEST:JUNIT4
-            RETURN t AS testClass
-        ]]></cypher>
-    </concept>
-
-    <concept id="junit4:IgnoreTestMethod">
-        <requiresConcept refId="junit4:TestMethod" />
-        <description>Labels all JUNIT4 and TEST test labelled methods annotated with "org.junit.@Ignore" with IGNORE.</description>
-        <cypher><![CDATA[
-            MATCH (m:METHOD:JUNIT4:TEST)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
+            MATCH (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="org.junit.Ignore"
-            SET m:IGNORE
-            RETURN m as ignoreTestMethod
+            SET e:JUNIT4:IGNORE
+            RETURN e as ignoreElement
         ]]></cypher>
     </concept>
-
-    <concept id="junit4:IgnoreTestClass">
-        <requiresConcept refId="junit4:TestClass" />
-        <description>Labels all JUNIT4 and TEST test labelled classes annotated with "org.junit.@Ignore" with IGNORE.</description>
-        <cypher><![CDATA[
-            MATCH (t:TYPE:JUNIT4:TEST)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="org.junit.Ignore"
-            SET t:IGNORE
-            RETURN t as ignoreTestClass
-        ]]></cypher>
-    </concept>
-
 
 </jqa:jqassistant-rules>

@@ -21,60 +21,32 @@ import static org.junit.Assert.assertThat;
 public class Junit4IT extends AbstractAnalysisIT {
 
     /**
-     * Verifies the concept "junit4:TestMethod".
+     * Verifies the concept "junit4:TestClassOrMethod".
      *
      * @throws IOException           If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * @throws AnalyzerException     If the test fails.
      * @throws NoSuchMethodException If the test fails.
      */
     @Test
-    public void testMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void testClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:TestMethod");
-        Map<String, List<Object>> columns = executeQuery("MATCH m:METHOD:JUNIT4:TEST RETURN m").getColumns();
-        assertThat(columns.get("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        applyConcept("junit4:TestClassOrMethod");
+        assertThat(executeQuery("MATCH m:METHOD:JUNIT4:TEST RETURN m").getColumns().get("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        assertThat(executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c").getColumns().get("c"), hasItem(typeDescriptor(TestClass.class)));
     }
 
     /**
-     * Verifies the concept "junit4:TestClass".
+     * Verifies the concept "junit4:IgnoreTestClassOrMethod".
      *
      * @throws IOException           If the test fails.
-     * @throws AnalyzerException If the test fails.
-     */
-    @Test
-    public void testClass() throws IOException, AnalyzerException {
-        scanClasses(TestClass.class);
-        applyConcept("junit4:TestClass");
-        Map<String, List<Object>> columns = executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c").getColumns();
-        assertThat(columns.get("c"), hasItem(typeDescriptor(TestClass.class)));
-    }
-
-    /**
-     * Verifies the concept "junit4:IgnoreTestMethod".
-     *
-     * @throws IOException           If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * @throws AnalyzerException     If the test fails.
      * @throws NoSuchMethodException If the test fails.
      */
     @Test
-    public void ignoreTestMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void ignoreTestClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
         scanClasses(IgnoredTestClass.class);
-        applyConcept("junit4:IgnoreTestMethod");
-        Map<String, List<Object>> columns = executeQuery("MATCH m:METHOD:JUNIT4:TEST:IGNORE RETURN m").getColumns();
-        assertThat(columns.get("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
-    }
-
-    /**
-     * Verifies the concept "junit4:IgnoreTestClass".
-     *
-     * @throws IOException           If the test fails.
-     * @throws AnalyzerException If the test fails.
-     */
-    @Test
-    public void ignoreTestClass() throws IOException, AnalyzerException {
-        scanClasses(IgnoredTestClass.class);
-        applyConcept("junit4:IgnoreTestClass");
-        Map<String, List<Object>> columns = executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST:IGNORE RETURN c").getColumns();
-        assertThat(columns.get("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
+        applyConcept("junit4:IgnoreTestClassOrMethod");
+        assertThat(executeQuery("MATCH m:METHOD:JUNIT4:IGNORE RETURN m").getColumns().get("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
+        assertThat(executeQuery("MATCH c:TYPE:CLASS:JUNIT4:IGNORE RETURN c").getColumns().get("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
     }
 }

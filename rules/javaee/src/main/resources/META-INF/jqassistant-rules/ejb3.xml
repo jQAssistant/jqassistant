@@ -1,7 +1,7 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="ejb3:StatelessSessionBean">
-        <description>Labels all types annotated with javax.ejb.Stateless with EJB and STATELESS.</description>
+        <description>Labels all types annotated with @javax.ejb.Stateless with EJB and STATELESS.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Stateless"
@@ -11,7 +11,7 @@
     </concept>
 
     <concept id="ejb3:StatefulSessionBean">
-        <description>Labels all types annotated with javax.ejb.Stateful with EJB and STATEFUL.</description>
+        <description>Labels all types annotated with @javax.ejb.Stateful with EJB and STATEFUL.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Stateful"
@@ -21,7 +21,7 @@
     </concept>
 
     <concept id="ejb3:SingletonBean">
-        <description>Labels all classes annotated with javax.ejb.Singleton with EJB and SINGLETON.</description>
+        <description>Labels all classes annotated with @javax.ejb.Singleton with EJB and SINGLETON.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Singleton"
@@ -31,7 +31,7 @@
     </concept>
 
     <concept id="ejb3:MessageDrivenBean">
-        <description>Labels all types annotated with javax.ejb.MessageDriven with EJB and MESSAGEDRIVEN.</description>
+        <description>Labels all types annotated with @javax.ejb.MessageDriven with EJB and MESSAGEDRIVEN.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.ejb.MessageDriven"
@@ -41,7 +41,7 @@
     </concept>
 
     <concept id="ejb3:Local">
-        <description>Labels all types annotated with javax.ejb.Local with EJB and LOCAL.</description>
+        <description>Labels all types annotated with @javax.ejb.Local with EJB and LOCAL.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Local"
@@ -51,7 +51,7 @@
     </concept>
 
     <concept id="ejb3:Remote">
-        <description>Labels all types annotated with javax.ejb.Remote with EJB and REMOTE.</description>
+        <description>Labels all types annotated with @javax.ejb.Remote with EJB and REMOTE.</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.ejb.Remote"
