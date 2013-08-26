@@ -72,7 +72,6 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
     @Override
     public void setProperty(ArtifactDescriptor descriptor, NodeProperty property, Object value) {
         super.setProperty(descriptor, property, value);
-
         switch (property) {
             case GROUP:
                 descriptor.setGroup((String) value);

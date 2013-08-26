@@ -70,11 +70,7 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
      */
     @Override
     public Map<NodeProperty, Object> getProperties(ParameterDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        if (descriptor.isFinal() != null) {
-            properties.put(NodeProperty.FINAL, descriptor.isFinal());
-        }
-        return properties;
+        return super.getProperties(descriptor);
     }
 
     /**
@@ -82,15 +78,6 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
      */
     @Override
     public void setProperty(ParameterDescriptor descriptor, NodeProperty property, Object value) {
-        if (value != null) {
-            super.setProperty(descriptor, property, value);
-            switch (property) {
-                case FINAL:
-                    descriptor.setFinal((Boolean) value);
-                    break;
-                default:
-                    break;
-            }
-        }
+        super.setProperty(descriptor, property, value);
     }
 }

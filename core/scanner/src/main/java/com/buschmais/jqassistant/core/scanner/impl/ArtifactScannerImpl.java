@@ -7,10 +7,7 @@ import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -94,7 +91,7 @@ public class ArtifactScannerImpl implements ArtifactScanner {
                     scanListener.beforePackage();
                     try {
                         for (ZipEntry zipEntry : e.getValue()) {
-                            classScanner.scanInputStream(artifactDescriptor, zipFile.getInputStream(zipEntry), zipEntry.getName());
+                            scanInputStream(artifactDescriptor, zipFile.getInputStream(zipEntry), zipEntry.getName());
                             currentClasses++;
                         }
                     } finally {
@@ -133,8 +130,26 @@ public class ArtifactScannerImpl implements ArtifactScanner {
             LOGGER.info("Scanning directory '{}' [{} class files].", directory.getAbsolutePath(), classFiles.size());
             URI directoryURI = directory.toURI();
             for (File classFile : classFiles) {
-                classScanner.scanInputStream(artifactDescriptor, new BufferedInputStream(new FileInputStream(classFile)), directoryURI.relativize(classFile.toURI()).toString());
+                scanInputStream(artifactDescriptor, new FileInputStream(classFile), directoryURI.relativize(classFile.toURI()).toString());
             }
         }
+    }
+
+    /**
+     * Scan the given input stream.
+     *
+     * @param artifactDescriptor The containing artifact descriptor.
+     * @param inputStream        The input stream.
+     * @param name               The name.
+     * @throws IOException If scanning fails.
+     */
+    private void scanInputStream(ArtifactDescriptor artifactDescriptor, InputStream inputStream, String name) throws IOException {
+        try {
+            scanListener.beforeClass();
+            classScanner.scanInputStream(artifactDescriptor, new BufferedInputStream(inputStream), name);
+        } finally {
+            scanListener.afterClass();
+        }
+
     }
 }

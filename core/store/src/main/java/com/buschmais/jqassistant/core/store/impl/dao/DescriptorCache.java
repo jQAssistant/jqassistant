@@ -9,7 +9,7 @@ import java.util.Map;
 public class DescriptorCache {
 
     private final Map<String, Descriptor> cache = new HashMap<>();
-    private final Map<String, Descriptor> sharedCache = new LRUMap(10240000);
+    private final Map<String, Descriptor> sharedCache = new LRUMap(1024000);
 
     public <T extends Descriptor> void put(T descriptor) {
         if (this.cache.put(descriptor.getFullQualifiedName(), descriptor) != null) {
