@@ -40,7 +40,8 @@ public class ArtifactScannerImpl implements ArtifactScanner {
      * @param classScanner The {@link ClassScanner} instance.
      */
     public ArtifactScannerImpl(ClassScanner classScanner) {
-        this(classScanner, null);
+        this(classScanner, new ScanListener() {
+        });
     }
 
 
