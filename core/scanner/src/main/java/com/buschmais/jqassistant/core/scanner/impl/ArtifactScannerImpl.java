@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
 import org.apache.commons.io.DirectoryWalker;
@@ -92,7 +93,8 @@ public class ArtifactScannerImpl implements ArtifactScanner {
                     scanListener.beforePackage();
                     try {
                         for (ZipEntry zipEntry : e.getValue()) {
-                            scanInputStream(artifactDescriptor, zipFile.getInputStream(zipEntry), zipEntry.getName());
+                            TypeDescriptor typeDescriptor = scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
+                            artifactDescriptor.getContains().add(typeDescriptor);
                             currentClasses++;
                         }
                     } finally {
@@ -131,7 +133,8 @@ public class ArtifactScannerImpl implements ArtifactScanner {
             LOGGER.info("Scanning directory '{}' [{} class files].", directory.getAbsolutePath(), classFiles.size());
             URI directoryURI = directory.toURI();
             for (File classFile : classFiles) {
-                scanInputStream(artifactDescriptor, new FileInputStream(classFile), directoryURI.relativize(classFile.toURI()).toString());
+                TypeDescriptor typeDescriptor = scanInputStream(new FileInputStream(classFile), directoryURI.relativize(classFile.toURI()).toString());
+                artifactDescriptor.getContains().add(typeDescriptor);
             }
         }
     }
@@ -139,15 +142,15 @@ public class ArtifactScannerImpl implements ArtifactScanner {
     /**
      * Scan the given input stream.
      *
-     * @param artifactDescriptor The containing artifact descriptor.
-     * @param inputStream        The input stream.
-     * @param name               The name.
+     * @param inputStream The input stream.
+     * @param name        The name.
+     * @return The type descriptor.
      * @throws IOException If scanning fails.
      */
-    private void scanInputStream(ArtifactDescriptor artifactDescriptor, InputStream inputStream, String name) throws IOException {
+    private TypeDescriptor scanInputStream(InputStream inputStream, String name) throws IOException {
         try {
             scanListener.beforeClass();
-            classScanner.scanInputStream(artifactDescriptor, new BufferedInputStream(inputStream), name);
+            return classScanner.scanInputStream(new BufferedInputStream(inputStream), name);
         } finally {
             scanListener.afterClass();
         }

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
@@ -85,7 +86,7 @@ public abstract class AbstractScannerIT {
      * @throws IOException If scanning fails.
      */
     protected void scanClasses(Class<?>... classes) throws IOException {
-        this.scanClasses(null, classes);
+        this.scanClasses("test", classes);
     }
 
     /**
@@ -98,7 +99,8 @@ public abstract class AbstractScannerIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
-        getClassScanner().scanClasses(artifact, classes);
+        Collection<TypeDescriptor> typeDescriptors = getClassScanner().scanClasses(classes);
+        artifact.getContains().addAll(typeDescriptors);
         store.commitTransaction();
     }
 
@@ -112,7 +114,7 @@ public abstract class AbstractScannerIT {
         store.beginTransaction();
         for (String resourceName : resourceNames) {
             InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
-            getClassScanner().scanInputStream(null, is, resourceName);
+            getClassScanner().scanInputStream(is, resourceName);
         }
         store.commitTransaction();
     }

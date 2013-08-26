@@ -30,6 +30,7 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.core.scanner.impl.visitor.ClassVisitor;
@@ -66,23 +67,22 @@ public class ClassScannerImpl implements ClassScanner {
     }
 
     @Override
-    public void scanClasses(Class<?>... classTypes) throws IOException {
-        this.scanClasses(null, classTypes);
-    }
-
-    @Override
-    public void scanClasses(ArtifactDescriptor artifact, Class<?>... classTypes) throws IOException {
+    public Collection<TypeDescriptor> scanClasses(Class<?>... classTypes) throws IOException {
+        List<TypeDescriptor> typeDescriptors = new ArrayList<>();
         for (Class<?> classType : classTypes) {
             String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
-            scanInputStream(artifact, classType.getResourceAsStream(resourceName), resourceName);
+            TypeDescriptor typeDescriptor = scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
+            typeDescriptors.add(typeDescriptor);
         }
+        return typeDescriptors;
     }
 
     @Override
-    public void scanInputStream(ArtifactDescriptor artifactDescriptor, InputStream inputStream, String name) throws IOException {
+    public TypeDescriptor scanInputStream(InputStream inputStream, String name) throws IOException {
         LOGGER.info("Scanning " + name);
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
-        ClassVisitor visitor = new ClassVisitor(artifactDescriptor, new VisitorHelper(store, resolverFactory));
+        ClassVisitor visitor = new ClassVisitor(new VisitorHelper(store, resolverFactory));
         new ClassReader(inputStream).accept(visitor, 0);
+        return visitor.getTypeDescriptor();
     }
 }
