@@ -18,16 +18,18 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
-import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A Mojo which scans the compiled classes in the output directory and test output directory.
@@ -88,9 +90,11 @@ public class ScanMojo extends AbstractAnalysisMojo {
                     descriptor.setClassifier(artifact.getClassifier());
                     descriptor.setType(type);
                 }
-                ArtifactScanner scanner = new ArtifactScannerImpl(new ClassScannerImpl(store));
+                List<ArtifactScannerPlugin> scannerPlugins = new ArrayList<>();
+                scannerPlugins.add(new ClassScannerPlugin(store));
+                ArtifactScanner scanner = new ArtifactScannerImpl(scannerPlugins);
                 try {
-                    scanner.scanClassDirectory(descriptor, directory);
+                    scanner.scanDirectory(descriptor, directory);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot scan classes in " + directory, e);
                 }

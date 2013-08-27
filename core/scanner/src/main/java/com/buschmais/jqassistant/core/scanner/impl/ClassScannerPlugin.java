@@ -29,60 +29,61 @@
  */
 package com.buschmais.jqassistant.core.scanner.impl;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.core.scanner.impl.visitor.ClassVisitor;
 import com.buschmais.jqassistant.core.scanner.impl.visitor.VisitorHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.commons.io.DirectoryWalker;
 import org.objectweb.asm.ClassReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URI;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
- * Implementation of the {@link ClassScanner}.
+ * Implementation of the {@link ArtifactScannerPlugin} for java classes.
  */
-public class ClassScannerImpl implements ClassScanner {
+public class ClassScannerPlugin implements ArtifactScannerPlugin<TypeDescriptor> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassScannerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassScannerPlugin.class);
 
     private final Store store;
+
+    private int scannedClasses;
 
     /**
      * Constructor.
      *
      * @param graphStore The store to use.
      */
-    public ClassScannerImpl(Store graphStore) {
+    public ClassScannerPlugin(Store graphStore) {
         this.store = graphStore;
+        this.scannedClasses = 0;
 
     }
 
     @Override
-    public Collection<TypeDescriptor> scanClasses(Class<?>... classTypes) throws IOException {
-        List<TypeDescriptor> typeDescriptors = new ArrayList<>();
-        for (Class<?> classType : classTypes) {
-            String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
-            TypeDescriptor typeDescriptor = scanInputStream(classType.getResourceAsStream(resourceName), resourceName);
-            typeDescriptors.add(typeDescriptor);
-        }
-        return typeDescriptors;
+    public boolean matches(String file, boolean isDirectory) {
+        return !isDirectory && file.endsWith(".class");
     }
 
     @Override
-    public TypeDescriptor scanInputStream(InputStream inputStream, String name) throws IOException {
-        LOGGER.info("Scanning " + name);
+    public TypeDescriptor scan(InputStreamSource streamSource) throws IOException {
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
         ClassVisitor visitor = new ClassVisitor(new VisitorHelper(store, resolverFactory));
-        new ClassReader(inputStream).accept(visitor, 0);
-        return visitor.getTypeDescriptor();
+        new ClassReader(streamSource.openStream()).accept(visitor, 0);
+        TypeDescriptor typeDescriptor = visitor.getTypeDescriptor();
+        scannedClasses++;
+        return typeDescriptor;
+    }
+
+    /**
+     * Return the number of classes scanned by this plugin.
+     *
+     * @return the number of classes scanned by this plugin.
+     */
+    public int getScannedClasses() {
+        return scannedClasses;
     }
 }

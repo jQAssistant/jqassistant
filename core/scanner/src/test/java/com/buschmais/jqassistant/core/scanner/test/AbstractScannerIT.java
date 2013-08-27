@@ -1,23 +1,19 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
-import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
-import com.buschmais.jqassistant.core.scanner.impl.ClassScannerImpl;
+import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import org.junit.After;
 import org.junit.Before;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
-
-import static com.buschmais.jqassistant.core.scanner.api.ArtifactScanner.ScanListener;
 
 /**
  * Abstract base class for test using the class scanner.
@@ -30,6 +26,11 @@ public abstract class AbstractScannerIT {
     protected Store store;
 
     /**
+     * The class scanner plugin.
+     */
+    protected ClassScannerPlugin classScannerPlugin;
+
+    /**
      * Initializes and resets the store.
      */
     @Before
@@ -39,6 +40,7 @@ public abstract class AbstractScannerIT {
         store.beginTransaction();
         store.reset();
         store.commitTransaction();
+        this.classScannerPlugin = new ClassScannerPlugin(store);
     }
 
     /**
@@ -50,34 +52,15 @@ public abstract class AbstractScannerIT {
     }
 
     /**
-     * Return an initialized class scanner instance.
-     *
-     * @return The class scanner instance.
-     */
-    protected ClassScanner getClassScanner() {
-        return new ClassScannerImpl(store);
-    }
-
-    /**
      * Return an initialized artifact scanner instance.
      *
      * @return The artifact scanner instance.
      */
     protected ArtifactScanner getArtifactScanner() {
-        return new ArtifactScannerImpl(getClassScanner(), getScanListener());
+        List<ArtifactScannerPlugin> plugins = new ArrayList<>();
+        plugins.add(this.classScannerPlugin);
+        return new ArtifactScannerImpl(plugins);
     }
-
-    /**
-     * Return the {@link ScanListener} to be used for scanning.
-     * <p>The default implementation returns a listener without any functionality, a class may override this method to return a listener implementing specific behavior.</p>
-     *
-     * @return The {@link ScanListener}.
-     */
-    protected ArtifactScanner.ScanListener getScanListener() {
-        return new ArtifactScanner.ScanListener() {
-        };
-    }
-
 
     /**
      * Scans the given classes.
@@ -99,23 +82,31 @@ public abstract class AbstractScannerIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
-        Collection<TypeDescriptor> typeDescriptors = getClassScanner().scanClasses(classes);
-        artifact.getContains().addAll(typeDescriptors);
+        getArtifactScanner().scanClasses(artifact, classes);
         store.commitTransaction();
     }
 
     /**
-     * Scans the classes given as resource names (e.g. for anonymous inner classes).
+     * Scans the given URLs.
      *
-     * @param resourceNames The classes.
+     * @param urls The URLs.
      * @throws IOException If scanning fails.
      */
-    protected void scanClassResources(String... resourceNames) throws IOException {
+    protected void scanURLs(URL... urls) throws IOException {
+        this.scanURLs("test", urls);
+    }
+
+    /**
+     * Scans the given URLs (e.g. for anonymous inner classes).
+     *
+     * @param artifactId The id of the containing artifact.
+     * @param urls       The URLs.
+     * @throws IOException If scanning fails.
+     */
+    protected void scanURLs(String artifactId, URL... urls) throws IOException {
         store.beginTransaction();
-        for (String resourceName : resourceNames) {
-            InputStream is = AnonymousInnerClassIT.class.getResourceAsStream(resourceName);
-            getClassScanner().scanInputStream(is, resourceName);
-        }
+        ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
+        getArtifactScanner().scanURLs(artifact, urls);
         store.commitTransaction();
     }
 
