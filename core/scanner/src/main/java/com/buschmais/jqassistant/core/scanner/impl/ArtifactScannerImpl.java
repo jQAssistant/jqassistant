@@ -4,7 +4,9 @@ import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,7 @@ public class ArtifactScannerImpl implements ArtifactScanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactScannerImpl.class);
 
+    private Store store;
     private Collection<ArtifactScannerPlugin> plugins;
 
     /**
@@ -31,7 +34,8 @@ public class ArtifactScannerImpl implements ArtifactScanner {
      *
      * @param plugins The {@link ArtifactScannerPlugin}s to use for scanning.
      */
-    public ArtifactScannerImpl(Collection<ArtifactScannerPlugin> plugins) {
+    public ArtifactScannerImpl(Store store, Collection<ArtifactScannerPlugin> plugins) {
+        this.store = store;
         this.plugins = plugins;
     }
 
@@ -78,8 +82,11 @@ public class ArtifactScannerImpl implements ArtifactScanner {
                     LOGGER.info("Scanning " + e.getKey() + " (" + currentDirectories + "/" + totalDirectories + " directories, " + currentFiles + "/" + totalFiles + " files)");
                     for (final ZipEntry zipEntry : e.getValue()) {
                         String name = zipEntry.getName();
-                        boolean isDirectory = zipEntry.isDirectory();
-                        scan(artifactDescriptor, name, isDirectory, getStreamSource(zipFile.getInputStream(zipEntry)));
+                        if (zipEntry.isDirectory()) {
+                            scanDirectory(artifactDescriptor, name);
+                        } else {
+                            scanFile(artifactDescriptor, name, getStreamSource(zipFile.getInputStream(zipEntry)));
+                        }
                         currentFiles++;
                     }
                     currentDirectories++;
@@ -98,6 +105,12 @@ public class ArtifactScannerImpl implements ArtifactScanner {
         new DirectoryWalker<File>() {
 
             @Override
+            protected boolean handleDirectory(File directory, int depth, Collection<File> results) throws IOException {
+                results.add(directory);
+                return true;
+            }
+
+            @Override
             protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
                 results.add(file);
             }
@@ -113,7 +126,14 @@ public class ArtifactScannerImpl implements ArtifactScanner {
             URI directoryURI = directory.toURI();
             for (final File file : files) {
                 String name = directoryURI.relativize(file.toURI()).toString();
-                scan(artifactDescriptor, name, file.isDirectory(), getStreamSource(new FileInputStream(file)));
+                if (file.isDirectory()) {
+                    if (!StringUtils.isEmpty(name)) {
+                        String directoryName = name.substring(0, name.length() - 1);
+                        scanDirectory(artifactDescriptor, directoryName);
+                    }
+                } else {
+                    scanFile(artifactDescriptor, name, getStreamSource(new FileInputStream(file)));
+                }
             }
         }
     }
@@ -122,14 +142,14 @@ public class ArtifactScannerImpl implements ArtifactScanner {
     public void scanClasses(ArtifactDescriptor artifactDescriptor, Class<?>... classes) throws IOException {
         for (final Class<?> classType : classes) {
             final String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
-            scan(artifactDescriptor, resourceName, false, getStreamSource(classType.getResourceAsStream(resourceName)));
+            scanFile(artifactDescriptor, resourceName, getStreamSource(classType.getResourceAsStream(resourceName)));
         }
     }
 
     @Override
     public void scanURLs(ArtifactDescriptor artifactDescriptor, URL... urls) throws IOException {
         for (final URL url : urls) {
-            scan(artifactDescriptor, url.getPath() + "/" + url.getFile(), false, getStreamSource(url.openStream()));
+            scanFile(artifactDescriptor, url.getPath() + "/" + url.getFile(), getStreamSource(url.openStream()));
         }
     }
 
@@ -153,15 +173,31 @@ public class ArtifactScannerImpl implements ArtifactScanner {
      *
      * @param artifactDescriptor The artifact descriptor containing the file.
      * @param name               The name of the file, relative to the artifact root directory.
-     * @param directory          <code>true</code>, if the file represents a directory.
      * @param streamSource       The stream source.
      * @throws IOException If scanning fails.
      */
-    private void scan(ArtifactDescriptor artifactDescriptor, String name, boolean directory, InputStreamSource streamSource) throws IOException {
+    private void scanFile(ArtifactDescriptor artifactDescriptor, String name, InputStreamSource streamSource) throws IOException {
         for (ArtifactScannerPlugin plugin : this.plugins) {
-            if (plugin.matches(name, directory)) {
-                LOGGER.info("Scanning " + name);
-                Descriptor descriptor = plugin.scan(streamSource);
+            if (plugin.matches(name, false)) {
+                LOGGER.info("Scanning directory '{}'", name);
+                Descriptor descriptor = plugin.scanFile(store, streamSource);
+                artifactDescriptor.getContains().add(descriptor);
+            }
+        }
+    }
+
+    /**
+     * Scans the given stream source                                          .
+     *
+     * @param artifactDescriptor The artifact descriptor containing the file.
+     * @param name               The name of the file, relative to the artifact root directory.
+     * @throws IOException If scanning fails.
+     */
+    private void scanDirectory(ArtifactDescriptor artifactDescriptor, String name) throws IOException {
+        for (ArtifactScannerPlugin plugin : this.plugins) {
+            if (plugin.matches(name, true)) {
+                LOGGER.info("Scanning directory '{}'", name);
+                Descriptor descriptor = plugin.scanDirectory(store, name);
                 artifactDescriptor.getContains().add(descriptor);
             }
         }

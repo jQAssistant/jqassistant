@@ -46,19 +46,12 @@ import java.io.*;
  */
 public class ClassScannerPlugin implements ArtifactScannerPlugin<TypeDescriptor> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClassScannerPlugin.class);
-
-    private final Store store;
-
     private int scannedClasses;
 
     /**
      * Constructor.
-     *
-     * @param graphStore The store to use.
      */
-    public ClassScannerPlugin(Store graphStore) {
-        this.store = graphStore;
+    public ClassScannerPlugin() {
         this.scannedClasses = 0;
 
     }
@@ -69,13 +62,18 @@ public class ClassScannerPlugin implements ArtifactScannerPlugin<TypeDescriptor>
     }
 
     @Override
-    public TypeDescriptor scan(InputStreamSource streamSource) throws IOException {
+    public TypeDescriptor scanFile(Store store, InputStreamSource streamSource) throws IOException {
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
         ClassVisitor visitor = new ClassVisitor(new VisitorHelper(store, resolverFactory));
         new ClassReader(streamSource.openStream()).accept(visitor, 0);
         TypeDescriptor typeDescriptor = visitor.getTypeDescriptor();
         scannedClasses++;
         return typeDescriptor;
+    }
+
+    @Override
+    public TypeDescriptor scanDirectory(Store store, String name) throws IOException {
+        return null;
     }
 
     /**
