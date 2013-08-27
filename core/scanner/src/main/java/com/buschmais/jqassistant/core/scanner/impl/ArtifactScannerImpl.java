@@ -179,7 +179,7 @@ public class ArtifactScannerImpl implements ArtifactScanner {
     private void scanFile(ArtifactDescriptor artifactDescriptor, String name, InputStreamSource streamSource) throws IOException {
         for (ArtifactScannerPlugin plugin : this.plugins) {
             if (plugin.matches(name, false)) {
-                LOGGER.info("Scanning directory '{}'", name);
+                LOGGER.info("Scanning file '{}'", name);
                 Descriptor descriptor = plugin.scanFile(store, streamSource);
                 artifactDescriptor.getContains().add(descriptor);
             }
