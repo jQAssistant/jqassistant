@@ -2,10 +2,8 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
 import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
