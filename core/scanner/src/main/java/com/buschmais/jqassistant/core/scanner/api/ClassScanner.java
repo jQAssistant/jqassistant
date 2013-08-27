@@ -15,14 +15,6 @@ import java.util.Collection;
 public interface ClassScanner {
 
     /**
-     * Scans the given classes by resolving their files as resources from the class path.
-     *
-     * @param classTypes The classes.
-     * @throws IOException If scanning fails.
-     */
-    Collection<TypeDescriptor> scanClasses(Class<?>... classTypes) throws IOException;
-
-    /**
      * Scans an inputstream representing a class.
      *
      * @param inputStream The input stream.

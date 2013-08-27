@@ -1,8 +1,10 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
+import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ClassScanner;
 import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
@@ -10,45 +12,29 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import static com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin.InputStreamSource;
 
 /**
  * Implementation of the {@link ArtifactScanner}.
  */
 public class ArtifactScannerImpl implements ArtifactScanner {
 
-    private ClassScanner classScanner;
-    private ScanListener scanListener;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactScannerImpl.class);
 
-    /**
-     * Constructor.
-     *
-     * @param classScanner The {@link ClassScanner} instance.
-     * @param scanListener The {@link ScanListener} instance.
-     */
-    public ArtifactScannerImpl(ClassScanner classScanner, ScanListener scanListener) {
-        this.classScanner = classScanner;
-        this.scanListener = scanListener;
-    }
+    private Collection<ArtifactScannerPlugin> plugins;
 
     /**
      * Constructor.
      *
-     * @param classScanner The {@link ClassScanner} instance.
+     * @param plugins The {@link ArtifactScannerPlugin}s to use for scanning.
      */
-    public ArtifactScannerImpl(ClassScanner classScanner) {
-        this(classScanner, new ScanListener() {
-        });
-    }
-
-
-    @Override
-    public void scanArchive(File archive) throws IOException {
-        scanArchive(null, archive);
+    public ArtifactScannerImpl(Collection<ArtifactScannerPlugin> plugins) {
+        this.plugins = plugins;
     }
 
     @Override
@@ -58,9 +44,9 @@ public class ArtifactScannerImpl implements ArtifactScanner {
         } else {
             LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
             long start = System.currentTimeMillis();
-            ZipFile zipFile = new ZipFile(archive);
-            int totalClasses = 0;
-            int totalPackages = 0;
+            final ZipFile zipFile = new ZipFile(archive);
+            int totalFiles = 0;
+            int totalDirectories = 0;
             try {
                 final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
                 Map<String, SortedSet<ZipEntry>> entries = new TreeMap<>();
@@ -73,34 +59,32 @@ public class ArtifactScannerImpl implements ArtifactScanner {
                 while (zipEntries.hasMoreElements()) {
                     ZipEntry e = zipEntries.nextElement();
                     String name = e.getName();
-                    if (!e.isDirectory() && name.endsWith(".class")) {
-                        String packageDirectory = name.substring(0, name.lastIndexOf('/'));
-                        SortedSet<ZipEntry> packageEntries = entries.get(packageDirectory);
-                        if (packageEntries == null) {
-                            packageEntries = new TreeSet<>(zipEntryComparator);
-                            entries.put(packageDirectory, packageEntries);
-                            totalPackages++;
-                        }
-                        packageEntries.add(e);
-                        totalClasses++;
+                    String directory;
+                    if (!e.isDirectory()) {
+                        directory = name;
+                    } else {
+                        directory = name.substring(0, name.lastIndexOf('/'));
                     }
+                    SortedSet<ZipEntry> directoryEntries = entries.get(directory);
+                    if (directoryEntries == null) {
+                        directoryEntries = new TreeSet<>(zipEntryComparator);
+                        entries.put(directory, directoryEntries);
+                        totalDirectories++;
+                    }
+                    directoryEntries.add(e);
                 }
-                int currentPackages = 0;
-                int currentClasses = 0;
-                LOGGER.info("Archive '{}' contains {} packages.", archive.getAbsolutePath(), entries.size());
+                int currentDirectories = 0;
+                int currentFiles = 0;
+                LOGGER.info("Archive '{}' contains {} directories.", archive.getAbsolutePath(), entries.size());
                 for (Map.Entry<String, SortedSet<ZipEntry>> e : entries.entrySet()) {
-                    LOGGER.info("Scanning " + e.getKey() + " (" + currentPackages + "/" + totalPackages + " packages, " + currentClasses + "/" + totalClasses + " classes)");
-                    scanListener.beforePackage();
-                    try {
-                        for (ZipEntry zipEntry : e.getValue()) {
-                            TypeDescriptor typeDescriptor = scanInputStream(zipFile.getInputStream(zipEntry), zipEntry.getName());
-                            artifactDescriptor.getContains().add(typeDescriptor);
-                            currentClasses++;
-                        }
-                    } finally {
-                        scanListener.afterPackage();
+                    LOGGER.info("Scanning " + e.getKey() + " (" + currentDirectories + "/" + totalDirectories + " directories, " + currentFiles + "/" + totalFiles + " files)");
+                    for (final ZipEntry zipEntry : e.getValue()) {
+                        String name = zipEntry.getName();
+                        boolean isDirectory = zipEntry.isDirectory();
+                        scan(artifactDescriptor, name, isDirectory, getStreamSource(zipFile.getInputStream(zipEntry)));
+                        currentFiles++;
                     }
-                    currentPackages++;
+                    currentDirectories++;
                 }
             } finally {
                 zipFile.close();
@@ -110,50 +94,78 @@ public class ArtifactScannerImpl implements ArtifactScanner {
         }
     }
 
-
     @Override
-    public void scanClassDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException {
-        final List<File> classFiles = new ArrayList<>();
+    public void scanDirectory(ArtifactDescriptor artifactDescriptor, File directory) throws IOException {
+        final List<File> files = new ArrayList<>();
         new DirectoryWalker<File>() {
 
             @Override
             protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                if (!file.isDirectory() && file.getName().endsWith(".class")) {
-                    results.add(file);
-                }
+                results.add(file);
             }
 
             public void scan(File directory) throws IOException {
-                super.walk(directory, classFiles);
+                super.walk(directory, files);
             }
         }.scan(directory);
-        if (classFiles.isEmpty()) {
-            LOGGER.info("Directory '{}' does not contain class files, skipping.", directory.getAbsolutePath(), classFiles.size());
+        if (files.isEmpty()) {
+            LOGGER.info("Directory '{}' does not contain files, skipping.", directory.getAbsolutePath(), files.size());
         } else {
-            LOGGER.info("Scanning directory '{}' [{} class files].", directory.getAbsolutePath(), classFiles.size());
+            LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
             URI directoryURI = directory.toURI();
-            for (File classFile : classFiles) {
-                TypeDescriptor typeDescriptor = scanInputStream(new FileInputStream(classFile), directoryURI.relativize(classFile.toURI()).toString());
-                artifactDescriptor.getContains().add(typeDescriptor);
+            for (final File file : files) {
+                String name = directoryURI.relativize(file.toURI()).toString();
+                scan(artifactDescriptor, name, file.isDirectory(), getStreamSource(new FileInputStream(file)));
             }
         }
     }
 
+    @Override
+    public void scanClasses(ArtifactDescriptor artifactDescriptor, Class<?>... classes) throws IOException {
+        for (final Class<?> classType : classes) {
+            final String resourceName = "/" + classType.getName().replace('.', '/') + ".class";
+            scan(artifactDescriptor, resourceName, false, getStreamSource(classType.getResourceAsStream(resourceName)));
+        }
+    }
+
+    @Override
+    public void scanURLs(ArtifactDescriptor artifactDescriptor, URL... urls) throws IOException {
+        for (final URL url : urls) {
+            scan(artifactDescriptor, url.getPath() + "/" + url.getFile(), false, getStreamSource(url.openStream()));
+        }
+    }
+
     /**
-     * Scan the given input stream.
+     * Return a {@link InputStreamSource} for the given input stream.
      *
      * @param inputStream The input stream.
-     * @param name        The name.
-     * @return The type descriptor.
+     * @return The {@link InputStreamSource}.
+     */
+    private InputStreamSource getStreamSource(final InputStream inputStream) {
+        return new InputStreamSource() {
+            @Override
+            public InputStream openStream() throws IOException {
+                return new BufferedInputStream((inputStream));
+            }
+        };
+    }
+
+    /**
+     * Scans the given stream source                                          .
+     *
+     * @param artifactDescriptor The artifact descriptor containing the file.
+     * @param name               The name of the file, relative to the artifact root directory.
+     * @param directory          <code>true</code>, if the file represents a directory.
+     * @param streamSource       The stream source.
      * @throws IOException If scanning fails.
      */
-    private TypeDescriptor scanInputStream(InputStream inputStream, String name) throws IOException {
-        try {
-            scanListener.beforeClass();
-            return classScanner.scanInputStream(new BufferedInputStream(inputStream), name);
-        } finally {
-            scanListener.afterClass();
+    private void scan(ArtifactDescriptor artifactDescriptor, String name, boolean directory, InputStreamSource streamSource) throws IOException {
+        for (ArtifactScannerPlugin plugin : this.plugins) {
+            if (plugin.matches(name, directory)) {
+                LOGGER.info("Scanning " + name);
+                Descriptor descriptor = plugin.scan(streamSource);
+                artifactDescriptor.getContains().add(descriptor);
+            }
         }
-
     }
 }

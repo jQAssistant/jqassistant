@@ -39,7 +39,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
     @Test
     public void innerClass() throws IOException {
         String resourceName = "/" + INNERCLASS_NAME.replace(".", "/") + ".class";
-        scanClassResources(resourceName);
+        scanURLs(AnonymousInnerClassIT.class.getResource(resourceName));
         assertOuterClassContainsInnerClass();
     }
 

@@ -14,48 +14,12 @@ import static org.junit.Assert.assertThat;
 
 public class JavaRuntimePT extends AbstractScannerIT {
 
-
-    /**
-     * A specific scan listener which counts the number of scanned classes and wraps a transaction around each package.
-     */
-    public class JavaRuntimeScanListener extends ArtifactScanner.ScanListener {
-
-        private int scannedClasses = 0;
-
-        @Override
-        public void afterClass() {
-            scannedClasses++;
-        }
-
-        @Override
-        public void beforePackage() {
-            store.beginTransaction();
-            artifactDescriptor = store.find(ArtifactDescriptor.class, "rt");
-        }
-
-        @Override
-        public void afterPackage() {
-            store.commitTransaction();
-        }
-
-        public int getScannedClasses() {
-            return scannedClasses;
-        }
-    }
-
     /**
      * The list of primitive types.
      */
     public static final Class<?>[] PRIMITIVE_TYPES = new Class<?>[]{void.class, boolean.class, short.class, int.class, float.class, double.class, long.class};
 
     private ArtifactDescriptor artifactDescriptor;
-
-    private JavaRuntimeScanListener scanListener;
-
-    @Before
-    public void createListener() {
-        scanListener = new JavaRuntimeScanListener();
-    }
 
     /**
      * Scans the rt.jar of the Java Runtime Environment specified by the enviroment variable java.home.
@@ -70,14 +34,10 @@ public class JavaRuntimePT extends AbstractScannerIT {
         Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
         store.beginTransaction();
         artifactDescriptor = store.create(ArtifactDescriptor.class, "rt");
-        store.commitTransaction();
         getArtifactScanner().scanArchive(artifactDescriptor, runtimeJar);
-        long expectedTypeCount = scanListener.getScannedClasses() + PRIMITIVE_TYPES.length;
+        store.commitTransaction();
+        long expectedTypeCount = classScannerPlugin.getScannedClasses() + PRIMITIVE_TYPES.length;
         assertThat(executeQuery("MATCH a-[:CONTAINS]->t:TYPE RETURN COUNT(DISTINCT t) as types").getColumns().get("types"), hasItem(expectedTypeCount));
     }
 
-    @Override
-    protected ArtifactScanner.ScanListener getScanListener() {
-        return scanListener;
-    }
 }
