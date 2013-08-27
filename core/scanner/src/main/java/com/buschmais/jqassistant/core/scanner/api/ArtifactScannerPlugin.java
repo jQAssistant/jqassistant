@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,7 @@ public interface ArtifactScannerPlugin<T extends Descriptor> {
     /**
      * Match given file name.
      *
-     * @param file        The file name.
+     * @param file        The file or directory name.
      * @param isDirectory <code>true</code> if the file is a directory.
      * @return <code>true</code> If the file shall be scanned.
      */
@@ -31,10 +32,19 @@ public interface ArtifactScannerPlugin<T extends Descriptor> {
     /**
      * Perform scanning of a file.
      *
+     * @param store        The {@Store}.
      * @param streamSource The {@InputStreamSource}.
      * @return The descriptor representing the file.
      * @throws IOException If scanning fails.
      */
-    T scan(InputStreamSource streamSource) throws IOException;
+    T scanFile(Store store, InputStreamSource streamSource) throws IOException;
 
+    /**
+     * Perform scanning of a file.
+     *
+     * @param store The {@Store}.
+     * @return The descriptor representing the file.
+     * @throws IOException If scanning fails.
+     */
+    T scanDirectory(Store store, String name) throws IOException;
 }

@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -74,33 +75,38 @@ public class ScanMojo extends AbstractAnalysisMojo {
      * @throws MojoExecutionException If scanning fails.
      */
     private void scanDirectory(final File directory, final boolean testJar) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Scanning classes directory: " + directory.getAbsolutePath());
-        super.executeInTransaction(new StoreOperation<Void>() {
-            @Override
-            public Void run(Store store) throws MojoExecutionException {
-                Artifact artifact = project.getArtifact();
-                String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
-                String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
-                ArtifactDescriptor descriptor = store.find(ArtifactDescriptor.class, id);
-                if (descriptor == null) {
-                    descriptor = store.create(ArtifactDescriptor.class, id);
-                    descriptor.setGroup(artifact.getGroupId());
-                    descriptor.setName(artifact.getArtifactId());
-                    descriptor.setVersion(artifact.getVersion());
-                    descriptor.setClassifier(artifact.getClassifier());
-                    descriptor.setType(type);
+        if (!directory.exists()) {
+            getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
+        } else {
+            getLog().info("Scanning directory: " + directory.getAbsolutePath());
+            super.executeInTransaction(new StoreOperation<Void>() {
+                @Override
+                public Void run(Store store) throws MojoExecutionException {
+                    Artifact artifact = project.getArtifact();
+                    String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
+                    String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
+                    ArtifactDescriptor descriptor = store.find(ArtifactDescriptor.class, id);
+                    if (descriptor == null) {
+                        descriptor = store.create(ArtifactDescriptor.class, id);
+                        descriptor.setGroup(artifact.getGroupId());
+                        descriptor.setName(artifact.getArtifactId());
+                        descriptor.setVersion(artifact.getVersion());
+                        descriptor.setClassifier(artifact.getClassifier());
+                        descriptor.setType(type);
+                    }
+                    List<ArtifactScannerPlugin> scannerPlugins = new ArrayList<>();
+                    scannerPlugins.add(new PackageScannerPlugin());
+                    scannerPlugins.add(new ClassScannerPlugin());
+                    ArtifactScanner scanner = new ArtifactScannerImpl(store, scannerPlugins);
+                    try {
+                        scanner.scanDirectory(descriptor, directory);
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
+                    }
+                    return null;
                 }
-                List<ArtifactScannerPlugin> scannerPlugins = new ArrayList<>();
-                scannerPlugins.add(new ClassScannerPlugin(store));
-                ArtifactScanner scanner = new ArtifactScannerImpl(scannerPlugins);
-                try {
-                    scanner.scanDirectory(descriptor, directory);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Cannot scan classes in " + directory, e);
-                }
-                return null;
-            }
-        });
+            });
+        }
     }
 
     /**

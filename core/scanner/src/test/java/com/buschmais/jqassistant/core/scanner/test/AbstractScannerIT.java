@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -26,6 +27,11 @@ public abstract class AbstractScannerIT {
     protected Store store;
 
     /**
+     * The package scanner plugin
+     */
+    protected PackageScannerPlugin packageScannerPlugin;
+
+    /**
      * The class scanner plugin.
      */
     protected ClassScannerPlugin classScannerPlugin;
@@ -40,7 +46,8 @@ public abstract class AbstractScannerIT {
         store.beginTransaction();
         store.reset();
         store.commitTransaction();
-        this.classScannerPlugin = new ClassScannerPlugin(store);
+        this.packageScannerPlugin = new PackageScannerPlugin();
+        this.classScannerPlugin = new ClassScannerPlugin();
     }
 
     /**
@@ -58,8 +65,9 @@ public abstract class AbstractScannerIT {
      */
     protected ArtifactScanner getArtifactScanner() {
         List<ArtifactScannerPlugin> plugins = new ArrayList<>();
+        plugins.add(this.packageScannerPlugin);
         plugins.add(this.classScannerPlugin);
-        return new ArtifactScannerImpl(plugins);
+        return new ArtifactScannerImpl(store, plugins);
     }
 
     /**
