@@ -124,7 +124,7 @@ public abstract class AbstractScannerIT {
      * @param query The query.
      * @return The  {@link AbstractScannerIT.TestResult}.
      */
-    protected TestResult executeQuery(String query) {
+    protected TestResult query(String query) {
         return executeQuery(query, Collections.<String, Object>emptyMap());
     }
 

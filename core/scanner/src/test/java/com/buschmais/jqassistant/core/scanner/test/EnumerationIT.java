@@ -26,10 +26,10 @@ public class EnumerationIT extends AbstractScannerIT {
     @Test
     public void implicitDefaultConstructor() throws IOException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(EnumerationType.class);
-        assertThat(executeQuery("MATCH (e:TYPE:ENUM) RETURN e").getColumns().get("e"), hasItem(typeDescriptor(EnumerationType.class)));
-        assertThat(executeQuery("MATCH (e:TYPE:ENUM)-[:EXTENDS]->(s) RETURN s").getColumns().get("s"), hasItem(typeDescriptor(Enum.class)));
-        assertThat(executeQuery("MATCH (e:TYPE:ENUM)-[:CONTAINS]->(f:FIELD) RETURN f").getColumns().get("f"), CoreMatchers.allOf(hasItem(fieldDescriptor(EnumerationType.class, "A")), hasItem(fieldDescriptor(EnumerationType.class, "B")), hasItem(fieldDescriptor(EnumerationType
+        assertThat(query("MATCH (e:TYPE:ENUM) RETURN e").getColumns().get("e"), hasItem(typeDescriptor(EnumerationType.class)));
+        assertThat(query("MATCH (e:TYPE:ENUM)-[:EXTENDS]->(s) RETURN s").getColumns().get("s"), hasItem(typeDescriptor(Enum.class)));
+        assertThat(query("MATCH (e:TYPE:ENUM)-[:CONTAINS]->(f:FIELD) RETURN f").getColumns().get("f"), CoreMatchers.allOf(hasItem(fieldDescriptor(EnumerationType.class, "A")), hasItem(fieldDescriptor(EnumerationType.class, "B")), hasItem(fieldDescriptor(EnumerationType
                 .class, "value"))));
-        assertThat(executeQuery("MATCH (e:TYPE:ENUM)-[:CONTAINS]->(c:CONSTRUCTOR) RETURN c").getColumns().get("c"), hasItem(MethodDescriptorMatcher.constructorDescriptor(EnumerationType.class, String.class, int.class, boolean.class)));
+        assertThat(query("MATCH (e:TYPE:ENUM)-[:CONTAINS]->(c:CONSTRUCTOR) RETURN c").getColumns().get("c"), hasItem(MethodDescriptorMatcher.constructorDescriptor(EnumerationType.class, String.class, int.class, boolean.class)));
     }
 }

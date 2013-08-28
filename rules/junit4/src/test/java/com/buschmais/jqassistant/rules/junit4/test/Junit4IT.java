@@ -7,8 +7,6 @@ import com.buschmais.jqassistant.rules.junit4.test.set.TestClass;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
@@ -31,8 +29,8 @@ public class Junit4IT extends AbstractAnalysisIT {
     public void testClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
         scanClasses(TestClass.class);
         applyConcept("junit4:TestClassOrMethod");
-        assertThat(executeQuery("MATCH m:METHOD:JUNIT4:TEST RETURN m").getColumns().get("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
-        assertThat(executeQuery("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c").getColumns().get("c"), hasItem(typeDescriptor(TestClass.class)));
+        assertThat(query("MATCH m:METHOD:JUNIT4:TEST RETURN m").getColumns().get("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        assertThat(query("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c").getColumns().get("c"), hasItem(typeDescriptor(TestClass.class)));
     }
 
     /**
@@ -46,7 +44,7 @@ public class Junit4IT extends AbstractAnalysisIT {
     public void ignoreTestClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
         scanClasses(IgnoredTestClass.class);
         applyConcept("junit4:IgnoreTestClassOrMethod");
-        assertThat(executeQuery("MATCH m:METHOD:JUNIT4:IGNORE RETURN m").getColumns().get("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
-        assertThat(executeQuery("MATCH c:TYPE:CLASS:JUNIT4:IGNORE RETURN c").getColumns().get("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
+        assertThat(query("MATCH m:METHOD:JUNIT4:IGNORE RETURN m").getColumns().get("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
+        assertThat(query("MATCH c:TYPE:CLASS:JUNIT4:IGNORE RETURN c").getColumns().get("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
     }
 }

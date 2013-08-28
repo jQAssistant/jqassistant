@@ -25,7 +25,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
+    public org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
         ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(this.methodDescriptor, parameter);
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(parameterDescriptor, visitorHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
@@ -68,10 +68,10 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public AnnotationVisitor visitAnnotationDefault() {
+    public org.objectweb.asm.AnnotationVisitor visitAnnotationDefault() {
         AnnotationValueDescriptor annotationDescriptor = new AnnotationValueDescriptor();
         this.annotationDefault = annotationDescriptor.getValue();
-        return null;// new AnnotationVisitor(annotationDescriptor, visitorHelper);
+        return new AnnotationDefaultVisitor(this.methodDescriptor, visitorHelper);
     }
 
     @Override

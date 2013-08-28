@@ -25,7 +25,7 @@ public class ConstructorIT extends AbstractScannerIT {
     @Test
     public void implicitDefaultConstructor() throws IOException, NoSuchMethodException {
         scanClasses(ImplicitDefaultConstructor.class);
-        assertThat(executeQuery("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumns().get("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
+        assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumns().get("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
     }
 
     /**
@@ -38,6 +38,6 @@ public class ConstructorIT extends AbstractScannerIT {
     @Test
     public void overloadedConstructors() throws IOException, NoSuchMethodException {
         scanClasses(OverloadedConstructor.class);
-        assertThat(executeQuery("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumns().get("c"), allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)), hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
+        assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumns().get("c"), allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)), hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
     }
 }

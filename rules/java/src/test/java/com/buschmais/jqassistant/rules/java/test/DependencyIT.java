@@ -45,7 +45,7 @@ public class DependencyIT extends AbstractAnalysisIT {
     public void fieldOrMethodDependency() throws IOException, AnalyzerException {
         scanClasses(FieldOrMethodDependency.class);
         applyConcept("dependency:FieldOrMethodDependency");
-        TestResult testResult = executeQuery("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
+        TestResult testResult = query("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
         // field
         assertThat(testResult.getColumns().get("t2"), allOf(hasItem(typeDescriptor(List.class)), hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(FieldAnnotation.class))));
         // method
@@ -62,7 +62,7 @@ public class DependencyIT extends AbstractAnalysisIT {
     public void typeDependency() throws IOException, AnalyzerException {
         scanClasses(DependentType.class);
         applyConcept("dependency:TypeDependency");
-        TestResult testResult = executeQuery("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
+        TestResult testResult = query("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
         // field
         assertThat(testResult.getColumns().get("t2"), allOf(hasItem(typeDescriptor(SuperType.class)), hasItem(typeDescriptor(Comparable.class)), hasItem(typeDescriptor(Integer.class)), hasItem(typeDescriptor(TypeAnnotation.class))));
     }

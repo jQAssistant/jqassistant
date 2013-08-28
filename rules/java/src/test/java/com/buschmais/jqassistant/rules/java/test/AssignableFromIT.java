@@ -28,6 +28,6 @@ public class AssignableFromIT extends AbstractAnalysisIT {
     public void assignableFrom() throws IOException, AnalyzerException {
         scanClasses(ClassType.class);
         applyConcept("java:AssignableFrom");
-        assertThat(executeQuery("MATCH (types:TYPE)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumns().get("assignableType"), allOf(hasItem(typeDescriptor(ClassType.class)), hasItem(typeDescriptor(InterfaceType.class)), hasItem(typeDescriptor(Object.class))));
+        assertThat(query("MATCH (types:TYPE)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumns().get("assignableType"), allOf(hasItem(typeDescriptor(ClassType.class)), hasItem(typeDescriptor(InterfaceType.class)), hasItem(typeDescriptor(Object.class))));
     }
 }

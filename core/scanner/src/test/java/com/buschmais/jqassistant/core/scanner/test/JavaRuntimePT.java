@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -37,7 +35,7 @@ public class JavaRuntimePT extends AbstractScannerIT {
         getArtifactScanner().scanArchive(artifactDescriptor, runtimeJar);
         store.commitTransaction();
         long expectedTypeCount = classScannerPlugin.getScannedClasses() + PRIMITIVE_TYPES.length;
-        assertThat(executeQuery("MATCH a-[:CONTAINS]->t:TYPE RETURN COUNT(DISTINCT t) as types").getColumns().get("types"), hasItem(expectedTypeCount));
+        assertThat(query("MATCH a-[:CONTAINS]->t:TYPE RETURN COUNT(DISTINCT t) as types").getColumns().get("types"), hasItem(expectedTypeCount));
     }
 
 }
