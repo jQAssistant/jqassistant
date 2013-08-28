@@ -54,8 +54,8 @@ public class PackageIT extends AbstractScannerIT {
                 currentPackage = null;
             }
         } while (currentPackage != null);
-        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN = 'artifact' RETURN p").getColumns().get("p"), allOf(packageMatchers));
-        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumns().get("p"),
+        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN = 'artifact' RETURN p").getColumn("p"), allOf(packageMatchers));
+        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumn("p"),
                 hasItem(packageDescriptor(PackageIT.class.getPackage().getName() + ".set.empty")));
     }
 }

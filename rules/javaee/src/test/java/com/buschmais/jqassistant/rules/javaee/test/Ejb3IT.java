@@ -29,8 +29,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void statelessSessionBean() throws IOException, AnalyzerException {
         scanClasses(StatelessLocalBean.class);
         applyConcept("ejb3:StatelessSessionBean");
-        Map<String, List<Object>> columns = query("MATCH (ejb:TYPE:STATELESS) RETURN ejb").getColumns();
-        assertThat(columns.get("ejb"), hasItem(typeDescriptor(StatelessLocalBean.class)));
+        assertThat(query("MATCH (ejb:TYPE:STATELESS) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatelessLocalBean.class)));
     }
 
     /**
@@ -43,8 +42,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void statefulSessionBean() throws IOException, AnalyzerException {
         scanClasses(StatefulBean.class);
         applyConcept("ejb3:StatefulSessionBean");
-        Map<String, List<Object>> columns = query("MATCH (ejb:TYPE:STATEFUL) RETURN ejb").getColumns();
-        assertThat(columns.get("ejb"), hasItem(typeDescriptor(StatefulBean.class)));
+        assertThat( query("MATCH (ejb:TYPE:STATEFUL) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatefulBean.class)));
     }
 
 
@@ -58,8 +56,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void singletonBean() throws IOException, AnalyzerException {
         scanClasses(SingletonBean.class);
         applyConcept("ejb3:SingletonBean");
-        Map<String, List<Object>> columns = query("MATCH (ejb:TYPE:SINGLETON) RETURN ejb").getColumns();
-        assertThat(columns.get("ejb"), hasItem(typeDescriptor(SingletonBean.class)));
+        assertThat(query("MATCH (ejb:TYPE:SINGLETON) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(SingletonBean.class)));
     }
 
     /**
@@ -72,8 +69,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void messageDrivenBean() throws IOException, AnalyzerException {
         scanClasses(MessageDrivenBean.class);
         applyConcept("ejb3:MessageDrivenBean");
-        Map<String, List<Object>> columns = query("MATCH (ejb:TYPE:MESSAGEDRIVEN) RETURN ejb").getColumns();
-        assertThat(columns.get("ejb"), hasItem(typeDescriptor(MessageDrivenBean.class)));
+        assertThat(query("MATCH (ejb:TYPE:MESSAGEDRIVEN) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(MessageDrivenBean.class)));
     }
 
     /**
@@ -86,8 +82,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void localSessionBean() throws IOException, AnalyzerException {
         scanClasses(StatelessLocalBean.class);
         applyConcept("ejb3:Local");
-        Map<String, List<Object>> columns = query("MATCH (ejb:TYPE:LOCAL) RETURN ejb").getColumns();
-        assertThat(columns.get("ejb"), hasItem(typeDescriptor(StatelessLocalBean.class)));
+        assertThat(query("MATCH (ejb:TYPE:LOCAL) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatelessLocalBean.class)));
     }
 
     /**
@@ -100,8 +95,7 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void remoteSessionBean() throws IOException, AnalyzerException {
         scanClasses(StatelessRemoteBean.class);
         applyConcept("ejb3:Remote");
-        Map<String, List<Object>> columns = query("MATCH (ejb:TYPE:REMOTE) RETURN ejb").getColumns();
-        assertThat(columns.get("ejb"), hasItem(typeDescriptor(StatelessRemoteBean.class)));
+        assertThat(query("MATCH (ejb:TYPE:REMOTE) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatelessRemoteBean.class)));
     }
 
     /**
@@ -114,15 +108,15 @@ public class Ejb3IT extends AbstractAnalysisIT {
     public void enterpriseJavaBean() throws IOException, AnalyzerException {
         scanClasses(StatelessLocalBean.class, StatelessRemoteBean.class, StatefulBean.class, MessageDrivenBean.class);
         executeGroup("ejb3:EJB");
-        assertThat(query("MATCH (ejb:TYPE:EJB) RETURN ejb").getColumns().get("ejb"), allOf(
+        assertThat(query("MATCH (ejb:TYPE:EJB) RETURN ejb").getColumn("ejb"), allOf(
                 hasItem(typeDescriptor(StatelessLocalBean.class)),
                 hasItem(typeDescriptor(StatelessRemoteBean.class)),
                 hasItem(typeDescriptor(StatefulBean.class)),
                 hasItem(typeDescriptor(MessageDrivenBean.class))
         ));
-        assertThat(query("MATCH (ejb:TYPE:EJB:LOCAL) RETURN ejb").getColumns().get("ejb"),
+        assertThat(query("MATCH (ejb:TYPE:EJB:LOCAL) RETURN ejb").getColumn("ejb"),
                 hasItem(typeDescriptor(StatelessLocalBean.class)));
-        assertThat(query("MATCH (ejb:TYPE:EJB:REMOTE) RETURN ejb").getColumns().get("ejb"),
+        assertThat(query("MATCH (ejb:TYPE:EJB:REMOTE) RETURN ejb").getColumn("ejb"),
                 hasItem(typeDescriptor(StatelessRemoteBean.class)));
     }
 }

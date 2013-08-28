@@ -28,7 +28,6 @@ public class JpaIT extends AbstractAnalysisIT {
     public void jpaEntity() throws IOException, AnalyzerException {
         scanClasses(JpaEntity.class);
         applyConcept("jpa:Entity");
-        Map<String, List<Object>> columns = query("MATCH (e:TYPE:ENTITY) RETURN e").getColumns();
-        assertThat(columns.get("e"), hasItem(typeDescriptor(JpaEntity.class)));
+        assertThat(query("MATCH (e:TYPE:ENTITY) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
     }
 }

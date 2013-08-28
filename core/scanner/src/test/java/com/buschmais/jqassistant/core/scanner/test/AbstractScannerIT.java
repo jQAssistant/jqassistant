@@ -177,12 +177,12 @@ public abstract class AbstractScannerIT {
         }
 
         /**
-         * Return all columns identified by their name.
+         * Return a column identified by its name.
          *
          * @return All columns.
          */
-        public Map<String, List<Object>> getColumns() {
-            return columns;
+        public List<Object> getColumn(String name) {
+            return columns.get(name);
         }
     }
 }
