@@ -21,8 +21,8 @@ public class ArrayIT extends AbstractScannerIT {
         Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("className", Array.class.getName());
         TestResult testResult = executeQuery("MATCH (t:TYPE)-[:CONTAINS]->(f:FIELD) WHERE t.FQN={className} RETURN f", parameters);
-        assertThat(testResult.getColumns().get("f"), hasItem(fieldDescriptor(Array.class, "stringArray")));
+        assertThat(testResult.getColumn("f"), hasItem(fieldDescriptor(Array.class, "stringArray")));
         testResult = executeQuery("MATCH (t:TYPE)-[:CONTAINS]->(m:METHOD) WHERE t.FQN={className} RETURN m", parameters);
-        assertThat(testResult.getColumns().get("m"), allOf(hasItem(methodDescriptor(Array.class, "getStringArray")), hasItem(methodDescriptor(Array.class, "getStringArray"))));
+        assertThat(testResult.getColumn("m"), allOf(hasItem(methodDescriptor(Array.class, "getStringArray")), hasItem(methodDescriptor(Array.class, "getStringArray"))));
     }
 }

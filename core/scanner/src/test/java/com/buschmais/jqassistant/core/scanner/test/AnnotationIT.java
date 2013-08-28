@@ -45,7 +45,7 @@ public class AnnotationIT extends AbstractScannerIT {
         // verify values
         testResult = query("MATCH (t:TYPE:CLASS)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(5));
-        List<Object> values = testResult.getColumns().get("value");
+        List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("class"))));
         assertThat(values, hasItem(valueDescriptor("classValue", typeDescriptor(Number.class))));
         assertThat(values, hasItem(valueDescriptor("arrayValue", allOf(hasItem(valueDescriptor("[0]", is("a"))), hasItem(valueDescriptor("[1]", is("b")))))));
@@ -71,7 +71,7 @@ public class AnnotationIT extends AbstractScannerIT {
         // verify values on method level
         testResult = query("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
-        List<Object> values = testResult.getColumns().get("value");
+        List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("method"))));
     }
 
@@ -93,7 +93,7 @@ public class AnnotationIT extends AbstractScannerIT {
         // verify values on method parameter level
         testResult = query("MATCH (m:METHOD)-[:HAS]->(p:PARAMETER)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
-        List<Object> values = testResult.getColumns().get("value");
+        List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("parameter"))));
     }
 
@@ -115,7 +115,7 @@ public class AnnotationIT extends AbstractScannerIT {
         // verify values
         testResult = query("MATCH (f:FIELD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
-        List<Object> values = testResult.getColumns().get("value");
+        List<Object> values = testResult.getColumn("value");
         assertThat(values, hasItem(valueDescriptor("value", is("field"))));
     }
 
@@ -127,8 +127,8 @@ public class AnnotationIT extends AbstractScannerIT {
     @Test
     public void annotationDefaultValues() throws IOException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(AnnotationWithDefaultValue.class);
-        assertThat(query("MATCH (t:TYPE:ANNOTATION) RETURN t").getColumns().get("t"), hasItem(typeDescriptor(AnnotationWithDefaultValue.class)));
-        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:DEPENDS_ON]->(d:TYPE) RETURN d").getColumns().get("d"), allOf(
+        assertThat(query("MATCH (t:TYPE:ANNOTATION) RETURN t").getColumn("t"), hasItem(typeDescriptor(AnnotationWithDefaultValue.class)));
+        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:DEPENDS_ON]->(d:TYPE) RETURN d").getColumn("d"), allOf(
                 hasItem(typeDescriptor(Number.class)),
                 hasItem(typeDescriptor(Enumeration.class)),
                 hasItem(typeDescriptor(double.class)),

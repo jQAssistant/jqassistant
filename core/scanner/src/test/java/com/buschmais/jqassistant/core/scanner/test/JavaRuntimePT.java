@@ -35,7 +35,7 @@ public class JavaRuntimePT extends AbstractScannerIT {
         getArtifactScanner().scanArchive(artifactDescriptor, runtimeJar);
         store.commitTransaction();
         long expectedTypeCount = classScannerPlugin.getScannedClasses() + PRIMITIVE_TYPES.length;
-        assertThat(query("MATCH a-[:CONTAINS]->t:TYPE RETURN COUNT(DISTINCT t) as types").getColumns().get("types"), hasItem(expectedTypeCount));
+        assertThat(query("MATCH a-[:CONTAINS]->t:TYPE RETURN COUNT(DISTINCT t) as types").getColumn("types"), hasItem(expectedTypeCount));
     }
 
 }
