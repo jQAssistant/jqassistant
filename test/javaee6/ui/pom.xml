@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.test</groupId>
         <artifactId>jqassistant.test.javaee6</artifactId>
-        <version>1.0.0-M1</version>
+        <version>1.0.0-M2-SNAPSHOT</version>
     </parent>
     <artifactId>jqassistant.test.javaee6.ui</artifactId>
     <packaging>war</packaging>
