@@ -1,15 +1,9 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.JavaType;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.model.test.matcher.descriptor.PackageDescriptorMatcher;
 import com.buschmais.jqassistant.core.scanner.test.set.pojo.Pojo;
-import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.hamcrest.core.AllOf;
-import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +15,6 @@ import java.util.List;
 
 import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -61,8 +54,8 @@ public class PackageIT extends AbstractScannerIT {
                 currentPackage = null;
             }
         } while (currentPackage != null);
-        assertThat(executeQuery("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN = 'artifact' RETURN p").getColumns().get("p"), allOf(packageMatchers));
-        assertThat(executeQuery("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumns().get("p"),
+        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN = 'artifact' RETURN p").getColumns().get("p"), allOf(packageMatchers));
+        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumns().get("p"),
                 hasItem(packageDescriptor(PackageIT.class.getPackage().getName() + ".set.empty")));
     }
 }

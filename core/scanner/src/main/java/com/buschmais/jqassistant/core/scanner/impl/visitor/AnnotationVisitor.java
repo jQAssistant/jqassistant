@@ -63,7 +63,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
     @Override
     public AnnotationVisitor visitAnnotation(final String name, final String desc) {
         AnnotationValueDescriptor valueDescriptor = createValue(AnnotationValueDescriptor.class, name);
-        valueDescriptor.setType(visitorHelper.getTypeDescriptor(Annotation.class.getName()));
+        valueDescriptor.setType(visitorHelper.getTypeDescriptor(visitorHelper.getType(desc)));
         addValue(name, valueDescriptor);
         return new AnnotationVisitor(valueDescriptor, visitorHelper);
     }

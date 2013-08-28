@@ -47,7 +47,7 @@ public class AnonymousInnerClassIT extends AbstractScannerIT {
      * Asserts that the outer class can be fetched and contains a relation to the inner class.
      */
     private void assertOuterClassContainsInnerClass() {
-        TestResult testResult = executeQuery("MATCH (outerClass:TYPE)-[:CONTAINS]->(innerClass:TYPE) RETURN outerClass");
+        TestResult testResult = query("MATCH (outerClass:TYPE)-[:CONTAINS]->(innerClass:TYPE) RETURN outerClass");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");

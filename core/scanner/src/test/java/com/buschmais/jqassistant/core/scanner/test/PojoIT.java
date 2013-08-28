@@ -17,7 +17,7 @@ public class PojoIT extends AbstractScannerIT {
     @Test
     public void attributes() throws IOException {
         scanClasses(Pojo.class);
-        TestResult testResult = executeQuery("MATCH (t:TYPE) WHERE t.FQN =~ '.*Pojo' RETURN t as types");
+        TestResult testResult = query("MATCH (t:TYPE) WHERE t.FQN =~ '.*Pojo' RETURN t as types");
         assertThat(testResult.getRows().size(), equalTo(1));
         TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
