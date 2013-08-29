@@ -6,6 +6,7 @@ import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
+import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.*;
@@ -59,6 +60,13 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                     if (value instanceof Node) {
                         Node node = (Node) value;
                         return getDescriptor(node);
+                    } else if (value instanceof List<?>) {
+                        List<?> listValue = (List<?>) value;
+                        List<Object> decodedList = new ArrayList<>();
+                        for (Object o : listValue) {
+                            decodedList.add(decodeValue(o));
+                        }
+                        decodedValue = decodedList;
                     } else {
                         decodedValue = value;
                     }

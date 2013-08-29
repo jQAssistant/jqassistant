@@ -79,9 +79,9 @@ public class DependencyIT extends AbstractAnalysisIT {
         applyConcept("dependency:PackageDependency");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
-        assertThat(executeQuery("MATCH (p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE) WHERE p1.FQN={package} RETURN p2", parameters).getColumn("p2"), hasItem(packageDescriptor(B.class.getPackage())));
+        assertThat(query("MATCH (p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE) WHERE p1.FQN={package} RETURN p2", parameters).getColumn("p2"), hasItem(packageDescriptor(B.class.getPackage())));
         parameters.put("package", B.class.getPackage().getName());
-        assertThat(executeQuery("MATCH (p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE) WHERE p1.FQN={package} RETURN p2", parameters).getColumn("p2"), hasItem(packageDescriptor(A.class.getPackage())));
+        assertThat(query("MATCH (p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE) WHERE p1.FQN={package} RETURN p2", parameters).getColumn("p2"), hasItem(packageDescriptor(A.class.getPackage())));
     }
 
     /**
@@ -97,9 +97,9 @@ public class DependencyIT extends AbstractAnalysisIT {
         applyConcept("dependency:ArtifactDependency");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("artifact", "a");
-        assertThat(executeQuery("MATCH (a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT) WHERE a1.FQN={artifact} RETURN a2", parameters).getColumn("a2"), hasItem(artifactDescriptor("b")));
+        assertThat(query("MATCH (a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT) WHERE a1.FQN={artifact} RETURN a2", parameters).getColumn("a2"), hasItem(artifactDescriptor("b")));
         parameters.put("artifact", "b");
-        assertThat(executeQuery("MATCH (a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT) WHERE a1.FQN={artifact} RETURN a2", parameters).getColumn("a2"), hasItem(artifactDescriptor("a")));
+        assertThat(query("MATCH (a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT) WHERE a1.FQN={artifact} RETURN a2", parameters).getColumn("a2"), hasItem(artifactDescriptor("a")));
     }
 
     /**

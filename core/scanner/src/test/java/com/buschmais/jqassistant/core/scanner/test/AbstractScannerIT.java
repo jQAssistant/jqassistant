@@ -125,7 +125,7 @@ public abstract class AbstractScannerIT {
      * @return The  {@link AbstractScannerIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return executeQuery(query, Collections.<String, Object>emptyMap());
+        return query(query, Collections.<String, Object>emptyMap());
     }
 
     /**
@@ -135,7 +135,7 @@ public abstract class AbstractScannerIT {
      * @param parameters The query parameters.
      * @return The  {@link AbstractScannerIT.TestResult}.
      */
-    protected TestResult executeQuery(String query, Map<String, Object> parameters) {
+    protected TestResult query(String query, Map<String, Object> parameters) {
         store.beginTransaction();
         QueryResult queryResult = store.executeQuery(query, parameters);
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -178,11 +178,11 @@ public abstract class AbstractScannerIT {
 
         /**
          * Return a column identified by its name.
-         *
+         * @param <T> The expected type.
          * @return All columns.
          */
-        public List<Object> getColumn(String name) {
-            return columns.get(name);
+        public <T> List<T> getColumn(String name) {
+            return (List<T>) columns.get(name);
         }
     }
 }
