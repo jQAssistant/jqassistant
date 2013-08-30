@@ -4,6 +4,8 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.annotations.AnnotatedType;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.annotations.Annotation;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldaccesses.FieldAccess;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldaccesses.FieldDependency;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.methodinvocations.MethodDependency;
@@ -35,6 +37,21 @@ import static org.junit.Assert.assertThat;
  * Tests for the dependency concepts and result.
  */
 public class DependencyIT extends AbstractAnalysisIT {
+
+    /**
+     * Verifies the concept "dependency:Annotation".
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void annotations() throws IOException, AnalyzerException {
+        scanClasses(AnnotatedType.class, Annotation.class);
+        applyConcept("dependency:Annotation");
+        TestResult testResult = query("MATCH (e:TYPE:CLASS)-[:DEPENDS_ON]->(t:TYPE) RETURN t");
+        assertThat(testResult.getColumn("t"), allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+    }
+
 
     /**
      * Verifies the concept "dependency:MethodInvocation".

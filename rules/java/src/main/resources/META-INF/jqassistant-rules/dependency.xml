@@ -14,8 +14,7 @@
 			WITH
 			    e, a
 			MATCH
-            	(a)-[:HAS*0..]->(v:VALUE),
-            	(v)-[:OF_TYPE]->(vt:TYPE)
+            	(a)-[:HAS|OF_TYPE*0..]->(vt:TYPE)
             CREATE UNIQUE
 				(e)-[:DEPENDS_ON]->(vt)
             RETURN
