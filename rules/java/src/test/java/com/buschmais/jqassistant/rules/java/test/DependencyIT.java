@@ -4,11 +4,15 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
-import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.FieldAnnotation;
-import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.TypeBody;
-import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.MethodAnnotation;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldaccesses.FieldAccess;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldaccesses.FieldDependency;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.methodinvocations.MethodDependency;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.methodinvocations.MethodInvocation;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.packages.a.A;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.packages.b.B;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.FieldAnnotation;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.MethodAnnotation;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.TypeBody;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.types.DependentType;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.types.SuperType;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.types.TypeAnnotation;
@@ -16,10 +20,7 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.buschmais.jqassistant.core.model.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.ArtifactDescriptorMatcher.artifactDescriptor;
@@ -34,6 +35,42 @@ import static org.junit.Assert.assertThat;
  * Tests for the dependency concepts and result.
  */
 public class DependencyIT extends AbstractAnalysisIT {
+
+    /**
+     * Verifies the concept "dependency:MethodInvocation".
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void methodInvocations() throws IOException, AnalyzerException {
+        scanClasses(MethodInvocation.class, MethodDependency.class);
+        applyConcept("dependency:MethodInvocation");
+        TestResult testResult = query("MATCH (m:METHOD)-[:DEPENDS_ON]->(t:TYPE) RETURN t");
+        assertThat(testResult.getColumn("t"), allOf(hasItem(typeDescriptor(MethodDependency.class)), hasItem(typeDescriptor(Map.class)), hasItem(typeDescriptor(SortedSet.class)), hasItem(typeDescriptor(Number.class))));
+    }
+
+    /**
+     * Verifies the concept "dependency:FieldAccess".
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void fieldAccess() throws IOException, AnalyzerException {
+        scanClasses(FieldAccess.class, FieldDependency.class);
+        applyConcept("dependency:FieldAccess");
+        String query = "MATCH (m:METHOD)-[:DEPENDS_ON]->(t:TYPE) WHERE m.FQN =~ {method} RETURN t";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("method", ".*#void readField.*");
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
+        parameters.put("method", ".*#void writeField.*");
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
+        parameters.put("method", ".*#void readStaticField.*");
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
+        parameters.put("method", ".*#void writeStaticField.*");
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
+    }
 
     /**
      * Verifies the concept "dependency:TypeBody".
@@ -126,7 +163,7 @@ public class DependencyIT extends AbstractAnalysisIT {
      */
     @Test
     public void typeCycles() throws IOException, AnalyzerException {
-        scanClasses( A.class);
+        scanClasses(A.class);
         scanClasses(B.class);
         validateConstraint("dependency:TypeCycles");
         List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
@@ -148,4 +185,5 @@ public class DependencyIT extends AbstractAnalysisIT {
         List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
-    }}
+    }
+}

@@ -36,7 +36,7 @@
     </concept>
 
     <concept id="dependency:MethodInvocation">
-        <description>Creates a DEPENDS_ON relationship between a method and the parameter and exception types of all methods it invokes.</description>
+        <description>Creates a DEPENDS_ON relationship between a method and the parameter types of all methods it invokes.</description>
         <cypher><![CDATA[
             MATCH
             	(m:METHOD)-[:INVOKES]->(target:METHOD),
@@ -46,7 +46,7 @@
 				(m)-[:DEPENDS_ON]->(dt),
 				(m)-[:DEPENDS_ON]->(pt)
 			RETURN
-				COUNT(DISTINCT m) as methods
+				COUNT(DISTINCT m) as methodInvocations
 	    ]]></cypher>
     </concept>
 
@@ -61,7 +61,7 @@
 				(m)-[:DEPENDS_ON]->(dt),
 				(m)-[:DEPENDS_ON]->(ft)
 			RETURN
-				COUNT(DISTINCT m) as fields
+				COUNT(DISTINCT m) as fieldAccesses
 	    ]]></cypher>
     </concept>
 
