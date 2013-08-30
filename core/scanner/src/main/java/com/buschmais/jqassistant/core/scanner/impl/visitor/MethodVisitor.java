@@ -49,8 +49,6 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
                 this.methodDescriptor.getWrites().add(fieldDescriptor);
                 break;
         }
-        visitorHelper.addDependency(methodDescriptor, owner);
-        visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(desc));
     }
 
     @Override
@@ -59,8 +57,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
         this.methodDescriptor.getInvokes().add(invokedMethodDescriptor);
-        visitorHelper.addDependency(methodDescriptor, owner);
-        addMethodDesc(desc);
+        visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(Type.getReturnType(desc)));
     }
 
     @Override
@@ -146,14 +143,6 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(methodDescriptor, visitorHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
-    }
-
-    private void addMethodDesc(final String desc) {
-        visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(Type.getReturnType(desc)));
-        Type[] types = Type.getArgumentTypes(desc);
-        for (int i = 0; i < types.length; i++) {
-            visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(types[i]));
-        }
     }
 
     @Override

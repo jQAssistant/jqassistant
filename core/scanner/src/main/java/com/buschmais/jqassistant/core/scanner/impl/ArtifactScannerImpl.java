@@ -62,10 +62,11 @@ public class ArtifactScannerImpl implements ArtifactScanner {
                     ZipEntry e = zipEntries.nextElement();
                     String name = e.getName();
                     String directory;
-                    if (!e.isDirectory()) {
+                    if (e.isDirectory()) {
                         directory = name;
                     } else {
                         directory = name.substring(0, name.lastIndexOf('/'));
+                        totalFiles++;
                     }
                     SortedSet<ZipEntry> directoryEntries = entries.get(directory);
                     if (directoryEntries == null) {

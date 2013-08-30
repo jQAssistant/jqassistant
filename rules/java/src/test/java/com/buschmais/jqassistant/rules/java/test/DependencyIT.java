@@ -4,9 +4,9 @@ import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
-import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldsormethods.FieldAnnotation;
-import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldsormethods.FieldOrMethodDependency;
-import com.buschmais.jqassistant.rules.java.test.set.dependency.fieldsormethods.MethodAnnotation;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.FieldAnnotation;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.TypeBody;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.MethodAnnotation;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.packages.a.A;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.packages.b.B;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.types.DependentType;
@@ -36,15 +36,15 @@ import static org.junit.Assert.assertThat;
 public class DependencyIT extends AbstractAnalysisIT {
 
     /**
-     * Verifies the concept "dependency:FieldOrMethodDependency".
+     * Verifies the concept "dependency:TypeBody".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void fieldOrMethodDependency() throws IOException, AnalyzerException {
-        scanClasses(FieldOrMethodDependency.class);
-        applyConcept("dependency:FieldOrMethodDependency");
+    public void typeBodies() throws IOException, AnalyzerException {
+        scanClasses(TypeBody.class);
+        applyConcept("dependency:TypeBody");
         TestResult testResult = query("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
         // field
         assertThat(testResult.getColumn("t2"), allOf(hasItem(typeDescriptor(List.class)), hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(FieldAnnotation.class))));
@@ -53,30 +53,30 @@ public class DependencyIT extends AbstractAnalysisIT {
     }
 
     /**
-     * Verifies the concept "dependency:TypeDependency".
+     * Verifies the concept "dependency:Type".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void typeDependency() throws IOException, AnalyzerException {
+    public void types() throws IOException, AnalyzerException {
         scanClasses(DependentType.class);
-        applyConcept("dependency:TypeDependency");
+        applyConcept("dependency:Type");
         TestResult testResult = query("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
         // field
         assertThat(testResult.getColumn("t2"), allOf(hasItem(typeDescriptor(SuperType.class)), hasItem(typeDescriptor(Comparable.class)), hasItem(typeDescriptor(Integer.class)), hasItem(typeDescriptor(TypeAnnotation.class))));
     }
 
     /**
-     * Verifies the concept "dependency:PackageDependency".
+     * Verifies the concept "dependency:Package".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void packageDependency() throws IOException, AnalyzerException {
+    public void packages() throws IOException, AnalyzerException {
         scanClasses(A.class, B.class);
-        applyConcept("dependency:PackageDependency");
+        applyConcept("dependency:Package");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
         assertThat(query("MATCH (p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE) WHERE p1.FQN={package} RETURN p2", parameters).getColumn("p2"), hasItem(packageDescriptor(B.class.getPackage())));
@@ -85,16 +85,16 @@ public class DependencyIT extends AbstractAnalysisIT {
     }
 
     /**
-     * Verifies the concept "dependency:ArtifactDependency".
+     * Verifies the concept "dependency:Artifact".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void artifactDependency() throws IOException, AnalyzerException {
+    public void artifacts() throws IOException, AnalyzerException {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        applyConcept("dependency:ArtifactDependency");
+        applyConcept("dependency:Artifact");
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("artifact", "a");
         assertThat(query("MATCH (a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT) WHERE a1.FQN={artifact} RETURN a2", parameters).getColumn("a2"), hasItem(artifactDescriptor("b")));
@@ -103,49 +103,49 @@ public class DependencyIT extends AbstractAnalysisIT {
     }
 
     /**
-     * Verifies the constraint "dependency:CyclicPackageDependency".
+     * Verifies the constraint "dependency:PackageCycles".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void cyclicPackageDependency() throws IOException, AnalyzerException {
+    public void packageCycles() throws IOException, AnalyzerException {
         scanClasses(A.class);
         scanClasses(B.class);
-        validateConstraint("dependency:CyclicPackageDependency");
+        validateConstraint("dependency:PackageCycles");
         List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:CyclicPackageDependency")));
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:PackageCycles")));
         assertThat(constraintViolations, matcher);
     }
 
     /**
-     * Verifies the constraint "dependency:CyclicTypeDependency".
+     * Verifies the constraint "dependency:TypeCycles".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void cyclicTypeDependency() throws IOException, AnalyzerException {
+    public void typeCycles() throws IOException, AnalyzerException {
         scanClasses( A.class);
         scanClasses(B.class);
-        validateConstraint("dependency:CyclicTypeDependency");
+        validateConstraint("dependency:TypeCycles");
         List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:CyclicTypeDependency")));
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:TypeCycles")));
         assertThat(constraintViolations, matcher);
     }
 
     /**
-     * Verifies the constraint "dependency:CyclicArtifactDependency".
+     * Verifies the constraint "dependency:ArtifactCycles".
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void cyclicArtifactDependency() throws IOException, AnalyzerException {
+    public void artifactCycles() throws IOException, AnalyzerException {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        validateConstraint("dependency:CyclicArtifactDependency");
+        validateConstraint("dependency:ArtifactCycles");
         List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:CyclicArtifactDependency")));
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
     }}

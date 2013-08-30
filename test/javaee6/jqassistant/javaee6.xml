@@ -47,8 +47,8 @@
         <includeConstraint refId="JpaEntitiesInApiModelPackage"/>
         <includeConstraint refId="EjbLocatedInImplementationPackage"/>
         <includeConstraint refId="TestClassNameHasTestSuffix"/>
-        <includeConstraint refId="dependency:CyclicTypeDependency"/>
-        <includeConstraint refId="dependency:CyclicArtifactDependency"/>
+        <includeConstraint refId="dependency:TypeCycles"/>
+        <includeConstraint refId="dependency:ArtifactCycles"/>
     </group>
 
 </jqa:jqassistant-rules>

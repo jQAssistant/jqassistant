@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.rules.java.test.set.dependency.fieldsormethods;
+package com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies;
 
 import java.util.Iterator;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A class containing dependencies on field and method level
  */
-public class FieldOrMethodDependency {
+public class TypeBody {
 
     @FieldAnnotation
     private List<String> values;

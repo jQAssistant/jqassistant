@@ -1,24 +1,30 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="dependency:AnnotationDependency">
-        <description>Creates a DEPENDS_ON relationship between an annotated element and a type if the annotation depends on the type.
-        </description>
+    <concept id="dependency:Annotation">
+        <description>Creates a DEPENDS_ON relationship between an annotated element and the types of the annotation and its values.</description>
         <cypher><![CDATA[
             MATCH
-            	(e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(t:TYPE)
+            	(e)-[:ANNOTATED_BY]->(a:ANNOTATION)-[:OF_TYPE]->(at:TYPE)
 			WHERE
 				e:TYPE
 				OR e:METHOD
 				OR e:FIELD
 			CREATE UNIQUE
-				(e)-[:DEPENDS_ON]->(t)
-			RETURN
+				(e)-[:DEPENDS_ON]->(at)
+			WITH
+			    e, a
+			MATCH
+            	(a)-[:HAS*0..]->(v:VALUE),
+            	(v)-[:OF_TYPE]->(vt:TYPE)
+            CREATE UNIQUE
+				(e)-[:DEPENDS_ON]->(vt)
+            RETURN
 				COUNT(DISTINCT e) as elements
 	    ]]></cypher>
     </concept>
 
-    <concept id="dependency:ParameterDependency">
-        <description>Creates a DEPENDS_ON relationship between a method and a type if a method parameter depends the type.</description>
+    <concept id="dependency:MethodParameter">
+        <description>Creates a DEPENDS_ON relationship between a method and and the types of its parameters.</description>
         <cypher><![CDATA[
             MATCH
             	(m:METHOD)-[:HAS]->(p:PARAMETER)-[:DEPENDS_ON]->(t:TYPE)
@@ -29,11 +35,42 @@
 	    ]]></cypher>
     </concept>
 
+    <concept id="dependency:MethodInvocation">
+        <description>Creates a DEPENDS_ON relationship between a method and the parameter and exception types of all methods it invokes.</description>
+        <cypher><![CDATA[
+            MATCH
+            	(m:METHOD)-[:INVOKES]->(target:METHOD),
+            	(dt:TYPE)-[:CONTAINS]->(target),
+            	(target)-[:HAS]->(p:PARAMETER)-[:DEPENDS_ON]->(pt)
+			CREATE UNIQUE
+				(m)-[:DEPENDS_ON]->(dt),
+				(m)-[:DEPENDS_ON]->(pt)
+			RETURN
+				COUNT(DISTINCT m) as methods
+	    ]]></cypher>
+    </concept>
 
-    <concept id="dependency:FieldOrMethodDependency">
-        <requiresConcept refId="dependency:AnnotationDependency"/>
-        <requiresConcept refId="dependency:ParameterDependency"/>
-        <description>Creates a DEPENDS_ON relationship between types if there are field or method dependencies between them.</description>
+    <concept id="dependency:FieldAccess">
+        <description>Creates a DEPENDS_ON relationship between a method and the all fields types and their containing types it reads and writes.</description>
+        <cypher><![CDATA[
+            MATCH
+            	(m:METHOD)-[:READS|WRITES]->(target:FIELD),
+            	(dt:TYPE)-[:CONTAINS]->(target),
+            	(target)-[:DEPENDS_ON]->(ft)
+			CREATE UNIQUE
+				(m)-[:DEPENDS_ON]->(dt),
+				(m)-[:DEPENDS_ON]->(ft)
+			RETURN
+				COUNT(DISTINCT m) as fields
+	    ]]></cypher>
+    </concept>
+
+    <concept id="dependency:TypeBody">
+        <requiresConcept refId="dependency:Annotation"/>
+        <requiresConcept refId="dependency:MethodParameter"/>
+        <requiresConcept refId="dependency:MethodInvocation"/>
+        <requiresConcept refId="dependency:FieldAccess"/>
+        <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
         <cypher><![CDATA[
             MATCH 
             	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|THROWS]->(t2:TYPE)
@@ -47,9 +84,9 @@
 	    ]]></cypher>
     </concept>
 
-    <concept id="dependency:TypeDependency">
-        <requiresConcept refId="dependency:FieldOrMethodDependency"/>
-        <description>Creates a DEPENDS_ON relationship between types if there are dependencies between them.</description>
+    <concept id="dependency:Type">
+        <requiresConcept refId="dependency:TypeBody"/>
+        <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.</description>
         <cypher><![CDATA[
             MATCH 
             	(t1:TYPE)-[:DEPENDS_ON|EXTENDS|IMPLEMENTS]->(t2:TYPE)
@@ -62,9 +99,9 @@
         ]]></cypher>
     </concept>
 
-    <concept id="dependency:PackageDependency">
-        <requiresConcept refId="dependency:TypeDependency"/>
-        <description>Creates a DEPENDS_ON relationship between packages if there are type dependencies between them.</description>
+    <concept id="dependency:Package">
+        <requiresConcept refId="dependency:Type"/>
+        <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.</description>
         <cypher><![CDATA[
 			MATCH  
 				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
@@ -77,8 +114,8 @@
         ]]></cypher>
     </concept>
 
-    <concept id="dependency:ArtifactDependency">
-        <requiresConcept refId="dependency:PackageDependency"/>
+    <concept id="dependency:Artifact">
+        <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.</description>
         <cypher><![CDATA[
 			MATCH  
@@ -92,8 +129,8 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="dependency:CyclicPackageDependency">
-        <requiresConcept refId="dependency:PackageDependency"/>
+    <constraint id="dependency:PackageCycles">
+        <requiresConcept refId="dependency:Package"/>
         <description>There must be no cyclic package dependencies.</description>
         <cypher><![CDATA[
 			MATCH
@@ -108,8 +145,8 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="dependency:CyclicTypeDependency">
-        <requiresConcept refId="dependency:PackageDependency"/>
+    <constraint id="dependency:TypeCycles">
+        <requiresConcept refId="dependency:Package"/>
         <description>There must be no cyclic type dependencies.</description>
         <cypher><![CDATA[
             MATCH
@@ -131,8 +168,8 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="dependency:CyclicArtifactDependency">
-        <requiresConcept refId="dependency:ArtifactDependency"/>
+    <constraint id="dependency:ArtifactCycles">
+        <requiresConcept refId="dependency:Artifact"/>
         <description>There must be no cyclic artifact dependencies.</description>
         <cypher><![CDATA[
 			MATCH
