@@ -46,7 +46,6 @@ public class VisitorHelper {
         return resolverFactory.getMethodDescriptorResolver().resolve(type, signature);
     }
 
-
     /**
      * Return the field descriptor for the given type and field signature.
      *
