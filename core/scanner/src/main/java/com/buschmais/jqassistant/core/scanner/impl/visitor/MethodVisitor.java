@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.impl.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ParameterDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
@@ -38,12 +36,29 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
+        String fieldSignature = visitorHelper.getFieldSignature(name, desc);
+        TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
+        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, fieldSignature);
+        switch (opcode) {
+            case Opcodes.GETFIELD:
+            case Opcodes.GETSTATIC:
+                this.methodDescriptor.getReads().add(fieldDescriptor);
+                break;
+            case Opcodes.PUTFIELD:
+            case Opcodes.PUTSTATIC:
+                this.methodDescriptor.getWrites().add(fieldDescriptor);
+                break;
+        }
         visitorHelper.addDependency(methodDescriptor, owner);
         visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(desc));
     }
 
     @Override
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
+        String methodSignature = visitorHelper.getMethodSignature(name, desc);
+        TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
+        MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
+        this.methodDescriptor.getInvokes().add(invokedMethodDescriptor);
         visitorHelper.addDependency(methodDescriptor, owner);
         addMethodDesc(desc);
     }

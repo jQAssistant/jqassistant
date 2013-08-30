@@ -31,6 +31,21 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
     private Set<AnnotationValueDescriptor> annotations = new HashSet<>();
 
     /**
+     * The fields read by this method.
+     */
+    private Set<FieldDescriptor> reads = new HashSet<>();
+
+    /**
+     * The fields written by this method.
+     */
+    private Set<FieldDescriptor> writes = new HashSet<>();
+
+    /**
+     * The methods invoked by this method.
+     */
+    private Set<MethodDescriptor> invokes = new HashSet<>();
+
+    /**
      * <code>true</code> if this method is a constructorMethod.
      */
     private Boolean constructorMethod;
@@ -99,6 +114,30 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
     @Override
     public void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations) {
         this.annotations = annotations;
+    }
+
+    public Set<FieldDescriptor> getReads() {
+        return reads;
+    }
+
+    public void setReads(Set<FieldDescriptor> reads) {
+        this.reads = reads;
+    }
+
+    public Set<FieldDescriptor> getWrites() {
+        return writes;
+    }
+
+    public void setWrites(Set<FieldDescriptor> writes) {
+        this.writes = writes;
+    }
+
+    public Set<MethodDescriptor> getInvokes() {
+        return invokes;
+    }
+
+    public void setInvokes(Set<MethodDescriptor> invokes) {
+        this.invokes = invokes;
     }
 
     public Boolean isAbstract() {
