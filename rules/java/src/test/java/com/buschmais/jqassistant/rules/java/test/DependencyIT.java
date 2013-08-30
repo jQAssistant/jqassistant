@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.rules.java.test.set.dependency.methodinvocation
 import com.buschmais.jqassistant.rules.java.test.set.dependency.methodinvocations.MethodInvocation;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.packages.a.A;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.packages.b.B;
+import com.buschmais.jqassistant.rules.java.test.set.dependency.parameters.Parameters;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.FieldAnnotation;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.MethodAnnotation;
 import com.buschmais.jqassistant.rules.java.test.set.dependency.typebodies.TypeBody;
@@ -46,12 +47,26 @@ public class DependencyIT extends AbstractAnalysisIT {
      */
     @Test
     public void annotations() throws IOException, AnalyzerException {
-        scanClasses(AnnotatedType.class, Annotation.class);
+        scanClasses(AnnotatedType.class);
         applyConcept("dependency:Annotation");
-        TestResult testResult = query("MATCH (e:TYPE:CLASS)-[:DEPENDS_ON]->(t:TYPE) RETURN t");
-        assertThat(testResult.getColumn("t"), allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:TYPE:CLASS)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"), allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:FIELD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"), allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:METHOD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"), allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:PARAMETER)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"), allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
     }
 
+    /**
+     * Verifies the concept "dependency:MethodParameter".
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void parameters() throws IOException, AnalyzerException {
+        scanClasses(Parameters.class);
+        applyConcept("dependency:MethodParameter");
+        assertThat(query("MATCH (m:METHOD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"), allOf(hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(Integer.class))));
+    }
 
     /**
      * Verifies the concept "dependency:MethodInvocation".
