@@ -7,7 +7,7 @@ import java.util.Map;
 
 public enum Relation implements RelationshipType {
 
-    ANNOTATED_BY, DEPENDS_ON, CONTAINS, EXTENDS, IMPLEMENTS, THROWS, HAS, OF_TYPE;
+    ANNOTATED_BY, DEPENDS_ON, CONTAINS, EXTENDS, IMPLEMENTS, THROWS, HAS, OF_TYPE, INVOKES, READS, WRITES;
 
     private static Map<String, Relation> relations;
 

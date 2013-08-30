@@ -48,6 +48,9 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
         relations.put(Relation.THROWS, descriptor.getDeclaredThrowables());
         relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
         relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
+        relations.put(Relation.INVOKES, descriptor.getInvokes());
+        relations.put(Relation.READS, descriptor.getReads());
+        relations.put(Relation.WRITES, descriptor.getWrites());
         return relations;
     }
 
@@ -62,6 +65,15 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
                 break;
             case ANNOTATED_BY:
                 descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
+                break;
+            case INVOKES:
+                descriptor.getInvokes().add((MethodDescriptor) target);
+                break;
+            case READS:
+                descriptor.getReads().add((FieldDescriptor) target);
+                break;
+            case WRITES:
+                descriptor.getWrites().add((FieldDescriptor) target);
                 break;
             case DEPENDS_ON:
                 descriptor.getDependencies().add((TypeDescriptor) target);
