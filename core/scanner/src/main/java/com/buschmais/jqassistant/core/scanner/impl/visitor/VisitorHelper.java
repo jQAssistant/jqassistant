@@ -80,20 +80,29 @@ public class VisitorHelper {
     }
 
     /**
+     * Create and return the parameter descriptor for the given methodDescriptor and parameter index.
+     *
+     * @param methodDescriptor The declaring methodDescriptor.
+     * @param index            The parameter index.
+     * @return The parameter descriptor.
+     */
+    ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
+        String fullQualifiedName = methodDescriptor.getFullQualifiedName() + "(" + index + ")";
+        ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class, fullQualifiedName);
+        methodDescriptor.getParameters().add(parameterDescriptor);
+        return parameterDescriptor;
+    }
+
+    /**
      * Return the parameter descriptor for the given methodDescriptor and parameter index.
      *
      * @param methodDescriptor The declaring methodDescriptor.
-     * @param index  The parameter index.
+     * @param index            The parameter index.
      * @return The parameter descriptor.
      */
     ParameterDescriptor getParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
         String fullQualifiedName = methodDescriptor.getFullQualifiedName() + "(" + index + ")";
-        ParameterDescriptor parameterDescriptor = store.find(ParameterDescriptor.class, fullQualifiedName);
-        if (parameterDescriptor == null) {
-            parameterDescriptor = store.create(ParameterDescriptor.class, fullQualifiedName);
-            methodDescriptor.getParameters().add(parameterDescriptor);
-        }
-        return parameterDescriptor;
+        return store.find(ParameterDescriptor.class, fullQualifiedName);
     }
 
     /**
