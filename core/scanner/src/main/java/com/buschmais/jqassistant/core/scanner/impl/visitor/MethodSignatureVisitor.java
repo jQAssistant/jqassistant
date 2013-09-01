@@ -50,7 +50,7 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitParameterType() {
-        ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameterIndex);
+        ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, parameterIndex);
         parameterIndex++;
         return new DependentTypeSignatureVisitor(parameterDescriptor, visitorHelper);
     }
