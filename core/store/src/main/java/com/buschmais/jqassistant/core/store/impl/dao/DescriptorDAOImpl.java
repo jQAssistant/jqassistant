@@ -6,7 +6,6 @@ import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
-import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
 import org.neo4j.graphdb.*;
@@ -122,17 +121,36 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
         DescriptorMapper<Descriptor> mapper = registry.getDescriptorMapper(type);
-        T descriptor = descriptorCache.findBy(fullQualifiedName);
-        if (descriptor == null) {
+        Node node = null;
+        Long id = descriptorCache.findBy(fullQualifiedName);
+        if (id != null) {
+            node = database.getNodeById(id);
+        } else {
             ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getCoreLabel(), NodeProperty.FQN.name(), fullQualifiedName);
             ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
             try {
                 if (iterator.hasNext()) {
-                    Node node = iterator.next();
-                    descriptor = createDescriptor(node);
+                    node = iterator.next();
                 }
             } finally {
                 iterator.close();
+            }
+        }
+        return getDescriptor(node);
+    }
+
+    /**
+     * Get the {@link Descriptor} which represents the given node.
+     *
+     * @param node The node.
+     * @return The {@link Descriptor}.
+     */
+    private <T extends Descriptor> T getDescriptor(Node node) {
+        T descriptor = null;
+        if (node != null) {
+            descriptor = descriptorCache.findBy(node.getId());
+            if (descriptor == null) {
+                descriptor = createDescriptor(node);
             }
         }
         return descriptor;
@@ -245,7 +263,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
         this.descriptorCache.put(descriptor);
         // create outgoing relationships
-        Map<Relation, Set<Descriptor>> relations = new HashMap<Relation, Set<Descriptor>>();
+        Map<Relation, Set<Descriptor>> relations = new HashMap<>();
         for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
             Relation relation = Relation.getRelation(relationship.getType().name());
             if (relation != null) {
@@ -286,17 +304,14 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         return database.getNodeById(id);
     }
 
+
     /**
-     * Get the {@link Descriptor} which represents the given node.
+     * Return the descriptor type for a given node.
      *
      * @param node The node.
-     * @return The {@link Descriptor}.
+     * @param <T>  The type.
+     * @return The type.
      */
-    private Descriptor getDescriptor(Node node) {
-        Class<Descriptor> type = getType(node);
-        return find(type, (String) node.getProperty(NodeProperty.FQN.name()));
-    }
-
     private <T extends Descriptor> Class<T> getType(Node node) {
         // find adapter and create instance
         DescriptorMapper<T> mapper = registry.getDescriptorMapper(node);
