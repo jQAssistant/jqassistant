@@ -90,8 +90,10 @@ public abstract class AbstractScannerIT {
      */
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
-        ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
-        for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
+        ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
+        if (artifact == null) {
+            artifact = store.create(ArtifactDescriptor.class, artifactId);
+        } for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();
@@ -183,6 +185,7 @@ public abstract class AbstractScannerIT {
 
         /**
          * Return a column identified by its name.
+         *
          * @param <T> The expected type.
          * @return All columns.
          */
