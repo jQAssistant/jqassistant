@@ -19,7 +19,7 @@
             CREATE UNIQUE
 				(e)-[:DEPENDS_ON]->(vt)
             RETURN
-				COUNT(DISTINCT e) as elements
+				COUNT(DISTINCT e) as element
 	    ]]></cypher>
     </concept>
 
@@ -32,7 +32,7 @@
 			CREATE UNIQUE
 				(m)-[:DEPENDS_ON]->(t)
 			RETURN
-				COUNT(DISTINCT p) as parameters
+				COUNT(DISTINCT p) as parameter
 	    ]]></cypher>
     </concept>
 
@@ -41,13 +41,17 @@
         <cypher><![CDATA[
             MATCH
             	(m:METHOD)-[:INVOKES]->(target:METHOD),
-            	(dt:TYPE)-[:CONTAINS]->(target),
-            	(target)-[:HAS]->(p:PARAMETER)-[:DEPENDS_ON]->(pt)
+            	(dt:TYPE)-[:CONTAINS]->(target)
 			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(dt),
+				(m)-[:DEPENDS_ON]->(dt)
+			WITH
+			    m, target
+			MATCH
+            	(target)-[:HAS]->(:PARAMETER)-[:DEPENDS_ON]->(pt)
+			CREATE UNIQUE
 				(m)-[:DEPENDS_ON]->(pt)
 			RETURN
-				COUNT(DISTINCT m) as methodInvocations
+				COUNT(DISTINCT m) as methodInvocation
 	    ]]></cypher>
     </concept>
 
@@ -56,13 +60,17 @@
         <cypher><![CDATA[
             MATCH
             	(m:METHOD)-[:READS|WRITES]->(target:FIELD),
-            	(dt:TYPE)-[:CONTAINS]->(target),
-            	(target)-[:DEPENDS_ON]->(ft)
+            	(dt:TYPE)-[:CONTAINS]->(target)
 			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(dt),
+				(m)-[:DEPENDS_ON]->(dt)
+		    WITH
+		        m, target
+		    MATCH
+              	(target)-[:DEPENDS_ON]->(ft)
+			CREATE UNIQUE
 				(m)-[:DEPENDS_ON]->(ft)
 			RETURN
-				COUNT(DISTINCT m) as fieldAccesses
+				COUNT(DISTINCT m) as fieldAccess
 	    ]]></cypher>
     </concept>
 
@@ -81,7 +89,7 @@
 			CREATE UNIQUE
 				(t1)-[:DEPENDS_ON]->(t2)
 			RETURN
-				COUNT(DISTINCT t1) as types
+				COUNT(DISTINCT t1) as type
 	    ]]></cypher>
     </concept>
 
@@ -96,7 +104,7 @@
 			CREATE UNIQUE 
 				(t1)-[:DEPENDS_ON]->(t2)
 			RETURN 
-				COUNT(DISTINCT t1) as types
+				COUNT(DISTINCT t1) as type
         ]]></cypher>
     </concept>
 
@@ -111,7 +119,7 @@
 			CREATE UNIQUE 
 				(p1)-[:DEPENDS_ON]->(p2)
 			RETURN 
-				COUNT(DISTINCT p1) as packages
+				COUNT(DISTINCT p1) as package
         ]]></cypher>
     </concept>
 
