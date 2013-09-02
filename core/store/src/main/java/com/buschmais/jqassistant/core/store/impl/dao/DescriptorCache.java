@@ -16,7 +16,7 @@ public class DescriptorCache {
 
     private final Map<String, WeakReference<Descriptor>> referenceCache = new WeakHashMap<>();
     private final Map<String, Descriptor> cache = new HashMap<>();
-    private final Map<String, Descriptor> sharedCache = new LRUMap(512000);
+    private final Map<String, Descriptor> sharedCache = new LRUMap(16384);
 
     public <T extends Descriptor> void put(T descriptor) {
         if (this.cache.put(descriptor.getFullQualifiedName(), descriptor) != null) {
