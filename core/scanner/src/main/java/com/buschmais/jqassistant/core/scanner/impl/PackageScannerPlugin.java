@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.core.scanner.impl.resolver.PackageDescriptorResolver;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import java.io.IOException;
@@ -24,10 +26,11 @@ public class PackageScannerPlugin implements ArtifactScannerPlugin<PackageDescri
     @Override
     public PackageDescriptor scanDirectory(Store store, String name) throws IOException {
         String packageName = name.replaceAll("/", ".");
-        PackageDescriptor packageDescriptor = store.find(PackageDescriptor.class, packageName);
-        if (packageDescriptor == null) {
-            packageDescriptor = store.create(PackageDescriptor.class, packageName);
-        }
-        return packageDescriptor;
+     /*
+        PackageDescriptorResolver packageDescriptorResolver = new PackageDescriptorResolver(store);
+        return packageDescriptorResolver.resolve(packageName);
+        */
+        PackageDescriptorResolver packageDescriptorResolver = new PackageDescriptorResolver(store);
+        return packageDescriptorResolver.resolve(packageName);
     }
 }

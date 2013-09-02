@@ -17,6 +17,7 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
@@ -85,21 +86,23 @@ public class ScanMojo extends AbstractAnalysisMojo {
                     Artifact artifact = project.getArtifact();
                     String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
                     String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
-                    ArtifactDescriptor descriptor = store.find(ArtifactDescriptor.class, id);
-                    if (descriptor == null) {
-                        descriptor = store.create(ArtifactDescriptor.class, id);
-                        descriptor.setGroup(artifact.getGroupId());
-                        descriptor.setName(artifact.getArtifactId());
-                        descriptor.setVersion(artifact.getVersion());
-                        descriptor.setClassifier(artifact.getClassifier());
-                        descriptor.setType(type);
+                    ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
+                    if (artifactDescriptor == null) {
+                        artifactDescriptor = store.create(ArtifactDescriptor.class, id);
+                        artifactDescriptor.setGroup(artifact.getGroupId());
+                        artifactDescriptor.setName(artifact.getArtifactId());
+                        artifactDescriptor.setVersion(artifact.getVersion());
+                        artifactDescriptor.setClassifier(artifact.getClassifier());
+                        artifactDescriptor.setType(type);
                     }
                     List<ArtifactScannerPlugin> scannerPlugins = new ArrayList<>();
                     scannerPlugins.add(new PackageScannerPlugin());
                     scannerPlugins.add(new ClassScannerPlugin());
                     ArtifactScanner scanner = new ArtifactScannerImpl(store, scannerPlugins);
                     try {
-                        scanner.scanDirectory(descriptor, directory);
+                        for (Descriptor descriptor : scanner.scanDirectory(directory)) {
+                            artifactDescriptor.getContains().add(descriptor);
+                        }
                     } catch (IOException e) {
                         throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
                     }

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
 import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
@@ -90,7 +91,9 @@ public abstract class AbstractScannerIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
-        getArtifactScanner().scanClasses(artifact, classes);
+        for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
+            artifact.getContains().add(descriptor);
+        }
         store.commitTransaction();
     }
 
@@ -114,7 +117,9 @@ public abstract class AbstractScannerIT {
     protected void scanURLs(String artifactId, URL... urls) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
-        getArtifactScanner().scanURLs(artifact, urls);
+        for (Descriptor descriptor : getArtifactScanner().scanURLs(urls)) {
+            artifact.getContains().add(descriptor);
+        }
         store.commitTransaction();
     }
 

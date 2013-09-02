@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.scanner.impl.resolver;
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
+import org.apache.commons.lang.StringUtils;
 
 public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T extends AbstractDescriptor> {
 
