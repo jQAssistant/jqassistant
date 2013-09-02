@@ -57,7 +57,6 @@ public class PackageIT extends AbstractScannerIT {
      * @throws IOException If the test fails.
      */
     @Test
-    @Ignore
     public void nonEmptyPackages() throws IOException {
         scanTestClassesDirectory();
         TestResult query = query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->() RETURN p");

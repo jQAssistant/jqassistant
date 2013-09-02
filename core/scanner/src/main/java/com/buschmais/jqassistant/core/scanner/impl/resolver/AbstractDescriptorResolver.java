@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T extends AbstractDescriptor> {
 
+    public static final String EMPTY_NAME = "";
     private final Store store;
 
     private final AbstractDescriptorResolver<?, P> parentResolver;
@@ -33,9 +34,14 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T e
         T descriptor = store.find(getType(), fullQualifiedName);
         if (descriptor == null) {
             P parent = null;
-            int separatorIndex = fullQualifiedName.lastIndexOf(getSeparator());
-            if (separatorIndex != -1) {
-                String parentName = fullQualifiedName.substring(0, separatorIndex);
+            if (!EMPTY_NAME.equals(fullQualifiedName)) {
+                int separatorIndex = fullQualifiedName.lastIndexOf(getSeparator());
+                String parentName;
+                if (separatorIndex != -1) {
+                    parentName = fullQualifiedName.substring(0, separatorIndex);
+                } else {
+                    parentName = EMPTY_NAME;
+                }
                 parent = parentResolver.resolve(parentName);
             }
             descriptor = store.create(getType(), fullQualifiedName);
