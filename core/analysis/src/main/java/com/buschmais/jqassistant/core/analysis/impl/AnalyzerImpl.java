@@ -188,7 +188,7 @@ public class AnalyzerImpl implements Analyzer {
             return new Result<T>(executable, queryResult.getColumns(), rows);
         } catch (RuntimeException e) {
             store.rollbackTransaction();
-            throw new AnalyzerException("Cannot execute query: " + executable.getQuery(), e);
+            throw new AnalyzerException("Cannot execute query: " + executable.getQuery() + " (" + executable.getClass().getSimpleName() + " '" + executable.getId() + "')", e);
         } finally {
             IOUtils.closeQuietly(queryResult);
         }

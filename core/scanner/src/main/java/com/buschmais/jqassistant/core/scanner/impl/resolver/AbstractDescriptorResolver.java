@@ -5,6 +5,12 @@ import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.lang.StringUtils;
 
+/**
+ * Abstract resolver providing functionality to resolve a descriptor hierarchy from full qualified name.
+ *
+ * @param <P> The type of the parent descriptor.
+ * @param <T> The type of the descriptor to be resolved.
+ */
 public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T extends AbstractDescriptor> {
 
     public static final String EMPTY_NAME = "";
@@ -12,17 +18,35 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T e
 
     private final AbstractDescriptorResolver<?, P> parentResolver;
 
+    /**
+     * Constructor.
+     *
+     * @param store          The store.
+     * @param parentResolver The parent resolver instance.
+     */
     protected AbstractDescriptorResolver(Store store, AbstractDescriptorResolver<?, P> parentResolver) {
         this.store = store;
         this.parentResolver = parentResolver;
     }
 
+    /**
+     * Constructor.
+     *
+     * @param store The store.
+     */
     @SuppressWarnings("unchecked")
-    public AbstractDescriptorResolver(Store store) {
+    protected AbstractDescriptorResolver(Store store) {
         this.store = store;
         this.parentResolver = (AbstractDescriptorResolver<?, P>) this;
     }
 
+    /**
+     * Resolve a descriptor from a given parent descriptor and a local name.
+     *
+     * @param parent The parent descriptor.
+     * @param name   The name.
+     * @return The descriptor.
+     */
     public T resolve(P parent, String name) {
         StringBuffer fullQualifiedName = new StringBuffer(parent.getFullQualifiedName());
         fullQualifiedName.append(getSeparator());
@@ -30,6 +54,12 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T e
         return resolve(fullQualifiedName.toString());
     }
 
+    /**
+     * Resolve a descriptor from a given full qualified name.
+     *
+     * @param fullQualifiedName The full qualified name.
+     * @return The descriptor.
+     */
     public T resolve(String fullQualifiedName) {
         T descriptor = store.find(getType(), fullQualifiedName);
         if (descriptor == null) {
@@ -52,10 +82,9 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T e
         return descriptor;
     }
 
-    protected Store getStore() {
-        return store;
-    }
-
+    /**
+     * Return the descriptor type which is resolved by this instance.
+     */
     protected abstract Class<T> getType();
 
     protected abstract char getSeparator();
