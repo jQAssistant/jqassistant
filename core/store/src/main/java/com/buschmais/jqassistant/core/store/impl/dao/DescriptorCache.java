@@ -25,7 +25,7 @@ public class DescriptorCache {
     /**
      * The shared index cache (limited size).
      */
-    private final Map<String, Long> sharedIndexCache = new LRUMap(4096);
+    private final Map<String, Long> sharedIndexCache = new LRUMap(65536);
 
     /**
      * The transactional descriptor cache.
@@ -40,7 +40,7 @@ public class DescriptorCache {
     /**
      * The shared cache (limited size).
      */
-    private final Map<Long, Descriptor> sharedCache = new LRUMap(1024);
+    private final Map<Long, Descriptor> sharedCache = new LRUMap(65536);
 
     /**
      * Put a descriptor into the cache.
