@@ -32,7 +32,6 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
@@ -152,7 +151,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
      * @throws MojoExecutionException If the file cannot be determined.
      */
     private File getXmlReportFile() throws MojoExecutionException {
-        File selectedXmlReportFile = getReportFile(xmlReportFile, REPORT_XML);
+        File selectedXmlReportFile = BaseProjectResolver.getReportFile(project, xmlReportFile, REPORT_XML);
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
     }

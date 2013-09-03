@@ -13,8 +13,6 @@ import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
@@ -40,8 +38,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     protected static interface StoreOperation<T> {
         public T run(Store store) throws MojoExecutionException, MojoFailureException;
     }
-
-    public static final String RULES_DIRECTORY = "jqassistant";
 
     public static final String REPORT_XML = "/jqassistant/jqassistant-report.xml";
 
@@ -82,32 +78,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected File xmlReportFile;
 
-
-    /**
-     * The artifactId.
-     *
-     * @parameter expression="${project.artifactId}"
-     * @readonly
-     */
-    protected String artifactId;
-
-    /**
-     * The project rulesDirectory.
-     *
-     * @parameter expression="${basedir}"
-     * @readonly
-     */
-    protected File basedir;
-
-
-    /**
-     * The build rulesDirectory.
-     *
-     * @parameter expression="${project.build.rulesDirectory}"
-     * @readonly
-     */
-    protected File buildDirectory;
-
     /**
      * The classes rulesDirectory.
      *
@@ -138,14 +108,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * @parameter expression="${project}"
      */
     protected MavenProject project;
-
-    /**
-     * The Maven Session Object
-     *
-     * @parameter expression="${session}"
-     * @readonly
-     */
-    protected MavenSession session;
 
     /**
      * Contains the full list of projects in the reactor.
@@ -193,7 +155,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         if (storeDirectory != null) {
             directory = storeDirectory;
         } else {
-            directory = new File(getBaseProject().getBuild().getDirectory() + "/jqassistant/store");
+            directory = new File(BaseProjectResolver.getBaseProject(project).getBuild().getDirectory() + "/jqassistant/store");
         }
         return storeProvider.getStore(directory);
     }
@@ -210,9 +172,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         if (rulesDirectory != null) {
             selectedDirectory = rulesDirectory;
         } else {
-            MavenProject baseProject = getBaseProject();
+            MavenProject baseProject = BaseProjectResolver.getBaseProject(project);
             if (baseProject != null) {
-                selectedDirectory = new File(baseProject.getBasedir(), RULES_DIRECTORY);
+                selectedDirectory = new File(baseProject.getBasedir(), BaseProjectResolver.RULES_DIRECTORY);
             }
         }
         List<Source> sources = new ArrayList<>();
@@ -228,31 +190,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         return ruleSetReader.read(sources);
     }
 
-    /**
-     * Return the {@link MavenProject} which is the base project for scanning and analysis.
-     * <p>The base project is by searching with the project tree starting from the current project over its parents until
-     * a project is found containing a directory "jqassistant" or no parent can be determined.</p>
-     *
-     * @return The {@link MavenProject} containing a rules directory.
-     * @throws MojoExecutionException If the directory cannot be resolved.
-     */
-    protected MavenProject getBaseProject() throws MojoExecutionException {
-        MavenProject currentProject = project;
-        if (project != null) {
-            do {
-                File directory = new File(currentProject.getBasedir(), RULES_DIRECTORY);
-                if (directory.exists() && directory.isDirectory()) {
-                    return currentProject;
-                }
-                MavenProject parent = currentProject.getParent();
-                if (parent == null || parent.getBasedir() == null) {
-                    return currentProject;
-                }
-                currentProject = parent;
-            } while (currentProject != null);
-        }
-        throw new MojoExecutionException("Cannot resolve base directory.");
-    }
 
     /**
      * Retrieves the list of available rules from the rules directory.
@@ -367,27 +304,5 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         }
     }
 
-    /**
-     * Determines a report file name.
-     *
-     * @param reportFile The report file as specified in the pom.xml file or on the command line.
-     * @return The resolved {@link File}.
-     * @throws MojoExecutionException If the file cannot be determined.
-     */
-    protected File getReportFile(File reportFile, String defaultFile) throws MojoExecutionException {
-        MavenProject baseProject = getBaseProject();
-        File selectedXmlReportFile;
-        if (reportFile != null) {
-            selectedXmlReportFile = reportFile;
-        } else if (baseProject != null) {
-            String rulesProjectOutputDirectory = baseProject.getBuild().getDirectory();
-            selectedXmlReportFile = new File(rulesProjectOutputDirectory + defaultFile);
-        } else if (project != null) {
-            String outputDirectory = project.getBuild().getDirectory();
-            selectedXmlReportFile = new File(outputDirectory + defaultFile);
-        } else {
-            throw new MojoExecutionException("Cannot determine report file.");
-        }
-        return selectedXmlReportFile;
-    }
+
 }
