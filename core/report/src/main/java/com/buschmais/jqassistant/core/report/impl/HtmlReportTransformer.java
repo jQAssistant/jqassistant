@@ -17,10 +17,18 @@ public class HtmlReportTransformer implements ReportTransformer {
 
     @Override
     public void transform(Source source, Result target) throws ReportTransformerException {
-        Source xsl = new StreamSource(HtmlReportTransformer.class.getResourceAsStream("/xsl/jqassistant-report.xsl"));
-        Transformer transformer = null;
+        Source xsl = new StreamSource(HtmlReportTransformer.class.getResourceAsStream("/xsl/jqassistant-report-embedded.xsl"));
+        TransformerFactory transformerFactory;
+        Transformer transformer;
         try {
-            transformer = TransformerFactory.newInstance().newTransformer(xsl);
+            transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setURIResolver(new URIResolver() {
+                @Override
+                public Source resolve(String href, String base) throws TransformerException {
+                    return new StreamSource(HtmlReportTransformer.class.getResourceAsStream(href));
+                }
+            });
+            transformer = transformerFactory.newTransformer(xsl);
         } catch (TransformerConfigurationException e) {
             throw new ReportTransformerException("Cannot get transformer factory.", e);
         }

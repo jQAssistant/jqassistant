@@ -150,13 +150,6 @@
                                 </groups>
                             </configuration>
                         </execution>
-                        <execution>
-                            <id>report</id>
-                            <goals>
-                                <goal>report</goal>
-                            </goals>
-                            <phase>install</phase>
-                        </execution>
                     </executions>
                     <dependencies>
                         <dependency>

@@ -3,49 +3,110 @@ package com.buschmais.jqassistant.mojo;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
+import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.reporting.AbstractMavenReport;
+import org.apache.maven.reporting.MavenReportException;
+import org.neo4j.cypher.internal.parser.experimental.functions.Abs;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.Locale;
 
 /**
  * @goal report
  * @phase site
  */
-public class ReportMojo extends AbstractAnalysisAggregatorMojo {
+public class ReportMojo extends AbstractMavenReport {
 
-    public static final String REPORT_HTML = "/jqassistant/jqassistant-report.html";
+    /**
+     * Directory where reports will go.
+     *
+     * @parameter expression="${project.reporting.outputDirectory}"
+     * @required
+     * @readonly
+     */
+    private String outputDirectory;
 
     /**
      * The file to write the XML report to.
      *
-     * @parameter expression="${jqassistant.report.html}"
+     * @parameter expression="${jqassistant.report.xml}"
      */
-    protected File htmlReportFile;
+    protected File xmlReportFile;
+
+    /**
+     * @component
+     * @required
+     * @readonly
+     */
+    private Renderer siteRenderer;
+
+    /**
+     * @parameter default-value="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
 
     @Override
-    public void aggregate() throws MojoExecutionException, MojoFailureException {
-        // Determine XML report file
-        File selectedXmlReportFile = BaseProjectResolver.getReportFile(project, xmlReportFile, REPORT_XML);
-        if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
-            throw new MojoExecutionException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
+    protected void executeReport(Locale locale) throws MavenReportException {
+        File selectedXmlReportFile;
+        try {
+            selectedXmlReportFile = BaseProjectResolver.getReportFile(project, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
+        } catch (MojoExecutionException e) {
+            throw new MavenReportException("Cannot resolve XML report.", e);
         }
-        // Determine HTML report file
-        File selectedHtmlReportFile = BaseProjectResolver.getReportFile(project, htmlReportFile, REPORT_HTML);
-        selectedHtmlReportFile.getParentFile().mkdirs();
+        if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
+            throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
+        }
+        StringWriter writer = new StringWriter();
         // Transform
         Source xmlSource = new StreamSource(selectedXmlReportFile);
-        Result htmlTarget = new StreamResult(selectedHtmlReportFile);
-        getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + " to " + selectedHtmlReportFile.getAbsolutePath() + ".");
+        Result htmlTarget = new StreamResult(writer);
+        getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
         ReportTransformer transformer = new HtmlReportTransformer();
         try {
             transformer.transform(xmlSource, htmlTarget);
         } catch (ReportTransformerException e) {
-            throw new MojoExecutionException("Cannot transform report.", e);
+            throw new MavenReportException("Cannot transform report.", e);
         }
+        getSink().rawText(writer.toString());
+    }
+
+    public String getDescription(Locale arg0) {
+        return "The jQAssistant report.";
+    }
+
+    public String getName(Locale arg0) {
+        return "jQAssistant";
+    }
+
+    public String getOutputName() {
+        return "jqassistant";
+    }
+
+    @Override
+    protected String getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    @Override
+    protected MavenProject getProject() {
+        return project;
+    }
+
+    @Override
+    protected Renderer getSiteRenderer() {
+        return siteRenderer;
     }
 }

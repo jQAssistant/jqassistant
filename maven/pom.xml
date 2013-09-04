@@ -12,6 +12,7 @@
 	<properties>
 		<org.apache.maven_version>3.0.5</org.apache.maven_version>
 		<org.apache.maven_project_version>2.2.1</org.apache.maven_project_version>
+        <org.apache.maven.reporting_version>2.0.5</org.apache.maven.reporting_version>
 	</properties>
 
 	<dependencyManagement>
@@ -36,7 +37,12 @@
 				<artifactId>maven-project</artifactId>
 				<version>${org.apache.maven_project_version}</version>
 			</dependency>
-		</dependencies>
+            <dependency>
+                <groupId>org.apache.maven.reporting</groupId>
+                <artifactId>maven-reporting-impl</artifactId>
+                <version>${org.apache.maven.reporting_version}</version>
+            </dependency>
+        </dependencies>
 	</dependencyManagement>
 
 	<modules>
