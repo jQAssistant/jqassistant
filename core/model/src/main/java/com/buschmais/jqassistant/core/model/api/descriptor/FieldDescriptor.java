@@ -8,7 +8,12 @@ import java.util.Set;
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
-public class FieldDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class FieldDescriptor extends ParentDescriptor implements NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+
+    /**
+     * The name of the field.
+     */
+    private String name;
 
     /**
      * The classes the field depends on.
@@ -49,6 +54,16 @@ public class FieldDescriptor extends ParentDescriptor implements DependentDescri
      * <code>true</code> if this class is synthetic, otherwise <code>false</code>.
      */
     private Boolean syntheticFiels;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
     @Override
     public Set<TypeDescriptor> getDependencies() {

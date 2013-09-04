@@ -8,7 +8,12 @@ import java.util.Set;
 /**
  * Describes a method of a Java class.
  */
-public class MethodDescriptor extends AbstractDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class MethodDescriptor extends AbstractDescriptor implements NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+
+    /**
+     * The name of the method
+    */
+    private String name;
 
     /**
      * The parameters of this this method.
@@ -79,6 +84,16 @@ public class MethodDescriptor extends AbstractDescriptor implements DependentDes
      * <code>true</code> if this method is synthetic, otherwise <code>false</code>.
      */
     private Boolean syntheticMethod;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Set<ParameterDescriptor> getParameters() {
         return parameters;

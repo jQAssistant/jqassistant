@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.*;
+import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
@@ -69,6 +72,7 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     @Override
     public Map<NodeProperty, Object> getProperties(FieldDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
+        properties.put(NodeProperty.NAME, descriptor.getName());
         if (descriptor.getVisibility() != null) {
             properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
         }
@@ -98,6 +102,9 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
         if (value != null) {
             super.setProperty(descriptor, property, value);
             switch (property) {
+                case NAME:
+                    descriptor.setName((String) value);
+                    break;
                 case STATIC:
                     descriptor.setStatic((Boolean) value);
                     break;

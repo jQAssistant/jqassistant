@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
+import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
 
@@ -58,4 +57,27 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<NodeProperty, Object> getProperties(PackageDescriptor descriptor) {
+        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
+        properties.put(NodeProperty.NAME, descriptor.getName());
+        return properties;
+    }
+
+    @Override
+    public void setProperty(PackageDescriptor descriptor, NodeProperty property, Object value) {
+        if (value != null) {
+            super.setProperty(descriptor, property, value);
+            switch (property) {
+                case NAME:
+                    descriptor.setName((String) value);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

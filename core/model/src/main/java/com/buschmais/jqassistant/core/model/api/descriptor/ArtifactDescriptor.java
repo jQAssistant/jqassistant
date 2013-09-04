@@ -5,7 +5,7 @@ package com.buschmais.jqassistant.core.model.api.descriptor;
  *
  * @author Herklotz
  */
-public class ArtifactDescriptor extends ParentDescriptor {
+public class ArtifactDescriptor extends ParentDescriptor implements NamedDescriptor {
 
     private String group;
     private String name;

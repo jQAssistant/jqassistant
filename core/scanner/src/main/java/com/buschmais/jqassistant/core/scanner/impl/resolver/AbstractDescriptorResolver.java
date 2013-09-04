@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.scanner.impl.resolver;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.model.api.descriptor.NamedDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Abstract resolver providing functionality to resolve a descriptor hierarchy from full qualified name.
@@ -11,7 +11,7 @@ import org.apache.commons.lang.StringUtils;
  * @param <P> The type of the parent descriptor.
  * @param <T> The type of the descriptor to be resolved.
  */
-public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T extends AbstractDescriptor> {
+public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & NamedDescriptor, T extends AbstractDescriptor & NamedDescriptor> {
 
     public static final String EMPTY_NAME = "";
     private final Store store;
@@ -64,17 +64,23 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor, T e
         T descriptor = store.find(getType(), fullQualifiedName);
         if (descriptor == null) {
             P parent = null;
+            String name;
             if (!EMPTY_NAME.equals(fullQualifiedName)) {
                 int separatorIndex = fullQualifiedName.lastIndexOf(getSeparator());
                 String parentName;
                 if (separatorIndex != -1) {
+                    name = fullQualifiedName.substring(separatorIndex + 1, fullQualifiedName.length());
                     parentName = fullQualifiedName.substring(0, separatorIndex);
                 } else {
+                    name = fullQualifiedName;
                     parentName = EMPTY_NAME;
                 }
                 parent = parentResolver.resolve(parentName);
+            } else {
+                name = EMPTY_NAME;
             }
             descriptor = store.create(getType(), fullQualifiedName);
+            descriptor.setName(name);
             if (parent != null) {
                 parent.getContains().add(descriptor);
             }

@@ -14,14 +14,14 @@ public enum NodeProperty {
     FQN,
 
     /**
+     * The name
+     */
+    NAME,
+
+    /**
      * Artifact group
      */
     GROUP,
-
-    /**
-     * Artifact name
-     */
-    NAME,
 
     /**
      * Artifact version
