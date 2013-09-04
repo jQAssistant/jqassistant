@@ -5,7 +5,6 @@ import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -31,12 +30,12 @@ public class ReportMojo extends AbstractAnalysisAggregatorMojo {
     @Override
     public void aggregate() throws MojoExecutionException, MojoFailureException {
         // Determine XML report file
-        File selectedXmlReportFile = getReportFile(xmlReportFile, REPORT_XML);
+        File selectedXmlReportFile = BaseProjectResolver.getReportFile(project, xmlReportFile, REPORT_XML);
         if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
             throw new MojoExecutionException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
         }
         // Determine HTML report file
-        File selectedHtmlReportFile = getReportFile(htmlReportFile, REPORT_HTML);
+        File selectedHtmlReportFile = BaseProjectResolver.getReportFile(project, htmlReportFile, REPORT_HTML);
         selectedHtmlReportFile.getParentFile().mkdirs();
         // Transform
         Source xmlSource = new StreamSource(selectedXmlReportFile);

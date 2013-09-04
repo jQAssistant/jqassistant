@@ -26,12 +26,11 @@ import java.io.IOException;
 
 /**
  * @goal server
- * @requiresProject false
  */
-public class ServerMojo extends AbstractAnalysisMojo {
+public class ServerMojo extends AbstractAnalysisAggregatorMojo {
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void aggregate() throws MojoExecutionException, MojoFailureException {
         execute(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {

@@ -49,7 +49,7 @@ public class ScanMojo extends AbstractAnalysisMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // reset the store if the current project is the base project (i.e. where the rules are located).
-        if (project != null && project.equals(getBaseProject())) {
+        if (project != null && project.equals(BaseProjectResolver.getBaseProject(project))) {
             reset();
         }
         scanDirectory(classesDirectory, false);
