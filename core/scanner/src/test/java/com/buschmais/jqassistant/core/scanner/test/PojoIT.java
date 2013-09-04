@@ -22,9 +22,15 @@ public class PojoIT extends AbstractScannerIT {
         TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
         assertThat(typeDescriptor.getJavaType(), is(JavaType.CLASS));
-        assertThat(query("MATCH t:TYPE:CLASS WHERE t.FQN =~ '.*Pojo' RETURN t.NAME as NAME").getColumn("NAME"), hasItem(equalTo("Pojo")));
-        assertThat(query("MATCH t:TYPE:CLASS-[:CONTAINS]->f:FIELD RETURN f.NAME as NAME").getColumn("NAME"), CoreMatchers.allOf(hasItem(equalTo("java.lang.String stringValue")), hasItem(equalTo("int intValue"))));
-        assertThat(query("MATCH t:TYPE:CLASS-[:CONTAINS]->m:METHOD RETURN m.NAME as NAME").getColumn("NAME"), CoreMatchers.allOf(hasItem(equalTo("java.lang.String getStringValue()")), hasItem(equalTo("void setStringValue(java.lang.String)")), hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
+        assertThat(query("MATCH t:TYPE:CLASS WHERE t.FQN =~ '.*Pojo' RETURN t.SIGNATURE as signature").getColumn("signature"), hasItem(equalTo("Pojo")));
+
+        testResult = query("MATCH t:TYPE:CLASS-[:CONTAINS]->f:FIELD RETURN f.SIGNATURE as signature, f.NAME as name");
+        assertThat(testResult.getColumn("signature"), allOf(hasItem(equalTo("java.lang.String stringValue")), hasItem(equalTo("int intValue"))));
+        assertThat(testResult.getColumn("name"), allOf(hasItem(equalTo("stringValue")), hasItem(equalTo("intValue"))));
+
+        testResult = query("MATCH t:TYPE:CLASS-[:CONTAINS]->m:METHOD RETURN m.SIGNATURE as signature, m.NAME as name");
+        assertThat(testResult.getColumn("signature"), allOf(hasItem(equalTo("java.lang.String getStringValue()")), hasItem(equalTo("void setStringValue(java.lang.String)")), hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
+        assertThat(testResult.getColumn("name"), allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")), hasItem(equalTo("setIntValue"))));
     }
 
 }

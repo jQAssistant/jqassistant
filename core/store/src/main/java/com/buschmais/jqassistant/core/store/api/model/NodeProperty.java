@@ -39,6 +39,11 @@ public enum NodeProperty {
     TYPE,
 
     /**
+     * The signature
+     */
+    SIGNATURE,
+
+    /**
      * <code>true</code> if the class or method is abstract, otherwise
      * <code>false</code>.
      */

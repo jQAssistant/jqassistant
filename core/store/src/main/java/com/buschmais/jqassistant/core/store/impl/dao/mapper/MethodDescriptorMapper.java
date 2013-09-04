@@ -88,7 +88,10 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     @Override
     public Map<NodeProperty, Object> getProperties(MethodDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.NAME, descriptor.getName());
+        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
+        if (descriptor.getName()!=null) {
+            properties.put(NodeProperty.NAME, descriptor.getName());
+        }
         if (descriptor.isAbstract() != null) {
             properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
         }
@@ -118,6 +121,9 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
         if (value != null) {
             super.setProperty(descriptor, property, value);
             switch (property) {
+                case SIGNATURE:
+                    descriptor.setSignature((String) value);
+                    break;
                 case NAME:
                     descriptor.setName((String) value);
                     break;

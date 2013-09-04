@@ -8,10 +8,15 @@ import java.util.Set;
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
-public class FieldDescriptor extends ParentDescriptor implements NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class FieldDescriptor extends ParentDescriptor implements SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
-     * The name of the field.
+     * The signature of the field.
+     */
+    private String signature;
+
+    /**
+     * The name of the method
      */
     private String name;
 
@@ -56,6 +61,16 @@ public class FieldDescriptor extends ParentDescriptor implements NamedDescriptor
     private Boolean syntheticFiels;
 
     @Override
+    public String getSignature() {
+        return signature;
+    }
+
+    @Override
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
@@ -64,6 +79,7 @@ public class FieldDescriptor extends ParentDescriptor implements NamedDescriptor
     public void setName(String name) {
         this.name = name;
     }
+
 
     @Override
     public Set<TypeDescriptor> getDependencies() {

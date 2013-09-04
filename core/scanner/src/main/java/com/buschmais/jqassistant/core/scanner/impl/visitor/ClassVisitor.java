@@ -53,8 +53,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        FieldDescriptor fieldDescriptor = getFieldDescriptor(typeDescriptor, name, desc);
+        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, visitorHelper.getFieldSignature(name, desc));
         typeDescriptor.getContains().add(fieldDescriptor);
+        fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
         setAccessModifier(access, fieldDescriptor);
@@ -71,8 +72,10 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
-        MethodDescriptor methodDescriptor = getMethodDescriptor(typeDescriptor, name, desc);
+        MethodDescriptor methodDescriptor =
+                visitorHelper.getMethodDescriptor(typeDescriptor, visitorHelper.getMethodSignature(name, desc));
         typeDescriptor.getContains().add(methodDescriptor);
+        methodDescriptor.setName(name);
         setAccessModifier(access, methodDescriptor);
         if (CONSTRUCTOR_METHOD.equals(name)) {
             methodDescriptor.setConstructor(Boolean.TRUE);
@@ -141,14 +144,6 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitEnd() {
-    }
-
-    protected MethodDescriptor getMethodDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
-        return visitorHelper.getMethodDescriptor(typeDescriptor, visitorHelper.getMethodSignature(name, desc));
-    }
-
-    protected FieldDescriptor getFieldDescriptor(TypeDescriptor typeDescriptor, String name, String desc) {
-        return visitorHelper.getFieldDescriptor(typeDescriptor, visitorHelper.getFieldSignature(name, desc));
     }
 
     /**

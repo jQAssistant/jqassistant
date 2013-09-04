@@ -63,7 +63,7 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     @Override
     public Map<NodeProperty, Object> getProperties(PackageDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.NAME, descriptor.getName());
+        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
         return properties;
     }
 
@@ -72,8 +72,8 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
         if (value != null) {
             super.setProperty(descriptor, property, value);
             switch (property) {
-                case NAME:
-                    descriptor.setName((String) value);
+                case SIGNATURE:
+                    descriptor.setSignature((String) value);
                     break;
                 default:
                     break;

@@ -8,11 +8,16 @@ import java.util.Set;
 /**
  * Describes a method of a Java class.
  */
-public class MethodDescriptor extends AbstractDescriptor implements NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class MethodDescriptor extends AbstractDescriptor implements SignatureDescriptor,NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+
+    /**
+     * The signature of the method
+    */
+    private String signature;
 
     /**
      * The name of the method
-    */
+     */
     private String name;
 
     /**
@@ -84,6 +89,16 @@ public class MethodDescriptor extends AbstractDescriptor implements NamedDescrip
      * <code>true</code> if this method is synthetic, otherwise <code>false</code>.
      */
     private Boolean syntheticMethod;
+
+    @Override
+    public String getSignature() {
+        return signature;
+    }
+
+    @Override
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
 
     @Override
     public String getName() {
