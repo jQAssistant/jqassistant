@@ -83,7 +83,7 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     @Override
     public Map<NodeProperty, Object> getProperties(TypeDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.NAME, descriptor.getName());
+        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
         if (descriptor.isAbstract() != null) {
             properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
         }
@@ -107,8 +107,8 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
         if (value != null) {
             super.setProperty(descriptor, property, value);
             switch (property) {
-                case NAME:
-                    descriptor.setName((String) value);
+                case SIGNATURE:
+                    descriptor.setSignature((String) value);
                     break;
                 case ABSTRACT:
                     descriptor.setAbstract((Boolean) value);

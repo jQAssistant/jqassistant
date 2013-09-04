@@ -3,18 +3,18 @@ package com.buschmais.jqassistant.core.model.api.descriptor;
 /**
  * Describes a Java package.
  */
-public class PackageDescriptor extends ParentDescriptor implements NamedDescriptor {
+public class PackageDescriptor extends ParentDescriptor implements SignatureDescriptor {
 
     /**
-     * The name of the package.
+     * The signature of the package.
      */
-    private String name;
+    private String signature;
 
-    public String getName() {
-        return name;
+    public String getSignature() {
+        return signature;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 }

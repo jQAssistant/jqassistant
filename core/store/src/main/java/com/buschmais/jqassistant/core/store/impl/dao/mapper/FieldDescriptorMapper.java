@@ -72,7 +72,10 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     @Override
     public Map<NodeProperty, Object> getProperties(FieldDescriptor descriptor) {
         Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.NAME, descriptor.getName());
+        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
+        if (descriptor.getName()!=null) {
+            properties.put(NodeProperty.NAME, descriptor.getName());
+        }
         if (descriptor.getVisibility() != null) {
             properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
         }
@@ -102,6 +105,9 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
         if (value != null) {
             super.setProperty(descriptor, property, value);
             switch (property) {
+                case SIGNATURE:
+                    descriptor.setSignature((String) value);
+                    break;
                 case NAME:
                     descriptor.setName((String) value);
                     break;

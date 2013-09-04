@@ -8,12 +8,12 @@ import java.util.Set;
 /**
  * Describes a Java type.
  */
-public class TypeDescriptor extends ParentDescriptor implements NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class TypeDescriptor extends ParentDescriptor implements SignatureDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
-     * The name of the class.
+     * The signature of the class.
      */
-    private String name;
+    private String signature;
 
     /**
      * The super class.
@@ -66,13 +66,13 @@ public class TypeDescriptor extends ParentDescriptor implements NamedDescriptor,
     private Boolean syntheticClass;
 
     @Override
-    public String getName() {
-        return name;
+    public String getSignature() {
+        return signature;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setSignature(String signature) {
+        this.signature = signature;
     }
 
     /**
