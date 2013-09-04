@@ -8,7 +8,12 @@ import java.util.Set;
 /**
  * Describes a Java type.
  */
-public class TypeDescriptor extends ParentDescriptor implements DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class TypeDescriptor extends ParentDescriptor implements NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+
+    /**
+     * The name of the class.
+     */
+    private String name;
 
     /**
      * The super class.
@@ -59,6 +64,16 @@ public class TypeDescriptor extends ParentDescriptor implements DependentDescrip
      * <code>true</code> if this class is synthetic, otherwise <code>false</code>.
      */
     private Boolean syntheticClass;
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Return the super class.
