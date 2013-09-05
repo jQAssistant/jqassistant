@@ -5,8 +5,8 @@ import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
 
@@ -18,7 +18,7 @@ import java.util.Set;
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.FIELD;
 
 /**
- * A mapper for {@link FieldDescriptor}s.
+ * A store for {@link FieldDescriptor}s.
  */
 public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescriptor> {
 
@@ -30,7 +30,7 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     }
 
     @Override
-    public NodeLabel getCoreLabel() {
+    public PrimaryLabel getPrimaryLabel() {
         return FIELD;
     }
 

@@ -5,8 +5,8 @@ import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypedValueDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.*;
-import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import com.buschmais.jqassistant.core.store.api.model.ValueLabel;
 import org.neo4j.graphdb.Label;
@@ -16,7 +16,7 @@ import java.util.*;
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.VALUE;
 
 /**
- * A mapper for {@link com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor}s.
+ * A store for {@link com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor}s.
  */
 public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescriptor> {
 
@@ -32,7 +32,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
     }
 
     @Override
-    public NodeLabel getCoreLabel() {
+    public PrimaryLabel getPrimaryLabel() {
         return VALUE;
     }
 

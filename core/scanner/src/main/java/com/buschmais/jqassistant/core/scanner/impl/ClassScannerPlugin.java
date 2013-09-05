@@ -30,21 +30,19 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.core.scanner.impl.visitor.ClassVisitor;
 import com.buschmais.jqassistant.core.scanner.impl.visitor.VisitorHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.objectweb.asm.ClassReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
 /**
- * Implementation of the {@link ArtifactScannerPlugin} for java classes.
+ * Implementation of the {@link com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin} for java classes.
  */
-public class ClassScannerPlugin implements ArtifactScannerPlugin<TypeDescriptor> {
+public class ClassScannerPlugin implements FileScannerPlugin<TypeDescriptor> {
 
     private int scannedClasses;
 

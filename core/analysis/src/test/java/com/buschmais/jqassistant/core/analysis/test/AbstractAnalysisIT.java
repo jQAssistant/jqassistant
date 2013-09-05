@@ -2,11 +2,12 @@ package com.buschmais.jqassistant.core.analysis.test;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
+import com.buschmais.jqassistant.core.analysis.api.PluginReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.PluginReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
@@ -33,8 +34,9 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
 
     @BeforeClass
     public static void readRules() {
-        CatalogReader catalogReader = new CatalogReaderImpl();
-        List<Source> sources = catalogReader.readCatalogs();
+        PluginReader pluginReader = new PluginReaderImpl();
+        List<JqassistantPlugin> plugins = pluginReader.readPlugins();
+        List<Source> sources = pluginReader.getRuleSources(plugins);
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());

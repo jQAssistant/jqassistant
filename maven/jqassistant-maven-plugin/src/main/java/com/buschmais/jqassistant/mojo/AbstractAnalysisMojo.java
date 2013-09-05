@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.core.analysis.api.CatalogReader;
+import com.buschmais.jqassistant.core.analysis.api.PluginReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
-import com.buschmais.jqassistant.core.analysis.impl.CatalogReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.PluginReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
@@ -119,7 +120,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * The catalog reader instance.
      */
-    private CatalogReader catalogReader = new CatalogReaderImpl();
+    private PluginReader pluginReader = new PluginReaderImpl();
 
     /**
      * The rules reader instance.
@@ -186,10 +187,11 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
                 sources.add(new StreamSource(ruleFile));
             }
         }
-        sources.addAll(catalogReader.readCatalogs());
+        List<JqassistantPlugin> plugin = pluginReader.readPlugins();
+        List<Source> ruleSources = pluginReader.getRuleSources(plugin);
+        sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
-
 
     /**
      * Retrieves the list of available rules from the rules directory.

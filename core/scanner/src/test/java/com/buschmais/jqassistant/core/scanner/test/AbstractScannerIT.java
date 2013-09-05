@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.core.scanner.test;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
@@ -64,11 +64,11 @@ public abstract class AbstractScannerIT {
      *
      * @return The artifact scanner instance.
      */
-    protected ArtifactScanner getArtifactScanner() {
-        List<ArtifactScannerPlugin> plugins = new ArrayList<>();
+    protected FileScanner getArtifactScanner() {
+        List<FileScannerPlugin> plugins = new ArrayList<>();
         plugins.add(this.packageScannerPlugin);
         plugins.add(this.classScannerPlugin);
-        return new ArtifactScannerImpl(store, plugins);
+        return new FileScannerImpl(store, plugins);
     }
 
     /**

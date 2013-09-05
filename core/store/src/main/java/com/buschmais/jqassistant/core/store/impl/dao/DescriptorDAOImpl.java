@@ -99,7 +99,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     public <T extends Descriptor> void persist(T descriptor) {
         LOGGER.debug("Creating node for '{}'.", descriptor.getFullQualifiedName());
         DescriptorMapper<T> adapter = registry.getDescriptorMapper(descriptor.getClass());
-        Node node = database.createNode(adapter.getCoreLabel());
+        Node node = database.createNode(adapter.getPrimaryLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         descriptorCache.put(descriptor);
     }
@@ -126,7 +126,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         if (id != null) {
             node = database.getNodeById(id);
         } else {
-            ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getCoreLabel(), NodeProperty.FQN.name(), fullQualifiedName);
+            ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getPrimaryLabel(), NodeProperty.FQN.name(), fullQualifiedName);
             ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
             try {
                 if (iterator.hasNext()) {
@@ -169,7 +169,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      *
      * @param descriptor The descriptor.
      * @param node       The node.
-     * @param mapper     The mapper.
+     * @param mapper     The store.
      */
     private <T extends Descriptor> void flushRelations(T descriptor, Node node, DescriptorMapper<T> mapper) {
         Map<Relation, Set<? extends Descriptor>> relations = mapper.getRelations(descriptor);
@@ -202,7 +202,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      *
      * @param descriptor The descriptor.
      * @param node       The node.
-     * @param mapper     The mapper.
+     * @param mapper     The store.
      */
     private <T extends Descriptor> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
         Map<NodeProperty, Object> properties = mapper.getProperties(descriptor);
@@ -235,7 +235,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      *
      * @param descriptor The descriptor.
      * @param node       The node.
-     * @param mapper     The mapper.
+     * @param mapper     The store.
      */
 
     private <T extends Descriptor> void flushLabels(T descriptor, Node node, DescriptorMapper<T> mapper) {

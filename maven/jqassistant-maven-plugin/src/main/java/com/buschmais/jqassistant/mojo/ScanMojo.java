@@ -18,9 +18,9 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.ArtifactScannerImpl;
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -95,10 +95,10 @@ public class ScanMojo extends AbstractAnalysisMojo {
                         artifactDescriptor.setClassifier(artifact.getClassifier());
                         artifactDescriptor.setType(type);
                     }
-                    List<ArtifactScannerPlugin> scannerPlugins = new ArrayList<>();
+                    List<FileScannerPlugin> scannerPlugins = new ArrayList<>();
                     scannerPlugins.add(new PackageScannerPlugin());
                     scannerPlugins.add(new ClassScannerPlugin());
-                    ArtifactScanner scanner = new ArtifactScannerImpl(store, scannerPlugins);
+                    FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
                     try {
                         for (Descriptor descriptor : scanner.scanDirectory(directory)) {
                             artifactDescriptor.getContains().add(descriptor);

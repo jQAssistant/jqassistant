@@ -1,4 +1,4 @@
-<v1:jqassistant-catalog xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/catalog/schema/v1.0">
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
     <rules>
         <resources>
             <resource>dependency.xml</resource>
@@ -6,4 +6,4 @@
             <resource>package.xml</resource>
         </resources>
     </rules>
-</v1:jqassistant-catalog>
+</v1:jqassistant-plugin>
