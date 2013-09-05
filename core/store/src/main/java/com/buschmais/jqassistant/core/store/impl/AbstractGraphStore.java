@@ -4,19 +4,19 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
-import com.buschmais.jqassistant.core.store.impl.dao.mapper.*;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.buschmais.jqassistant.core.store.api.model.NodeProperty.FQN;
 
@@ -48,11 +48,13 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start(List<DescriptorMapper<?>> mappers) {
         database = startDatabase();
-        List<PrimaryLabel> primaryLabels = new ArrayList<>();
+        Set<PrimaryLabel> primaryLabels = new HashSet<>();
         mapperRegistry = new DescriptorMapperRegistry();
         for (DescriptorMapper<?> mapper : mappers) {
+            if (!primaryLabels.add(mapper.getPrimaryLabel())) {
+                throw new IllegalStateException("Primary label is already defined " + mapper.getPrimaryLabel() + ":" + primaryLabels);
+            }
             mapperRegistry.register(mapper);
-            primaryLabels.add(mapper.getPrimaryLabel());
         }
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
         beginTransaction();
