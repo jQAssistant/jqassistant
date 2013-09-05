@@ -1,17 +1,16 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.PackageDescriptorResolver;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import java.io.IOException;
 
 /**
- * Implementation of the {@link ArtifactScannerPlugin} for java packages.
+ * Implementation of the {@link com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin} for java packages.
  */
-public class PackageScannerPlugin implements ArtifactScannerPlugin<PackageDescriptor> {
+public class PackageScannerPlugin implements FileScannerPlugin<PackageDescriptor> {
 
     @Override
     public boolean matches(String file, boolean isDirectory) {

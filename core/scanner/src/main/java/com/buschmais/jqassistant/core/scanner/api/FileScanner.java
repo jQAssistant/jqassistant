@@ -10,7 +10,7 @@ import java.net.URL;
 /**
  * Defines the interface for an artifact scanner.
  */
-public interface ArtifactScanner {
+public interface FileScanner {
 
     /**
      * Scans an archive,e .g. JAR file.

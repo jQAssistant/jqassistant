@@ -5,8 +5,8 @@ import com.buschmais.jqassistant.core.model.api.descriptor.JavaType;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
 
@@ -18,7 +18,7 @@ import java.util.Set;
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.TYPE;
 
 /**
- * A mapper for {@link TypeDescriptor}s.
+ * A store for {@link TypeDescriptor}s.
  */
 public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor> {
 
@@ -30,7 +30,7 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    public NodeLabel getCoreLabel() {
+    public PrimaryLabel getPrimaryLabel() {
         return TYPE;
     }
 

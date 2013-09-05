@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScanner;
-import com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
@@ -16,12 +16,12 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.buschmais.jqassistant.core.scanner.api.ArtifactScannerPlugin.InputStreamSource;
+import static com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin.InputStreamSource;
 
 /**
- * Implementation of the {@link ArtifactScanner}.
+ * Implementation of the {@link com.buschmais.jqassistant.core.scanner.api.FileScanner}.
  */
-public class ArtifactScannerImpl implements ArtifactScanner {
+public class FileScannerImpl implements FileScanner {
 
     private abstract class AbstractIterable<E> implements Iterable<Descriptor> {
 
@@ -83,17 +83,17 @@ public class ArtifactScannerImpl implements ArtifactScanner {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactScannerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerImpl.class);
 
     private Store store;
-    private Collection<ArtifactScannerPlugin> plugins;
+    private Collection<FileScannerPlugin> plugins;
 
     /**
      * Constructor.
      *
-     * @param plugins The {@link ArtifactScannerPlugin}s to use for scanning.
+     * @param plugins The {@link com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin}s to use for scanning.
      */
-    public ArtifactScannerImpl(Store store, Collection<ArtifactScannerPlugin> plugins) {
+    public FileScannerImpl(Store store, Collection<FileScannerPlugin> plugins) {
         this.store = store;
         this.plugins = plugins;
     }
@@ -298,7 +298,7 @@ public class ArtifactScannerImpl implements ArtifactScanner {
      * @throws IOException If scanning fails.
      */
     private Descriptor scanFile(String name, InputStreamSource streamSource) throws IOException {
-        for (ArtifactScannerPlugin plugin : this.plugins) {
+        for (FileScannerPlugin plugin : this.plugins) {
             if (plugin.matches(name, false)) {
                 LOGGER.info("Scanning file '{}'", name);
                 return plugin.scanFile(store, streamSource);
@@ -314,7 +314,7 @@ public class ArtifactScannerImpl implements ArtifactScanner {
      * @throws IOException If scanning fails.
      */
     private Descriptor scanDirectory(String name) throws IOException {
-        for (ArtifactScannerPlugin plugin : this.plugins) {
+        for (FileScannerPlugin plugin : this.plugins) {
             if (plugin.matches(name, true)) {
                 LOGGER.info("Scanning directory '{}'", name);
                 return plugin.scanDirectory(store, name);

@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.METHOD;
 
 /**
- * A mapper for {@link MethodDescriptor}s.
+ * A store for {@link MethodDescriptor}s.
  */
 public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescriptor> {
 
@@ -27,7 +28,7 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     }
 
     @Override
-    public NodeLabel getCoreLabel() {
+    public PrimaryLabel getPrimaryLabel() {
         return METHOD;
     }
 

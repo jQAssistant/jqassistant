@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
 import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
 
@@ -26,11 +27,11 @@ public interface DescriptorMapper<T extends Descriptor> {
     public Set<Class<? extends T>> getJavaType();
 
     /**
-     * Return the {@link NodeLabel}s.
+     * Return the {@link PrimaryLabel}.
      *
-     * @return The {@link NodeLabel}s.
+     * @return The {@link PrimaryLabel}.
      */
-    public NodeLabel getCoreLabel();
+    public PrimaryLabel getPrimaryLabel();
 
     /**
      * Creates a descriptor instance.

@@ -18,7 +18,7 @@ public class DescriptorMapperRegistry {
     private final Map<String, DescriptorMapper<?>> mappersByCoreLabel = new HashMap<>();
 
     /**
-     * Register a mapper.
+     * Register a store.
      *
      * @param mapper The Mapper.
      */
@@ -26,15 +26,15 @@ public class DescriptorMapperRegistry {
         for (Class<? extends Descriptor> javaType : mapper.getJavaType()) {
             this.mappersByJavaType.put(javaType, mapper);
         }
-        this.mappersByCoreLabel.put(mapper.getCoreLabel().name(), mapper);
+        this.mappersByCoreLabel.put(mapper.getPrimaryLabel().name(), mapper);
     }
 
     /**
-     * Return the mapper for a given node.
+     * Return the store for a given node.
      *
      * @param node The node.
      * @param <T>  The descriptor types.
-     * @return The mapper.
+     * @return The store.
      */
     @SuppressWarnings("unchecked")
     public <T extends Descriptor> DescriptorMapper<T> getDescriptorMapper(Node node) {
@@ -54,17 +54,17 @@ public class DescriptorMapperRegistry {
     }
 
     /**
-     * Return the mapper for the given java types.
+     * Return the store for the given java types.
      *
      * @param javaType The java types.
      * @param <T>      The descriptor types.
-     * @return The mapper.
+     * @return The store.
      */
     @SuppressWarnings("unchecked")
     public <T extends Descriptor> DescriptorMapper<T> getDescriptorMapper(Class<?> javaType) {
         DescriptorMapper<T> mapper = (DescriptorMapper<T>) mappersByJavaType.get(javaType);
         if (mapper == null) {
-            throw new IllegalArgumentException("Cannot find mapper for java type " + javaType);
+            throw new IllegalArgumentException("Cannot find store for java type " + javaType);
         }
         return mapper;
     }
