@@ -153,18 +153,18 @@
                     </executions>
                     <dependencies>
                         <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>jqassistant.rules.java</artifactId>
+                            <groupId>com.buschmais.jqassistant.plugin</groupId>
+                            <artifactId>jqassistant.plugin.java</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                         <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>jqassistant.rules.javaee</artifactId>
+                            <groupId>com.buschmais.jqassistant.plugin</groupId>
+                            <artifactId>jqassistant.plugin.javaee</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                         <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>jqassistant.rules.junit4</artifactId>
+                            <groupId>com.buschmais.jqassistant.plugin</groupId>
+                            <artifactId>jqassistant.plugin.junit4</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>
@@ -268,7 +268,7 @@
         <module>core</module>
         <module>maven</module>
         <module>test</module>
-        <module>rules</module>
+        <module>plugin</module>
     </modules>
 
 </project>

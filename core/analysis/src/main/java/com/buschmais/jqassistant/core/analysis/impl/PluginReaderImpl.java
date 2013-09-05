@@ -61,7 +61,7 @@ public class PluginReaderImpl implements PluginReader {
             unmarshaller.setSchema(JaxbHelper.getSchema(PLUGIN_SCHEMA_RESOURCE));
             return unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantPlugin.class).getValue();
         } catch (JAXBException e) {
-            throw new IllegalArgumentException("Cannot read plugin from URL " + pluginUrl.toString(), e);
+            throw new IllegalArgumentException("Cannot read plugin from " + pluginUrl.toString(), e);
         }
     }
 
