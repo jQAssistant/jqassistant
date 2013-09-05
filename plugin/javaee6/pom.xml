@@ -7,7 +7,7 @@
         <version>1.0.0-M2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant.plugin.javaee</artifactId>
+    <artifactId>jqassistant.plugin.javaee6</artifactId>
 
     <build>
         <plugins>

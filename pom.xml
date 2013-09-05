@@ -159,7 +159,7 @@
                         </dependency>
                         <dependency>
                             <groupId>com.buschmais.jqassistant.plugin</groupId>
-                            <artifactId>jqassistant.plugin.javaee</artifactId>
+                            <artifactId>jqassistant.plugin.javaee6</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                         <dependency>

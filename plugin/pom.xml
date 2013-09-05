@@ -29,7 +29,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.javaee</artifactId>
+                <artifactId>jqassistant.plugin.javaee6</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -39,7 +39,7 @@
         <module>java</module>
         <module>jpa2</module>
         <module>ejb3</module>
-        <module>javaee</module>
+        <module>javaee6</module>
         <module>junit4</module>
     </modules>
 
