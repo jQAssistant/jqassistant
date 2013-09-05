@@ -1,0 +1,15 @@
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+    <store>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.ArtifactDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.PackageDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.TypeDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.MethodDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.ParameterDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.FieldDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.core.store.impl.dao.mapper.ValueDescriptorMapper</mapper>
+    </store>
+    <scanner>
+        <plugin>com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin</plugin>
+    </scanner>
+</v1:jqassistant-plugin>

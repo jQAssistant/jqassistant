@@ -4,12 +4,13 @@ import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.*;
 import org.junit.After;
 import org.junit.Before;
 
@@ -28,27 +29,15 @@ public abstract class AbstractScannerIT {
     protected Store store;
 
     /**
-     * The package scanner plugin
-     */
-    protected PackageScannerPlugin packageScannerPlugin;
-
-    /**
-     * The class scanner plugin.
-     */
-    protected ClassScannerPlugin classScannerPlugin;
-
-    /**
      * Initializes and resets the store.
      */
     @Before
     public void startStore() {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        store.start();
+        store.start(getDescriptorMappers());
         store.beginTransaction();
         store.reset();
         store.commitTransaction();
-        this.packageScannerPlugin = new PackageScannerPlugin();
-        this.classScannerPlugin = new ClassScannerPlugin();
     }
 
     /**
@@ -60,15 +49,41 @@ public abstract class AbstractScannerIT {
     }
 
     /**
+     * Return the list of descriptor mappers used by the test.
+     *
+     * @return The descriptor mappers.
+     */
+    protected List<DescriptorMapper<?>> getDescriptorMappers() {
+        List<DescriptorMapper<?>> mappers = new ArrayList<>();
+        mappers.add(new ArtifactDescriptorMapper());
+        mappers.add(new PackageDescriptorMapper());
+        mappers.add(new TypeDescriptorMapper());
+        mappers.add(new MethodDescriptorMapper());
+        mappers.add(new ParameterDescriptorMapper());
+        mappers.add(new FieldDescriptorMapper());
+        mappers.add(new ValueDescriptorMapper());
+        return mappers;
+    }
+
+    /**
+     * Return the list of scanner plugins used by the test.
+     *
+     * @return The scanner plugins.
+     */
+    protected List<FileScannerPlugin<?>> getScannerPlugins() {
+        List<FileScannerPlugin<?>> plugins = new ArrayList<>();
+        plugins.add(new PackageScannerPlugin());
+        plugins.add(new ClassScannerPlugin());
+        return plugins;
+    }
+
+    /**
      * Return an initialized artifact scanner instance.
      *
      * @return The artifact scanner instance.
      */
     protected FileScanner getArtifactScanner() {
-        List<FileScannerPlugin> plugins = new ArrayList<>();
-        plugins.add(this.packageScannerPlugin);
-        plugins.add(this.classScannerPlugin);
-        return new FileScannerImpl(store, plugins);
+        return new FileScannerImpl(store, getScannerPlugins());
     }
 
     /**
@@ -93,7 +108,8 @@ public abstract class AbstractScannerIT {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
         if (artifact == null) {
             artifact = store.create(ArtifactDescriptor.class, artifactId);
-        } for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
+        }
+        for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();

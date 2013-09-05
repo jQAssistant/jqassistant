@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.store.api;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,17 +14,17 @@ public interface Store {
     /**
      * Start the store.
      * <p>
-     * This method must be called before any other method of this interface can
-     * be used.
+     * This method must be called before any other method of this interface can be used.
      * </p>
+     *
+     * @param mappers The mappers to use.
      */
-    void start();
+    void start(List<DescriptorMapper<?>> mappers);
 
     /**
      * Stop the store.
      * <p>
-     * After calling this method no other method defined within this interface
-     * can be called.
+     * After calling this method no other method defined within this interface can be called.
      * </p>
      */
     void stop();
@@ -49,8 +51,7 @@ public interface Store {
     /**
      * Commit a transaction.
      * <p>
-     * This method must be called to permanently store the changes of executed
-     * write operations.
+     * This method must be called to permanently store the changes of executed write operations.
      * </p>
      */
     void commitTransaction();

@@ -1,19 +1,17 @@
 package com.buschmais.jqassistant.core.analysis.test;
 
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.PluginReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.PluginReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.test.AbstractScannerIT;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -32,11 +30,12 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
 
     protected InMemoryReportWriter reportWriter;
 
+    private PluginReader pluginReader = new PluginReaderImpl();
+
     @BeforeClass
     public static void readRules() {
         PluginReader pluginReader = new PluginReaderImpl();
-        List<JqassistantPlugin> plugins = pluginReader.readPlugins();
-        List<Source> sources = pluginReader.getRuleSources(plugins);
+        List<Source> sources = pluginReader.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
@@ -48,6 +47,24 @@ public class AbstractAnalysisIT extends AbstractScannerIT {
     public void initializeAnalyzer() {
         reportWriter = new InMemoryReportWriter();
         analyzer = new AnalyzerImpl(store, reportWriter);
+    }
+
+    @Override
+    protected List<DescriptorMapper<?>> getDescriptorMappers() {
+        try {
+            return pluginReader.getDescriptorMappers();
+        } catch (PluginReaderException e) {
+            throw new IllegalStateException("Cannot get descriptor mappers.", e);
+        }
+    }
+
+    @Override
+    protected List<FileScannerPlugin<?>> getScannerPlugins() {
+        try {
+            return pluginReader.getScannerPlugins();
+        } catch (PluginReaderException e) {
+            throw new IllegalStateException("Cannot get scanner plugins.", e);
+        }
     }
 
     /**

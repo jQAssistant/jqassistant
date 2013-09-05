@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.*;
@@ -12,7 +13,9 @@ import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.buschmais.jqassistant.core.store.api.model.NodeProperty.FQN;
@@ -43,19 +46,17 @@ public abstract class AbstractGraphStore implements Store {
     private DescriptorDAO descriptorDAO;
 
     @Override
-    public void start() {
+    public void start(List<DescriptorMapper<?>> mappers) {
         database = startDatabase();
+        List<PrimaryLabel> primaryLabels = new ArrayList<>();
         mapperRegistry = new DescriptorMapperRegistry();
-        mapperRegistry.register(new ArtifactDescriptorMapper());
-        mapperRegistry.register(new PackageDescriptorMapper());
-        mapperRegistry.register(new TypeDescriptorMapper());
-        mapperRegistry.register(new MethodDescriptorMapper());
-        mapperRegistry.register(new ParameterDescriptorMapper());
-        mapperRegistry.register(new FieldDescriptorMapper());
-        mapperRegistry.register(new ValueDescriptorMapper());
+        for (DescriptorMapper<?> mapper : mappers) {
+            mapperRegistry.register(mapper);
+            primaryLabels.add(mapper.getPrimaryLabel());
+        }
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
         beginTransaction();
-        for (NodeLabel label : NodeLabel.values()) {
+        for (PrimaryLabel label : primaryLabels) {
             IndexDefinition index = null;
             for (IndexDefinition indexDefinition : database.schema().getIndexes(label)) {
                 for (String s : indexDefinition.getPropertyKeys()) {
