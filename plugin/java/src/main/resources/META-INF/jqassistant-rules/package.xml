@@ -1,0 +1,33 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <constraint id="package:PackageNameMustStartWithArtifactGroup">
+        <description>Verifies that all package names within an artifact start with the group name.</description>
+        <cypher><![CDATA[
+            MATCH
+                (artifact:ARTIFACT)-[:CONTAINS]->(t:TYPE),
+                (package:PACKAGE)-[:CONTAINS]->(t)
+            WHERE NOT
+                package.FQN =~ (artifact.GROUP + ".*")
+            RETURN DISTINCT
+                artifact, package
+            ORDER BY
+                artifact.FQN, package.FQN
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="package:PackageNameMustContainArtifactName">
+        <description>Verifies that all package names within an artifact contain the artifact name.</description>
+        <cypher><![CDATA[
+            MATCH
+                (artifact:ARTIFACT)-[:CONTAINS]->(t:TYPE),
+                (package:PACKAGE)-[:CONTAINS]->(t)
+            WHERE NOT
+                package.FQN =~ (".*" + artifact.NAME + ".*")
+            RETURN DISTINCT
+                artifact, package
+            ORDER BY
+                artifact.FQN, package.FQN
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
