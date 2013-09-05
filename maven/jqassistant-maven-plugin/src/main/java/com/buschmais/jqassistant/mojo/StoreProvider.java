@@ -2,11 +2,13 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,13 +40,13 @@ public class StoreProvider {
      * @param databaseDirectory The database directory to use.
      * @return The {@link Store} instance.
      */
-    public Store getStore(final File databaseDirectory) {
+    public Store getStore(final File databaseDirectory, List<DescriptorMapper<?>> mappers) {
         Store store = stores.get(databaseDirectory);
         if (store == null) {
             LOGGER.info("Opening store in directory '{}'.", databaseDirectory.getAbsolutePath());
             databaseDirectory.getParentFile().mkdirs();
             store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
-            store.start();
+            store.start(mappers);
             stores.put(databaseDirectory, store);
         }
         return store;

@@ -1,18 +1,15 @@
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.impl.PluginReaderImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -120,7 +117,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * The catalog reader instance.
      */
-    private PluginReader pluginReader = new PluginReaderImpl();
+    protected PluginReader pluginReader = new PluginReaderImpl();
 
     /**
      * The rules reader instance.
@@ -151,16 +148,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         return operation.run(getStore());
     }
 
-    private Store getStore() throws MojoExecutionException {
-        File directory;
-        if (storeDirectory != null) {
-            directory = storeDirectory;
-        } else {
-            directory = new File(BaseProjectResolver.getBaseProject(project).getBuild().getDirectory() + "/jqassistant/store");
-        }
-        return storeProvider.getStore(directory);
-    }
-
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
@@ -187,8 +174,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
                 sources.add(new StreamSource(ruleFile));
             }
         }
-        List<JqassistantPlugin> plugin = pluginReader.readPlugins();
-        List<Source> ruleSources = pluginReader.getRuleSources(plugin);
+        List<Source> ruleSources = pluginReader.getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
@@ -306,5 +292,25 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         }
     }
 
-
+    /**
+     * Return the store instance to use.
+     *
+     * @return The store instance.
+     * @throws MojoExecutionException If the store cannot be created.
+     */
+    private Store getStore() throws MojoExecutionException {
+        File directory;
+        if (storeDirectory != null) {
+            directory = storeDirectory;
+        } else {
+            directory = new File(BaseProjectResolver.getBaseProject(project).getBuild().getDirectory() + "/jqassistant/store");
+        }
+        List<DescriptorMapper<?>> descriptorMappers;
+        try {
+            descriptorMappers = pluginReader.getDescriptorMappers();
+        } catch (PluginReaderException e) {
+            throw new MojoExecutionException("Cannot get descriptor mappers.", e);
+        }
+        return storeProvider.getStore(directory, descriptorMappers);
+    }
 }

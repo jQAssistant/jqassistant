@@ -86,14 +86,14 @@ public class FileScannerImpl implements FileScanner {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerImpl.class);
 
     private Store store;
-    private Collection<FileScannerPlugin> plugins;
+    private Collection<FileScannerPlugin<?>> plugins;
 
     /**
      * Constructor.
      *
      * @param plugins The {@link com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin}s to use for scanning.
      */
-    public FileScannerImpl(Store store, Collection<FileScannerPlugin> plugins) {
+    public FileScannerImpl(Store store, Collection<FileScannerPlugin<?>> plugins) {
         this.store = store;
         this.plugins = plugins;
     }

@@ -16,13 +16,12 @@
 
 package com.buschmais.jqassistant.mojo;
 
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
-import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -30,7 +29,6 @@ import org.apache.maven.plugin.MojoFailureException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -52,8 +50,14 @@ public class ScanMojo extends AbstractAnalysisMojo {
         if (project != null && project.equals(BaseProjectResolver.getBaseProject(project))) {
             reset();
         }
-        scanDirectory(classesDirectory, false);
-        scanDirectory(testClassesDirectory, true);
+        List<FileScannerPlugin<?>> scannerPlugins = null;
+        try {
+            scannerPlugins = pluginReader.getScannerPlugins();
+        } catch (PluginReaderException e) {
+            throw new MojoExecutionException("Cannot get scanner plugins.", e);
+        }
+        scanDirectory(classesDirectory, false, scannerPlugins);
+        scanDirectory(testClassesDirectory, true, scannerPlugins);
     }
 
     /**
@@ -75,7 +79,7 @@ public class ScanMojo extends AbstractAnalysisMojo {
      * @param directory The directory.
      * @throws MojoExecutionException If scanning fails.
      */
-    private void scanDirectory(final File directory, final boolean testJar) throws MojoExecutionException, MojoFailureException {
+    private void scanDirectory(final File directory, final boolean testJar, final List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException, MojoFailureException {
         if (!directory.exists()) {
             getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
         } else {
@@ -95,9 +99,6 @@ public class ScanMojo extends AbstractAnalysisMojo {
                         artifactDescriptor.setClassifier(artifact.getClassifier());
                         artifactDescriptor.setType(type);
                     }
-                    List<FileScannerPlugin> scannerPlugins = new ArrayList<>();
-                    scannerPlugins.add(new PackageScannerPlugin());
-                    scannerPlugins.add(new ClassScannerPlugin());
                     FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
                     try {
                         for (Descriptor descriptor : scanner.scanDirectory(directory)) {
