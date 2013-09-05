@@ -1,0 +1,13 @@
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+    <store>
+        <mapper>com.buschmais.jqassistant.plugin.jpa2.impl.store.PersistenceUnitMapper</mapper>
+    </store>
+    <scanner>
+        <plugin>com.buschmais.jqassistant.plugin.jpa2.impl.scanner.PersistenceUnitScanner</plugin>
+    </scanner>
+    <rules>
+        <resources>
+            <resource>jpa2.xml</resource>
+        </resources>
+    </rules>
+</v1:jqassistant-plugin>
