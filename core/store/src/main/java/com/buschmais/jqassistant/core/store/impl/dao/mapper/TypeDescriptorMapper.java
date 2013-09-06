@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.TYPE;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.Label.label;
 
 /**
  * A store for {@link TypeDescriptor}s.
@@ -136,7 +137,7 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
         Set<Label> labels = new HashSet<>();
         final JavaType javaType = descriptor.getJavaType();
         if (javaType != null) {
-            labels.add(new com.buschmais.jqassistant.core.store.impl.dao.mapper.Label(javaType));
+            labels.add(label(javaType));
         }
         return labels;
     }

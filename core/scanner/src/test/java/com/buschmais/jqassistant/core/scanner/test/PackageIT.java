@@ -63,20 +63,4 @@ public class PackageIT extends AbstractScannerIT {
         assertThat(query.getRows().size(), equalTo(1));
         assertThat(query.getColumn("p"), hasItem(packageDescriptor(PackageIT.class.getPackage().getName() + ".set.empty")));
     }
-
-    private void scanTestClassesDirectory() throws IOException {
-        // Determine test classes directory.
-        URL resource = Pojo.class.getResource("/");
-        String file = resource.getFile();
-        File directory = new File(file);
-        Assert.assertTrue("Expected a directory.", directory.isDirectory());
-        // Scan.
-        store.beginTransaction();
-        ArtifactDescriptor artifact = store.create(ArtifactDescriptor.class, "artifact");
-        for (Descriptor descriptor : getArtifactScanner().scanDirectory(directory)) {
-            artifact.getContains().add(descriptor);
-        }
-        store.commitTransaction();
-    }
-
 }

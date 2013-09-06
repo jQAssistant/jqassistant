@@ -8,13 +8,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Dirk Mahler
- * Date: 29.07.13
- * Time: 22:42
- * To change this template use File | Settings | File Templates.
+ * Provides utility functions for working with XML files.
  */
-public class JaxbHelper {
+public class XmlHelper {
 
     public static Schema getSchema(String resource) {
         Schema schema;
