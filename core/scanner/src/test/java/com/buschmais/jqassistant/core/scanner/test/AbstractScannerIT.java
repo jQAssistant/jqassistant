@@ -7,13 +7,16 @@ import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ClassScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.PackageScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.test.set.pojo.Pojo;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.*;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -136,6 +139,26 @@ public abstract class AbstractScannerIT {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
         for (Descriptor descriptor : getArtifactScanner().scanURLs(urls)) {
+            artifact.getContains().add(descriptor);
+        }
+        store.commitTransaction();
+    }
+
+
+    /**
+     * Scans the test classes directory.
+     * @throws IOException If scanning fails.
+     */
+    protected void scanTestClassesDirectory() throws IOException {
+        // Determine test classes directory.
+        URL resource = Pojo.class.getResource("/");
+        String file = resource.getFile();
+        File directory = new File(file);
+        Assert.assertTrue("Expected a directory.", directory.isDirectory());
+        // Scan.
+        store.beginTransaction();
+        ArtifactDescriptor artifact = store.create(ArtifactDescriptor.class, "artifact");
+        for (Descriptor descriptor : getArtifactScanner().scanDirectory(directory)) {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();

@@ -28,4 +28,15 @@ public class Jpa2IT extends AbstractAnalysisIT {
         applyConcept("jpa2:Entity");
         assertThat(query("MATCH (e:TYPE:ENTITY) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
     }
+
+    /**
+     * Verifies scanning of persistence descriptors.
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void persistenceDescriptor() throws IOException, AnalyzerException {
+        scanTestClassesDirectory();
+    }
 }

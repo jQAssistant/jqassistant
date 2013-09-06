@@ -14,6 +14,7 @@ import org.neo4j.graphdb.Label;
 import java.util.*;
 
 import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.VALUE;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.Label.label;
 
 /**
  * A store for {@link com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor}s.
@@ -177,7 +178,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
             throw new IllegalStateException("Unsupported value descriptor type " + descriptor.getClass().getName());
         }
         Set<Label> labels = new HashSet<>();
-        labels.add(new com.buschmais.jqassistant.core.store.impl.dao.mapper.Label(valueLabel));
+        labels.add(label(valueLabel));
         return labels;
     }
 

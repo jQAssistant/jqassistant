@@ -5,8 +5,9 @@ import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 /**
  * Defines the JPA labels.
  */
-public enum JpaLabel implements PrimaryLabel {
+public enum Jpa2Label implements PrimaryLabel {
 
+    PERSISTENCE(false),
     PERSISTENCEUNIT(false);
 
     private boolean index;
@@ -16,12 +17,12 @@ public enum JpaLabel implements PrimaryLabel {
      *
      * @param index <code>true</code> if nodes with this label shall be indexed.
      */
-    private JpaLabel(boolean index) {
+    private Jpa2Label(boolean index) {
         this.index = index;
     }
 
     @Override
     public boolean isIndexed() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+        return false;
     }
 }
