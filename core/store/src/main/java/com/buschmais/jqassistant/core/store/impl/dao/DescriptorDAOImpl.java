@@ -3,8 +3,7 @@ package com.buschmais.jqassistant.core.store.impl.dao;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
+import com.buschmais.jqassistant.core.store.api.model.IndexProperty;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -126,7 +125,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         if (id != null) {
             node = database.getNodeById(id);
         } else {
-            ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getPrimaryLabel(), NodeProperty.FQN.name(), fullQualifiedName);
+            ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getPrimaryLabel(), IndexProperty.FQN.name(), fullQualifiedName);
             ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
             try {
                 if (iterator.hasNext()) {
@@ -172,13 +171,11 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param mapper     The store.
      */
     private <T extends Descriptor> void flushRelations(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        Map<Relation, Set<? extends Descriptor>> relations = mapper.getRelations(descriptor);
-        for (Entry<Relation, Set<? extends Descriptor>> relationEntry : relations.entrySet()) {
-            Relation relationType = relationEntry.getKey();
-            Set<? extends Descriptor> targetDescriptors = relationEntry.getValue();
-            if (!targetDescriptors.isEmpty()) {
+        for (RelationshipType relationshipType : mapper.getRelationshipTypes()) {
+            Set<? extends Descriptor> targetDescriptors = mapper.getRelation(descriptor, relationshipType);
+            if (targetDescriptors != null && !targetDescriptors.isEmpty()) {
                 Set<Node> existingTargetNodes = new HashSet<>();
-                Iterable<Relationship> relationships = node.getRelationships(relationType, Direction.OUTGOING);
+                Iterable<Relationship> relationships = node.getRelationships(relationshipType, Direction.OUTGOING);
                 if (relationships != null) {
                     for (Relationship relation : relationships) {
                         existingTargetNodes.add(relation.getEndNode());
@@ -188,7 +185,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
                     if (targetDescriptor != null) {
                         Node targetNode = getNode(targetDescriptor);
                         if (!existingTargetNodes.contains(targetNode)) {
-                            node.createRelationshipTo(targetNode, relationType);
+                            node.createRelationshipTo(targetNode, relationshipType);
                         }
                     }
                 }
@@ -204,26 +201,24 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node       The node.
      * @param mapper     The store.
      */
-    private <T extends Descriptor> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        Map<NodeProperty, Object> properties = mapper.getProperties(descriptor);
-        for (Entry<NodeProperty, Object> entry : properties.entrySet()) {
-            NodeProperty property = entry.getKey();
-            String name = property.name();
-            Object value = entry.getValue();
+    private <T extends Descriptor, P extends Enum> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
+        node.setProperty(IndexProperty.FQN.name(), descriptor.getFullQualifiedName());
+        for (String propertyName : mapper.getPropertyNames()) {
+            Object value = mapper.getProperty(descriptor, propertyName);
             if (value == null) {
-                if (node.hasProperty(name)) {
-                    node.removeProperty(name);
+                if (node.hasProperty(propertyName)) {
+                    node.removeProperty(propertyName);
                 }
             } else {
                 Object existingValue;
-                if (node.hasProperty(property.name())) {
-                    existingValue = node.getProperty(name);
+                if (node.hasProperty(propertyName)) {
+                    existingValue = node.getProperty(propertyName);
                 } else {
                     existingValue = null;
                 }
                 if (!value.equals(existingValue)) {
-                    LOGGER.debug("Updating property '" + property + "' with value '" + value + "' on node '" + node.getId() + "'");
-                    node.setProperty(name, value);
+                    LOGGER.debug("Updating property '" + propertyName + "' with value '" + value + "' on node '" + node.getId() + "'");
+                    node.setProperty(propertyName, value);
                 }
             }
         }
@@ -255,34 +250,28 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param node The {@link Node}.
      * @return The descriptor.
      */
-    private <T extends Descriptor> T createDescriptor(Node node) {
+    private <T extends Descriptor, R extends Enum & RelationshipType> T createDescriptor(Node node) {
         DescriptorMapper<T> mapper = registry.getDescriptorMapper(node);
         Class<T> type = getType(node);
         T descriptor = mapper.createInstance(type);
         mapper.setId(descriptor, Long.valueOf(node.getId()));
-        descriptor.setFullQualifiedName((String) node.getProperty(NodeProperty.FQN.name()));
+        descriptor.setFullQualifiedName((String) node.getProperty(IndexProperty.FQN.name()));
         this.descriptorCache.put(descriptor);
         // create outgoing relationships
-        Map<Relation, Set<Descriptor>> relations = new HashMap<>();
-        for (Relationship relationship : node.getRelationships(Direction.OUTGOING)) {
-            Relation relation = Relation.getRelation(relationship.getType().name());
-            if (relation != null) {
+        Map<R, Set<Descriptor>> relations = new HashMap<>();
+        for (RelationshipType relationshipType : mapper.getRelationshipTypes()) {
+            Set<Descriptor> relation = new HashSet<>();
+            for (Relationship relationship : node.getRelationships(Direction.OUTGOING, relationshipType)) {
                 Node targetNode = relationship.getEndNode();
                 Descriptor targetDescriptor = getDescriptor(targetNode);
-                Set<Descriptor> set = relations.get(relation);
-                if (set == null) {
-                    set = new HashSet<>();
-                    relations.put(relation, set);
-                }
-                set.add(targetDescriptor);
+                relation.add(targetDescriptor);
             }
+            mapper.setRelation(descriptor, relationshipType, relation);
         }
-        mapper.setRelations(descriptor, relations);
         // Set properties
-        for (String name : node.getPropertyKeys()) {
-            NodeProperty nodeProperty = NodeProperty.getProperty(name);
-            if (nodeProperty != null) {
-                mapper.setProperty(descriptor, nodeProperty, node.getProperty(name));
+        for (String name : mapper.getPropertyNames()) {
+            if (node.hasProperty(name)) {
+                mapper.setProperty(descriptor, name, node.getProperty(name));
             }
         }
         // Set labels

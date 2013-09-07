@@ -1,10 +1,10 @@
-package com.buschmais.jqassistant.core.store.api.model;
+package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Denotes labels for {@link NodeLabel#VALUE} nodes.
+ * Denotes labels for {@link com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel#VALUE} nodes.
  */
 public enum ValueLabel {
 

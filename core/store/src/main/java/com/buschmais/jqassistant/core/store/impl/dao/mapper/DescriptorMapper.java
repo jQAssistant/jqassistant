@@ -1,12 +1,9 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +12,7 @@ import java.util.Set;
  * Defines an interface to map an {@link Descriptor} to nodes and
  * relationships.
  *
- * @param <T> The descriptor types.
+ * @param <T> The descriptor type.
  */
 public interface DescriptorMapper<T extends Descriptor> {
 
@@ -34,6 +31,20 @@ public interface DescriptorMapper<T extends Descriptor> {
     public PrimaryLabel getPrimaryLabel();
 
     /**
+     * Return the names of all properties.
+     *
+     * @return The names of all properties.
+     */
+    public Iterable<String> getPropertyNames();
+
+    /**
+     * Return the names of all relations.
+     *
+     * @return The names of all relations.
+     */
+    public Iterable<? extends RelationshipType> getRelationshipTypes();
+
+    /**
      * Creates a descriptor instance.
      *
      * @param type The java type.
@@ -44,30 +55,28 @@ public interface DescriptorMapper<T extends Descriptor> {
     /**
      * Return the java type.
      *
-     *
      * @param labels The labels provided by a node.
      * @return The java type.
      */
     public Class<? extends T> getType(Set<Label> labels);
 
-
     /**
-     * Return a {@link Map} containing all outgoing relations with the
-     * {@link com.buschmais.jqassistant.core.store.api.model.Relation} as key and the target descriptors as value for the
-     * given descriptor.
+     * Return a relation.
      *
-     * @param descriptor The descriptor.
-     * @return The relations {@link Map}.
+     * @param descriptor       The descriptor.
+     * @param relationshipType The relationshipType.
+     * @return The target descriptors.
      */
-    public Map<Relation, Set<? extends Descriptor>> getRelations(T descriptor);
+    public Set<? extends Descriptor> getRelation(T descriptor, RelationshipType relationshipType);
 
     /**
      * Set the outgoing relations for the given descriptor.
      *
-     * @param descriptor The descriptor.
-     * @param relations  The relations map.
+     * @param descriptor       The descriptor.
+     * @param relationshipType The relationshipType.
+     * @param targets          The target descriptors.
      */
-    public void setRelations(T descriptor, Map<Relation, Set<Descriptor>> relations);
+    public void setRelation(T descriptor, RelationshipType relationshipType, Set<? extends Descriptor> targets);
 
     /**
      * Return the id of the descriptor.
@@ -88,19 +97,20 @@ public interface DescriptorMapper<T extends Descriptor> {
     /**
      * Returns a {@link Map} with all properties of this descriptor.
      *
-     * @param descriptor The properties of this descriptor will be returned.
+     * @param descriptor   The properties of this descriptor will be returned.
+     * @param propertyName The property name.
      * @return a {@link Map} with all properties.
      */
-    public Map<NodeProperty, Object> getProperties(T descriptor);
+    public Object getProperty(T descriptor, String propertyName);
 
     /**
      * Set the property on the passed descriptor.
      *
-     * @param descriptor the target descriptor
-     * @param property   the property name
-     * @param value      the value of the property
+     * @param descriptor   the target descriptor
+     * @param propertyName the property name
+     * @param value        the value of the property
      */
-    public void setProperty(T descriptor, NodeProperty property, Object value);
+    public void setProperty(T descriptor, String propertyName, Object value);
 
     /**
      * Return the set of labels to be set on the node.

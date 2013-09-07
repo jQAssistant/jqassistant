@@ -5,21 +5,30 @@ import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypedValueDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.*;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
-import com.buschmais.jqassistant.core.store.api.model.ValueLabel;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
 import java.util.*;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.VALUE;
 import static com.buschmais.jqassistant.core.store.impl.dao.mapper.Label.label;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.VALUE;
 
 /**
  * A store for {@link com.buschmais.jqassistant.core.model.api.descriptor.ValueDescriptor}s.
  */
-public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescriptor> {
+public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescriptor, ValueDescriptorMapper.Property, ValueDescriptorMapper.Relation> {
+
+    enum Property {
+        NAME,
+        VALUE;
+    }
+
+    enum Relation implements RelationshipType {
+        HAS,
+        VALUE,
+        OF_TYPE;
+    }
 
     @Override
     public Set<Class<? extends ValueDescriptor>> getJavaType() {
@@ -35,6 +44,16 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
     @Override
     public PrimaryLabel getPrimaryLabel() {
         return VALUE;
+    }
+
+    @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
     }
 
     @Override
@@ -78,30 +97,35 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(ValueDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<>();
-        Object value = descriptor.getValue();
-        if (value != null) {
-            Set<? extends Descriptor> values;
-            if (descriptor instanceof ArrayValueDescriptor) {
-                values = new HashSet<>((List<? extends ValueDescriptor>) value);
-            } else if (descriptor instanceof AnnotationValueDescriptor) {
-                values = new HashSet<>((List<? extends ValueDescriptor>) value);
-            } else if (!(descriptor instanceof PrimitiveValueDescriptor)) {
-                values = asSet((Descriptor) value);
-            } else {
-                values = Collections.emptySet();
-            }
-            relations.put(Relation.HAS, values);
+    public Set<? extends Descriptor> getRelation(ValueDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case HAS:
+                Object value = descriptor.getValue();
+                if (value != null) {
+                    if (descriptor instanceof ArrayValueDescriptor) {
+                        return new HashSet<>((List<? extends ValueDescriptor>) value);
+                    } else if (descriptor instanceof AnnotationValueDescriptor) {
+                        return new HashSet<>((List<? extends ValueDescriptor>) value);
+                    } else if (!(descriptor instanceof PrimitiveValueDescriptor)) {
+                        return asSet((Descriptor) value);
+                    } else {
+                        return Collections.emptySet();
+                    }
+                }
+                break;
+            case OF_TYPE:
+                if (descriptor instanceof TypedValueDescriptor) {
+                    return asSet(((TypedValueDescriptor) descriptor).getType());
+                }
+                break;
+            default:
+                break;
         }
-        if (descriptor instanceof TypedValueDescriptor) {
-            relations.put(Relation.OF_TYPE, asSet(((TypedValueDescriptor) descriptor).getType()));
-        }
-        return relations;
+        return null;
     }
 
     @Override
-    protected void setRelation(ValueDescriptor descriptor, Relation relation, Descriptor target) {
+    protected void setRelation(ValueDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case HAS:
                 if (descriptor instanceof ArrayValueDescriptor) {
@@ -111,7 +135,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                         values = new LinkedList<>();
                         arrayValueDescriptor.setValue(values);
                     }
-                    values.add((ValueDescriptor) target);
+                    values.addAll((Collection<? extends ValueDescriptor>) target);
                 } else if (descriptor instanceof AnnotationValueDescriptor) {
                     AnnotationValueDescriptor annotationValueDescriptor = (AnnotationValueDescriptor) descriptor;
                     List<ValueDescriptor> values = annotationValueDescriptor.getValue();
@@ -119,9 +143,9 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                         values = new LinkedList<>();
                         annotationValueDescriptor.setValue(values);
                     }
-                    values.add((ValueDescriptor) target);
+                    values.addAll((Collection<? extends ValueDescriptor>) target);
                 } else if (!(descriptor instanceof PrimitiveValueDescriptor)) {
-                    descriptor.setValue(target);
+                    descriptor.setValue(getSingleEntry(target));
                 }
                 break;
             case OF_TYPE:
@@ -134,19 +158,22 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
     }
 
     @Override
-    public Map<NodeProperty, Object> getProperties(ValueDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.NAME, descriptor.getName());
-        Object value = descriptor.getValue();
-        if (descriptor instanceof PrimitiveValueDescriptor) {
-            properties.put(NodeProperty.VALUE, value);
+    public Object getProperty(ValueDescriptor descriptor, Property property) {
+        switch (property) {
+            case NAME:
+                return descriptor.getName();
+            case VALUE:
+                if (descriptor instanceof PrimitiveValueDescriptor) {
+                    return descriptor.getValue();
+                }
+                break;
+            default:
         }
-        return properties;
+        return null;
     }
 
     @Override
-    public void setProperty(ValueDescriptor descriptor, NodeProperty property, Object value) {
-        super.setProperty(descriptor, property, value);
+    public void setProperty(ValueDescriptor descriptor, Property property, Object value) {
         switch (property) {
             case NAME:
                 descriptor.setName((String) value);

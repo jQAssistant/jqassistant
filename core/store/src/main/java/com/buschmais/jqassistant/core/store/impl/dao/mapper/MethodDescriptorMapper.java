@@ -2,23 +2,40 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeLabel;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.METHOD;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.METHOD;
 
 /**
  * A store for {@link MethodDescriptor}s.
  */
-public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescriptor> {
+public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescriptor, MethodDescriptorMapper.Property, MethodDescriptorMapper.Relation> {
+
+    enum Property {
+        SIGNATURE,
+        NAME,
+        NATIVE,
+        ABSTRACT,
+        STATIC,
+        FINAL,
+        SYNTHETIC,
+        VISIBILITY;
+    }
+
+    enum Relation implements RelationshipType {
+        HAS,
+        THROWS,
+        ANNOTATED_BY,
+        DEPENDS_ON,
+        INVOKES,
+        READS,
+        WRITES;
+    }
 
     @Override
     public Set<Class<? extends MethodDescriptor>> getJavaType() {
@@ -33,6 +50,16 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     }
 
     @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
+
+    @Override
     public Class<? extends MethodDescriptor> getType(Set<Label> labels) {
         return MethodDescriptor.class;
     }
@@ -43,41 +70,51 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(MethodDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<Relation, Set<? extends Descriptor>>();
-        relations.put(Relation.HAS, descriptor.getParameters());
-        relations.put(Relation.THROWS, descriptor.getDeclaredThrowables());
-        relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
-        relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
-        relations.put(Relation.INVOKES, descriptor.getInvokes());
-        relations.put(Relation.READS, descriptor.getReads());
-        relations.put(Relation.WRITES, descriptor.getWrites());
-        return relations;
+    public Set<? extends Descriptor> getRelation(MethodDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case HAS:
+                return descriptor.getParameters();
+            case THROWS:
+                return descriptor.getDeclaredThrowables();
+            case ANNOTATED_BY:
+                return descriptor.getAnnotatedBy();
+            case DEPENDS_ON:
+                return descriptor.getDependencies();
+            case INVOKES:
+                return descriptor.getInvokes();
+            case READS:
+                return descriptor.getReads();
+            case WRITES:
+                return descriptor.getWrites();
+            default:
+                break;
+        }
+        return null;
     }
 
     @Override
-    protected void setRelation(MethodDescriptor descriptor, Relation relation, Descriptor target) {
+    protected void setRelation(MethodDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case HAS:
-                descriptor.getParameters().add((ParameterDescriptor) target);
+                descriptor.setParameters((Set<ParameterDescriptor>) target);
                 break;
             case THROWS:
-                descriptor.getDeclaredThrowables().add((TypeDescriptor) target);
+                descriptor.setDeclaredThrowables((Set<TypeDescriptor>) target);
                 break;
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
+                descriptor.setAnnotatedBy((Set<AnnotationValueDescriptor>) target);
                 break;
             case INVOKES:
-                descriptor.getInvokes().add((MethodDescriptor) target);
+                descriptor.setInvokes((Set<MethodDescriptor>) target);
                 break;
             case READS:
-                descriptor.getReads().add((FieldDescriptor) target);
+                descriptor.setReads((Set<FieldDescriptor>) target);
                 break;
             case WRITES:
-                descriptor.getWrites().add((FieldDescriptor) target);
+                descriptor.setWrites((Set<FieldDescriptor>) target);
                 break;
             case DEPENDS_ON:
-                descriptor.getDependencies().add((TypeDescriptor) target);
+                descriptor.setDependencies((Set<TypeDescriptor>) target);
                 break;
             default:
         }
@@ -87,68 +124,62 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
      * {@inheritDoc}
      */
     @Override
-    public Map<NodeProperty, Object> getProperties(MethodDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
-        if (descriptor.getName()!=null) {
-            properties.put(NodeProperty.NAME, descriptor.getName());
+    public Object getProperty(MethodDescriptor descriptor, Property property) {
+        switch (property) {
+            case SIGNATURE:
+                return descriptor.getSignature();
+            case NAME:
+                return descriptor.getName();
+            case ABSTRACT:
+                return descriptor.isAbstract();
+            case VISIBILITY:
+                return descriptor.getVisibility() != null ? descriptor.getVisibility().name() : null;
+            case STATIC:
+                return descriptor.isStatic();
+            case FINAL:
+                return descriptor.isFinal();
+            case NATIVE:
+                return descriptor.isNative();
+            case SYNTHETIC:
+                return descriptor.isSynthetic();
+            default:
+                break;
         }
-        if (descriptor.isAbstract() != null) {
-            properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
-        }
-        if (descriptor.getVisibility() != null) {
-            properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
-        }
-        if (descriptor.isStatic() != null) {
-            properties.put(NodeProperty.STATIC, descriptor.isStatic());
-        }
-        if (descriptor.isFinal() != null) {
-            properties.put(NodeProperty.FINAL, descriptor.isFinal());
-        }
-        if (descriptor.isNative() != null) {
-            properties.put(NodeProperty.NATIVE, descriptor.isNative());
-        }
-        if (descriptor.isSynthetic() != null) {
-            properties.put(NodeProperty.SYNTHETIC, descriptor.isSynthetic());
-        }
-        return properties;
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setProperty(MethodDescriptor descriptor, NodeProperty property, Object value) {
-        if (value != null) {
-            super.setProperty(descriptor, property, value);
-            switch (property) {
-                case SIGNATURE:
-                    descriptor.setSignature((String) value);
-                    break;
-                case NAME:
-                    descriptor.setName((String) value);
-                    break;
-                case NATIVE:
-                    descriptor.setNative((Boolean) value);
-                    break;
-                case ABSTRACT:
-                    descriptor.setAbstract((Boolean) value);
-                    break;
-                case STATIC:
-                    descriptor.setStatic((Boolean) value);
-                    break;
-                case FINAL:
-                    descriptor.setFinal((Boolean) value);
-                    break;
-                case SYNTHETIC:
-                    descriptor.setSynthetic((Boolean) value);
-                    break;
-                case VISIBILITY:
-                    descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
-                    break;
-                default:
-                    break;
-            }
+    public void setProperty(MethodDescriptor descriptor, Property property, Object value) {
+        switch (property) {
+            case SIGNATURE:
+                descriptor.setSignature((String) value);
+                break;
+            case NAME:
+                descriptor.setName((String) value);
+                break;
+            case NATIVE:
+                descriptor.setNative((Boolean) value);
+                break;
+            case ABSTRACT:
+                descriptor.setAbstract((Boolean) value);
+                break;
+            case STATIC:
+                descriptor.setStatic((Boolean) value);
+                break;
+            case FINAL:
+                descriptor.setFinal((Boolean) value);
+                break;
+            case SYNTHETIC:
+                descriptor.setSynthetic((Boolean) value);
+                break;
+            case VISIBILITY:
+                descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
+                break;
+            default:
+                break;
         }
     }
 

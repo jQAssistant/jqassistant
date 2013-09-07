@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeProperty.FQN;
+import static com.buschmais.jqassistant.core.store.api.model.IndexProperty.FQN;
 
 /**
  * Abstract base implementation of a {@link Store}.
