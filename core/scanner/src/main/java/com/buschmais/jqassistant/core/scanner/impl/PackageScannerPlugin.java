@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.resolver.PackageDescriptorResolver;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 /**
@@ -18,7 +19,7 @@ public class PackageScannerPlugin implements FileScannerPlugin<PackageDescriptor
     }
 
     @Override
-    public PackageDescriptor scanFile(Store store, InputStreamSource streamSource) throws IOException {
+    public PackageDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
         return null;
     }
 

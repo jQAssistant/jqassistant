@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -16,10 +17,8 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin.InputStreamSource;
-
 /**
- * Implementation of the {@link com.buschmais.jqassistant.core.scanner.api.FileScanner}.
+ * Implementation of the {@link FileScanner}.
  */
 public class FileScannerImpl implements FileScanner {
 
@@ -31,7 +30,7 @@ public class FileScannerImpl implements FileScanner {
 
         protected abstract boolean isDirectory(E element);
 
-        protected abstract String getFileName(E element);
+        protected abstract String getName(E element);
 
         protected abstract InputStream openInputStream(String name, E element) throws IOException;
 
@@ -48,11 +47,19 @@ public class FileScannerImpl implements FileScanner {
                     try {
                         while (next == null && hasNextElement()) {
                             E element = nextElement();
-                            String fileName = getFileName(element);
-                            if (isDirectory(element)) {
-                                next = scanDirectory(fileName);
-                            } else {
-                                next = scanFile(fileName, getStreamSource(openInputStream(fileName, element)));
+                            for (FileScannerPlugin plugin : plugins) {
+                                String name = getName(element);
+                                boolean isDirectory = isDirectory(element);
+                                if (plugin.matches(name, isDirectory)) {
+                                    LOGGER.info("Scanning '{}'", name);
+                                    if (isDirectory) {
+                                        next = plugin.scanDirectory(store, name);
+                                    } else {
+                                        BufferedInputStream inputStream = new BufferedInputStream(openInputStream(name, element));
+                                        StreamSource streamSource = new StreamSource(inputStream, name);
+                                        next = plugin.scanFile(store, streamSource);
+                                    }
+                                }
                             }
                         }
                         if (next != null) {
@@ -61,7 +68,7 @@ public class FileScannerImpl implements FileScanner {
                         close();
                         return false;
                     } catch (IOException e) {
-                        throw new IllegalStateException("Cannot iterator over elements.", e);
+                        throw new IllegalStateException("Cannot iterate over elements.", e);
                     }
                 }
 
@@ -123,7 +130,7 @@ public class FileScannerImpl implements FileScanner {
             }
 
             @Override
-            protected String getFileName(ZipEntry element) {
+            protected String getName(ZipEntry element) {
                 return element.getName();
             }
 
@@ -179,7 +186,7 @@ public class FileScannerImpl implements FileScanner {
             }
 
             @Override
-            protected String getFileName(File element) {
+            protected String getName(File element) {
                 String name = directoryURI.relativize(element.toURI()).toString();
                 if (element.isDirectory()) {
                     if (!StringUtils.isEmpty(name)) {
@@ -223,7 +230,7 @@ public class FileScannerImpl implements FileScanner {
             }
 
             @Override
-            protected String getFileName(Class<?> element) {
+            protected String getName(Class<?> element) {
                 return "/" + element.getName().replace('.', '/') + ".class";
             }
 
@@ -259,7 +266,7 @@ public class FileScannerImpl implements FileScanner {
             }
 
             @Override
-            protected String getFileName(URL element) {
+            protected String getName(URL element) {
                 return element.getPath() + "/" + element.getFile();
             }
 
@@ -272,54 +279,5 @@ public class FileScannerImpl implements FileScanner {
             protected void close() throws IOException {
             }
         };
-    }
-
-    /**
-     * Return a {@link InputStreamSource} for the given input stream.
-     *
-     * @param inputStream The input stream.
-     * @return The {@link InputStreamSource}.
-     */
-
-    private InputStreamSource getStreamSource(final InputStream inputStream) {
-        return new InputStreamSource() {
-            @Override
-            public InputStream openStream() throws IOException {
-                return new BufferedInputStream((inputStream));
-            }
-        };
-    }
-
-    /**
-     * Scans the given stream source                                          .
-     *
-     * @param name         The name of the file, relative to the artifact root directory.
-     * @param streamSource The stream source.
-     * @throws IOException If scanning fails.
-     */
-    private Descriptor scanFile(String name, InputStreamSource streamSource) throws IOException {
-        for (FileScannerPlugin plugin : this.plugins) {
-            if (plugin.matches(name, false)) {
-                LOGGER.info("Scanning file '{}'", name);
-                return plugin.scanFile(store, streamSource);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Scans the given stream source                                          .
-     *
-     * @param name The name of the file, relative to the artifact root directory.
-     * @throws IOException If scanning fails.
-     */
-    private Descriptor scanDirectory(String name) throws IOException {
-        for (FileScannerPlugin plugin : this.plugins) {
-            if (plugin.matches(name, true)) {
-                LOGGER.info("Scanning directory '{}'", name);
-                return plugin.scanDirectory(store, name);
-            }
-        }
-        return null;
     }
 }

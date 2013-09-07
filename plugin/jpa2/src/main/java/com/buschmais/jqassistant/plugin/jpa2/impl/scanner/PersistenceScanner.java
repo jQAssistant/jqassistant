@@ -38,16 +38,16 @@ public class PersistenceScanner implements FileScannerPlugin<PersistenceDescript
     }
 
     @Override
-    public PersistenceDescriptor scanFile(Store store, InputStreamSource streamSource) throws IOException {
+    public PersistenceDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
         DescriptorResolverFactory descriptorResolverFactory = new DescriptorResolverFactory(store);
         Persistence persistence;
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            persistence = unmarshaller.unmarshal(new StreamSource(streamSource.openStream()), Persistence.class).getValue();
+            persistence = unmarshaller.unmarshal(streamSource, Persistence.class).getValue();
         } catch (JAXBException e) {
             throw new IOException("Cannot read persistence descriptor.", e);
         }
-        PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class, "persistence.xml");
+        PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class, streamSource.getSystemId());
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class, persistenceUnit.getName());
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);

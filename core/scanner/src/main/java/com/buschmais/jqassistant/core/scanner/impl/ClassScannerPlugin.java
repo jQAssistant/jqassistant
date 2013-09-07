@@ -37,6 +37,7 @@ import com.buschmais.jqassistant.core.scanner.impl.visitor.VisitorHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.objectweb.asm.ClassReader;
 
+import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 
 /**
@@ -60,10 +61,10 @@ public class ClassScannerPlugin implements FileScannerPlugin<TypeDescriptor> {
     }
 
     @Override
-    public TypeDescriptor scanFile(Store store, InputStreamSource streamSource) throws IOException {
+    public TypeDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(store);
         ClassVisitor visitor = new ClassVisitor(new VisitorHelper(store, resolverFactory));
-        new ClassReader(streamSource.openStream()).accept(visitor, 0);
+        new ClassReader(streamSource.getInputStream()).accept(visitor, 0);
         TypeDescriptor typeDescriptor = visitor.getTypeDescriptor();
         scannedClasses++;
         return typeDescriptor;
