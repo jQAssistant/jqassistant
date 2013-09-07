@@ -20,11 +20,11 @@ import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
 /**
  * A scanner for JPA persistence units.
  */
-public class PersistenceScanner implements FileScannerPlugin<PersistenceDescriptor> {
+public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDescriptor> {
 
     private JAXBContext jaxbContext;
 
-    public PersistenceScanner() {
+    public PersistenceScannerPlugin() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {

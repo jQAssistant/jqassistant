@@ -5,23 +5,37 @@ import com.buschmais.jqassistant.core.model.api.descriptor.JavaType;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.TYPE;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.TYPE;
 import static com.buschmais.jqassistant.core.store.impl.dao.mapper.Label.label;
 
 /**
  * A store for {@link TypeDescriptor}s.
  */
-public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor> {
+public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor, TypeDescriptorMapper.Property, TypeDescriptorMapper.Relation> {
+
+    enum Property {
+        SIGNATURE,
+        ABSTRACT,
+        VISIBILITY,
+        STATIC,
+        FINAL,
+        SYNTHETIC;
+    }
+
+    enum Relation implements RelationshipType {
+        ANNOTATED_BY,
+        CONTAINS,
+        DEPENDS_ON,
+        IMPLEMENTS,
+        EXTENDS;
+    }
 
     @Override
     public Set<Class<? extends TypeDescriptor>> getJavaType() {
@@ -36,6 +50,16 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
+
+    @Override
     public Class<? extends TypeDescriptor> getType(Set<Label> labels) {
         return TypeDescriptor.class;
     }
@@ -46,33 +70,41 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(TypeDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<>();
-        relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
-        relations.put(Relation.CONTAINS, descriptor.getContains());
-        relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
-        relations.put(Relation.IMPLEMENTS, descriptor.getInterfaces());
-        relations.put(Relation.EXTENDS, asSet(descriptor.getSuperClass()));
-        return relations;
+    public Set<? extends Descriptor> getRelation(TypeDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case ANNOTATED_BY:
+                return descriptor.getAnnotatedBy();
+            case CONTAINS:
+                return descriptor.getContains();
+            case DEPENDS_ON:
+                return descriptor.getDependencies();
+            case IMPLEMENTS:
+                return descriptor.getInterfaces();
+            case EXTENDS:
+                return asSet(descriptor.getSuperClass());
+            default:
+                break;
+        }
+        return null;
     }
 
     @Override
-    protected void setRelation(TypeDescriptor descriptor, Relation relation, Descriptor target) {
+    protected void setRelation(TypeDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
+                descriptor.setAnnotatedBy((Set<AnnotationValueDescriptor>) target);
                 break;
             case CONTAINS:
-                descriptor.getContains().add(target);
+                descriptor.setContains((Set<Descriptor>) target);
                 break;
             case DEPENDS_ON:
-                descriptor.getDependencies().add((TypeDescriptor) target);
+                descriptor.setDependencies((Set<TypeDescriptor>) target);
                 break;
             case IMPLEMENTS:
-                descriptor.getInterfaces().add((TypeDescriptor) target);
+                descriptor.setInterfaces((Set<TypeDescriptor>) target);
                 break;
             case EXTENDS:
-                descriptor.setSuperClass((TypeDescriptor) target);
+                descriptor.setSuperClass((TypeDescriptor) getSingleEntry(target));
                 break;
             default:
         }
@@ -82,53 +114,49 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
      * {@inheritDoc}
      */
     @Override
-    public Map<NodeProperty, Object> getProperties(TypeDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
-        if (descriptor.isAbstract() != null) {
-            properties.put(NodeProperty.ABSTRACT, descriptor.isAbstract());
+    public Object getProperty(TypeDescriptor descriptor, Property property) {
+        switch (property) {
+            case SIGNATURE:
+                return descriptor.getSignature();
+            case ABSTRACT:
+                return descriptor.isAbstract();
+            case VISIBILITY:
+                return descriptor.getVisibility() != null ? descriptor.getVisibility().name() : null;
+            case STATIC:
+                return descriptor.isStatic();
+            case FINAL:
+                return descriptor.isFinal();
+            case SYNTHETIC:
+                return descriptor.isSynthetic();
+            default:
+                break;
         }
-        if (descriptor.getVisibility() != null) {
-            properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
-        }
-        if (descriptor.isStatic() != null) {
-            properties.put(NodeProperty.STATIC, descriptor.isStatic());
-        }
-        if (descriptor.isFinal() != null) {
-            properties.put(NodeProperty.FINAL, descriptor.isFinal());
-        }
-        if (descriptor.isSynthetic() != null) {
-            properties.put(NodeProperty.SYNTHETIC, descriptor.isSynthetic());
-        }
-        return properties;
+        return null;
     }
 
     @Override
-    public void setProperty(TypeDescriptor descriptor, NodeProperty property, Object value) {
-        if (value != null) {
-            super.setProperty(descriptor, property, value);
-            switch (property) {
-                case SIGNATURE:
-                    descriptor.setSignature((String) value);
-                    break;
-                case ABSTRACT:
-                    descriptor.setAbstract((Boolean) value);
-                    break;
-                case STATIC:
-                    descriptor.setStatic((Boolean) value);
-                    break;
-                case FINAL:
-                    descriptor.setFinal((Boolean) value);
-                    break;
-                case SYNTHETIC:
-                    descriptor.setSynthetic((Boolean) value);
-                    break;
-                case VISIBILITY:
-                    descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
-                    break;
-                default:
-                    break;
-            }
+    public void setProperty(TypeDescriptor descriptor, Property property, Object value) {
+        switch (property) {
+            case SIGNATURE:
+                descriptor.setSignature((String) value);
+                break;
+            case ABSTRACT:
+                descriptor.setAbstract((Boolean) value);
+                break;
+            case STATIC:
+                descriptor.setStatic((Boolean) value);
+                break;
+            case FINAL:
+                descriptor.setFinal((Boolean) value);
+                break;
+            case SYNTHETIC:
+                descriptor.setSynthetic((Boolean) value);
+                break;
+            case VISIBILITY:
+                descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
+                break;
+            default:
+                break;
         }
     }
 

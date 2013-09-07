@@ -1,19 +1,60 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
+import org.apache.commons.collections.map.HashedMap;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * Abstract base implementation of a {@link DescriptorMapper}.
  *
  * @param <T> The types.
  */
-public abstract class AbstractDescriptorMapper<T extends Descriptor> implements DescriptorMapper<T> {
+public abstract class AbstractDescriptorMapper<T extends Descriptor, P extends Enum, R extends Enum & RelationshipType> implements DescriptorMapper<T> {
+
+    private Map<String, P> properties;
+
+    private Map<String, R> relations;
+
+    /**
+     * Return the enumeration type defining the relations of the descriptor.
+     *
+     * @return The enumeration type.
+     */
+    protected abstract Class<R> getRelationKeys();
+
+    /**
+     * Return the enumeration type defining the properties of the descriptor.
+     *
+     * @return The enumeration type.
+     */
+    protected abstract Class<P> getPropertyKeys();
+
+    /**
+     * Constructor.
+     */
+    protected AbstractDescriptorMapper() {
+        properties = new HashMap<>();
+        for (P p : getPropertyKeys().getEnumConstants()) {
+            properties.put(p.name(), p);
+        }
+        relations = new HashedMap();
+        for (R r : getRelationKeys().getEnumConstants()) {
+            relations.put(r.name(), r);
+        }
+    }
+
+    @Override
+    public Iterable<String> getPropertyNames() {
+        return properties.keySet();
+    }
+
+    @Override
+    public Iterable<? extends RelationshipType> getRelationshipTypes() {
+        return relations.values();
+    }
 
     /**
      * Converts values to a {@link Set} of values.
@@ -34,6 +75,24 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor> implements 
         return set;
     }
 
+    /**
+     * Get a single entry from a set.
+     *
+     * @param set The set
+     * @param <T> The value type.
+     * @return The value.
+     */
+    protected <T> T getSingleEntry(Collection<T> set) {
+        if (set.size() > 1) {
+            throw new IllegalArgumentException("Collection must contain exactly one entry.");
+        }
+        Iterator<T> iterator = set.iterator();
+        if (iterator.hasNext()) {
+            return iterator.next();
+        }
+        return null;
+    }
+
     @Override
     public Long getId(T descriptor) {
         return descriptor.getId();
@@ -48,39 +107,32 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor> implements 
     }
 
     @Override
-    public void setRelations(T descriptor, Map<Relation, Set<Descriptor>> relations) {
-        for (Entry<Relation, Set<Descriptor>> entry : relations.entrySet()) {
-            for (Descriptor target : entry.getValue()) {
-                setRelation(descriptor, entry.getKey(), target);
-            }
-        }
+    public final Set<? extends Descriptor> getRelation(T descriptor, RelationshipType relationshipType) {
+        return getRelation(descriptor, relations.get(relationshipType.name()));
     }
 
-    protected abstract void setRelation(T descriptor, Relation relation, Descriptor target);
+    protected abstract Set<? extends Descriptor> getRelation(T descriptor, R relation);
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public Map<NodeProperty, Object> getProperties(T descriptor) {
-        Map<NodeProperty, Object> properties = new HashMap<NodeProperty, Object>();
-        properties.put(NodeProperty.FQN, descriptor.getFullQualifiedName());
-        return properties;
+    public final void setRelation(T descriptor, RelationshipType relationshipType, Set<? extends Descriptor> targets) {
+        setRelation(descriptor, relations.get(relationshipType.name()), targets);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    protected abstract void setRelation(T descriptor, R relation, Set<? extends Descriptor> targets);
+
     @Override
-    public void setProperty(T descriptor, NodeProperty property, Object value) {
-        switch (property) {
-            case FQN:
-                descriptor.setFullQualifiedName((String) value);
-                break;
-            default:
-                break;
-        }
+    public final Object getProperty(T descriptor, String propertyName) {
+        return getProperty(descriptor, properties.get(propertyName));
     }
+
+    protected abstract Object getProperty(T descriptor, P property);
+
+    @Override
+    public final void setProperty(T descriptor, String propertyName, Object value) {
+        setProperty(descriptor, properties.get(propertyName), value);
+    }
+
+    protected abstract void setProperty(T descriptor, P property, Object value);
 
     @Override
     public Set<Label> getLabels(T descriptor) {

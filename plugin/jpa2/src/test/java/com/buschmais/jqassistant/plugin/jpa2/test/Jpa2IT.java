@@ -2,12 +2,14 @@ package com.buschmais.jqassistant.plugin.jpa2.test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
+import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
 import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher.persistenceUnitDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -38,5 +40,6 @@ public class Jpa2IT extends AbstractAnalysisIT {
     @Test
     public void persistenceDescriptor() throws IOException, AnalyzerException {
         scanTestClassesDirectory();
+        assertThat(query("MATCH (pu:PERSISTENCEUNIT) RETURN pu").getColumn("pu"), hasItem(persistenceUnitDescriptor("persistence-unit")));
     }
 }

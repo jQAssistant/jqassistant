@@ -2,22 +2,27 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.PACKAGE;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.PACKAGE;
 
 /**
  * A store for {@link PackageDescriptor}s.
  */
-public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDescriptor> {
+public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDescriptor, PackageDescriptorMapper.Property, PackageDescriptorMapper.Relation> {
+
+    enum Property {
+        SIGNATURE;
+    }
+
+    enum Relation implements RelationshipType {
+        CONTAINS;
+    }
 
     @Override
     public Set<Class<? extends PackageDescriptor>> getJavaType() {
@@ -32,6 +37,16 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     }
 
     @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
+
+    @Override
     public Class<? extends PackageDescriptor> getType(Set<Label> labels) {
         return PackageDescriptor.class;
     }
@@ -42,17 +57,21 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(PackageDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<Relation, Set<? extends Descriptor>>();
-        relations.put(Relation.CONTAINS, descriptor.getContains());
-        return relations;
+    public Set<? extends Descriptor> getRelation(PackageDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case CONTAINS:
+                return descriptor.getContains();
+            default:
+                break;
+        }
+        return null;
     }
 
     @Override
-    protected void setRelation(PackageDescriptor descriptor, Relation relation, Descriptor target) {
+    protected void setRelation(PackageDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case CONTAINS:
-                descriptor.getContains().add(target);
+                descriptor.setContains((Set<Descriptor>) target);
                 break;
             default:
         }
@@ -62,23 +81,22 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
      * {@inheritDoc}
      */
     @Override
-    public Map<NodeProperty, Object> getProperties(PackageDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
-        return properties;
+    public Object getProperty(PackageDescriptor descriptor, Property property) {
+        switch (property) {
+            case SIGNATURE:
+                return descriptor.getSignature();
+        }
+        return null;
     }
 
     @Override
-    public void setProperty(PackageDescriptor descriptor, NodeProperty property, Object value) {
-        if (value != null) {
-            super.setProperty(descriptor, property, value);
-            switch (property) {
-                case SIGNATURE:
-                    descriptor.setSignature((String) value);
-                    break;
-                default:
-                    break;
-            }
+    public void setProperty(PackageDescriptor descriptor, Property property, Object value) {
+        switch (property) {
+            case SIGNATURE:
+                descriptor.setSignature((String) value);
+                break;
+            default:
+                break;
         }
     }
 }

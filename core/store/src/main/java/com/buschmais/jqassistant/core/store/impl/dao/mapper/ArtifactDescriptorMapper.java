@@ -5,24 +5,33 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.ARTIFACT;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.ARTIFACT;
 
 /**
  * Maps the {@link ArtifactDescriptor} to nodes and relationships.
  *
  * @author Herklotz
  */
-public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactDescriptor> {
+public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactDescriptor, ArtifactDescriptorMapper.Property, ArtifactDescriptorMapper.Relation> {
+
+    enum Property {
+        GROUP,
+        NAME,
+        VERSION,
+        CLASSIFIER,
+        TYPE;
+    }
+
+    enum Relation implements RelationshipType {
+        CONTAINS;
+    }
 
     /**
      * {@inheritDoc}
@@ -43,6 +52,16 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
     }
 
     @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
+
+    @Override
     public Class<? extends ArtifactDescriptor> getType(Set<Label> labels) {
         return ArtifactDescriptor.class;
     }
@@ -56,22 +75,29 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      * {@inheritDoc}
      */
     @Override
-    public Map<NodeProperty, Object> getProperties(ArtifactDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.GROUP, descriptor.getGroup());
-        properties.put(NodeProperty.NAME, descriptor.getName());
-        properties.put(NodeProperty.VERSION, descriptor.getVersion());
-        properties.put(NodeProperty.CLASSIFIER, descriptor.getClassifier());
-        properties.put(NodeProperty.TYPE, descriptor.getType());
-        return properties;
+    public Object getProperty(ArtifactDescriptor descriptor, Property property) {
+        switch (property) {
+            case GROUP:
+                return descriptor.getGroup();
+            case NAME:
+                return descriptor.getName();
+            case VERSION:
+                return descriptor.getVersion();
+            case CLASSIFIER:
+                return descriptor.getClassifier();
+            case TYPE:
+                return descriptor.getType();
+            default:
+                break;
+        }
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setProperty(ArtifactDescriptor descriptor, NodeProperty property, Object value) {
-        super.setProperty(descriptor, property, value);
+    public void setProperty(ArtifactDescriptor descriptor, Property property, Object value) {
         switch (property) {
             case GROUP:
                 descriptor.setGroup((String) value);
@@ -89,27 +115,30 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
             default:
                 break;
         }
-
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(ArtifactDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<Relation, Set<? extends Descriptor>>();
-        relations.put(Relation.CONTAINS, descriptor.getContains());
-        return relations;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setRelation(ArtifactDescriptor descriptor, Relation relation, Descriptor target) {
+    public Set<? extends Descriptor> getRelation(ArtifactDescriptor descriptor, Relation relation) {
         switch (relation) {
             case CONTAINS:
-                descriptor.getContains().add(target);
+                return descriptor.getContains();
+            default:
+                break;
+        }
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setRelation(ArtifactDescriptor descriptor, Relation relation, Set<?extends Descriptor> target) {
+        switch (relation) {
+            case CONTAINS:
+                descriptor.setContains((Set<Descriptor>) target);
                 break;
             default:
         }

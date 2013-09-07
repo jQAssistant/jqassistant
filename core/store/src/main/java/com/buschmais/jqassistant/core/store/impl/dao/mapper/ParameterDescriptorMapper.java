@@ -4,22 +4,28 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ParameterDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.PARAMETER;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.PARAMETER;
 
 /**
  * A store for {@link ParameterDescriptor}s.
  */
-public class ParameterDescriptorMapper extends AbstractDescriptorMapper<ParameterDescriptor> {
+public class ParameterDescriptorMapper extends AbstractDescriptorMapper<ParameterDescriptor, ParameterDescriptorMapper.Property, ParameterDescriptorMapper.Relation> {
+
+    enum Property {
+
+    }
+
+    enum Relation implements RelationshipType{
+        ANNOTATED_BY,
+        DEPENDS_ON;
+    }
 
     @Override
     public Set<Class<? extends ParameterDescriptor>> getJavaType() {
@@ -34,6 +40,16 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
     }
 
     @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
+
+    @Override
     public Class<? extends ParameterDescriptor> getType(Set<Label> labels) {
         return ParameterDescriptor.class;
     }
@@ -44,21 +60,23 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(ParameterDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<>();
-        relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
-        relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
-        return relations;
+    public Set<? extends Descriptor> getRelation(ParameterDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case ANNOTATED_BY:return descriptor.getAnnotatedBy();
+            case DEPENDS_ON:return descriptor.getDependencies();
+            default:break;
+        }
+        return null;
     }
 
     @Override
-    protected void setRelation(ParameterDescriptor descriptor, Relation relation, Descriptor target) {
+    protected void setRelation(ParameterDescriptor descriptor, Relation relation, Set<?extends Descriptor> target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
+                descriptor.setAnnotatedBy((Set<AnnotationValueDescriptor>) target);
                 break;
             case DEPENDS_ON:
-                descriptor.getDependencies().add((TypeDescriptor) target);
+                descriptor.setDependencies((Set<TypeDescriptor>) target);
                 break;
             default:
         }
@@ -68,15 +86,14 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
      * {@inheritDoc}
      */
     @Override
-    public Map<NodeProperty, Object> getProperties(ParameterDescriptor descriptor) {
-        return super.getProperties(descriptor);
+    public Object getProperty(ParameterDescriptor descriptor, Property property) {
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setProperty(ParameterDescriptor descriptor, NodeProperty property, Object value) {
-        super.setProperty(descriptor, property, value);
+    public void setProperty(ParameterDescriptor descriptor, Property property, Object value) {
     }
 }

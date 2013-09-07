@@ -1,24 +1,29 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.AbstractDescriptorMapper;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static com.buschmais.jqassistant.plugin.jpa2.impl.store.Jpa2Label.PERSISTENCE;
-import static com.buschmais.jqassistant.plugin.jpa2.impl.store.Jpa2Label.PERSISTENCEUNIT;
 
 /**
  * {@link AbstractDescriptorMapper} for {@PersistenceUnitDescriptor}s.
  */
-public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescriptor> {
+public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescriptor, PersistenceMapper.Property, PersistenceMapper.Relation> {
+
+    public enum Property {
+        VERSION;
+    }
+
+    public enum Relation implements RelationshipType {
+        CONTAINS;
+    }
 
     @Override
     public Set<Class<? extends PersistenceDescriptor>> getJavaType() {
@@ -43,10 +48,31 @@ public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescr
     }
 
     @Override
-    protected void setRelation(PersistenceDescriptor descriptor, Relation relation, Descriptor target) {
-        switch (relation) {
-            case CONTAINS:
-                descriptor.getContains().add((PersistenceUnitDescriptor) target);
+    public Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    public Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
+
+    @Override
+    public Object getProperty(PersistenceDescriptor descriptor, Property property) {
+        switch (property) {
+            case VERSION:
+                return descriptor.getVersion();
+            default:
+                break;
+        }
+        return null;
+    }
+
+    @Override
+    public void setProperty(PersistenceDescriptor descriptor, Property property, Object value) {
+        switch (property) {
+            case VERSION:
+                descriptor.setVersion((String) value);
                 break;
             default:
                 break;
@@ -54,9 +80,24 @@ public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescr
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(PersistenceDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<>();
-        relations.put(Relation.CONTAINS, descriptor.getContains());
-        return relations;
+    public void setRelation(PersistenceDescriptor descriptor, Relation relation, Set<? extends Descriptor> targets) {
+        switch (relation) {
+            case CONTAINS:
+                descriptor.setContains((Set<PersistenceUnitDescriptor>) targets);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public Set<? extends Descriptor> getRelation(PersistenceDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case CONTAINS:
+                return descriptor.getContains();
+            default:
+                break;
+        }
+        return null;
     }
 }

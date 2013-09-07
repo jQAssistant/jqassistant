@@ -11,10 +11,20 @@ import java.util.Set;
  */
 public class PersistenceDescriptor extends AbstractDescriptor {
 
+    private String version;
+
     /**
      * The persistence units referenced by this persistence unit.
      */
     private Set<PersistenceUnitDescriptor> contains = new HashSet<>();
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     public Set<PersistenceUnitDescriptor> getContains() {
         return contains;

@@ -4,7 +4,7 @@
         <mapper>com.buschmais.jqassistant.plugin.jpa2.impl.store.PersistenceUnitMapper</mapper>
     </store>
     <scanner>
-        <plugin>com.buschmais.jqassistant.plugin.jpa2.impl.scanner.PersistenceScanner</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.jpa2.impl.scanner.PersistenceScannerPlugin</plugin>
     </scanner>
     <rules>
         <resources>

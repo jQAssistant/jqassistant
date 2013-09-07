@@ -1,4 +1,6 @@
-package com.buschmais.jqassistant.core.store.api.model;
+package com.buschmais.jqassistant.core.store.impl.dao.mapper;
+
+import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
 
 /**
  * The node labels created by the scanner.

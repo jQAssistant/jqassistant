@@ -5,22 +5,35 @@ import com.buschmais.jqassistant.core.model.api.descriptor.FieldDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NodeProperty;
 import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
-import com.buschmais.jqassistant.core.store.api.model.Relation;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.RelationshipType;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.api.model.NodeLabel.FIELD;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.FIELD;
 
 /**
  * A store for {@link FieldDescriptor}s.
  */
-public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescriptor> {
+public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescriptor, FieldDescriptorMapper.Property, FieldDescriptorMapper.Relation> {
+
+    enum Property {
+        SIGNATURE,
+        NAME,
+        VISIBILITY,
+        STATIC,
+        FINAL,
+        VOLATILE,
+        TRANSIENT,
+        SYNTHETIC;
+    }
+
+    enum Relation implements RelationshipType {
+        ANNOTATED_BY,
+        DEPENDS_ON;
+    }
 
     @Override
     public Set<Class<? extends FieldDescriptor>> getJavaType() {
@@ -34,6 +47,15 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
         return FIELD;
     }
 
+    @Override
+    protected Class<Property> getPropertyKeys() {
+        return Property.class;
+    }
+
+    @Override
+    protected Class<Relation> getRelationKeys() {
+        return Relation.class;
+    }
 
     @Override
     public Class<? extends FieldDescriptor> getType(Set<Label> labels) {
@@ -46,21 +68,26 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     }
 
     @Override
-    public Map<Relation, Set<? extends Descriptor>> getRelations(FieldDescriptor descriptor) {
-        Map<Relation, Set<? extends Descriptor>> relations = new HashMap<Relation, Set<? extends Descriptor>>();
-        relations.put(Relation.ANNOTATED_BY, descriptor.getAnnotatedBy());
-        relations.put(Relation.DEPENDS_ON, descriptor.getDependencies());
-        return relations;
+    public Set<? extends Descriptor> getRelation(FieldDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case ANNOTATED_BY:
+                return descriptor.getAnnotatedBy();
+            case DEPENDS_ON:
+                return descriptor.getDependencies();
+            default:
+                break;
+        }
+        return null;
     }
 
     @Override
-    protected void setRelation(FieldDescriptor descriptor, Relation relation, Descriptor target) {
+    protected void setRelation(FieldDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case ANNOTATED_BY:
-                descriptor.getAnnotatedBy().add((AnnotationValueDescriptor) target);
+                descriptor.setAnnotatedBy((Set<AnnotationValueDescriptor>) target);
                 break;
             case DEPENDS_ON:
-                descriptor.getDependencies().add((TypeDescriptor) target);
+                descriptor.setDependencies((Set<TypeDescriptor>) target);
                 break;
             default:
         }
@@ -70,68 +97,62 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
      * {@inheritDoc}
      */
     @Override
-    public Map<NodeProperty, Object> getProperties(FieldDescriptor descriptor) {
-        Map<NodeProperty, Object> properties = super.getProperties(descriptor);
-        properties.put(NodeProperty.SIGNATURE, descriptor.getSignature());
-        if (descriptor.getName()!=null) {
-            properties.put(NodeProperty.NAME, descriptor.getName());
+    public Object getProperty(FieldDescriptor descriptor, Property property) {
+        switch (property) {
+            case SIGNATURE:
+                return descriptor.getSignature();
+            case NAME:
+                return descriptor.getName();
+            case VISIBILITY:
+                return descriptor.getVisibility() != null ? descriptor.getVisibility().name() : null;
+            case STATIC:
+                return descriptor.isStatic();
+            case FINAL:
+                return descriptor.isFinal();
+            case VOLATILE:
+                return descriptor.isVolatile();
+            case TRANSIENT:
+                return descriptor.isTransient();
+            case SYNTHETIC:
+                return descriptor.isSynthetic();
+            default:
+                break;
         }
-        if (descriptor.getVisibility() != null) {
-            properties.put(NodeProperty.VISIBILITY, descriptor.getVisibility().name());
-        }
-        if (descriptor.isStatic() != null) {
-            properties.put(NodeProperty.STATIC, descriptor.isStatic());
-        }
-        if (descriptor.isFinal() != null) {
-            properties.put(NodeProperty.FINAL, descriptor.isFinal());
-        }
-        if (descriptor.isVolatile() != null) {
-            properties.put(NodeProperty.VOLATILE, descriptor.isVolatile());
-        }
-        if (descriptor.isTransient() != null) {
-            properties.put(NodeProperty.TRANSIENT, descriptor.isTransient());
-        }
-        if (descriptor.isSynthetic() != null) {
-            properties.put(NodeProperty.SYNTHETIC, descriptor.isSynthetic());
-        }
-        return properties;
+        return null;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setProperty(FieldDescriptor descriptor, NodeProperty property, Object value) {
-        if (value != null) {
-            super.setProperty(descriptor, property, value);
-            switch (property) {
-                case SIGNATURE:
-                    descriptor.setSignature((String) value);
-                    break;
-                case NAME:
-                    descriptor.setName((String) value);
-                    break;
-                case STATIC:
-                    descriptor.setStatic((Boolean) value);
-                    break;
-                case FINAL:
-                    descriptor.setFinal((Boolean) value);
-                    break;
-                case VOLATILE:
-                    descriptor.setVolatile((Boolean) value);
-                    break;
-                case TRANSIENT:
-                    descriptor.setTransient((Boolean) value);
-                    break;
-                case SYNTHETIC:
-                    descriptor.setSynthetic((Boolean) value);
-                    break;
-                case VISIBILITY:
-                    descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
-                    break;
-                default:
-                    break;
-            }
+    public void setProperty(FieldDescriptor descriptor, Property property, Object value) {
+        switch (property) {
+            case SIGNATURE:
+                descriptor.setSignature((String) value);
+                break;
+            case NAME:
+                descriptor.setName((String) value);
+                break;
+            case STATIC:
+                descriptor.setStatic((Boolean) value);
+                break;
+            case FINAL:
+                descriptor.setFinal((Boolean) value);
+                break;
+            case VOLATILE:
+                descriptor.setVolatile((Boolean) value);
+                break;
+            case TRANSIENT:
+                descriptor.setTransient((Boolean) value);
+                break;
+            case SYNTHETIC:
+                descriptor.setSynthetic((Boolean) value);
+                break;
+            case VISIBILITY:
+                descriptor.setVisibility(VisibilityModifier.valueOf((String) value));
+                break;
+            default:
+                break;
         }
     }
 }
