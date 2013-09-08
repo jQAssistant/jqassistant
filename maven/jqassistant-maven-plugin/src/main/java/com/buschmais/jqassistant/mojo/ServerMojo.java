@@ -25,7 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import java.io.IOException;
 
 /**
- * @goal reset
+ * @goal server
  * @aggregator true
  * @requiresProject false
  */

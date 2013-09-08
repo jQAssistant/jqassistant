@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoFailureException;
  *
  * @goal reset
  * @aggregator true
+ * @requiresProject false
  */
 public class ResetMojo extends AbstractAnalysisMojo {
 
