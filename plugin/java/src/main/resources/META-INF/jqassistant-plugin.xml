@@ -1,4 +1,16 @@
-<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+    <store>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.PackageDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.TypeDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.FieldDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.MethodDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.ParameterDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.ValueDescriptorMapper</mapper>
+    </store>
+    <scanner>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassScannerPlugin</plugin>
+    </scanner>
     <rules>
         <resources>
             <resource>dependency.xml</resource>
@@ -6,4 +18,4 @@
             <resource>package.xml</resource>
         </resources>
     </rules>
-</v1:jqassistant-plugin>
+</jqa-plugin:jqassistant-plugin>

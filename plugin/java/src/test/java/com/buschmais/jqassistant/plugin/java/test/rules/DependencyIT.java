@@ -1,7 +1,7 @@
-package com.buschmais.jqassistant.plugin.java.test;
+package com.buschmais.jqassistant.plugin.java.test.rules;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.java.test.set.dependency.annotations.AnnotatedType;
@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.buschmais.jqassistant.core.model.test.matcher.ResultMatcher.result;
-import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.ArtifactDescriptorMatcher.artifactDescriptor;
-import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.PackageDescriptorMatcher.packageDescriptor;
-import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static com.buschmais.jqassistant.core.model.test.matcher.rule.ConstraintMatcher.constraint;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -37,7 +37,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Tests for the dependency concepts and result.
  */
-public class DependencyIT extends AbstractAnalysisIT {
+public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "dependency:Annotation".
