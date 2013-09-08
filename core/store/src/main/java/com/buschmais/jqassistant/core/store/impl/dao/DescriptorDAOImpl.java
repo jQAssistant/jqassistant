@@ -234,7 +234,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      */
 
     private <T extends Descriptor> void flushLabels(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        Set<Label> labels = mapper.getLabels(descriptor);
+        Set<? extends Label> labels = mapper.getLabels(descriptor);
         for (Label label : labels) {
             node.addLabel(label);
         }

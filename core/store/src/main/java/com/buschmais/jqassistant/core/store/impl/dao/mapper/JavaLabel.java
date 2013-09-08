@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 
 /**
  * The node labels created by the scanner.
  */
-public enum NodeLabel implements PrimaryLabel {
+public enum JavaLabel implements IndexedLabel {
     /**
      * Artifact.
      */
@@ -44,7 +44,7 @@ public enum NodeLabel implements PrimaryLabel {
     /**
      * Default constructor.
      */
-    NodeLabel() {
+    JavaLabel() {
         this(false);
     }
 
@@ -53,7 +53,7 @@ public enum NodeLabel implements PrimaryLabel {
      *
      * @param indexed <code>true</code> if nodes with this label shall be indexed for faster lookup.
      */
-    NodeLabel(boolean indexed) {
+    JavaLabel(boolean indexed) {
         this.indexed = indexed;
     }
 

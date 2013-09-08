@@ -135,7 +135,7 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor, P extends E
     protected abstract void setProperty(T descriptor, P property, Object value);
 
     @Override
-    public Set<Label> getLabels(T descriptor) {
+    public Set<? extends Label> getLabels(T descriptor) {
         return Collections.emptySet();
     }
 

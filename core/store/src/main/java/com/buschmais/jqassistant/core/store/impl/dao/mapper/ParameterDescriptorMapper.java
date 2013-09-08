@@ -4,14 +4,14 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.ParameterDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.PARAMETER;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.JavaLabel.PARAMETER;
 
 /**
  * A store for {@link ParameterDescriptor}s.
@@ -35,7 +35,7 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
     }
 
     @Override
-    public PrimaryLabel getPrimaryLabel() {
+    public IndexedLabel getPrimaryLabel() {
         return PARAMETER;
     }
 

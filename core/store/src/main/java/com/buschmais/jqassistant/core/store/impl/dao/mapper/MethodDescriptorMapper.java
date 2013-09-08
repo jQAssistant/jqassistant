@@ -2,14 +2,14 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.*;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.METHOD;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.JavaLabel.METHOD;
 
 /**
  * A store for {@link MethodDescriptor}s.
@@ -45,7 +45,7 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     }
 
     @Override
-    public PrimaryLabel getPrimaryLabel() {
+    public IndexedLabel getPrimaryLabel() {
         return METHOD;
     }
 
@@ -184,17 +184,17 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     }
 
     @Override
-    public Set<Label> getLabels(MethodDescriptor descriptor) {
+    public Set<? extends Label> getLabels(MethodDescriptor descriptor) {
         Set<Label> labels = new HashSet<>();
         if (Boolean.TRUE.equals(descriptor.isConstructor())) {
-            labels.add(NodeLabel.CONSTRUCTOR);
+            labels.add(JavaLabel.CONSTRUCTOR);
         }
         return labels;
     }
 
     @Override
     public void setLabel(MethodDescriptor descriptor, Label label) {
-        if (NodeLabel.CONSTRUCTOR.name().equals(label.name())) {
+        if (JavaLabel.CONSTRUCTOR.name().equals(label.name())) {
             descriptor.setConstructor(Boolean.TRUE);
         }
     }
