@@ -7,7 +7,6 @@ import com.buschmais.jqassistant.core.store.impl.dao.mapper.AbstractDescriptorMa
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +18,12 @@ import static com.buschmais.jqassistant.plugin.jpa2.impl.store.Jpa2Label.PERSIST
 public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceUnitDescriptor, PersistenceUnitMapper.PersistenceUnitProperty, PersistenceUnitMapper.PersistenceUnitRelation> {
 
     enum PersistenceUnitProperty {
+        DESCRIPTION,
+        PROVIDER,
+        JTADATASOURCE,
+        NONJTADATASOURCE,
+        VALIDATIONMODE,
+        SHAREDCACHEMODE;
     }
 
     enum PersistenceUnitRelation implements RelationshipType {
@@ -60,10 +65,42 @@ public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceU
 
     @Override
     public void setProperty(PersistenceUnitDescriptor descriptor, PersistenceUnitProperty property, Object value) {
+        switch (property) {
+            case DESCRIPTION:
+                descriptor.setDescription((String) value);
+            case JTADATASOURCE:
+                descriptor.setJtaDataSource((String) value);
+            case NONJTADATASOURCE:
+                descriptor.setNonJtaDataSource((String) value);
+            case PROVIDER:
+                descriptor.setProvider((String) value);
+            case VALIDATIONMODE:
+                descriptor.setValidationMode((String) value);
+            case SHAREDCACHEMODE:
+                descriptor.setSharedCacheMode((String) value);
+            default:
+                break;
+        }
     }
 
     @Override
     protected Object getProperty(PersistenceUnitDescriptor descriptor, PersistenceUnitProperty property) {
+        switch (property) {
+            case DESCRIPTION:
+                return descriptor.getDescription();
+            case JTADATASOURCE:
+                return descriptor.getJtaDataSource();
+            case NONJTADATASOURCE:
+                return descriptor.getNonJtaDataSource();
+            case PROVIDER:
+                return descriptor.getProvider();
+            case VALIDATIONMODE:
+                return descriptor.getValidationMode();
+            case SHAREDCACHEMODE:
+                return descriptor.getSharedCacheMode();
+            default:
+                break;
+        }
         return null;
     }
 

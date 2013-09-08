@@ -24,11 +24,12 @@ import org.apache.maven.plugin.MojoFailureException;
  * A mojo which resets the store, i.e. deletes all nodes and relationships.
  *
  * @goal reset
+ * @aggregator true
  */
-public class ResetMojo extends AbstractAnalysisAggregatorMojo {
+public class ResetMojo extends AbstractAnalysisMojo {
 
     @Override
-    public void aggregate() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         getLog().info("Resetting store.");
         executeInTransaction(new StoreOperation<Void>() {
             @Override

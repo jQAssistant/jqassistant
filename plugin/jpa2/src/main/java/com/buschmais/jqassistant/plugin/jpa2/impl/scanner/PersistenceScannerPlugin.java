@@ -48,8 +48,15 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
             throw new IOException("Cannot read persistence descriptor.", e);
         }
         PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class, streamSource.getSystemId());
+        persistenceDescriptor.setVersion(persistence.getVersion());
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class, persistenceUnit.getName());
+            persistenceUnitDescriptor.setDescription(persistenceUnit.getDescription());
+            persistenceUnitDescriptor.setJtaDataSource(persistenceUnit.getJtaDataSource());
+            persistenceUnitDescriptor.setNonJtaDataSource(persistenceUnit.getNonJtaDataSource());
+            persistenceUnitDescriptor.setProvider(persistenceUnit.getProvider());
+            persistenceUnitDescriptor.setValidationMode(persistenceUnit.getValidationMode().name());
+            persistenceUnitDescriptor.setSharedCacheMode(persistenceUnit.getSharedCacheMode().name());
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
             for (String clazz : persistenceUnit.getClazz()) {
                 TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz);

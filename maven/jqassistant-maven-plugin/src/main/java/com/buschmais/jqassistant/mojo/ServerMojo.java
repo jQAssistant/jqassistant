@@ -25,12 +25,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import java.io.IOException;
 
 /**
- * @goal server
+ * @goal reset
+ * @aggregator true
+ * @requiresProject false
  */
-public class ServerMojo extends AbstractAnalysisAggregatorMojo {
+public class ServerMojo extends AbstractAnalysisMojo {
 
     @Override
-    public void aggregate() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         execute(new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
