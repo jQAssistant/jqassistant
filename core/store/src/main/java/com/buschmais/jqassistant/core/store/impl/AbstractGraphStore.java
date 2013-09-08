@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
@@ -48,17 +48,17 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void start(List<DescriptorMapper<?>> mappers) {
         database = startDatabase();
-        Set<PrimaryLabel> primaryLabels = new HashSet<>();
+        Set<IndexedLabel> indexedLabels = new HashSet<>();
         mapperRegistry = new DescriptorMapperRegistry();
         for (DescriptorMapper<?> mapper : mappers) {
-            if (!primaryLabels.add(mapper.getPrimaryLabel())) {
-                throw new IllegalStateException("Primary label is already defined " + mapper.getPrimaryLabel() + ":" + primaryLabels);
+            if (!indexedLabels.add(mapper.getPrimaryLabel())) {
+                throw new IllegalStateException("Primary label is already defined " + mapper.getPrimaryLabel() + ":" + indexedLabels);
             }
             mapperRegistry.register(mapper);
         }
         descriptorDAO = new DescriptorDAOImpl(mapperRegistry, database);
         beginTransaction();
-        for (PrimaryLabel label : primaryLabels) {
+        for (IndexedLabel label : indexedLabels) {
             IndexDefinition index = null;
             for (IndexDefinition indexDefinition : database.schema().getIndexes(label)) {
                 for (String s : indexDefinition.getPropertyKeys()) {

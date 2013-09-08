@@ -1,19 +1,23 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
- *
+ * Defines utility functions for working with labels.
  */
 public class Label implements org.neo4j.graphdb.Label {
 
     private String name;
 
+    /**
+     * Return a label from an enum value.
+     */
     public static Label label(Enum<? extends Enum> label) {
         return new Label(label);
     }
 
+    /**
+     * Private constructor.
+     * @param label The enum value label.
+     */
     private Label(Enum<? extends Enum> label) {
         this.name = label.name();
     }

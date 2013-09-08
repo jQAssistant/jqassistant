@@ -2,14 +2,14 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.PACKAGE;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.JavaLabel.PACKAGE;
 
 /**
  * A store for {@link PackageDescriptor}s.
@@ -32,7 +32,7 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     }
 
     @Override
-    public PrimaryLabel getPrimaryLabel() {
+    public IndexedLabel getPrimaryLabel() {
         return PACKAGE;
     }
 

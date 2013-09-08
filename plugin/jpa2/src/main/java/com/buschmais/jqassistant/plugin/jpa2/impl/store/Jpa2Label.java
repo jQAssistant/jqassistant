@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store;
 
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 
 /**
  * Defines the JPA labels.
  */
-public enum Jpa2Label implements PrimaryLabel {
+public enum Jpa2Label implements IndexedLabel {
 
+    JPA(false),
     PERSISTENCE(false),
     PERSISTENCEUNIT(false);
 

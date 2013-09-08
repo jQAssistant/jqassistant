@@ -5,14 +5,14 @@ package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.ARTIFACT;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.JavaLabel.ARTIFACT;
 
 /**
  * Maps the {@link ArtifactDescriptor} to nodes and relationships.
@@ -47,7 +47,7 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      * {@inheritDoc}
      */
     @Override
-    public PrimaryLabel getPrimaryLabel() {
+    public IndexedLabel getPrimaryLabel() {
         return ARTIFACT;
     }
 

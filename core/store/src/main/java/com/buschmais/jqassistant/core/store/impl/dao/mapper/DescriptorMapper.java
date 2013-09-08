@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.store.impl.dao.mapper;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
@@ -24,11 +24,11 @@ public interface DescriptorMapper<T extends Descriptor> {
     public Set<Class<? extends T>> getJavaType();
 
     /**
-     * Return the {@link PrimaryLabel}.
+     * Return the {@link com.buschmais.jqassistant.core.store.api.model.IndexedLabel}.
      *
-     * @return The {@link PrimaryLabel}.
+     * @return The {@link com.buschmais.jqassistant.core.store.api.model.IndexedLabel}.
      */
-    public PrimaryLabel getPrimaryLabel();
+    public IndexedLabel getPrimaryLabel();
 
     /**
      * Return the names of all properties.
@@ -115,10 +115,11 @@ public interface DescriptorMapper<T extends Descriptor> {
     /**
      * Return the set of labels to be set on the node.
      *
+     *
      * @param descriptor The descriptor.
      * @return The set of labels.
      */
-    public Set<Label> getLabels(T descriptor);
+    public Set<? extends Label> getLabels(T descriptor);
 
     /**
      * Set a label on the descriptor.

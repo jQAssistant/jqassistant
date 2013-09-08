@@ -24,6 +24,9 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 
     private JAXBContext jaxbContext;
 
+    /**
+     * Constructor.
+     */
     public PersistenceScannerPlugin() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);

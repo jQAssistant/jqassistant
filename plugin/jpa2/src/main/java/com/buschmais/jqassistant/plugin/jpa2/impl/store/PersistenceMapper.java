@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store;
 
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.AbstractDescriptorMapper;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.buschmais.jqassistant.plugin.jpa2.impl.store.Jpa2Label.JPA;
 import static com.buschmais.jqassistant.plugin.jpa2.impl.store.Jpa2Label.PERSISTENCE;
 
 /**
@@ -43,7 +43,7 @@ public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescr
     }
 
     @Override
-    public PrimaryLabel getPrimaryLabel() {
+    public IndexedLabel getPrimaryLabel() {
         return PERSISTENCE;
     }
 
@@ -99,5 +99,10 @@ public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescr
                 break;
         }
         return null;
+    }
+
+    @Override
+    public Set<? extends Label> getLabels(PersistenceDescriptor descriptor) {
+        return asSet(JPA);
     }
 }

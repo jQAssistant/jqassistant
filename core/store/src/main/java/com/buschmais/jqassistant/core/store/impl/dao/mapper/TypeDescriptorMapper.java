@@ -5,14 +5,14 @@ import com.buschmais.jqassistant.core.model.api.descriptor.JavaType;
 import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.api.descriptor.VisibilityModifier;
 import com.buschmais.jqassistant.core.model.api.descriptor.value.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.PrimaryLabel;
+import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.core.store.impl.dao.mapper.NodeLabel.TYPE;
+import static com.buschmais.jqassistant.core.store.impl.dao.mapper.JavaLabel.TYPE;
 import static com.buschmais.jqassistant.core.store.impl.dao.mapper.Label.label;
 
 /**
@@ -45,7 +45,7 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    public PrimaryLabel getPrimaryLabel() {
+    public IndexedLabel getPrimaryLabel() {
         return TYPE;
     }
 
@@ -161,7 +161,7 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     }
 
     @Override
-    public Set<Label> getLabels(TypeDescriptor descriptor) {
+    public Set<? extends Label> getLabels(TypeDescriptor descriptor) {
         Set<Label> labels = new HashSet<>();
         final JavaType javaType = descriptor.getJavaType();
         if (javaType != null) {
