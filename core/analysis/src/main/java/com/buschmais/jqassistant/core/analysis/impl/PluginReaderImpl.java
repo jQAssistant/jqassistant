@@ -88,7 +88,7 @@ public class PluginReaderImpl implements PluginReader {
                                 InputStream ruleStream = url.openStream();
                                 sources.add(new StreamSource(ruleStream, systemId));
                             } catch (IOException e) {
-                                throw new IllegalStateException("Cannot open rule URL: " + url.toString(), e);
+                                throw new IllegalStateException("Cannot open rules URL: " + url.toString(), e);
                             } catch (URISyntaxException e) {
                                 throw new IllegalStateException("Cannot create URI from url: " + url.toString());
                             }

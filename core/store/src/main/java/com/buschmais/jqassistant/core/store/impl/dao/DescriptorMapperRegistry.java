@@ -64,7 +64,7 @@ public class DescriptorMapperRegistry {
     public <T extends Descriptor> DescriptorMapper<T> getDescriptorMapper(Class<?> javaType) {
         DescriptorMapper<T> mapper = (DescriptorMapper<T>) mappersByJavaType.get(javaType);
         if (mapper == null) {
-            throw new IllegalArgumentException("Cannot find store for java type " + javaType);
+            throw new IllegalArgumentException("Cannot find mapper for java type " + javaType);
         }
         return mapper;
     }

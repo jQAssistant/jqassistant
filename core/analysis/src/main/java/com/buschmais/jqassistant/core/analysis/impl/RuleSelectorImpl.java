@@ -35,10 +35,10 @@ public class RuleSelectorImpl implements RuleSelector {
 
 
     /**
-     * Resolve the given selected groups names into the target rule set.
+     * Resolve the given selected groups names into the target rules set.
      *
      * @param groups        The selected group names.
-     * @param targetRuleSet The target rule set.
+     * @param targetRuleSet The target rules set.
      */
     private void resolveGroups(Collection<Group> groups, RuleSet targetRuleSet) {
         for (Group group : groups) {
@@ -52,10 +52,10 @@ public class RuleSelectorImpl implements RuleSelector {
     }
 
     /**
-     * Resolve the given selected constraint names into the target rule set.
+     * Resolve the given selected constraint names into the target rules set.
      *
      * @param constraints   The selected constraint names.
-     * @param targetRuleSet The target rule set.
+     * @param targetRuleSet The target rules set.
      */
     private void resolveConstraints(Collection<Constraint> constraints, RuleSet targetRuleSet) {
         for (Constraint constraint : constraints) {
@@ -67,10 +67,10 @@ public class RuleSelectorImpl implements RuleSelector {
     }
 
     /**
-     * Resolve the given selected concept names into the target rule set.
+     * Resolve the given selected concept names into the target rules set.
      *
      * @param concepts      The selected concept names.
-     * @param targetRuleSet The target rule set.
+     * @param targetRuleSet The target rules set.
      */
     private void resolveConcepts(Collection<Concept> concepts, RuleSet targetRuleSet) {
         for (Concept concept : concepts) {

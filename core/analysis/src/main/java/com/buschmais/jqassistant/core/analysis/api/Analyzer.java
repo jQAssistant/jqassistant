@@ -9,9 +9,9 @@ import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 public interface Analyzer {
 
     /**
-     * Executes the given rule set.
+     * Executes the given rules set.
      *
-     * @param ruleSet The rule set.
+     * @param ruleSet The rules set.
      * @throws ReportWriterException If the report cannot be written.
      */
     void execute(RuleSet ruleSet) throws AnalyzerException;

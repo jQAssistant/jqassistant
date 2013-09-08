@@ -5,7 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
- * Abstract base class for rule matchers.
+ * Abstract base class for rules matchers.
  */
 public class AbstractRuleMatcher<T extends Rule> extends TypeSafeMatcher<T> {
 
@@ -16,8 +16,8 @@ public class AbstractRuleMatcher<T extends Rule> extends TypeSafeMatcher<T> {
     /**
      * Constructor.
      *
-     * @param type The rule type.
-     * @param id   The expected rule id.
+     * @param type The rules type.
+     * @param id   The expected rules id.
      */
     protected AbstractRuleMatcher(Class<T> type, String id) {
         this.type = type;
