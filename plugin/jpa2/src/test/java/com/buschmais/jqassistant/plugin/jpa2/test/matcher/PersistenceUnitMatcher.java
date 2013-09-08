@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.jpa2.test.matcher;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.model.test.matcher.descriptor.AbstractDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.jpa2.impl.store.PersistenceUnitDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
 import org.hamcrest.Matcher;
 
 /**

@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.jpa2.impl.store.PersistenceDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.impl.store.PersistenceUnitDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
 import com.sun.java.xml.ns.persistence.ObjectFactory;
 import com.sun.java.xml.ns.persistence.Persistence;
 

@@ -6,8 +6,8 @@ package com.buschmais.jqassistant.core.model.api.rule;
 public interface Rule {
 
     /**
-     * Return the id of the rule.
-     * @return The id of the rule.
+     * Return the id of the rules.
+     * @return The id of the rules.
      */
     String getId();
 

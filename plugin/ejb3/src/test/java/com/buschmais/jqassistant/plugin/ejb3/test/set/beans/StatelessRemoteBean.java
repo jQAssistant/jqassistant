@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.jpa2.test.set.ejb3;
+package com.buschmais.jqassistant.plugin.ejb3.test.set.beans;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;

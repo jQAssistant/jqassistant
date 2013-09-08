@@ -1,22 +1,22 @@
 package com.buschmais.jqassistant.plugin.junit4.test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestClass;
 import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.MethodDescriptorMatcher.methodDescriptor;
-import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 /**
  * Tests for Junit4 concepts.
  */
-public class Junit4IT extends AbstractAnalysisIT {
+public class Junit4IT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "junit4:TestClassOrMethod".

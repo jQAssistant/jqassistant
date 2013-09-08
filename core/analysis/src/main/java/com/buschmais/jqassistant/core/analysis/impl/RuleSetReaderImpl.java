@@ -43,7 +43,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
             try {
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
                 unmarshaller.setSchema(XmlHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
-                LOGGER.info("Reading rule descriptor from '{}'.", source.getSystemId());
+                LOGGER.info("Reading rules descriptor from '{}'.", source.getSystemId());
                 rules.add(unmarshaller.unmarshal(source, JqassistantRules.class).getValue());
             } catch (JAXBException e) {
                 throw new IllegalArgumentException("Cannot read rules from " + source.getSystemId(), e);

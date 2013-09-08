@@ -1,13 +1,14 @@
-package com.buschmais.jqassistant.plugin.jpa2.test;
+package com.buschmais.jqassistant.plugin.ejb3.test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.test.AbstractAnalysisIT;
-import com.buschmais.jqassistant.plugin.jpa2.test.set.ejb3.*;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+
+import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.*;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static com.buschmais.jqassistant.core.model.test.matcher.descriptor.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -15,7 +16,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Tests for the EJB3 concepts.
  */
-public class Ejb3IT extends AbstractAnalysisIT {
+public class Ejb3IT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "ejb3:StatelessSessionBean".

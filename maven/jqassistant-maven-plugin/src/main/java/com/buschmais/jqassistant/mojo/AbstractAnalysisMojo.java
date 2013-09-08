@@ -125,7 +125,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     private RuleSetReader ruleSetReader = new RuleSetReaderImpl();
 
     /**
-     * The rule selector.
+     * The rules selector.
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
 
@@ -183,7 +183,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * Retrieves the list of available rules from the rules directory.
      *
      * @param rulesDirectory The rules directory.
-     * @return The {@link java.util.List} of available rule {@link java.io.File}s.
+     * @return The {@link java.util.List} of available rules {@link java.io.File}s.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the rules directory cannot be read.
      */
@@ -216,7 +216,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * Resolves the effective rules.
      *
-     * @return The resolved rule set.
+     * @return The resolved rules set.
      * @throws MojoExecutionException If resolving fails.
      */
     protected RuleSet resolveEffectiveRules() throws MojoExecutionException {
@@ -230,9 +230,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     }
 
     /**
-     * Validates the given rule set for unresolved concepts, constraints or groups.
+     * Validates the given rules set for unresolved concepts, constraints or groups.
      *
-     * @param ruleSet The rule set.
+     * @param ruleSet The rules set.
      * @throws MojoExecutionException If there are unresolved concepts, constraints or groups.
      */
     private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {
