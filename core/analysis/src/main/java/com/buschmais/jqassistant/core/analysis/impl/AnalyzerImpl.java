@@ -2,11 +2,10 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.model.api.rule.Query;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rule.*;
-import com.buschmais.jqassistant.core.report.api.ReportWriter;
-import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.IOUtils;
@@ -24,7 +23,7 @@ public class AnalyzerImpl implements Analyzer {
 
     private Store store;
 
-    private ReportWriter reportWriter;
+    private ExecutionListener reportWriter;
 
     private Set<Concept> executedConcepts = new HashSet<>();
 
@@ -37,7 +36,7 @@ public class AnalyzerImpl implements Analyzer {
      *
      * @param store The Store to use.
      */
-    public AnalyzerImpl(Store store, ReportWriter reportWriter) {
+    public AnalyzerImpl(Store store, ExecutionListener reportWriter) {
         this.store = store;
         this.reportWriter = reportWriter;
     }
@@ -53,7 +52,7 @@ public class AnalyzerImpl implements Analyzer {
             } finally {
                 reportWriter.end();
             }
-        } catch (ReportWriterException e) {
+        } catch (ExecutionListenerException e) {
             throw new AnalyzerException("Cannot write report.", e);
         }
     }
@@ -62,10 +61,10 @@ public class AnalyzerImpl implements Analyzer {
      * Executes the given groups.
      *
      * @param groups The groups.
-     * @throws ReportWriterException If the report cannot be written.
+     * @throws com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException If the report cannot be written.
      * @throws AnalyzerException     If the groups cannot be executed.
      */
-    private void executeGroups(Iterable<Group> groups) throws ReportWriterException, AnalyzerException {
+    private void executeGroups(Iterable<Group> groups) throws ExecutionListenerException, AnalyzerException {
         for (Group group : groups) {
             executeGroup(group);
         }
@@ -75,10 +74,10 @@ public class AnalyzerImpl implements Analyzer {
      * Executes the given group.
      *
      * @param group The group.
-     * @throws ReportWriterException If the report cannot be written.
+     * @throws com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException If the report cannot be written.
      * @throws AnalyzerException     If the group cannot be executed.
      */
-    private void executeGroup(Group group) throws ReportWriterException, AnalyzerException {
+    private void executeGroup(Group group) throws ExecutionListenerException, AnalyzerException {
         if (!executedGroups.contains(group)) {
             LOGGER.info("Executing group '{}'", group.getId());
             for (Group includedGroup : group.getGroups()) {
@@ -99,10 +98,10 @@ public class AnalyzerImpl implements Analyzer {
      * Validates the given constraints.
      *
      * @param constraints The constraints.
-     * @throws ReportWriterException If the report cannot be written.
+     * @throws com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException If the report cannot be written.
      * @throws AnalyzerException     If the constraints cannot be validated.
      */
-    private void validateConstraints(Iterable<Constraint> constraints) throws ReportWriterException, AnalyzerException {
+    private void validateConstraints(Iterable<Constraint> constraints) throws ExecutionListenerException, AnalyzerException {
         for (Constraint constraint : constraints) {
             validateConstraint(constraint);
         }
@@ -112,10 +111,10 @@ public class AnalyzerImpl implements Analyzer {
      * Validates the given constraint.
      *
      * @param constraint The constraint.
-     * @throws ReportWriterException If the report cannot be written.
+     * @throws com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException If the report cannot be written.
      * @throws AnalyzerException     If the constraint cannot be validated.
      */
-    private void validateConstraint(Constraint constraint) throws ReportWriterException, AnalyzerException {
+    private void validateConstraint(Constraint constraint) throws ExecutionListenerException, AnalyzerException {
         if (!executedConstraints.contains(constraint)) {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
@@ -135,10 +134,10 @@ public class AnalyzerImpl implements Analyzer {
      * Applies the given concepts.
      *
      * @param concepts The concepts.
-     * @throws ReportWriterException If the report cannot be written.
+     * @throws com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException If the report cannot be written.
      * @throws AnalyzerException     If the concepts cannot be applied.
      */
-    private void applyConcepts(Iterable<Concept> concepts) throws ReportWriterException, AnalyzerException {
+    private void applyConcepts(Iterable<Concept> concepts) throws ExecutionListenerException, AnalyzerException {
         for (Concept concept : concepts) {
             applyConcept(concept);
         }
@@ -148,10 +147,10 @@ public class AnalyzerImpl implements Analyzer {
      * Applies the given concept.
      *
      * @param concept The concept.
-     * @throws ReportWriterException If the report cannot be written.
+     * @throws com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException If the report cannot be written.
      * @throws AnalyzerException     If the concept cannot be applied.
      */
-    private void applyConcept(Concept concept) throws ReportWriterException, AnalyzerException {
+    private void applyConcept(Concept concept) throws ExecutionListenerException, AnalyzerException {
         if (!executedConcepts.contains(concept)) {
             for (Concept requiredConcept : concept.getRequiredConcepts()) {
                 applyConcept(requiredConcept);

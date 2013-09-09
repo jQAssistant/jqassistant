@@ -7,16 +7,16 @@
         <version>1.0.0-M2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant.core.report</artifactId>
+    <artifactId>jqassistant.core.pluginmanager</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.analysis</artifactId>
+            <artifactId>jqassistant.core.scanner</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
         </dependency>
     </dependencies>
 </project>

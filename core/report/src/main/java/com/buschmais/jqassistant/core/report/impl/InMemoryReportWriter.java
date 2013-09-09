@@ -3,18 +3,18 @@ package com.buschmais.jqassistant.core.report.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
-import com.buschmais.jqassistant.core.report.api.ReportWriter;
-import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 
 /**
- * A {@link ReportWriter} implementation collection the concept results and constraint violations in-memory.
+ * A {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} implementation collection the concept results and constraint violations in-memory.
  */
-public class InMemoryReportWriter implements ReportWriter {
+public class InMemoryReportWriter implements ExecutionListener {
 
     private List<Result<Concept>> conceptResults = new ArrayList<Result<Concept>>();
 
@@ -24,41 +24,41 @@ public class InMemoryReportWriter implements ReportWriter {
 	private Result currentResult;
 
     @Override
-    public void begin() throws ReportWriterException {
+    public void begin() throws ExecutionListenerException {
     }
 
     @Override
-    public void end() throws ReportWriterException {
+    public void end() throws ExecutionListenerException {
     }
 
     @Override
-    public void beginConcept(Concept concept) throws ReportWriterException {
+    public void beginConcept(Concept concept) throws ExecutionListenerException {
     }
 
     @Override
-    public void endConcept() throws ReportWriterException {
+    public void endConcept() throws ExecutionListenerException {
         addResult(this.conceptResults);
     }
 
     @Override
-    public void beginGroup(Group group) throws ReportWriterException {
+    public void beginGroup(Group group) throws ExecutionListenerException {
     }
 
     @Override
-    public void endGroup() throws ReportWriterException {
+    public void endGroup() throws ExecutionListenerException {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws ReportWriterException {
+    public void beginConstraint(Constraint constraint) throws ExecutionListenerException {
     }
 
     @Override
-    public void endConstraint() throws ReportWriterException {
+    public void endConstraint() throws ExecutionListenerException {
         addResult(this.constraintViolations);
     }
 
     @Override
-    public void setResult(Result result) throws ReportWriterException {
+    public void setResult(Result result) throws ExecutionListenerException {
         this.currentResult = result;
     }
 

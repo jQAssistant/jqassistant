@@ -11,20 +11,20 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
-import com.buschmais.jqassistant.core.report.api.ReportWriter;
-import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
- * Implementation of a {@link ReportWriter} which writes the results of an analysis to an XML file.
+ * Implementation of a {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} which writes the results of an analysis to an XML file.
  */
-public class XmlReportWriter implements ReportWriter {
+public class XmlReportWriter implements ExecutionListener {
 
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.0";
     public static final String NAMESPACE_PREFIX = "jqa-report";
@@ -43,17 +43,17 @@ public class XmlReportWriter implements ReportWriter {
 
     private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public XmlReportWriter(Writer writer) throws ReportWriterException {
+    public XmlReportWriter(Writer writer) throws ExecutionListenerException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         try {
             xmlStreamWriter = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(writer));
         } catch (XMLStreamException e) {
-            throw new ReportWriterException("Cannot create XML stream writer.", e);
+            throw new ExecutionListenerException("Cannot create XML stream writer.", e);
         }
     }
 
     @Override
-    public void begin() throws ReportWriterException {
+    public void begin() throws ExecutionListenerException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -68,7 +68,7 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void end() throws ReportWriterException {
+    public void end() throws ExecutionListenerException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -79,17 +79,17 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginConcept(Concept concept) throws ReportWriterException {
+    public void beginConcept(Concept concept) throws ExecutionListenerException {
         beginExecutable();
     }
 
     @Override
-    public void endConcept() throws ReportWriterException {
+    public void endConcept() throws ExecutionListenerException {
         endExecutable();
     }
 
     @Override
-    public void beginGroup(final Group group) throws ReportWriterException {
+    public void beginGroup(final Group group) throws ExecutionListenerException {
         final Date now = new Date();
         run(new XmlOperation() {
             @Override
@@ -104,7 +104,7 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void endGroup() throws ReportWriterException {
+    public void endGroup() throws ExecutionListenerException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -115,17 +115,17 @@ public class XmlReportWriter implements ReportWriter {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws ReportWriterException {
+    public void beginConstraint(Constraint constraint) throws ExecutionListenerException {
         beginExecutable();
     }
 
     @Override
-    public void endConstraint() throws ReportWriterException {
+    public void endConstraint() throws ExecutionListenerException {
         endExecutable();
     }
 
     @Override
-    public void setResult(final Result<? extends AbstractExecutable> result) throws ReportWriterException {
+    public void setResult(final Result<? extends AbstractExecutable> result) throws ExecutionListenerException {
         this.result = result;
     }
 
@@ -133,7 +133,7 @@ public class XmlReportWriter implements ReportWriter {
         this.executableBeginTime = System.currentTimeMillis();
     }
 
-    private void endExecutable() throws ReportWriterException {
+    private void endExecutable() throws ExecutionListenerException {
         if (result != null) {
             final AbstractExecutable executable = result.getExecutable();
             final String elementName;
@@ -142,7 +142,7 @@ public class XmlReportWriter implements ReportWriter {
             } else if (executable instanceof Constraint) {
                 elementName = "constraint";
             } else {
-                throw new ReportWriterException("Cannot write report for unsupported executable " + executable);
+                throw new ExecutionListenerException("Cannot write report for unsupported executable " + executable);
             }
             final List<String> columnNames = result.getColumnNames();
             run(new XmlOperation() {
@@ -195,11 +195,11 @@ public class XmlReportWriter implements ReportWriter {
         xmlStreamWriter.writeEndElement(); // duration
     }
 
-    private void run(XmlOperation operation) throws ReportWriterException {
+    private void run(XmlOperation operation) throws ExecutionListenerException {
         try {
             operation.run();
         } catch (XMLStreamException e) {
-            throw new ReportWriterException("Cannot write to XML report.", e);
+            throw new ExecutionListenerException("Cannot write to XML report.", e);
         }
     }
 }
