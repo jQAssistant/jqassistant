@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.resolver;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.SignatureDescriptor;
 

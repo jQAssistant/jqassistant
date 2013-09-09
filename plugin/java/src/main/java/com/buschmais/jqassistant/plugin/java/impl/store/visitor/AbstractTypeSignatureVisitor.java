@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;

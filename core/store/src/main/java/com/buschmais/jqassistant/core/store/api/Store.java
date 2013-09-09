@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * Defines the store for {@link com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor}s.
+ * Defines the store for {@link com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor}s.
  */
 public interface Store {
 

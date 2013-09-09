@@ -17,7 +17,7 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;

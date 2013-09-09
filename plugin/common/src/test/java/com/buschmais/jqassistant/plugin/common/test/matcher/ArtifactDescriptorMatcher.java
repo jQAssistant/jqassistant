@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.test.matcher;
 
-import com.buschmais.jqassistant.core.model.test.matcher.descriptor.AbstractDescriptorMatcher;
+import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
 import org.hamcrest.Matcher;
 

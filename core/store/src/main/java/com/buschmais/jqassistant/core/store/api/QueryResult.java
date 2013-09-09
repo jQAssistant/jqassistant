@@ -43,7 +43,7 @@ public class QueryResult implements Closeable {
      * <p>
      * Where applicable the values of a row are transformed to instances of the
      * corresponding classes, e.g. nodes will be made available as instances of
-     * the according {@link com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor}s.
+     * the according {@link com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor}s.
      * </p>
      */
     private final Iterable<Row> rows;

@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 
 import java.util.Map;
 

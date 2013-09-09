@@ -33,10 +33,6 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.scanner</artifactId>
         </dependency>
         <dependency>
@@ -54,7 +50,12 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.model</artifactId>
+            <artifactId>jqassistant.core.store</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
@@ -73,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
+            <artifactId>hamcrest-library</artifactId>
         </dependency>
     </dependencies>
 

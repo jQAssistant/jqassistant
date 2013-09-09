@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import org.junit.Assume;
 import org.junit.Test;
 

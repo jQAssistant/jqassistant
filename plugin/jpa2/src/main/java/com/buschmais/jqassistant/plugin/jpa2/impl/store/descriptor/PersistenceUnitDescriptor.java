@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
 import java.util.HashSet;

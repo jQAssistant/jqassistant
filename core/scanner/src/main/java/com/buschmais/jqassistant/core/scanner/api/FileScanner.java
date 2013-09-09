@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 
 import java.io.File;
 import java.io.IOException;

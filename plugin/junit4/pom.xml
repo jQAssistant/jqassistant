@@ -24,7 +24,12 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.model</artifactId>
+            <artifactId>jqassistant.core.store</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>

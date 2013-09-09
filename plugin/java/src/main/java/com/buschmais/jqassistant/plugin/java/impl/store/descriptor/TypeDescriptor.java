@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;

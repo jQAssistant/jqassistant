@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.core.report.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rule.Concept;
-import com.buschmais.jqassistant.core.model.api.rule.Constraint;
-import com.buschmais.jqassistant.core.model.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} implementation which  delegates all method calls to the {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener}s  provided by the {@link Iterable} constructor argument.
