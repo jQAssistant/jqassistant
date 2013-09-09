@@ -1,11 +1,10 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Defines the interface for plugins for scanning files.

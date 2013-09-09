@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rule.Group;
-import com.buschmais.jqassistant.core.model.api.rule.Concept;
-import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} implementation collection the concept results and constraint violations in-memory.

@@ -1,10 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
-import com.buschmais.jqassistant.core.model.api.Result;
-import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
-import com.buschmais.jqassistant.core.model.api.rule.Group;
-import com.buschmais.jqassistant.core.model.api.rule.Concept;
-import com.buschmais.jqassistant.core.model.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 
 /**
  * Created with IntelliJ IDEA.

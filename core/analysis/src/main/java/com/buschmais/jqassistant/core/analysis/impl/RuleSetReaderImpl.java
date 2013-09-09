@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
-import com.buschmais.jqassistant.core.model.api.rule.Query;
-import com.buschmais.jqassistant.core.model.api.rule.Concept;
-import com.buschmais.jqassistant.core.model.api.rule.Constraint;
-import com.buschmais.jqassistant.core.model.api.rule.Group;
-import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Query;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +131,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     /**
-     * Reads {@link GroupType}s and converts them to {@link com.buschmais.jqassistant.core.model.api.rule.Group}s.
+     * Reads {@link GroupType}s and converts them to {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}s.
      *
      * @param constraintTypes The {@link ConstraintType}s.
      * @param groupTypes      The {@link GroupType}s.
@@ -202,11 +202,11 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     /**
-     * Gets a {@link com.buschmais.jqassistant.core.model.api.rule.Group} from the cache or create a new instance if it does not exist yet.
+     * Gets a {@link com.buschmais.jqassistant.core.analysis.api.rule.Group} from the cache or create a new instance if it does not exist yet.
      *
      * @param id     The id.
-     * @param groups The {@link com.buschmais.jqassistant.core.model.api.rule.Group}s.
-     * @return The {@link com.buschmais.jqassistant.core.model.api.rule.Group}.
+     * @param groups The {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}s.
+     * @return The {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}.
      */
     private Group getOrCreateGroup(String id, Map<String, Group> groups) {
         Group group = groups.get(id);
