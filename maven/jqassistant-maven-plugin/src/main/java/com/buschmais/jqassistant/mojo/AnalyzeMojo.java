@@ -18,6 +18,8 @@ package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.model.api.Result;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
@@ -25,8 +27,6 @@ import com.buschmais.jqassistant.core.model.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.report.api.ReportWriter;
-import com.buschmais.jqassistant.core.report.api.ReportWriterException;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
@@ -68,10 +68,10 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         XmlReportWriter xmlReportWriter;
         try {
             xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
-        } catch (ReportWriterException e) {
+        } catch (ExecutionListenerException e) {
             throw new MojoExecutionException("Cannot create XML report file writer.", e);
         }
-        List<ReportWriter> reportWriters = new LinkedList<>();
+        List<ExecutionListener> reportWriters = new LinkedList<>();
         reportWriters.add(inMemoryReportWriter);
         reportWriters.add(xmlReportWriter);
         try {

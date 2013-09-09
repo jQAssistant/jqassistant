@@ -1,5 +1,6 @@
-package com.buschmais.jqassistant.core.analysis.api;
+package com.buschmais.jqassistant.core.pluginmanager.api;
 
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Defines the interface for plugin readers.
  */
-public interface PluginReader {
+public interface PluginManager {
 
     String PLUGIN_RESOURCE = "META-INF/jqassistant-plugin.xml";
     String PLUGIN_SCHEMA_RESOURCE = "/META-INF/xsd/jqassistant-plugin-1.0.xsd";
@@ -26,7 +27,7 @@ public interface PluginReader {
      * Return the instances of the configured descriptor mappers.
      *
      * @return The instances of the configured descriptor mappers.
-     * @throws PluginReaderException If the instances cannot be created.
+     * @throws com.buschmais.jqassistant.core.analysis.api.PluginReaderException If the instances cannot be created.
      */
     List<DescriptorMapper<?>> getDescriptorMappers() throws PluginReaderException;
 

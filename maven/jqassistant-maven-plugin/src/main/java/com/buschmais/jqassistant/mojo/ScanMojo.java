@@ -52,7 +52,7 @@ public class ScanMojo extends AbstractAnalysisMojo {
         }
         List<FileScannerPlugin<?>> scannerPlugins = null;
         try {
-            scannerPlugins = pluginReader.getScannerPlugins();
+            scannerPlugins = pluginManager.getScannerPlugins();
         } catch (PluginReaderException e) {
             throw new MojoExecutionException("Cannot get scanner plugins.", e);
         }

@@ -1,6 +1,7 @@
-package com.buschmais.jqassistant.core.analysis.impl;
+package com.buschmais.jqassistant.core.pluginmanager.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReader;
+import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
+import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.*;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
@@ -24,9 +25,9 @@ import java.util.List;
 /**
  * Plugin reader implementation.
  */
-public class PluginReaderImpl implements PluginReader {
+public class PluginManagerImpl implements PluginManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PluginReaderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginManagerImpl.class);
 
     private JAXBContext jaxbContext;
 
@@ -35,7 +36,7 @@ public class PluginReaderImpl implements PluginReader {
     /**
      * Constructor.
      */
-    public PluginReaderImpl() {
+    public PluginManagerImpl() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -79,7 +80,7 @@ public class PluginReaderImpl implements PluginReader {
                             fullResource.append(directory);
                         }
                         fullResource.append(resource);
-                        URL url = PluginReaderImpl.class.getResource(fullResource.toString());
+                        URL url = PluginManagerImpl.class.getResource(fullResource.toString());
                         String systemId = null;
                         if (url != null) {
                             try {
@@ -141,7 +142,7 @@ public class PluginReaderImpl implements PluginReader {
         if (this.plugins == null) {
             final Enumeration<URL> resources;
             try {
-                resources = PluginReaderImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
+                resources = PluginManagerImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
             } catch (IOException e) {
                 throw new IllegalStateException("Cannot get plugin resources.", e);
             }

@@ -34,6 +34,18 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.report</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.pluginmanager</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>jqassistant.plugin.common</artifactId>
                 <version>${project.version}</version>

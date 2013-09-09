@@ -1,13 +1,14 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
-import com.buschmais.jqassistant.core.analysis.impl.PluginReaderImpl;
+import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.apache.commons.io.DirectoryWalker;
@@ -117,7 +118,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * The catalog reader instance.
      */
-    protected PluginReader pluginReader = new PluginReaderImpl();
+    protected PluginManager pluginManager = new PluginManagerImpl();
 
     /**
      * The rules reader instance.
@@ -174,7 +175,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
                 sources.add(new StreamSource(ruleFile));
             }
         }
-        List<Source> ruleSources = pluginReader.getRuleSources();
+        List<Source> ruleSources = pluginManager.getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
@@ -307,7 +308,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         }
         List<DescriptorMapper<?>> descriptorMappers;
         try {
-            descriptorMappers = pluginReader.getDescriptorMappers();
+            descriptorMappers = pluginManager.getDescriptorMappers();
         } catch (PluginReaderException e) {
             throw new MojoExecutionException("Cannot get descriptor mappers.", e);
         }

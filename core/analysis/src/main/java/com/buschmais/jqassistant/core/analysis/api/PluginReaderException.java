@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
 /**
- * Exception thrown by the {@link com.buschmais.jqassistant.core.analysis.api.PluginReader}.
+ * Exception thrown by the {@link com.buschmais.jqassistant.core.pluginmanager.api.PluginReader}.
  */
 public class PluginReaderException extends Exception {
 

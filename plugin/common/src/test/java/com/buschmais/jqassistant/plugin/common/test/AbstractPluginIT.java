@@ -2,13 +2,14 @@ package com.buschmais.jqassistant.plugin.common.test;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.analysis.impl.PluginReaderImpl;
+import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.model.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.model.api.rule.Concept;
 import com.buschmais.jqassistant.core.model.api.rule.Constraint;
 import com.buschmais.jqassistant.core.model.api.rule.Group;
 import com.buschmais.jqassistant.core.model.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
@@ -72,12 +73,12 @@ public class AbstractPluginIT {
 
     protected InMemoryReportWriter reportWriter;
 
-    private PluginReader pluginReader = new PluginReaderImpl();
+    private PluginManager pluginManager = new PluginManagerImpl();
 
     @BeforeClass
     public static void readRules() {
-        PluginReader pluginReader = new PluginReaderImpl();
-        List<Source> sources = pluginReader.getRuleSources();
+        PluginManager pluginManager = new PluginManagerImpl();
+        List<Source> sources = pluginManager.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
@@ -284,7 +285,7 @@ public class AbstractPluginIT {
 
     private List<DescriptorMapper<?>> getDescriptorMappers() {
         try {
-            return pluginReader.getDescriptorMappers();
+            return pluginManager.getDescriptorMappers();
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get descriptor mappers.", e);
         }
@@ -292,7 +293,7 @@ public class AbstractPluginIT {
 
     private List<FileScannerPlugin<?>> getScannerPlugins() {
         try {
-            return pluginReader.getScannerPlugins();
+            return pluginManager.getScannerPlugins();
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
