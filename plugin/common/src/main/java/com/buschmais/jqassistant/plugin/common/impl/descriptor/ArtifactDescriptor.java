@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.descriptor;
 
-import com.buschmais.jqassistant.core.model.api.descriptor.NamedDescriptor;
-import com.buschmais.jqassistant.core.model.api.descriptor.ParentDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 
 /**
  * Describes an artifact.
