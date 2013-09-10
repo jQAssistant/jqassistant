@@ -7,6 +7,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +19,9 @@ import java.util.List;
  * Implementation of the {@link RuleSelector}.
  */
 public class RuleSelectorImpl implements RuleSelector {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RuleSelectorImpl.class);
+
     @Override
     public RuleSet getEffectiveRuleSet(RuleSet ruleSet, List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws RuleSetResolverException {
         RuleSet effectiveRuleSet = new RuleSet();
@@ -137,10 +142,11 @@ public class RuleSelectorImpl implements RuleSelector {
         final List<Group> selectedGroups = new ArrayList<>();
         for (String groupName : groupNames) {
             Group group = ruleSet.getGroups().get(groupName);
-            if (group == null) {
-                throw new RuleSetResolverException("The group '" + groupName + "' is not defined.");
+            if (group != null) {
+                selectedGroups.add(group);
+            } else {
+                LOGGER.warn("Group '{}' is not defined, skipping.", groupName);
             }
-            selectedGroups.add(group);
         }
         return selectedGroups;
     }
