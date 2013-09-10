@@ -37,7 +37,11 @@ public enum JavaLabel implements IndexedLabel {
     /**
      * value
      */
-    VALUE;
+    VALUE,
+    /**
+     * Properties
+     */
+    PROPERTIES;
 
     private boolean indexed;
 
