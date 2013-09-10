@@ -19,6 +19,9 @@ package com.buschmais.jqassistant.mojo;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+
+import java.util.Set;
 
 /**
  * A Mojo which lists all effective rules.
@@ -29,8 +32,9 @@ import org.apache.maven.plugin.MojoFailureException;
 public class EffectiveRulesMojo extends AbstractAnalysisAggregatorMojo {
 
     @Override
-    public void aggregate() throws MojoExecutionException, MojoFailureException {
-        RuleSet targetRuleSet = resolveEffectiveRules();
+    public void aggregate(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Effective rules for '" + baseProject.getName() + "'.");
+        RuleSet targetRuleSet = resolveEffectiveRules(baseProject);
         logRuleSet(targetRuleSet);
     }
 

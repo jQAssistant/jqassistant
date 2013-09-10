@@ -34,6 +34,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -41,6 +42,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @goal analyze
@@ -56,12 +58,13 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
     protected boolean failOnConstraintViolations;
 
     @Override
-    public void aggregate() throws MojoExecutionException, MojoFailureException {
-        final RuleSet ruleSet = resolveEffectiveRules();
+    public void aggregate(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
+        final RuleSet ruleSet = resolveEffectiveRules(baseProject);
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
-            xmlReportFileWriter = new FileWriter(getXmlReportFile());
+            xmlReportFileWriter = new FileWriter(getXmlReportFile(baseProject));
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot create XML report file.", e);
         }
@@ -76,7 +79,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         reportWriters.add(xmlReportWriter);
         try {
             final CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            execute(new StoreOperation<Void>() {
+            execute(baseProject, new StoreOperation<Void>() {
                 @Override
                 public Void run(Store store) throws MojoExecutionException {
                     Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
@@ -150,8 +153,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
      * @return The {@link File} to write the XML report to.
      * @throws MojoExecutionException If the file cannot be determined.
      */
-    private File getXmlReportFile() throws MojoExecutionException {
-        File selectedXmlReportFile = BaseProjectResolver.getReportFile(project, xmlReportFile, REPORT_XML);
+    private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
+        File selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, REPORT_XML);
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
     }

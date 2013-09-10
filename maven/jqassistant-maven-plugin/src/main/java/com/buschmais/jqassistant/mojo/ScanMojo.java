@@ -26,10 +26,12 @@ import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescripto
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A Mojo which scans the compiled classes in the output directory and test output directory.
@@ -37,7 +39,7 @@ import java.util.List;
  * @phase package
  * @goal scan
  */
-public class ScanMojo extends AbstractAnalysisMojo {
+public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 
     /**
      * The artifact type for test jars.
@@ -45,26 +47,26 @@ public class ScanMojo extends AbstractAnalysisMojo {
     public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
         // reset the store if the current project is the base project (i.e. where the rules are located).
-        if (project != null && project.equals(BaseProjectResolver.getBaseProject(project))) {
-            reset();
+        reset(baseProject);
+        for (MavenProject project : projects) {
+            List<FileScannerPlugin<?>> scannerPlugins = null;
+            try {
+                scannerPlugins = pluginManager.getScannerPlugins();
+            } catch (PluginReaderException e) {
+                throw new MojoExecutionException("Cannot get scanner plugins.", e);
+            }
+            scanDirectory(baseProject, project, project.getBuild().getOutputDirectory(), false, scannerPlugins);
+            scanDirectory(baseProject, project, project.getBuild().getTestOutputDirectory(), true, scannerPlugins);
         }
-        List<FileScannerPlugin<?>> scannerPlugins = null;
-        try {
-            scannerPlugins = pluginManager.getScannerPlugins();
-        } catch (PluginReaderException e) {
-            throw new MojoExecutionException("Cannot get scanner plugins.", e);
-        }
-        scanDirectory(classesDirectory, false, scannerPlugins);
-        scanDirectory(testClassesDirectory, true, scannerPlugins);
     }
 
     /**
      * Reset the store.
      */
-    private void reset() throws MojoFailureException, MojoExecutionException {
-        executeInTransaction(new StoreOperation<Void>() {
+    private void reset(MavenProject baseProject) throws MojoFailureException, MojoExecutionException {
+        executeInTransaction(baseProject, new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException, MojoFailureException {
                 store.reset();
@@ -76,15 +78,16 @@ public class ScanMojo extends AbstractAnalysisMojo {
     /**
      * Scan the given directory for classes.
      *
-     * @param directory The directory.
+     * @param directoryName The directory.
      * @throws MojoExecutionException If scanning fails.
      */
-    private void scanDirectory(final File directory, final boolean testJar, final List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException, MojoFailureException {
+    private void scanDirectory(MavenProject baseProject, final MavenProject project, final String directoryName, final boolean testJar, final List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException, MojoFailureException {
+        final File directory = new File(directoryName);
         if (!directory.exists()) {
             getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
         } else {
             getLog().info("Scanning directory: " + directory.getAbsolutePath());
-            super.executeInTransaction(new StoreOperation<Void>() {
+            super.executeInTransaction(baseProject, new StoreOperation<Void>() {
                 @Override
                 public Void run(Store store) throws MojoExecutionException {
                     Artifact artifact = project.getArtifact();

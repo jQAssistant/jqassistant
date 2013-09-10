@@ -62,7 +62,8 @@ public class ReportMojo extends AbstractMavenReport {
     protected void executeReport(Locale locale) throws MavenReportException {
         File selectedXmlReportFile;
         try {
-            selectedXmlReportFile = BaseProjectResolver.getReportFile(project, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
+            MavenProject baseProject = BaseProjectResolver.getBaseProject(project);
+            selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
         } catch (MojoExecutionException e) {
             throw new MavenReportException("Cannot resolve XML report.", e);
         }

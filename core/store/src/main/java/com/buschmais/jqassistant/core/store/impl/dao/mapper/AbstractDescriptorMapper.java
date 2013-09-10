@@ -79,14 +79,14 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor, P extends E
      * Get a single entry from a set.
      *
      * @param set The set
-     * @param <T> The value type.
+     * @param <X> The value type.
      * @return The value.
      */
-    protected <T> T getSingleEntry(Collection<T> set) {
+    protected <X> X getSingleEntry(Collection<X> set) {
         if (set.size() > 1) {
             throw new IllegalArgumentException("Collection must contain exactly one entry.");
         }
-        Iterator<T> iterator = set.iterator();
+        Iterator<X> iterator = set.iterator();
         if (iterator.hasNext()) {
             return iterator.next();
         }

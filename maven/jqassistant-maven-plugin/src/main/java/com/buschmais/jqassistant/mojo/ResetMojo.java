@@ -19,6 +19,9 @@ package com.buschmais.jqassistant.mojo;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+
+import java.util.Set;
 
 /**
  * A mojo which resets the store, i.e. deletes all nodes and relationships.
@@ -27,12 +30,12 @@ import org.apache.maven.plugin.MojoFailureException;
  * @aggregator true
  * @requiresProject false
  */
-public class ResetMojo extends AbstractAnalysisMojo {
+public class ResetMojo extends AbstractAnalysisAggregatorMojo {
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
         getLog().info("Resetting store.");
-        executeInTransaction(new StoreOperation<Void>() {
+        executeInTransaction(baseProject, new StoreOperation<Void>() {
             @Override
             public Void run(Store store) {
                 store.reset();
@@ -40,4 +43,5 @@ public class ResetMojo extends AbstractAnalysisMojo {
             }
         });
     }
+
 }

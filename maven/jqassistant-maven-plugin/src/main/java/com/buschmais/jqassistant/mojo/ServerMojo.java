@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.Server;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 
@@ -33,7 +34,8 @@ public class ServerMojo extends AbstractAnalysisMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        execute(new StoreOperation<Void>() {
+        MavenProject baseProject = BaseProjectResolver.getBaseProject(currentProject);
+        execute(baseProject, new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException {
                 Server server = new Server((EmbeddedGraphStore) store);

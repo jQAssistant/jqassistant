@@ -78,22 +78,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     protected File xmlReportFile;
 
     /**
-     * The classes rulesDirectory.
-     *
-     * @parameter expression="${project.build.outputDirectory}"
-     * @readonly
-     */
-    protected File classesDirectory;
-
-    /**
-     * The classes rulesDirectory.
-     *
-     * @parameter expression="${project.build.testOutputDirectory}"
-     * @readonly
-     */
-    protected File testClassesDirectory;
-
-    /**
      * The store directory.
      *
      * @parameter expression="${jqassistant.store.directory}"
@@ -106,7 +90,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      *
      * @parameter expression="${project}"
      */
-    protected MavenProject project;
+    protected MavenProject currentProject;
 
     /**
      * Contains the full list of projects in the reactor.
@@ -135,8 +119,8 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected StoreProvider storeProvider;
 
-    protected <T> T executeInTransaction(StoreOperation<T> operation) throws MojoExecutionException, MojoFailureException {
-        final Store store = getStore();
+    protected <T> T executeInTransaction(MavenProject project, StoreOperation<T> operation) throws MojoExecutionException, MojoFailureException {
+        final Store store = getStore(project);
         store.beginTransaction();
         try {
             return operation.run(store);
@@ -145,8 +129,8 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         }
     }
 
-    protected <T> T execute(StoreOperation<T> operation) throws MojoExecutionException, MojoFailureException {
-        return operation.run(getStore());
+    protected <T> T execute(MavenProject project, StoreOperation<T> operation) throws MojoExecutionException, MojoFailureException {
+        return operation.run(getStore(project));
     }
 
     /**
@@ -156,15 +140,12 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the rules cannot be read.
      */
-    protected RuleSet readRules() throws MojoExecutionException {
+    protected RuleSet readRules(MavenProject baseProject) throws MojoExecutionException {
         File selectedDirectory = null;
         if (rulesDirectory != null) {
             selectedDirectory = rulesDirectory;
         } else {
-            MavenProject baseProject = BaseProjectResolver.getBaseProject(project);
-            if (baseProject != null) {
-                selectedDirectory = new File(baseProject.getBasedir(), BaseProjectResolver.RULES_DIRECTORY);
-            }
+            selectedDirectory = new File(baseProject.getBasedir(), BaseProjectResolver.RULES_DIRECTORY);
         }
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
@@ -179,6 +160,23 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
+
+    /**
+     * Resolves the effective rules.
+     *
+     * @return The resolved rules set.
+     * @throws MojoExecutionException If resolving fails.
+     */
+    protected RuleSet resolveEffectiveRules(MavenProject baseProject) throws MojoExecutionException {
+        RuleSet ruleSet = readRules(baseProject);
+        validateRuleSet(ruleSet);
+        try {
+            return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
+        } catch (RuleSetResolverException e) {
+            throw new MojoExecutionException("Cannot resolve rules.", e);
+        }
+    }
+
 
     /**
      * Retrieves the list of available rules from the rules directory.
@@ -211,22 +209,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
             return ruleFiles;
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
-        }
-    }
-
-    /**
-     * Resolves the effective rules.
-     *
-     * @return The resolved rules set.
-     * @throws MojoExecutionException If resolving fails.
-     */
-    protected RuleSet resolveEffectiveRules() throws MojoExecutionException {
-        RuleSet ruleSet = readRules();
-        validateRuleSet(ruleSet);
-        try {
-            return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
-        } catch (RuleSetResolverException e) {
-            throw new MojoExecutionException("Cannot resolve rules.", e);
         }
     }
 
@@ -299,12 +281,12 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * @return The store instance.
      * @throws MojoExecutionException If the store cannot be created.
      */
-    private Store getStore() throws MojoExecutionException {
+    private Store getStore(MavenProject baseProject) throws MojoExecutionException {
         File directory;
         if (storeDirectory != null) {
             directory = storeDirectory;
         } else {
-            directory = new File(BaseProjectResolver.getBaseProject(project).getBuild().getDirectory() + "/jqassistant/store");
+            directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
         }
         List<DescriptorMapper<?>> descriptorMappers;
         try {

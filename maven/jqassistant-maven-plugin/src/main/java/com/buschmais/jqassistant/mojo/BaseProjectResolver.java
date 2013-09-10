@@ -55,27 +55,25 @@ public final class BaseProjectResolver {
     /**
      * Determines a report file name.
      *
-     * @param project    The current project.
+     * @param baseProject    The base project.
      * @param reportFile The report file as specified in the pom.xml file or on the command line.
      * @return The resolved {@link java.io.File}.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *          If the file cannot be determined.
      */
-    static File getReportFile(MavenProject project, File reportFile, String defaultFile) throws MojoExecutionException {
-        MavenProject baseProject = getBaseProject(project);
+    static File getReportFile(MavenProject baseProject, File reportFile, String defaultFile) throws MojoExecutionException {
         File selectedXmlReportFile;
         if (reportFile != null) {
             selectedXmlReportFile = reportFile;
         } else if (baseProject != null) {
             String rulesProjectOutputDirectory = baseProject.getBuild().getDirectory();
             selectedXmlReportFile = new File(rulesProjectOutputDirectory + defaultFile);
-        } else if (project != null) {
-            String outputDirectory = project.getBuild().getDirectory();
+        } else if (baseProject != null) {
+            String outputDirectory = baseProject.getBuild().getDirectory();
             selectedXmlReportFile = new File(outputDirectory + defaultFile);
         } else {
             throw new MojoExecutionException("Cannot determine report file.");
         }
         return selectedXmlReportFile;
     }
-
 }
