@@ -147,7 +147,8 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                 break;
             case OF_TYPE:
                 if (descriptor instanceof TypedValueDescriptor) {
-                    ((TypedValueDescriptor) descriptor).setType((TypeDescriptor) target);
+                    TypeDescriptor typeDescriptor = (TypeDescriptor) getSingleEntry(target);
+                    ((TypedValueDescriptor) descriptor).setType(typeDescriptor);
                 }
                 break;
             default:
