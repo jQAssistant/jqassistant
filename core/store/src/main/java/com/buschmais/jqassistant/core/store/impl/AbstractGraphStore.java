@@ -8,9 +8,15 @@ import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.kernel.GraphDatabaseAPI;
+import org.neo4j.tooling.GlobalGraphOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,6 +34,8 @@ import static com.buschmais.jqassistant.core.store.api.model.IndexProperty.FQN;
  * </p>
  */
 public abstract class AbstractGraphStore implements Store {
+
+    private static final Logger LOGGER= LoggerFactory.getLogger(AbstractGraphStore.class);
 
     /**
      * The {@link GraphDatabaseService} to use.
@@ -121,8 +129,23 @@ public abstract class AbstractGraphStore implements Store {
         descriptorDAO.flush();
     }
 
-    protected DescriptorMapperRegistry getMapperRegistry() {
-        return mapperRegistry;
+
+    @Override
+    public void reset() {
+        LOGGER.info("Resetting store.");
+        for (DescriptorMapper<?> descriptorMapper : mapperRegistry.getDescriptorMappers()) {
+            IndexedLabel primaryLabel = descriptorMapper.getPrimaryLabel();
+            LOGGER.info("Removing nodes with label '{}'.", primaryLabel);
+            beginTransaction();
+            for (Node node : GlobalGraphOperations.at(database).getAllNodesWithLabel(primaryLabel)) {
+                for (Relationship relationship : node.getRelationships(Direction.BOTH)) {
+                    relationship.delete();
+                }
+                node.delete();
+            }
+            commitTransaction();
+        }
+        LOGGER.info("Reset finished.");
     }
 
     /**

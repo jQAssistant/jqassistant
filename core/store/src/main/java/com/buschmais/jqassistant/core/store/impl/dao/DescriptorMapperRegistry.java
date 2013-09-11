@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.ResourceIterator;
+import java.util.Collection;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -67,5 +68,9 @@ public class DescriptorMapperRegistry {
             throw new IllegalArgumentException("Cannot find mapper for java type " + javaType);
         }
         return mapper;
+    }
+
+    public Collection<DescriptorMapper<?>> getDescriptorMappers() {
+        return mappersByCoreLabel.values();
     }
 }

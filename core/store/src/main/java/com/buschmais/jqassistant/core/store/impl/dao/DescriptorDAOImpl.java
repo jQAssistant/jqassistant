@@ -20,9 +20,11 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
     private final class RowIterable implements Iterable<QueryResult.Row>, Closeable {
 
+        private List<String> columns;
         private ResourceIterator<Map<String, Object>> iterator;
 
-        private RowIterable(ResourceIterator<Map<String, Object>> iterator) {
+        private RowIterable(List<String> columns, ResourceIterator<Map<String, Object>> iterator) {
+            this.columns = columns;
             this.iterator = iterator;
         }
 
@@ -38,12 +40,12 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
                 @Override
                 public QueryResult.Row next() {
+                    Map<String, Object> next = iterator.next();
                     Map<String, Object> row = new LinkedHashMap<>();
-                    for (Entry<String, Object> entry : iterator.next().entrySet()) {
-                        String name = entry.getKey();
-                        Object value = entry.getValue();
+                    for (String column : columns) {
+                        Object value = next.get(column);
                         Object decodedValue = decodeValue(value);
-                        row.put(name, decodedValue);
+                        row.put(column, decodedValue);
                     }
                     return new QueryResult.Row(row);
                 }
@@ -158,7 +160,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     @Override
     public QueryResult executeQuery(String query, Map<String, Object> parameters) {
         ExecutionResult result = executionEngine.execute(query, parameters);
-        Iterable<QueryResult.Row> rowIterable = new RowIterable(result.iterator());
+        Iterable<QueryResult.Row> rowIterable = new RowIterable(result.columns(), result.iterator());
         return new QueryResult(result.columns(), rowIterable);
     }
 
