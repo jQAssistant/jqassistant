@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
  */
 public class EmbeddedGraphStore extends AbstractGraphStore {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(EmbeddedGraphStore.class);
-
     /**
      * The directory of the database.
      */
@@ -77,15 +75,4 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         transaction = null;
     }
 
-    @Override
-    public void reset() {
-        LOGGER.info("Resetting store in '{}'.", databaseDirectory);
-        for (Relationship relationShip : GlobalGraphOperations.at(database).getAllRelationships()) {
-            relationShip.delete();
-        }
-        for (Node node : GlobalGraphOperations.at(database).getAllNodes()) {
-            node.delete();
-        }
-        LOGGER.info("Reset finished.", databaseDirectory);
-    }
 }

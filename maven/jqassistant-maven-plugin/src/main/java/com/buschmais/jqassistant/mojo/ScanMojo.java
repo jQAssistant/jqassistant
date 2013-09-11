@@ -66,7 +66,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
      * Reset the store.
      */
     private void reset(MavenProject baseProject) throws MojoFailureException, MojoExecutionException {
-        executeInTransaction(baseProject, new StoreOperation<Void>() {
+        execute(baseProject, new StoreOperation<Void>() {
             @Override
             public Void run(Store store) throws MojoExecutionException, MojoFailureException {
                 store.reset();

@@ -35,7 +35,7 @@ public class ResetMojo extends AbstractAnalysisAggregatorMojo {
     @Override
     protected void aggregate(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
         getLog().info("Resetting store.");
-        executeInTransaction(baseProject, new StoreOperation<Void>() {
+        execute(baseProject, new StoreOperation<Void>() {
             @Override
             public Void run(Store store) {
                 store.reset();
