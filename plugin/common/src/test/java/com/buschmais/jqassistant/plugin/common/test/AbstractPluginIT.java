@@ -104,9 +104,7 @@ public class AbstractPluginIT {
     public void startStore() {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
         store.start(getDescriptorMappers());
-        store.beginTransaction();
         store.reset();
-        store.commitTransaction();
     }
 
     /**
