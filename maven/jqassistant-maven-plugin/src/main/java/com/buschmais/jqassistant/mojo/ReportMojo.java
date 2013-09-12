@@ -3,14 +3,11 @@ package com.buschmais.jqassistant.mojo;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
-import org.apache.maven.doxia.sink.Sink;
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.neo4j.cypher.internal.parser.experimental.functions.Abs;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -18,7 +15,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Locale;
 
 /**

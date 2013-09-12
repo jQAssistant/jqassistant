@@ -30,7 +30,7 @@
         <cypher><![CDATA[
             MATCH p=shortestPath((a:TYPE)-[:CONTAINS|DEPENDS_ON*]->(i:TYPE))
             WHERE a:API AND i:IMPL
-            RETURN extract(t in nodes(p) : t.FQN) as Path
+            RETURN extract(t in nodes(p) | t.FQN) as Path
             ORDER BY length(p) DESC
         ]]></cypher>
     </constraint>

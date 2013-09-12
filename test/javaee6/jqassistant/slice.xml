@@ -31,7 +31,7 @@
             WHERE NOT (
               d:USER
             )
-            RETURN extract(n in nodes(p) : n.FQN) as path
+            RETURN extract(n in nodes(p) | n.FQN) as path
         ]]></cypher>
     </constraint>
 
@@ -45,7 +45,7 @@
               d:CART
               OR d:SLICE:USER
             )
-            RETURN extract(n in nodes(p) : n.FQN) as path
+            RETURN extract(n in nodes(p) | n.FQN) as path
         ]]></cypher>
     </constraint>
 

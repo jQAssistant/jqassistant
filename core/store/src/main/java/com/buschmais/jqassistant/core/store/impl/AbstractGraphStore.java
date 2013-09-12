@@ -135,7 +135,7 @@ public abstract class AbstractGraphStore implements Store {
         LOGGER.info("Resetting store.");
         for (DescriptorMapper<?> descriptorMapper : mapperRegistry.getDescriptorMappers()) {
             IndexedLabel primaryLabel = descriptorMapper.getPrimaryLabel();
-            LOGGER.info("Removing nodes with label '{}'.", primaryLabel);
+            LOGGER.debug("Removing nodes with label '{}'.", primaryLabel);
             beginTransaction();
             for (Node node : GlobalGraphOperations.at(database).getAllNodesWithLabel(primaryLabel)) {
                 for (Relationship relationship : node.getRelationships(Direction.BOTH)) {
