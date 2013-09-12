@@ -81,9 +81,9 @@
         <requiresConcept refId="dependency:FieldAccess"/>
         <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
         <cypher><![CDATA[
-            MATCH 
+            MATCH
             	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|THROWS]->(t2:TYPE)
-			WHERE 
+			WHERE
 				t1<>t2
 				AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)
 			CREATE UNIQUE
@@ -97,13 +97,13 @@
         <requiresConcept refId="dependency:TypeBody"/>
         <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.</description>
         <cypher><![CDATA[
-            MATCH 
+            MATCH
             	(t1:TYPE)-[:DEPENDS_ON|EXTENDS|IMPLEMENTS]->(t2:TYPE)
-			WHERE 
+			WHERE
 				t1<>t2
-			CREATE UNIQUE 
+			CREATE UNIQUE
 				(t1)-[:DEPENDS_ON]->(t2)
-			RETURN 
+			RETURN
 				COUNT(DISTINCT t1) as type
         ]]></cypher>
     </concept>
@@ -112,13 +112,13 @@
         <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.</description>
         <cypher><![CDATA[
-			MATCH  
+			MATCH
 				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
-			WHERE 
+			WHERE
 				p1<>p2
-			CREATE UNIQUE 
+			CREATE UNIQUE
 				(p1)-[:DEPENDS_ON]->(p2)
-			RETURN 
+			RETURN
 				COUNT(DISTINCT p1) as package
         ]]></cypher>
     </concept>
@@ -127,13 +127,13 @@
         <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.</description>
         <cypher><![CDATA[
-			MATCH  
+			MATCH
 				(a1:ARTIFACT)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(a2:ARTIFACT)
-			WHERE 
+			WHERE
 				a1<>a2
-			CREATE UNIQUE 
+			CREATE UNIQUE
 				(a1)-[:DEPENDS_ON]->(a2)
-			RETURN 
+			RETURN
 				a1 AS artifact, COLLECT(DISTINCT a2.NAME) AS dependencies
         ]]></cypher>
     </concept>
@@ -148,7 +148,7 @@
 			WHERE
 				p1<>p2
 			RETURN
-				p1 as package, extract(p in nodes(path) : p.FQN) as cycle
+				p1 AS package, EXTRACT(p IN NODES(path) | p.FQN) AS cycle
 			ORDER BY
 				package.FQN
         ]]></cypher>
@@ -173,7 +173,7 @@
                   t1=t2 OR (t1)-[:CONTAINS]-(t2)
                 )
             RETURN
-                length(path) as length, extract(p in nodes(path) : p.FQN) as cycle
+                LENGTH(path) AS length, EXTRACT(p IN NODES(path) | p.FQN) AS cycle
         ]]></cypher>
     </constraint>
 
@@ -187,7 +187,7 @@
 			WHERE
 				a1<>a2
 			RETURN
-				a1 as artifact, extract(a in nodes(path) : a.FQN) as cycle
+				a1 AS artifact, EXTRACT(a IN NODES(path) | a.FQN) AS cycle
 			ORDER BY
 				artifact.FQN
         ]]></cypher>
