@@ -1,6 +1,12 @@
 package com.buschmais.jqassistant.core.store.impl.dao;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import gnu.trove.iterator.TLongObjectIterator;
+import gnu.trove.iterator.TObjectLongIterator;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.TObjectLongMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
+import gnu.trove.map.hash.TObjectLongHashMap;
 import org.apache.commons.collections.map.LRUMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +26,7 @@ public class DescriptorCache {
     /**
      * The transactional index cache.
      */
-    private final Map<String, Long> indexCache = new HashMap<>();
+    private final TObjectLongMap<String> indexCache = new TObjectLongHashMap<>();
     /**
      * The shared index cache (limited size).
      */
@@ -29,7 +35,7 @@ public class DescriptorCache {
     /**
      * The transactional descriptor cache.
      */
-    private final Map<Long, Descriptor> cache = new HashMap<>();
+    private final TLongObjectMap<Descriptor> cache = new TLongObjectHashMap<>();
 
     /**
      * The reference cache (weak references).
@@ -48,10 +54,10 @@ public class DescriptorCache {
      * @param <T>        The descriptor type.
      */
     public <T extends Descriptor> void put(T descriptor) {
-        if (this.cache.put(descriptor.getId(), descriptor) != null) {
+        if (this.cache.put(descriptor.getId().longValue(), descriptor) != null) {
             throw new IllegalStateException("Cannot put two instances with same ID into cache: " + descriptor.getId());
         }
-        this.indexCache.put(descriptor.getFullQualifiedName(), descriptor.getId());
+        this.indexCache.put(descriptor.getFullQualifiedName(), descriptor.getId().longValue());
     }
 
     /**
@@ -61,15 +67,16 @@ public class DescriptorCache {
      * @return The node/descriptor id or <code>null</code>.
      */
     public Long findBy(String fullQualifiedName) {
-        Long id = indexCache.get(fullQualifiedName);
-        if (id != null) {
-            return id;
+        long id = indexCache.get(fullQualifiedName);
+        if (id != 0) {
+            return Long.valueOf(id);
         }
-        id = sharedIndexCache.get(fullQualifiedName);
-        if (id != null) {
-            indexCache.put(fullQualifiedName, id);
+        Long sharedId = sharedIndexCache.get(fullQualifiedName);
+        if (sharedId != null) {
+            indexCache.put(fullQualifiedName, sharedId.longValue());
+            return sharedId;
         }
-        return id;
+        return null;
     }
 
     /**
@@ -80,7 +87,7 @@ public class DescriptorCache {
      * @return The descriptor or <code>null</code>.
      */
     public <T extends Descriptor> T findBy(Long id) {
-        T descriptor = (T) cache.get(id);
+        T descriptor = (T) cache.get(id.longValue());
         if (descriptor != null) {
             LOGGER.trace("Hit '{}' (TX).", id);
             return descriptor;
@@ -94,7 +101,7 @@ public class DescriptorCache {
         }
         if (descriptor != null) {
             LOGGER.trace("Hit '{}' (Ref/Shared).", id);
-            cache.put(id, descriptor);
+            cache.put(id.longValue(), descriptor);
         } else {
             LOGGER.trace("Miss '{}'.", id);
         }
@@ -106,23 +113,27 @@ public class DescriptorCache {
      * @return The descriptors.
      */
     public Iterable<Descriptor> getDescriptors() {
-        return cache.values();
+        return cache.valueCollection();
     }
 
     /**
      * Flush all transactional
      */
     public void flush() {
-        for (Map.Entry<Long, Descriptor> entry : cache.entrySet()) {
-            this.referenceCache.put(entry.getKey(), new SoftReference<>(entry.getValue()));
-            this.sharedCache.put(entry.getKey(), entry.getValue());
+        for (TLongObjectIterator<Descriptor> iterator = cache.iterator(); iterator.hasNext();) {
+            iterator.advance();
+            Long key = Long.valueOf(iterator.key());
+            Descriptor value = iterator.value();
+            this.referenceCache.put(key, new SoftReference<>(value));
+            this.sharedCache.put(key, value);
+            iterator.remove();
         }
         LOGGER.trace("ref='{}', shared '{}'.", this.referenceCache.size(), this.sharedCache.size());
-        this.cache.clear();
-        for (Map.Entry<String, Long> entry : indexCache.entrySet()) {
-            this.sharedIndexCache.put(entry.getKey(), entry.getValue());
+        for (TObjectLongIterator<String> iterator = indexCache.iterator(); iterator.hasNext(); ) {
+            iterator.advance();
+            this.sharedIndexCache.put(iterator.key(), Long.valueOf(iterator.value()));
+            iterator.remove();
         }
         LOGGER.trace("sharedIndex '{}'.", this.sharedIndexCache.size());
-        this.indexCache.clear();
     }
 }
