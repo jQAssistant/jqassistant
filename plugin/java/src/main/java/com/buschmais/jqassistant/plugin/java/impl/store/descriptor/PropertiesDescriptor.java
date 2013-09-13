@@ -3,19 +3,20 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
 
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A descriptor containing properties.
  */
 public class PropertiesDescriptor extends AbstractDescriptor {
 
-    private Properties properties;
+    private Set<PrimitiveValueDescriptor> properties;
 
-    public Properties getProperties() {
+    public Set<PrimitiveValueDescriptor> getProperties() {
         return properties;
     }
 
-    public void setProperties(Properties properties) {
+    public void setProperties(Set<PrimitiveValueDescriptor> properties) {
         this.properties = properties;
     }
 }
