@@ -47,12 +47,12 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor, P extends E
     }
 
     @Override
-    public Iterable<String> getPropertyNames() {
+    public final Iterable<String> getPropertyNames() {
         return properties.keySet();
     }
 
     @Override
-    public Iterable<? extends RelationshipType> getRelationshipTypes() {
+    public final Iterable<? extends RelationshipType> getRelationshipTypes() {
         return relations.values();
     }
 
@@ -142,5 +142,4 @@ public abstract class AbstractDescriptorMapper<T extends Descriptor, P extends E
     @Override
     public void setLabel(T descriptor, Label label) {
     }
-
 }

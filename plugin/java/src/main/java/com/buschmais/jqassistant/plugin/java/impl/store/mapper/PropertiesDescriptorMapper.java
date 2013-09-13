@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.mapper;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.AbstractDescriptorMapper;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
@@ -22,6 +23,7 @@ public class PropertiesDescriptorMapper extends AbstractDescriptorMapper<Propert
     }
 
     enum Relation implements RelationshipType {
+        HAS;
     }
 
     @Override
@@ -34,11 +36,6 @@ public class PropertiesDescriptorMapper extends AbstractDescriptorMapper<Propert
     @Override
     public IndexedLabel getPrimaryLabel() {
         return JavaLabel.PROPERTIES;
-    }
-
-    @Override
-    public Iterable<? extends RelationshipType> getRelationshipTypes() {
-        return emptyList();
     }
 
     @Override
@@ -63,11 +60,23 @@ public class PropertiesDescriptorMapper extends AbstractDescriptorMapper<Propert
 
     @Override
     protected Set<? extends Descriptor> getRelation(PropertiesDescriptor descriptor, Relation relation) {
+        switch (relation) {
+            case HAS:
+                return descriptor.getProperties();
+            default:
+                break;
+        }
         return null;
     }
 
     @Override
     protected void setRelation(PropertiesDescriptor descriptor, Relation relation, Set<? extends Descriptor> targets) {
+        switch (relation) {
+            case HAS:
+                descriptor.setProperties((Set<PrimitiveValueDescriptor>) targets);
+            default:
+                break;
+        }
     }
 
     @Override

@@ -6,10 +6,12 @@
         <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.MethodDescriptorMapper</mapper>
         <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.ParameterDescriptorMapper</mapper>
         <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.ValueDescriptorMapper</mapper>
+        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.PropertiesDescriptorMapper</mapper>
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin</plugin>
     </scanner>
     <rules>
         <resources>
