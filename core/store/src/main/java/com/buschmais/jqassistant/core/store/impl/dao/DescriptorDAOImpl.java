@@ -103,6 +103,9 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Node node = database.createNode(adapter.getPrimaryLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         descriptorCache.put(descriptor);
+        if (descriptor.getFullQualifiedName() != null) {
+            descriptorCache.index(descriptor);
+        }
     }
 
     @Override
@@ -204,7 +207,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param mapper     The store.
      */
     private <T extends Descriptor, P extends Enum> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        node.setProperty(IndexProperty.FQN.name(), descriptor.getFullQualifiedName());
+        String fullQualifiedName = descriptor.getFullQualifiedName();
+        if (fullQualifiedName != null) {
+            node.setProperty(IndexProperty.FQN.name(), fullQualifiedName);
+        }
         for (String propertyName : mapper.getPropertyNames()) {
             Object value = mapper.getProperty(descriptor, propertyName);
             if (value == null) {
@@ -257,8 +263,11 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Class<T> type = getType(node);
         T descriptor = mapper.createInstance(type);
         mapper.setId(descriptor, Long.valueOf(node.getId()));
-        descriptor.setFullQualifiedName((String) node.getProperty(IndexProperty.FQN.name()));
         this.descriptorCache.put(descriptor);
+        if (node.hasProperty(IndexProperty.FQN.name())) {
+            descriptor.setFullQualifiedName((String) node.getProperty(IndexProperty.FQN.name()));
+            this.descriptorCache.index(descriptor);
+        }
         // create outgoing relationships
         Map<R, Set<Descriptor>> relations = new HashMap<>();
         for (RelationshipType relationshipType : mapper.getRelationshipTypes()) {

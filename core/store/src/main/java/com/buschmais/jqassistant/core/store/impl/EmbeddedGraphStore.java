@@ -61,7 +61,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         }
         flush();
         transaction.success();
-        transaction.finish();
+        transaction.close();
         transaction = null;
     }
 
@@ -71,7 +71,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
             throw new IllegalStateException("There is no existing transaction.");
         }
         transaction.failure();
-        transaction.finish();
+        transaction.close();
         transaction = null;
     }
 

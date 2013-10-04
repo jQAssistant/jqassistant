@@ -66,6 +66,14 @@ public interface Store {
      * Creates a {@link Descriptor} of the given type.
      *
      * @param type              The type.
+     * @return The {@link Descriptor}.
+     */
+    <T extends Descriptor> T create(Class<T> type);
+
+    /**
+     * Creates a {@link Descriptor} of the given type with a full qualified name
+     *
+     * @param type              The type.
      * @param fullQualifiedName The full qualified name of the descriptor.
      * @return The {@link Descriptor}.
      */
@@ -79,17 +87,6 @@ public interface Store {
      * @return The {@link Descriptor}.
      */
     <T extends Descriptor> T find(Class<T> type, String fullQualifiedName);
-
-    /**
-     * Executes a CYPHER query.
-     * <p>
-     * This method delegates to {@link DescriptorDAO#executeQuery(String, Map)} using Collections#emptyMap as parameters.
-     * </p>
-     *
-     * @param query The CYPHER query.
-     * @return The {@link QueryResult}.
-     */
-    QueryResult executeQuery(String query);
 
     /**
      * Executes a CYPHER query.

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
 import java.util.HashSet;
@@ -17,6 +18,7 @@ public class PersistenceUnitDescriptor extends AbstractDescriptor {
     private String nonJtaDataSource;
     private String validationMode;
     private String sharedCacheMode;
+    private PropertiesDescriptor properties;
 
     /**
      * The classes referenced by this persistence unit.
@@ -77,5 +79,13 @@ public class PersistenceUnitDescriptor extends AbstractDescriptor {
 
     public void setSharedCacheMode(String sharedCacheMode) {
         this.sharedCacheMode = sharedCacheMode;
+    }
+
+    public PropertiesDescriptor getProperties() {
+        return properties;
+    }
+
+    public void setProperties(PropertiesDescriptor properties) {
+        this.properties = properties;
     }
 }

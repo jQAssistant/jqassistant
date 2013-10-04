@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor;
@@ -16,6 +18,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 
 import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
 
 /**
  * A scanner for JPA persistence units.
@@ -52,6 +55,7 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
         }
         PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class, streamSource.getSystemId());
         persistenceDescriptor.setVersion(persistence.getVersion());
+        // Create persistence units
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class, persistenceUnit.getName());
             persistenceUnitDescriptor.setDescription(persistenceUnit.getDescription());
@@ -60,11 +64,21 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
             persistenceUnitDescriptor.setProvider(persistenceUnit.getProvider());
             persistenceUnitDescriptor.setValidationMode(persistenceUnit.getValidationMode().name());
             persistenceUnitDescriptor.setSharedCacheMode(persistenceUnit.getSharedCacheMode().name());
-            persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
             for (String clazz : persistenceUnit.getClazz()) {
                 TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz);
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
+            // Create persistence unit properties
+            PropertiesDescriptor propertiesDescriptor = store.create(PropertiesDescriptor.class);
+            for (Property property : persistenceUnit.getProperties().getProperty()) {
+                PrimitiveValueDescriptor primitiveValueDescriptor = store.create(PrimitiveValueDescriptor.class);
+                primitiveValueDescriptor.setName(property.getName());
+                primitiveValueDescriptor.setValue(property.getValue());
+                propertiesDescriptor.getProperties().add(primitiveValueDescriptor);
+            }
+            persistenceUnitDescriptor.setProperties(propertiesDescriptor);
+            // Add persistence unit to persistence descriptor
+            persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }
         return persistenceDescriptor;
     }

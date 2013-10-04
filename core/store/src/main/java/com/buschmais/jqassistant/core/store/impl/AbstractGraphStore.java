@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
@@ -18,7 +18,6 @@ import org.neo4j.tooling.GlobalGraphOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,7 @@ import static com.buschmais.jqassistant.core.store.api.model.IndexProperty.FQN;
  */
 public abstract class AbstractGraphStore implements Store {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(AbstractGraphStore.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
 
     /**
      * The {@link GraphDatabaseService} to use.
@@ -98,10 +97,12 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public <T extends Descriptor> T create(Class<T> type) {
+        return create(type, null);
+    }
+
+    @Override
     public <T extends Descriptor> T create(Class<T> type, String fullQualifiedName) {
-        if (fullQualifiedName == null) {
-            throw new IllegalArgumentException("FQN must not be null.");
-        }
         DescriptorMapper<T> mapper = mapperRegistry.getDescriptorMapper(type);
         T descriptor = mapper.createInstance(type);
         descriptor.setFullQualifiedName(fullQualifiedName);
@@ -112,11 +113,6 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
         return descriptorDAO.find(type, fullQualifiedName);
-    }
-
-    @Override
-    public QueryResult executeQuery(String query) {
-        return descriptorDAO.executeQuery(query, Collections.<String, Object>emptyMap());
     }
 
     @Override

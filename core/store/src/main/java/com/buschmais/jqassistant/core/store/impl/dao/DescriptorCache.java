@@ -57,7 +57,19 @@ public class DescriptorCache {
         if (this.cache.put(descriptor.getId().longValue(), descriptor) != null) {
             throw new IllegalStateException("Cannot put two instances with same ID into cache: " + descriptor.getId());
         }
-        this.indexCache.put(descriptor.getFullQualifiedName(), descriptor.getId().longValue());
+    }
+
+    /**
+     * Add a descriptor to the index.
+     *
+     * @param descriptor The descriptor.
+     * @param <T>        The descriptor type.
+     */
+    public <T extends Descriptor> void index(T descriptor) {
+        String fullQualifiedName = descriptor.getFullQualifiedName();
+        if (fullQualifiedName != null) {
+            this.indexCache.put(fullQualifiedName, descriptor.getId().longValue());
+        }
     }
 
     /**
@@ -110,6 +122,7 @@ public class DescriptorCache {
 
     /**
      * Get all descriptors from the transactional descriptor cache.
+     *
      * @return The descriptors.
      */
     public Iterable<Descriptor> getDescriptors() {
@@ -120,7 +133,7 @@ public class DescriptorCache {
      * Flush all transactional
      */
     public void flush() {
-        for (TLongObjectIterator<Descriptor> iterator = cache.iterator(); iterator.hasNext();) {
+        for (TLongObjectIterator<Descriptor> iterator = cache.iterator(); iterator.hasNext(); ) {
             iterator.advance();
             Long key = Long.valueOf(iterator.key());
             Descriptor value = iterator.value();
