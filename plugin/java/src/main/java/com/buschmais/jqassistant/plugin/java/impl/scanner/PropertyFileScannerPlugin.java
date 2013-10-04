@@ -30,6 +30,7 @@ public class PropertyFileScannerPlugin implements FileScannerPlugin<PropertiesDe
             PrimitiveValueDescriptor primitiveValueDescriptor = store.create(PrimitiveValueDescriptor.class, filename + ":" + name);
             primitiveValueDescriptor.setName(name);
             primitiveValueDescriptor.setValue(value);
+            propertiesDescriptor.getProperties().add(primitiveValueDescriptor);
         }
         return propertiesDescriptor;
     }
