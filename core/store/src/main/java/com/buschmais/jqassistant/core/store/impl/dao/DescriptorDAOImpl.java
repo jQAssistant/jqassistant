@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.store.impl.dao;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.IndexProperty;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
@@ -14,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class DescriptorDAOImpl implements DescriptorDAO {
 
@@ -98,13 +98,13 @@ public class DescriptorDAOImpl implements DescriptorDAO {
 
     @Override
     public <T extends Descriptor> void persist(T descriptor) {
-        LOGGER.debug("Creating node for '{}'.", descriptor.getFullQualifiedName());
+        LOGGER.debug("Creating node for '{}'.", descriptor.getId());
         DescriptorMapper<T> adapter = registry.getDescriptorMapper(descriptor.getClass());
         Node node = database.createNode(adapter.getPrimaryLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         descriptorCache.put(descriptor);
-        if (descriptor.getFullQualifiedName() != null) {
-            descriptorCache.index(descriptor);
+        if (descriptor instanceof FullQualifiedNameDescriptor) {
+            descriptorCache.index((FullQualifiedNameDescriptor) descriptor);
         }
     }
 
@@ -112,7 +112,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     public void flush() {
         LOGGER.debug("Flushing changes to database.");
         for (Descriptor descriptor : descriptorCache.getDescriptors()) {
-            LOGGER.debug("Flushing descriptor '{}'.", descriptor.getFullQualifiedName());
+            LOGGER.debug("Flushing descriptor '{}'.", descriptor.getId());
             Node node = getNode(descriptor);
             DescriptorMapper mapper = registry.getDescriptorMapper(descriptor.getClass());
             flushRelations(descriptor, node, mapper);
@@ -207,9 +207,8 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param mapper     The store.
      */
     private <T extends Descriptor, P extends Enum> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        String fullQualifiedName = descriptor.getFullQualifiedName();
-        if (fullQualifiedName != null) {
-            node.setProperty(IndexProperty.FQN.name(), fullQualifiedName);
+        if (descriptor instanceof FullQualifiedNameDescriptor) {
+            node.setProperty(IndexProperty.FQN.name(), ((FullQualifiedNameDescriptor) descriptor).getFullQualifiedName());
         }
         for (String propertyName : mapper.getPropertyNames()) {
             Object value = mapper.getProperty(descriptor, propertyName);
@@ -264,9 +263,10 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         T descriptor = mapper.createInstance(type);
         mapper.setId(descriptor, Long.valueOf(node.getId()));
         this.descriptorCache.put(descriptor);
-        if (node.hasProperty(IndexProperty.FQN.name())) {
-            descriptor.setFullQualifiedName((String) node.getProperty(IndexProperty.FQN.name()));
-            this.descriptorCache.index(descriptor);
+        if (descriptor instanceof FullQualifiedNameDescriptor) {
+            FullQualifiedNameDescriptor fullQualifiedNameDescriptor = (FullQualifiedNameDescriptor)descriptor;
+            fullQualifiedNameDescriptor.setFullQualifiedName((String) node.getProperty(IndexProperty.FQN.name()));
+            this.descriptorCache.index(fullQualifiedNameDescriptor);
         }
         // create outgoing relationships
         Map<R, Set<Descriptor>> relations = new HashMap<>();

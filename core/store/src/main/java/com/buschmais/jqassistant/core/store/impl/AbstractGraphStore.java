@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
@@ -98,11 +99,14 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <T extends Descriptor> T create(Class<T> type) {
-        return create(type, null);
+        DescriptorMapper<T> mapper = mapperRegistry.getDescriptorMapper(type);
+        T descriptor = mapper.createInstance(type);
+        descriptorDAO.persist(descriptor);
+        return descriptor;
     }
 
     @Override
-    public <T extends Descriptor> T create(Class<T> type, String fullQualifiedName) {
+    public <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName) {
         DescriptorMapper<T> mapper = mapperRegistry.getDescriptorMapper(type);
         T descriptor = mapper.createInstance(type);
         descriptor.setFullQualifiedName(fullQualifiedName);

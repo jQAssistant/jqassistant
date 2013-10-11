@@ -4,10 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Abstract base implementation of an {@link AbstractDescriptor} which contains
- * other {@link AbstractDescriptor}s.
+ * Abstract base implementation of an {@link AbstractFullQualifiedNameDescriptor} which contains
+ * other {@link Descriptor}s.
  */
-public abstract class ParentDescriptor extends AbstractDescriptor {
+public abstract class ParentDescriptor extends AbstractFullQualifiedNameDescriptor {
 
     /**
      * The contained descriptors.

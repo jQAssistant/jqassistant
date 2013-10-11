@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.store.test.matcher;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 /**
  * Abstract base class for descriptor matchers.
  */
-public class AbstractDescriptorMatcher<T extends Descriptor> extends TypeSafeMatcher<T> {
+public class AbstractDescriptorMatcher<T extends FullQualifiedNameDescriptor> extends TypeSafeMatcher<T> {
 
     private Class<T> type;
 

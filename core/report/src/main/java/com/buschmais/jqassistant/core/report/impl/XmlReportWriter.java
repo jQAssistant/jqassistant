@@ -14,11 +14,11 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
@@ -171,7 +171,7 @@ public class XmlReportWriter implements ExecutionListener {
                             for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
                                 String columnName = rowEntry.getKey();
                                 Object value = rowEntry.getValue();
-                                String stringValue = value instanceof Descriptor ? ((Descriptor) value).getFullQualifiedName() : value.toString();
+                                String stringValue = value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value).getFullQualifiedName() : value.toString();
                                 xmlStreamWriter.writeStartElement("column");
                                 xmlStreamWriter.writeAttribute("name", columnName);
                                 xmlStreamWriter.writeCharacters(stringValue);
