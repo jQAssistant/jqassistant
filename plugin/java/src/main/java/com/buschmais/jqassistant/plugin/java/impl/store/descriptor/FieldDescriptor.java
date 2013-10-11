@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractFullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
-public class FieldDescriptor extends ParentDescriptor implements SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class FieldDescriptor extends AbstractFullQualifiedNameDescriptor implements SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
      * The signature of the field.

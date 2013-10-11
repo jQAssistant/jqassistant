@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.resolver;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractFullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.SignatureDescriptor;
@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.SignatureDesc
  * @param <P> The type of the parent descriptor.
  * @param <T> The type of the descriptor to be resolved.
  */
-public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & SignatureDescriptor, T extends AbstractDescriptor & SignatureDescriptor> {
+public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & SignatureDescriptor, T extends AbstractFullQualifiedNameDescriptor & SignatureDescriptor> {
 
     public static final String EMPTY_NAME = "";
     private final Store store;

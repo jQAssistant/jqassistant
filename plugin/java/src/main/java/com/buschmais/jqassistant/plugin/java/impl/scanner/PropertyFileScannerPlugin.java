@@ -22,12 +22,12 @@ public class PropertyFileScannerPlugin implements FileScannerPlugin<PropertiesDe
     @Override
     public PropertiesDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
         String filename = streamSource.getSystemId();
-        PropertiesDescriptor propertiesDescriptor = store.create(PropertiesDescriptor.class, filename);
+        PropertiesDescriptor propertiesDescriptor = store.create(PropertiesDescriptor.class);
         Properties properties = new Properties();
         properties.load(streamSource.getInputStream());
         for (String name : properties.stringPropertyNames()) {
             String value = properties.getProperty(name);
-            PrimitiveValueDescriptor primitiveValueDescriptor = store.create(PrimitiveValueDescriptor.class, filename + ":" + name);
+            PrimitiveValueDescriptor primitiveValueDescriptor = store.create(PrimitiveValueDescriptor.class);
             primitiveValueDescriptor.setName(name);
             primitiveValueDescriptor.setValue(value);
             propertiesDescriptor.getProperties().add(primitiveValueDescriptor);

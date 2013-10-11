@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractFullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Describes a method of a Java class.
  */
-public class MethodDescriptor extends AbstractDescriptor implements SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public class MethodDescriptor extends AbstractFullQualifiedNameDescriptor implements SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
      * The signature of the method

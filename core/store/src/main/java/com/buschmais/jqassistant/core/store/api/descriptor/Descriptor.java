@@ -19,18 +19,4 @@ public interface Descriptor {
      */
     void setId(Long id);
 
-    /**
-     * Return the full qualified name.
-     *
-     * @return The full qualified name.
-     */
-    String getFullQualifiedName();
-
-
-    /**
-     * Return the full qualified name.
-     *
-     * @param fullQualifiedName The full qualified name.
-     */
-    void setFullQualifiedName(String fullQualifiedName);
 }

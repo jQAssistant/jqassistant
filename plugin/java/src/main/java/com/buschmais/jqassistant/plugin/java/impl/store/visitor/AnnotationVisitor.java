@@ -88,15 +88,12 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
             this.arrayValueDescriptor = null;
         }
         String valueName;
-        String fullQualifiedName;
         if (arrayValueDescriptor != null) {
             valueName = "[" + getListValue(this.arrayValueDescriptor).size() + "]";
-            fullQualifiedName = this.arrayValueDescriptor.getFullQualifiedName() + valueName;
         } else {
             valueName = name;
-            fullQualifiedName = this.annotationValueDescriptor.getFullQualifiedName() + ":" + valueName;
         }
-        T valueDescriptor = visitorHelper.getValueDescriptor(type, fullQualifiedName);
+        T valueDescriptor = visitorHelper.getValueDescriptor(type);
         valueDescriptor.setName(valueName);
         return valueDescriptor;
     }

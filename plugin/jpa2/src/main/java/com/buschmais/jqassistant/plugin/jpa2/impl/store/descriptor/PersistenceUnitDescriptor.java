@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
@@ -10,8 +11,9 @@ import java.util.Set;
 /**
  * A descriptor for JPA persistence units.
  */
-public class PersistenceUnitDescriptor extends AbstractDescriptor {
+public class PersistenceUnitDescriptor extends AbstractDescriptor implements NamedDescriptor {
 
+    private String name;
     private String description;
     private String provider;
     private String jtaDataSource;
@@ -24,6 +26,14 @@ public class PersistenceUnitDescriptor extends AbstractDescriptor {
      * The classes referenced by this persistence unit.
      */
     private Set<TypeDescriptor> contains = new HashSet<>();
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getDescription() {
         return description;

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.store.api;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 
 import java.util.List;
@@ -75,9 +76,9 @@ public interface Store {
      *
      * @param type              The type.
      * @param fullQualifiedName The full qualified name of the descriptor.
-     * @return The {@link Descriptor}.
+     * @return The {@link com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor}.
      */
-    <T extends Descriptor> T create(Class<T> type, String fullQualifiedName);
+    <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);
 
     /**
      * Finds a {@link Descriptor}.

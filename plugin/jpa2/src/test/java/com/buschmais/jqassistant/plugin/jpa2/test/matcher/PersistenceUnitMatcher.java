@@ -2,20 +2,30 @@ package com.buschmais.jqassistant.plugin.jpa2.test.matcher;
 
 import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
+import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 
 /**
  * A matcher for {@link PersistenceUnitDescriptor}s.
  */
-public class PersistenceUnitMatcher extends AbstractDescriptorMatcher<PersistenceUnitDescriptor> {
+public class PersistenceUnitMatcher extends TypeSafeMatcher<PersistenceUnitDescriptor> {
 
-    /**
-     * Constructor.
-     *
-     * @param name The expected full qualified types name.
-     */
-    protected PersistenceUnitMatcher(String name) {
-        super(PersistenceUnitDescriptor.class, name);
+    private String name;
+
+    public PersistenceUnitMatcher(String name) {
+        this.name = name;
+    }
+
+    @Override
+    protected boolean matchesSafely(PersistenceUnitDescriptor item) {
+        return name.equals(item.getName());
+    }
+
+    @Override
+    public void describeTo(Description description) {
+        description.appendText("a persistence unit with name ");
+        description.appendValue(name);
     }
 
     /**
@@ -27,4 +37,5 @@ public class PersistenceUnitMatcher extends AbstractDescriptorMatcher<Persistenc
     public static Matcher<? super PersistenceUnitDescriptor> persistenceUnitDescriptor(String name) {
         return new PersistenceUnitMatcher(name);
     }
+
 }

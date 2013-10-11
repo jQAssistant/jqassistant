@@ -73,6 +73,7 @@ public class Jpa2IT extends AbstractPluginIT {
         assertThat(testResult.getRows().size(), equalTo(1));
         List<? super PersistenceUnitDescriptor> persistenceUnitDescriptors = testResult.getColumn("pu");
         PersistenceUnitDescriptor persistenceUnitDescriptor = (PersistenceUnitDescriptor) persistenceUnitDescriptors.get(0);
+        assertThat(persistenceUnitDescriptor.getName(), equalTo("persistence-unit"));
         assertThat(persistenceUnitDescriptor.getDescription(), equalTo("description"));
         assertThat(persistenceUnitDescriptor.getJtaDataSource(), equalTo("jtaDataSource"));
         assertThat(persistenceUnitDescriptor.getNonJtaDataSource(), equalTo("nonJtaDataSource"));
@@ -83,6 +84,6 @@ public class Jpa2IT extends AbstractPluginIT {
         PropertiesDescriptor properties = persistenceUnitDescriptor.getProperties();
         assertThat(properties, notNullValue());
         Matcher<? super PrimitiveValueDescriptor> valueMatcher = (Matcher<? super PrimitiveValueDescriptor>) valueDescriptor("stringProperty", equalTo("stringValue"));
-        assertThat(properties.getProperties(), IsCollectionContaining.hasItem(valueMatcher));
+        assertThat(properties.getProperties(), hasItem(valueMatcher));
     }
 }

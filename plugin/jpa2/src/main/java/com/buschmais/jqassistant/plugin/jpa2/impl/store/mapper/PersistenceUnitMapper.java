@@ -21,6 +21,7 @@ import static com.buschmais.jqassistant.plugin.jpa2.impl.store.mapper.Jpa2Label.
 public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceUnitDescriptor, PersistenceUnitMapper.PersistenceUnitProperty, PersistenceUnitMapper.PersistenceUnitRelation> {
 
     enum PersistenceUnitProperty {
+        NAME,
         DESCRIPTION,
         PROVIDER,
         JTADATASOURCE,
@@ -70,6 +71,8 @@ public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceU
     @Override
     public void setProperty(PersistenceUnitDescriptor descriptor, PersistenceUnitProperty property, Object value) {
         switch (property) {
+            case NAME:
+                descriptor.setName((String) value);
             case DESCRIPTION:
                 descriptor.setDescription((String) value);
             case JTADATASOURCE:
@@ -90,6 +93,8 @@ public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceU
     @Override
     protected Object getProperty(PersistenceUnitDescriptor descriptor, PersistenceUnitProperty property) {
         switch (property) {
+            case NAME:
+                return descriptor.getName();
             case DESCRIPTION:
                 return descriptor.getDescription();
             case JTADATASOURCE:

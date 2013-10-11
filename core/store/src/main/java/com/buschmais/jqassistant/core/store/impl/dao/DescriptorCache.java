@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.store.impl.dao;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.iterator.TObjectLongIterator;
 import gnu.trove.map.TLongObjectMap;
@@ -12,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.SoftReference;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -65,7 +65,7 @@ public class DescriptorCache {
      * @param descriptor The descriptor.
      * @param <T>        The descriptor type.
      */
-    public <T extends Descriptor> void index(T descriptor) {
+    public <T extends FullQualifiedNameDescriptor> void index(T descriptor) {
         String fullQualifiedName = descriptor.getFullQualifiedName();
         if (fullQualifiedName != null) {
             this.indexCache.put(fullQualifiedName, descriptor.getId().longValue());

@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.AbstractFullQualifiedNameDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Describes a parameter of a method.
  */
-public class ParameterDescriptor extends AbstractDescriptor implements DependentDescriptor, AnnotatedDescriptor {
+public class ParameterDescriptor extends AbstractFullQualifiedNameDescriptor implements DependentDescriptor, AnnotatedDescriptor {
 
     /**
      * The classes the method depends on.

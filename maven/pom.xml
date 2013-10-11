@@ -42,6 +42,11 @@
                 <artifactId>maven-reporting-impl</artifactId>
                 <version>${org.apache.maven.reporting_version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
+                <artifactId>slf4j-maven-plugin-log</artifactId>
+                <version>1.0.0</version>
+            </dependency>
         </dependencies>
 	</dependencyManagement>
 

@@ -56,8 +56,8 @@ public class VisitorHelper {
         return resolverFactory.getFieldDescriptorResolver().resolve(type, signature);
     }
 
-    <T extends ValueDescriptor> T getValueDescriptor(Class<T> type, String name) {
-        return store.create(type, name);
+    <T extends ValueDescriptor> T getValueDescriptor(Class<T> type) {
+        return store.create(type);
     }
 
     /**
@@ -70,7 +70,7 @@ public class VisitorHelper {
     AnnotationValueDescriptor addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
             TypeDescriptor type = getTypeDescriptor(typeName);
-            AnnotationValueDescriptor annotationDescriptor = store.create(AnnotationValueDescriptor.class, annotatedDescriptor.getFullQualifiedName() + "@" + typeName);
+            AnnotationValueDescriptor annotationDescriptor = store.create(AnnotationValueDescriptor.class);
             annotationDescriptor.setType(type);
             annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
             return annotationDescriptor;

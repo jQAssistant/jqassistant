@@ -20,6 +20,7 @@ import static com.buschmais.jqassistant.plugin.jpa2.impl.store.mapper.Jpa2Label.
 public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescriptor, PersistenceMapper.Property, PersistenceMapper.Relation> {
 
     public enum Property {
+        NAME,
         VERSION;
     }
 
@@ -62,6 +63,8 @@ public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescr
     @Override
     public Object getProperty(PersistenceDescriptor descriptor, Property property) {
         switch (property) {
+            case NAME:
+                return descriptor.getName();
             case VERSION:
                 return descriptor.getVersion();
             default:
@@ -73,6 +76,8 @@ public class PersistenceMapper extends AbstractDescriptorMapper<PersistenceDescr
     @Override
     public void setProperty(PersistenceDescriptor descriptor, Property property, Object value) {
         switch (property) {
+            case NAME:
+                descriptor.setName((String) value);
             case VERSION:
                 descriptor.setVersion((String) value);
                 break;
