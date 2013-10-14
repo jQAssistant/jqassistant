@@ -16,6 +16,7 @@ import java.util.Set;
 public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescriptor, MethodDescriptorMapper.Property, MethodDescriptorMapper.Relation> {
 
     enum Property {
+        FQN,
         SIGNATURE,
         NAME,
         NATIVE,
@@ -125,6 +126,8 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     @Override
     public Object getProperty(MethodDescriptor descriptor, Property property) {
         switch (property) {
+            case FQN:
+                return descriptor.getFullQualifiedName();
             case SIGNATURE:
                 return descriptor.getSignature();
             case NAME:
@@ -153,6 +156,9 @@ public class MethodDescriptorMapper extends AbstractDescriptorMapper<MethodDescr
     @Override
     public void setProperty(MethodDescriptor descriptor, Property property, Object value) {
         switch (property) {
+            case FQN:
+                descriptor.setFullQualifiedName((String) value);
+                break;
             case SIGNATURE:
                 descriptor.setSignature((String) value);
                 break;

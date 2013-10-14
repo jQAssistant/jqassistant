@@ -18,10 +18,10 @@ import java.util.Set;
 public class ParameterDescriptorMapper extends AbstractDescriptorMapper<ParameterDescriptor, ParameterDescriptorMapper.Property, ParameterDescriptorMapper.Relation> {
 
     enum Property {
-
+        FQN;
     }
 
-    enum Relation implements RelationshipType{
+    enum Relation implements RelationshipType {
         ANNOTATED_BY,
         DEPENDS_ON;
     }
@@ -61,15 +61,18 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
     @Override
     public Set<? extends Descriptor> getRelation(ParameterDescriptor descriptor, Relation relation) {
         switch (relation) {
-            case ANNOTATED_BY:return descriptor.getAnnotatedBy();
-            case DEPENDS_ON:return descriptor.getDependencies();
-            default:break;
+            case ANNOTATED_BY:
+                return descriptor.getAnnotatedBy();
+            case DEPENDS_ON:
+                return descriptor.getDependencies();
+            default:
+                break;
         }
         return null;
     }
 
     @Override
-    protected void setRelation(ParameterDescriptor descriptor, Relation relation, Set<?extends Descriptor> target) {
+    protected void setRelation(ParameterDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case ANNOTATED_BY:
                 descriptor.setAnnotatedBy((Set<AnnotationValueDescriptor>) target);
@@ -86,7 +89,12 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
      */
     @Override
     public Object getProperty(ParameterDescriptor descriptor, Property property) {
-        return null;
+        switch (property) {
+            case FQN:
+                return descriptor.getFullQualifiedName();
+            default:
+                return null;
+        }
     }
 
     /**
@@ -94,5 +102,12 @@ public class ParameterDescriptorMapper extends AbstractDescriptorMapper<Paramete
      */
     @Override
     public void setProperty(ParameterDescriptor descriptor, Property property, Object value) {
+        switch (property) {
+            case FQN:
+                descriptor.setFullQualifiedName((String) value);
+                break;
+            default:
+                break;
+        }
     }
 }

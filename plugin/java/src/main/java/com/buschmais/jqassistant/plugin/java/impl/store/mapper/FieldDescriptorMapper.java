@@ -21,6 +21,7 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.mapper.JavaLabel.
 public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescriptor, FieldDescriptorMapper.Property, FieldDescriptorMapper.Relation> {
 
     enum Property {
+        FQN,
         SIGNATURE,
         NAME,
         VISIBILITY,
@@ -100,6 +101,8 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     @Override
     public Object getProperty(FieldDescriptor descriptor, Property property) {
         switch (property) {
+            case FQN:
+                return descriptor.getFullQualifiedName();
             case SIGNATURE:
                 return descriptor.getSignature();
             case NAME:
@@ -128,6 +131,9 @@ public class FieldDescriptorMapper extends AbstractDescriptorMapper<FieldDescrip
     @Override
     public void setProperty(FieldDescriptor descriptor, Property property, Object value) {
         switch (property) {
+            case FQN:
+                descriptor.setFullQualifiedName((String) value);
+                break;
             case SIGNATURE:
                 descriptor.setSignature((String) value);
                 break;

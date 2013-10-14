@@ -9,23 +9,24 @@ public enum JavaLabel implements IndexedLabel {
     /**
      * Artifact.
      */
-    ARTIFACT(true),
+    ARTIFACT("FQN"),
     /**
      * Package
      */
-    PACKAGE(true),
+    PACKAGE("FQN"),
     /**
      * Type
      */
-    TYPE(true),
+    TYPE("FQN"),
     /**
      * Method
      */
-    METHOD(true),
+    METHOD("FQN"),
     /**
      * Parameter
      */
-    PARAMETER(true),
+    PARAMETER("FQN"),
+
     /**
      * Constructor
      */
@@ -33,7 +34,7 @@ public enum JavaLabel implements IndexedLabel {
     /**
      * Field
      */
-    FIELD(true),
+    FIELD("FQN"),
     /**
      * value
      */
@@ -43,25 +44,22 @@ public enum JavaLabel implements IndexedLabel {
      */
     PROPERTIES;
 
-    private boolean indexed;
+    private String indexedProperty;
 
-    /**
-     * Default constructor.
-     */
     JavaLabel() {
-        this(false);
+        this(null);
     }
 
     /**
      * Parametrized constructor.
      *
-     * @param indexed <code>true</code> if nodes with this label shall be indexed for faster lookup.
+     * @param indexedProperty The name of the property to be used for indexing.
      */
-    JavaLabel(boolean indexed) {
-        this.indexed = indexed;
+    JavaLabel(String indexedProperty) {
+        this.indexedProperty = indexedProperty;
     }
 
-    public boolean isIndexed() {
-        return indexed;
+    public String getIndexedProperty() {
+        return indexedProperty;
     }
 }

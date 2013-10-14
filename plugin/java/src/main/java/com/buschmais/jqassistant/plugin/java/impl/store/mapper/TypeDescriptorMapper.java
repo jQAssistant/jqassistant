@@ -21,6 +21,7 @@ import static com.buschmais.jqassistant.core.store.impl.dao.mapper.Label.label;
 public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescriptor, TypeDescriptorMapper.Property, TypeDescriptorMapper.Relation> {
 
     enum Property {
+        FQN,
         SIGNATURE,
         ABSTRACT,
         VISIBILITY,
@@ -116,6 +117,8 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     @Override
     public Object getProperty(TypeDescriptor descriptor, Property property) {
         switch (property) {
+            case FQN:
+                return descriptor.getFullQualifiedName();
             case SIGNATURE:
                 return descriptor.getSignature();
             case ABSTRACT:
@@ -137,6 +140,9 @@ public class TypeDescriptorMapper extends AbstractDescriptorMapper<TypeDescripto
     @Override
     public void setProperty(TypeDescriptor descriptor, Property property, Object value) {
         switch (property) {
+            case FQN:
+                descriptor.setFullQualifiedName((String) value);
+                break;
             case SIGNATURE:
                 descriptor.setSignature((String) value);
                 break;
