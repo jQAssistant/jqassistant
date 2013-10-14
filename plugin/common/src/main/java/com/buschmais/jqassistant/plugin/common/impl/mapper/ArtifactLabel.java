@@ -9,8 +9,7 @@ public enum ArtifactLabel implements IndexedLabel {
 
     ARTIFACT;
 
-    @Override
-    public boolean isIndexed() {
-        return false;
+    public String getIndexedProperty() {
+        return null;
     }
 }
