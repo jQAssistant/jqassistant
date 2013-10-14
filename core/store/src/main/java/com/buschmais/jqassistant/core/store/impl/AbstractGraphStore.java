@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.IndexProperty;
 import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
@@ -23,8 +24,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static com.buschmais.jqassistant.core.store.api.model.IndexProperty.FQN;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -68,16 +67,17 @@ public abstract class AbstractGraphStore implements Store {
         beginTransaction();
         for (IndexedLabel label : indexedLabels) {
             IndexDefinition index = null;
+            String indexedProperty = label.getIndexedProperty();
             for (IndexDefinition indexDefinition : database.schema().getIndexes(label)) {
                 for (String s : indexDefinition.getPropertyKeys()) {
-                    if (FQN.name().equals(s)) {
+                    if (s.equals(indexedProperty)) {
                         index = indexDefinition;
                     }
                 }
             }
-            if (label.isIndexed() && index == null) {
-                database.schema().indexFor(label).on(FQN.name()).create();
-            } else if (!label.isIndexed() && index != null) {
+            if (indexedProperty != null && index == null) {
+                database.schema().indexFor(label).on(indexedProperty).create();
+            } else if (indexedProperty == null && index != null) {
                 index.drop();
             }
         }
@@ -116,7 +116,7 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
-        return descriptorDAO.find(type, fullQualifiedName);
+        return descriptorDAO.find(type, IndexProperty.FQN.name(), fullQualifiedName);
     }
 
     @Override

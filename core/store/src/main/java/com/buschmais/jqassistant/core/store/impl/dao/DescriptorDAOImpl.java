@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.store.impl.dao;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.IndexProperty;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
@@ -103,9 +103,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         Node node = database.createNode(adapter.getPrimaryLabel());
         adapter.setId(descriptor, Long.valueOf(node.getId()));
         descriptorCache.put(descriptor);
-        if (descriptor instanceof FullQualifiedNameDescriptor) {
-            descriptorCache.index((FullQualifiedNameDescriptor) descriptor);
-        }
+        this.index(descriptor);
     }
 
     @Override
@@ -123,14 +121,14 @@ public class DescriptorDAOImpl implements DescriptorDAO {
     }
 
     @Override
-    public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
+    public <T extends Descriptor> T find(Class<T> type, String property, Object value) {
         DescriptorMapper<Descriptor> mapper = registry.getDescriptorMapper(type);
         Node node = null;
-        Long id = descriptorCache.findBy(fullQualifiedName);
+        Long id = descriptorCache.findBy(type, property, value);
         if (id != null) {
             node = database.getNodeById(id);
         } else {
-            ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getPrimaryLabel(), IndexProperty.FQN.name(), fullQualifiedName);
+            ResourceIterable<Node> nodesByLabelAndProperty = database.findNodesByLabelAndProperty(mapper.getPrimaryLabel(), property, value);
             ResourceIterator<Node> iterator = nodesByLabelAndProperty.iterator();
             try {
                 if (iterator.hasNext()) {
@@ -263,11 +261,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         T descriptor = mapper.createInstance(type);
         mapper.setId(descriptor, Long.valueOf(node.getId()));
         this.descriptorCache.put(descriptor);
-        if (descriptor instanceof FullQualifiedNameDescriptor) {
-            FullQualifiedNameDescriptor fullQualifiedNameDescriptor = (FullQualifiedNameDescriptor)descriptor;
-            fullQualifiedNameDescriptor.setFullQualifiedName((String) node.getProperty(IndexProperty.FQN.name()));
-            this.descriptorCache.index(fullQualifiedNameDescriptor);
-        }
         // create outgoing relationships
         Map<R, Set<Descriptor>> relations = new HashMap<>();
         for (RelationshipType relationshipType : mapper.getRelationshipTypes()) {
@@ -289,6 +282,7 @@ public class DescriptorDAOImpl implements DescriptorDAO {
         for (Label label : node.getLabels()) {
             mapper.setLabel(descriptor, label);
         }
+        this.index(descriptor);
         return descriptor;
     }
 
@@ -321,5 +315,14 @@ public class DescriptorDAOImpl implements DescriptorDAO {
             labels.add(label);
         }
         return (Class<T>) mapper.getType(labels);
+    }
+
+    private <T extends Descriptor> void index(T descriptor) {
+        DescriptorMapper<T> mapper = registry.getDescriptorMapper(descriptor.getClass());
+        String indexedProperty = mapper.getPrimaryLabel().getIndexedProperty();
+        if (indexedProperty != null) {
+            Object value = mapper.getProperty(descriptor, indexedProperty);
+            descriptorCache.index(descriptor.getClass(), indexedProperty, value, descriptor.getId());
+        }
     }
 }
