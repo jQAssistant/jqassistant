@@ -7,5 +7,5 @@ import org.neo4j.graphdb.Label;
  */
 public interface IndexedLabel extends Label {
 
-    boolean isIndexed();
+    String getIndexedProperty();
 }

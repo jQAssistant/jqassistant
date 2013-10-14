@@ -11,17 +11,16 @@ import java.util.Map;
 public interface DescriptorDAO {
 
     /**
-     * Find a {@link AbstractDescriptor} by the full qualified name.
-     * <p/>
-     * Only supported for {@link AbstractDescriptor}s which are indexed.
+     * Find a {@link AbstractDescriptor} by indexed properties and values.
      *
-     * @param <T>               The descriptor types.
-     * @param type              The class types.
-     * @param fullQualifiedName The full qualified name.
+     * @param <T>      The descriptor type.
+     * @param type     The class type.
+     * @param property The indexed property.
+     * @param value    The value.
      * @return The {@link AbstractDescriptor} or <code>null</code> if it does
      *         not exist.
      */
-    <T extends Descriptor> T find(Class<T> type, String fullQualifiedName);
+    <T extends Descriptor> T find(Class<T> type, String property, Object value);
 
     /**
      * Persists an {@link AbstractDescriptor}.
@@ -40,11 +39,7 @@ public interface DescriptorDAO {
     /**
      * Flushes all pending changes to the database.
      * <p/>
-     * This currently only affects relations added to an
-     * {@link AbstractDescriptor} after calling
-     * {@link #persist(Descriptor)} on it. The method is automatically
-     * called if {@link #find(Class, String)} or
-     * {@link #executeQuery(String, Map)} are called.
+     * This currently only affects relations added to an {@link AbstractDescriptor} after calling {@link #persist(Descriptor)} on it. The method is automatically called if {@link #find(Class, String, Object)} or {@link #executeQuery(String, Map)} are called.
      */
     void flush();
 

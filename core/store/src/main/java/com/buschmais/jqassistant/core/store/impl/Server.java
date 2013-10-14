@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.store.impl;
 
 import org.neo4j.kernel.GraphDatabaseAPI;
-import org.neo4j.server.WrappingNeoServerBootstrapper;
+import org.neo4j.server.WrappingNeoServer;
 
 /**
  * Web server implementation wrapping an {@link EmbeddedGraphStore}.
@@ -14,9 +14,9 @@ public class Server {
     private final EmbeddedGraphStore graphStore;
 
     /**
-     * The {@link WrappingNeoServerBootstrapper}.
+     * The {@link WrappingNeoServer}.
      */
-    private WrappingNeoServerBootstrapper server;
+    private WrappingNeoServer server;
 
     /**
      * Constructor.
@@ -32,7 +32,7 @@ public class Server {
      */
     public void start() {
         GraphDatabaseAPI databaseAPI = graphStore.getDatabaseAPI();
-        this.server = new WrappingNeoServerBootstrapper(databaseAPI);
+        this.server = new WrappingNeoServer(databaseAPI);
         this.server.start();
     }
 

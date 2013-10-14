@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.store.impl.dao;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import gnu.trove.iterator.TLongObjectIterator;
 import gnu.trove.iterator.TObjectLongIterator;
 import gnu.trove.map.TLongObjectMap;
@@ -21,16 +20,50 @@ import java.util.WeakHashMap;
  */
 public class DescriptorCache {
 
+    private static class IndexKey {
+        private Class<? extends Descriptor> type;
+        private String property;
+        private Object value;
+
+        private IndexKey(Class<? extends Descriptor> type, String property, Object value) {
+            this.type = type;
+            this.property = property;
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            IndexKey indexKey = (IndexKey) o;
+
+            if (!property.equals(indexKey.property)) return false;
+            if (!type.equals(indexKey.type)) return false;
+            if (!value.equals(indexKey.value)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = type.hashCode();
+            result = 31 * result + property.hashCode();
+            result = 31 * result + value.hashCode();
+            return result;
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DescriptorCache.class);
 
     /**
      * The transactional index cache.
      */
-    private final TObjectLongMap<String> indexCache = new TObjectLongHashMap<>();
+    private final TObjectLongMap<IndexKey> indexCache = new TObjectLongHashMap<>();
     /**
      * The shared index cache (limited size).
      */
-    private final Map<String, Long> sharedIndexCache = new LRUMap(65536);
+    private final Map<IndexKey, Long> sharedIndexCache = new LRUMap(65536);
 
     /**
      * The transactional descriptor cache.
@@ -62,30 +95,35 @@ public class DescriptorCache {
     /**
      * Add a descriptor to the index.
      *
-     * @param descriptor The descriptor.
-     * @param <T>        The descriptor type.
+     * @param <T>      The descriptor type.
+     * @param type     The descriptor type.
+     * @param property The indexed property.
+     * @param value    The value.
+     * @param id       The descriptor id.
      */
-    public <T extends FullQualifiedNameDescriptor> void index(T descriptor) {
-        String fullQualifiedName = descriptor.getFullQualifiedName();
-        if (fullQualifiedName != null) {
-            this.indexCache.put(fullQualifiedName, descriptor.getId().longValue());
-        }
+    public <T extends Descriptor> void index(Class<T> type, String property, Object value, Long id) {
+        IndexKey key = new IndexKey(type, property, value);
+        this.indexCache.put(key, id);
     }
 
     /**
      * Find a node/descriptor id using its full qualified name.
      *
-     * @param fullQualifiedName The full qualified name.
-     * @return The node/descriptor id or <code>null</code>.
+     * @param <T>      The descriptor type.
+     * @param type     The descriptor type.
+     * @param property The indexed property.
+     * @param value    The value.
+     * @return he descriptor id or <code>null</code>.
      */
-    public Long findBy(String fullQualifiedName) {
-        long id = indexCache.get(fullQualifiedName);
+    public <T extends Descriptor> Long findBy(Class<T> type, String property, Object value) {
+        IndexKey indexKey = new IndexKey(type, property, value);
+        long id = indexCache.get(indexKey);
         if (id != 0) {
             return Long.valueOf(id);
         }
-        Long sharedId = sharedIndexCache.get(fullQualifiedName);
+        Long sharedId = sharedIndexCache.get(indexKey);
         if (sharedId != null) {
-            indexCache.put(fullQualifiedName, sharedId.longValue());
+            indexCache.put(indexKey, sharedId.longValue());
             return sharedId;
         }
         return null;
@@ -142,7 +180,7 @@ public class DescriptorCache {
             iterator.remove();
         }
         LOGGER.trace("ref='{}', shared '{}'.", this.referenceCache.size(), this.sharedCache.size());
-        for (TObjectLongIterator<String> iterator = indexCache.iterator(); iterator.hasNext(); ) {
+        for (TObjectLongIterator<IndexKey> iterator = indexCache.iterator(); iterator.hasNext(); ) {
             iterator.advance();
             this.sharedIndexCache.put(iterator.key(), Long.valueOf(iterator.value()));
             iterator.remove();

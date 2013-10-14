@@ -7,23 +7,11 @@ import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
  */
 public enum Jpa2Label implements IndexedLabel {
 
-    JPA(false),
-    PERSISTENCE(false),
-    PERSISTENCEUNIT(false);
+    JPA,
+    PERSISTENCE,
+    PERSISTENCEUNIT;
 
-    private boolean index;
-
-    /**
-     * Constructor.
-     *
-     * @param index <code>true</code> if nodes with this label shall be indexed.
-     */
-    private Jpa2Label(boolean index) {
-        this.index = index;
-    }
-
-    @Override
-    public boolean isIndexed() {
-        return false;
+    public String getIndexedProperty() {
+        return null;
     }
 }

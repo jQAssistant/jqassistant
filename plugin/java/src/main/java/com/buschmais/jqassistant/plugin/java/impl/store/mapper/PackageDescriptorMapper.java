@@ -16,6 +16,7 @@ import java.util.Set;
 public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDescriptor, PackageDescriptorMapper.Property, PackageDescriptorMapper.Relation> {
 
     enum Property {
+        FQN,
         SIGNATURE;
     }
 
@@ -82,6 +83,8 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     @Override
     public Object getProperty(PackageDescriptor descriptor, Property property) {
         switch (property) {
+            case FQN:
+                return descriptor.getFullQualifiedName();
             case SIGNATURE:
                 return descriptor.getSignature();
         }
@@ -91,6 +94,9 @@ public class PackageDescriptorMapper extends AbstractDescriptorMapper<PackageDes
     @Override
     public void setProperty(PackageDescriptor descriptor, Property property, Object value) {
         switch (property) {
+            case FQN:
+                descriptor.setFullQualifiedName((String) value);
+                break;
             case SIGNATURE:
                 descriptor.setSignature((String) value);
                 break;
