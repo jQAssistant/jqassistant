@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import org.junit.Assume;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
     private ArtifactDescriptor artifactDescriptor;
 
     /**
-     * Scans the rt.jar of the Java Runtime Environment specified by the enviroment variable java.home.
+     * Scans the rt.jar of the Java Runtime Environment specified by the environment variable java.home.
      *
      * @throws IOException If scanning fails.
      */
