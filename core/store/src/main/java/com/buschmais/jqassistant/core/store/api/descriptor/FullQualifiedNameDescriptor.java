@@ -5,6 +5,8 @@ package com.buschmais.jqassistant.core.store.api.descriptor;
  */
 public interface FullQualifiedNameDescriptor extends Descriptor {
 
+    String PROPERTY = "FQN";
+
     /**
      * Return the full qualified name.
      *

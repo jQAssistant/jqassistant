@@ -33,14 +33,19 @@ public class DescriptorCache {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
 
             IndexKey indexKey = (IndexKey) o;
 
-            if (!property.equals(indexKey.property)) return false;
-            if (!type.equals(indexKey.type)) return false;
-            if (!value.equals(indexKey.value)) return false;
+            if (!property.equals(indexKey.property))
+                return false;
+            if (!type.equals(indexKey.type))
+                return false;
+            if (!value.equals(indexKey.value))
+                return false;
 
             return true;
         }
