@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.core.store.impl.dao;
 import com.buschmais.jqassistant.core.store.api.DescriptorDAO;
 import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.IndexProperty;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import org.neo4j.cypher.javacompat.ExecutionEngine;
 import org.neo4j.cypher.javacompat.ExecutionResult;
@@ -205,9 +203,6 @@ public class DescriptorDAOImpl implements DescriptorDAO {
      * @param mapper     The store.
      */
     private <T extends Descriptor, P extends Enum> void flushProperties(T descriptor, Node node, DescriptorMapper<T> mapper) {
-        if (descriptor instanceof FullQualifiedNameDescriptor) {
-            node.setProperty(IndexProperty.FQN.name(), ((FullQualifiedNameDescriptor) descriptor).getFullQualifiedName());
-        }
         for (String propertyName : mapper.getPropertyNames()) {
             Object value = mapper.getProperty(descriptor, propertyName);
             if (value == null) {

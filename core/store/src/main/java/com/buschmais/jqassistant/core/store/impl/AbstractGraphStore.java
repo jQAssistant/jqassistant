@@ -5,7 +5,6 @@ import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.IndexProperty;
 import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorDAOImpl;
 import com.buschmais.jqassistant.core.store.impl.dao.DescriptorMapperRegistry;
@@ -116,7 +115,7 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
-        return descriptorDAO.find(type, IndexProperty.FQN.name(), fullQualifiedName);
+        return descriptorDAO.find(type, FullQualifiedNameDescriptor.PROPERTY, fullQualifiedName);
     }
 
     @Override
