@@ -21,6 +21,7 @@ import java.util.Set;
 public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactDescriptor, ArtifactDescriptorMapper.Property, ArtifactDescriptorMapper.Relation> {
 
     enum Property {
+        FQN,
         GROUP,
         NAME,
         VERSION,
@@ -76,6 +77,8 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
     @Override
     public Object getProperty(ArtifactDescriptor descriptor, Property property) {
         switch (property) {
+            case FQN:
+                return descriptor.getFullQualifiedName();
             case GROUP:
                 return descriptor.getGroup();
             case NAME:
@@ -98,6 +101,9 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
     @Override
     public void setProperty(ArtifactDescriptor descriptor, Property property, Object value) {
         switch (property) {
+            case FQN:
+                descriptor.setFullQualifiedName((String) value);
+                break;
             case GROUP:
                 descriptor.setGroup((String) value);
                 break;
@@ -134,7 +140,7 @@ public class ArtifactDescriptorMapper extends AbstractDescriptorMapper<ArtifactD
      * {@inheritDoc}
      */
     @Override
-    protected void setRelation(ArtifactDescriptor descriptor, Relation relation, Set<?extends Descriptor> target) {
+    protected void setRelation(ArtifactDescriptor descriptor, Relation relation, Set<? extends Descriptor> target) {
         switch (relation) {
             case CONTAINS:
                 descriptor.setContains((Set<Descriptor>) target);
