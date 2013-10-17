@@ -27,7 +27,11 @@ public enum ValueLabel {
     /**
      * Array value.
      */
-    ARRAY;
+    ARRAY,
+    /**
+     * Property value.
+     */
+    PROPERTY;
 
     private static Map<String, ValueLabel> labels;
 
