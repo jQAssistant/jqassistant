@@ -2,8 +2,7 @@ package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor;
@@ -71,14 +70,12 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
             // Create persistence unit properties
-            PropertiesDescriptor propertiesDescriptor = store.create(PropertiesDescriptor.class);
             for (Property property : persistenceUnit.getProperties().getProperty()) {
-                PrimitiveValueDescriptor primitiveValueDescriptor = store.create(PrimitiveValueDescriptor.class);
-                primitiveValueDescriptor.setName(property.getName());
-                primitiveValueDescriptor.setValue(property.getValue());
-                propertiesDescriptor.getProperties().add(primitiveValueDescriptor);
+                PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
+                propertyDescriptor.setName(property.getName());
+                propertyDescriptor.setValue(property.getValue());
+                persistenceUnitDescriptor.getProperties().add(propertyDescriptor);
             }
-            persistenceUnitDescriptor.setProperties(propertiesDescriptor);
             // Add persistence unit to persistence descriptor
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }

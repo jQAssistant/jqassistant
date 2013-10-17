@@ -35,6 +35,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
         javaTypes.add(EnumerationValueDescriptor.class);
         javaTypes.add(PrimitiveValueDescriptor.class);
         javaTypes.add(ClassValueDescriptor.class);
+        javaTypes.add(PropertyDescriptor.class);
         return javaTypes;
     }
 
@@ -69,6 +70,8 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                         return PrimitiveValueDescriptor.class;
                     case CLASS:
                         return ClassValueDescriptor.class;
+                    case PROPERTY:
+                        return PropertyDescriptor.class;
                     default:
                         throw new IllegalStateException("Unsupported value label " + valueLabel);
                 }
@@ -89,6 +92,8 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
             return new PrimitiveValueDescriptor();
         } else if (ClassValueDescriptor.class.equals(type)) {
             return new ClassValueDescriptor();
+        } else if (PropertyDescriptor.class.equals(type)) {
+            return new PropertyDescriptor();
         }
         throw new IllegalStateException("Unsupported value type " + type.getName());
     }
@@ -103,7 +108,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                         return new HashSet<>((List<? extends ValueDescriptor>) value);
                     } else if (descriptor instanceof AnnotationValueDescriptor) {
                         return new HashSet<>((List<? extends ValueDescriptor>) value);
-                    } else if (!(descriptor instanceof PrimitiveValueDescriptor)) {
+                    } else if (!(descriptor instanceof PrimitiveValueDescriptor || descriptor instanceof PropertyDescriptor)) {
                         return asSet((Descriptor) value);
                     } else {
                         return Collections.emptySet();
@@ -141,7 +146,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                         annotationValueDescriptor.setValue(values);
                     }
                     values.addAll((Collection<? extends ValueDescriptor>) target);
-                } else if (!(descriptor instanceof PrimitiveValueDescriptor)) {
+                } else if (!(descriptor instanceof PrimitiveValueDescriptor || descriptor instanceof PropertyDescriptor)) {
                     descriptor.setValue(getSingleEntry(target));
                 }
                 break;
@@ -161,7 +166,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
             case NAME:
                 return descriptor.getName();
             case VALUE:
-                if (descriptor instanceof PrimitiveValueDescriptor) {
+                if (descriptor instanceof PrimitiveValueDescriptor || descriptor instanceof PropertyDescriptor) {
                     return descriptor.getValue();
                 }
                 break;
@@ -177,7 +182,7 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
                 descriptor.setName((String) value);
                 break;
             case VALUE:
-                if (descriptor instanceof PrimitiveValueDescriptor) {
+                if (descriptor instanceof PrimitiveValueDescriptor || descriptor instanceof PropertyDescriptor) {
                     descriptor.setValue(value);
                 }
                 break;
@@ -199,6 +204,8 @@ public class ValueDescriptorMapper extends AbstractDescriptorMapper<ValueDescrip
             valueLabel = ValueLabel.PRIMITIVE;
         } else if (ClassValueDescriptor.class.equals(descriptor.getClass())) {
             valueLabel = ValueLabel.CLASS;
+        } else if (PropertyDescriptor.class.equals(descriptor.getClass())) {
+            valueLabel = ValueLabel.PROPERTY;
         } else {
             throw new IllegalStateException("Unsupported value descriptor type " + descriptor.getClass().getName());
         }

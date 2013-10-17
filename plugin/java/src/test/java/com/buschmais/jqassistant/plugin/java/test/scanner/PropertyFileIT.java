@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyFileDescriptor;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -27,10 +28,11 @@ public class PropertyFileIT extends AbstractPluginIT {
     @Test
     public void propertyFile() throws IOException {
         scanURLs(PropertyFileIT.class.getResource("/META-INF/test.properties"));
-        List<PropertiesDescriptor> propertiesDescriptors = query("MATCH (p:PROPERTIES) RETURN p").getColumn("p");
-        assertThat(propertiesDescriptors.size(), equalTo(1));
-        PropertiesDescriptor propertiesDescriptor = propertiesDescriptors.get(0);
-        Matcher<? super PrimitiveValueDescriptor> valueMatcher = (Matcher<? super PrimitiveValueDescriptor>) valueDescriptor("foo", equalTo("bar"));
-        assertThat(propertiesDescriptor.getProperties(), hasItem(valueMatcher));
+        List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:PROPERTIES) RETURN p").getColumn("p");
+        assertThat(propertyFileDescriptors.size(), equalTo(1));
+        PropertyFileDescriptor propertyFileDescriptor = propertyFileDescriptors.get(0);
+        Matcher<? super PropertyDescriptor> valueMatcher = (Matcher<? super PropertyDescriptor>) valueDescriptor("foo", equalTo("bar"));
+        assertThat(propertyFileDescriptor.getFullQualifiedName(), endsWith("/META-INF/test.properties"));
+        assertThat(propertyFileDescriptor.getProperties(), hasItem(valueMatcher));
     }
 }

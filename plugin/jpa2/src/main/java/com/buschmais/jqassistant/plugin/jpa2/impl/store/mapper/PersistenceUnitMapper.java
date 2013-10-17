@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.jpa2.impl.store.mapper;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
 import com.buschmais.jqassistant.core.store.impl.dao.mapper.AbstractDescriptorMapper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertiesDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
 import org.neo4j.graphdb.Label;
@@ -120,7 +120,7 @@ public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceU
                 descriptor.setContains((Set<TypeDescriptor>) target);
                 break;
             case HAS:
-                descriptor.setProperties((PropertiesDescriptor) target);
+                descriptor.setProperties((Set<PropertyDescriptor>) target);
             default:
                 break;
         }
@@ -132,7 +132,7 @@ public class PersistenceUnitMapper extends AbstractDescriptorMapper<PersistenceU
             case CONTAINS:
                 return descriptor.getContains();
             case HAS:
-                return asSet(descriptor.getProperties());
+                return descriptor.getProperties();
             default:
                 break;
         }
