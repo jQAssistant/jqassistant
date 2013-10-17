@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -267,7 +267,7 @@ public class FileScannerImpl implements FileScanner {
 
             @Override
             protected String getName(URL element) {
-                return element.getPath() + "/" + element.getFile();
+                return element.getPath();
             }
 
             @Override
