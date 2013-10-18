@@ -1,54 +1,61 @@
 package com.buschmais.jqassistant.mojo;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.plexus.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
+
 /**
  * A provider for a singleton store.
  */
+@Component(role = StoreProvider.class, instantiationStrategy = "singleton")
 public class StoreProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StoreProvider.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(StoreProvider.class);
 
-    private Map<File, Store> stores = new HashMap<>();
+	private Map<File, Store> stores = new HashMap<>();
 
-    public StoreProvider() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                LOGGER.info("Shutting down stores...");
-                for (Map.Entry<File, Store> entry : stores.entrySet()) {
-                    LOGGER.info("  '{}'", entry.getKey().getAbsolutePath());
-                    entry.getValue().stop();
-                }
-                LOGGER.info("Shutdown finished.");
-            }
-        });
-    }
+	public StoreProvider() {
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				LOGGER.info("Shutting down stores...");
+				for (Map.Entry<File, Store> entry : stores.entrySet()) {
+					LOGGER.info("  '{}'", entry.getKey().getAbsolutePath());
+					entry.getValue().stop();
+				}
+				LOGGER.info("Shutdown finished.");
+			}
+		});
+	}
 
-    /**
-     * Return the {@link Store} instance.
-     *
-     * @param databaseDirectory The database directory to use.
-     * @return The {@link Store} instance.
-     */
-    public Store getStore(final File databaseDirectory, List<DescriptorMapper<?>> mappers) {
-        Store store = stores.get(databaseDirectory);
-        if (store == null) {
-            LOGGER.info("Opening store in directory '{}'.", databaseDirectory.getAbsolutePath());
-            databaseDirectory.getParentFile().mkdirs();
-            store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
-            store.start(mappers);
-            stores.put(databaseDirectory, store);
-        }
-        return store;
-    }
+	/**
+	 * Return the {@link Store} instance.
+	 * 
+	 * @param databaseDirectory
+	 *            The database directory to use.
+	 * @return The {@link Store} instance.
+	 */
+	public Store getStore(final File databaseDirectory,
+			List<DescriptorMapper<?>> mappers) {
+		Store store = stores.get(databaseDirectory);
+		if (store == null) {
+			LOGGER.info("Opening store in directory '{}'.",
+					databaseDirectory.getAbsolutePath());
+			databaseDirectory.getParentFile().mkdirs();
+			store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
+			store.start(mappers);
+			stores.put(databaseDirectory, store);
+		}
+		return store;
+	}
 }

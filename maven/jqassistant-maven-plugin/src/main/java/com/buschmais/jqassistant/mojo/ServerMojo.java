@@ -16,40 +16,43 @@
 
 package com.buschmais.jqassistant.mojo;
 
+import java.io.IOException;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.MavenProject;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.Server;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-
-import java.io.IOException;
 
 /**
- * @goal server
- * @aggregator true
- * @requiresProject false
+ * The server Mojo starts an embedded Neo4j server.
  */
+@Mojo(name = "server", aggregator = true, requiresProject = false)
 public class ServerMojo extends AbstractAnalysisMojo {
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        MavenProject baseProject = BaseProjectResolver.getBaseProject(currentProject);
-        execute(baseProject, new StoreOperation<Void>() {
-            @Override
-            public Void run(Store store) throws MojoExecutionException {
-                Server server = new Server((EmbeddedGraphStore) store);
-                server.start();
-                try {
-                    getLog().info("Press <Enter> to finish.");
-                    System.in.read();
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Cannot read from System.in.", e);
-                } finally {
-                    server.stop();
-                }
-                return null;
-            }
-        });
-    }
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
+		MavenProject baseProject = BaseProjectResolver
+				.getBaseProject(currentProject);
+		execute(baseProject, new StoreOperation<Void>() {
+			@Override
+			public Void run(Store store) throws MojoExecutionException {
+				Server server = new Server((EmbeddedGraphStore) store);
+				server.start();
+				try {
+					getLog().info("Press <Enter> to finish.");
+					System.in.read();
+				} catch (IOException e) {
+					throw new MojoExecutionException(
+							"Cannot read from System.in.", e);
+				} finally {
+					server.stop();
+				}
+				return null;
+			}
+		});
+	}
 }
