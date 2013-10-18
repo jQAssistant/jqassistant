@@ -43,8 +43,8 @@ public class PackageIT extends AbstractPluginIT {
                 currentPackage = null;
             }
         } while (currentPackage != null);
-        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN = 'artifact' RETURN p").getColumn("p"), allOf(packageMatchers));
-        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
+        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN = 'artifact' RETURN p").getColumn("p"), allOf(packageMatchers));
+        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
     }
 
 
@@ -56,7 +56,7 @@ public class PackageIT extends AbstractPluginIT {
     @Test
     public void nonEmptyPackages() throws IOException {
         scanClassesDirectory(Pojo.class);
-        TestResult query = query("MATCH (a:ARTIFACT)-[:CONTAINS]->p:PACKAGE WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->() RETURN p");
+        TestResult query = query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->() RETURN p");
         assertThat(query.getRows().size(), equalTo(1));
         assertThat(query.getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
     }
