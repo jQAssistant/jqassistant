@@ -22,7 +22,7 @@ public class DAOIT extends AbstractPluginIT {
     @Test
     public void resultContainsCollection() throws IOException {
         scanClasses(PojoIT.class);
-        TestResult query = query("MATCH parent:PACKAGE-[:CONTAINS]->child:PACKAGE RETURN parent, COLLECT(child) AS children");
+        TestResult query = query("MATCH (parent:PACKAGE)-[:CONTAINS]->(child:PACKAGE) RETURN parent, COLLECT(child) AS children");
         Iterable<PackageDescriptor> parent = query.getColumn("parent");
         assertThat(parent, everyItem(any(PackageDescriptor.class)));
         Iterable<Iterable<PackageDescriptor>> children = query.getColumn("children");

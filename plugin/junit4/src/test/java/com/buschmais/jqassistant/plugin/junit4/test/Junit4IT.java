@@ -29,8 +29,8 @@ public class Junit4IT extends AbstractPluginIT {
     public void testClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
         scanClasses(TestClass.class);
         applyConcept("junit4:TestClassOrMethod");
-        assertThat(query("MATCH m:METHOD:JUNIT4:TEST RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
-        assertThat(query("MATCH c:TYPE:CLASS:JUNIT4:TEST RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
+        assertThat(query("MATCH (m:METHOD:JUNIT4:TEST) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        assertThat(query("MATCH (c:TYPE:CLASS:JUNIT4:TEST) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
     }
 
     /**
@@ -44,7 +44,7 @@ public class Junit4IT extends AbstractPluginIT {
     public void ignoreTestClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
         scanClasses(IgnoredTestClass.class);
         applyConcept("junit4:IgnoreTestClassOrMethod");
-        assertThat(query("MATCH m:METHOD:JUNIT4:IGNORE RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
-        assertThat(query("MATCH c:TYPE:CLASS:JUNIT4:IGNORE RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
+        assertThat(query("MATCH (m:METHOD:JUNIT4:IGNORE) RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
+        assertThat(query("MATCH (c:TYPE:CLASS:JUNIT4:IGNORE) RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
     }
 }
