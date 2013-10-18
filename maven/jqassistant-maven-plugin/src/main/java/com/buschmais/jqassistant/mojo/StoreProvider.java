@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PreDestroy;
+
 import org.codehaus.plexus.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +21,7 @@ import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 @Component(role = StoreProvider.class, instantiationStrategy = "singleton")
 public class StoreProvider {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(StoreProvider.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(StoreProvider.class);
 
 	private Map<File, Store> stores = new HashMap<>();
 
@@ -43,19 +44,22 @@ public class StoreProvider {
 	 * 
 	 * @param databaseDirectory
 	 *            The database directory to use.
-	 * @return The {@link Store} instance.
+	 * @return The @link Store} instance.
 	 */
-	public Store getStore(final File databaseDirectory,
-			List<DescriptorMapper<?>> mappers) {
+	public Store getStore(final File databaseDirectory, List<DescriptorMapper<?>> mappers) {
 		Store store = stores.get(databaseDirectory);
 		if (store == null) {
-			LOGGER.info("Opening store in directory '{}'.",
-					databaseDirectory.getAbsolutePath());
+			LOGGER.info("Opening store in directory '{}'.", databaseDirectory.getAbsolutePath());
 			databaseDirectory.getParentFile().mkdirs();
 			store = new EmbeddedGraphStore(databaseDirectory.getAbsolutePath());
 			store.start(mappers);
 			stores.put(databaseDirectory, store);
 		}
 		return store;
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		throw new RuntimeException("Bla!");
 	}
 }
