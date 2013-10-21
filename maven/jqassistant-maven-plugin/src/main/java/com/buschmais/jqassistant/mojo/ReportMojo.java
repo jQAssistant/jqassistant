@@ -33,7 +33,7 @@ public class ReportMojo extends AbstractMavenReport {
 	 * Directory where reports will go.
 	 */
 	@Parameter(property = "project.reporting.outputDirectory")
-	private String outputDirectory;
+	protected String outputDirectory;
 
 	/**
 	 * The file to write the XML report to.
@@ -41,11 +41,14 @@ public class ReportMojo extends AbstractMavenReport {
 	@Parameter(property = "jqassistant.report.xml")
 	protected File xmlReportFile;
 
-	@Component
-	private Renderer siteRenderer;
+	/**
+	 * The Maven project.
+	 */
+	@Parameter(property = "project")
+	protected MavenProject project;
 
-	@Parameter(defaultValue = "project")
-	private MavenProject project;
+	@Component
+	protected Renderer siteRenderer;
 
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
@@ -91,6 +94,10 @@ public class ReportMojo extends AbstractMavenReport {
 	@Override
 	protected String getOutputDirectory() {
 		return outputDirectory;
+	}
+
+	public void setProject(MavenProject project) {
+		this.project = project;
 	}
 
 	@Override

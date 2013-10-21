@@ -79,7 +79,6 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 		if (!directory.exists()) {
 			getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
 		} else {
-			getLog().info("Scanning directory: " + directory.getAbsolutePath());
 			store.beginTransaction();
 			try {
 				Artifact artifact = project.getArtifact();
@@ -103,7 +102,6 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 				} catch (IOException e) {
 					throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
 				}
-
 			} finally {
 				store.commitTransaction();
 			}

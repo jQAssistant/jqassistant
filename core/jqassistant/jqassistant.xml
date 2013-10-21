@@ -5,10 +5,8 @@
         <includeConcept refId="module:TypesPerModule"/>
         <includeConstraint refId="dependency:PackageCycles"/>
         <includeConstraint refId="dependency:ArtifactCycles"/>
-        <!--
         <includeConstraint refId="package:PackageNameMustStartWithArtifactGroup"/>
         <includeConstraint refId="package:PackageNameMustContainArtifactName"/>
-        -->
         <includeConstraint refId="module:ApiMustNotDependOnImplementation"/>
         <includeConstraint refId="module:ModuleMustDependOnApiOfOtherModule"/>
     </group>
