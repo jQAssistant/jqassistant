@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
 /**
- * The report mojo.
+ * Generates a HTML reports based on analysis results.
  */
 @Mojo(name = "report", defaultPhase = LifecyclePhase.SITE)
 public class ReportMojo extends AbstractMavenReport {
@@ -55,7 +55,7 @@ public class ReportMojo extends AbstractMavenReport {
 					.getBaseProject(project);
 			selectedXmlReportFile = BaseProjectResolver
 					.getReportFile(baseProject, xmlReportFile,
-							AbstractAnalysisMojo.REPORT_XML);
+                            AbstractAnalysisMojo.REPORT_XML);
 		} catch (MojoExecutionException e) {
 			throw new MavenReportException("Cannot resolve XML report.", e);
 		}

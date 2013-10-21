@@ -26,23 +26,17 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * A mojo which resets the store, i.e. deletes all nodes and relationships.
+ * Resets the store.
  */
 @Mojo(name = "reset", aggregator = true, requiresProject = false)
 public class ResetMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
 	protected void aggregate(MavenProject baseProject,
-			Set<MavenProject> projects) throws MojoExecutionException,
-			MojoFailureException {
+			Set<MavenProject> projects, Store store)
+			throws MojoExecutionException, MojoFailureException {
 		getLog().info("Resetting store.");
-		execute(baseProject, new StoreOperation<Void>() {
-			@Override
-			public Void run(Store store) {
-				store.reset();
-				return null;
-			}
-		});
+		store.reset();
 	}
 
 }

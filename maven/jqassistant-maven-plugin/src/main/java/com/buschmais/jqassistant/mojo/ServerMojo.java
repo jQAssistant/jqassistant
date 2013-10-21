@@ -17,6 +17,7 @@
 package com.buschmais.jqassistant.mojo;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,31 +29,28 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.Server;
 
 /**
- * The server Mojo starts an embedded Neo4j server.
+ * Starts an embedded Neo4j server.
  */
-@Mojo(name = "server", aggregator = true, requiresProject = false)
-public class ServerMojo extends AbstractAnalysisMojo {
+@Mojo(name = "server")
+public class ServerMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		MavenProject baseProject = BaseProjectResolver
-				.getBaseProject(currentProject);
-		execute(baseProject, new StoreOperation<Void>() {
-			@Override
-			public Void run(Store store) throws MojoExecutionException {
-				Server server = new Server((EmbeddedGraphStore) store);
-				server.start();
-				try {
-					getLog().info("Press <Enter> to finish.");
-					System.in.read();
-				} catch (IOException e) {
-					throw new MojoExecutionException(
-							"Cannot read from System.in.", e);
-				} finally {
-					server.stop();
-				}
-				return null;
-			}
-		});
+	protected void aggregate(MavenProject baseProject,
+			Set<MavenProject> projects, Store store)
+			throws MojoExecutionException, MojoFailureException {
+		Server server = new Server((EmbeddedGraphStore) store);
+		server.start();
+		getLog().info(
+				"Running server for module " + baseProject.getGroupId() + ":"
+						+ baseProject.getArtifactId() + ":"
+						+ baseProject.getVersion());
+		getLog().info("Press <Enter> to finish.");
+		try {
+			System.in.read();
+		} catch (IOException e) {
+			throw new MojoExecutionException("Cannot read from System.in.", e);
+		} finally {
+			server.stop();
+		}
 	}
 }

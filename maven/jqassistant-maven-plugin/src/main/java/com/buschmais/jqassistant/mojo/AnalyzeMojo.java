@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2011 tdarby <tim.darby.uk@googlemail.com>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.buschmais.jqassistant.mojo;
 
 import java.io.File;
@@ -32,11 +16,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -49,7 +29,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 
 /**
- * The analyze Mojo runs analysis according to the defined rules.
+ * Runs analysis according to the defined rules.
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY)
 public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
@@ -61,8 +41,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 	protected boolean failOnConstraintViolations;
 
 	@Override
-	public void aggregate(MavenProject baseProject, Set<MavenProject> projects)
-			throws MojoExecutionException, MojoFailureException {
+	public void aggregate(MavenProject baseProject, Set<MavenProject> projects,
+			Store store) throws MojoExecutionException, MojoFailureException {
 		getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
 		final RuleSet ruleSet = resolveEffectiveRules(baseProject);
 		InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
@@ -84,20 +64,14 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 		reportWriters.add(inMemoryReportWriter);
 		reportWriters.add(xmlReportWriter);
 		try {
-			final CompositeReportWriter reportWriter = new CompositeReportWriter(
+			CompositeReportWriter reportWriter = new CompositeReportWriter(
 					reportWriters);
-			execute(baseProject, new StoreOperation<Void>() {
-				@Override
-				public Void run(Store store) throws MojoExecutionException {
-					Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
-					try {
-						analyzer.execute(ruleSet);
-					} catch (AnalyzerException e) {
-						throw new MojoExecutionException("Analysis failed.", e);
-					}
-					return null;
-				}
-			});
+			Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
+			try {
+				analyzer.execute(ruleSet);
+			} catch (AnalyzerException e) {
+				throw new MojoExecutionException("Analysis failed.", e);
+			}
 		} finally {
 			IOUtils.closeQuietly(xmlReportFileWriter);
 		}
@@ -159,8 +133,10 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 						message.append(entry.getKey());
 						message.append('=');
 						Object value = entry.getValue();
-						message.append(value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value)
-								.getFullQualifiedName() : value.toString());
+						message.append(value instanceof FullQualifiedNameDescriptor
+								? ((FullQualifiedNameDescriptor) value)
+										.getFullQualifiedName() : value
+										.toString());
 					}
 					getLog().error("  " + message.toString());
 				}

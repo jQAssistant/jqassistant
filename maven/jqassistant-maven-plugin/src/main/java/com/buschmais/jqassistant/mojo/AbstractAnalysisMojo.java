@@ -11,12 +11,9 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
@@ -29,24 +26,14 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * Abstract base implementation for analysis mojos.
  */
-public abstract class AbstractAnalysisMojo extends
-		org.apache.maven.plugin.AbstractMojo {
-
-	/**
-	 * Defines the interface for an operation on the store.
-	 * 
-	 * @param <T>
-	 *            The return type of the operation.
-	 */
-	protected static interface StoreOperation<T> {
-		public T run(Store store) throws MojoExecutionException,
-				MojoFailureException;
-	}
+public abstract class AbstractAnalysisMojo
+		extends
+			org.apache.maven.plugin.AbstractMojo {
 
 	public static final String REPORT_XML = "/jqassistant/jqassistant-report.xml";
 
@@ -114,26 +101,6 @@ public abstract class AbstractAnalysisMojo extends
 	 * The rules selector.
 	 */
 	private RuleSelector ruleSelector = new RuleSelectorImpl();
-
-	@Component
-	protected StoreProvider storeProvider;
-
-	protected <T> T executeInTransaction(MavenProject project,
-			StoreOperation<T> operation) throws MojoExecutionException,
-			MojoFailureException {
-		final Store store = getStore(project);
-		store.beginTransaction();
-		try {
-			return operation.run(store);
-		} finally {
-			store.commitTransaction();
-		}
-	}
-
-	protected <T> T execute(MavenProject project, StoreOperation<T> operation)
-			throws MojoExecutionException, MojoFailureException {
-		return operation.run(getStore(project));
-	}
 
 	/**
 	 * Reads the available rules from the rules directory and deployed catalogs.
@@ -315,22 +282,20 @@ public abstract class AbstractAnalysisMojo extends
 	 * @throws MojoExecutionException
 	 *             If the store cannot be created.
 	 */
-	private Store getStore(MavenProject baseProject)
+	protected Store getStore(MavenProject baseProject)
 			throws MojoExecutionException {
 		File directory;
-		if (storeDirectory != null) {
-			directory = storeDirectory;
+		if (this.storeDirectory != null) {
+			directory = this.storeDirectory;
 		} else {
 			directory = new File(baseProject.getBuild().getDirectory()
 					+ "/jqassistant/store");
 		}
-		List<DescriptorMapper<?>> descriptorMappers;
-		try {
-			descriptorMappers = pluginManager.getDescriptorMappers();
-		} catch (PluginReaderException e) {
-			throw new MojoExecutionException("Cannot get descriptor mappers.",
-					e);
-		}
-		return storeProvider.getStore(directory, descriptorMappers);
+		getLog().info(
+				"Opening store in directory '" + directory.getAbsolutePath()
+						+ "'");
+		directory.getParentFile().mkdirs();
+		Store store = new EmbeddedGraphStore(directory.getAbsolutePath());
+		return store;
 	}
 }

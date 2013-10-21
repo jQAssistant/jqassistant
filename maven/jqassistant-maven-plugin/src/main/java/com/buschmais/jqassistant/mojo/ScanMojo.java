@@ -37,8 +37,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
 
 /**
- * A Mojo which scans the compiled classes in the output directory and test
- * output directory.
+ * Scans the the output directory and test output directory.
  */
 @Mojo(name = "scan", defaultPhase = LifecyclePhase.PACKAGE)
 public class ScanMojo extends AbstractAnalysisAggregatorMojo {
@@ -50,39 +49,24 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
 	protected void aggregate(MavenProject baseProject,
-			Set<MavenProject> projects) throws MojoExecutionException,
-			MojoFailureException {
+			Set<MavenProject> projects, Store store)
+			throws MojoExecutionException, MojoFailureException {
 		// reset the store if the current project is the base project (i.e.
 		// where the rules are located).
-		reset(baseProject);
+		store.reset();
 		for (MavenProject project : projects) {
-			List<FileScannerPlugin<?>> scannerPlugins = null;
+			List<FileScannerPlugin<?>> scannerPlugins;
 			try {
 				scannerPlugins = pluginManager.getScannerPlugins();
 			} catch (PluginReaderException e) {
 				throw new MojoExecutionException("Cannot get scanner plugins.",
 						e);
 			}
-			scanDirectory(baseProject, project, project.getBuild()
+			scanDirectory(baseProject, project, store, project.getBuild()
 					.getOutputDirectory(), false, scannerPlugins);
-			scanDirectory(baseProject, project, project.getBuild()
+			scanDirectory(baseProject, project, store, project.getBuild()
 					.getTestOutputDirectory(), true, scannerPlugins);
 		}
-	}
-
-	/**
-	 * Reset the store.
-	 */
-	private void reset(MavenProject baseProject) throws MojoFailureException,
-			MojoExecutionException {
-		execute(baseProject, new StoreOperation<Void>() {
-			@Override
-			public Void run(Store store) throws MojoExecutionException,
-					MojoFailureException {
-				store.reset();
-				return null;
-			}
-		});
 	}
 
 	/**
@@ -94,8 +78,8 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	 *             If scanning fails.
 	 */
 	private void scanDirectory(MavenProject baseProject,
-			final MavenProject project, final String directoryName,
-			final boolean testJar,
+			final MavenProject project, Store store,
+			final String directoryName, boolean testJar,
 			final List<FileScannerPlugin<?>> scannerPlugins)
 			throws MojoExecutionException, MojoFailureException {
 		final File directory = new File(directoryName);
@@ -105,43 +89,39 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 							+ "' does not exist, skipping scan.");
 		} else {
 			getLog().info("Scanning directory: " + directory.getAbsolutePath());
-			super.executeInTransaction(baseProject, new StoreOperation<Void>() {
-				@Override
-				public Void run(Store store) throws MojoExecutionException {
-					Artifact artifact = project.getArtifact();
-					String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact
-							.getType();
-					String id = createArtifactDescriptorId(
-							artifact.getGroupId(), artifact.getArtifactId(),
-							type, artifact.getClassifier(),
-							artifact.getVersion());
-					ArtifactDescriptor artifactDescriptor = store.find(
-							ArtifactDescriptor.class, id);
-					if (artifactDescriptor == null) {
-						artifactDescriptor = store.create(
-								ArtifactDescriptor.class, id);
-						artifactDescriptor.setGroup(artifact.getGroupId());
-						artifactDescriptor.setName(artifact.getArtifactId());
-						artifactDescriptor.setVersion(artifact.getVersion());
-						artifactDescriptor.setClassifier(artifact
-								.getClassifier());
-						artifactDescriptor.setType(type);
-					}
-					FileScanner scanner = new FileScannerImpl(store,
-							scannerPlugins);
-					try {
-						for (Descriptor descriptor : scanner
-								.scanDirectory(directory)) {
-							artifactDescriptor.getContains().add(descriptor);
-						}
-					} catch (IOException e) {
-						throw new MojoExecutionException(
-								"Cannot scan directory '"
-										+ directory.getAbsolutePath() + "'", e);
-					}
-					return null;
+			store.beginTransaction();
+			try {
+				Artifact artifact = project.getArtifact();
+				String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact
+						.getType();
+				String id = createArtifactDescriptorId(artifact.getGroupId(),
+						artifact.getArtifactId(), type,
+						artifact.getClassifier(), artifact.getVersion());
+				ArtifactDescriptor artifactDescriptor = store.find(
+						ArtifactDescriptor.class, id);
+				if (artifactDescriptor == null) {
+					artifactDescriptor = store.create(ArtifactDescriptor.class,
+							id);
+					artifactDescriptor.setGroup(artifact.getGroupId());
+					artifactDescriptor.setName(artifact.getArtifactId());
+					artifactDescriptor.setVersion(artifact.getVersion());
+					artifactDescriptor.setClassifier(artifact.getClassifier());
+					artifactDescriptor.setType(type);
 				}
-			});
+				FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
+				try {
+					for (Descriptor descriptor : scanner
+							.scanDirectory(directory)) {
+						artifactDescriptor.getContains().add(descriptor);
+					}
+				} catch (IOException e) {
+					throw new MojoExecutionException("Cannot scan directory '"
+							+ directory.getAbsolutePath() + "'", e);
+				}
+
+			} finally {
+				store.commitTransaction();
+			}
 		}
 	}
 

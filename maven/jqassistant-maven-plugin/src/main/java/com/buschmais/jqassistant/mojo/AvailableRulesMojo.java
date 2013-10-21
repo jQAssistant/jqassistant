@@ -25,16 +25,17 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * A Mojo which lists all available rules.
+ * Lists all available rules.
  */
 @Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE)
 public class AvailableRulesMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
-	public void aggregate(MavenProject baseProject, Set<MavenProject> projects)
-			throws MojoExecutionException, MojoFailureException {
+	public void aggregate(MavenProject baseProject, Set<MavenProject> projects,
+			Store store) throws MojoExecutionException, MojoFailureException {
 		getLog().info("Available rules for '" + baseProject.getName() + "'.");
 		RuleSet ruleSet = readRules(baseProject);
 		logRuleSet(ruleSet);
