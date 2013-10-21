@@ -5,13 +5,18 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation;
  */
 public @interface AnnotationWithDefaultValue {
 
-    Class<?> classValue() default Number.class;
+	Class<?> classValue() default Number.class;
 
-    Enumeration enumerationValue() default Enumeration.DEFAULT;
+	Enumeration enumerationValue() default Enumeration.DEFAULT;
 
-    double primitiveValueValue() default 0;
+	double primitiveValueValue() default 0;
 
-    Class[] arrayValue() default {Integer.class};
+	Class[] arrayValue() default { Integer.class };
 
-    NestedAnnotation annotationValue() default @NestedAnnotation("test"); // creates an implict dependency to java.lang.String
+	NestedAnnotation annotationValue() default @NestedAnnotation("test"); // creates
+																			// an
+																			// implict
+																			// dependency
+																			// to
+																			// java.lang.String
 }

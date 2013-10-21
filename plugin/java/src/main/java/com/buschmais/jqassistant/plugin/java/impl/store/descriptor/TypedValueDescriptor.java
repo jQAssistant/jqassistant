@@ -5,7 +5,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
  */
 public interface TypedValueDescriptor<V> extends ValueDescriptor<V> {
 
-    TypeDescriptor getType();
+	TypeDescriptor getType();
 
-    void setType(TypeDescriptor type);
+	void setType(TypeDescriptor type);
 }

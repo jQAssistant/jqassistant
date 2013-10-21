@@ -5,7 +5,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
  */
 public interface SignatureDescriptor {
 
-    String getSignature();
+	String getSignature();
 
-    void setSignature(String signature);
+	void setSignature(String signature);
 }

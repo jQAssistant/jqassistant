@@ -5,21 +5,21 @@ package com.buschmais.jqassistant.plugin.java.test.set.dependency.fieldaccesses;
  */
 public class FieldAccess {
 
-    public void readField() {
-        FieldDependency fieldDependency = new FieldDependency();
-        System.out.println(fieldDependency.field);
-    }
+	public void readField() {
+		FieldDependency fieldDependency = new FieldDependency();
+		System.out.println(fieldDependency.field);
+	}
 
-    public void writeField() {
-        FieldDependency fieldDependency = new FieldDependency();
-        fieldDependency.field = null;
-    }
+	public void writeField() {
+		FieldDependency fieldDependency = new FieldDependency();
+		fieldDependency.field = null;
+	}
 
-    public void readStaticField() {
-        System.out.println(FieldDependency.staticField);
-    }
+	public void readStaticField() {
+		System.out.println(FieldDependency.staticField);
+	}
 
-    public void writeStaticField() {
-        FieldDependency.staticField = null;
-    }
+	public void writeStaticField() {
+		FieldDependency.staticField = null;
+	}
 }

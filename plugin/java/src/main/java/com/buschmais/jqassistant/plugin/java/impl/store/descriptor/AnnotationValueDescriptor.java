@@ -5,5 +5,5 @@ import java.util.List;
 /**
  * Represents an annotation value.
  */
-public class AnnotationValueDescriptor extends AbstractTypedValueDescriptor<List<ValueDescriptor>>  {
+public class AnnotationValueDescriptor extends AbstractTypedValueDescriptor<List<ValueDescriptor>> {
 }

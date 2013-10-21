@@ -8,8 +8,8 @@ import java.util.Set;
  */
 public class FieldDependency {
 
-    public static Map<?,?> staticField = null;
+	public static Map<?, ?> staticField = null;
 
-    public Set<?> field = null;
+	public Set<?> field = null;
 
 }

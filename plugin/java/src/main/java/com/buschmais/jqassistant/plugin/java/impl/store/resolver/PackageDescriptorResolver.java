@@ -5,18 +5,18 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescri
 
 public class PackageDescriptorResolver extends AbstractDescriptorResolver<PackageDescriptor, PackageDescriptor> {
 
-    public PackageDescriptorResolver(Store store) {
-        super(store);
-    }
+	public PackageDescriptorResolver(Store store) {
+		super(store);
+	}
 
-    @Override
-    protected Class<PackageDescriptor> getType() {
-        return PackageDescriptor.class;
-    }
+	@Override
+	protected Class<PackageDescriptor> getType() {
+		return PackageDescriptor.class;
+	}
 
-    @Override
-    protected char getSeparator() {
-        return '.';
-    }
+	@Override
+	protected char getSeparator() {
+		return '.';
+	}
 
 }

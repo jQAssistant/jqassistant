@@ -7,8 +7,8 @@ import java.util.TreeSet;
  */
 public class MethodInvocation {
 
-    public void methodInvocation() {
-        MethodDependency methodDependency = new MethodDependency();
-        methodDependency.getMap(new TreeSet<Number>());
-    }
+	public void methodInvocation() {
+		MethodDependency methodDependency = new MethodDependency();
+		methodDependency.getMap(new TreeSet<Number>());
+	}
 }
