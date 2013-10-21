@@ -5,18 +5,26 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 /**
  * Enum of all access modifiers.
- *
+ * 
  * @author Herklotz
  */
 public enum VisibilityModifier {
 
-	/** Modifier: private. */
+	/**
+	 * Modifier: private.
+	 */
 	PRIVATE,
-	/** Modifier: default. */
+	/**
+	 * Modifier: default.
+	 */
 	DEFAULT,
-	/** Modifier: protected. */
+	/**
+	 * Modifier: protected.
+	 */
 	PROTECTED,
-	/** Modifier: public. */
+	/**
+	 * Modifier: public.
+	 */
 	PUBLIC;
 
 }

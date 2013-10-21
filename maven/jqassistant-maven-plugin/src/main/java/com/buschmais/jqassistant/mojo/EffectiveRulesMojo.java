@@ -34,8 +34,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class EffectiveRulesMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
-	public void aggregate(MavenProject baseProject, Set<MavenProject> projects,
-			Store store) throws MojoExecutionException, MojoFailureException {
+	public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException {
 		getLog().info("Effective rules for '" + baseProject.getName() + "'.");
 		RuleSet targetRuleSet = resolveEffectiveRules(baseProject);
 		logRuleSet(targetRuleSet);

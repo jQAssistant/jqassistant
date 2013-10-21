@@ -35,14 +35,12 @@ import com.buschmais.jqassistant.core.store.impl.Server;
 public class ServerMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
-	protected void aggregate(MavenProject baseProject,
-			Set<MavenProject> projects, Store store)
-			throws MojoExecutionException, MojoFailureException {
+	protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException {
 		Server server = new Server((EmbeddedGraphStore) store);
 		server.start();
 		getLog().info(
-				"Running server for module " + baseProject.getGroupId() + ":"
-						+ baseProject.getArtifactId() + ":"
+				"Running server for module " + baseProject.getGroupId() + ":" + baseProject.getArtifactId() + ":"
 						+ baseProject.getVersion());
 		getLog().info("Press <Enter> to finish.");
 		try {

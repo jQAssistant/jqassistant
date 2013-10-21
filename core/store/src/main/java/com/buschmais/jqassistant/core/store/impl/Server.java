@@ -8,39 +8,40 @@ import org.neo4j.server.WrappingNeoServer;
  */
 public class Server {
 
-    /**
-     * The {@link EmbeddedGraphStore}.
-     */
-    private final EmbeddedGraphStore graphStore;
+	/**
+	 * The {@link EmbeddedGraphStore}.
+	 */
+	private final EmbeddedGraphStore graphStore;
 
-    /**
-     * The {@link WrappingNeoServer}.
-     */
-    private WrappingNeoServer server;
+	/**
+	 * The {@link WrappingNeoServer}.
+	 */
+	private WrappingNeoServer server;
 
-    /**
-     * Constructor.
-     *
-     * @param graphStore The {@link EmbeddedGraphStore}.
-     */
-    public Server(EmbeddedGraphStore graphStore) {
-        this.graphStore = graphStore;
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param graphStore
+	 *            The {@link EmbeddedGraphStore}.
+	 */
+	public Server(EmbeddedGraphStore graphStore) {
+		this.graphStore = graphStore;
+	}
 
-    /**
-     * Start the web server.
-     */
-    public void start() {
-        GraphDatabaseAPI databaseAPI = graphStore.getDatabaseAPI();
-        this.server = new WrappingNeoServer(databaseAPI);
-        this.server.start();
-    }
+	/**
+	 * Start the web server.
+	 */
+	public void start() {
+		GraphDatabaseAPI databaseAPI = graphStore.getDatabaseAPI();
+		this.server = new WrappingNeoServer(databaseAPI);
+		this.server.start();
+	}
 
-    /**
-     * Stop the web server.
-     */
-    public void stop() {
-        this.server.stop();
-    }
+	/**
+	 * Stop the web server.
+	 */
+	public void stop() {
+		this.server.stop();
+	}
 
 }

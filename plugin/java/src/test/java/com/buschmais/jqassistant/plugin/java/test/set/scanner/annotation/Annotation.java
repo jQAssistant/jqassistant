@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation;
 
+import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.DEFAULT;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.DEFAULT;
 
 /**
  * An annotation containing values of all supported types.
@@ -11,14 +11,14 @@ import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Annotation {
 
-    String value();
+	String value();
 
-    String[] arrayValue() default {};
+	String[] arrayValue() default {};
 
-    Class<?> classValue() default Object.class;
+	Class<?> classValue() default Object.class;
 
-    Enumeration enumerationValue() default DEFAULT;
+	Enumeration enumerationValue() default DEFAULT;
 
-    NestedAnnotation nestedAnnotationValue() default @NestedAnnotation("default");
+	NestedAnnotation nestedAnnotationValue() default @NestedAnnotation("default");
 
 }

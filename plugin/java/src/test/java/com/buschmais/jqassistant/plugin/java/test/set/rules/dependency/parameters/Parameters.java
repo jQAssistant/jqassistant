@@ -5,6 +5,6 @@ package com.buschmais.jqassistant.plugin.java.test.set.dependency.parameters;
  */
 public class Parameters {
 
-    public void doSomething(String stringValue, Integer integerValue) {
-    }
+	public void doSomething(String stringValue, Integer integerValue) {
+	}
 }

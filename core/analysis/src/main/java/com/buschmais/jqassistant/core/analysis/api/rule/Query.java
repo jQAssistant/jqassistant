@@ -8,24 +8,24 @@ import java.util.Map;
  */
 public class Query {
 
-    private String cypher;
+	private String cypher;
 
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+	private Map<String, Object> parameters = new HashMap<String, Object>();
 
-    public String getCypher() {
-        return cypher;
-    }
+	public String getCypher() {
+		return cypher;
+	}
 
-    public void setCypher(String cypher) {
-        this.cypher = cypher;
-    }
+	public void setCypher(String cypher) {
+		this.cypher = cypher;
+	}
 
-    public Map<String, Object> getParameters() {
-        return parameters;
-    }
+	public Map<String, Object> getParameters() {
+		return parameters;
+	}
 
-    @Override
-    public String toString() {
-        return "cypher='" + cypher + "', parameters=" + parameters + "]";
-    }
+	@Override
+	public String toString() {
+		return "cypher='" + cypher + "', parameters=" + parameters + "]";
+	}
 }

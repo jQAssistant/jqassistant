@@ -48,9 +48,8 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
 
 	@Override
-	protected void aggregate(MavenProject baseProject,
-			Set<MavenProject> projects, Store store)
-			throws MojoExecutionException, MojoFailureException {
+	protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException {
 		// reset the store if the current project is the base project (i.e.
 		// where the rules are located).
 		store.reset();
@@ -59,13 +58,10 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 			try {
 				scannerPlugins = pluginManager.getScannerPlugins();
 			} catch (PluginReaderException e) {
-				throw new MojoExecutionException("Cannot get scanner plugins.",
-						e);
+				throw new MojoExecutionException("Cannot get scanner plugins.", e);
 			}
-			scanDirectory(baseProject, project, store, project.getBuild()
-					.getOutputDirectory(), false, scannerPlugins);
-			scanDirectory(baseProject, project, store, project.getBuild()
-					.getTestOutputDirectory(), true, scannerPlugins);
+			scanDirectory(baseProject, project, store, project.getBuild().getOutputDirectory(), false, scannerPlugins);
+			scanDirectory(baseProject, project, store, project.getBuild().getTestOutputDirectory(), true, scannerPlugins);
 		}
 	}
 
@@ -77,31 +73,22 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	 * @throws MojoExecutionException
 	 *             If scanning fails.
 	 */
-	private void scanDirectory(MavenProject baseProject,
-			final MavenProject project, Store store,
-			final String directoryName, boolean testJar,
-			final List<FileScannerPlugin<?>> scannerPlugins)
-			throws MojoExecutionException, MojoFailureException {
+	private void scanDirectory(MavenProject baseProject, final MavenProject project, Store store, final String directoryName,
+			boolean testJar, final List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException, MojoFailureException {
 		final File directory = new File(directoryName);
 		if (!directory.exists()) {
-			getLog().info(
-					"Directory '" + directory.getAbsolutePath()
-							+ "' does not exist, skipping scan.");
+			getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
 		} else {
 			getLog().info("Scanning directory: " + directory.getAbsolutePath());
 			store.beginTransaction();
 			try {
 				Artifact artifact = project.getArtifact();
-				String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact
-						.getType();
-				String id = createArtifactDescriptorId(artifact.getGroupId(),
-						artifact.getArtifactId(), type,
-						artifact.getClassifier(), artifact.getVersion());
-				ArtifactDescriptor artifactDescriptor = store.find(
-						ArtifactDescriptor.class, id);
+				String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
+				String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(),
+						artifact.getVersion());
+				ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
 				if (artifactDescriptor == null) {
-					artifactDescriptor = store.create(ArtifactDescriptor.class,
-							id);
+					artifactDescriptor = store.create(ArtifactDescriptor.class, id);
 					artifactDescriptor.setGroup(artifact.getGroupId());
 					artifactDescriptor.setName(artifact.getArtifactId());
 					artifactDescriptor.setVersion(artifact.getVersion());
@@ -110,13 +97,11 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 				}
 				FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
 				try {
-					for (Descriptor descriptor : scanner
-							.scanDirectory(directory)) {
+					for (Descriptor descriptor : scanner.scanDirectory(directory)) {
 						artifactDescriptor.getContains().add(descriptor);
 					}
 				} catch (IOException e) {
-					throw new MojoExecutionException("Cannot scan directory '"
-							+ directory.getAbsolutePath() + "'", e);
+					throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
 				}
 
 			} finally {
@@ -140,8 +125,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	 *            The version.
 	 * @return The id.
 	 */
-	private String createArtifactDescriptorId(String group, String name,
-			String type, String classifier, String version) {
+	private String createArtifactDescriptorId(String group, String name, String type, String classifier, String version) {
 		StringBuffer id = new StringBuffer();
 		id.append(group);
 		id.append(':');

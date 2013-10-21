@@ -51,26 +51,19 @@ public class ReportMojo extends AbstractMavenReport {
 	protected void executeReport(Locale locale) throws MavenReportException {
 		File selectedXmlReportFile;
 		try {
-			MavenProject baseProject = BaseProjectResolver
-					.getBaseProject(project);
-			selectedXmlReportFile = BaseProjectResolver
-					.getReportFile(baseProject, xmlReportFile,
-                            AbstractAnalysisMojo.REPORT_XML);
+			MavenProject baseProject = BaseProjectResolver.getBaseProject(project);
+			selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
 		} catch (MojoExecutionException e) {
 			throw new MavenReportException("Cannot resolve XML report.", e);
 		}
-		if (!selectedXmlReportFile.exists()
-				|| selectedXmlReportFile.isDirectory()) {
-			throw new MavenReportException(
-					selectedXmlReportFile.getAbsoluteFile()
-							+ " does not exist or is not a file.");
+		if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
+			throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
 		}
 		StringWriter writer = new StringWriter();
 		// Transform
 		Source xmlSource = new StreamSource(selectedXmlReportFile);
 		Result htmlTarget = new StreamResult(writer);
-		getLog().info(
-				"Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
+		getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
 		ReportTransformer transformer = new HtmlReportTransformer();
 		try {
 			transformer.transform(xmlSource, htmlTarget);

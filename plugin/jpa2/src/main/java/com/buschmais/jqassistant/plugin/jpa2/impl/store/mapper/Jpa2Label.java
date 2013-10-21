@@ -7,11 +7,9 @@ import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
  */
 public enum Jpa2Label implements IndexedLabel {
 
-    JPA,
-    PERSISTENCE,
-    PERSISTENCEUNIT;
+	JPA, PERSISTENCE, PERSISTENCEUNIT;
 
-    public String getIndexedProperty() {
-        return null;
-    }
+	public String getIndexedProperty() {
+		return null;
+	}
 }

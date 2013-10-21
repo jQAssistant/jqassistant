@@ -7,13 +7,13 @@ import com.buschmais.jqassistant.plugin.java.test.set.dependency.packages.a.A;
  */
 public class B {
 
-    private A a;
+	private A a;
 
-    public A getA() {
-        return a;
-    }
+	public A getA() {
+		return a;
+	}
 
-    public void setA(A a) {
-        this.a = a;
-    }
+	public void setA(A a) {
+		this.a = a;
+	}
 }

@@ -6,17 +6,17 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescripto
 
 public class MethodDescriptorResolver extends AbstractDescriptorResolver<TypeDescriptor, MethodDescriptor> {
 
-    public MethodDescriptorResolver(Store store, TypeDescriptorResolver parentResolver) {
-        super(store, parentResolver);
-    }
+	public MethodDescriptorResolver(Store store, TypeDescriptorResolver parentResolver) {
+		super(store, parentResolver);
+	}
 
-    @Override
-    protected Class<MethodDescriptor> getType() {
-        return MethodDescriptor.class;
-    }
+	@Override
+	protected Class<MethodDescriptor> getType() {
+		return MethodDescriptor.class;
+	}
 
-    @Override
-    protected char getSeparator() {
-        return '#';
-    }
+	@Override
+	protected char getSeparator() {
+		return '#';
+	}
 }

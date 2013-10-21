@@ -7,9 +7,9 @@ import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
  */
 public enum ArtifactLabel implements IndexedLabel {
 
-    ARTIFACT;
+	ARTIFACT;
 
-    public String getIndexedProperty() {
-        return null;
-    }
+	public String getIndexedProperty() {
+		return null;
+	}
 }

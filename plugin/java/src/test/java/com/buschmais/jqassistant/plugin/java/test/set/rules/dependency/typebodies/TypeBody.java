@@ -8,13 +8,13 @@ import java.util.List;
  */
 public class TypeBody {
 
-    @FieldAnnotation
-    private List<String> values;
+	@FieldAnnotation
+	private List<String> values;
 
-    @MethodAnnotation
-    public Iterator<Integer> iterator(Number n) throws Exception {
-        Double doubleValue = Double.valueOf(0d);
-        Boolean.valueOf(true);
-        return null;
-    }
+	@MethodAnnotation
+	public Iterator<Integer> iterator(Number n) throws Exception {
+		Double doubleValue = Double.valueOf(0d);
+		Boolean.valueOf(true);
+		return null;
+	}
 }

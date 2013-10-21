@@ -34,8 +34,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class AvailableRulesMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
-	public void aggregate(MavenProject baseProject, Set<MavenProject> projects,
-			Store store) throws MojoExecutionException, MojoFailureException {
+	public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException {
 		getLog().info("Available rules for '" + baseProject.getName() + "'.");
 		RuleSet ruleSet = readRules(baseProject);
 		logRuleSet(ruleSet);

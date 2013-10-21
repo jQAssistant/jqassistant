@@ -5,7 +5,7 @@ package com.buschmais.jqassistant.core.store.api.descriptor;
  */
 public interface NamedDescriptor {
 
-    String getName();
+	String getName();
 
-    void setName(String name);
+	void setName(String name);
 }

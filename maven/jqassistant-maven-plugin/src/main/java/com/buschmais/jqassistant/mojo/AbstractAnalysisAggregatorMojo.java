@@ -13,20 +13,15 @@ import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 /**
  * Abstract base implementation for analysis mojos running as aggregator.
  */
-public abstract class AbstractAnalysisAggregatorMojo
-		extends
-			AbstractAnalysisMojo {
+public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMojo {
 
 	@Override
-	public final void execute() throws MojoExecutionException,
-			MojoFailureException {
-		MavenProject lastProject = reactorProjects
-				.get(reactorProjects.size() - 1);
+	public final void execute() throws MojoExecutionException, MojoFailureException {
+		MavenProject lastProject = reactorProjects.get(reactorProjects.size() - 1);
 		if (currentProject.equals(lastProject)) {
 			Map<MavenProject, Set<MavenProject>> baseProjects = new HashMap<>();
 			for (MavenProject reactorProject : reactorProjects) {
-				MavenProject baseProject = BaseProjectResolver
-						.getBaseProject(reactorProject);
+				MavenProject baseProject = BaseProjectResolver.getBaseProject(reactorProject);
 				Set<MavenProject> projects = baseProjects.get(baseProject);
 				if (projects == null) {
 					projects = new HashSet<>();
@@ -39,12 +34,10 @@ public abstract class AbstractAnalysisAggregatorMojo
 			try {
 				descriptorMappers = pluginManager.getDescriptorMappers();
 			} catch (PluginReaderException e) {
-				throw new MojoExecutionException(
-						"Cannot get descriptor mappers.", e);
+				throw new MojoExecutionException("Cannot get descriptor mappers.", e);
 			}
 
-			for (Map.Entry<MavenProject, Set<MavenProject>> entry : baseProjects
-					.entrySet()) {
+			for (Map.Entry<MavenProject, Set<MavenProject>> entry : baseProjects.entrySet()) {
 				MavenProject baseProject = entry.getKey();
 				Store store = getStore(baseProject);
 				try {
@@ -66,7 +59,6 @@ public abstract class AbstractAnalysisAggregatorMojo
 	 * @throws MojoFailureException
 	 *             If execution fails.
 	 */
-	protected abstract void aggregate(MavenProject baseProject,
-			Set<MavenProject> projects, Store store)
-			throws MojoExecutionException, MojoFailureException;
+	protected abstract void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException;
 }

@@ -6,60 +6,61 @@ import com.buschmais.jqassistant.core.store.api.model.IndexedLabel;
  * The node labels created by the scanner.
  */
 public enum JavaLabel implements IndexedLabel {
-    /**
-     * Artifact.
-     */
-    ARTIFACT("FQN"),
-    /**
-     * Package
-     */
-    PACKAGE("FQN"),
-    /**
-     * Type
-     */
-    TYPE("FQN"),
-    /**
-     * Method
-     */
-    METHOD("FQN"),
-    /**
-     * Parameter
-     */
-    PARAMETER("FQN"),
+	/**
+	 * Artifact.
+	 */
+	ARTIFACT("FQN"),
+	/**
+	 * Package
+	 */
+	PACKAGE("FQN"),
+	/**
+	 * Type
+	 */
+	TYPE("FQN"),
+	/**
+	 * Method
+	 */
+	METHOD("FQN"),
+	/**
+	 * Parameter
+	 */
+	PARAMETER("FQN"),
 
-    /**
-     * Constructor
-     */
-    CONSTRUCTOR,
-    /**
-     * Field
-     */
-    FIELD("FQN"),
-    /**
-     * value
-     */
-    VALUE,
-    /**
-     * Properties
-     */
-    PROPERTIES;
+	/**
+	 * Constructor
+	 */
+	CONSTRUCTOR,
+	/**
+	 * Field
+	 */
+	FIELD("FQN"),
+	/**
+	 * value
+	 */
+	VALUE,
+	/**
+	 * Properties
+	 */
+	PROPERTIES;
 
-    private String indexedProperty;
+	private String indexedProperty;
 
-    JavaLabel() {
-        this(null);
-    }
+	JavaLabel() {
+		this(null);
+	}
 
-    /**
-     * Parametrized constructor.
-     *
-     * @param indexedProperty The name of the property to be used for indexing.
-     */
-    JavaLabel(String indexedProperty) {
-        this.indexedProperty = indexedProperty;
-    }
+	/**
+	 * Parametrized constructor.
+	 * 
+	 * @param indexedProperty
+	 *            The name of the property to be used for indexing.
+	 */
+	JavaLabel(String indexedProperty) {
+		this.indexedProperty = indexedProperty;
+	}
 
-    public String getIndexedProperty() {
-        return indexedProperty;
-    }
+	public String getIndexedProperty() {
+		return indexedProperty;
+	}
 }

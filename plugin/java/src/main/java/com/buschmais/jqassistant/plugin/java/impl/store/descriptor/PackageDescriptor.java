@@ -7,16 +7,16 @@ import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
  */
 public class PackageDescriptor extends ParentDescriptor implements SignatureDescriptor {
 
-    /**
-     * The signature of the package.
-     */
-    private String signature;
+	/**
+	 * The signature of the package.
+	 */
+	private String signature;
 
-    public String getSignature() {
-        return signature;
-    }
+	public String getSignature() {
+		return signature;
+	}
 
-    public void setSignature(String signature) {
-        this.signature = signature;
-    }
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
 }

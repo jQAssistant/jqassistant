@@ -32,9 +32,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class ResetMojo extends AbstractAnalysisAggregatorMojo {
 
 	@Override
-	protected void aggregate(MavenProject baseProject,
-			Set<MavenProject> projects, Store store)
-			throws MojoExecutionException, MojoFailureException {
+	protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException {
 		getLog().info("Resetting store.");
 		store.reset();
 	}

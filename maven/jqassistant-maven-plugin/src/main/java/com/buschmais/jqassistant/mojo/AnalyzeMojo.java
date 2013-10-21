@@ -41,8 +41,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 	protected boolean failOnConstraintViolations;
 
 	@Override
-	public void aggregate(MavenProject baseProject, Set<MavenProject> projects,
-			Store store) throws MojoExecutionException, MojoFailureException {
+	public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
+			MojoFailureException {
 		getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
 		final RuleSet ruleSet = resolveEffectiveRules(baseProject);
 		InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
@@ -50,22 +50,19 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 		try {
 			xmlReportFileWriter = new FileWriter(getXmlReportFile(baseProject));
 		} catch (IOException e) {
-			throw new MojoExecutionException("Cannot create XML report file.",
-					e);
+			throw new MojoExecutionException("Cannot create XML report file.", e);
 		}
 		XmlReportWriter xmlReportWriter;
 		try {
 			xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
 		} catch (ExecutionListenerException e) {
-			throw new MojoExecutionException(
-					"Cannot create XML report file writer.", e);
+			throw new MojoExecutionException("Cannot create XML report file writer.", e);
 		}
 		List<ExecutionListener> reportWriters = new LinkedList<>();
 		reportWriters.add(inMemoryReportWriter);
 		reportWriters.add(xmlReportWriter);
 		try {
-			CompositeReportWriter reportWriter = new CompositeReportWriter(
-					reportWriters);
+			CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
 			Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
 			try {
 				analyzer.execute(ruleSet);
@@ -91,13 +88,10 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 	 *            The {@link InMemoryReportWriter}.
 	 */
 	private void verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
-		List<Result<Concept>> conceptResults = inMemoryReportWriter
-				.getConceptResults();
+		List<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults();
 		for (Result<Concept> conceptResult : conceptResults) {
 			if (conceptResult.getRows().isEmpty()) {
-				getLog().warn(
-						"Concept '" + conceptResult.getExecutable().getId()
-								+ "' returned an empty result.");
+				getLog().warn("Concept '" + conceptResult.getExecutable().getId() + "' returned an empty result.");
 			}
 		}
 	}
@@ -111,20 +105,14 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 	 * @throws MojoFailureException
 	 *             If constraint violations are detected.
 	 */
-	private void verifyConstraintViolations(
-			InMemoryReportWriter inMemoryReportWriter)
-			throws MojoFailureException {
-		List<Result<Constraint>> constraintViolations = inMemoryReportWriter
-				.getConstraintViolations();
+	private void verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws MojoFailureException {
+		List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
 		int violations = 0;
 		for (Result<Constraint> constraintViolation : constraintViolations) {
 			if (!constraintViolation.isEmpty()) {
-				AbstractExecutable constraint = constraintViolation
-						.getExecutable();
-				getLog().error(
-						constraint.getId() + ": " + constraint.getDescription());
-				for (Map<String, Object> columns : constraintViolation
-						.getRows()) {
+				AbstractExecutable constraint = constraintViolation.getExecutable();
+				getLog().error(constraint.getId() + ": " + constraint.getDescription());
+				for (Map<String, Object> columns : constraintViolation.getRows()) {
 					StringBuilder message = new StringBuilder();
 					for (Map.Entry<String, Object> entry : columns.entrySet()) {
 						if (message.length() > 0) {
@@ -133,10 +121,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 						message.append(entry.getKey());
 						message.append('=');
 						Object value = entry.getValue();
-						message.append(value instanceof FullQualifiedNameDescriptor
-								? ((FullQualifiedNameDescriptor) value)
-										.getFullQualifiedName() : value
-										.toString());
+						message.append(value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value)
+								.getFullQualifiedName() : value.toString());
 					}
 					getLog().error("  " + message.toString());
 				}
@@ -144,8 +130,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 			}
 		}
 		if (failOnConstraintViolations && violations > 0) {
-			throw new MojoFailureException(violations
-					+ " constraints have been violated!");
+			throw new MojoFailureException(violations + " constraints have been violated!");
 		}
 	}
 
@@ -156,10 +141,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 	 * @throws MojoExecutionException
 	 *             If the file cannot be determined.
 	 */
-	private File getXmlReportFile(MavenProject baseProject)
-			throws MojoExecutionException {
-		File selectedXmlReportFile = BaseProjectResolver.getReportFile(
-				baseProject, xmlReportFile, REPORT_XML);
+	private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
+		File selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, REPORT_XML);
 		selectedXmlReportFile.getParentFile().mkdirs();
 		return selectedXmlReportFile;
 	}

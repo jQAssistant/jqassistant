@@ -5,9 +5,9 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor;
  */
 public class OverloadedConstructor {
 
-    public OverloadedConstructor() {
-    }
+	public OverloadedConstructor() {
+	}
 
-    public OverloadedConstructor(String value) {
-    }
+	public OverloadedConstructor(String value) {
+	}
 }

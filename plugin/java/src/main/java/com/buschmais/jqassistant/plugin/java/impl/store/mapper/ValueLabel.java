@@ -8,41 +8,41 @@ import java.util.Map;
  */
 public enum ValueLabel {
 
-    /**
-     * Primitive value.
-     */
-    PRIMITIVE,
-    /**
-     * Enumeration value.
-     */
-    ENUM,
-    /**
-     * Annotation value.
-     */
-    ANNOTATION,
-    /**
-     * Type value.
-     */
-    CLASS,
-    /**
-     * Array value.
-     */
-    ARRAY,
-    /**
-     * Property value.
-     */
-    PROPERTY;
+	/**
+	 * Primitive value.
+	 */
+	PRIMITIVE,
+	/**
+	 * Enumeration value.
+	 */
+	ENUM,
+	/**
+	 * Annotation value.
+	 */
+	ANNOTATION,
+	/**
+	 * Type value.
+	 */
+	CLASS,
+	/**
+	 * Array value.
+	 */
+	ARRAY,
+	/**
+	 * Property value.
+	 */
+	PROPERTY;
 
-    private static Map<String, ValueLabel> labels;
+	private static Map<String, ValueLabel> labels;
 
-    static {
-        labels = new HashMap<>();
-        for (ValueLabel valueLabel : ValueLabel.values()) {
-            labels.put(valueLabel.name(), valueLabel);
-        }
-    }
+	static {
+		labels = new HashMap<>();
+		for (ValueLabel valueLabel : ValueLabel.values()) {
+			labels.put(valueLabel.name(), valueLabel);
+		}
+	}
 
-    public static ValueLabel getValueLabel(String name) {
-        return labels.get(name);
-    }
+	public static ValueLabel getValueLabel(String name) {
+		return labels.get(name);
+	}
 }

@@ -31,9 +31,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 /**
  * Abstract base implementation for analysis mojos.
  */
-public abstract class AbstractAnalysisMojo
-		extends
-			org.apache.maven.plugin.AbstractMojo {
+public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.AbstractMojo {
 
 	public static final String REPORT_XML = "/jqassistant/jqassistant-report.xml";
 
@@ -111,22 +109,19 @@ public abstract class AbstractAnalysisMojo
 	 * @throws org.apache.maven.plugin.MojoExecutionException
 	 *             If the rules cannot be read.
 	 */
-	protected RuleSet readRules(MavenProject baseProject)
-			throws MojoExecutionException {
+	protected RuleSet readRules(MavenProject baseProject) throws MojoExecutionException {
 		File selectedDirectory = null;
 		if (rulesDirectory != null) {
 			selectedDirectory = rulesDirectory;
 		} else {
-			selectedDirectory = new File(baseProject.getBasedir(),
-					BaseProjectResolver.RULES_DIRECTORY);
+			selectedDirectory = new File(baseProject.getBasedir(), BaseProjectResolver.RULES_DIRECTORY);
 		}
 		List<Source> sources = new ArrayList<>();
 		// read rules from rules directory
 		if (selectedDirectory != null) {
 			List<File> ruleFiles = readRulesDirectory(selectedDirectory);
 			for (File ruleFile : ruleFiles) {
-				getLog().debug(
-						"Adding rules from file " + ruleFile.getAbsolutePath());
+				getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
 				sources.add(new StreamSource(ruleFile));
 			}
 		}
@@ -142,13 +137,11 @@ public abstract class AbstractAnalysisMojo
 	 * @throws MojoExecutionException
 	 *             If resolving fails.
 	 */
-	protected RuleSet resolveEffectiveRules(MavenProject baseProject)
-			throws MojoExecutionException {
+	protected RuleSet resolveEffectiveRules(MavenProject baseProject) throws MojoExecutionException {
 		RuleSet ruleSet = readRules(baseProject);
 		validateRuleSet(ruleSet);
 		try {
-			return ruleSelector.getEffectiveRuleSet(ruleSet, concepts,
-					constraints, groups);
+			return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
 		} catch (RuleSetResolverException e) {
 			throw new MojoExecutionException("Cannot resolve rules.", e);
 		}
@@ -164,22 +157,17 @@ public abstract class AbstractAnalysisMojo
 	 * @throws org.apache.maven.plugin.MojoExecutionException
 	 *             If the rules directory cannot be read.
 	 */
-	private List<File> readRulesDirectory(File rulesDirectory)
-			throws MojoExecutionException {
+	private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
 		if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
-			throw new MojoExecutionException(rulesDirectory.getAbsolutePath()
-					+ " does not exist or is not a rulesDirectory.");
+			throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
 		}
-		getLog().info(
-				"Reading rules from rulesDirectory "
-						+ rulesDirectory.getAbsolutePath());
+		getLog().info("Reading rules from rulesDirectory " + rulesDirectory.getAbsolutePath());
 		final List<File> ruleFiles = new ArrayList<File>();
 		try {
 			new DirectoryWalker<File>() {
 
 				@Override
-				protected void handleFile(File file, int depth,
-						Collection<File> results) throws IOException {
+				protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
 					if (!file.isDirectory() && file.getName().endsWith(".xml")) {
 						results.add(file);
 					}
@@ -191,8 +179,7 @@ public abstract class AbstractAnalysisMojo
 			}.scan(rulesDirectory);
 			return ruleFiles;
 		} catch (IOException e) {
-			throw new MojoExecutionException("Cannot read rulesDirectory: "
-					+ rulesDirectory.getAbsolutePath(), e);
+			throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
 		}
 	}
 
@@ -220,9 +207,7 @@ public abstract class AbstractAnalysisMojo
 			message.append(ruleSet.getMissingGroups());
 		}
 		if (message.length() > 0) {
-			throw new MojoExecutionException(
-					"The following rules are referenced but are not available;"
-							+ message);
+			throw new MojoExecutionException("The following rules are referenced but are not available;" + message);
 		}
 	}
 
@@ -239,36 +224,26 @@ public abstract class AbstractAnalysisMojo
 		}
 		getLog().info("Constraints [" + ruleSet.getConstraints().size() + "]");
 		for (Constraint constraint : ruleSet.getConstraints().values()) {
-			getLog().info(
-					LOG_LINE_PREFIX + constraint.getId() + "\" - "
-							+ constraint.getDescription());
+			getLog().info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
 		}
 		getLog().info("Concepts [" + ruleSet.getConcepts().size() + "]");
 		for (Concept concept : ruleSet.getConcepts().values()) {
-			getLog().info(
-					LOG_LINE_PREFIX + concept.getId() + "\" - "
-							+ concept.getDescription());
+			getLog().info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
 		}
 		if (!ruleSet.getMissingConcepts().isEmpty()) {
-			getLog().warn(
-					"Missing concepts [" + ruleSet.getMissingConcepts().size()
-							+ "]");
+			getLog().warn("Missing concepts [" + ruleSet.getMissingConcepts().size() + "]");
 			for (String missingConcept : ruleSet.getMissingConcepts()) {
 				getLog().warn(LOG_LINE_PREFIX + missingConcept);
 			}
 		}
 		if (!ruleSet.getMissingConstraints().isEmpty()) {
-			getLog().warn(
-					"Missing constraints ["
-							+ ruleSet.getMissingConstraints().size() + "]");
+			getLog().warn("Missing constraints [" + ruleSet.getMissingConstraints().size() + "]");
 			for (String missingConstraint : ruleSet.getMissingConstraints()) {
 				getLog().warn(LOG_LINE_PREFIX + missingConstraint);
 			}
 		}
 		if (!ruleSet.getMissingGroups().isEmpty()) {
-			getLog().warn(
-					"Missing groups [" + ruleSet.getMissingGroups().size()
-							+ "]");
+			getLog().warn("Missing groups [" + ruleSet.getMissingGroups().size() + "]");
 			for (String missingGroup : ruleSet.getMissingGroups()) {
 				getLog().warn(LOG_LINE_PREFIX + missingGroup);
 			}
@@ -282,18 +257,14 @@ public abstract class AbstractAnalysisMojo
 	 * @throws MojoExecutionException
 	 *             If the store cannot be created.
 	 */
-	protected Store getStore(MavenProject baseProject)
-			throws MojoExecutionException {
+	protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
 		File directory;
 		if (this.storeDirectory != null) {
 			directory = this.storeDirectory;
 		} else {
-			directory = new File(baseProject.getBuild().getDirectory()
-					+ "/jqassistant/store");
+			directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
 		}
-		getLog().info(
-				"Opening store in directory '" + directory.getAbsolutePath()
-						+ "'");
+		getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
 		directory.getParentFile().mkdirs();
 		Store store = new EmbeddedGraphStore(directory.getAbsolutePath());
 		return store;
