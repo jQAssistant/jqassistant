@@ -36,7 +36,7 @@ public class PropertyFileDescriptorMapper extends
 
 	@Override
 	public IndexedLabel getPrimaryLabel() {
-		return JavaLabel.PROPERTIES;
+		return JavaLabel.PROPERTYFILE;
 	}
 
 	@Override

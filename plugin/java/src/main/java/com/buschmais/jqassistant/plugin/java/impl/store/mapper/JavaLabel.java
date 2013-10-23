@@ -42,7 +42,7 @@ public enum JavaLabel implements IndexedLabel {
 	/**
 	 * Properties
 	 */
-	PROPERTIES;
+	PROPERTYFILE;
 
 	private String indexedProperty;
 
