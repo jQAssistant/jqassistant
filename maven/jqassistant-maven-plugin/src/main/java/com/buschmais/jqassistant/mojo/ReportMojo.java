@@ -34,46 +34,46 @@ public class ReportMojo extends AbstractMavenReport {
 	 */
 	@Parameter(property = "project.reporting.outputDirectory")
 	protected String outputDirectory;
-
 	/**
 	 * The file to write the XML report to.
 	 */
 	@Parameter(property = "jqassistant.report.xml")
 	protected File xmlReportFile;
-
 	/**
 	 * The Maven project.
 	 */
 	@Parameter(property = "project")
 	protected MavenProject project;
-
 	@Component
 	protected Renderer siteRenderer;
 
 	@Override
 	protected void executeReport(Locale locale) throws MavenReportException {
+		MavenProject baseProject;
 		File selectedXmlReportFile;
 		try {
-			MavenProject baseProject = BaseProjectResolver.getBaseProject(project);
+			baseProject = BaseProjectResolver.getBaseProject(project);
 			selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
 		} catch (MojoExecutionException e) {
 			throw new MavenReportException("Cannot resolve XML report.", e);
 		}
-		if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
-			throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
+		if (project.equals(baseProject)) {
+			if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
+				throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
+			}
+			StringWriter writer = new StringWriter();
+			// Transform
+			Source xmlSource = new StreamSource(selectedXmlReportFile);
+			Result htmlTarget = new StreamResult(writer);
+			getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
+			ReportTransformer transformer = new HtmlReportTransformer();
+			try {
+				transformer.transform(xmlSource, htmlTarget);
+			} catch (ReportTransformerException e) {
+				throw new MavenReportException("Cannot transform report.", e);
+			}
+			getSink().rawText(writer.toString());
 		}
-		StringWriter writer = new StringWriter();
-		// Transform
-		Source xmlSource = new StreamSource(selectedXmlReportFile);
-		Result htmlTarget = new StreamResult(writer);
-		getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
-		ReportTransformer transformer = new HtmlReportTransformer();
-		try {
-			transformer.transform(xmlSource, htmlTarget);
-		} catch (ReportTransformerException e) {
-			throw new MavenReportException("Cannot transform report.", e);
-		}
-		getSink().rawText(writer.toString());
 	}
 
 	@Override
@@ -96,13 +96,13 @@ public class ReportMojo extends AbstractMavenReport {
 		return outputDirectory;
 	}
 
-	public void setProject(MavenProject project) {
-		this.project = project;
-	}
-
 	@Override
 	protected MavenProject getProject() {
 		return project;
+	}
+
+	public void setProject(MavenProject project) {
+		this.project = project;
 	}
 
 	@Override

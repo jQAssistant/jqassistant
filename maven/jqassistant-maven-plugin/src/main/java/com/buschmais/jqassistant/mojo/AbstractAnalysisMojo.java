@@ -38,6 +38,11 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 	public static final String LOG_LINE_PREFIX = "  \"";
 
 	/**
+	 * The store directory.
+	 */
+	@Parameter(property = "jqassistant.store.directory")
+	protected File storeDirectory;
+	/**
 	 * The directory to scan for rules.
 	 */
 	@Parameter(property = "jqassistant.rules.directory")
@@ -66,24 +71,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 	 */
 	@Parameter(property = "jqassistant.report.xml")
 	protected File xmlReportFile;
-
-	/**
-	 * The store directory.
-	 */
-	@Parameter(property = "jqassistant.store.directory")
-	protected File storeDirectory;
-
-	/**
-	 * The Maven project.
-	 */
-	@Parameter(property = "project")
-	protected MavenProject currentProject;
-
-	/**
-	 * Contains the full list of projects in the reactor.
-	 */
-	@Parameter(property = "reactorProjects")
-	protected List<MavenProject> reactorProjects;
 
 	/**
 	 * The catalog reader instance.
