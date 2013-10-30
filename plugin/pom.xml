@@ -34,6 +34,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.junit4</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.report</artifactId>
                 <version>${project.version}</version>
@@ -73,6 +78,7 @@
         <module>ejb3</module>
         <module>javaee6</module>
         <module>junit4</module>
+        <module>maven3</module>
     </modules>
 
 </project>

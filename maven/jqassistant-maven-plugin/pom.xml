@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.java</artifactId>
+            <artifactId>jqassistant.plugin.maven3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
