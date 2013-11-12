@@ -1,79 +1,59 @@
 package com.buschmais.jqassistant.plugin.common.impl.descriptor;
 
+import com.buschmais.cdo.neo4j.api.annotation.Label;
+import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 
 /**
  * Describes an artifact.
- * 
+ *
  * @author Herklotz
  */
-public class ArtifactDescriptor extends ParentDescriptor implements NamedDescriptor {
+@Label(value = "ARTIFACT", usingIndexOf = FullQualifiedNameDescriptor.class)
+public interface ArtifactDescriptor extends ParentDescriptor, NamedDescriptor {
 
-	private String group;
-	private String name;
-	private String version;
-	private String classifier;
-	private String type;
+    /**
+     * @return the group
+     */
+    @Property("GROUP")
+    public String getGroup();
 
-	/**
-	 * @return the group
-	 */
-	public String getGroup() {
-		return group;
-	}
+    /**
+     * @param group the group to set
+     */
+    public void setGroup(String group);
 
-	/**
-	 * @param group
-	 *            the group to set
-	 */
-	public void setGroup(String group) {
-		this.group = group;
-	}
+    /**
+     * @return the name
+     */
+    @Property("NAME")
+    public String getName();
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name);
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @return the version
+     */
+    @Property("VERSION")
+    public String getVersion();
 
-	/**
-	 * @return the version
-	 */
-	public String getVersion() {
-		return version;
-	}
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(String version);
 
-	/**
-	 * @param version
-	 *            the version to set
-	 */
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    @Property("CLASSIFIER")
+    public String getClassifier();
 
-	public String getClassifier() {
-		return classifier;
-	}
+    public void setClassifier(String classifier);
 
-	public void setClassifier(String classifier) {
-		this.classifier = classifier;
-	}
+    @Property("TYPE")
+    public String getType();
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type);
 }

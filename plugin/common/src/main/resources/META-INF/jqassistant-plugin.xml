@@ -1,6 +1,6 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
     <store>
-        <mapper>com.buschmais.jqassistant.plugin.common.impl.mapper.ArtifactDescriptorMapper</mapper>
+        <type>com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor</type>
     </store>
     <rules>
         <resources>
