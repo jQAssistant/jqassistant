@@ -20,7 +20,7 @@ public class Server {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param graphStore
 	 *            The {@link EmbeddedGraphStore}.
 	 */
@@ -32,7 +32,7 @@ public class Server {
 	 * Start the web server.
 	 */
 	public void start() {
-		GraphDatabaseAPI databaseAPI = graphStore.getDatabaseAPI();
+		GraphDatabaseAPI databaseAPI = graphStore.getDatabaseService();
 		this.server = new WrappingNeoServer(databaseAPI);
 		this.server.start();
 	}

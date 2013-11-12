@@ -1,75 +1,54 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-
+import com.buschmais.cdo.api.CdoManager;
+import com.buschmais.cdo.api.CdoManagerFactory;
+import com.buschmais.cdo.neo4j.api.EmbeddedNeo4jCdoManager;
+import com.buschmais.cdo.neo4j.impl.EmbeddedNeo4jCdoManagerFactoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
+import org.neo4j.kernel.GraphDatabaseAPI;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.Collection;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
  */
 public class EmbeddedGraphStore extends AbstractGraphStore {
 
-	/**
-	 * The directory of the database.
-	 */
-	private final String databaseDirectory;
+    /**
+     * The directory of the database.
+     */
+    private final String databaseDirectory;
 
-	/**
-	 * The current {@link Transaction}.
-	 */
-	private Transaction transaction = null;
+    /**
+     * Constructor.
+     *
+     * @param databaseDirectory The directory of the database.
+     */
+    public EmbeddedGraphStore(String databaseDirectory) {
+        this.databaseDirectory = databaseDirectory;
+    }
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param databaseDirectory
-	 *            The directory of the database.
-	 */
-	public EmbeddedGraphStore(String databaseDirectory) {
-		this.databaseDirectory = databaseDirectory;
-	}
+    @Override
+    protected GraphDatabaseAPI getDatabaseAPI(CdoManager cdoManager) {
+        return (GraphDatabaseAPI) ((EmbeddedNeo4jCdoManager)cdoManager).getGraphDatabaseService();
+    }
 
-	@Override
-	protected GraphDatabaseService startDatabase() {
-		return new GraphDatabaseFactory().newEmbeddedDatabase(databaseDirectory);
-	}
+    @Override
+    protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
+        File database = new File(databaseDirectory);
+        try {
+            return new EmbeddedNeo4jCdoManagerFactoryImpl(database.toURI().toURL(), types.toArray(new Class<?>[0]));
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
+        }
+    }
 
-	@Override
-	protected void stopDatabase(GraphDatabaseService database) {
-		if (database != null) {
-			database.shutdown();
-		}
-	}
+    @Override
+    protected void closeCdoManagerFactory(CdoManagerFactory cdoManagerFactory) {
+        cdoManagerFactory.close();
+    }
 
-	@Override
-	public void beginTransaction() {
-		if (transaction != null) {
-			throw new IllegalStateException("There is already an existing transaction.");
-		}
-		transaction = database.beginTx();
-	}
-
-	@Override
-	public void commitTransaction() {
-		if (transaction == null) {
-			throw new IllegalStateException("There is no existing transaction.");
-		}
-		flush();
-		transaction.success();
-		transaction.close();
-		transaction = null;
-	}
-
-	@Override
-	public void rollbackTransaction() {
-		if (transaction == null) {
-			throw new IllegalStateException("There is no existing transaction.");
-		}
-		transaction.failure();
-		transaction.close();
-		transaction = null;
-	}
 
 }
