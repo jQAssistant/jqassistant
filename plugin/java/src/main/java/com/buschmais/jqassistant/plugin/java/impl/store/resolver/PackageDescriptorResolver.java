@@ -10,7 +10,7 @@ public class PackageDescriptorResolver extends AbstractDescriptorResolver<Packag
 	}
 
 	@Override
-	protected Class<PackageDescriptor> getType() {
+	protected Class<PackageDescriptor> getBaseType() {
 		return PackageDescriptor.class;
 	}
 

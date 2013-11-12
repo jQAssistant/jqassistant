@@ -1,229 +1,50 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.buschmais.cdo.neo4j.api.annotation.Label;
+import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.cdo.neo4j.api.annotation.Relation;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
+
+import java.util.Set;
 
 /**
  * Describes a Java type.
  */
-public class TypeDescriptor extends ParentDescriptor implements SignatureDescriptor, DependentDescriptor, AnnotatedDescriptor,
-		AccessModifierDescriptor {
+@Label(value="TYPE", usingIndexOf=FullQualifiedNameDescriptor.class)
+public interface TypeDescriptor extends ParentDescriptor, SignatureDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
-	/**
-	 * The signature of the class.
-	 */
-	private String signature;
+    /**
+     * Return the super class.
+     *
+     * @return The super class.
+     */
+    @Relation("EXTENDS")
+    public TypeDescriptor getSuperClass();
 
-	/**
-	 * The super class.
-	 */
-	private TypeDescriptor superClass;
+    /**
+     * Set the super class.
+     *
+     * @param superClass The super class.
+     */
+    public void setSuperClass(TypeDescriptor superClass);
 
-	/**
-	 * The implemented interfaces.
-	 */
-	private Set<TypeDescriptor> interfaces = new HashSet<>();
+    /**
+     * Return the implemented interfaces.
+     *
+     * @return The implemented interfaces.
+     */
+    @Relation("IMPLEMENTS")
+    public Set<TypeDescriptor> getInterfaces();
 
-	/**
-	 * The classes this class depends on.
-	 */
-	private Set<TypeDescriptor> dependencies = new HashSet<>();
+    /**
+     * @return the abstractClass
+     */
+    @Property("ABSTRACT")
+    public Boolean isAbstract();
 
-	/**
-	 * The annotations this class is annotated by.
-	 */
-	private Set<AnnotationValueDescriptor> annotations = new HashSet<>();
-
-	/**
-	 * The java types.
-	 */
-	private JavaType javaType;
-
-	/**
-	 * <code>true</code> if this class is abstract.
-	 */
-	private Boolean abstractClass;
-
-	/**
-	 * Visibility of this class.
-	 */
-	private VisibilityModifier visbility;
-
-	/**
-	 * <code>true</code> if this class is static, otherwise <code>false</code>.
-	 */
-	private Boolean staticClass;
-
-	/**
-	 * <code>true</code> if this class is final, otherwise <code>false</code>.
-	 */
-	private Boolean finalClass;
-
-	/**
-	 * <code>true</code> if this class is synthetic, otherwise
-	 * <code>false</code>.
-	 */
-	private Boolean syntheticClass;
-
-	@Override
-	public String getSignature() {
-		return signature;
-	}
-
-	@Override
-	public void setSignature(String signature) {
-		this.signature = signature;
-	}
-
-	/**
-	 * Return the super class.
-	 * 
-	 * @return The super class.
-	 */
-	public TypeDescriptor getSuperClass() {
-		return superClass;
-	}
-
-	/**
-	 * Set the super class.
-	 * 
-	 * @param superClass
-	 *            The super class.
-	 */
-	public void setSuperClass(TypeDescriptor superClass) {
-		this.superClass = superClass;
-	}
-
-	/**
-	 * Return the implemented interfaces.
-	 * 
-	 * @return The implemented interfaces.
-	 */
-	public Set<TypeDescriptor> getInterfaces() {
-		return interfaces;
-	}
-
-	/**
-	 * Set the implemented interfaces.
-	 * 
-	 * @param interfaces
-	 *            The implemented interfaces.
-	 */
-	public void setInterfaces(Set<TypeDescriptor> interfaces) {
-		this.interfaces = interfaces;
-	}
-
-	@Override
-	public Set<TypeDescriptor> getDependencies() {
-		return dependencies;
-	}
-
-	@Override
-	public void setDependencies(Set<TypeDescriptor> dependencies) {
-		this.dependencies = dependencies;
-	}
-
-	@Override
-	public Set<AnnotationValueDescriptor> getAnnotatedBy() {
-		return annotations;
-	}
-
-	@Override
-	public void setAnnotatedBy(Set<AnnotationValueDescriptor> annotations) {
-		this.annotations = annotations;
-	}
-
-	/**
-	 * @return the abstractClass
-	 */
-	public Boolean isAbstract() {
-		return abstractClass;
-	}
-
-	/**
-	 * @param abstractClass
-	 *            the abstractClass to set
-	 */
-	public void setAbstract(boolean abstractClass) {
-		this.abstractClass = abstractClass;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public VisibilityModifier getVisibility() {
-		return visbility;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setVisibility(VisibilityModifier visibilityModifier) {
-		visbility = visibilityModifier;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Boolean isStatic() {
-		return staticClass;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setStatic(Boolean s) {
-		staticClass = s;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Boolean isFinal() {
-		return finalClass;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void setFinal(Boolean f) {
-		finalClass = f;
-	}
-
-	@Override
-	public Boolean isSynthetic() {
-		return syntheticClass;
-	}
-
-	@Override
-	public void setSynthetic(Boolean syntheticClass) {
-		this.syntheticClass = syntheticClass;
-	}
-
-	/**
-	 * Return the java types.
-	 * 
-	 * @return The java types.
-	 */
-	public JavaType getJavaType() {
-		return javaType;
-	}
-
-	/**
-	 * Set the java types.
-	 * 
-	 * @param javaType
-	 *            The java types.
-	 */
-	public void setJavaType(JavaType javaType) {
-		this.javaType = javaType;
-	}
+    /**
+     * @param isAbstract the isAbstract to set
+     */
+    public void setAbstract(boolean isAbstract);
 }

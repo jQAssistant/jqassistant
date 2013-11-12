@@ -25,7 +25,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param visitorHelper
 	 *            The {@link VisitorHelper}.
 	 */
@@ -53,7 +53,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 
 	@Override
 	public void visitEnum(final String name, final String desc, final String value) {
-		EnumerationValueDescriptor valueDescriptor = createValue(EnumerationValueDescriptor.class, name);
+		EnumValueDescriptor valueDescriptor = createValue(EnumValueDescriptor.class, name);
 		TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(visitorHelper.getType(desc));
 		FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, visitorHelper.getFieldSignature(value, desc));
 		valueDescriptor.setType(visitorHelper.getTypeDescriptor(Enum.class.getName()));
@@ -82,7 +82,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 
 	/**
 	 * Create a value descriptor of given type and name and initializes it.
-	 * 
+	 *
 	 * @param type
 	 *            The class type.
 	 * @param name
@@ -108,7 +108,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 
 	/**
 	 * Add the descriptor as value to the current annotation or array value.
-	 * 
+	 *
 	 * @param name
 	 *            The name.
 	 * @param value
@@ -124,7 +124,7 @@ public class AnnotationVisitor extends org.objectweb.asm.AnnotationVisitor {
 
 	/**
 	 * Get the list of referenced values.
-	 * 
+	 *
 	 * @param valueDescriptor
 	 *            The value descriptor containing a list value.
 	 * @param <T>

@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.objectweb.asm.Attribute;
@@ -82,8 +83,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
 	@Override
 	public org.objectweb.asm.AnnotationVisitor visitAnnotationDefault() {
-		AnnotationValueDescriptor annotationDescriptor = new AnnotationValueDescriptor();
-		this.annotationDefault = annotationDescriptor.getValue();
+		this.annotationDefault = new ArrayList<>();
 		return new AnnotationDefaultVisitor(this.methodDescriptor, visitorHelper);
 	}
 

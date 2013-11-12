@@ -1,12 +1,21 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
     <store>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.PackageDescriptorMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.TypeDescriptorMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.FieldDescriptorMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.MethodDescriptorMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.ParameterDescriptorMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.ValueDescriptorMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.java.impl.store.mapper.PropertyFileDescriptorMapper</mapper>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassTypeDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.InterfaceTypeDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumTypeDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationTypeDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ConstructorDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ParameterDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ArrayValueDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassValueDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumValueDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyFileDescriptor</type>
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageScannerPlugin</plugin>
