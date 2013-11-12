@@ -11,7 +11,7 @@ public class TypeDescriptorResolver extends AbstractDescriptorResolver<PackageDe
 	}
 
 	@Override
-	protected Class<TypeDescriptor> getType() {
+	protected Class<TypeDescriptor> getBaseType() {
 		return TypeDescriptor.class;
 	}
 

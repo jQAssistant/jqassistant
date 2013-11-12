@@ -11,7 +11,7 @@ public class MethodDescriptorResolver extends AbstractDescriptorResolver<TypeDes
 	}
 
 	@Override
-	protected Class<MethodDescriptor> getType() {
+	protected Class<MethodDescriptor> getBaseType() {
 		return MethodDescriptor.class;
 	}
 

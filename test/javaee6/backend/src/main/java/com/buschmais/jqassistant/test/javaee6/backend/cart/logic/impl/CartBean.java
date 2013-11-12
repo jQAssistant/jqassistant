@@ -6,8 +6,8 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import com.buschmais.jqassistant.test.javaee6.backend.cart.logic.api.CartService;
-import com.buschmais.jqassistant.test.javaee6.backend.cart.persistence.api.CartDAO;
-import com.buschmais.jqassistant.test.javaee6.backend.cart.persistence.api.model.Cart;
+import com.buschmais.jqassistant.test.javaee6.backend.cart.model.api.CartDAO;
+import com.buschmais.jqassistant.test.javaee6.backend.cart.model.api.model.Cart;
 
 /**
  * Created with IntelliJ IDEA. User: dirk.mahler Date: 24.06.13 Time: 14:24 To

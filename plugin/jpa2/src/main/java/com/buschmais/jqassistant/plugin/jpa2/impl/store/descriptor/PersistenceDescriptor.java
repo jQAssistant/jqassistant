@@ -1,44 +1,24 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.cdo.neo4j.api.annotation.Label;
+import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
+import java.util.Set;
+
 /**
- * A descriptor for JPA persistence descriptors.
+ * A descriptor for JPA model descriptors.
  */
-public class PersistenceDescriptor extends AbstractDescriptor implements NamedDescriptor {
+@Label("PERSISTENCE")
+public interface PersistenceDescriptor extends Descriptor, NamedDescriptor, JpaDescriptor {
 
-	private String name;
-	private String version;
-	/**
-	 * The persistence units referenced by this persistence unit.
-	 */
-	private Set<PersistenceUnitDescriptor> contains = new HashSet<>();
+    @Property("VERSION")
+    public String getVersion();
 
-	public String getName() {
-		return name;
-	}
+    public void setVersion(String version);
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Property("CONTAINS")
+    public Set<PersistenceUnitDescriptor> getContains();
 
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
-	public Set<PersistenceUnitDescriptor> getContains() {
-		return contains;
-	}
-
-	public void setContains(Set<PersistenceUnitDescriptor> contains) {
-		this.contains = contains;
-	}
 }

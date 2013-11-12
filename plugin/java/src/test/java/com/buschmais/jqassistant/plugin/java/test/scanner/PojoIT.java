@@ -6,11 +6,10 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.JavaType;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
 public class PojoIT extends AbstractPluginIT {
@@ -22,7 +21,6 @@ public class PojoIT extends AbstractPluginIT {
 		assertThat(testResult.getRows().size(), equalTo(1));
 		TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
 		assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
-		assertThat(typeDescriptor.getJavaType(), is(JavaType.CLASS));
 		assertThat(query("MATCH (t:TYPE:CLASS) WHERE t.FQN =~ '.*Pojo' RETURN t.SIGNATURE as signature").getColumn("signature"),
 				hasItem(equalTo("Pojo")));
 

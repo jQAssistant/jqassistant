@@ -21,7 +21,7 @@ import com.sun.java.xml.ns.persistence.ObjectFactory;
 import com.sun.java.xml.ns.persistence.Persistence;
 
 /**
- * A scanner for JPA persistence units.
+ * A scanner for JPA model units.
  */
 public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDescriptor> {
 
@@ -40,7 +40,7 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 
 	@Override
 	public boolean matches(String file, boolean isDirectory) {
-		return "META-INF/persistence.xml".equals(file) || "WEB-INF/persistence.xml".equals(file);
+		return "META-INF/persistence.xml".equals(file) || "WEB-INF/model.xml".equals(file);
 	}
 
 	@Override
@@ -51,12 +51,12 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 			persistence = unmarshaller.unmarshal(streamSource, Persistence.class).getValue();
 		} catch (JAXBException e) {
-			throw new IOException("Cannot read persistence descriptor.", e);
+			throw new IOException("Cannot read model descriptor.", e);
 		}
 		PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
 		persistenceDescriptor.setName(streamSource.getSystemId());
 		persistenceDescriptor.setVersion(persistence.getVersion());
-		// Create persistence units
+		// Create model units
 		for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
 			PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class);
 			persistenceUnitDescriptor.setName(persistenceUnit.getName());
@@ -70,14 +70,14 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 				TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz);
 				persistenceUnitDescriptor.getContains().add(typeDescriptor);
 			}
-			// Create persistence unit properties
+			// Create model unit properties
 			for (Property property : persistenceUnit.getProperties().getProperty()) {
 				PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
 				propertyDescriptor.setName(property.getName());
 				propertyDescriptor.setValue(property.getValue());
 				persistenceUnitDescriptor.getProperties().add(propertyDescriptor);
 			}
-			// Add persistence unit to persistence descriptor
+			// Add model unit to model descriptor
 			persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
 		}
 		return persistenceDescriptor;

@@ -2,13 +2,13 @@
 
     <constraint id="JpaEntitiesInApiModelPackage">
         <requiresConcept refId="jpa2:Entity"/>
-        <description>All JPA entities must be located in the package "persistence.api"</description>
+        <description>All JPA entities must be located in the package "model.api"</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)-[:CONTAINS]->(e)
             WHERE e:JPA AND e:ENTITY AND NOT(p.FQN =~ {packageExpression})
             RETURN e AS jpaEntity
         ]]></cypher>
-        <parameter name="packageExpression" type="string" value=".*\.persistence\.api\.model"/>
+        <parameter name="packageExpression" type="string" value=".*\.model\.api\.model"/>
     </constraint>
 
     <constraint id="EjbLocatedInImplementationPackage">
@@ -42,7 +42,7 @@
         <includeConstraint refId="slice:Cart"/>
         <includeConstraint refId="layer:UI"/>
         <includeConstraint refId="layer:Logic"/>
-        <includeConstraint refId="layer:Persistence"/>
+        <includeConstraint refId="layer:Model"/>
         <includeConstraint refId="abstractness:ApiMustNotDependOnImplementation"/>
         <includeConstraint refId="JpaEntitiesInApiModelPackage"/>
         <includeConstraint refId="EjbLocatedInImplementationPackage"/>

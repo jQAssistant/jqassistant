@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.test.javaee6.backend.cart.logic.api;
 import java.io.Serializable;
 import java.util.List;
 
-import com.buschmais.jqassistant.test.javaee6.backend.cart.persistence.api.model.Cart;
+import com.buschmais.jqassistant.test.javaee6.backend.cart.model.api.model.Cart;
 
 /**
  * Created with IntelliJ IDEA. User: dirk.mahler Date: 24.06.13 Time: 14:23 To

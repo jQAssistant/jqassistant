@@ -24,15 +24,15 @@ public class PersistenceUnitMatcher extends TypeSafeMatcher<PersistenceUnitDescr
 
 	@Override
 	public void describeTo(Description description) {
-		description.appendText("a persistence unit with name ");
+		description.appendText("a model unit with name ");
 		description.appendValue(name);
 	}
 
 	/**
 	 * Return a {@link PersistenceUnitMatcher}.
-	 * 
+	 *
 	 * @param name
-	 *            The expected name of the persistence unit.
+	 *            The expected name of the model unit.
 	 * @return The {@link PersistenceUnitMatcher}.
 	 */
 	public static Matcher<? super PersistenceUnitDescriptor> persistenceUnitDescriptor(String name) {

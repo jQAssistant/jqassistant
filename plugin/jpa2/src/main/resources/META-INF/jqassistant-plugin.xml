@@ -1,7 +1,7 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
     <store>
-        <mapper>com.buschmais.jqassistant.plugin.jpa2.impl.store.mapper.PersistenceMapper</mapper>
-        <mapper>com.buschmais.jqassistant.plugin.jpa2.impl.store.mapper.PersistenceUnitMapper</mapper>
+        <type>com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor</type>
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.jpa2.impl.scanner.PersistenceScannerPlugin</plugin>

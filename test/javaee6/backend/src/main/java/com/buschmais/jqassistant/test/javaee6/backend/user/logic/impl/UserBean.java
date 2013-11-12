@@ -6,8 +6,8 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 
 import com.buschmais.jqassistant.test.javaee6.backend.user.logic.api.UserService;
-import com.buschmais.jqassistant.test.javaee6.backend.user.persistence.api.UserDAO;
-import com.buschmais.jqassistant.test.javaee6.backend.user.persistence.api.model.User;
+import com.buschmais.jqassistant.test.javaee6.backend.user.model.api.UserDAO;
+import com.buschmais.jqassistant.test.javaee6.backend.user.model.api.model.User;
 
 /**
  * Created with IntelliJ IDEA. User: dirk.mahler Date: 24.06.13 Time: 14:24 To

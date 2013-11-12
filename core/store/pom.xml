@@ -26,17 +26,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.neo4j</groupId>
-            <artifactId>neo4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j.app</groupId>
-            <artifactId>neo4j-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.neo4j.app</groupId>
-            <artifactId>neo4j-server</artifactId>
-            <classifier>static-web</classifier>
+            <groupId>com.buschmais.cdo</groupId>
+            <artifactId>cdo.neo4j</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>

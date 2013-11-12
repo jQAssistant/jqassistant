@@ -19,12 +19,10 @@ public class JavaRuntimePT extends AbstractPluginIT {
 	public static final Class<?>[] PRIMITIVE_TYPES = new Class<?>[] { void.class, boolean.class, short.class, int.class, float.class,
 			double.class, long.class };
 
-	private ArtifactDescriptor artifactDescriptor;
-
 	/**
 	 * Scans the rt.jar of the Java Runtime Environment specified by the
 	 * environment variable java.home.
-	 * 
+	 *
 	 * @throws IOException
 	 *             If scanning fails.
 	 */

@@ -16,7 +16,7 @@
 
     <xs:complexType name="StoreType">
         <xs:sequence>
-            <xs:element name="mapper" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 

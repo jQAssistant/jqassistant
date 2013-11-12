@@ -1,17 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-
-import javax.xml.transform.Source;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
+import com.buschmais.cdo.api.QueryResult;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
@@ -28,12 +17,20 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
-import com.buschmais.jqassistant.core.store.api.QueryResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
+import javax.xml.transform.Source;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Abstract base class for analysis tests.
@@ -54,7 +51,7 @@ public class AbstractPluginIT {
 
 		/**
 		 * Return all rows.
-		 * 
+		 *
 		 * @return All rows.
 		 */
 		public List<Map<String, Object>> getRows() {
@@ -63,7 +60,7 @@ public class AbstractPluginIT {
 
 		/**
 		 * Return a column identified by its name.
-		 * 
+		 *
 		 * @param <T>
 		 *            The expected type.
 		 * @return All columns.
@@ -111,6 +108,7 @@ public class AbstractPluginIT {
 		store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
 		store.start(getDescriptorMappers());
 		store.reset();
+        store.beginTransaction();
 	}
 
 	/**
@@ -118,12 +116,13 @@ public class AbstractPluginIT {
 	 */
 	@After
 	public void stopStore() {
+        store.commitTransaction();
 		store.stop();
 	}
 
 	/**
 	 * Return an initialized artifact scanner instance.
-	 * 
+	 *
 	 * @return The artifact scanner instance.
 	 */
 	protected FileScanner getArtifactScanner() {
@@ -132,7 +131,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given classes.
-	 * 
+	 *
 	 * @param classes
 	 *            The classes.
 	 * @throws java.io.IOException
@@ -144,7 +143,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given classes.
-	 * 
+	 *
 	 * @param artifactId
 	 *            The id of the containing artifact.
 	 * @param classes
@@ -153,7 +152,6 @@ public class AbstractPluginIT {
 	 *             If scanning fails.
 	 */
 	protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
-		store.beginTransaction();
 		ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
 		if (artifact == null) {
 			artifact = store.create(ArtifactDescriptor.class, artifactId);
@@ -161,12 +159,11 @@ public class AbstractPluginIT {
 		for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
 			artifact.getContains().add(descriptor);
 		}
-		store.commitTransaction();
 	}
 
 	/**
 	 * Scans the given URLs.
-	 * 
+	 *
 	 * @param urls
 	 *            The URLs.
 	 * @throws IOException
@@ -178,7 +175,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given URLs (e.g. for anonymous inner classes).
-	 * 
+	 *
 	 * @param artifactId
 	 *            The id of the containing artifact.
 	 * @param urls
@@ -187,17 +184,15 @@ public class AbstractPluginIT {
 	 *             If scanning fails.
 	 */
 	protected void scanURLs(String artifactId, URL... urls) throws IOException {
-		store.beginTransaction();
 		ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
 		for (Descriptor descriptor : getArtifactScanner().scanURLs(urls)) {
 			artifact.getContains().add(descriptor);
 		}
-		store.commitTransaction();
 	}
 
 	/**
 	 * Scans the test classes directory.
-	 * 
+	 *
 	 * @param rootClass
 	 *            A class within the test directory.
 	 * @throws IOException
@@ -221,7 +216,7 @@ public class AbstractPluginIT {
 	/**
 	 * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
 	 * .
-	 * 
+	 *
 	 * @param query
 	 *            The query.
 	 * @return The {@link AbstractPluginIT.TestResult}.
@@ -233,7 +228,7 @@ public class AbstractPluginIT {
 	/**
 	 * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
 	 * .
-	 * 
+	 *
 	 * @param query
 	 *            The query.
 	 * @param parameters
@@ -241,7 +236,6 @@ public class AbstractPluginIT {
 	 * @return The {@link AbstractPluginIT.TestResult}.
 	 */
 	protected TestResult query(String query, Map<String, Object> parameters) {
-		store.beginTransaction();
 		QueryResult queryResult = store.executeQuery(query, parameters);
 		List<Map<String, Object>> rows = new ArrayList<>();
 		Map<String, List<Object>> columns = new HashMap<>();
@@ -256,13 +250,12 @@ public class AbstractPluginIT {
 				column.add(entry.getValue());
 			}
 		}
-		store.commitTransaction();
 		return new TestResult(rows, columns);
 	}
 
 	/**
 	 * Applies the concept identified by id.
-	 * 
+	 *
 	 * @param id
 	 *            The id.
 	 * @throws AnalyzerException
@@ -278,7 +271,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Validates the constraint identified by id.
-	 * 
+	 *
 	 * @param id
 	 *            The id.
 	 * @throws AnalyzerException
@@ -294,7 +287,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Executes the group identified by id.
-	 * 
+	 *
 	 * @param id
 	 *            The id.
 	 * @throws AnalyzerException
@@ -308,9 +301,9 @@ public class AbstractPluginIT {
 		analyzer.execute(targetRuleSet);
 	}
 
-	private List<DescriptorMapper<?>> getDescriptorMappers() {
+	private List<Class<?>> getDescriptorMappers() {
 		try {
-			return pluginManager.getDescriptorMappers();
+			return pluginManager.getDescriptorTypes();
 		} catch (PluginReaderException e) {
 			throw new IllegalStateException("Cannot get descriptor mappers.", e);
 		}

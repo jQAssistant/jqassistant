@@ -20,64 +20,64 @@
         ]]></cypher>
     </concept>
 
-    <concept id="layer:Persistence">
-        <description>Labels all .persistence packages as LAYER and PERSISTENCE.</description>
+    <concept id="layer:Model">
+        <description>Labels all .model packages as LAYER and MODEL.</description>
         <cypher><![CDATA[
             MATCH (p:PACKAGE)
-            WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.persistence"
-            SET p:LAYER:PERSISTENCE
+            WHERE p.FQN =~ "com\\.buschmais\\.jqassistant.*\\.model"
+            SET p:LAYER:MODEL
             RETURN p AS package
         ]]></cypher>
     </concept>
 
     <constraint id="layer:UI">
+        <requiresConcept refId="dependency:Package"/>
         <requiresConcept refId="layer:UI"/>
         <requiresConcept refId="layer:Logic"/>
-        <requiresConcept refId="layer:Persistence"/>
-        <description>Packages in layer UI must have only dependencies to classes in layer UI, LOGIC or PERSISTENCE.</description>
+        <requiresConcept refId="layer:Model"/>
+        <description>Packages in layer UI must have only dependencies to packages in layer UI, LOGIC or MODEL.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:UI)-[:CONTAINS*]->(typeFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:TYPE),
-              (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
+              (package:PACKAGE:LAYER:UI)-[:DEPENDS_ON]->(dependencyPackage)
             WHERE NOT (
               dependencyPackage:UI
               OR dependencyPackage:LOGIC
-              OR dependencyPackage:PERSISTENCE
+              OR dependencyPackage:MODEL
             )
-            RETURN typeFieldOrMethod AS element, dependencyPackage AS dependency
+            RETURN dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 
     <constraint id="layer:Logic">
+        <requiresConcept refId="dependency:Package"/>
         <requiresConcept refId="layer:UI"/>
         <requiresConcept refId="layer:Logic"/>
-        <requiresConcept refId="layer:Persistence"/>
-        <description>Packages in layer Logic must have only dependencies to classes in layer LOGIC or PERSISTENCE.</description>
+        <requiresConcept refId="layer:Model"/>
+        <description>Packages in layer Logic must have only dependencies to classes in layer LOGIC or MODEL.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:LOGIC)-[:CONTAINS*]->(typeFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:TYPE),
-              (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
+              (package:PACKAGE:LAYER:UI)-[:DEPENDS_ON]->(dependencyPackage)
             WHERE NOT (
               dependencyPackage:LOGIC
-              OR dependencyPackage:PERSISTENCE
+              OR dependencyPackage:MODEL
             )
-            RETURN typeFieldOrMethod AS element, dependencyPackage AS dependency
+            RETURN dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 
-    <constraint id="layer:Persistence">
+    <constraint id="layer:Model">
+        <requiresConcept refId="dependency:Package"/>
         <requiresConcept refId="layer:UI"/>
         <requiresConcept refId="layer:Logic"/>
-        <requiresConcept refId="layer:Persistence"/>
-        <description>Packages in layer Persistence must have only dependencies to classes in layer PERSISTENCE.</description>
+        <requiresConcept refId="layer:Model"/>
+        <description>Packages in layer Model must have only dependencies to classes in layer MODEL.</description>
         <cypher><![CDATA[
             MATCH
-              (package:PACKAGE:LAYER:PERSISTENCE)-[:CONTAINS*]->(typeFieldOrMethod)-[:ANNOTATED_BY|IMPLEMENTS|EXTENDS|THROWS|DEPENDS_ON]->(dependency:TYPE),
-              (dependencyPackage:PACKAGE:LAYER)-[:CONTAINS*]->(dependency)
+              (package:PACKAGE:LAYER:UI)-[:DEPENDS_ON]->(dependencyPackage)
             WHERE NOT (
-              dependencyPackage:PERSISTENCE
+              dependencyPackage:MODEL
             )
-            RETURN typeFieldOrMethod AS element, dependencyPackage AS dependency
+            RETURN dependencyPackage AS dependency
          ]]></cypher>
     </constraint>
 </jqa:jqassistant-rules>

@@ -11,7 +11,7 @@ public class FieldDescriptorResolver extends AbstractDescriptorResolver<TypeDesc
 	}
 
 	@Override
-	protected Class<FieldDescriptor> getType() {
+	protected Class<FieldDescriptor> getBaseType() {
 		return FieldDescriptor.class;
 	}
 

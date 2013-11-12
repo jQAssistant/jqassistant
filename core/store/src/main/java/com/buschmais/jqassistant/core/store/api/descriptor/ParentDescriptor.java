@@ -1,37 +1,21 @@
 package com.buschmais.jqassistant.core.store.api.descriptor;
 
-import java.util.HashSet;
+import com.buschmais.cdo.neo4j.api.annotation.Relation;
+
 import java.util.Set;
 
 /**
  * Abstract base implementation of an
- * {@link AbstractFullQualifiedNameDescriptor} which contains other
+ * {@link FullQualifiedNameDescriptor} which contains other
  * {@link Descriptor}s.
  */
-public abstract class ParentDescriptor extends AbstractFullQualifiedNameDescriptor {
+public interface ParentDescriptor extends FullQualifiedNameDescriptor {
 
-	/**
-	 * The contained descriptors.
-	 */
-	private Set<Descriptor> contains = new HashSet<>();
-
-	/**
-	 * Return the contained descriptors.
-	 * 
-	 * @return The contained descriptors.
-	 */
-	public Set<Descriptor> getContains() {
-		return contains;
-	}
-
-	/**
-	 * Set the contained descriptors.
-	 * 
-	 * @param contains
-	 *            The contained descriptors.
-	 */
-	public void setContains(Set<Descriptor> contains) {
-		this.contains = contains;
-	}
-
+    /**
+     * Return the contained descriptors.
+     *
+     * @return The contained descriptors.
+     */
+    @Relation("CONTAINS")
+    public Set<Descriptor> getContains();
 }

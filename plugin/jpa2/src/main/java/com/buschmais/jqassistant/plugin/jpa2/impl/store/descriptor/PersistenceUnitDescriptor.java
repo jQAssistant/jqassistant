@@ -1,101 +1,55 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.buschmais.jqassistant.core.store.api.descriptor.AbstractDescriptor;
+import com.buschmais.cdo.neo4j.api.annotation.Label;
+import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.cdo.neo4j.api.annotation.Relation;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
+import java.util.Set;
+
 /**
- * A descriptor for JPA persistence units.
+ * A descriptor for JPA model units.
  */
-public class PersistenceUnitDescriptor extends AbstractDescriptor implements NamedDescriptor {
+@Label("PERSISTENCEUNIT")
+public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, JpaDescriptor {
 
-	private String name;
-	private String description;
-	private String provider;
-	private String jtaDataSource;
-	private String nonJtaDataSource;
-	private String validationMode;
-	private String sharedCacheMode;
-	private Set<PropertyDescriptor> properties = new HashSet<>();
+    @Property("DESCRITPION")
+    public String getDescription();
 
-	/**
-	 * The classes referenced by this persistence unit.
-	 */
-	private Set<TypeDescriptor> contains = new HashSet<>();
+    public void setDescription(String description);
 
-	public String getName() {
-		return name;
-	}
+    @Property("PROVIDER")
+    public String getProvider();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setProvider(String provider);
 
-	public String getDescription() {
-		return description;
-	}
+    @Property("JTADATASOURCE")
+    public String getJtaDataSource();
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setJtaDataSource(String jtaDataSource);
 
-	public String getProvider() {
-		return provider;
-	}
+    @Property("NONJTADATASOURCE")
+    public String getNonJtaDataSource();
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
+    public void setNonJtaDataSource(String nonJtaDataSource);
 
-	public String getJtaDataSource() {
-		return jtaDataSource;
-	}
+    @Property("VALIDATIONMODE")
+    public String getValidationMode();
 
-	public void setJtaDataSource(String jtaDataSource) {
-		this.jtaDataSource = jtaDataSource;
-	}
+    public void setValidationMode(String validationMode);
 
-	public String getNonJtaDataSource() {
-		return nonJtaDataSource;
-	}
+    @Relation("CONTAINS")
+    public Set<TypeDescriptor> getContains();
 
-	public void setNonJtaDataSource(String nonJtaDataSource) {
-		this.nonJtaDataSource = nonJtaDataSource;
-	}
+    @Property("SHAREDCACHEMODE")
+    public String getSharedCacheMode();
 
-	public String getValidationMode() {
-		return validationMode;
-	}
+    public void setSharedCacheMode(String sharedCacheMode);
 
-	public void setValidationMode(String validationMode) {
-		this.validationMode = validationMode;
-	}
+    @Property("PROPERTIES")
+    public Set<PropertyDescriptor> getProperties();
 
-	public Set<TypeDescriptor> getContains() {
-		return contains;
-	}
-
-	public void setContains(Set<TypeDescriptor> contains) {
-		this.contains = contains;
-	}
-
-	public String getSharedCacheMode() {
-		return sharedCacheMode;
-	}
-
-	public void setSharedCacheMode(String sharedCacheMode) {
-		this.sharedCacheMode = sharedCacheMode;
-	}
-
-	public Set<PropertyDescriptor> getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Set<PropertyDescriptor> properties) {
-		this.properties = properties;
-	}
 }

@@ -28,7 +28,7 @@ public class Jpa2IT extends AbstractPluginIT {
 
 	/**
 	 * Verifies the concept "entity:Entity".
-	 * 
+	 *
 	 * @throws java.io.IOException
 	 *             If the test fails.
 	 * @throws AnalyzerException
@@ -42,8 +42,8 @@ public class Jpa2IT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies scanning of persistence descriptors.
-	 * 
+	 * Verifies scanning of model descriptors.
+	 *
 	 * @throws java.io.IOException
 	 *             If the test fails.
 	 * @throws AnalyzerException
@@ -62,8 +62,8 @@ public class Jpa2IT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies scanning of persistence unit descriptors.
-	 * 
+	 * Verifies scanning of model unit descriptors.
+	 *
 	 * @throws java.io.IOException
 	 *             If the test fails.
 	 * @throws AnalyzerException

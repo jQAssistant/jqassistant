@@ -1,18 +1,16 @@
 package com.buschmais.jqassistant.mojo;
 
-import static com.buschmais.jqassistant.mojo.Aggregator.AggregatedGoal;
-
-import java.util.List;
-import java.util.Set;
-
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.dao.mapper.DescriptorMapper;
+import java.util.List;
+import java.util.Set;
+
+import static com.buschmais.jqassistant.mojo.Aggregator.AggregatedGoal;
 
 /**
  * Abstract base implementation for analysis mojos running as aggregator.
@@ -35,15 +33,15 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
 	public final void execute() throws MojoExecutionException, MojoFailureException {
 		Aggregator.execute(new AggregatedGoal() {
 			public void execute(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
-				List<DescriptorMapper<?>> descriptorMappers;
+				List<Class<?>> descriptorTypes;
 				try {
-					descriptorMappers = pluginManager.getDescriptorMappers();
+					descriptorTypes = pluginManager.getDescriptorTypes();
 				} catch (PluginReaderException e) {
 					throw new MojoExecutionException("Cannot get descriptor mappers.", e);
 				}
 				Store store = getStore(baseProject);
 				try {
-					store.start(descriptorMappers);
+					store.start(descriptorTypes);
 					AbstractAnalysisAggregatorMojo.this.aggregate(baseProject, projects, store);
 				} finally {
 					store.stop();
@@ -54,7 +52,7 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
 
 	/**
 	 * Execute the aggregated analysis.
-	 * 
+	 *
 	 * @throws MojoExecutionException
 	 *             If execution fails.
 	 * @throws MojoFailureException

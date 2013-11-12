@@ -5,20 +5,4 @@ package com.buschmais.jqassistant.core.store.api.descriptor;
  * etc.)
  */
 public interface Descriptor {
-
-	/**
-	 * Return the id.
-	 * 
-	 * @return The id.
-	 */
-	Long getId();
-
-	/**
-	 * Set the id.
-	 * 
-	 * @param id
-	 *            The id.
-	 */
-	void setId(Long id);
-
 }
