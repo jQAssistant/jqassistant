@@ -7,6 +7,6 @@ import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 /**
  * Describes a Java package.
  */
-@Label(value = "PACKAGE", usingIndexOf = FullQualifiedNameDescriptor.class)
+@Label(value = "PACKAGE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface PackageDescriptor extends ParentDescriptor, SignatureDescriptor {
 }
