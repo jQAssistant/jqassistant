@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.cdo.api.QueryResult;
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Query;
 import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -188,10 +188,10 @@ public class AnalyzerImpl implements Analyzer {
      */
     private <T extends AbstractExecutable> Result<T> execute(T executable) throws AnalyzerException {
         List<Map<String, Object>> rows = new ArrayList<>();
-        QueryResult queryResult = null;
+       com.buschmais.cdo.api.Query.Result queryResult = null;
         try {
             queryResult = executeQuery(executable.getQuery());
-            for (QueryResult.Row row : queryResult.getRows()) {
+            for (com.buschmais.cdo.api.Query.Result.Row row : queryResult.getRows()) {
                 rows.add(row.get());
             }
             return new Result<T>(executable, queryResult.getColumns(), rows);
@@ -206,7 +206,7 @@ public class AnalyzerImpl implements Analyzer {
      * @param query The query.
      * @return The query result.
      */
-    private QueryResult executeQuery(Query query) {
+    private com.buschmais.cdo.api.Query.Result executeQuery(Query query) {
         String cypher = query.getCypher();
         Map<String, Object> parameters = query.getParameters();
         LOGGER.debug("Executing query '{}' with parameters [{}]", cypher, parameters);

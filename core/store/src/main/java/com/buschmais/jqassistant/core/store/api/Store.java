@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import com.buschmais.cdo.api.QueryResult;
+import com.buschmais.cdo.api.Query;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 
@@ -104,9 +104,10 @@ public abstract class Store {
      * This method executes a CYPHER query.
      * </p>
      *
+     *
      * @param query      The CYPHER query.
      * @param parameters The {@link java.util.Map} of parameters for the given query.
-     * @return The {@link QueryResult}.
+     * @return The {@link Query.Result}.
      */
-    public abstract QueryResult executeQuery(String query, Map<String, Object> parameters);
+    public abstract Query.Result executeQuery(String query, Map<String, Object> parameters);
 }

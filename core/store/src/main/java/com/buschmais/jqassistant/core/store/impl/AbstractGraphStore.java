@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import com.buschmais.cdo.api.CdoManager;
 import com.buschmais.cdo.api.CdoManagerFactory;
-import com.buschmais.cdo.api.QueryResult;
+import com.buschmais.cdo.api.Query;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
@@ -95,17 +95,16 @@ public abstract class AbstractGraphStore extends Store {
     }
 
     @Override
-    public QueryResult executeQuery(String query, Map<String, Object> parameters) {
-        return cdoManager.executeQuery(query, parameters);
+    public Query.Result executeQuery(String query, Map<String, Object> parameters) {
+        return cdoManager.createQuery(query).setParameters(parameters).execute();
     }
-
 
     @Override
     public void reset() {
         LOGGER.info("Resetting store.");
         beginTransaction();
-        cdoManager.executeQuery("MATCH (n)-[r]-(d) DELETE r");
-        cdoManager.executeQuery("MATCH (n) DELETE n");
+        cdoManager.createQuery("MATCH (n)-[r]-(d) DELETE r").execute();
+        cdoManager.createQuery("MATCH (n) DELETE n").execute();
         commitTransaction();
         LOGGER.info("Reset finished.");
     }
