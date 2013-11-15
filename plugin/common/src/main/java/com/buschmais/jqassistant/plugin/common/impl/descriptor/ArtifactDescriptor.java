@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
  *
  * @author Herklotz
  */
-@Label(value = "ARTIFACT", usingIndexOf = FullQualifiedNameDescriptor.class)
+@Label(value = "ARTIFACT", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface ArtifactDescriptor extends ParentDescriptor, NamedDescriptor {
 
     /**

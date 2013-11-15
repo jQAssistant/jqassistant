@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * A descriptor representing a property file.
  */
-@Label(value = "PROPERTYFILE", usingIndexOf = FullQualifiedNameDescriptor.class)
+@Label(value = "PROPERTYFILE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface PropertyFileDescriptor extends FullQualifiedNameDescriptor {
 
     @Relation("HAS")

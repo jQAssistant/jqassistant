@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
-@Label(value = "FIELD", usingIndexOf = FullQualifiedNameDescriptor.class)
+@Label(value = "FIELD", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface FieldDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, FullQualifiedNameDescriptor {
 
     /**

@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Describes a method of a Java class.
  */
-@Label(value = "METHOD", usingIndexOf = FullQualifiedNameDescriptor.class)
+@Label(value = "METHOD", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface MethodDescriptor extends FullQualifiedNameDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     @Relation("HAS")

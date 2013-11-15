@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * Describes a Java type.
  */
-@Label(value="TYPE", usingIndexOf=FullQualifiedNameDescriptor.class)
+@Label(value="TYPE", usingIndexedPropertyOf=FullQualifiedNameDescriptor.class)
 public interface TypeDescriptor extends ParentDescriptor, SignatureDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
