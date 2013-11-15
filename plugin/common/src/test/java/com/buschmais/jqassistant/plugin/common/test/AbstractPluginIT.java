@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import com.buschmais.cdo.api.QueryResult;
+import com.buschmais.cdo.api.Query;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
@@ -236,13 +236,13 @@ public class AbstractPluginIT {
 	 * @return The {@link AbstractPluginIT.TestResult}.
 	 */
 	protected TestResult query(String query, Map<String, Object> parameters) {
-		QueryResult queryResult = store.executeQuery(query, parameters);
+        Query.Result queryResult = store.executeQuery(query, parameters);
 		List<Map<String, Object>> rows = new ArrayList<>();
 		Map<String, List<Object>> columns = new HashMap<>();
 		for (String column : queryResult.getColumns()) {
 			columns.put(column, new ArrayList<>());
 		}
-		for (QueryResult.Row row : queryResult.getRows()) {
+		for (Query.Result.Row row : queryResult.getRows()) {
 			Map<String, Object> rowData = row.get();
 			rows.add(rowData);
 			for (Map.Entry<String, ?> entry : rowData.entrySet()) {
