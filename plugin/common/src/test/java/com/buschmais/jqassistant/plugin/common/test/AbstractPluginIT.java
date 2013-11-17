@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
+import com.buschmais.cdo.api.IterableQueryResult;
 import com.buschmais.cdo.api.Query;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
@@ -236,20 +237,22 @@ public class AbstractPluginIT {
 	 * @return The {@link AbstractPluginIT.TestResult}.
 	 */
 	protected TestResult query(String query, Map<String, Object> parameters) {
-        Query.Result queryResult = store.executeQuery(query, parameters);
-		List<Map<String, Object>> rows = new ArrayList<>();
+        IterableQueryResult<IterableQueryResult.CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
+        List<Map<String, Object>> rows = new ArrayList<>();
 		Map<String, List<Object>> columns = new HashMap<>();
-		for (String column : queryResult.getColumns()) {
+        List<String> columnNames = compositeRowObjects.getColumns();
+        for (String column : columnNames) {
 			columns.put(column, new ArrayList<>());
 		}
-		for (Query.Result.Row row : queryResult.getRows()) {
-			Map<String, Object> rowData = row.get();
-			rows.add(rowData);
-			for (Map.Entry<String, ?> entry : rowData.entrySet()) {
-				List<Object> column = columns.get(entry.getKey());
-				column.add(entry.getValue());
-			}
-		}
+		for (IterableQueryResult.CompositeRowObject rowObject : compositeRowObjects) {
+			Map<String, Object> row = new HashMap<>();
+            for (String columnName : columnNames) {
+                Object value = rowObject.get(columnName, Object.class);
+                row.put(columnName, value);
+                columns.get(columnName).add(value);
+            }
+            rows.add(row);
+        }
 		return new TestResult(rows, columns);
 	}
 
