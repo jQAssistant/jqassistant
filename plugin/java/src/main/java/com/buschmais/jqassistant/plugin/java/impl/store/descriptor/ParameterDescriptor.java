@@ -6,6 +6,6 @@ import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDesc
 /**
  * Describes a parameter of a method.
  */
-@Label(value = "PARAMETER", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
+@Label(value = "PARAMETER")
 public interface ParameterDescriptor extends FullQualifiedNameDescriptor, DependentDescriptor, AnnotatedDescriptor {
 }
