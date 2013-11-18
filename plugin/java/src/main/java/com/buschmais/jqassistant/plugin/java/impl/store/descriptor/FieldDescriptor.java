@@ -8,29 +8,32 @@ import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
-@Label(value = "FIELD", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface FieldDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, FullQualifiedNameDescriptor {
+@Label(value = "FIELD")
+public interface FieldDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor,
+		AccessModifierDescriptor, FullQualifiedNameDescriptor {
 
-    /**
-     * @return the transientField
-     */
-    @Property("TRANSIENT")
-    public Boolean isTransient();
+	/**
+	 * @return the transientField
+	 */
+	@Property("TRANSIENT")
+	public Boolean isTransient();
 
-    /**
-     * @param transientField the transientField to set
-     */
-    public void setTransient(Boolean transientField);
+	/**
+	 * @param transientField
+	 *            the transientField to set
+	 */
+	public void setTransient(Boolean transientField);
 
-    /**
-     * @return the volatileField
-     */
-    @Property("VOLATILE")
-    public Boolean isVolatile();
+	/**
+	 * @return the volatileField
+	 */
+	@Property("VOLATILE")
+	public Boolean isVolatile();
 
-    /**
-     * @param volatileField the volatileField to set
-     */
-    public void setVolatile(Boolean volatileField);
+	/**
+	 * @param volatileField
+	 *            the volatileField to set
+	 */
+	public void setVolatile(Boolean volatileField);
 
 }
