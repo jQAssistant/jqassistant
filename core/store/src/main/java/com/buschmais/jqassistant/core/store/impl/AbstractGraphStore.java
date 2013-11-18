@@ -2,8 +2,6 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import com.buschmais.cdo.api.CdoManager;
 import com.buschmais.cdo.api.CdoManagerFactory;
-import com.buschmais.cdo.api.IterableQueryResult;
-import com.buschmais.cdo.api.IterableResult;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
@@ -16,6 +14,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import static com.buschmais.cdo.api.Query.Result;
+import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -96,7 +97,7 @@ public abstract class AbstractGraphStore extends Store {
     }
 
     @Override
-    public IterableQueryResult<IterableQueryResult.CompositeRowObject> executeQuery(String query, Map<String, Object> parameters) {
+    public Result<CompositeRowObject> executeQuery(String query, Map<String, Object> parameters) {
         return cdoManager.createQuery(query).withParameters(parameters).execute();
     }
 

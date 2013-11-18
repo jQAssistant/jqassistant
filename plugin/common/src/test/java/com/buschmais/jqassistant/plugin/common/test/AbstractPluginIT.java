@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import com.buschmais.cdo.api.IterableQueryResult;
-import com.buschmais.cdo.api.Query;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
@@ -32,6 +30,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+
+import static com.buschmais.cdo.api.Query.Result;
+import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base class for analysis tests.
@@ -237,14 +238,14 @@ public class AbstractPluginIT {
 	 * @return The {@link AbstractPluginIT.TestResult}.
 	 */
 	protected TestResult query(String query, Map<String, Object> parameters) {
-        IterableQueryResult<IterableQueryResult.CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
+        Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
         List<Map<String, Object>> rows = new ArrayList<>();
 		Map<String, List<Object>> columns = new HashMap<>();
         List<String> columnNames = compositeRowObjects.getColumns();
         for (String column : columnNames) {
 			columns.put(column, new ArrayList<>());
 		}
-		for (IterableQueryResult.CompositeRowObject rowObject : compositeRowObjects) {
+		for (CompositeRowObject rowObject : compositeRowObjects) {
 			Map<String, Object> row = new HashMap<>();
             for (String columnName : columnNames) {
                 Object value = rowObject.get(columnName, Object.class);
