@@ -1,5 +1,20 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
+import static com.buschmais.cdo.api.Query.Result;
+import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
+
+import javax.xml.transform.Source;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
@@ -20,19 +35,6 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-
-import javax.xml.transform.Source;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.*;
-
-import static com.buschmais.cdo.api.Query.Result;
-import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base class for analysis tests.
@@ -53,7 +55,7 @@ public class AbstractPluginIT {
 
 		/**
 		 * Return all rows.
-		 *
+		 * 
 		 * @return All rows.
 		 */
 		public List<Map<String, Object>> getRows() {
@@ -62,7 +64,7 @@ public class AbstractPluginIT {
 
 		/**
 		 * Return a column identified by its name.
-		 *
+		 * 
 		 * @param <T>
 		 *            The expected type.
 		 * @return All columns.
@@ -110,7 +112,7 @@ public class AbstractPluginIT {
 		store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
 		store.start(getDescriptorMappers());
 		store.reset();
-        store.beginTransaction();
+		store.beginTransaction();
 	}
 
 	/**
@@ -118,13 +120,13 @@ public class AbstractPluginIT {
 	 */
 	@After
 	public void stopStore() {
-        store.commitTransaction();
+		store.commitTransaction();
 		store.stop();
 	}
 
 	/**
 	 * Return an initialized artifact scanner instance.
-	 *
+	 * 
 	 * @return The artifact scanner instance.
 	 */
 	protected FileScanner getArtifactScanner() {
@@ -133,7 +135,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given classes.
-	 *
+	 * 
 	 * @param classes
 	 *            The classes.
 	 * @throws java.io.IOException
@@ -145,7 +147,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given classes.
-	 *
+	 * 
 	 * @param artifactId
 	 *            The id of the containing artifact.
 	 * @param classes
@@ -165,7 +167,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given URLs.
-	 *
+	 * 
 	 * @param urls
 	 *            The URLs.
 	 * @throws IOException
@@ -177,7 +179,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the given URLs (e.g. for anonymous inner classes).
-	 *
+	 * 
 	 * @param artifactId
 	 *            The id of the containing artifact.
 	 * @param urls
@@ -194,7 +196,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Scans the test classes directory.
-	 *
+	 * 
 	 * @param rootClass
 	 *            A class within the test directory.
 	 * @throws IOException
@@ -218,7 +220,7 @@ public class AbstractPluginIT {
 	/**
 	 * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
 	 * .
-	 *
+	 * 
 	 * @param query
 	 *            The query.
 	 * @return The {@link AbstractPluginIT.TestResult}.
@@ -230,7 +232,7 @@ public class AbstractPluginIT {
 	/**
 	 * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
 	 * .
-	 *
+	 * 
 	 * @param query
 	 *            The query.
 	 * @param parameters
@@ -238,28 +240,30 @@ public class AbstractPluginIT {
 	 * @return The {@link AbstractPluginIT.TestResult}.
 	 */
 	protected TestResult query(String query, Map<String, Object> parameters) {
-        Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
-        List<Map<String, Object>> rows = new ArrayList<>();
+		Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
+		List<Map<String, Object>> rows = new ArrayList<>();
 		Map<String, List<Object>> columns = new HashMap<>();
-        List<String> columnNames = compositeRowObjects.getColumns();
-        for (String column : columnNames) {
-			columns.put(column, new ArrayList<>());
-		}
 		for (CompositeRowObject rowObject : compositeRowObjects) {
 			Map<String, Object> row = new HashMap<>();
-            for (String columnName : columnNames) {
-                Object value = rowObject.get(columnName, Object.class);
-                row.put(columnName, value);
-                columns.get(columnName).add(value);
-            }
-            rows.add(row);
-        }
+			Iterable<String> columnNames = rowObject.getColumns();
+			for (String columnName : columnNames) {
+				List<Object> columnValues = columns.get(columnName);
+				if (columnValues == null) {
+					columnValues = new ArrayList<>();
+					columns.put(columnName, columnValues);
+				}
+				Object value = rowObject.get(columnName, Object.class);
+				row.put(columnName, value);
+				columnValues.add(value);
+			}
+			rows.add(row);
+		}
 		return new TestResult(rows, columns);
 	}
 
 	/**
 	 * Applies the concept identified by id.
-	 *
+	 * 
 	 * @param id
 	 *            The id.
 	 * @throws AnalyzerException
@@ -275,7 +279,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Validates the constraint identified by id.
-	 *
+	 * 
 	 * @param id
 	 *            The id.
 	 * @throws AnalyzerException
@@ -291,7 +295,7 @@ public class AbstractPluginIT {
 
 	/**
 	 * Executes the group identified by id.
-	 *
+	 * 
 	 * @param id
 	 *            The id.
 	 * @throws AnalyzerException
