@@ -5,15 +5,14 @@ import java.util.Set;
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
 /**
  * Describes a method of a Java class.
  */
 @Label(value = "METHOD")
-public interface MethodDescriptor extends FullQualifiedNameDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor,
-		AnnotatedDescriptor, AccessModifierDescriptor {
+public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor,
+		AccessModifierDescriptor {
 
 	@Relation("HAS")
 	public Set<ParameterDescriptor> getParameters();
