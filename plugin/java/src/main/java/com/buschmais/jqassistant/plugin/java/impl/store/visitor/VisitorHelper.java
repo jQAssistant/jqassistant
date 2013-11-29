@@ -136,8 +136,8 @@ public class VisitorHelper {
 	 * @return The parameter descriptor.
 	 */
 	ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
-		String fullQualifiedName = methodDescriptor.getFullQualifiedName() + "(" + index + ")";
-		ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class, fullQualifiedName);
+		ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class);
+		parameterDescriptor.setIndex(index);
 		methodDescriptor.getParameters().add(parameterDescriptor);
 		return parameterDescriptor;
 	}
@@ -155,7 +155,7 @@ public class VisitorHelper {
 	ParameterDescriptor getParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("method", methodDescriptor);
-		params.put("fqn", methodDescriptor.getFullQualifiedName() + "(" + index + ")");
+		params.put("index", index);
 		return store.executeQuery(FindParameterQuery.class, params).getSingleResult().as(FindParameterQuery.class).getParameter();
 	}
 

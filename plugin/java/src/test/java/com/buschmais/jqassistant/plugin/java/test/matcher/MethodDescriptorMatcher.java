@@ -5,22 +5,21 @@ import java.lang.reflect.Method;
 
 import org.hamcrest.Matcher;
 
-import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 
 /**
  * A matcher for {@link MethodDescriptorMatcher}s.
  */
-public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDescriptor> {
+public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<MethodDescriptor> {
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param fqn
+	 * @param fullQualifiedName
 	 *            The expected full qualified name.
 	 */
-	protected MethodDescriptorMatcher(String fqn) {
-		super(MethodDescriptor.class, fqn);
+	protected MethodDescriptorMatcher(String fullQualifiedName) {
+		super(MethodDescriptor.class, fullQualifiedName);
 	}
 
 	/**
@@ -47,23 +46,21 @@ public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDes
 	 * @return The {@link MethodDescriptorMatcher}.
 	 */
 	public static Matcher<? super MethodDescriptor> methodDescriptor(Method method) {
-		StringBuffer name = new StringBuffer();
-		name.append(method.getDeclaringClass().getName());
-		name.append('#');
-		name.append(method.getReturnType().getCanonicalName());
-		name.append(' ');
-		name.append(method.getName());
-		name.append('(');
+		StringBuffer signature = new StringBuffer();
+		signature.append(method.getReturnType().getCanonicalName());
+		signature.append(' ');
+		signature.append(method.getName());
+		signature.append('(');
 		int parameterCount = 0;
 		for (Class<?> parameterType : method.getParameterTypes()) {
 			if (parameterCount > 0) {
-				name.append(',');
+				signature.append(',');
 			}
-			name.append(parameterType.getCanonicalName());
+			signature.append(parameterType.getCanonicalName());
 			parameterCount++;
 		}
-		name.append(')');
-		return new MethodDescriptorMatcher(name.toString());
+		signature.append(')');
+		return new MethodDescriptorMatcher(signature.toString());
 	}
 
 	/**
@@ -88,23 +85,20 @@ public class MethodDescriptorMatcher extends AbstractDescriptorMatcher<MethodDes
 	 * @return The {@link MethodDescriptorMatcher}.
 	 */
 	public static Matcher<? super MethodDescriptor> methodDescriptor(Constructor constructor) {
-		StringBuffer name = new StringBuffer();
-		name.append(constructor.getDeclaringClass().getName());
-		name.append('#');
-		name.append("void");
-		name.append(' ');
-		name.append("<init>");
-		name.append('(');
+		StringBuffer signature = new StringBuffer();
+		signature.append("void");
+		signature.append(' ');
+		signature.append("<init>");
+		signature.append('(');
 		int parameterCount = 0;
 		for (Class<?> parameterType : constructor.getParameterTypes()) {
 			if (parameterCount > 0) {
-				name.append(',');
+				signature.append(',');
 			}
-			name.append(parameterType.getCanonicalName());
+			signature.append(parameterType.getCanonicalName());
 			parameterCount++;
 		}
-		name.append(')');
-		return new MethodDescriptorMatcher(name.toString());
+		signature.append(')');
+		return new MethodDescriptorMatcher(signature.toString());
 	}
-
 }

@@ -4,13 +4,12 @@ import java.lang.reflect.Field;
 
 import org.hamcrest.Matcher;
 
-import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
 
 /**
  * A matcher for {@FieldDescriptor}s.
  */
-public class FieldDescriptorMatcher extends AbstractDescriptorMatcher<FieldDescriptor> {
+public class FieldDescriptorMatcher extends AbstractSignatureDescriptorMatcher<FieldDescriptor> {
 
 	/**
 	 * Constructor.
@@ -19,7 +18,7 @@ public class FieldDescriptorMatcher extends AbstractDescriptorMatcher<FieldDescr
 	 *            The expected field.
 	 */
 	protected FieldDescriptorMatcher(Field field) {
-		super(FieldDescriptor.class, field.getDeclaringClass().getName() + "#" + field.getType().getCanonicalName() + " " + field.getName());
+		super(FieldDescriptor.class, field.getType().getCanonicalName() + " " + field.getName());
 	}
 
 	/**
