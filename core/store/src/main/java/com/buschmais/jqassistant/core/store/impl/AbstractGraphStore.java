@@ -4,7 +4,6 @@ import static com.buschmais.cdo.api.Query.Result;
 import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LRUMap;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.cdo.api.CdoManager;
 import com.buschmais.cdo.api.CdoManagerFactory;
+import com.buschmais.cdo.api.ResultIterable;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
@@ -29,11 +29,8 @@ import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDesc
 public abstract class AbstractGraphStore implements Store {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
-
 	private CdoManagerFactory cdoManagerFactory;
-
 	private CdoManager cdoManager;
-
 	private Map<String, FullQualifiedNameDescriptor> fqnCache;
 
 	@Override
@@ -85,15 +82,8 @@ public abstract class AbstractGraphStore implements Store {
 		if (t != null) {
 			return t;
 		}
-		Iterable<T> ts = cdoManager.find(type, fullQualifiedName);
-		Iterator<T> iterator = ts.iterator();
-		if (iterator.hasNext()) {
-			t = iterator.next();
-		}
-		if (iterator.hasNext()) {
-			throw new IllegalArgumentException("Found more than one descriptors for " + type.getName() + " and name " + fullQualifiedName);
-		}
-		return t;
+		ResultIterable<T> result = cdoManager.find(type, fullQualifiedName);
+		return result.hasResult() ? result.getSingleResult() : null;
 	}
 
 	@Override
