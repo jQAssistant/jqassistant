@@ -54,14 +54,8 @@ public class FileScannerImpl implements FileScanner {
 								boolean isDirectory = isDirectory(element);
 								if (plugin.matches(name, isDirectory)) {
 									LOGGER.info("Scanning '{}'", name);
-									if (isDirectory) {
-										next = plugin.scanDirectory(store, name);
-									} else {
-										BufferedInputStream inputStream = new BufferedInputStream(openInputStream(name, element));
-										StreamSource streamSource = new StreamSource(inputStream, name);
-										next = plugin.scanFile(store, streamSource);
-									}
-								}
+                                    next = doScan(element, plugin, name, isDirectory);
+                                }
 							}
 						}
 						if (next != null) {
@@ -74,7 +68,23 @@ public class FileScannerImpl implements FileScanner {
 					}
 				}
 
-				@Override
+                private Descriptor doScan(E element, FileScannerPlugin plugin, String name, boolean directory) throws IOException {
+                    try {
+                        if (directory) {
+                            return plugin.scanDirectory(store, name);
+                        } else {
+                            BufferedInputStream inputStream = new BufferedInputStream(openInputStream(name, element));
+                            StreamSource streamSource = new StreamSource(inputStream, name);
+                            Descriptor descriptor = plugin.scanFile(store, streamSource);
+                            inputStream.close();
+                            return descriptor;
+                        }
+                    } catch(Exception e) {
+                        throw new IOException("Error scanning "+name,e);
+                    }
+                }
+
+                @Override
 				public Descriptor next() {
 					if (hasNext()) {
 						Descriptor result = next;

@@ -32,7 +32,7 @@ public class ClassScannerPlugin implements FileScannerPlugin<TypeDescriptor> {
 
 	@Override
 	public boolean matches(String file, boolean isDirectory) {
-		return !isDirectory && file.endsWith(".class");
+		return !isDirectory && file.endsWith(".class") && !file.startsWith("apple");
 	}
 
 	@Override

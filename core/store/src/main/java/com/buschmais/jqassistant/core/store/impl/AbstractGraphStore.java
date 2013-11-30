@@ -6,6 +6,7 @@ import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 import java.util.Collection;
 import java.util.Map;
 
+import com.buschmais.cdo.api.Query;
 import org.apache.commons.collections.map.LRUMap;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
@@ -94,14 +95,26 @@ public abstract class AbstractGraphStore implements Store {
 	@Override
 	public void reset() {
 		LOGGER.info("Resetting store.");
-		beginTransaction();
-		cdoManager.createQuery("MATCH (n)-[r]-(d) DELETE r").execute();
-		cdoManager.createQuery("MATCH (n) DELETE n").execute();
-		commitTransaction();
+        runQueryUntilResultIsZero("MATCH (n) WITH n LIMIT 10000 MATCH (n)-[r]-() DELETE n,r RETURN COUNT(*) as deleted");
+        runQueryUntilResultIsZero("MATCH (n) WITH n LIMIT 50000 DELETE n RETURN COUNT(*) as deleted");
 		LOGGER.info("Reset finished.");
 	}
 
-	@Override
+    public interface DeletedCount {
+        Long getDeleted();
+    }
+
+    private void runQueryUntilResultIsZero(String deleteNodesAndRels) {
+        Query deleteNodesAndRelQuery = cdoManager.createQuery(deleteNodesAndRels, DeletedCount.class);
+        DeletedCount result;
+        do {
+            beginTransaction();
+            result = (DeletedCount)deleteNodesAndRelQuery.execute().getSingleResult();
+            commitTransaction();
+        } while (result.getDeleted() > 0);
+    }
+
+    @Override
 	public void beginTransaction() {
 		cdoManager.begin();
 	}
