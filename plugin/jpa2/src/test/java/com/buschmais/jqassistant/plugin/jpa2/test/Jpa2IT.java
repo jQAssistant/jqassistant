@@ -38,7 +38,9 @@ public class Jpa2IT extends AbstractPluginIT {
 	public void jpaEntity() throws IOException, AnalyzerException {
 		scanClasses(JpaEntity.class);
 		applyConcept("jpa2:Entity");
-		assertThat(query("MATCH (e:TYPE:ENTITY) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
+        store.beginTransaction();
+        assertThat(query("MATCH (e:TYPE:ENTITY) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
+        store.commitTransaction();
 	}
 
 	/**
@@ -52,6 +54,7 @@ public class Jpa2IT extends AbstractPluginIT {
 	@Test
 	public void persistenceDescriptor() throws IOException, AnalyzerException {
 		scanClassesDirectory(JpaEntity.class);
+        store.beginTransaction();
 		TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
@@ -59,6 +62,7 @@ public class Jpa2IT extends AbstractPluginIT {
 		assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
 		Set<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
 		assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
+        store.commitTransaction();
 	}
 
 	/**
@@ -72,6 +76,7 @@ public class Jpa2IT extends AbstractPluginIT {
 	@Test
 	public void persistenceUnitDescriptor() throws IOException, AnalyzerException {
 		scanClassesDirectory(JpaEntity.class);
+        store.beginTransaction();
 		TestResult testResult = query("MATCH (pu:JPA:PERSISTENCEUNIT) RETURN pu");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		List<? super PersistenceUnitDescriptor> persistenceUnitDescriptors = testResult.getColumn("pu");
@@ -87,5 +92,6 @@ public class Jpa2IT extends AbstractPluginIT {
 		Matcher<? super PropertyDescriptor> valueMatcher = (Matcher<? super PropertyDescriptor>) valueDescriptor("stringProperty",
 				equalTo("stringValue"));
 		assertThat(persistenceUnitDescriptor.getProperties(), hasItem(valueMatcher));
+        store.commitTransaction();
 	}
 }

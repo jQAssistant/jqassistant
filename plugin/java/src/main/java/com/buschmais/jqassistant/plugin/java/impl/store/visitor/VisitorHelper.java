@@ -73,7 +73,6 @@ public class VisitorHelper {
 	MethodDescriptor getMethodDescriptor(TypeDescriptor type, String signature) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("type", type);
-		params.put("fqn", type.getFullQualifiedName() + "#" + signature);
 		params.put("signature", signature);
 		MethodDescriptor methodDescriptor = store.executeQuery(GetOrCreateMethodQuery.class, params).getSingleResult()
 				.as(GetOrCreateMethodQuery.class).getMethod();
@@ -95,7 +94,6 @@ public class VisitorHelper {
 	FieldDescriptor getFieldDescriptor(TypeDescriptor type, String signature) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("type", type);
-		params.put("fqn", type.getFullQualifiedName() + "#" + signature);
 		params.put("signature", signature);
 		return store.executeQuery(GetOrCreateFieldQuery.class, params).getSingleResult().as(GetOrCreateFieldQuery.class).getField();
 	}

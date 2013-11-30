@@ -17,6 +17,7 @@ public class PojoIT extends AbstractPluginIT {
 	@Test
 	public void attributes() throws IOException {
 		scanClasses(Pojo.class);
+        store.beginTransaction();
 		TestResult testResult = query("MATCH (t:TYPE:CLASS) WHERE t.FQN =~ '.*Pojo' RETURN t as types");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
@@ -38,6 +39,7 @@ public class PojoIT extends AbstractPluginIT {
 				testResult.getColumn("name"),
 				allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")),
 						hasItem(equalTo("setIntValue"))));
+        store.commitTransaction();
 	}
 
 }

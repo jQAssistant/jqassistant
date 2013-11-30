@@ -29,8 +29,10 @@ public class ConstructorIT extends AbstractPluginIT {
 	@Test
 	public void implicitDefaultConstructor() throws IOException, NoSuchMethodException {
 		scanClasses(ImplicitDefaultConstructor.class);
+        store.beginTransaction();
 		assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"),
 				hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
+        store.commitTransaction();
 	}
 
 	/**
@@ -45,9 +47,11 @@ public class ConstructorIT extends AbstractPluginIT {
 	@Test
 	public void overloadedConstructors() throws IOException, NoSuchMethodException {
 		scanClasses(OverloadedConstructor.class);
+        store.beginTransaction();
 		assertThat(
 				query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"),
 				allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)),
 						hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
+        store.commitTransaction();
 	}
 }

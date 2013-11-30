@@ -52,6 +52,7 @@ public class AnonymousInnerClassIT extends AbstractPluginIT {
 	 * the inner class.
 	 */
 	private void assertOuterClassContainsInnerClass() {
+        store.beginTransaction();
 		TestResult testResult = query("MATCH (outerClass:TYPE)-[:CONTAINS]->(innerClass:TYPE) RETURN outerClass");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		Map<String, Object> row = testResult.getRows().get(0);
@@ -59,6 +60,7 @@ public class AnonymousInnerClassIT extends AbstractPluginIT {
 		assertThat(outerClass, typeDescriptor(AnonymousInnerClass.class));
 		Matcher<Iterable<? super TypeDescriptor>> matcher = hasItem(typeDescriptor(INNERCLASS_NAME));
 		assertThat(outerClass.getContains(), matcher);
+        store.commitTransaction();
 	}
 
 }

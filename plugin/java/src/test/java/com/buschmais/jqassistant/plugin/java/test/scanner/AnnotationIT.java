@@ -41,7 +41,8 @@ public class AnnotationIT extends AbstractPluginIT {
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
 		// verify annotation type
-		TestResult testResult = query("MATCH (t:TYPE:CLASS)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN t, a, at");
+        store.beginTransaction();
+        TestResult testResult = query("MATCH (t:TYPE:CLASS)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN t, a, at");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		Map<String, Object> row = testResult.getRows().get(0);
 		assertThat((TypeDescriptor) row.get("t"),
@@ -64,6 +65,7 @@ public class AnnotationIT extends AbstractPluginIT {
 						allOf(hasItem(valueDescriptor("[0]", is("a"))), hasItem(valueDescriptor("[1]", is("b")))))));
 		assertThat(values, hasItem(valueDescriptor("enumerationValue", fieldDescriptor(NON_DEFAULT))));
 		assertThat(values, hasItem(valueDescriptor("nestedAnnotationValue", hasItem(valueDescriptor("value", is("nestedClass"))))));
+        store.commitTransaction();
 	}
 
 	/**
@@ -78,7 +80,8 @@ public class AnnotationIT extends AbstractPluginIT {
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
 		// verify annotation type on method level
-		TestResult testResult = query("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
+		store.beginTransaction();
+        TestResult testResult = query("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		Map<String, Object> row = testResult.getRows().get(0);
 		assertThat(
@@ -94,6 +97,7 @@ public class AnnotationIT extends AbstractPluginIT {
 		assertThat(testResult.getRows().size(), equalTo(1));
 		List<Object> values = testResult.getColumn("value");
 		assertThat(values, hasItem(valueDescriptor("value", is("method"))));
+        store.commitTransaction();
 	}
 
 	/**
@@ -108,6 +112,7 @@ public class AnnotationIT extends AbstractPluginIT {
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
 		// verify annotation type on method parameter level
+        store.beginTransaction();
 		TestResult testResult = query("MATCH (m:METHOD)-[:HAS]->(p:PARAMETER)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		Map<String, Object> row = testResult.getRows().get(0);
@@ -124,6 +129,7 @@ public class AnnotationIT extends AbstractPluginIT {
 		assertThat(testResult.getRows().size(), equalTo(1));
 		List<Object> values = testResult.getColumn("value");
 		assertThat(values, hasItem(valueDescriptor("value", is("parameter"))));
+        store.commitTransaction();
 	}
 
 	/**
@@ -138,6 +144,7 @@ public class AnnotationIT extends AbstractPluginIT {
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
 				com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
 		// verify annotation type
+        store.beginTransaction();
 		TestResult testResult = query("MATCH (f:FIELD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN f, a, at");
 		assertThat(testResult.getRows().size(), equalTo(1));
 		Map<String, Object> row = testResult.getRows().get(0);
@@ -152,6 +159,7 @@ public class AnnotationIT extends AbstractPluginIT {
 		assertThat(testResult.getRows().size(), equalTo(1));
 		List<Object> values = testResult.getColumn("value");
 		assertThat(values, hasItem(valueDescriptor("value", is("field"))));
+        store.commitTransaction();
 	}
 
 	/**
@@ -163,6 +171,7 @@ public class AnnotationIT extends AbstractPluginIT {
 	@Test
 	public void annotationDefaultValues() throws IOException, NoSuchFieldException, NoSuchMethodException {
 		scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue.class);
+        store.beginTransaction();
 		assertThat(query("MATCH (t:TYPE:ANNOTATION) RETURN t").getColumn("t"),
 				hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue.class)));
 		assertThat(
@@ -171,5 +180,6 @@ public class AnnotationIT extends AbstractPluginIT {
 						hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Enumeration.class)),
 						hasItem(typeDescriptor(double.class)), hasItem(typeDescriptor(Integer.class)),
 						hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class))));
+        store.commitTransaction();
 	}
 }

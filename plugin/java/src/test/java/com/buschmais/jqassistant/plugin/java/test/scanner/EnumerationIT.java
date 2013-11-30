@@ -30,6 +30,7 @@ public class EnumerationIT extends AbstractPluginIT {
 	@Test
 	public void implicitDefaultConstructor() throws IOException, NoSuchMethodException, NoSuchFieldException {
 		scanClasses(EnumerationType.class);
+        store.beginTransaction();
 		assertThat(query("MATCH (e:TYPE:ENUM) RETURN e").getColumn("e"), hasItem(typeDescriptor(EnumerationType.class)));
 		assertThat(query("MATCH (e:TYPE:ENUM)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Enum.class)));
 		assertThat(query("MATCH (e:TYPE:ENUM)-[:CONTAINS]->(f:FIELD) RETURN f").getColumn("f"), CoreMatchers.allOf(
@@ -37,5 +38,6 @@ public class EnumerationIT extends AbstractPluginIT {
 				hasItem(fieldDescriptor(EnumerationType.class, "value"))));
 		assertThat(query("MATCH (e:TYPE:ENUM)-[:CONTAINS]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
 				hasItem(MethodDescriptorMatcher.constructorDescriptor(EnumerationType.class, String.class, int.class, boolean.class)));
+        store.commitTransaction();
 	}
 }
