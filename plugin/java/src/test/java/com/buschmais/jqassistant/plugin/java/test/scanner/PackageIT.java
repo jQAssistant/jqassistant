@@ -34,6 +34,7 @@ public class PackageIT extends AbstractPluginIT {
 	@Test
 	public void artifactContainsPackages() throws IOException {
 		scanClassesDirectory(Pojo.class);
+        store.beginTransaction();
 		// Assert that all packages of Pojo.class are contained in the artifact
 		List<Matcher<? super Iterable<? super PackageDescriptor>>> packageMatchers = new ArrayList<>();
 		String currentPackage = Pojo.class.getPackage().getName();
@@ -50,6 +51,7 @@ public class PackageIT extends AbstractPluginIT {
 				allOf(packageMatchers));
 		assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p")
 				.getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
+        store.commitTransaction();
 	}
 
 	/**
@@ -62,8 +64,10 @@ public class PackageIT extends AbstractPluginIT {
 	@Test
 	public void nonEmptyPackages() throws IOException {
 		scanClassesDirectory(Pojo.class);
+        store.beginTransaction();
 		TestResult query = query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->() RETURN p");
 		assertThat(query.getRows().size(), equalTo(1));
 		assertThat(query.getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
+        store.commitTransaction();
 	}
 }

@@ -31,9 +31,11 @@ public class AssignableFromIT extends AbstractPluginIT {
 	public void assignableFrom() throws IOException, AnalyzerException {
 		scanClasses(ClassType.class);
 		applyConcept("java:AssignableFrom");
+        store.beginTransaction();
 		assertThat(
 				query("MATCH (types:TYPE)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumn("assignableType"),
 				allOf(hasItem(typeDescriptor(ClassType.class)), hasItem(typeDescriptor(InterfaceType.class)),
 						hasItem(typeDescriptor(Object.class))));
+        store.commitTransaction();
 	}
 }
