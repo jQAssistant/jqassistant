@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
@@ -19,7 +20,20 @@ public class JavaRuntimePT extends AbstractPluginIT {
 	public static final Class<?>[] PRIMITIVE_TYPES = new Class<?>[] { void.class, boolean.class, short.class, int.class, float.class,
 			double.class, long.class };
 
-	/**
+
+    @Override
+    public void startStore() {
+        super.startStore();
+        store.commitTransaction();
+    }
+
+    @Override
+    public void stopStore() {
+        store.beginTransaction();
+        super.stopStore();
+    }
+
+    /**
 	 * Scans the rt.jar of the Java Runtime Environment specified by the
 	 * environment variable java.home.
 	 *
@@ -35,7 +49,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 		Iterable<Descriptor> iterable = getArtifactScanner().scanArchive(runtimeJar);
 		Iterator<Descriptor> iterator = iterable.iterator();
 		Descriptor descriptor;
-		do {
+        do {
 			int count = 0;
 			store.beginTransaction();
 			do {
@@ -45,7 +59,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 				} else {
 					descriptor = null;
 				}
-			} while (descriptor != null && count < 10);
+			} while (descriptor != null && count < 1000);
 			store.commitTransaction();
 		} while (descriptor != null);
 		// long expectedTypeCount = classScannerPlugin.getScannedClasses() +
