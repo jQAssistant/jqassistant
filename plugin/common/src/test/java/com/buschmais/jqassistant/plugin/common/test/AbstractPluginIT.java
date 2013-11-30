@@ -111,17 +111,16 @@ public class AbstractPluginIT {
 	public void startStore() {
 		store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
 		store.start(getDescriptorMappers());
-		store.reset();
-		store.beginTransaction();
-	}
+        store.reset();
+    }
+
 
 	/**
 	 * Stops the store.
 	 */
 	@After
 	public void stopStore() {
-		store.commitTransaction();
-		store.stop();
+        store.stop();
 	}
 
 	/**
@@ -156,6 +155,7 @@ public class AbstractPluginIT {
 	 *             If scanning fails.
 	 */
 	protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
+        store.beginTransaction();
 		ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
 		if (artifact == null) {
 			artifact = store.create(ArtifactDescriptor.class, artifactId);
@@ -163,6 +163,7 @@ public class AbstractPluginIT {
 		for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
 			artifact.getContains().add(descriptor);
 		}
+        store.commitTransaction();
 	}
 
 	/**
@@ -188,10 +189,12 @@ public class AbstractPluginIT {
 	 *             If scanning fails.
 	 */
 	protected void scanURLs(String artifactId, URL... urls) throws IOException {
+        store.beginTransaction();
 		ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
 		for (Descriptor descriptor : getArtifactScanner().scanURLs(urls)) {
 			artifact.getContains().add(descriptor);
 		}
+        store.commitTransaction();
 	}
 
 	/**
