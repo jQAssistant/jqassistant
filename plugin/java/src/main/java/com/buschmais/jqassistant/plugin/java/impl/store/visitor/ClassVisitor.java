@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
@@ -76,7 +77,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             methodDescriptor.setNative(Boolean.TRUE);
         }
         if (signature == null) {
-            visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(org.objectweb.asm.Type.getReturnType(desc)));
+            String returnType = visitorHelper.getType(Type.getReturnType(desc));
+            methodDescriptor.setReturns(visitorHelper.getTypeDescriptor(returnType));
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
                 ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
