@@ -84,7 +84,7 @@ public class AnalyzerImpl implements Analyzer {
 	 */
 	private void executeGroup(Group group) throws ExecutionListenerException, AnalyzerException {
 		if (!executedGroups.contains(group)) {
-			LOGGER.info("Executing group '{}'", group.getId());
+			if (LOGGER.isInfoEnabled()) LOGGER.info("Executing group '{}'", group.getId());
 			for (Group includedGroup : group.getGroups()) {
 				executeGroup(includedGroup);
 			}
@@ -130,7 +130,7 @@ public class AnalyzerImpl implements Analyzer {
 			for (Concept requiredConcept : constraint.getRequiredConcepts()) {
 				applyConcept(requiredConcept);
 			}
-			LOGGER.info("Validating constraint '{}'.", constraint.getId());
+			if (LOGGER.isInfoEnabled()) LOGGER.info("Validating constraint '{}'.", constraint.getId());
 			try {
 				store.beginTransaction();
 				reportWriter.beginConstraint(constraint);
@@ -176,7 +176,7 @@ public class AnalyzerImpl implements Analyzer {
 			for (Concept requiredConcept : concept.getRequiredConcepts()) {
 				applyConcept(requiredConcept);
 			}
-			LOGGER.info("Applying concept '{}'.", concept.getId());
+			if (LOGGER.isInfoEnabled()) LOGGER.info("Applying concept '{}'.", concept.getId());
 			reportWriter.beginConcept(concept);
 			try {
 				store.beginTransaction();
@@ -233,7 +233,7 @@ public class AnalyzerImpl implements Analyzer {
 	private com.buschmais.cdo.api.Query.Result<CompositeRowObject> executeQuery(Query query) {
 		String cypher = query.getCypher();
 		Map<String, Object> parameters = query.getParameters();
-		LOGGER.debug("Executing query '{}' with parameters [{}]", cypher, parameters);
+		if (LOGGER.isDebugEnabled()) LOGGER.debug("Executing query '{}' with parameters [{}]", cypher, parameters);
 		return store.executeQuery(cypher, parameters);
 	}
 }
