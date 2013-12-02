@@ -82,7 +82,7 @@
         <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
         <cypher><![CDATA[
             MATCH
-            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|THROWS]->(t2:TYPE)
+            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|RETURNS|THROWS]->(t2:TYPE)
 			WHERE
 				t1<>t2
 				AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)

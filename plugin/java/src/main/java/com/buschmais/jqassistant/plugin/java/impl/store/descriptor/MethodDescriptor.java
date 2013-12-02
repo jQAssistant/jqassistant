@@ -17,6 +17,16 @@ public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, 
 	@Relation("HAS")
 	public Set<ParameterDescriptor> getParameters();
 
+    @Relation("RETURNS")
+    public TypeDescriptor getReturns();
+
+    public void setReturns(TypeDescriptor returns);
+
+    @Relation("HAS_DEFAULT")
+    public ValueDescriptor getHasDefault();
+
+    public void setHasDefault(ValueDescriptor hasDefault);
+
 	@Relation("THROWS")
 	public Set<TypeDescriptor> getDeclaredThrowables();
 

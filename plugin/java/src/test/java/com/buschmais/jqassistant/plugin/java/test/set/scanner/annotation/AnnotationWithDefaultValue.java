@@ -9,14 +9,9 @@ public @interface AnnotationWithDefaultValue {
 
 	Enumeration enumerationValue() default Enumeration.DEFAULT;
 
-	double primitiveValueValue() default 0;
+	double primitiveValue() default 0;
 
-	Class[] arrayValue() default { Integer.class };
+	Class[] arrayValue() default { Integer.class, Double.class };
 
-	NestedAnnotation annotationValue() default @NestedAnnotation("test"); // creates
-																			// an
-																			// implict
-																			// dependency
-																			// to
-																			// java.lang.String
+	NestedAnnotation annotationValue() default @NestedAnnotation("test");
 }
