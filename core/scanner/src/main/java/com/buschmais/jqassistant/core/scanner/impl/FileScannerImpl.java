@@ -53,7 +53,7 @@ public class FileScannerImpl implements FileScanner {
 								String name = getName(element);
 								boolean isDirectory = isDirectory(element);
 								if (plugin.matches(name, isDirectory)) {
-									LOGGER.info("Scanning '{}'", name);
+									if (LOGGER.isInfoEnabled()) LOGGER.info("Scanning '{}'", name);
                                     next = doScan(element, plugin, name, isDirectory);
                                 }
 							}
@@ -125,7 +125,7 @@ public class FileScannerImpl implements FileScanner {
 		if (!archive.exists()) {
 			throw new IOException("Archive '" + archive.getAbsolutePath() + "' not found.");
 		}
-		LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
+		if (LOGGER.isInfoEnabled()) LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
 		final ZipFile zipFile = new ZipFile(archive);
 		final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
 		return new AbstractIterable<ZipEntry>() {
@@ -181,7 +181,7 @@ public class FileScannerImpl implements FileScanner {
 				super.walk(directory, files);
 			}
 		}.scan(directory);
-		LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
+		if (LOGGER.isInfoEnabled()) LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
 		final URI directoryURI = directory.toURI();
 		final Iterator<File> iterator = files.iterator();
 		return new AbstractIterable<File>() {

@@ -46,7 +46,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 				} else {
 					descriptor = null;
 				}
-			} while (descriptor != null && count < 1000);
+			} while (descriptor != null && count < 50);
 			store.commitTransaction();
 		} while (descriptor != null);
 		// long expectedTypeCount = classScannerPlugin.getScannedClasses() +

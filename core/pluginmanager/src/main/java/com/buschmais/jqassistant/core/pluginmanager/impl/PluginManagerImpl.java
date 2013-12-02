@@ -84,7 +84,7 @@ public class PluginManagerImpl implements PluginManager {
                         if (url != null) {
                             try {
                                 systemId = url.toURI().toString();
-                                LOGGER.debug("Adding rulesType from " + url.toString());
+                                if (LOGGER.isDebugEnabled()) LOGGER.debug("Adding rulesType from " + url.toString());
                                 InputStream ruleStream = url.openStream();
                                 sources.add(new StreamSource(ruleStream, systemId));
                             } catch (IOException e) {
@@ -148,7 +148,7 @@ public class PluginManagerImpl implements PluginManager {
             this.plugins = new ArrayList<>();
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                LOGGER.info("Reading plugin descriptor from URL '{}'.", url);
+                if (LOGGER.isInfoEnabled()) LOGGER.info("Reading plugin descriptor from URL '{}'.", url);
                 this.plugins.add(readPlugin(url));
             }
         }
