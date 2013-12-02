@@ -3,15 +3,22 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 public class JavaRuntimePT extends AbstractPluginIT {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(JavaRuntimePT.class);
 
 	/**
 	 * The list of primitive types.
@@ -51,6 +58,17 @@ public class JavaRuntimePT extends AbstractPluginIT {
 		applyConcept("metric:Top10FieldsPerType");
 		applyConcept("metric:Top10TypeFanIn");
 		applyConcept("metric:Top10TypeFanOut");
+		for (Result<Concept> conceptResult : reportWriter.getConceptResults()) {
+			LOGGER.info(conceptResult.getExecutable().getId());
+			for (Map<String, Object> row : conceptResult.getRows()) {
+				StringBuffer sb = new StringBuffer("\t");
+				for (Object value : row.values()) {
+					sb.append(value);
+					sb.append("\t");
+				}
+				LOGGER.info(sb.toString());
+			}
+		}
 	}
 
 }
