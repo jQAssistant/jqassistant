@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 /**
  * A matcher for {@link Result}s.
  */
-public class ResultMatcher extends TypeSafeMatcher<Result> {
+public class ResultMatcher<E extends AbstractExecutable> extends TypeSafeMatcher<Result<E>> {
 
 	private Matcher<? extends AbstractExecutable> executableMatcher;
 
@@ -43,7 +43,7 @@ public class ResultMatcher extends TypeSafeMatcher<Result> {
 	 *            The matcher for the expected constraint.
 	 * @return The {@link ResultMatcher}.
 	 */
-	public static Matcher<Result> result(Matcher<? extends AbstractExecutable> constraintMatcher) {
+	public static <E extends AbstractExecutable> Matcher<? super Result<E>> result(Matcher<E> constraintMatcher) {
 		return new ResultMatcher(constraintMatcher);
 	}
 
