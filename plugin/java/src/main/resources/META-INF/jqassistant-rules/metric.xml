@@ -28,7 +28,7 @@
 	    ]]></cypher>
     </concept>
 
-    <concept id="metric:Top10FanOutTypes">
+    <concept id="metric:Top10TypeFanOut">
         <requiresConcept refId="dependency:Type"/>
         <description>Returns the top 10 types regarding to the other types they depend on.</description>
         <cypher><![CDATA[
@@ -42,7 +42,7 @@
 	    ]]></cypher>
     </concept>
 
-    <concept id="metric:Top10FanInTypes">
+    <concept id="metric:Top10TypeFanIn">
         <requiresConcept refId="dependency:Type"/>
         <description>Returns the top 10 types regarding to the other types which are dependent on them.</description>
         <cypher><![CDATA[

@@ -27,6 +27,7 @@
             <resource>dependency.xml</resource>
             <resource>java.xml</resource>
             <resource>package.xml</resource>
+            <resource>metric.xml</resource>
         </resources>
     </rules>
 </jqa-plugin:jqassistant-plugin>
