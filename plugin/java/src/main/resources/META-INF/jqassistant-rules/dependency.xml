@@ -37,7 +37,8 @@
     </concept>
 
     <concept id="dependency:MethodInvocation">
-        <description>Creates a DEPENDS_ON relationship between a method and the parameter types of all methods it invokes.</description>
+        <requiresConcept refId="dependency:MethodParameter"/>
+        <description>Creates a DEPENDS_ON relationship between a method and the dependencies of the method signature it invokes.</description>
         <cypher><![CDATA[
             MATCH
             	(m:METHOD)-[:INVOKES]->(target:METHOD),
@@ -50,13 +51,19 @@
             	(target)-[:HAS]->(:PARAMETER)-[:DEPENDS_ON]->(pt)
 			CREATE UNIQUE
 				(m)-[:DEPENDS_ON]->(pt)
+	        WITH
+			    m, target
+			MATCH
+            	(target)-[:RETURNS]->(rt)
+			CREATE UNIQUE
+				(m)-[:DEPENDS_ON]->(rt)
 			RETURN
 				COUNT(DISTINCT m) as methodInvocation
 	    ]]></cypher>
     </concept>
 
     <concept id="dependency:FieldAccess">
-        <description>Creates a DEPENDS_ON relationship between a method and the all fields types and their containing types it reads and writes.</description>
+        <description>Creates a DEPENDS_ON relationship between a method and all fields types it reads and writes.</description>
         <cypher><![CDATA[
             MATCH
             	(m:METHOD)-[:READS|WRITES]->(target:FIELD),
@@ -66,7 +73,7 @@
 		    WITH
 		        m, target
 		    MATCH
-              	(target)-[:DEPENDS_ON]->(ft)
+              	(target)-[:OF_TYPE|DEPENDS_ON]->(ft)
 			CREATE UNIQUE
 				(m)-[:DEPENDS_ON]->(ft)
 			RETURN
@@ -82,7 +89,7 @@
         <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
         <cypher><![CDATA[
             MATCH
-            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:DEPENDS_ON|RETURNS|THROWS]->(t2:TYPE)
+            	(t1:TYPE)-[:CONTAINS*0..1]->(fieldOrMethod)-[:OF_TYPE|RETURNS|DEPENDS_ON|THROWS]->(t2:TYPE)
 			WHERE
 				t1<>t2
 				AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)
@@ -98,7 +105,7 @@
         <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.</description>
         <cypher><![CDATA[
             MATCH
-            	(t1:TYPE)-[:DEPENDS_ON|EXTENDS|IMPLEMENTS]->(t2:TYPE)
+            	(t1:TYPE)-[:EXTENDS|IMPLEMENTS]->(t2:TYPE)
 			WHERE
 				t1<>t2
 			CREATE UNIQUE

@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.plugin.java.test.set.scanner.generics;
 
-public class GenericMethod {
+import java.util.List;
+
+public class GenericMembers {
+
+	private List<Integer> integerList;
 
 	<X extends Number> X get(X value) {
 		return null;
