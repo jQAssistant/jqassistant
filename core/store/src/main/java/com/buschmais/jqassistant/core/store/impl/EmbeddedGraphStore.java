@@ -39,16 +39,16 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         return (GraphDatabaseAPI) cdoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
-    @Override
-    protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
-        File database = new File(databaseDirectory);
-        try {
-            return new EmbeddedNeo4jCdoManagerFactoryImpl(new CdoUnit(null, null, database.toURI().toURL(), null, new HashSet<>(types),
-                    CdoUnit.ValidationMode.NONE, CdoUnit.TransactionAttribute.MANDATORY, new Properties()));
-        } catch (MalformedURLException e) {
-            throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
-        }
-    }
+	@Override
+	protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
+		File database = new File(databaseDirectory);
+		try {
+			return new EmbeddedNeo4jCdoManagerFactoryImpl(new CdoUnit(null, null, database.toURI().toURL(), null, new HashSet<>(types),
+					CdoUnit.ValidationMode.NONE, CdoUnit.TransactionAttribute.MANDATORY, new Properties()));
+		} catch (MalformedURLException e) {
+			throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
+		}
+	}
 
     @Override
     protected void closeCdoManagerFactory(CdoManagerFactory cdoManagerFactory) {

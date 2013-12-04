@@ -7,7 +7,7 @@ import com.buschmais.cdo.neo4j.api.annotation.Property;
  * Describes a parameter of a method.
  */
 @Label(value = "PARAMETER")
-public interface ParameterDescriptor extends DependentDescriptor, AnnotatedDescriptor {
+public interface ParameterDescriptor extends TypedDescriptor, DependentDescriptor, AnnotatedDescriptor {
 
 	@Property("INDEX")
 	public int getIndex();

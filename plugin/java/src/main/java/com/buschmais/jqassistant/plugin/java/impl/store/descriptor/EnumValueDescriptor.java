@@ -5,12 +5,12 @@ import com.buschmais.cdo.neo4j.api.annotation.Relation;
 /**
  * Represents an enumeration value.
  */
-public interface EnumValueDescriptor extends TypedValueDescriptor<FieldDescriptor>, EnumDescriptor {
+public interface EnumValueDescriptor extends TypedDescriptor, ValueDescriptor<FieldDescriptor>, EnumDescriptor {
 
-    @Relation("HAS")
-    @Override
-    FieldDescriptor getValue();
+	@Relation("HAS")
+	@Override
+	FieldDescriptor getValue();
 
-    @Override
-    void setValue(FieldDescriptor fieldDescriptor);
+	@Override
+	void setValue(FieldDescriptor fieldDescriptor);
 }
