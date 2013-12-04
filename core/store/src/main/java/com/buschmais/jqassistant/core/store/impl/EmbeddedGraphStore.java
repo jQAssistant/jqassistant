@@ -20,40 +20,39 @@ import com.buschmais.jqassistant.core.store.api.Store;
  */
 public class EmbeddedGraphStore extends AbstractGraphStore {
 
-	/**
-	 * The directory of the database.
-	 */
-	private final String databaseDirectory;
+    /**
+     * The directory of the database.
+     */
+    private final String databaseDirectory;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param databaseDirectory
-	 *            The directory of the database.
-	 */
-	public EmbeddedGraphStore(String databaseDirectory) {
-		this.databaseDirectory = databaseDirectory;
-	}
+    /**
+     * Constructor.
+     *
+     * @param databaseDirectory The directory of the database.
+     */
+    public EmbeddedGraphStore(String databaseDirectory) {
+        this.databaseDirectory = databaseDirectory;
+    }
 
-	@Override
-	protected GraphDatabaseAPI getDatabaseAPI(CdoManager cdoManager) {
-		return (GraphDatabaseAPI) cdoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
-	}
+    @Override
+    protected GraphDatabaseAPI getDatabaseAPI(CdoManager cdoManager) {
+        return (GraphDatabaseAPI) cdoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
+    }
 
-	@Override
-	protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
-		File database = new File(databaseDirectory);
-		try {
-			return new EmbeddedNeo4jCdoManagerFactoryImpl(new CdoUnit(null, null, database.toURI().toURL(), null, new HashSet<>(types),
-					CdoUnit.ValidationMode.NONE, new Properties()));
-		} catch (MalformedURLException e) {
-			throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
-		}
-	}
+    @Override
+    protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
+        File database = new File(databaseDirectory);
+        try {
+            return new EmbeddedNeo4jCdoManagerFactoryImpl(new CdoUnit(null, null, database.toURI().toURL(), null, new HashSet<>(types),
+                    CdoUnit.ValidationMode.NONE, CdoUnit.TransactionAttribute.MANDATORY, new Properties()));
+        } catch (MalformedURLException e) {
+            throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
+        }
+    }
 
-	@Override
-	protected void closeCdoManagerFactory(CdoManagerFactory cdoManagerFactory) {
-		cdoManagerFactory.close();
-	}
+    @Override
+    protected void closeCdoManagerFactory(CdoManagerFactory cdoManagerFactory) {
+        cdoManagerFactory.close();
+    }
 
 }

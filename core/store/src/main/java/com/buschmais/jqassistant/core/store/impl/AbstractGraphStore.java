@@ -116,17 +116,17 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
 	public void beginTransaction() {
-		cdoManager.begin();
+		cdoManager.currentTransaction().begin();
 	}
 
 	@Override
 	public void commitTransaction() {
-		cdoManager.commit();
+		cdoManager.currentTransaction().commit();
 	}
 
 	@Override
 	public void rollbackTransaction() {
-		cdoManager.rollback();
+		cdoManager.currentTransaction().rollback();
 	}
 
 	public GraphDatabaseAPI getDatabaseService() {
