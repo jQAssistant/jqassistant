@@ -2,12 +2,14 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -100,6 +102,13 @@ public class GenericsIT extends AbstractPluginIT {
 		assertThat(result.getColumn("f"), hasItem(fieldDescriptor(GenericMembers.class, "integerList")));
 		assertThat(result.getColumn("gt"), hasItem(typeDescriptor(List.class)));
 		assertThat(result.getColumn("tv"), hasItem(typeDescriptor(Integer.class)));
+		result = query("MATCH (gm:TYPE)-[:CONTAINS]->(m:METHOD), (m)-[:RETURNS]->(rt), (m)-[:DEPENDS_ON]->(rtv) RETURN m, rt , rtv");
+		assertThat(result.getColumn("m"), hasItem(methodDescriptor(GenericMembers.class, "get", List.class)));
+		assertThat(result.getColumn("rt"), hasItem(typeDescriptor(Set.class)));
+		assertThat(result.getColumn("rtv"), hasItem(typeDescriptor(Number.class)));
+		result = query("MATCH (gm:TYPE)-[:CONTAINS]->(m:METHOD), (m)-[:HAS]->(p), (p)-[:OF_TYPE]->(pt) ,(p)-[:DEPENDS_ON]->(ptv) RETURN pt , ptv");
+		assertThat(result.getColumn("pt"), hasItem(typeDescriptor(List.class)));
+		assertThat(result.getColumn("ptv"), hasItem(typeDescriptor(Double.class)));
 		store.commitTransaction();
 	}
 }

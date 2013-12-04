@@ -28,7 +28,7 @@
         <description>Creates a DEPENDS_ON relationship between a method and the types of its parameters.</description>
         <cypher><![CDATA[
             MATCH
-            	(m:METHOD)-[:HAS]->(p:PARAMETER)-[:DEPENDS_ON]->(t:TYPE)
+            	(m:METHOD)-[:HAS]->(p:PARAMETER)-[:OF_TYPE|DEPENDS_ON]->(t:TYPE)
 			CREATE UNIQUE
 				(m)-[:DEPENDS_ON]->(t)
 			RETURN
