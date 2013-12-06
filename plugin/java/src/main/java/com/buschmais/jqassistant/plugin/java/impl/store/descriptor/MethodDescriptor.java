@@ -1,20 +1,20 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import java.util.Set;
-
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
+import java.util.Set;
+
 /**
  * Describes a method of a Java class.
  */
 @Label(value = "METHOD")
-public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor,
-		AccessModifierDescriptor {
+public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor,
+        AccessModifierDescriptor, AbstractDescriptor {
 
-	@Relation("HAS")
+    @Relation("HAS")
 	public Set<ParameterDescriptor> getParameters();
 
     @Relation("RETURNS")
@@ -38,11 +38,6 @@ public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, 
 
 	@Relation("INVOKES")
 	public Set<MethodDescriptor> getInvokes();
-
-	@Property("ABSTRACT")
-	public Boolean isAbstract();
-
-	void setAbstract(Boolean isAbstract);
 
 	@Property("NATIVE")
 	public Boolean isNative();

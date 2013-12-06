@@ -1,5 +1,18 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import static com.buschmais.jqassistant.plugin.java.test.matcher.AnnotationValueDescriptorMatcher.annotationValueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -10,20 +23,6 @@ import static com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
 /**
  * Contains test which verify correct scanning of annotations and annotated
@@ -172,19 +171,19 @@ public class AnnotationIT extends AbstractPluginIT {
         assertThat(query("MATCH (t:TYPE:ANNOTATION) RETURN t").getColumn("t"),
                 hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue.class)));
         assertThat(
-                query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='classValue' RETURN v").getColumn("v"),
+                query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='classValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, typeDescriptor(Number.class))));
         assertThat(
-                query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='enumerationValue' RETURN v").getColumn("v"),
+                query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='enumerationValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, fieldDescriptor(DEFAULT))));
         assertThat(
-                query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='primitiveValue' RETURN v").getColumn("v"),
+                query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='primitiveValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, is(0d))));
         assertThat(
-                query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='arrayValue' RETURN v").getColumn("v"),
+                query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='arrayValue' RETURN v").getColumn("v"),
                 hasItem(valueDescriptor(null, hasItem(valueDescriptor("[0]", typeDescriptor(Integer.class))))));
         assertThat(
-                query("MATCH (t:TYPE:ANNOTATION)-[:CONTAINS]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='annotationValue' RETURN v").getColumn("v"),
+                query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='annotationValue' RETURN v").getColumn("v"),
                 hasItem(annotationValueDescriptor(NestedAnnotation.class, hasItem(valueDescriptor("value", is("test"))))));
         store.commitTransaction();
     }

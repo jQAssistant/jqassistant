@@ -5,7 +5,7 @@
         <description>Returns the top 10 types regarding to the number of declared methods (including constructors).</description>
         <cypher><![CDATA[
             MATCH
-            	(t:TYPE)-[:CONTAINS]->(m:METHOD)
+            	(t:TYPE)-[:DECLARES]->(m:METHOD)
 			RETURN
 				t.FQN as Type, COUNT(m) as MethodCount
 		    ORDER BY
@@ -19,7 +19,7 @@
         <description>Returns the top 10 types regarding to the number of declared fields.</description>
         <cypher><![CDATA[
             MATCH
-            	(t:TYPE)-[:CONTAINS]->(f:FIELD)
+            	(t:TYPE)-[:DECLARES]->(f:FIELD)
 			RETURN
 				t.FQN as Type, COUNT(f) as FieldCount
 		    ORDER BY
