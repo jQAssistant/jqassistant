@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.plugin.common.impl.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.jqassistant.core.store.api.descriptor.ContainingDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
 
 /**
  * Describes an artifact.
@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
  * @author Herklotz
  */
 @Label(value = "ARTIFACT", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface ArtifactDescriptor extends ParentDescriptor, NamedDescriptor {
+public interface ArtifactDescriptor extends ContainingDescriptor, NamedDescriptor, FullQualifiedNameDescriptor {
 
     /**
      * @return the group

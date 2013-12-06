@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.resolver;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.ParentDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.SignatureDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageMemberDescriptor;
 
 /**
  * Abstract resolver providing functionality to resolve a descriptor hierarchy
@@ -16,14 +15,14 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.SignatureDesc
  * @param <P> The type of the parent descriptor.
  * @param <T> The type of the descriptor to be resolved.
  */
-public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & SignatureDescriptor, T extends FullQualifiedNameDescriptor & SignatureDescriptor> {
+public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageDescriptor, T extends PackageMemberDescriptor> {
 
     public static final String EMPTY_NAME = "";
     private final Store store;
     /**
      * The parent resovler.
      */
-    private final AbstractDescriptorResolver<?, P> parentResolver;
+    private final AbstractPackageMemberDescriptorResolver<?, P> parentResolver;
 
     /**
      * Constructor.
@@ -31,7 +30,7 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & Si
      * @param store          The store.
      * @param parentResolver The parent resolver instance.
      */
-    protected AbstractDescriptorResolver(Store store, AbstractDescriptorResolver<?, P> parentResolver) {
+    protected AbstractPackageMemberDescriptorResolver(Store store, AbstractPackageMemberDescriptorResolver<?, P> parentResolver) {
         this.store = store;
         this.parentResolver = parentResolver;
     }
@@ -42,9 +41,9 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & Si
      * @param store The store.
      */
     @SuppressWarnings("unchecked")
-    protected AbstractDescriptorResolver(Store store) {
+    protected AbstractPackageMemberDescriptorResolver(Store store) {
         this.store = store;
-        this.parentResolver = (AbstractDescriptorResolver<?, P>) this;
+        this.parentResolver = (AbstractPackageMemberDescriptorResolver<?, P>) this;
     }
 
     /**
@@ -89,23 +88,23 @@ public abstract class AbstractDescriptorResolver<P extends ParentDescriptor & Si
             }
         } else {
             P parent = null;
-            String signature;
+            String name;
             if (!EMPTY_NAME.equals(fullQualifiedName)) {
                 int separatorIndex = fullQualifiedName.lastIndexOf(getSeparator());
                 String parentName;
                 if (separatorIndex != -1) {
-                    signature = fullQualifiedName.substring(separatorIndex + 1, fullQualifiedName.length());
+                    name = fullQualifiedName.substring(separatorIndex + 1, fullQualifiedName.length());
                     parentName = fullQualifiedName.substring(0, separatorIndex);
                 } else {
-                    signature = fullQualifiedName;
+                    name = fullQualifiedName;
                     parentName = EMPTY_NAME;
                 }
                 parent = parentResolver.resolve(parentName);
             } else {
-                signature = EMPTY_NAME;
+                name = EMPTY_NAME;
             }
             descriptor = store.create(concreteType, fullQualifiedName);
-            descriptor.setSignature(signature);
+            descriptor.setName(name);
             if (parent != null) {
                 parent.getContains().add(descriptor);
             }

@@ -28,7 +28,7 @@
         <requiresConcept refId="abstractness:ImplementationClasses"/>
         <description>API classes must not have dependencies to implementation classes.</description>
         <cypher><![CDATA[
-            MATCH p=shortestPath((a:TYPE)-[:CONTAINS|DEPENDS_ON*]->(i:TYPE))
+            MATCH p=shortestPath((a:TYPE)-[:DECLARES|DEPENDS_ON*]->(i:TYPE))
             WHERE a:API AND i:IMPL
             RETURN extract(t in nodes(p) | t.FQN) as Path
             ORDER BY length(p) DESC

@@ -5,11 +5,9 @@ import com.buschmais.cdo.neo4j.api.annotation.Relation;
 import java.util.Set;
 
 /**
- * Abstract base implementation of an
- * {@link FullQualifiedNameDescriptor} which contains other
- * {@link Descriptor}s.
+ * Abstract base implementation of a {@link Descriptor} which contains other {@link Descriptor}s.
  */
-public interface ParentDescriptor extends FullQualifiedNameDescriptor {
+public interface ContainingDescriptor extends Descriptor {
 
     /**
      * Return the contained descriptors.
