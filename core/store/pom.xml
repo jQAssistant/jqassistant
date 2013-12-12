@@ -30,8 +30,13 @@
             <artifactId>cdo.neo4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
+            <groupId>org.neo4j.app</groupId>
+            <artifactId>neo4j-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j.app</groupId>
+            <artifactId>neo4j-server</artifactId>
+            <classifier>static-web</classifier>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
