@@ -43,8 +43,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
         try {
-            return Cdo.createCdoManagerFactory(database.toURI().toURL(), Neo4jCdoProvider.class, types.toArray(new Class<?>[0]),
-                    ValidationMode.NONE, TransactionAttribute.MANDATORY, new Properties());
+            return Cdo.createCdoManagerFactory(database.toURI().toURL(), Neo4jCdoProvider.class, types.toArray(new Class<?>[0]));
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
         }
