@@ -87,9 +87,15 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public <QL> Result<CompositeRowObject> executeQuery(QL query, Map<String, Object> parameters) {
+    public Result<CompositeRowObject> executeQuery(String query, Map<String, Object> parameters) {
         return cdoManager.createQuery(query).withParameters(parameters).execute();
     }
+
+    @Override
+    public Result<CompositeRowObject> executeQuery(Class<?> query, Map<String, Object> parameters) {
+        return cdoManager.createQuery(query).withParameters(parameters).execute();
+    }
+
 
     @Override
     public void reset() {
