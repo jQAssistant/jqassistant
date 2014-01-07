@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.core.store.impl;
 
 import com.buschmais.cdo.api.CdoManager;
 import com.buschmais.cdo.api.CdoManagerFactory;
+import com.buschmais.cdo.api.TransactionAttribute;
+import com.buschmais.cdo.api.ValidationMode;
 import com.buschmais.cdo.api.bootstrap.Cdo;
 import com.buschmais.cdo.neo4j.api.Neo4jCdoProvider;
 import com.buschmais.cdo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
@@ -41,8 +43,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
         try {
-            return Cdo.createCdoManagerFactory(database.toURI().toURL(), Neo4jCdoProvider.class, types.toArray(new Class<?>[0]),
-                    CdoManagerFactory.ValidationMode.NONE, CdoManagerFactory.TransactionAttribute.MANDATORY, new Properties());
+            return Cdo.createCdoManagerFactory(database.toURI().toURL(), Neo4jCdoProvider.class, types.toArray(new Class<?>[0]));
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("Cannot create CdoManagerFactory.", e);
         }
