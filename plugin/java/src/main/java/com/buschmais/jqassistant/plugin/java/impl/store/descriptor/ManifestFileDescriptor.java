@@ -8,7 +8,7 @@ import java.util.List;
 
 import static com.buschmais.cdo.neo4j.api.annotation.Relation.Outgoing;
 
-@Label("MANIFEST")
+@Label("MANIFESTFILE")
 public interface ManifestFileDescriptor extends Descriptor {
 
     @Relation("DECLARES")
