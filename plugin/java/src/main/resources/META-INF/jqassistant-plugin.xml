@@ -16,11 +16,15 @@
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumValueDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyFileDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestFileDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestSectionDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestEntryDescriptor</type>
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ManifestFileScannerPlugin</plugin>
     </scanner>
     <rules>
         <resources>
