@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
-import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
 
 import java.util.Set;
 
@@ -15,7 +15,7 @@ public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescrip
         AccessModifierDescriptor, AbstractDescriptor {
 
     @Relation("HAS")
-	public Set<ParameterDescriptor> getParameters();
+    public Set<ParameterDescriptor> getParameters();
 
     @Relation("RETURNS")
     public TypeDescriptor getReturns();
@@ -27,20 +27,20 @@ public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescrip
 
     public void setHasDefault(ValueDescriptor hasDefault);
 
-	@Relation("THROWS")
-	public Set<TypeDescriptor> getDeclaredThrowables();
+    @Relation("THROWS")
+    public Set<TypeDescriptor> getDeclaredThrowables();
 
-	@Relation("READS")
-	public Set<FieldDescriptor> getReads();
+    @Relation("READS")
+    public Set<FieldDescriptor> getReads();
 
-	@Relation("WRITES")
-	public Set<FieldDescriptor> getWrites();
+    @Relation("WRITES")
+    public Set<FieldDescriptor> getWrites();
 
-	@Relation("INVOKES")
-	public Set<MethodDescriptor> getInvokes();
+    @Relation("INVOKES")
+    public Set<MethodDescriptor> getInvokes();
 
-	@Property("NATIVE")
-	public Boolean isNative();
+    @Property("NATIVE")
+    public Boolean isNative();
 
-	public void setNative(Boolean nativeMethod);
+    public void setNative(Boolean nativeMethod);
 }

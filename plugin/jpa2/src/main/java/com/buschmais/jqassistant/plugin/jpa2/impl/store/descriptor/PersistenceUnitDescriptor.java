@@ -4,7 +4,7 @@ import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 

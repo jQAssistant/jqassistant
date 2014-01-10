@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Label;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
 
 /**
  * Interface for value descriptors.
@@ -9,21 +9,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
  * @param <V> The value type.
  */
 @Label("VALUE")
-public interface ValueDescriptor<V> extends Descriptor {
-
-    /**
-     * Set the name.
-     *
-     * @return The name.
-     */
-    String getName();
-
-    /**
-     * Return the name.
-     *
-     * @param name The name.
-     */
-    void setName(String name);
+public interface ValueDescriptor<V> extends NamedDescriptor {
 
     /**
      * Set the value.

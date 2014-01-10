@@ -1,0 +1,64 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="osgi-bundle:Bundle">
+        <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
+        <cypher><![CDATA[
+            MATCH
+              (bundle:ARTIFACT)-[:CONTAINS]->(manifest:MANIFEST:FILE),
+              (manifest)-[DECLARES]->(section:MANIFESTSECTION),
+              (section)-[:HAS]->(entry:MANIFESTENTRY)
+            WHERE
+              entry.NAME = "Bundle-SymbolicName"
+            SET
+              bundle:OSGI:BUNDLE,
+              bundle.BUNDLESYMBOLICNAME = entry.VALUE
+            RETURN
+              bundle.NAME, entry.VALUE
+        ]]></cypher>
+    </concept>
+
+    <concept id="osgi-bundle:ExportPackage">
+        <requiresConcept refId="osgi-bundle:Bundle"/>
+        <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
+        <cypher><![CDATA[
+            match
+             (bundle:OSGI:BUNDLE)-[:CONTAINS]->(package:PACKAGE)
+            with
+              bundle, package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
+            match
+              (bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
+              (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
+              (section)-[:HAS]->(entry:MANIFESTENTRY)
+            where
+              entry.NAME = "Export-Package"
+              AND entry.VALUE =~ pattern
+            create unique
+              (bundle)-[:EXPORTS]->(package)
+            return
+              bundle as Bundle, collect(package) as ExportedPackages
+        ]]></cypher>
+    </concept>
+
+    <concept id="osgi-bundle:ImportPackage">
+        <requiresConcept refId="osgi-bundle:Bundle"/>
+        <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
+        <cypher><![CDATA[
+            match
+             (bundle:OSGI:BUNDLE)-[:CONTAINS]->(package:PACKAGE)
+            with
+              bundle, package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
+            match
+              (bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
+              (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
+              (section)-[:HAS]->(entry:MANIFESTENTRY)
+            where
+              entry.NAME = "Import-Package"
+              AND entry.VALUE =~ pattern
+            create unique
+              (bundle)-[:IMPORTS]->(package)
+            return
+              bundle as Bundle, collect(package) as ImportedPackages
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>

@@ -39,7 +39,12 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.buschmais.jqassistant.core</groupId>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.osgi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.report</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
@@ -79,6 +84,7 @@
         <module>javaee6</module>
         <module>junit4</module>
         <module>maven3</module>
+        <module>osgi</module>
     </modules>
 
 </project>
