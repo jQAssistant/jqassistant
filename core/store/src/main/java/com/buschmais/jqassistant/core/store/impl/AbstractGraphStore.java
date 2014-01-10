@@ -43,6 +43,10 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void stop() {
         if (cdoManager != null) {
+            if (cdoManager.currentTransaction().isActive()) {
+                LOGGER.warn("Rolling back an active transaction.");
+                cdoManager.currentTransaction().rollback();
+            }
             cdoManager.close();
         }
         if (cdoManagerFactory != null) {
@@ -135,7 +139,12 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     public GraphDatabaseAPI getDatabaseService() {
-        return getDatabaseAPI(cdoManager);
+        beginTransaction();
+        try {
+            return getDatabaseAPI(cdoManager);
+        } finally {
+            commitTransaction();
+        }
     }
 
     protected abstract GraphDatabaseAPI getDatabaseAPI(CdoManager cdoManager);
