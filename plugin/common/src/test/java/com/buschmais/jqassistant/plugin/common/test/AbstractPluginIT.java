@@ -39,7 +39,7 @@ import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
  */
 public class AbstractPluginIT {
 
-    public static final String ARTIFACT_ID = "test";
+    public static final String ARTIFACT_ID = "artifact";
 
     /**
      * Represents a test result which allows fetching values by row or columns.
@@ -196,7 +196,7 @@ public class AbstractPluginIT {
         Assert.assertTrue("Expected a directory.", directory.isDirectory());
         // Scan.
         store.beginTransaction();
-        ArtifactDescriptor artifact = store.create(ArtifactDescriptor.class, "artifact");
+        ArtifactDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
         for (Descriptor descriptor : getArtifactScanner().scanDirectory(directory)) {
             artifact.getContains().add(descriptor);
         }
