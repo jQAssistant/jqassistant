@@ -61,4 +61,33 @@
         ]]></cypher>
     </concept>
 
+    <concept
+        id="osgi-bundle:PublicClassesWithUninvokedMethodsInUnexportedPackages">
+        <requiresConcept refId="osgi-bundle:ExportPackage" />
+        <requiresConcept refId="junit4:TestClassOrMethod" />
+        <description><![CDATA[Finds packages with not exported public classes.]]></description>
+        <cypher><![CDATA[
+            MATCH 
+              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(package:PACKAGE)-[:CONTAINS]->(class:PUBLIC:CLASS)-[:DECLARES]->(method:METHOD)
+            WHERE 
+              NOT (bundle)-[:EXPORTS]->(package)
+              AND NOT (class:TEST)
+              AND NOT ()-[:INVOKES]->(method)
+            SET
+              class:UNUSED
+            RETURN
+              class
+        ]]></cypher>
+    </concept>
+
+    <constraint id="osgi-bundle:UnexportedAndUnusedPublicClasses">
+        <requiresConcept
+            refId="osgi-bundle:PublicClassesWithUninvokedMethodsInUnexportedPackages" />
+        <description><![CDATA[Searches for public classes which are not exported by OSGI convention.]]></description>
+        <cypher><![CDATA[
+            MATCH (c:TYPE:CLASS:UNUSED)
+            RETURN c
+        ]]></cypher>
+    </constraint>
+    
 </jqa:jqassistant-rules>
