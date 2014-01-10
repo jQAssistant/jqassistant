@@ -26,10 +26,11 @@ public class ManifestFileScannerPlugin implements FileScannerPlugin<ManifestFile
         return !isDirectory && file.endsWith("META-INF/MANIFEST.MF");
     }
 
-	@Override
-	public ManifestFileDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
+    @Override
+    public ManifestFileDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
         Manifest manifest = new Manifest(streamSource.getInputStream());
         ManifestFileDescriptor manifestFileDescriptor = store.create(ManifestFileDescriptor.class);
+        manifestFileDescriptor.setFileName(streamSource.getSystemId());
         ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
         mainSectionDescriptor.setName(SECTION_MAIN);
         manifestFileDescriptor.setMainSection(mainSectionDescriptor);
@@ -56,6 +57,6 @@ public class ManifestFileScannerPlugin implements FileScannerPlugin<ManifestFile
 
     @Override
     public ManifestFileDescriptor scanDirectory(Store store, String name) throws IOException {
-		return null;
-	}
+        return null;
+    }
 }
