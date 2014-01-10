@@ -39,6 +39,8 @@ import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
  */
 public class AbstractPluginIT {
 
+    public static final String ARTIFACT_ID = "test";
+
     /**
      * Represents a test result which allows fetching values by row or columns.
      */
@@ -135,7 +137,7 @@ public class AbstractPluginIT {
      * @throws java.io.IOException If scanning fails.
      */
     protected void scanClasses(Class<?>... classes) throws IOException {
-        this.scanClasses("test", classes);
+        this.scanClasses(ARTIFACT_ID, classes);
     }
 
     /**
@@ -147,10 +149,7 @@ public class AbstractPluginIT {
      */
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
-        ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
-        if (artifact == null) {
-            artifact = store.create(ArtifactDescriptor.class, artifactId);
-        }
+        ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
         for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
             artifact.getContains().add(descriptor);
         }
@@ -164,7 +163,7 @@ public class AbstractPluginIT {
      * @throws IOException If scanning fails.
      */
     protected void scanURLs(URL... urls) throws IOException {
-        this.scanURLs("test", urls);
+        this.scanURLs(ARTIFACT_ID, urls);
     }
 
     /**
@@ -176,7 +175,7 @@ public class AbstractPluginIT {
      */
     protected void scanURLs(String artifactId, URL... urls) throws IOException {
         store.beginTransaction();
-        ArtifactDescriptor artifact = artifactId != null ? store.create(ArtifactDescriptor.class, artifactId) : null;
+        ArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
         for (Descriptor descriptor : getArtifactScanner().scanURLs(urls)) {
             artifact.getContains().add(descriptor);
         }
@@ -286,6 +285,21 @@ public class AbstractPluginIT {
         targetRuleSet.getGroups().put(group.getId(), group);
         analyzer.execute(targetRuleSet);
     }
+
+    /**
+     * Get or create an {@link com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor}.
+     *
+     * @param artifactId The artifact id.
+     * @return The {@link com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor}.
+     */
+    private ArtifactDescriptor getArtifactDescriptor(String artifactId) {
+        ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
+        if (artifact == null) {
+            artifact = store.create(ArtifactDescriptor.class, artifactId);
+        }
+        return artifact;
+    }
+
 
     private List<Class<?>> getDescriptorMappers() {
         try {
