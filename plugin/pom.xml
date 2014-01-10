@@ -44,7 +44,7 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
+                <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.report</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>

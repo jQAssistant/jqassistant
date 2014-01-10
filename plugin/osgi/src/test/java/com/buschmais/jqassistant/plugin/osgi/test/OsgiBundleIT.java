@@ -7,10 +7,10 @@ import com.buschmais.jqassistant.plugin.osgi.test.api.data.Request;
 import com.buschmais.jqassistant.plugin.osgi.test.api.service.Service;
 import org.junit.Test;
 
+import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
@@ -24,15 +24,14 @@ import static org.junit.Assert.assertThat;
 public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
-     * Verifies the concept "osgi:Bundle".
+     * Verifies the concept "osgi-bundle:Bundle".
      *
      * @throws IOException       If the test fails.
      * @throws AnalyzerException If the test fails.
      */
     @Test
     public void bundle() throws IOException, AnalyzerException {
-        URL[] urls = getManifestUrls();
-        scanURLs(urls);
+        scanURLs(getManifestUrls());
         applyConcept("osgi-bundle:Bundle");
         store.beginTransaction();
         assertThat(query("MATCH (bundle:OSGI:BUNDLE) WHERE bundle.BUNDLESYMBOLICNAME='com.buschmais.jqassistant.plugin.osgi.test' RETURN bundle").getColumn("bundle").size(), equalTo(1));
@@ -40,15 +39,14 @@ public class OsgiBundleIT extends AbstractPluginIT {
     }
 
     /**
-     * Verifies the concept "osgi:ExportPackage".
+     * Verifies the concept "osgi-bundle:ExportPackage".
      *
      * @throws IOException       If the test fails.
      * @throws AnalyzerException If the test fails.
      */
     @Test
     public void exportedPackages() throws IOException, AnalyzerException {
-        URL[] urls = getManifestUrls();
-        scanURLs(urls);
+        scanURLs(getManifestUrls());
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:ExportPackage");
         store.beginTransaction();
@@ -59,20 +57,30 @@ public class OsgiBundleIT extends AbstractPluginIT {
     }
 
     /**
-     * Retrieves the URLs of all MANIFEST.MF file available in classpath directories (i.e. no JAR files).
+     * Verifies the concept "osgi-bundle:ImportPackage".
      *
-     * @return The URLs.
+     * @throws IOException       If the test fails.
+     * @throws AnalyzerException If the test fails.
+     */
+    @Test
+    public void importedPackages() throws IOException, AnalyzerException {
+        scanURLs(getManifestUrls());
+        scanClassesDirectory(Service.class);
+        applyConcept("osgi-bundle:ImportPackage");
+        store.beginTransaction();
+        List<PackageDescriptor> packages = query("MATCH (b:OSGI:BUNDLE)-[:IMPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
+        assertThat(packages.size(), equalTo(1));
+        assertThat(packages, hasItems(packageDescriptor(NotNull.class.getPackage())));
+        store.commitTransaction();
+    }
+
+    /**
+     * Retrieves the URL of the test MANIFEST.MF file.
+     *
+     * @return The URL.
      * @throws IOException If a problem occurs.
      */
-    private URL[] getManifestUrls() throws IOException {
-        Enumeration<URL> resources = OsgiBundleIT.class.getClassLoader().getResources("META-INF/MANIFEST.MF");
-        List<URL> urls = new ArrayList<>();
-        while (resources.hasMoreElements()) {
-            URL url = resources.nextElement();
-            if ("file".equals(url.getProtocol())) {
-                urls.add(url);
-            }
-        }
-        return urls.toArray(new URL[urls.size()]);
+    private URL getManifestUrls() throws IOException {
+        return new File(OsgiBundleIT.class.getResource("/").getFile(), "/META-INF/MANIFEST.MF").toURI().toURL();
     }
 }

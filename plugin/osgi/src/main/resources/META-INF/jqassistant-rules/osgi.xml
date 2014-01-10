@@ -44,11 +44,11 @@
         <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
         <cypher><![CDATA[
             match
-             (bundle:OSGI:BUNDLE)-[:CONTAINS]->(package:PACKAGE)
+             (package:PACKAGE)
             with
-              bundle, package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
+              package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
             match
-              (bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
+              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(manifest:FILE:MANIFEST),
               (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
               (section)-[:HAS]->(entry:MANIFESTENTRY)
             where
