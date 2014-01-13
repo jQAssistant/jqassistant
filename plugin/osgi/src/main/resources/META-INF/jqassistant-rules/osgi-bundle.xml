@@ -6,20 +6,24 @@
             MATCH
               (bundle:ARTIFACT)-[:CONTAINS]->(manifest:MANIFEST:FILE),
               (manifest)-[DECLARES]->(section:MANIFESTSECTION),
-              (section)-[:HAS]->(entry:MANIFESTENTRY)
+              (section)-[:HAS]->(nameEntry:MANIFESTENTRY),
+              (section)-[:HAS]->(versionEntry:MANIFESTENTRY)
             WHERE
-              entry.NAME = "Bundle-SymbolicName"
+              nameEntry.NAME = "Bundle-SymbolicName"
+              AND versionEntry.NAME = "Bundle-Version"
             SET
               bundle:OSGI:BUNDLE,
-              bundle.BUNDLESYMBOLICNAME = entry.VALUE
+              bundle.BUNDLESYMBOLICNAME = nameEntry.VALUE,
+              bundle.BUNDLEVERSION = versionEntry.VALUE
             RETURN
-              bundle.NAME, entry.VALUE
+              bundle.NAME, bundle.BUNDLESYMBOLICNAME, bundle.BUNDLEVERSION
         ]]></cypher>
     </concept>
 
     <concept id="osgi-bundle:ExportPackage">
         <requiresConcept refId="osgi-bundle:Bundle"/>
-        <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
+        <description>Creates an EXPORTS relation from a bundle artifact to all packages which are declared as "Export-Package" in the bundle manifest.
+        </description>
         <cypher><![CDATA[
             match
              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(package:PACKAGE)
@@ -41,7 +45,8 @@
 
     <concept id="osgi-bundle:ImportPackage">
         <requiresConcept refId="osgi-bundle:Bundle"/>
-        <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
+        <description>Creates an IMPORTS relation from a bundle artifact to all packages which are declared as "Import-Package" in the bundle manifest.
+        </description>
         <cypher><![CDATA[
             match
              (package:PACKAGE)
@@ -58,6 +63,27 @@
               (bundle)-[:IMPORTS]->(package)
             return
               bundle as Bundle, collect(package) as ImportedPackages
+        ]]></cypher>
+    </concept>
+
+    <concept id="osgi-bundle:Activator">
+        <requiresConcept refId="osgi-bundle:Bundle"/>
+        <description>Creates a ACTIVATES relation between a class and the bundle artifact if the class is declared as "Bundle-Activator" in the bundle
+            manifest.
+        </description>
+        <cypher><![CDATA[
+            match
+              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(manifest:FILE:MANIFEST),
+              (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
+              (section)-[:HAS]->(entry:MANIFESTENTRY),
+              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(activator:CLASS)
+            where
+              entry.NAME = "Bundle-Activator"
+              AND entry.VALUE = activator.FQN
+            create unique
+              (activator)-[:ACTIVATES]->(bundle)
+            return
+              activator as Activator, bundle as Bundle
         ]]></cypher>
     </concept>
 
