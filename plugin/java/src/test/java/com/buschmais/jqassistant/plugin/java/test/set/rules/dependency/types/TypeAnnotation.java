@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.types;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

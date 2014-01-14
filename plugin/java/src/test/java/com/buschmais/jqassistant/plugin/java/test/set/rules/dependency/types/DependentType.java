@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.types;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types;
 
 /**
  * A types with dependencies on types level.
@@ -6,8 +6,8 @@ package com.buschmais.jqassistant.plugin.java.test.set.dependency.types;
 @TypeAnnotation
 public class DependentType extends SuperType implements Comparable<Integer> {
 
-	@Override
-	public int compareTo(Integer o) {
-		return 0;
-	}
+    @Override
+    public int compareTo(Integer o) {
+        return 0;
+    }
 }

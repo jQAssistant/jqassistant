@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.methodinvocations;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.methodinvocations;
 
 import java.util.Map;
 import java.util.SortedSet;
@@ -8,7 +8,7 @@ import java.util.SortedSet;
  */
 public class MethodDependency {
 
-	public Map<?, ?> getMap(SortedSet<Number> set) {
-		return null;
-	}
+    public Map<?, ?> getMap(SortedSet<Number> set) {
+        return null;
+    }
 }

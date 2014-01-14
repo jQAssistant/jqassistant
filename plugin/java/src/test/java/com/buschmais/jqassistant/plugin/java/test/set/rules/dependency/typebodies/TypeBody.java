@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.typebodies;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies;
 
 import java.util.Iterator;
 import java.util.List;
@@ -8,13 +8,13 @@ import java.util.List;
  */
 public class TypeBody {
 
-	@FieldAnnotation
-	private List<String> values;
+    @FieldAnnotation
+    private List<String> values;
 
-	@MethodAnnotation
-	public Iterator<Integer> iterator(Number n) throws Exception {
-		Double doubleValue = Double.valueOf(0d);
-		Boolean.valueOf(true);
-		return null;
-	}
+    @MethodAnnotation
+    public Iterator<Integer> iterator(Number n) throws Exception {
+        Double doubleValue = Double.valueOf(0d);
+        Boolean.valueOf(true);
+        return null;
+    }
 }
