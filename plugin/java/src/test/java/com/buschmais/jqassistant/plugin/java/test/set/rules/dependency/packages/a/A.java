@@ -1,19 +1,19 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.packages.a;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a;
 
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.packages.b.B;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
 
 /**
  * A class depending on {@link B}.
  */
 public class A {
 
-	private B b;
+    private B b;
 
-	public B getB() {
-		return b;
-	}
+    public B getB() {
+        return b;
+    }
 
-	public void setB(B b) {
-		this.b = b;
-	}
+    public void setB(B b) {
+        this.b = b;
+    }
 }

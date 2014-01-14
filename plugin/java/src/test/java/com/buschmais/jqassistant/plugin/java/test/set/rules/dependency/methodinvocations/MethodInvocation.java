@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.methodinvocations;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.methodinvocations;
 
 import java.util.TreeSet;
 
@@ -7,8 +7,8 @@ import java.util.TreeSet;
  */
 public class MethodInvocation {
 
-	public void methodInvocation() {
-		MethodDependency methodDependency = new MethodDependency();
-		methodDependency.getMap(new TreeSet<Number>());
-	}
+    public void methodInvocation() {
+        MethodDependency methodDependency = new MethodDependency();
+        methodDependency.getMap(new TreeSet<Number>());
+    }
 }

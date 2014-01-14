@@ -1,8 +1,8 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.annotations;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations;
 
 import java.lang.annotation.Retention;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * An annotation with dependencies.
@@ -10,7 +10,7 @@ import java.lang.annotation.Retention;
 @Retention(RUNTIME)
 public @interface Annotation {
 
-	String value();
+    String value();
 
-	Class<?>[] classValues();
+    Class<?>[] classValues();
 }

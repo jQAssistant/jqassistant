@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.dependency.fieldaccesses;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.fieldaccesses;
 
 import java.util.Map;
 import java.util.Set;
@@ -8,8 +8,8 @@ import java.util.Set;
  */
 public class FieldDependency {
 
-	public static Map<?, ?> staticField = null;
+    public static Map<?, ?> staticField = null;
 
-	public Set<?> field = null;
+    public Set<?> field = null;
 
 }

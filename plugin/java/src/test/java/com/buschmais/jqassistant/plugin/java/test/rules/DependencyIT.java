@@ -1,5 +1,30 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations.AnnotatedType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations.Annotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.fieldaccesses.FieldAccess;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.fieldaccesses.FieldDependency;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.methodinvocations.MethodDependency;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.methodinvocations.MethodInvocation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.parameters.Parameters;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies.FieldAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies.MethodAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies.TypeBody;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.*;
+
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
@@ -8,32 +33,6 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorM
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.*;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.annotations.AnnotatedType;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.annotations.Annotation;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.fieldaccesses.FieldAccess;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.fieldaccesses.FieldDependency;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.methodinvocations.MethodDependency;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.methodinvocations.MethodInvocation;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.packages.a.A;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.packages.b.B;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.parameters.Parameters;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.typebodies.FieldAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.typebodies.MethodAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.typebodies.TypeBody;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.types.DependentType;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.types.SuperType;
-import com.buschmais.jqassistant.plugin.java.test.set.dependency.types.TypeAnnotation;
 
 /**
  * Tests for the dependency concepts and result.
