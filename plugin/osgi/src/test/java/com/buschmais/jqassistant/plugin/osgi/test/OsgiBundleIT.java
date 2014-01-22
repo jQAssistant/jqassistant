@@ -126,6 +126,31 @@ public class OsgiBundleIT extends AbstractPluginIT {
     }
 
     /**
+     * Verifies the constraint "osgi-bundle:UnusedInternalType".
+     *
+     * @throws IOException       If the test fails.
+     * @throws AnalyzerException If the test fails.
+     */
+    @Test
+    public void unusedInternalType() throws IOException, AnalyzerException {
+        scanURLs(getManifestUrl());
+        scanClassesDirectory(Service.class);
+        removeTestClass();
+        validateConstraint("osgi-bundle:UnusedInternalType");
+        store.beginTransaction();
+        Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:UnusedInternalType");
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Response.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Service.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies the constraint "osgi-bundle:InternalTypeMustNotBePublic".
      *
      * @throws IOException       If the test fails.

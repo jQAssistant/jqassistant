@@ -103,6 +103,24 @@
         ]]></cypher>
     </concept>
 
+    <constraint id="osgi-bundle:UnusedInternalType">
+        <requiresConcept refId="dependency:Type"/>
+        <requiresConcept refId="osgi-bundle:InternalType"/>
+        <requiresConcept refId="osgi-bundle:Activator"/>
+        <description>A bundle must not contain internal types which are not used by other types in the bundle.</description>
+        <cypher><![CDATA[
+            match
+              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(internalType:TYPE:INTERNAL)
+            where not (
+                (internalType)-[:ACTIVATES]->(bundle)
+              or
+                (bundle)-[:CONTAINS]->(:TYPE)-[:DEPENDS_ON]->(internalType)
+            )
+            return
+              bundle as Bundle, internalType as InternalType
+        ]]></cypher>
+    </constraint>
+
     <constraint id="osgi-bundle:InternalTypeMustNotBePublic">
         <requiresConcept refId="dependency:Type"/>
         <requiresConcept refId="osgi-bundle:InternalType"/>
