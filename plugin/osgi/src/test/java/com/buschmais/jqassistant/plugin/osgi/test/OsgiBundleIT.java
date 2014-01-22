@@ -1,12 +1,19 @@
 package com.buschmais.jqassistant.plugin.osgi.test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.osgi.test.api.data.Request;
+import com.buschmais.jqassistant.plugin.osgi.test.api.data.Response;
 import com.buschmais.jqassistant.plugin.osgi.test.api.service.Service;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.Activator;
+import com.buschmais.jqassistant.plugin.osgi.test.impl.ServiceImpl;
+import com.buschmais.jqassistant.plugin.osgi.test.impl.a.UsedPublicClass;
+import com.buschmais.jqassistant.plugin.osgi.test.impl.b.UnusedPublicClass;
+import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import javax.validation.constraints.NotNull;
@@ -15,10 +22,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.collection.IsMapContaining.hasValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -92,6 +104,49 @@ public class OsgiBundleIT extends AbstractPluginIT {
         List<TypeDescriptor> activators = query("MATCH (a:CLASS)-[:ACTIVATES]->(b:OSGI:BUNDLE) RETURN a").getColumn("a");
         assertThat(activators.size(), equalTo(1));
         assertThat(activators, hasItems(typeDescriptor(Activator.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "osgi-bundle:InternalType".
+     *
+     * @throws IOException       If the test fails.
+     * @throws AnalyzerException If the test fails.
+     */
+    @Test
+    public void internalType() throws IOException, AnalyzerException {
+        scanURLs(getManifestUrl());
+        scanClassesDirectory(Service.class);
+        removeTestClass();
+        applyConcept("osgi-bundle:InternalType");
+        store.beginTransaction();
+        List<TypeDescriptor> internalTypes = query("MATCH (t:TYPE:INTERNAL) RETURN t").getColumn("t");
+        assertThat(internalTypes, hasItems(typeDescriptor(Activator.class), typeDescriptor(UsedPublicClass.class), typeDescriptor(UnusedPublicClass.class), typeDescriptor(ServiceImpl.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "osgi-bundle:InternalTypeMustNotBePublic".
+     *
+     * @throws IOException       If the test fails.
+     * @throws AnalyzerException If the test fails.
+     */
+    @Test
+    public void internalTypeMustNotBePublic() throws IOException, AnalyzerException {
+        scanURLs(getManifestUrl());
+        scanClassesDirectory(Service.class);
+        removeTestClass();
+        validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
+        store.beginTransaction();
+        Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:InternalTypeMustNotBePublic");
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
+        assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Response.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Service.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
+        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
         store.commitTransaction();
     }
 

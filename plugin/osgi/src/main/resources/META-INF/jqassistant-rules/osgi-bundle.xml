@@ -58,7 +58,7 @@
               (section)-[:HAS]->(entry:MANIFESTENTRY)
             where
               entry.NAME = "Import-Package"
-              AND entry.VALUE =~ pattern
+              and entry.VALUE =~ pattern
             create unique
               (bundle)-[:IMPORTS]->(package)
             return
@@ -68,7 +68,7 @@
 
     <concept id="osgi-bundle:Activator">
         <requiresConcept refId="osgi-bundle:Bundle"/>
-        <description>Creates a ACTIVATES relation between a class and the bundle artifact if the class is declared as "Bundle-Activator" in the bundle
+        <description>Creates an ACTIVATES relation between a class and the bundle artifact if the class is declared as "Bundle-Activator" in the bundle
             manifest.
         </description>
         <cypher><![CDATA[
@@ -79,12 +79,53 @@
               (bundle:OSGI:BUNDLE)-[:CONTAINS]->(activator:CLASS)
             where
               entry.NAME = "Bundle-Activator"
-              AND entry.VALUE = activator.FQN
+              and entry.VALUE = activator.FQN
             create unique
               (activator)-[:ACTIVATES]->(bundle)
             return
               activator as Activator, bundle as Bundle
         ]]></cypher>
     </concept>
+
+    <concept id="osgi-bundle:InternalType">
+        <requiresConcept refId="osgi-bundle:ExportPackage"/>
+        <description>Labels all internal types (i.e. which are neither located in an exported package as INTERNAL.</description>
+        <cypher><![CDATA[
+            match
+              (bundle:BUNDLE:OSGI)-[:CONTAINS]->(internalPackage:PACKAGE),
+              (bundle)-[:CONTAINS]->(internalType:TYPE),
+              (internalPackage)-[:CONTAINS]->(internalType:TYPE)
+            where not
+                (bundle)-[:EXPORTS]->(internalPackage)
+            set
+              internalType:INTERNAL
+            return bundle, collect(internalType)
+        ]]></cypher>
+    </concept>
+
+    <constraint id="osgi-bundle:InternalTypeMustNotBePublic">
+        <requiresConcept refId="dependency:Type"/>
+        <requiresConcept refId="osgi-bundle:InternalType"/>
+        <requiresConcept refId="osgi-bundle:Activator"/>
+        <description>Internal types must not be public if no depending types exist in other packages of the bundle.</description>
+        <cypher><![CDATA[
+            match
+              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(internalType:TYPE:INTERNAL),
+              (internalPackage:PACKAGE)-[:CONTAINS]->(internalType)
+            optional match
+              (bundle)-[:CONTAINS]->(otherPackage:PACKAGE),
+              (otherPackage)-[:CONTAINS]->()-[:DEPENDS_ON]->(internalType)
+            where
+              internalType:PUBLIC
+            with
+              bundle, internalPackage, internalType, collect(otherPackage) as otherPackages
+            where
+              all(otherPackage in otherPackages where internalPackage = otherPackage)
+              and not
+                (internalType)-[:ACTIVATES]->(bundle)
+            return
+              bundle as Bundle, internalType as InternalType
+        ]]></cypher>
+    </constraint>
 
 </jqa:jqassistant-rules>
