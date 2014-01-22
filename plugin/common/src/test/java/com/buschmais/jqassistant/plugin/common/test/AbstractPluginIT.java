@@ -143,6 +143,31 @@ public class AbstractPluginIT {
     /**
      * Scans the given classes.
      *
+     * @param outerClass     The outer classes.
+     * @param innerClassName The outer classes.
+     * @throws java.io.IOException If scanning fails.
+     */
+    protected void scanInnerClass(Class<?> outerClass, String innerClassName) throws IOException, ClassNotFoundException {
+        Class<?> innerClass = getInnerClass(outerClass, innerClassName);
+        scanClasses(innerClass);
+    }
+
+    /**
+     * Loads an inner class.
+     *
+     * @param outerClass     The out class.
+     * @param innerClassName The name of the inner class.
+     * @return The inner class.
+     * @throws ClassNotFoundException If the class cannot be loaded.
+     */
+    protected Class<?> getInnerClass(Class<?> outerClass, String innerClassName) throws ClassNotFoundException {
+        String className = outerClass.getName() + "$" + innerClassName;
+        return outerClass.getClassLoader().loadClass(className);
+    }
+
+    /**
+     * Scans the given classes.
+     *
      * @param artifactId The id of the containing artifact.
      * @param classes    The classes.
      * @throws IOException If scanning fails.
@@ -200,6 +225,20 @@ public class AbstractPluginIT {
         for (Descriptor descriptor : getArtifactScanner().scanDirectory(directory)) {
             artifact.getContains().add(descriptor);
         }
+        store.commitTransaction();
+    }
+
+    /**
+     * Deletes the node representing the test class and all its relationships from the store.
+     *
+     * @throws IOException If an error occurs.
+     */
+    protected void removeTestClass() throws IOException {
+        store.beginTransaction();
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("className", this.getClass().getName());
+        store.executeQuery("MATCH (t:TYPE)-[r]-() WHERE t.FQN={className} DELETE r", parameters).close();
+        store.executeQuery("MATCH (t:TYPE) WHERE t.FQN={className} DELETE t", parameters).close();
         store.commitTransaction();
     }
 
