@@ -34,7 +34,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
             typeDescriptor.setAbstract(Boolean.TRUE);
         }
-        setAccessModifier(access, typeDescriptor);
+        setModifiers(access, typeDescriptor);
         if (signature == null) {
             if (superName != null) {
                 typeDescriptor.setSuperClass(visitorHelper.getTypeDescriptor(superName));
@@ -55,7 +55,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
-        setAccessModifier(access, fieldDescriptor);
+        setModifiers(access, fieldDescriptor);
         if (signature == null) {
             TypeDescriptor type = visitorHelper.getTypeDescriptor(visitorHelper.getType((desc)));
             fieldDescriptor.setType(type);
@@ -94,7 +94,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, visitorHelper.getMethodSignature(name, desc));
         typeDescriptor.getDeclaredMembers().add(methodDescriptor);
         methodDescriptor.setName(name);
-        setAccessModifier(access, methodDescriptor);
+        setModifiers(access, methodDescriptor);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT)) {
             methodDescriptor.setAbstract(Boolean.TRUE);
         }
@@ -120,8 +120,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         return new MethodVisitor(methodDescriptor, visitorHelper);
     }
 
-    private void setAccessModifier(final int access, AccessModifierDescriptor descriptor) {
-        descriptor.setVisibility(getVisibility(access));
+    private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
+        VisibilityModifier visibility = getVisibility(access);
+        descriptor.setVisibility(visibility);
         if (hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
             descriptor.setSynthetic(Boolean.TRUE);
         }

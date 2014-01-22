@@ -38,9 +38,8 @@ public class AnonymousInnerClassIT extends AbstractPluginIT {
      * @throws IOException If the test fails.
      */
     @Test
-    public void innerClass() throws IOException {
-        String resourceName = "/" + INNERCLASS_NAME.replace(".", "/") + ".class";
-        scanURLs(AnonymousInnerClassIT.class.getResource(resourceName));
+    public void innerClass() throws IOException, ClassNotFoundException {
+        scanInnerClass(AnonymousInnerClass.class, "1");
         assertOuterClassContainsInnerClass();
     }
 
