@@ -18,6 +18,10 @@ package com.buschmais.jqassistant.mojo;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -26,7 +30,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+import org.codehaus.plexus.util.AbstractScanner;
+import org.eclipse.tycho.core.TychoConstants;
+import org.eclipse.tycho.core.facade.BuildProperties;
+import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
@@ -47,6 +58,9 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	 */
 	public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
 
+	@Parameter(defaultValue = "true")
+	protected boolean useDefaultExcludes;
+
 	@Override
 	protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
 			MojoFailureException {
@@ -62,6 +76,8 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 			}
 			scanDirectory(baseProject, project, store, project.getBuild().getOutputDirectory(), false, scannerPlugins);
 			scanDirectory(baseProject, project, store, project.getBuild().getTestOutputDirectory(), true, scannerPlugins);
+			// scanProject(baseProject, project, store, project.getBasedir(),
+			// false, scannerPlugins);
 		}
 	}
 
@@ -76,6 +92,26 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	private void scanDirectory(MavenProject baseProject, final MavenProject project, Store store, final String directoryName,
 			boolean testJar, final List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException, MojoFailureException {
 		final File directory = new File(directoryName);
+		
+		EclipsePluginProject pdeProject = (EclipsePluginProject) project.getContextValue(TychoConstants.CTX_ECLIPSE_PLUGIN_PROJECT);
+		List<File> pdeFiles = new ArrayList<>();
+		try {
+			Iterator<PlexusIoResource> iterator = getPDEBinaries(baseProject, pdeProject);
+			if(iterator.hasNext()) {
+			do {
+				PlexusIoResource resource = iterator.next();
+					File file = new File(resource.getURL().getFile());
+					if (file.exists() && !file.isDirectory()) {
+						pdeFiles.add(file);
+					}
+			} while (iterator.hasNext());
+			} else {
+				getLog().info("No files from PDE build.properties bin.includes found!");
+			}
+		} catch (IOException e) {
+			new MojoExecutionException("Error while reading pde resources", e);
+		}
+
 		if (!directory.exists()) {
 			getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
 		} else {
@@ -99,6 +135,11 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 					for (Descriptor descriptor : scanner.scanDirectory(directory)) {
 						artifactDescriptor.getContains().add(descriptor);
 					}
+
+					for (Descriptor descriptor : scanner.scanFiles(baseProject.getBasedir(), pdeFiles)) {
+						artifactDescriptor.getContains().add(descriptor);
+					}
+
 				} catch (IOException e) {
 					throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
 				}
@@ -137,5 +178,39 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 		id.append(':');
 		id.append(version);
 		return id.toString();
+	}
+
+	private Iterator<PlexusIoResource> getPDEBinaries(MavenProject project, EclipsePluginProject pdeProject) throws IOException {
+		BuildProperties buildProperties = pdeProject.getBuildProperties();
+		return getResourceFileCollection(project.getBasedir(), buildProperties.getBinIncludes(), buildProperties.getBinExcludes())
+				.getResources();
+	}
+
+	/**
+	 * @return a {@link PlexusIoFileResourceCollection} with the given includes
+	 *         and excludes and the configured default excludes. An empty list
+	 *         of includes leads to an empty collection.
+	 */
+	protected PlexusIoFileResourceCollection getResourceFileCollection(File basedir, List<String> includes, List<String> excludes) {
+		PlexusIoFileResourceCollection collection = new PlexusIoFileResourceCollection();
+		collection.setBaseDir(basedir);
+
+		if (includes.isEmpty()) {
+			collection.setIncludes(new String[] { "" });
+		} else {
+			collection.setIncludes(includes.toArray(new String[includes.size()]));
+		}
+
+		Set<String> allExcludes = new LinkedHashSet<String>();
+		if (excludes != null) {
+			allExcludes.addAll(excludes);
+		}
+		if (useDefaultExcludes) {
+			allExcludes.addAll(Arrays.asList(AbstractScanner.DEFAULTEXCLUDES));
+		}
+
+		collection.setExcludes(allExcludes.toArray(new String[allExcludes.size()]));
+
+		return collection;
 	}
 }
