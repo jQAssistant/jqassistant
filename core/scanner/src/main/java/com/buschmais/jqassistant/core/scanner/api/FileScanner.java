@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import javax.management.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 
 /**
  * Defines the interface for an artifact scanner.
