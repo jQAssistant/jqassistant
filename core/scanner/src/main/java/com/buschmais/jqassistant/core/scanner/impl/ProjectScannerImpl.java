@@ -12,6 +12,9 @@ import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.ProjectDescriptor;
 
+/**
+ * Implementation of the {@link ProjectScanner}.
+ */
 public class ProjectScannerImpl implements ProjectScanner {
 
 	private final List<ProjectScannerPlugin<?>> projectScannerPlugins;
