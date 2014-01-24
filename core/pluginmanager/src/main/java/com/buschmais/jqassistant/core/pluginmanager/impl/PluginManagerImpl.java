@@ -1,18 +1,5 @@
 package com.buschmais.jqassistant.core.pluginmanager.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.*;
-import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -20,6 +7,28 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ResourcesType;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.RulesType;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ScannerType;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.StoreType;
+import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 
 /**
  * Plugin reader implementation.
@@ -84,7 +93,9 @@ public class PluginManagerImpl implements PluginManager {
                         if (url != null) {
                             try {
                                 systemId = url.toURI().toString();
-                                if (LOGGER.isDebugEnabled()) LOGGER.debug("Adding rulesType from " + url.toString());
+                                if (LOGGER.isDebugEnabled()) {
+									LOGGER.debug("Adding rulesType from " + url.toString());
+								}
                                 InputStream ruleStream = url.openStream();
                                 sources.add(new StreamSource(ruleStream, systemId));
                             } catch (IOException e) {
@@ -118,18 +129,37 @@ public class PluginManagerImpl implements PluginManager {
 
     @Override
     public List<FileScannerPlugin<?>> getScannerPlugins() throws PluginReaderException {
-        List<FileScannerPlugin<?>> scannerPlugins = new ArrayList<>();
+        List<FileScannerPlugin<?>> fileScannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : getPlugins()) {
             ScannerType scannerType = plugin.getScanner();
             if (scannerType != null) {
                 for (String scannerPluginName : scannerType.getPlugin()) {
-                    FileScannerPlugin<?> scannerPlugin = createInstance(scannerPluginName);
-                    scannerPlugins.add(scannerPlugin);
+					FileScannerPlugin<?> scannerPlugin = createInstance(FileScannerPlugin.class, scannerPluginName);
+					if (scannerPlugin != null) {
+						fileScannerPlugins.add(scannerPlugin);
+					}
                 }
             }
         }
-        return scannerPlugins;
+        return fileScannerPlugins;
     }
+
+	@Override
+	public List<ProjectScannerPlugin<?>> getProjectScannerPlugins() throws PluginReaderException {
+		List<ProjectScannerPlugin<?>> projectScannerPlugins = new ArrayList<>();
+		for (JqassistantPlugin plugin : getPlugins()) {
+			ScannerType scannerType = plugin.getScanner();
+			if (scannerType != null) {
+				for (String scannerPluginName : scannerType.getPlugin()) {
+					ProjectScannerPlugin<?> scannerPlugin = createInstance(ProjectScannerPlugin.class, scannerPluginName);
+					if (scannerPlugin != null) {
+						projectScannerPlugins.add(scannerPlugin);
+					}
+				}
+			}
+		}
+		return projectScannerPlugins;
+	}
 
     /**
      * Returns an {@link Iterable} over all plugins which can be resolved from
@@ -148,7 +178,9 @@ public class PluginManagerImpl implements PluginManager {
             this.plugins = new ArrayList<>();
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                if (LOGGER.isInfoEnabled()) LOGGER.info("Reading plugin descriptor from URL '{}'.", url);
+                if (LOGGER.isInfoEnabled()) {
+					LOGGER.info("Reading plugin descriptor from URL '{}'.", url);
+				}
                 this.plugins.add(readPlugin(url));
             }
         }
@@ -172,10 +204,11 @@ public class PluginManagerImpl implements PluginManager {
         }
     }
 
-    private <T> T createInstance(String typeName) throws PluginReaderException {
+	private <T> T createInstance(Class<? extends ScannerPlugin> clazz, String typeName) throws PluginReaderException {
         Class<T> type = getType(typeName);
         try {
-            return type.newInstance();
+			T newInstance = type.newInstance();
+			return clazz.isInstance(newInstance) ? newInstance : null;
         } catch (InstantiationException e) {
             throw new PluginReaderException("Cannot create instance of class " + type.getName(), e);
         } catch (IllegalAccessException e) {
