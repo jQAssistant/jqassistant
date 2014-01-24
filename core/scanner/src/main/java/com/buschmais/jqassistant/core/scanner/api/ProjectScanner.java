@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-
 
 /**
  * Defines the interface for a project scanner.
@@ -14,9 +12,13 @@ import org.apache.maven.project.MavenProject;
 public interface ProjectScanner {
 
 	/**
+	 * Provides all files, which the ProjectScanner found for processing with a
+	 * FileScannerPlugin.
+	 * 
 	 * @param project
-	 * @return
-	 * @throws MojoExecutionException
+	 *            A common {@link MavenProject}
+	 * @throws IOException
+	 *             If scanning fails.
 	 */
 	List<File> getAdditionalFiles(MavenProject project) throws IOException;
 }
