@@ -84,6 +84,7 @@
         <module>junit4</module>
         <module>maven3</module>
         <module>osgi</module>
+        <module>tycho</module>
     </modules>
 
 </project>

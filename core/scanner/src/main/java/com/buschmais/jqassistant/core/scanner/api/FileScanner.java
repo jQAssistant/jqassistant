@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.scanner.api;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 
@@ -50,4 +51,16 @@ public interface FileScanner {
 	 *             If Scanning fails.
 	 */
 	Iterable<Descriptor> scanURLs(URL... urls) throws IOException;
+
+	/**
+	 * Scan the given files.
+	 * 
+	 * @param directory
+	 *            reference directory for scanners
+	 * @param files
+	 *            given files to scan
+	 * @throws IOException
+	 *             If Scanning fails.
+	 */
+	Iterable<Descriptor> scanFiles(File directory, List<File> files) throws IOException;
 }
