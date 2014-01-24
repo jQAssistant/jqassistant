@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.ProjectDescriptor;
 
 public class ProjectScannerImpl implements ProjectScanner {
 
@@ -21,11 +23,11 @@ public class ProjectScannerImpl implements ProjectScanner {
 	}
 
 	@Override
-	public List<File> getAdditionalFiles(MavenProject project) {
+	public List<File> getAdditionalFiles(MavenProject project) throws IOException {
 		List<File> files = new ArrayList<>();
 		for (ProjectScannerPlugin<?> plugin : projectScannerPlugins) {
-			plugin.scanProject(store, project);
-			files.addAll(plugin.getAdditionalFiles());
+			ProjectDescriptor scannedProject = plugin.scanProject(store, project);
+			files.addAll(scannedProject.getAdditionalFiles());
 		}
 		return files;
 	}
