@@ -10,7 +10,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -32,26 +31,22 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TychoProjectD
 public class TychoProjectScannerPlugin implements ProjectScannerPlugin<ProjectDescriptor> {
 
 	@Override
-	public ProjectDescriptor scanProject(Store store, MavenProject project) throws MojoExecutionException {
+	public ProjectDescriptor scanProject(Store store, MavenProject project) throws IOException {
 		Object value = project.getContextValue(TychoConstants.CTX_ECLIPSE_PLUGIN_PROJECT);
 		final List<File> pdeFiles = new ArrayList<>();
 
 		if (value instanceof EclipsePluginProject) {
 			EclipsePluginProject pdeProject = (EclipsePluginProject) value;
 
-			try {
-				Iterator<PlexusIoResource> iterator = getPDEBinaries(project, pdeProject);
-				if (iterator.hasNext()) {
-					do {
-						PlexusIoResource resource = iterator.next();
-						File file = new File(resource.getURL().getFile());
-						if (file.exists() && !file.isDirectory()) {
-							pdeFiles.add(file);
-						}
-					} while (iterator.hasNext());
-				}
-			} catch (IOException e) {
-				throw new MojoExecutionException("Error while reading pde resources", e);
+			Iterator<PlexusIoResource> iterator = getPDEBinaries(project, pdeProject);
+			if (iterator.hasNext()) {
+				do {
+					PlexusIoResource resource = iterator.next();
+					File file = new File(resource.getURL().getFile());
+					if (file.exists() && !file.isDirectory()) {
+						pdeFiles.add(file);
+					}
+				} while (iterator.hasNext());
 			}
 		}
 
