@@ -31,7 +31,10 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
+import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescriptor;
@@ -54,14 +57,40 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 		// where the rules are located).
 		store.reset();
 		for (MavenProject project : projects) {
-			List<FileScannerPlugin<?>> scannerPlugins;
+			List<FileScannerPlugin<?>> fileScannerPlugins;
+			List<ProjectScannerPlugin<?>> projectScannerPlugins;
 			try {
-				scannerPlugins = pluginManager.getScannerPlugins();
+				fileScannerPlugins = pluginManager.getScannerPlugins();
+				projectScannerPlugins = pluginManager.getProjectScannerPlugins();
 			} catch (PluginReaderException e) {
 				throw new MojoExecutionException("Cannot get scanner plugins.", e);
 			}
-			scanDirectory(baseProject, project, store, project.getBuild().getOutputDirectory(), false, scannerPlugins);
-			scanDirectory(baseProject, project, store, project.getBuild().getTestOutputDirectory(), true, scannerPlugins);
+			scanProject(baseProject, project, store, project.getBasedir(), projectScannerPlugins, fileScannerPlugins);
+			scanDirectory(baseProject, project, store, project.getBuild().getOutputDirectory(), false, fileScannerPlugins);
+			scanDirectory(baseProject, project, store, project.getBuild().getTestOutputDirectory(), true, fileScannerPlugins);
+		}
+	}
+
+	private void scanProject(MavenProject baseProject, MavenProject project, Store store, File basedir,
+			List<ProjectScannerPlugin<?>> projectScannerPlugins, List<FileScannerPlugin<?>> fileScannerPlugins)
+			throws MojoExecutionException {
+
+		store.beginTransaction();
+		try {
+			ArtifactDescriptor artifactDescriptor = getStoredArtifact(project, store, false);
+			ProjectScanner projectScanner = new ProjectScannerImpl(store, projectScannerPlugins);
+			FileScanner fileScanner = new FileScannerImpl(store, fileScannerPlugins);
+			try {
+				List<File> additionalFiles = projectScanner.getAdditionalFiles(project);
+				for (Descriptor descriptor : fileScanner.scanFiles(baseProject.getBasedir(), additionalFiles)) {
+					artifactDescriptor.getContains().add(descriptor);
+				}
+
+			} catch (IOException e) {
+				throw new MojoExecutionException("Cannot scan files", e);
+			}
+		} finally {
+			store.commitTransaction();
 		}
 	}
 
@@ -76,24 +105,13 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 	private void scanDirectory(MavenProject baseProject, final MavenProject project, Store store, final String directoryName,
 			boolean testJar, final List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException, MojoFailureException {
 		final File directory = new File(directoryName);
+
 		if (!directory.exists()) {
 			getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
 		} else {
 			store.beginTransaction();
 			try {
-				Artifact artifact = project.getArtifact();
-				String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
-				String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(),
-						artifact.getVersion());
-				ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
-				if (artifactDescriptor == null) {
-					artifactDescriptor = store.create(ArtifactDescriptor.class, id);
-					artifactDescriptor.setGroup(artifact.getGroupId());
-					artifactDescriptor.setName(artifact.getArtifactId());
-					artifactDescriptor.setVersion(artifact.getVersion());
-					artifactDescriptor.setClassifier(artifact.getClassifier());
-					artifactDescriptor.setType(type);
-				}
+				ArtifactDescriptor artifactDescriptor = getStoredArtifact(project, store, testJar);
 				FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
 				try {
 					for (Descriptor descriptor : scanner.scanDirectory(directory)) {
@@ -106,6 +124,23 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 				store.commitTransaction();
 			}
 		}
+	}
+
+	private ArtifactDescriptor getStoredArtifact(final MavenProject project, Store store, boolean testJar) {
+		Artifact artifact = project.getArtifact();
+		String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
+		String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(),
+				artifact.getVersion());
+		ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
+		if (artifactDescriptor == null) {
+			artifactDescriptor = store.create(ArtifactDescriptor.class, id);
+			artifactDescriptor.setGroup(artifact.getGroupId());
+			artifactDescriptor.setName(artifact.getArtifactId());
+			artifactDescriptor.setVersion(artifact.getVersion());
+			artifactDescriptor.setClassifier(artifact.getClassifier());
+			artifactDescriptor.setType(type);
+		}
+		return artifactDescriptor;
 	}
 
 	/**

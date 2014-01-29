@@ -77,5 +77,11 @@
             <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
             <artifactId>slf4j-maven-plugin-log</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>com.buschmais.jqassistant.plugin</groupId>
+        	<artifactId>jqassistant.plugin.tycho</artifactId>
+        	<version>${project.version}</version>
+        	<scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

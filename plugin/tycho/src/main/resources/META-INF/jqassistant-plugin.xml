@@ -1,0 +1,8 @@
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+    <store>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TychoProjectDescriptor</type>
+    </store>
+    <scanner>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.TychoProjectScannerPlugin</plugin>
+    </scanner>
+</jqa-plugin:jqassistant-plugin>
