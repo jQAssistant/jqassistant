@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.report.JUnitReportWriter;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -43,7 +44,6 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
             xmlReportFileWriter = new FileWriter(getXmlReportFile(baseProject));
@@ -57,8 +57,10 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
             throw new MojoExecutionException("Cannot create XML report file writer.", e);
         }
         List<ExecutionListener> reportWriters = new LinkedList<>();
+        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         reportWriters.add(inMemoryReportWriter);
         reportWriters.add(xmlReportWriter);
+        reportWriters.add(getJunitReportWriter(baseProject));
         try {
             CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
             Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
@@ -77,6 +79,17 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         } finally {
             store.commitTransaction();
         }
+    }
+
+    private JUnitReportWriter getJunitReportWriter(MavenProject baseProject) throws MojoExecutionException {
+        JUnitReportWriter junitReportWriter;
+        File junitReportDirectory = BaseProjectResolver.getReportDirectory(baseProject);
+        try {
+            junitReportWriter = new JUnitReportWriter(junitReportDirectory);
+        } catch (ExecutionListenerException e) {
+            throw new MojoExecutionException("Cannot create XML report file writer.", e);
+        }
+        return junitReportWriter;
     }
 
     /**
@@ -144,4 +157,5 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
     }
+
 }

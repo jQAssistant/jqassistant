@@ -33,7 +33,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  */
 public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.AbstractMojo {
 
-	public static final String REPORT_XML = "/jqassistant/jqassistant-report.xml";
+	public static final String REPORT_XML = "jqassistant-report.xml";
 
 	public static final String LOG_LINE_PREFIX = "  \"";
 
