@@ -7,21 +7,16 @@ import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.ObjectFactory;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuites;
+import com.buschmais.jqassistant.plugin.junit4.impl.schema.Error;
+import com.buschmais.jqassistant.plugin.junit4.impl.schema.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite.Testcase;
-import static com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite.Testcase.Failure;
 
 /**
  * {@link ExecutionListener} implementation to write JUnit style reports.
@@ -64,7 +59,7 @@ public class JUnitReportWriter implements ExecutionListener {
     @Override
     public void endGroup() throws ExecutionListenerException {
         // TestSuite
-        Testsuites.Testsuite testsuite = new Testsuites.Testsuite();
+        Testsuite testsuite = new Testsuite();
         int tests = 0;
         int failures = 0;
         int errors = 0;
@@ -76,17 +71,17 @@ public class JUnitReportWriter implements ExecutionListener {
             AbstractExecutable executable = result.getExecutable();
             testcase.setName(executable.getId());
             testcase.setClassname(group.getId());
-            testcase.setTime(BigDecimal.valueOf(time));
+            testcase.setTime(Long.toString(time));
             testsuite.getTestcase().add(testcase);
             List<Map<String, Object>> rows = result.getRows();
             if (executable instanceof Concept && rows.isEmpty()) {
                 Failure failure = new Failure();
                 failure.setMessage(executable.getDescription());
-                failure.setValue("The concept returned an empty result.");
-                testcase.setFailure(failure);
+                failure.setContent("The concept returned an empty result.");
+                testcase.getFailure().add(failure);
                 failures++;
             } else if (executable instanceof Constraint && !rows.isEmpty()) {
-                Testcase.Error error = new Testcase.Error();
+                Error error = new Error();
                 error.setMessage(executable.getDescription());
                 StringBuilder sb = new StringBuilder();
                 for (Map<String, Object> row : rows) {
@@ -96,26 +91,25 @@ public class JUnitReportWriter implements ExecutionListener {
                         sb.append(rowEntry.getValue());
                     }
                 }
-                error.setValue(sb.toString());
-                testcase.setError(error);
+                error.setContent(sb.toString());
+                testcase.getError().add(error);
                 errors++;
             }
             tests++;
+            testsuite.getTestcase().add(testcase);
         }
-        testsuite.setTests(tests);
-        testsuite.setFailures(failures);
-        testsuite.setErrors(errors);
+        testsuite.setTests(Integer.toString(tests));
+        testsuite.setFailures(Integer.toString(failures));
+        testsuite.setErrors(Integer.toString(errors));
         testsuite.setName(group.getId());
         long groupTime = System.currentTimeMillis() - groupBeginTimestamp;
-        testsuite.setTime(BigDecimal.valueOf(groupTime));
+        testsuite.setTime(Long.toString(groupTime));
         // TestSuite
-        Testsuites testsuites = new Testsuites();
-        testsuites.getTestsuite().add(testsuite);
         File file = new File(directory, "TEST-" + group.getId() + ".xml");
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(testsuites, file);
+            marshaller.marshal(testsuite, file);
         } catch (JAXBException e) {
             throw new ExecutionListenerException("Cannot write JUNIT4 report.", e);
         }
