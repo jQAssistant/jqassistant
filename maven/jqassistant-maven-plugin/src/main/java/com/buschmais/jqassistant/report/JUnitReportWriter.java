@@ -72,7 +72,6 @@ public class JUnitReportWriter implements ExecutionListener {
             testcase.setName(executable.getId());
             testcase.setClassname(group.getId());
             testcase.setTime(Long.toString(time));
-            testsuite.getTestcase().add(testcase);
             List<Map<String, Object>> rows = result.getRows();
             if (executable instanceof Concept && rows.isEmpty()) {
                 Failure failure = new Failure();
