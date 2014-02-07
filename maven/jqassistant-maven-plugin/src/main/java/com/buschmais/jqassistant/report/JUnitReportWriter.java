@@ -107,7 +107,8 @@ public class JUnitReportWriter implements ExecutionListener {
         File file = new File(directory, "TEST-" + group.getId() + ".xml");
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.marshal(testsuite, file);
         } catch (JAXBException e) {
             throw new ExecutionListenerException("Cannot write JUNIT4 report.", e);
