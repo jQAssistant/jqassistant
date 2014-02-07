@@ -40,6 +40,9 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
     @Parameter(property = "jqassistant.failOnConstraintViolations", defaultValue = "true")
     protected boolean failOnConstraintViolations;
 
+    @Parameter(property = "jqassistant.junitReportDirectory")
+    private java.io.File junitReportDirectory;
+
     @Override
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
@@ -83,7 +86,10 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
 
     private JUnitReportWriter getJunitReportWriter(MavenProject baseProject) throws MojoExecutionException {
         JUnitReportWriter junitReportWriter;
-        File junitReportDirectory = BaseProjectResolver.getReportDirectory(baseProject);
+        if (junitReportDirectory == null) {
+            junitReportDirectory = new File(baseProject.getBuild().getDirectory() + "/surefire-reports");
+        }
+        junitReportDirectory.mkdirs();
         try {
             junitReportWriter = new JUnitReportWriter(junitReportDirectory);
         } catch (ExecutionListenerException e) {
