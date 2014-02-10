@@ -20,8 +20,15 @@
                 <configuration>
                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                     <settingsFile>src/it/settings.xml</settingsFile>
+                    <mergeUserSettings>true</mergeUserSettings>
                     <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                     <postBuildHookScript>verify</postBuildHookScript>
+                    <streamLogs>true</streamLogs>
+                    <pomIncludes>
+                        <pomInclude>singlemodule/site/pom.xml</pomInclude>
+                        <pomInclude>multimodule/singleparent/site/pom.xml</pomInclude>
+                        <pomInclude>multimodule/multiparent/site/pom.xml</pomInclude>
+                    </pomIncludes>
                 </configuration>
                 <executions>
                     <execution>

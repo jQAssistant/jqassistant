@@ -60,7 +60,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             TypeDescriptor type = visitorHelper.getTypeDescriptor(visitorHelper.getType((desc)));
             fieldDescriptor.setType(type);
         } else {
-            new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor(fieldDescriptor, visitorHelper) {
+            new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor<FieldDescriptor>(fieldDescriptor, visitorHelper) {
                 @Override
                 public SignatureVisitor visitArrayType() {
                     return new DependentTypeSignatureVisitor(fieldDescriptor, visitorHelper);

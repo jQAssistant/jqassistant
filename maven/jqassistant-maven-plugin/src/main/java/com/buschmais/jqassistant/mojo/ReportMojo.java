@@ -56,7 +56,7 @@ public class ReportMojo extends AbstractMavenReport {
             throw new MavenReportException("Cannot resolve XML report.", e);
         }
         if (project.equals(baseProject)) {
-            if (selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
+            if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
                 throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
             }
             StringWriter writer = new StringWriter();
