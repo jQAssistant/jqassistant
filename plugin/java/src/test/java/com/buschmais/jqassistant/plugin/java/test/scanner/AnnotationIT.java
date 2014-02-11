@@ -5,6 +5,8 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationVal
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -37,22 +39,22 @@ public class AnnotationIT extends AbstractPluginIT {
      */
     @Test
     public void annotatedClass() throws IOException, NoSuchFieldException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
+        scanClasses(AnnotatedType.class,
+                Annotation.class,
+                NestedAnnotation.class);
         // verify annotation type
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:TYPE:CLASS)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN t, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((TypeDescriptor) row.get("t"),
-                typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class));
+                typeDescriptor(AnnotatedType.class));
         assertThat(
                 (AnnotationValueDescriptor) row.get("a"),
-                annotationValueDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
+                annotationValueDescriptor(Annotation.class,
                         CoreMatchers.anything()));
         assertThat((TypeDescriptor) row.get("at"),
-                typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class));
+                typeDescriptor(Annotation.class));
         // verify values
         testResult = query("MATCH (t:TYPE:CLASS)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(5));
@@ -75,9 +77,9 @@ public class AnnotationIT extends AbstractPluginIT {
      */
     @Test
     public void annotatedMethod() throws IOException, NoSuchFieldException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
+        scanClasses(AnnotatedType.class,
+                Annotation.class,
+                NestedAnnotation.class);
         // verify annotation type on method level
         store.beginTransaction();
         TestResult testResult = query("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
@@ -85,12 +87,12 @@ public class AnnotationIT extends AbstractPluginIT {
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat(
                 (MethodDescriptor) row.get("m"),
-                methodDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class, "annotatedMethod",
+                methodDescriptor(AnnotatedType.class, "annotatedMethod",
                         String.class));
         assertThat((AnnotationValueDescriptor) row.get("a"),
-                annotationValueDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class, anything()));
+                annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"),
-                typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class));
+                typeDescriptor(Annotation.class));
         // verify values on method level
         testResult = query("MATCH (m:METHOD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -106,9 +108,9 @@ public class AnnotationIT extends AbstractPluginIT {
      */
     @Test
     public void annotatedMethodParameter() throws IOException, NoSuchFieldException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
+        scanClasses(AnnotatedType.class,
+                Annotation.class,
+                NestedAnnotation.class);
         // verify annotation type on method parameter level
         store.beginTransaction();
         TestResult testResult = query("MATCH (m:METHOD)-[:HAS]->(p:PARAMETER)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN m, a, at");
@@ -116,12 +118,12 @@ public class AnnotationIT extends AbstractPluginIT {
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat(
                 (MethodDescriptor) row.get("m"),
-                methodDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class, "annotatedMethod",
+                methodDescriptor(AnnotatedType.class, "annotatedMethod",
                         String.class));
         assertThat((AnnotationValueDescriptor) row.get("a"),
-                annotationValueDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class, anything()));
+                annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"),
-                typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class));
+                typeDescriptor(Annotation.class));
         // verify values on method parameter level
         testResult = query("MATCH (m:METHOD)-[:HAS]->(p:PARAMETER)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -137,20 +139,20 @@ public class AnnotationIT extends AbstractPluginIT {
      */
     @Test
     public void annotatedField() throws IOException, NoSuchFieldException, NoSuchMethodException {
-        scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class,
-                com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation.class);
+        scanClasses(AnnotatedType.class,
+                Annotation.class,
+                NestedAnnotation.class);
         // verify annotation type
         store.beginTransaction();
         TestResult testResult = query("MATCH (f:FIELD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN f, a, at");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         assertThat((FieldDescriptor) row.get("f"),
-                fieldDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType.class, "annotatedField"));
+                fieldDescriptor(AnnotatedType.class, "annotatedField"));
         assertThat((AnnotationValueDescriptor) row.get("a"),
-                annotationValueDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class, anything()));
+                annotationValueDescriptor(Annotation.class, anything()));
         assertThat((TypeDescriptor) row.get("at"),
-                typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation.class));
+                typeDescriptor(Annotation.class));
         // verify values
         testResult = query("MATCH (f:FIELD)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:HAS]->(value:VALUE) RETURN value");
         assertThat(testResult.getRows().size(), equalTo(1));
