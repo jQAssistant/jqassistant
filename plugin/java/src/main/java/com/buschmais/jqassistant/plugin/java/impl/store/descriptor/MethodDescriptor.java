@@ -43,4 +43,5 @@ public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescrip
     public Boolean isNative();
 
     public void setNative(Boolean nativeMethod);
+
 }
