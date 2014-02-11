@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
@@ -49,8 +50,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
-        final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor,
-                visitorHelper.getFieldSignature(name, desc));
+        final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, SignatureHelper.getFieldSignature(name, desc));
         typeDescriptor.getDeclaredMembers().add(fieldDescriptor);
         fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
@@ -91,7 +91,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
                                      final String[] exceptions) {
-        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, visitorHelper.getMethodSignature(name, desc));
+        MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, SignatureHelper.getMethodSignature(name, desc));
         typeDescriptor.getDeclaredMembers().add(methodDescriptor);
         methodDescriptor.setName(name);
         setModifiers(access, methodDescriptor);

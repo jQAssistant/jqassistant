@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
@@ -37,8 +37,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
 	@Override
 	public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
-		String fieldSignature = visitorHelper.getFieldSignature(name, desc);
-		TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
+        String fieldSignature = SignatureHelper.getFieldSignature(name, desc);
+        TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
 		FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, fieldSignature);
 		switch (opcode) {
 		case Opcodes.GETFIELD:
@@ -54,8 +54,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
 	@Override
 	public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
-		String methodSignature = visitorHelper.getMethodSignature(name, desc);
-		TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
+        String methodSignature = SignatureHelper.getMethodSignature(name, desc);
+        TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(owner);
 		MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
 		this.methodDescriptor.getInvokes().add(invokedMethodDescriptor);
 		visitorHelper.addDependency(methodDescriptor, visitorHelper.getType(Type.getReturnType(desc)));

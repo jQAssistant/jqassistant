@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -46,7 +47,7 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
     public void visitEnum(final String name, final String desc, final String value) {
         EnumValueDescriptor valueDescriptor = createValue(EnumValueDescriptor.class, name);
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(visitorHelper.getType(desc));
-        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, visitorHelper.getFieldSignature(value, desc));
+        FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, SignatureHelper.getFieldSignature(value, desc));
         valueDescriptor.setType(visitorHelper.getTypeDescriptor(Enum.class.getName()));
         valueDescriptor.setValue(fieldDescriptor);
         addValue(name, valueDescriptor);
