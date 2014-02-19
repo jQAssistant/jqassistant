@@ -10,13 +10,21 @@ public abstract class AbstractTemplateRule {
     private String cypher;
 
     @RuleProperty(key = "Requires Concepts", description = "A list of concepts which are required to be executed prior to this rule.")
-    private List<String> requiresConcepts;
+    private String requiresConcepts;
 
     public void setCypher(String cypher) {
         this.cypher = cypher;
     }
 
-    public void setRequiresConcepts(List<String> requiresConcepts) {
+    public void setRequiresConcepts(String requiresConcepts) {
         this.requiresConcepts = requiresConcepts;
+    }
+
+    public String getCypher() {
+        return cypher;
+    }
+
+    public String getRequiresConcepts() {
+        return requiresConcepts;
     }
 }

@@ -22,6 +22,9 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * {@link org.sonar.api.batch.Sensor} implementation scanning for jqassistant-report.xml files.
+ */
 public class JQAssistantSensor implements Sensor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
