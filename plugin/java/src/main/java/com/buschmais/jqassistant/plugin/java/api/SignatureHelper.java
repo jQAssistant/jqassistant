@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api;
 
+import org.objectweb.asm.Type;
+
 /**
  * Provides utility functions for working with signatures.
  */
@@ -9,6 +11,41 @@ public final class SignatureHelper {
      * Private constructor.
      */
     private SignatureHelper() {
+    }
+
+    /**
+     * Returns the Java type name corresponding to the given internal name.
+     *
+     * @param desc The internal name.
+     * @return The type name.
+     */
+    public static String getObjectType(String desc) {
+        return getType(Type.getObjectType(desc));
+    }
+
+    /**
+     * Returns the Java type name type corresponding to the given type descriptor.
+     *
+     * @param desc The type descriptor.
+     * @return The type name.
+     */
+    public static String getType(String desc) {
+        return getType(Type.getType(desc));
+    }
+
+    /**
+     * Return the type name of the given ASM type.
+     *
+     * @param t The ASM type.
+     * @return The type name.
+     */
+    public static String getType(final Type t) {
+        switch (t.getSort()) {
+            case Type.ARRAY:
+                return getType(t.getElementType());
+            default:
+                return t.getClassName();
+        }
     }
 
     /**
