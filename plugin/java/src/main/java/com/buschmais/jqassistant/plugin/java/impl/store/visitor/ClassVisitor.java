@@ -31,17 +31,17 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     public void visit(final int version, final int access, final String name, final String signature, final String superName,
                       final String[] interfaces) {
         Class<? extends TypeDescriptor> javaType = getJavaType(access);
-        typeDescriptor = visitorHelper.getTypeDescriptor(name, javaType);
+        typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(name), javaType);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
             typeDescriptor.setAbstract(Boolean.TRUE);
         }
         setModifiers(access, typeDescriptor);
         if (signature == null) {
             if (superName != null) {
-                typeDescriptor.setSuperClass(visitorHelper.getTypeDescriptor(superName));
+                typeDescriptor.setSuperClass(visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(superName)));
             }
             for (int i = 0; interfaces != null && i < interfaces.length; i++) {
-                typeDescriptor.getInterfaces().add(visitorHelper.getTypeDescriptor(interfaces[i]));
+                typeDescriptor.getInterfaces().add(visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(interfaces[i])));
             }
         } else {
             new SignatureReader(signature).accept(new ClassSignatureVisitor(typeDescriptor, visitorHelper));
@@ -57,7 +57,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
         fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
         setModifiers(access, fieldDescriptor);
         if (signature == null) {
-            TypeDescriptor type = visitorHelper.getTypeDescriptor(visitorHelper.getType((desc)));
+            TypeDescriptor type = visitorHelper.getTypeDescriptor(SignatureHelper.getType((desc)));
             fieldDescriptor.setType(type);
         } else {
             new SignatureReader(signature).accept(new AbstractTypeSignatureVisitor<FieldDescriptor>(fieldDescriptor, visitorHelper) {
@@ -83,7 +83,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             });
         }
         if (value instanceof org.objectweb.asm.Type) {
-            visitorHelper.addDependency(fieldDescriptor, visitorHelper.getType((org.objectweb.asm.Type) value));
+            visitorHelper.addDependency(fieldDescriptor, SignatureHelper.getType((org.objectweb.asm.Type) value));
         }
         return new FieldVisitor(fieldDescriptor, visitorHelper);
     }
@@ -102,19 +102,19 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             methodDescriptor.setNative(Boolean.TRUE);
         }
         if (signature == null) {
-            String returnType = visitorHelper.getType(Type.getReturnType(desc));
+            String returnType = SignatureHelper.getType(Type.getReturnType(desc));
             methodDescriptor.setReturns(visitorHelper.getTypeDescriptor(returnType));
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
                 ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
-                String parameterType = visitorHelper.getType(types[i]);
+                String parameterType = SignatureHelper.getType(types[i]);
                 parameterDescriptor.setType(visitorHelper.getTypeDescriptor(parameterType));
             }
         } else {
             new SignatureReader(signature).accept(new MethodSignatureVisitor(methodDescriptor, visitorHelper));
         }
         for (int i = 0; exceptions != null && i < exceptions.length; i++) {
-            TypeDescriptor exception = visitorHelper.getTypeDescriptor(org.objectweb.asm.Type.getObjectType(exceptions[i]).getClassName());
+            TypeDescriptor exception = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(exceptions[i]));
             methodDescriptor.getDeclaredThrowables().add(exception);
         }
         return new MethodVisitor(methodDescriptor, visitorHelper);
@@ -140,19 +140,19 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitInnerClass(final String name, final String outerName, final String innerName, final int access) {
-        addInnerClass(typeDescriptor, visitorHelper.getTypeDescriptor(name));
+        addInnerClass(typeDescriptor, visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(name)));
     }
 
     @Override
     public void visitOuterClass(final String owner, final String name, final String desc) {
-        addInnerClass(visitorHelper.getTypeDescriptor(owner), typeDescriptor);
+        addInnerClass(visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(owner)), typeDescriptor);
     }
 
     // ---------------------------------------------
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
-        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(typeDescriptor, visitorHelper.getType(desc));
+        AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(typeDescriptor, SignatureHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
 

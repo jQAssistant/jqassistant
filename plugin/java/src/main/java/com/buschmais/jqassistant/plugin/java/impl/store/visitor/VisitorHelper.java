@@ -6,7 +6,6 @@ import com.buschmais.jqassistant.plugin.java.impl.store.query.FindParameterQuery
 import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateFieldQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateMethodQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
-import org.objectweb.asm.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,24 +36,20 @@ public class VisitorHelper {
     /*
      * Return the type descriptor for the given type name.
      *
-     * @param typeName The full qualified name of the type (e.g
-     * java.lang.Object).
+     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
      */
-    TypeDescriptor getTypeDescriptor(String typeName) {
-        String fullQualifiedName = getType(Type.getObjectType(typeName));
+    TypeDescriptor getTypeDescriptor(String fullQualifiedName) {
         return resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName);
     }
 
     /*
      * Return the type descriptor for the given type name.
      *
-     * @param typeName The full qualified name of the type (e.g.
-     * java.lang.Object).
+     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
      *
      * @param type The expected type.
      */
-    TypeDescriptor getTypeDescriptor(String typeName, Class<? extends TypeDescriptor> type) {
-        String fullQualifiedName = getType(Type.getObjectType(typeName));
+    TypeDescriptor getTypeDescriptor(String fullQualifiedName, Class<? extends TypeDescriptor> type) {
         return resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type);
     }
 
@@ -161,31 +156,6 @@ public class VisitorHelper {
         if (typeName != null) {
             TypeDescriptor dependency = getTypeDescriptor(typeName);
             dependentDescriptor.getDependencies().add(dependency);
-        }
-    }
-
-    /**
-     * Return the type name for the given native name (as provided by ASM).
-     *
-     * @param desc The native name.
-     * @return The type name.
-     */
-    String getType(final String desc) {
-        return getType(Type.getType(desc));
-    }
-
-    /**
-     * Return the type name of the given ASM type.
-     *
-     * @param t The ASM type.
-     * @return The type name.
-     */
-    String getType(final Type t) {
-        switch (t.getSort()) {
-            case Type.ARRAY:
-                return getType(t.getElementType());
-            default:
-                return t.getClassName();
         }
     }
 }

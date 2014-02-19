@@ -11,8 +11,7 @@
     <artifactId>jqassistant.sonar.plugin</artifactId>
     <packaging>sonar-plugin</packaging>
 
-    <name>jQAssistant plugin for Sonar</name>
-    <description>This plugin provides analysis results to description will be displayed in SonarQube</description>
+    <description>This plugin provides analysis results to be displayed in SonarQube.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
