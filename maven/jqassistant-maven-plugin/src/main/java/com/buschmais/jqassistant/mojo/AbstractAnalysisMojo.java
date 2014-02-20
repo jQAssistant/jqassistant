@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.mojo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,11 +43,18 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 	 */
 	@Parameter(property = "jqassistant.store.directory")
 	protected File storeDirectory;
+
 	/**
 	 * The directory to scan for rules.
 	 */
 	@Parameter(property = "jqassistant.rules.directory")
 	protected File rulesDirectory;
+
+    /**
+     * The url to retrieve rules.
+     */
+    @Parameter(property = "jqassistant.rules.directory")
+    protected URL rulesUrl;
 
 	/**
 	 * The list of concept names to be applied.
@@ -112,6 +120,13 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 				sources.add(new StreamSource(ruleFile));
 			}
 		}
+        if (rulesUrl != null) {
+            try {
+                sources.add(new StreamSource(rulesUrl.openStream(), rulesUrl.toExternalForm()));
+            } catch (IOException e) {
+                throw new MojoExecutionException("Cannot open rule URL " + rulesUrl.toExternalForm());
+            }
+        }
 		List<Source> ruleSources = pluginManager.getRuleSources();
 		sources.addAll(ruleSources);
 		return ruleSetReader.read(sources);

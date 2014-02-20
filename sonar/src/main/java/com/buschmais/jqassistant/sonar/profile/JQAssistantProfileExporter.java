@@ -67,6 +67,13 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
         ruleSetWriter.write(ruleSet, writer);
     }
+    private void createExecutable(ActiveRule activeRule, AbstractTemplateRule check, AbstractExecutable executable) {
+        executable.setId(activeRule.getRule().getName());
+        executable.setDescription(activeRule.getRule().getDescription());
+        Query query = new Query();
+        query.setCypher(check.getCypher());
+        executable.setQuery(query);
+    }
 
     private void addRequiredConcepts(AbstractExecutable executable, AbstractTemplateRule check, Map<String, Concept> concepts) {
         String requiresConcepts = check.getRequiresConcepts();
@@ -75,13 +82,5 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                 executable.getRequiredConcepts().add(concepts.get(requiresConcept));
             }
         }
-    }
-
-    private void createExecutable(ActiveRule activeRule, AbstractTemplateRule check, AbstractExecutable executable) {
-        executable.setId(activeRule.getRule().getName());
-        executable.setDescription(activeRule.getRule().getDescription());
-        Query query = new Query();
-        query.setCypher(check.getCypher());
-        executable.setQuery(query);
     }
 }
