@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit4.test;
+package com.buschmais.jqassistant.plugin.junit4.test.rule;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;

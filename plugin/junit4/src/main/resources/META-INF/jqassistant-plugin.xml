@@ -1,5 +1,11 @@
 <v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
-    <rules>
+    <store>
+        <type>com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor</type>
+    </store>
+    <scanner>
+        <plugin>com.buschmais.jqassistant.plugin.junit4.impl.scanner.TestReportScannerPlugin</plugin>
+    </scanner>    <rules>
         <resources>
             <resource>junit4.xml</resource>
         </resources>

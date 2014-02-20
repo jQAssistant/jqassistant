@@ -61,6 +61,8 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
             }
             scanDirectory(baseProject, project, store, project.getBuild().getOutputDirectory(), false, scannerPlugins);
             scanDirectory(baseProject, project, store, project.getBuild().getTestOutputDirectory(), true, scannerPlugins);
+            scanTestReports(project.getBuild().getDirectory() + "/surefire-reports", store, scannerPlugins);
+            scanTestReports(project.getBuild().getDirectory() + "/failsafe-reports", store, scannerPlugins);
         }
     }
 
@@ -99,6 +101,30 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
                 }
+            } finally {
+                store.commitTransaction();
+            }
+        }
+    }
+
+    /**
+     * Scans a directory for test reports.
+     *
+     * @param directoryName  The directory name.
+     * @param store          The store.
+     * @param scannerPlugins The plugins.
+     * @throws MojoExecutionException If scanning fails.
+     */
+    private void scanTestReports(String directoryName, Store store, List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException {
+        FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
+        final File directory = new File(directoryName);
+        if (directory.exists()) {
+            store.beginTransaction();
+            try {
+                for (Descriptor descriptor : scanner.scanDirectory(directory)) {
+                }
+            } catch (IOException e) {
+                throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
             } finally {
                 store.commitTransaction();
             }

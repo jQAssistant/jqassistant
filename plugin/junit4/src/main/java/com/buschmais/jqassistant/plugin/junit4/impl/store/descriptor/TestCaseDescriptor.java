@@ -1,10 +1,11 @@
-package com.buschmais.jqassistant.plugin.junit4.impl.store;
+package com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
 @Label("TESTCASE")
 public interface TestCaseDescriptor extends NamedDescriptor {
@@ -18,9 +19,9 @@ public interface TestCaseDescriptor extends NamedDescriptor {
 
 
     @Relation("DECLARED_IN")
-    ClassTypeDescriptor getDeclaredIn();
+    TypeDescriptor getDeclaredIn();
 
-    void setDeclaredIn(ClassTypeDescriptor declaredIn);
+    void setDeclaredIn(TypeDescriptor declaredIn);
 
     @Property("TIME")
     float getTime();
