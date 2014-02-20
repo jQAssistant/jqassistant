@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
@@ -87,15 +84,20 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     private void addConcept(Concept concept, Map<String, Concept> concepts) {
         if (!concepts.containsKey(concept.getId())) {
             concepts.put(concept.getId(), concept);
+            addRequiredConcepts(concept, concepts);
         }
     }
 
     private void addConstraint(Constraint constraint, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
         if (!constraints.containsKey(constraint.getId())) {
             constraints.put(constraint.getId(), constraint);
-            for (Concept concept : constraint.getRequiredConcepts()) {
-                addConcept(concept, concepts);
-            }
+            addRequiredConcepts(constraint, concepts);
+        }
+    }
+
+    private void addRequiredConcepts(AbstractExecutable executable, Map<String, Concept> concepts) {
+        for (Concept concept : executable.getRequiredConcepts()) {
+            addConcept(concept, concepts);
         }
     }
 
