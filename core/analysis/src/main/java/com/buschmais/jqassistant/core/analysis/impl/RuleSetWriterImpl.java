@@ -6,10 +6,14 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
@@ -43,11 +47,23 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         writeGroups(groups.values(), rules);
         writeConcepts(concepts.values(), rules);
         writeConstraints(constraints.values(), rules);
+
+        marshal(writer, rules);
+    }
+
+    private void marshal(Writer writer, JqassistantRules rules) {
+        XMLOutputFactory xof = XMLOutputFactory.newInstance();
+        XMLStreamWriter streamWriter = null;
+        try {
+            streamWriter = xof.createXMLStreamWriter(writer);
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+        XMLStreamWriter indentingStreamWriter = new IndentingXMLStreamWriter(new CDataXMLStreamWriter(streamWriter));
         try {
             Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-            marshaller.marshal(rules, writer);
+            marshaller.marshal(rules, indentingStreamWriter);
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot write rules to " + writer, e);
         }
