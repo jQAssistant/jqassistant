@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="1" time="0.058" errors="1" skipped="1" tests="4" name="com.buschmais.jqassistant.plugin.junit4.test.ExampleTest">
+<testsuite failures="1" time="0.058" errors="1" skipped="1" tests="4" name="com.buschmais.jqassistant.plugin.junit4.test.set.Example">
     <properties>
         <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     </properties>
-    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit4.test.ExampleTest" name="success"/>
-    <testcase time="0.003" classname="com.buschmais.jqassistant.plugin.junit4.test.ExampleTest" name="failure">
+    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit4.test.set.Example" name="success"/>
+    <testcase time="0.003" classname="com.buschmais.jqassistant.plugin.junit4.test.set.Example" name="failure">
         <failure type="java.lang.AssertionError">java.lang.AssertionError
             at org.junit.Assert.fail(Assert.java:86)
             at org.junit.Assert.fail(Assert.java:95)
-            at com.buschmais.jqassistant.plugin.junit4.test.ExampleTest.failure(ExampleTest.java:15)
+            at com.buschmais.jqassistant.plugin.junit4.test.set.Example.failure(Example.java:15)
             at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
             at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
             at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -40,9 +40,9 @@
             at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
         </failure>
     </testcase>
-    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit4.test.ExampleTest" name="error">
+    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit4.test.set.Example" name="error">
         <error type="java.lang.RuntimeException">java.lang.RuntimeException
-            at com.buschmais.jqassistant.plugin.junit4.test.ExampleTest.error(ExampleTest.java:20)
+            at com.buschmais.jqassistant.plugin.junit4.test.set.Example.error(Example.java:20)
             at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
             at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
             at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
@@ -74,7 +74,7 @@
             at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
         </error>
     </testcase>
-    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit4.test.ExampleTest" name="skipped">
+    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit4.test.set.Example" name="skipped">
         <skipped/>
     </testcase>
 </testsuite>

@@ -2,8 +2,6 @@ package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
 
@@ -26,7 +24,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
 
     @Override
     public boolean matches(String file, boolean isDirectory) {
-        return file.matches(".*TEST-.*\\.xml");
+        return !isDirectory && file.matches(".*TEST-.*\\.xml");
     }
 
     @Override
@@ -92,11 +90,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
                                     testCaseDescriptor.setTime(parseTime(value));
                                     break;
                                 case "classname":
-                                    TypeDescriptor declaredIn = store.find(TypeDescriptor.class, value);
-                                    if (declaredIn == null) {
-                                        declaredIn = store.create(TypeDescriptor.class, value);
-                                    }
-                                    testCaseDescriptor.setDeclaredIn(declaredIn);
+                                    testCaseDescriptor.setClassName(value);
                                     break;
                             }
                         }
