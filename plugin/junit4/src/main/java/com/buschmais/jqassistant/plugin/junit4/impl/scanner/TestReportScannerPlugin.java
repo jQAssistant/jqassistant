@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
 
@@ -18,9 +17,13 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescriptor> {
+public class TestReportScannerPlugin extends AbstractFileScannerPlugin<TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
+
+    @Override
+    protected void initialize() {
+    }
 
     @Override
     public boolean matches(String file, boolean isDirectory) {
@@ -28,7 +31,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
     }
 
     @Override
-    public TestSuiteDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
+    public TestSuiteDescriptor scanFile(StreamSource streamSource) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try {
@@ -46,7 +49,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
                 Iterator attributes = element.getAttributes();
                 switch (elementName) {
                     case "testsuite":
-                        testSuiteDescriptor = store.create(TestSuiteDescriptor.class);
+                        testSuiteDescriptor = getStore().create(TestSuiteDescriptor.class);
                         testSuiteDescriptor.setFileName(streamSource.getSystemId());
                         while (attributes.hasNext()) {
                             Attribute attribute = (Attribute) attributes.next();
@@ -75,7 +78,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
                         }
                         break;
                     case "testcase":
-                        testCaseDescriptor = store.create(TestCaseDescriptor.class);
+                        testCaseDescriptor = getStore().create(TestCaseDescriptor.class);
                         testCaseDescriptor.setResult(TestCaseDescriptor.Result.SUCCESS);
                         testSuiteDescriptor.getTestCases().add(testCaseDescriptor);
                         while (attributes.hasNext()) {
@@ -119,7 +122,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
     }
 
     @Override
-    public TestSuiteDescriptor scanDirectory(Store store, String name) throws IOException {
+    public TestSuiteDescriptor scanDirectory(String name) throws IOException {
         return null;
     }
 }
