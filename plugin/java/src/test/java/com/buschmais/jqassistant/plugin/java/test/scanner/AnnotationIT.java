@@ -39,9 +39,7 @@ public class AnnotationIT extends AbstractPluginIT {
      */
     @Test
     public void annotatedClass() throws IOException, NoSuchFieldException {
-        scanClasses(AnnotatedType.class,
-                Annotation.class,
-                NestedAnnotation.class);
+        scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
         // verify annotation type
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:TYPE:CLASS)-[:ANNOTATED_BY]->(a:VALUE:ANNOTATION)-[:OF_TYPE]->(at:TYPE:ANNOTATION) RETURN t, a, at");

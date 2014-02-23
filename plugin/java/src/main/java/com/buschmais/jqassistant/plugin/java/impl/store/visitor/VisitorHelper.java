@@ -6,6 +6,8 @@ import com.buschmais.jqassistant.plugin.java.impl.store.query.FindParameterQuery
 import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateFieldQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateMethodQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
+import org.apache.commons.collections.map.LRUMap;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,8 @@ public class VisitorHelper {
     private static final String CONSTRUCTOR_METHOD = "void <init>";
     private DescriptorResolverFactory resolverFactory;
     private Store store;
+
+    private Map<String, TypeDescriptor> typeCache = new LRUMap(65536);
 
     /**
      * Constructor.
@@ -39,7 +43,7 @@ public class VisitorHelper {
      * @param typeName The full qualified name of the type (e.g. java.lang.Object).
      */
     TypeDescriptor getTypeDescriptor(String fullQualifiedName) {
-        return resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName);
+        return getTypeDescriptor(fullQualifiedName, TypeDescriptor.class);
     }
 
     /*
@@ -50,7 +54,12 @@ public class VisitorHelper {
      * @param type The expected type.
      */
     TypeDescriptor getTypeDescriptor(String fullQualifiedName, Class<? extends TypeDescriptor> type) {
-        return resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type);
+        TypeDescriptor typeDescriptor = typeCache.get(fullQualifiedName);
+        if (typeDescriptor == null || !type.equals(typeDescriptor.getClass())) {
+            typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type);
+            typeCache.put(fullQualifiedName, typeDescriptor);
+        }
+        return typeDescriptor;
     }
 
     /**
