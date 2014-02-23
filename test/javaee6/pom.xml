@@ -21,6 +21,11 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant.maven</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
+                <configuration>
+                    <!--
+                    <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=test2</rulesUrl>
+                    -->
+                </configuration>
             </plugin>
         </plugins>
     </build>

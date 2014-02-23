@@ -28,10 +28,36 @@ import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
  */
 public abstract class AbstractGraphStore implements Store {
 
+    private static final class FqnCacheKey {
+        private final Class<? extends Descriptor> type;
+        private final String fullQualifiedName;
+
+        private FqnCacheKey(Class<? extends Descriptor> type, String fullQualifiedName) {
+            this.type = type;
+            this.fullQualifiedName = fullQualifiedName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FqnCacheKey that = (FqnCacheKey) o;
+            if (!fullQualifiedName.equals(that.fullQualifiedName)) return false;
+            if (!(type.isAssignableFrom(that.type) || that.type.isAssignableFrom(type))) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return fullQualifiedName.hashCode();
+        }
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
     private CdoManagerFactory cdoManagerFactory;
     private CdoManager cdoManager;
-    private Map<String, FullQualifiedNameDescriptor> fqnCache;
+    private Map<FqnCacheKey, FullQualifiedNameDescriptor> fqnCache;
 
     @Override
     public void start(Collection<Class<?>> types) {
@@ -64,25 +90,27 @@ public abstract class AbstractGraphStore implements Store {
     public <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName) {
         T descriptor = cdoManager.create(type);
         descriptor.setFullQualifiedName(fullQualifiedName);
-        fqnCache.put(fullQualifiedName, descriptor);
+        fqnCache.put(new FqnCacheKey(type, fullQualifiedName), descriptor);
         return descriptor;
     }
 
     @Override
     public <T extends Descriptor, C extends T> C migrate(T descriptor, Class<C> concreteType) {
         if (descriptor instanceof FullQualifiedNameDescriptor) {
-            fqnCache.remove(((FullQualifiedNameDescriptor) descriptor).getFullQualifiedName());
+            String fullQualifiedName = ((FullQualifiedNameDescriptor) descriptor).getFullQualifiedName();
+            fqnCache.remove(new FqnCacheKey(concreteType, fullQualifiedName));
         }
         C migrated = cdoManager.migrate(descriptor, concreteType);
         if (migrated instanceof FullQualifiedNameDescriptor) {
-            fqnCache.put(((FullQualifiedNameDescriptor) migrated).getFullQualifiedName(), (FullQualifiedNameDescriptor) migrated);
+            String fullQualifiedName = ((FullQualifiedNameDescriptor) migrated).getFullQualifiedName();
+            fqnCache.put(new FqnCacheKey(migrated.getClass(), fullQualifiedName), (FullQualifiedNameDescriptor) migrated);
         }
         return migrated;
     }
 
     @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
-        T t = (T) fqnCache.get(fullQualifiedName);
+        T t = (T) fqnCache.get(new FqnCacheKey(type, fullQualifiedName));
         if (t != null) {
             return t;
         }
