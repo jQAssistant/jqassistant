@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyFileDescriptor;
 
@@ -10,9 +11,13 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Implementation of the {@link FileScannerPlugin} for property files.
+ * Implementation of a {@link AbstractFileScannerPlugin} for property files.
  */
-public class PropertyFileScannerPlugin implements FileScannerPlugin<PropertyFileDescriptor> {
+public class PropertyFileScannerPlugin extends AbstractFileScannerPlugin<PropertyFileDescriptor> {
+
+    @Override
+    protected void initialize() {
+    }
 
     @Override
     public boolean matches(String file, boolean isDirectory) {
@@ -20,7 +25,8 @@ public class PropertyFileScannerPlugin implements FileScannerPlugin<PropertyFile
     }
 
     @Override
-    public PropertyFileDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
+    public PropertyFileDescriptor scanFile(StreamSource streamSource) throws IOException {
+        Store store = getStore();
         PropertyFileDescriptor propertyFileDescriptor = store.create(PropertyFileDescriptor.class);
         String filename = streamSource.getSystemId();
         propertyFileDescriptor.setFileName(filename);
@@ -37,7 +43,7 @@ public class PropertyFileScannerPlugin implements FileScannerPlugin<PropertyFile
     }
 
     @Override
-    public PropertyFileDescriptor scanDirectory(Store store, String name) throws IOException {
+    public PropertyFileDescriptor scanDirectory(String name) throws IOException {
         return null;
     }
 }

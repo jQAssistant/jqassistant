@@ -1,17 +1,7 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
-import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
-import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
-
-import java.io.IOException;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
@@ -20,22 +10,32 @@ import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUn
 import com.sun.java.xml.ns.persistence.ObjectFactory;
 import com.sun.java.xml.ns.persistence.Persistence;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
+
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDescriptor> {
+public class PersistenceScannerPlugin extends AbstractFileScannerPlugin<PersistenceDescriptor> {
 
 	private JAXBContext jaxbContext;
 
-	/**
-	 * Constructor.
-	 */
-	public PersistenceScannerPlugin() {
+    private DescriptorResolverFactory descriptorResolverFactory;
+
+    @Override
+    protected void initialize() {
 		try {
 			jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
 		} catch (JAXBException e) {
 			throw new IllegalStateException("Cannot create JAXB context.", e);
 		}
+        descriptorResolverFactory = new DescriptorResolverFactory(getStore());
 	}
 
 	@Override
@@ -44,8 +44,7 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 	}
 
 	@Override
-	public PersistenceDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
-		DescriptorResolverFactory descriptorResolverFactory = new DescriptorResolverFactory(store);
+	public PersistenceDescriptor scanFile(StreamSource streamSource) throws IOException {
 		Persistence persistence;
 		try {
 			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -53,7 +52,8 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 		} catch (JAXBException e) {
 			throw new IOException("Cannot read model descriptor.", e);
 		}
-		PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
+        Store store = getStore();
+        PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
 		persistenceDescriptor.setName(streamSource.getSystemId());
 		persistenceDescriptor.setVersion(persistence.getVersion());
 		// Create model units
@@ -84,7 +84,7 @@ public class PersistenceScannerPlugin implements FileScannerPlugin<PersistenceDe
 	}
 
 	@Override
-	public PersistenceDescriptor scanDirectory(Store store, String name) throws IOException {
+	public PersistenceDescriptor scanDirectory(String name) throws IOException {
 		return null;
 	}
 }

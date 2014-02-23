@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.*;
 import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Plugin reader implementation.
@@ -117,13 +119,14 @@ public class PluginManagerImpl implements PluginManager {
     }
 
     @Override
-    public List<FileScannerPlugin<?>> getScannerPlugins() throws PluginReaderException {
+    public List<FileScannerPlugin<?>> getScannerPlugins(Store store, Properties properties) throws PluginReaderException {
         List<FileScannerPlugin<?>> scannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : getPlugins()) {
             ScannerType scannerType = plugin.getScanner();
             if (scannerType != null) {
                 for (String scannerPluginName : scannerType.getPlugin()) {
                     FileScannerPlugin<?> scannerPlugin = createInstance(scannerPluginName);
+                    scannerPlugin.initialize(store, properties);
                     scannerPlugins.add(scannerPlugin);
                 }
             }

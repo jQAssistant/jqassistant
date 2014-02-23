@@ -33,6 +33,7 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -55,7 +56,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
         for (MavenProject project : projects) {
             List<FileScannerPlugin<?>> scannerPlugins;
             try {
-                scannerPlugins = pluginManager.getScannerPlugins();
+                scannerPlugins = pluginManager.getScannerPlugins(store, new Properties());
             } catch (PluginReaderException e) {
                 throw new MojoExecutionException("Cannot get scanner plugins.", e);
             }
@@ -93,7 +94,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
                     artifactDescriptor.setClassifier(artifact.getClassifier());
                     artifactDescriptor.setType(type);
                 }
-                FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
+                FileScanner scanner = new FileScannerImpl(scannerPlugins);
                 try {
                     for (Descriptor descriptor : scanner.scanDirectory(directory)) {
                         artifactDescriptor.getContains().add(descriptor);
@@ -116,7 +117,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
      * @throws MojoExecutionException If scanning fails.
      */
     private void scanTestReports(String directoryName, Store store, List<FileScannerPlugin<?>> scannerPlugins) throws MojoExecutionException {
-        FileScanner scanner = new FileScannerImpl(store, scannerPlugins);
+        FileScanner scanner = new FileScannerImpl(scannerPlugins);
         final File directory = new File(directoryName);
         if (directory.exists()) {
             store.beginTransaction();

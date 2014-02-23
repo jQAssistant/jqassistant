@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
@@ -19,9 +19,13 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescriptor> {
+public class TestReportScannerPlugin extends AbstractFileScannerPlugin<TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
+
+    @Override
+    protected void initialize() {
+    }
 
     @Override
     public boolean matches(String file, boolean isDirectory) {
@@ -29,7 +33,8 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
     }
 
     @Override
-    public TestSuiteDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
+    public TestSuiteDescriptor scanFile(StreamSource streamSource) throws IOException {
+        Store store = getStore();
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try {
@@ -124,7 +129,7 @@ public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescr
     }
 
     @Override
-    public TestSuiteDescriptor scanDirectory(Store store, String name) throws IOException {
+    public TestSuiteDescriptor scanDirectory(String name) throws IOException {
         return null;
     }
 }
