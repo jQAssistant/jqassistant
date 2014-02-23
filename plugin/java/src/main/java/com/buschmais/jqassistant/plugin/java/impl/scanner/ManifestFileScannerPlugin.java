@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestEntryDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestSectionDescriptor;
@@ -13,13 +13,15 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 /**
- * Implementation of the
- * {@link FileScannerPlugin} for java
- * MANIFEST.MF files.
+ * Implementation of the {@link AbstractFileScannerPlugin} for java MANIFEST.MF files.
  */
-public class ManifestFileScannerPlugin implements FileScannerPlugin<ManifestFileDescriptor> {
+public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin<ManifestFileDescriptor> {
 
     public static final String SECTION_MAIN = "Main";
+
+    @Override
+    protected void initialize() {
+    }
 
     @Override
     public boolean matches(String file, boolean isDirectory) {
@@ -27,8 +29,9 @@ public class ManifestFileScannerPlugin implements FileScannerPlugin<ManifestFile
     }
 
     @Override
-    public ManifestFileDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
+    public ManifestFileDescriptor scanFile(StreamSource streamSource) throws IOException {
         Manifest manifest = new Manifest(streamSource.getInputStream());
+        Store store = getStore();
         ManifestFileDescriptor manifestFileDescriptor = store.create(ManifestFileDescriptor.class);
         manifestFileDescriptor.setFileName(streamSource.getSystemId());
         ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
@@ -56,7 +59,7 @@ public class ManifestFileScannerPlugin implements FileScannerPlugin<ManifestFile
     }
 
     @Override
-    public ManifestFileDescriptor scanDirectory(Store store, String name) throws IOException {
+    public ManifestFileDescriptor scanDirectory(String name) throws IOException {
         return null;
     }
 }
