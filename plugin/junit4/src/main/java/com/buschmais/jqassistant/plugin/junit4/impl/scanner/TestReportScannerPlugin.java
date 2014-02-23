@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
 
@@ -19,22 +18,17 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class TestReportScannerPlugin extends AbstractFileScannerPlugin<TestSuiteDescriptor> {
+public class TestReportScannerPlugin implements FileScannerPlugin<TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
     public boolean matches(String file, boolean isDirectory) {
-        return file.matches(".*TEST-.*\\.xml");
+        return !isDirectory && file.matches(".*TEST-.*\\.xml");
     }
 
     @Override
-    public TestSuiteDescriptor scanFile(StreamSource streamSource) throws IOException {
-        Store store = getStore();
+    public TestSuiteDescriptor scanFile(Store store, StreamSource streamSource) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try {
@@ -96,11 +90,7 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin<TestSuite
                                     testCaseDescriptor.setTime(parseTime(value));
                                     break;
                                 case "classname":
-                                    TypeDescriptor declaredIn = store.find(TypeDescriptor.class, value);
-                                    if (declaredIn == null) {
-                                        declaredIn = store.create(TypeDescriptor.class, value);
-                                    }
-                                    testCaseDescriptor.setDeclaredIn(declaredIn);
+                                    testCaseDescriptor.setClassName(value);
                                     break;
                             }
                         }
@@ -129,7 +119,7 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin<TestSuite
     }
 
     @Override
-    public TestSuiteDescriptor scanDirectory(String name) throws IOException {
+    public TestSuiteDescriptor scanDirectory(Store store, String name) throws IOException {
         return null;
     }
 }

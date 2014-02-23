@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.plugin.junit4.test.scanner;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -23,12 +22,12 @@ public class TestReportScannerIT extends AbstractPluginIT {
      */
     @Test
     public void propertyFile() throws IOException {
-        scanURLs(TestReportScannerIT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.ExampleTest.xml"));
+        scanURLs(TestReportScannerIT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
         store.beginTransaction();
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TESTSUITE:FILE) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         TestSuiteDescriptor testSuiteDescriptor = testSuiteDescriptors.get(0);
-        assertThat(testSuiteDescriptor.getFileName(), endsWith("TEST-com.buschmais.jqassistant.plugin.junit4.test.ExampleTest.xml"));
+        assertThat(testSuiteDescriptor.getFileName(), endsWith("TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
         assertThat(testSuiteDescriptor.getTests(), equalTo(4));
         assertThat(testSuiteDescriptor.getFailures(), equalTo(1));
         assertThat(testSuiteDescriptor.getErrors(), equalTo(1));
@@ -47,7 +46,7 @@ public class TestReportScannerIT extends AbstractPluginIT {
         assertThat(testCaseDescriptors.size(), equalTo(1));
         TestCaseDescriptor testCaseDescriptor = testCaseDescriptors.get(0);
         assertThat(testCaseDescriptor.getName(), equalTo(expectedName));
-        assertThat(testCaseDescriptor.getDeclaredIn(), typeDescriptor("com.buschmais.jqassistant.plugin.junit4.test.ExampleTest"));
+        assertThat(testCaseDescriptor.getClassName(), equalTo(Example.class.getName()));
         assertThat(testCaseDescriptor.getTime(), equalTo(expectedTime));
         assertThat(testCaseDescriptor.getResult(), equalTo(expectedResult));
     }

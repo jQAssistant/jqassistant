@@ -20,4 +20,23 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit4:TestCaseImplementedByMethod">
+        <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing methods.</description>
+        <cypher><![CDATA[
+            MATCH
+              (testcase:TESTCASE)
+            WITH
+              testcase
+            MATCH
+              (testclass:TYPE)-[:DECLARES]->(testmethod:METHOD)
+            WHERE
+              testclass.FQN=testcase.CLASSNAME
+              AND testmethod.NAME=testcase.NAME
+            CREATE UNIQUE
+              (testcase)-[:IMPLEMENTED_BY]->(testmethod)
+            RETURN
+              count(testcase) as TestCases
+        ]]></cypher>
+    </concept>
+
 </jqa:jqassistant-rules>
