@@ -127,7 +127,7 @@ public class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected FileScanner getArtifactScanner() {
-        return new FileScannerImpl(store, getScannerPlugins());
+        return new FileScannerImpl(getScannerPlugins());
     }
 
     /**
@@ -350,7 +350,7 @@ public class AbstractPluginIT {
 
     private List<FileScannerPlugin<?>> getScannerPlugins() {
         try {
-            return pluginManager.getScannerPlugins();
+            return pluginManager.getScannerPlugins(store, new Properties());
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
