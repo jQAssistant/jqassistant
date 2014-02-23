@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
@@ -73,11 +72,11 @@ public class FileScannerImpl implements FileScanner {
                 private Descriptor doScan(E element, FileScannerPlugin plugin, String name, boolean directory) throws IOException {
                     try {
                         if (directory) {
-                            return plugin.scanDirectory(store, name);
+                            return plugin.scanDirectory(name);
                         } else {
                             BufferedInputStream inputStream = new BufferedInputStream(openInputStream(name, element));
                             StreamSource streamSource = new StreamSource(inputStream, name);
-                            Descriptor descriptor = plugin.scanFile(store, streamSource);
+                            Descriptor descriptor = plugin.scanFile(streamSource);
                             inputStream.close();
                             return descriptor;
                         }
@@ -106,18 +105,14 @@ public class FileScannerImpl implements FileScanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerImpl.class);
 
-    private Store store;
     private Collection<FileScannerPlugin<?>> plugins;
 
     /**
      * Constructor.
      *
-     * @param plugins The
-     *                {@link com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin}
-     *                s to use for scanning.
+     * @param plugins The {@link FileScannerPlugin}s to use for scanning.
      */
-    public FileScannerImpl(Store store, Collection<FileScannerPlugin<?>> plugins) {
-        this.store = store;
+    public FileScannerImpl(Collection<FileScannerPlugin<?>> plugins) {
         this.plugins = plugins;
     }
 
