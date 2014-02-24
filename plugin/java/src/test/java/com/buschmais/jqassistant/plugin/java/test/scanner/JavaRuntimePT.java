@@ -50,7 +50,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 				} else {
 					descriptor = null;
 				}
-			} while (descriptor != null && count < 50);
+			} while (descriptor != null && count < 100);
 			store.commitTransaction();
 		} while (descriptor != null);
         applyConcept("metric:Top10TypesPerArtifact");

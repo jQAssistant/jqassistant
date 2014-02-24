@@ -11,8 +11,7 @@ import java.util.Set;
  * Describes a method of a Java class.
  */
 @Label(value = "METHOD")
-public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor,
-        AccessModifierDescriptor, AbstractDescriptor {
+public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
     @Relation("HAS")
     public Set<ParameterDescriptor> getParameters();
