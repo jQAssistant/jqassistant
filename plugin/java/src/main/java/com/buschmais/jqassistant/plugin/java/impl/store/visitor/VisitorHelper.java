@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import com.buschmais.jqassistant.plugin.java.impl.store.query.FindParameterQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateFieldQuery;
@@ -21,10 +22,13 @@ public class VisitorHelper {
      * The name of constructor methods.
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
+
     private DescriptorResolverFactory resolverFactory;
     private Store store;
 
-    private Map<String, TypeDescriptor> typeCache = new LRUMap(65536);
+    private Map<String, TypeDescriptor> typeCache = new LRUMap(16384);
+    private Map<TypeDescriptor, Map<String, MethodDescriptor>> methodCache = new LRUMap(16384);
+    private Map<TypeDescriptor, Map<String, FieldDescriptor>> fieldCache = new LRUMap(16384);
 
     /**
      * Constructor.
@@ -55,7 +59,13 @@ public class VisitorHelper {
      */
     TypeDescriptor getTypeDescriptor(String fullQualifiedName, Class<? extends TypeDescriptor> type) {
         TypeDescriptor typeDescriptor = typeCache.get(fullQualifiedName);
-        if (typeDescriptor == null || !type.equals(typeDescriptor.getClass())) {
+        if (typeDescriptor != null && !type.isAssignableFrom(typeDescriptor.getClass())) {
+            typeCache.remove(typeDescriptor);
+            methodCache.remove(typeDescriptor);
+            fieldCache.remove(typeDescriptor);
+            typeDescriptor = null;
+        }
+        if (typeDescriptor == null) {
             typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type);
             typeCache.put(fullQualifiedName, typeDescriptor);
         }
@@ -70,15 +80,37 @@ public class VisitorHelper {
      * @return The method descriptor.
      */
     MethodDescriptor getMethodDescriptor(TypeDescriptor type, String signature) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("type", type);
-        params.put("signature", signature);
-        MethodDescriptor methodDescriptor = store.executeQuery(GetOrCreateMethodQuery.class, params).getSingleResult()
-                .as(GetOrCreateMethodQuery.class).getMethod();
-        if (signature.startsWith(CONSTRUCTOR_METHOD) && !ConstructorDescriptor.class.isAssignableFrom(methodDescriptor.getClass())) {
-            methodDescriptor = store.migrate(methodDescriptor, ConstructorDescriptor.class);
+        Map<String, MethodDescriptor> methodsOfType = getMemberCache(type, methodCache);
+        MethodDescriptor methodDescriptor = methodsOfType.get(signature);
+        if (methodDescriptor == null) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("type", type);
+            params.put("signature", signature);
+            methodDescriptor = store.executeQuery(GetOrCreateMethodQuery.class, params).getSingleResult()
+                    .as(GetOrCreateMethodQuery.class).getMethod();
+            if (signature.startsWith(CONSTRUCTOR_METHOD) && !ConstructorDescriptor.class.isAssignableFrom(methodDescriptor.getClass())) {
+                methodDescriptor = store.migrate(methodDescriptor, ConstructorDescriptor.class);
+            }
+            methodsOfType.put(signature, methodDescriptor);
         }
         return methodDescriptor;
+    }
+
+    /**
+     * Get the member cache for a type descriptor.
+     *
+     * @param type        The type descriptor.
+     * @param memberCache The cache holding members by their type.
+     * @param <T>         The member type.
+     * @return The member cache.
+     */
+    private <T extends Descriptor> Map<String, T> getMemberCache(TypeDescriptor type, Map<TypeDescriptor, Map<String, T>> memberCache) {
+        Map<String, T> membersOfType = memberCache.get(type);
+        if (membersOfType == null) {
+            membersOfType = new LRUMap(256);
+            memberCache.put(type, membersOfType);
+        }
+        return membersOfType;
     }
 
     /**
@@ -89,10 +121,16 @@ public class VisitorHelper {
      * @return The field descriptor.
      */
     FieldDescriptor getFieldDescriptor(TypeDescriptor type, String signature) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("type", type);
-        params.put("signature", signature);
-        return store.executeQuery(GetOrCreateFieldQuery.class, params).getSingleResult().as(GetOrCreateFieldQuery.class).getField();
+        Map<String, FieldDescriptor> fieldsOfType = getMemberCache(type, fieldCache);
+        FieldDescriptor fieldDescriptor = fieldsOfType.get(signature);
+        if (fieldDescriptor == null) {
+            Map<String, Object> params = new HashMap<>();
+            params.put("type", type);
+            params.put("signature", signature);
+            fieldDescriptor = store.executeQuery(GetOrCreateFieldQuery.class, params).getSingleResult().as(GetOrCreateFieldQuery.class).getField();
+            fieldsOfType.put(signature, fieldDescriptor);
+        }
+        return fieldDescriptor;
     }
 
     /**
