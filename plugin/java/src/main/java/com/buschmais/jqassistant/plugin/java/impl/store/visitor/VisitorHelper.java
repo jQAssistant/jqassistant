@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateFieldQu
 import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateMethodQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 import org.apache.commons.collections.map.LRUMap;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
