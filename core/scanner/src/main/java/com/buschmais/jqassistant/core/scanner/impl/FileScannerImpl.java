@@ -41,23 +41,24 @@ public class FileScannerImpl implements FileScanner {
 
                 private Descriptor next = null;
 
-                @Override
-                public boolean hasNext() {
-                    try {
-                        while (next == null && hasNextElement()) {
-                            E element = nextElement();
+				@Override
+				public boolean hasNext() {
+					try {
+						while (next == null && hasNextElement()) {
+							E element = nextElement();
                             if (element == null) {
                                 LOGGER.warn("Skipping an unresolvable element while scanning.");
                             } else {
-                                for (FileScannerPlugin plugin : plugins) {
-                                    String name = getName(element);
-                                    boolean isDirectory = isDirectory(element);
-                                    if (plugin.matches(name, isDirectory)) {
-                                        if (LOGGER.isInfoEnabled()) LOGGER.info("Scanning '{}'", name);
-                                        next = doScan(element, plugin, name, isDirectory);
-                                    }
+							for (FileScannerPlugin plugin : plugins) {
+								String name = getName(element);
+								boolean isDirectory = isDirectory(element);
+								if (plugin.matches(name, isDirectory)) {
+									if (LOGGER.isInfoEnabled()) {
+										LOGGER.info("Scanning '{}'", name);
+									}
+                                    next = doScan(element, plugin, name, isDirectory);
                                 }
-                            }
+                            }}
                         }
                         if (next != null) {
                             return true;
@@ -116,19 +117,21 @@ public class FileScannerImpl implements FileScanner {
         this.plugins = plugins;
     }
 
-    @Override
-    public Iterable<Descriptor> scanArchive(File archive) throws IOException {
-        if (!archive.exists()) {
-            throw new IOException("Archive '" + archive.getAbsolutePath() + "' not found.");
-        }
-        if (LOGGER.isInfoEnabled()) LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
-        final ZipFile zipFile = new ZipFile(archive);
-        final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
-        return new AbstractIterable<ZipEntry>() {
-            @Override
-            protected boolean hasNextElement() {
-                return zipEntries.hasMoreElements();
-            }
+	@Override
+	public Iterable<Descriptor> scanArchive(File archive) throws IOException {
+		if (!archive.exists()) {
+			throw new IOException("Archive '" + archive.getAbsolutePath() + "' not found.");
+		}
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("Scanning archive '{}'.", archive.getAbsolutePath());
+		}
+		final ZipFile zipFile = new ZipFile(archive);
+		final Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
+		return new AbstractIterable<ZipEntry>() {
+			@Override
+			protected boolean hasNextElement() {
+				return zipEntries.hasMoreElements();
+			}
 
             @Override
             protected ZipEntry nextElement() {
@@ -169,8 +172,11 @@ public class FileScannerImpl implements FileScanner {
 
             @Override
             protected boolean handleDirectory(File directory, int depth, Collection<File> results) throws IOException {
-                results.add(directory);
-                return recursive || depth == 0;
+                if (recursive) {
+                    results.add(directory);
+                    return true;
+                }
+                return depth == 0;
             }
 
             @Override
@@ -178,12 +184,21 @@ public class FileScannerImpl implements FileScanner {
                 results.add(file);
             }
 
-            public void scan(File directory) throws IOException {
-                super.walk(directory, files);
-            }
-        }.scan(directory);
-        if (LOGGER.isInfoEnabled())
+			public void scan(File directory) throws IOException {
+				super.walk(directory, files);
+			}
+		}.scan(directory);
+		if (LOGGER.isInfoEnabled()) {
+			LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
+		}
+		return scanFiles(directory, files);
+	}
+
+	@Override
+	public Iterable<Descriptor> scanFiles(File directory, List<File> files) {
+        if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
+        }
         final URI directoryURI = directory.toURI();
         final Iterator<File> iterator = files.iterator();
         return new AbstractIterable<File>() {
