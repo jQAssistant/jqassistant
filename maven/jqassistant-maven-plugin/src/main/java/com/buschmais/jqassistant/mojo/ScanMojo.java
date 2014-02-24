@@ -122,7 +122,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
         if (directory.exists()) {
             store.beginTransaction();
             try {
-                for (Descriptor descriptor : scanner.scanDirectory(directory)) {
+                for (Descriptor descriptor : scanner.scanDirectory(directory, false)) {
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);

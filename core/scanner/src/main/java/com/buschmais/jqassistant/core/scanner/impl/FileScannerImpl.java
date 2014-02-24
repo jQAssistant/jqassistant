@@ -159,13 +159,18 @@ public class FileScannerImpl implements FileScanner {
 
     @Override
     public Iterable<Descriptor> scanDirectory(File directory) throws IOException {
+        return scanDirectory(directory, true);
+    }
+
+    @Override
+    public Iterable<Descriptor> scanDirectory(File directory, final boolean recursive) throws IOException {
         final List<File> files = new ArrayList<>();
         new DirectoryWalker<File>() {
 
             @Override
             protected boolean handleDirectory(File directory, int depth, Collection<File> results) throws IOException {
                 results.add(directory);
-                return true;
+                return recursive || depth == 0;
             }
 
             @Override
@@ -177,7 +182,8 @@ public class FileScannerImpl implements FileScanner {
                 super.walk(directory, files);
             }
         }.scan(directory);
-        if (LOGGER.isInfoEnabled()) LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
         final URI directoryURI = directory.toURI();
         final Iterator<File> iterator = files.iterator();
         return new AbstractIterable<File>() {
