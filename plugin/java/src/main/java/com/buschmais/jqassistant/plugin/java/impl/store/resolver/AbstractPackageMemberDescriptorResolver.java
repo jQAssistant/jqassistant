@@ -47,21 +47,6 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
     }
 
     /**
-     * Resolve a descriptor from a given parent descriptor and a local
-     * signature.
-     *
-     * @param parent    The parent descriptor.
-     * @param signature The signature.
-     * @return The descriptor.
-     */
-    public T resolve(P parent, String signature) {
-        StringBuffer fullQualifiedName = new StringBuffer(parent.getFullQualifiedName());
-        fullQualifiedName.append(getSeparator());
-        fullQualifiedName.append(signature);
-        return resolve(fullQualifiedName.toString());
-    }
-
-    /**
      * Resolve a descriptor from a given full qualified name.
      *
      * @param fullQualifiedName The full qualified name.
