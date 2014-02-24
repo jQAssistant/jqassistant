@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.pluginmanager.api;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import javax.xml.transform.Source;
@@ -40,4 +41,11 @@ public interface PluginManager {
      * @throws PluginReaderException If the instances cannot be created.
      */
     List<FileScannerPlugin<?>> getScannerPlugins(Store store, Properties properties) throws PluginReaderException;
+
+
+	/**
+	 * @return
+	 * @throws PluginReaderException
+	 */
+	List<ProjectScannerPlugin<?>> getProjectScannerPlugins() throws PluginReaderException;
 }
