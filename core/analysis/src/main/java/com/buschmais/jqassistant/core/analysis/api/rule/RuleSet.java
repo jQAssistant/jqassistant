@@ -11,36 +11,44 @@ import java.util.TreeSet;
  */
 public class RuleSet {
 
-	private Map<String, Concept> concepts = new TreeMap<>();
-	private Map<String, Constraint> constraints = new TreeMap<>();
-	private Map<String, Group> groups = new TreeMap<>();
+    private Map<String, Concept> concepts = new TreeMap<>();
+    private Map<String, Constraint> constraints = new TreeMap<>();
+    private Map<String, Group> groups = new TreeMap<>();
 
-	private Set<String> missingConcepts = new TreeSet<>();
-	private Set<String> missingConstraints = new TreeSet<>();
-	private Set<String> missingGroups = new TreeSet<>();
+    private Set<String> missingConcepts = new TreeSet<>();
+    private Set<String> missingConstraints = new TreeSet<>();
+    private Set<String> missingGroups = new TreeSet<>();
 
-	public Map<String, Concept> getConcepts() {
-		return concepts;
-	}
+    public Map<String, Concept> getConcepts() {
+        return concepts;
+    }
 
-	public Map<String, Constraint> getConstraints() {
-		return constraints;
-	}
+    public Map<String, Constraint> getConstraints() {
+        return constraints;
+    }
 
-	public Map<String, Group> getGroups() {
-		return groups;
-	}
+    public Map<String, Group> getGroups() {
+        return groups;
+    }
 
-	public Set<String> getMissingConcepts() {
-		return missingConcepts;
-	}
+    public Set<String> getMissingConcepts() {
+        return missingConcepts;
+    }
 
-	public Set<String> getMissingConstraints() {
-		return missingConstraints;
-	}
+    public Set<String> getMissingConstraints() {
+        return missingConstraints;
+    }
 
-	public Set<String> getMissingGroups() {
-		return missingGroups;
-	}
+    public Set<String> getMissingGroups() {
+        return missingGroups;
+    }
 
+    @Override
+    public String toString() {
+        return "RuleSet{" +
+                "groups=" + groups +
+                ", constraints=" + constraints +
+                ", concepts=" + concepts +
+                '}';
+    }
 }

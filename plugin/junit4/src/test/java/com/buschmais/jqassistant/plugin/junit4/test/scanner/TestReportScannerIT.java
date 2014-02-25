@@ -21,7 +21,7 @@ public class TestReportScannerIT extends AbstractPluginIT {
      * @throws java.io.IOException If the test fails.
      */
     @Test
-    public void propertyFile() throws IOException {
+    public void reportFile() throws IOException {
         scanURLs(TestReportScannerIT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
         store.beginTransaction();
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TESTSUITE:FILE) RETURN suite").getColumn("suite");
