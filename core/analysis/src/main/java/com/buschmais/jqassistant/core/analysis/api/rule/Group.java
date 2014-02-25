@@ -65,9 +65,13 @@ public class Group implements Rule {
 		return id.hashCode();
 	}
 
-	@Override
-	public String toString() {
-		return "Constraint Group " + id;
-	}
-
+    @Override
+    public String toString() {
+        return "Group{" +
+                "id='" + id + '\'' +
+                ", concepts=" + concepts +
+                ", constraints=" + constraints +
+                ", groups=" + groups +
+                '}';
+    }
 }
