@@ -20,12 +20,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The jQAssistant rule repository.
+ */
 public final class JQAssistantRuleRepository extends RuleRepository {
 
     public static final List<Class> RULE_CLASSES = Arrays.<Class>asList(ConceptTemplateRule.class, ConstraintTemplateRule.class);
 
     private final AnnotationRuleParser annotationRuleParser;
 
+    /**
+     * Constructor.
+     *
+     * @param annotationRuleParser The {@link AnnotationRuleParser} to use for template rules.
+     */
     public JQAssistantRuleRepository(AnnotationRuleParser annotationRuleParser) {
         super(JQAssistant.KEY, Java.KEY);
         setName(JQAssistant.NAME);
@@ -59,6 +67,7 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     private Rule createRule(AbstractExecutable executable, RuleType ruleType) {
         Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
         rule.setDescription(executable.getDescription());
+        rule.setSeverity(ruleType.getPriority());
         StringBuilder requiresConcepts = new StringBuilder();
         for (Concept requiredConcept : executable.getRequiredConcepts()) {
             if (requiresConcepts.length() > 0) {

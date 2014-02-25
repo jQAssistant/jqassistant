@@ -19,14 +19,23 @@ import org.sonar.api.rules.RuleParam;
 import org.sonar.api.utils.SonarException;
 
 import java.io.Writer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * A {@link ProfileExporter} implementation which provides rules as permalink for direct usage by the jQAssistant analyzer.
+ */
 public class JQAssistantProfileExporter extends ProfileExporter {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(JQAssistantProfileExporter.class);
 
     private final RuleFinder ruleFinder;
 
+    /**
+     * Constructor.
+     *
+     * @param ruleFinder The {@link org.sonar.api.rules.RuleFinder} to use.
+     */
     public JQAssistantProfileExporter(RuleFinder ruleFinder) {
         super(JQAssistant.KEY, JQAssistant.NAME);
         this.ruleFinder = ruleFinder;
@@ -36,7 +45,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
     public void exportProfile(RulesProfile profile, Writer writer) {
         CheckFactory<AbstractTemplateRule> annotationCheckFactory = AnnotationCheckFactory.<AbstractTemplateRule>create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
         Map<String, Concept> concepts = new HashMap<String, Concept>();
-        Map<AbstractExecutable, Set<String>> executables = new HashMap<AbstractExecutable, Set<String>>();
+        Map<AbstractExecutable, String> executables = new HashMap<AbstractExecutable, String>();
         for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
             AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
             AbstractExecutable executable;
@@ -48,18 +57,17 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                 executable = createExecutableFromTemplate(activeRule, check);
                 requiresConcepts = check.getRequiresConcepts();
             }
-            List<String> requiresConceptsArray = requiresConcepts != null ? Arrays.asList(StringUtils.splitByWholeSeparator(requiresConcepts, ",")) : Collections.<String>emptyList();
-            executables.put(executable, new HashSet<String>(requiresConceptsArray));
+            executables.put(executable, requiresConcepts);
             if (executable instanceof Concept) {
                 concepts.put(executable.getId(), (Concept) executable);
             }
         }
         Group group = new Group();
         group.setId(profile.getName());
-        for (Map.Entry<AbstractExecutable, Set<String>> executableEntry : executables.entrySet()) {
+        for (Map.Entry<AbstractExecutable, String> executableEntry : executables.entrySet()) {
             AbstractExecutable executable = executableEntry.getKey();
-            Set<String> requiresConcepts = executableEntry.getValue();
-            addRequiredConcepts(requiresConcepts, group, concepts);
+            String requiresConcepts = executableEntry.getValue();
+            addRequiredConcepts(executable, requiresConcepts, concepts);
             if (executable instanceof Concept) {
                 group.getConcepts().add((Concept) executable);
             } else if (executable instanceof Constraint) {
@@ -69,17 +77,39 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         RuleSet ruleSet = new RuleSet();
         ruleSet.getGroups().put(group.getId(), group);
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
-        LOGGER.info("Exporting rule set " + ruleSet.toString());
+        LOGGER.debug("Exporting rule set " + ruleSet.toString());
         ruleSetWriter.write(ruleSet, writer);
     }
 
-    private void addRequiredConcepts(Set<String> requiresConcepts, Group group, Map<String, Concept> concepts) {
-        for (String requiresConcept : requiresConcepts) {
-            Concept requiredConcept = concepts.get(requiresConcept);
-            if (requiredConcept == null) {
-                Rule rule = ruleFinder.findByKey(JQAssistant.KEY, requiresConcept);
-                requiredConcept = (Concept) createExecutableFromRule(rule);
-                group.getConcepts().add(requiredConcept);
+    /**
+     * Resolves and adds required concepts for an executable.
+     *
+     * @param executable       The executable.
+     * @param requiresConcepts The string containing the comma separated is of required concepts.
+     * @param concepts         The map of already resolved concepts.
+     */
+    private void addRequiredConcepts(AbstractExecutable executable, String requiresConcepts, Map<String, Concept> concepts) {
+        LOGGER.debug("Adding required concepts for " + executable.getId());
+        if (!StringUtils.isEmpty(requiresConcepts)) {
+            for (String requiresConceptId : StringUtils.splitByWholeSeparator(requiresConcepts, ",")) {
+                LOGGER.debug("Required concept: " + requiresConceptId);
+                Concept requiredConcept = concepts.get(requiresConceptId);
+                if (requiredConcept == null) {
+                    LOGGER.debug("Finding rule for concept : " + requiresConceptId);
+                    Rule rule = ruleFinder.findByKey(JQAssistant.KEY, requiresConceptId);
+                    requiredConcept = (Concept) createExecutableFromRule(rule);
+                    concepts.put(requiresConceptId, requiredConcept);
+                    RuleParam requiresConceptsParam = rule.getParam(RuleParameter.RequiresConcepts.getName());
+                    if (requiresConceptsParam != null) {
+                        addRequiredConcepts(requiredConcept, requiresConceptsParam.getDefaultValue(), concepts);
+                    }
+                }
+                if (requiredConcept != null) {
+                    LOGGER.debug("Adding required concept with id " + requiresConceptId + " to " + executable.getId());
+                    executable.getRequiredConcepts().add(requiredConcept);
+                } else {
+                    LOGGER.warn("Cannot resolve required concept with id " + requiresConceptId);
+                }
             }
         }
     }
@@ -96,7 +126,6 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         return createExecutableFromRule(rule, cypher);
     }
 
-
     /**
      * Creates an executable from a rule.
      *
@@ -104,7 +133,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
      * @return The executable.
      */
     private AbstractExecutable createExecutableFromRule(Rule rule) {
-        RuleParam cypherParam = rule.getParam(RuleParameter.Type.getName());
+        RuleParam cypherParam = rule.getParam(RuleParameter.Cypher.getName());
         if (cypherParam == null) {
             throw new SonarException("Cannot determine cypher for " + rule);
         }
@@ -161,6 +190,14 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         return executable;
     }
 
+    /**
+     * Sets the given parameters for an executable.
+     *
+     * @param executable  The executable.
+     * @param id          The id.
+     * @param description The description.
+     * @param cypher      The cypher expression.
+     */
     private void createExecutable(AbstractExecutable executable, String id, String description, String cypher) {
         executable.setId(id);
         executable.setDescription(description);
