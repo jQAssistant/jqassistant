@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar;
+package com.buschmais.jqassistant.sonar.plugin;
 
 /**
  * Defines constants for the jQAssistant plugin.

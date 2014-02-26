@@ -1,8 +1,6 @@
-package com.buschmais.jqassistant.sonar.rule;
+package com.buschmais.jqassistant.sonar.plugin.rule;
 
 import org.sonar.check.RuleProperty;
-
-import java.util.List;
 
 public abstract class AbstractTemplateRule {
 

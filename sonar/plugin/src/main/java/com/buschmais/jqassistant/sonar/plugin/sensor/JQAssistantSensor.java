@@ -1,8 +1,8 @@
-package com.buschmais.jqassistant.sonar.sensor;
+package com.buschmais.jqassistant.sonar.plugin.sensor;
 
 import com.buschmais.jqassistant.core.report.schema.v1.*;
-import com.buschmais.jqassistant.sonar.JQAssistant;
-import com.buschmais.jqassistant.sonar.rule.JQAssistantRuleRepository;
+import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
+import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Sensor;

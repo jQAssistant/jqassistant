@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.rule;
+package com.buschmais.jqassistant.sonar.plugin.rule;
 
 /**
  * Created by dimahler on 2/25/14.

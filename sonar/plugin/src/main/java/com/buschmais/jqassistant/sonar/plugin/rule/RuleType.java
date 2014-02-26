@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.rule;
+package com.buschmais.jqassistant.sonar.plugin.rule;
 
 import org.sonar.api.rules.RulePriority;
 

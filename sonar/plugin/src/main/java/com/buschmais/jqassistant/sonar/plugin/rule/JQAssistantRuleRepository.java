@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.rule;
+package com.buschmais.jqassistant.sonar.plugin.rule;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
-import com.buschmais.jqassistant.sonar.JQAssistant;
+import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 import org.sonar.api.resources.Java;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;

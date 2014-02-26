@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.rule;
+package com.buschmais.jqassistant.sonar.plugin.rule;
 
 import org.sonar.check.Cardinality;
 import org.sonar.check.Priority;

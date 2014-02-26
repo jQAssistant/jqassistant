@@ -1,8 +1,8 @@
-package com.buschmais.jqassistant.sonar;
+package com.buschmais.jqassistant.sonar.plugin;
 
-import com.buschmais.jqassistant.sonar.profile.JQAssistantProfileExporter;
-import com.buschmais.jqassistant.sonar.rule.JQAssistantRuleRepository;
-import com.buschmais.jqassistant.sonar.sensor.JQAssistantSensor;
+import com.buschmais.jqassistant.sonar.plugin.profile.JQAssistantProfileExporter;
+import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
+import com.buschmais.jqassistant.sonar.plugin.sensor.JQAssistantSensor;
 import org.sonar.api.SonarPlugin;
 
 import java.util.Arrays;

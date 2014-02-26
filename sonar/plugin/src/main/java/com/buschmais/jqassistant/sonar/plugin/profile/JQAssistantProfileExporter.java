@@ -1,10 +1,10 @@
-package com.buschmais.jqassistant.sonar.profile;
+package com.buschmais.jqassistant.sonar.plugin.profile;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
-import com.buschmais.jqassistant.sonar.JQAssistant;
-import com.buschmais.jqassistant.sonar.rule.*;
+import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
+import com.buschmais.jqassistant.sonar.plugin.rule.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
     public JQAssistantProfileExporter(RuleFinder ruleFinder) {
         super(JQAssistant.KEY, JQAssistant.NAME);
         this.ruleFinder = ruleFinder;
+        super.setMimeType("application/xml");
     }
 
     @Override
