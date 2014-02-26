@@ -34,19 +34,18 @@ public class JQAssistantSensor implements Sensor {
 
     private final JAXBContext reportContext;
 
-    private final Map<String, Rule> rules;
+    private final Map<String, ActiveRule> rules;
 
     public JQAssistantSensor(RulesProfile profile) throws JAXBException {
         this.annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
         this.reportContext = JAXBContext.newInstance(ObjectFactory.class);
-        this.rules = new HashMap<String, Rule>();
+        this.rules = new HashMap<String, ActiveRule>();
         for (Object check : annotationCheckFactory.getChecks()) {
-            Rule rule = annotationCheckFactory.getActiveRule(check).getRule();
-            rules.put(rule.getName(), rule);
+            ActiveRule rule = annotationCheckFactory.getActiveRule(check);
+            rules.put(rule.getRule().getName(), rule);
         }
         for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
-            Rule rule = activeRule.getRule();
-            rules.put(rule.getName(), rule);
+            rules.put(activeRule.getRule().getName(), activeRule);
         }
     }
 
@@ -83,34 +82,41 @@ public class JQAssistantSensor implements Sensor {
             LOGGER.info("Processing group '{}'", groupType.getId());
             for (RuleType ruleType : groupType.getConceptOrConstraint()) {
                 String id = ruleType.getId();
-                Rule rule = rules.get(id);
-                if (rule == null) {
-                    LOGGER.warn("Cannot resolve rule for id '{}'.", id);
+                ActiveRule activeRule = rules.get(id);
+                if (activeRule == null) {
+                    LOGGER.warn("Cannot resolve activeRule for id '{}'.", id);
                 } else {
                     ResultType result = ruleType.getResult();
                     boolean hasRows = result != null && result.getRows().getCount() > 0;
                     if (ruleType instanceof ConceptType && !hasRows) {
-                        createViolation(project, sensorContext, rule, result);
+                        createViolation(project, sensorContext, activeRule, "The concept did not return a result.");
                     } else if (ruleType instanceof ConstraintType && hasRows) {
-                        createViolation(project, sensorContext, rule, result);
+                        StringBuilder message = new StringBuilder();
+                        for (RowType rowType : result.getRows().getRow()) {
+                            StringBuilder row = new StringBuilder();
+                            for (ColumnType columnType : rowType.getColumn()) {
+                                if (row.length() > 0) {
+                                    row.append(", ");
+                                }
+                                row.append(columnType.getName());
+                                row.append('=');
+                                row.append(columnType.getValue());
+                            }
+                            if (message.length() > 0) {
+                                message.append('\n');
+                            }
+                            message.append(row);
+                        }
+                        createViolation(project, sensorContext, activeRule, message.toString());
                     }
                 }
             }
         }
     }
 
-    private void createViolation(Project project, SensorContext sensorContext, Rule rule, ResultType result) {
-        Violation violation = Violation.create(rule, project);
-        StringBuilder message = new StringBuilder();
-        for (RowType rowType : result.getRows().getRow()) {
-            for (ColumnType columnType : rowType.getColumn()) {
-                message.append(columnType.getName());
-                message.append('=');
-                message.append(columnType.getValue());
-            }
-            message.append('\n');
-        }
-        violation.setMessage(message.toString());
+    private void createViolation(Project project, SensorContext sensorContext, ActiveRule activeRule, String message) {
+        Violation violation = Violation.create(activeRule, project);
+        violation.setMessage(message);
         sensorContext.saveViolation(violation);
     }
 }

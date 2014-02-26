@@ -18,10 +18,6 @@
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.buschmais.jqassistant.maven</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-            </plugin>
         </plugins>
     </build>
 

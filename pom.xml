@@ -145,13 +145,13 @@
                             <goals>
                                 <goal>analyze</goal>
                             </goals>
-                            <configuration>
-                                <groups>
-                                    <group>default</group>
-                                </groups>
-                            </configuration>
                         </execution>
                     </executions>
+                    <configuration>
+                        <groups>
+                            <group>default</group>
+                        </groups>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>com.buschmais.jqassistant.plugin</groupId>
