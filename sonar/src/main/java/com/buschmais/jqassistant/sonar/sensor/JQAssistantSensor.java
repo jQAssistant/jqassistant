@@ -10,6 +10,7 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.checks.AnnotationCheckFactory;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
+import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.Violation;
 import org.sonar.api.utils.SonarException;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * {@link org.sonar.api.batch.Sensor} implementation scanning for jqassistant-report.xml files.
+ * {@link Sensor} implementation scanning for jqassistant-report.xml files.
  */
 public class JQAssistantSensor implements Sensor {
 
@@ -41,6 +42,10 @@ public class JQAssistantSensor implements Sensor {
         this.rules = new HashMap<String, Rule>();
         for (Object check : annotationCheckFactory.getChecks()) {
             Rule rule = annotationCheckFactory.getActiveRule(check).getRule();
+            rules.put(rule.getName(), rule);
+        }
+        for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
+            Rule rule = activeRule.getRule();
             rules.put(rule.getName(), rule);
         }
     }
@@ -85,17 +90,27 @@ public class JQAssistantSensor implements Sensor {
                     ResultType result = ruleType.getResult();
                     boolean hasRows = result != null && result.getRows().getCount() > 0;
                     if (ruleType instanceof ConceptType && !hasRows) {
-                        createViolation(project, sensorContext, rule);
+                        createViolation(project, sensorContext, rule, result);
                     } else if (ruleType instanceof ConstraintType && hasRows) {
-                        createViolation(project, sensorContext, rule);
+                        createViolation(project, sensorContext, rule, result);
                     }
                 }
             }
         }
     }
 
-    private void createViolation(Project project, SensorContext sensorContext, Rule rule) {
+    private void createViolation(Project project, SensorContext sensorContext, Rule rule, ResultType result) {
         Violation violation = Violation.create(rule, project);
+        StringBuilder message = new StringBuilder();
+        for (RowType rowType : result.getRows().getRow()) {
+            for (ColumnType columnType : rowType.getColumn()) {
+                message.append(columnType.getName());
+                message.append('=');
+                message.append(columnType.getValue());
+            }
+            message.append('\n');
+        }
+        violation.setMessage(message.toString());
         sensorContext.saveViolation(violation);
     }
 }
