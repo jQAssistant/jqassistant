@@ -53,6 +53,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
             } while (descriptor != null && count < 50);
             store.commitTransaction();
 		} while (descriptor != null);
+        /*
         applyConcept("metric:Top10TypesPerArtifact");
         applyConcept("metric:Top10TypesPerPackage");
         applyConcept("metric:Top10MethodsPerType");
@@ -70,6 +71,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 				LOGGER.info(sb.toString());
 			}
 		}
+		*/
 	}
 
 }
