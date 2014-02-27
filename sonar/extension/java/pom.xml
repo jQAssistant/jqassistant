@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant.sonar</groupId>
+        <artifactId>jqassistant.sonar.extension</artifactId>
+        <version>1.0.0-M3-SNAPSHOT</version>
+    </parent>
+    <artifactId>jqassistant.sonar.extension.java</artifactId>
+    <packaging>sonar-plugin</packaging>
+
+    <description>This extension provides Java rules for the jQAssistant plugin.</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.sonar</groupId>
+                <artifactId>sonar-packaging-maven-plugin</artifactId>
+                <configuration>
+                    <pluginClass>com.buschmais.jqassistant.sonar.extension.java.JQAssistantJavaExtension</pluginClass>
+                    <basePlugin>jQAssistant</basePlugin>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native2ascii-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.sonar</groupId>
+                <artifactId>sonar-dev-maven-plugin</artifactId>
+                <version>1.7</version>
+                <configuration>
+                    <copyPluginArtifact>
+                        <groupId>com.buschmais.jqassistant.sonar</groupId>
+                        <artifactId>jqassistant.sonar.plugin</artifactId>
+                        <version>${project.version}</version>
+                    </copyPluginArtifact>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-plugin-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java</artifactId>
+        </dependency>
+    </dependencies>
+</project>

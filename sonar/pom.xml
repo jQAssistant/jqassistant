@@ -123,5 +123,6 @@
 
     <modules>
         <module>plugin</module>
+        <module>extension</module>
     </modules>
 </project>
