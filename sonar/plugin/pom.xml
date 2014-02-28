@@ -12,18 +12,49 @@
 
     <description>This plugin provides analysis results to be displayed in SonarQube.</description>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.sonar</groupId>
+                <artifactId>sonar-packaging-maven-plugin</artifactId>
+                <configuration>
+                    <pluginKey>jQAssistant</pluginKey>
+                    <pluginName>jQAssistant</pluginName>
+                    <pluginClass>com.buschmais.jqassistant.sonar.plugin.JQAssistantPlugin</pluginClass>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native2ascii-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
-        <dependency>
-            <groupId>org.codehaus.sonar</groupId>
-            <artifactId>sonar-plugin-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.pluginmanager</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.buschmais.jqassistant.core</groupId>
+                    <artifactId>jqassistant.core.store</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.buschmais.jqassistant.core</groupId>
+                    <artifactId>jqassistant.core.scanner</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.report</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-plugin-api</artifactId>
         </dependency>
 
         <!-- unit tests -->
@@ -45,20 +76,5 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.sonar</groupId>
-                <artifactId>sonar-packaging-maven-plugin</artifactId>
-                <configuration>
-                    <pluginClass>com.buschmais.jqassistant.sonar.plugin.JQAssistantPlugin</pluginClass>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>native2ascii-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

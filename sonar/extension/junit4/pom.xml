@@ -7,10 +7,10 @@
         <artifactId>jqassistant.sonar.extension</artifactId>
         <version>1.0.0-M3-SNAPSHOT</version>
     </parent>
-    <artifactId>jqassistant.sonar.extension.java</artifactId>
+    <artifactId>jqassistant.sonar.extension.junit4</artifactId>
     <packaging>sonar-plugin</packaging>
 
-    <description>This extension provides Java rules for the jQAssistant plugin.</description>
+    <description>This extension provides JUnit 4 rules for the jQAssistant plugin.</description>
 
     <build>
         <plugins>
@@ -18,7 +18,7 @@
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <configuration>
-                    <pluginClass>com.buschmais.jqassistant.sonar.extension.java.JQAssistantJavaExtension</pluginClass>
+                    <pluginClass>com.buschmais.jqassistant.sonar.extension.junit4.JQAssistantJUnit4Extension</pluginClass>
                 </configuration>
             </plugin>
         </plugins>
@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.java</artifactId>
+            <artifactId>jqassistant.plugin.junit4</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

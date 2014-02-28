@@ -18,28 +18,62 @@
                     <artifactId>sonar-dev-maven-plugin</artifactId>
                     <version>1.7</version>
                     <configuration>
-                        <copyPluginArtifact>
-                            <groupId>com.buschmais.jqassistant.sonar</groupId>
-                            <artifactId>jqassistant.sonar.plugin</artifactId>
-                            <version>${project.version}</version>
-                        </copyPluginArtifact>
+                        <pluginArtifact>${project.build.directory}/jqassistant.sonar.plugin.jar</pluginArtifact>
+                        <extensionsDir>${project.build.directory}/extensions</extensionsDir>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.sonar</groupId>
+                <artifactId>sonar-packaging-maven-plugin</artifactId>
+                <configuration>
+                    <basePlugin>jQAssistant</basePlugin>
+                    <outputDirectory>${project.build.directory}/extensions/plugins</outputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native2ascii-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-sonar-plugin</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>process-test-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <includeArtifactIds>jqassistant.sonar.plugin</includeArtifactIds>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.sonar</groupId>
-                <artifactId>jqassistant.sonar.plugin</artifactId>
-                <version>1.0.0-M3-SNAPSHOT</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-plugin-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
     <modules>
         <module>java</module>
+        <module>junit4</module>
     </modules>
 </project>

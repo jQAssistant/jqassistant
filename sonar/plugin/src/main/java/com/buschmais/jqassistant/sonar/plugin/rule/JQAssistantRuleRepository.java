@@ -22,6 +22,11 @@ import java.util.List;
 
 /**
  * The jQAssistant rule repository.
+ * <p>It provides two types of rules:
+ * <ul>
+ * <li>Rules from jQAssistant plugin descriptors which are deployed as extensions.</li>
+ * <li>Template rules which can be configured by the user in the UI.</li>
+ * </ul>
  */
 public final class JQAssistantRuleRepository extends RuleRepository {
 

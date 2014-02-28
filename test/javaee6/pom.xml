@@ -8,6 +8,27 @@
     <artifactId>jqassistant.test.javaee6</artifactId>
     <packaging>pom</packaging>
 
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.buschmais.jqassistant.maven</groupId>
+                        <artifactId>jqassistant-maven-plugin</artifactId>
+                        <configuration>
+                            <groups>
+                                <group>Sonar way</group>
+                            </groups>
+                            <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=Sonar%2520way</rulesUrl>
+                            <failOnConstraintViolations>false</failOnConstraintViolations>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -22,9 +43,7 @@
                 <groupId>com.buschmais.jqassistant.maven</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
                 <configuration>
-                    <!--
-                    <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=test2</rulesUrl>
-                    -->
+                    <failOnConstraintViolations>false</failOnConstraintViolations>
                 </configuration>
             </plugin>
         </plugins>
