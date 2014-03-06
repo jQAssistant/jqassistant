@@ -30,7 +30,7 @@ public class JUnitReportWriter implements ExecutionListener {
     private Group group;
     private long executableBeginTimestamp;
     private long groupBeginTimestamp;
-    private Map<Result, Long> results;
+    private Map<Result, Long> results = new LinkedHashMap<>();
 
     public JUnitReportWriter(File directory) throws ExecutionListenerException {
         this.directory = directory;
@@ -52,7 +52,6 @@ public class JUnitReportWriter implements ExecutionListener {
     @Override
     public void beginGroup(Group group) throws ExecutionListenerException {
         this.group = group;
-        this.results = new LinkedHashMap<>();
         this.groupBeginTimestamp = System.currentTimeMillis();
     }
 
@@ -114,7 +113,7 @@ public class JUnitReportWriter implements ExecutionListener {
             throw new ExecutionListenerException("Cannot write JUNIT4 report.", e);
         }
         this.group = null;
-        this.results = null;
+        this.results.clear();
     }
 
     @Override

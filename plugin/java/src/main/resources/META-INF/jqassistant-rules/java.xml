@@ -55,4 +55,17 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:Deprecated">
+        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with DEPRECATED.</description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:TYPE)
+            WHERE
+              dt.FQN='java.lang.Deprecated'
+            SET
+              e:DEPRECATED
+            RETURN
+              count(e) AS DeprecatedElements
+        ]]></cypher>
+    </concept>
 </jqa:jqassistant-rules>
