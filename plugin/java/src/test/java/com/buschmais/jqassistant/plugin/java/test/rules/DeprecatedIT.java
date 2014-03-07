@@ -10,6 +10,7 @@ import java.io.IOException;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -37,6 +38,7 @@ public class DeprecatedIT extends AbstractPluginIT {
         assertThat(query("MATCH (element:FIELD:DEPRECATED) RETURN element").getColumn("element"), hasItem(fieldDescriptor(DeprecatedType.class, "value")));
         assertThat(query("MATCH (element:METHOD:DEPRECATED) RETURN element").getColumn("element"), hasItem(methodDescriptor(DeprecatedType.class, "getValue")));
         assertThat(query("MATCH (element:METHOD:DEPRECATED) RETURN element").getColumn("element"), hasItem(methodDescriptor(DeprecatedType.class, "setValue", int.class)));
+        assertThat(query("MATCH (element:PARAMETER:DEPRECATED) RETURN element.INDEX as index").getColumn("index"), hasItem(equalTo(0)));
         store.commitTransaction();
     }
 }
