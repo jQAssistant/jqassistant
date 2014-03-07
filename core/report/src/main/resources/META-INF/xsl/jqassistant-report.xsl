@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<xsl:stylesheet version="1.0"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:jqa-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.0">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="html" version="1.0" encoding="iso-8859-1" indent="yes"/>
     <xsl:template name="content">
         <script type="text/javascript">
@@ -89,7 +87,7 @@
                     <th>Group Name</th>
                     <th style="width:150px;">Date</th>
                 </tr>
-                <xsl:apply-templates select="//jqa-report:group"/>
+                <xsl:apply-templates select="//group"/>
             </table>
         </div>
         <div>
@@ -106,8 +104,8 @@
                     <th>Constraint Name</th>
                     <th style="width:150px;">Duration (in ms)</th>
                 </tr>
-                <xsl:apply-templates select="//jqa-report:constraint">
-                    <xsl:sort select="count(jqa-report:result)" order="descending" data-type="number"/>
+                <xsl:apply-templates select="//constraint">
+                    <xsl:sort select="count(result)" order="descending" data-type="number"/>
                     <xsl:sort select="@id" order="ascending"/>
                 </xsl:apply-templates>
             </table>
@@ -126,8 +124,8 @@
                     <th>Concept Name</th>
                     <th style="width:150px;">Duration (in ms)</th>
                 </tr>
-                <xsl:apply-templates select="//jqa-report:concept">
-                    <xsl:sort select="count(jqa-report:result)" order="descending" data-type="number"/>
+                <xsl:apply-templates select="//concept">
+                    <xsl:sort select="count(result)" order="descending" data-type="number"/>
                     <xsl:sort select="@id" order="ascending"/>
                 </xsl:apply-templates>
             </table>
@@ -135,8 +133,8 @@
     </xsl:template>
 
     <!-- ANALYSIS GROUP -->
-    <xsl:template match="jqa-report:group">
-        <tr>
+    <xsl:template match="group">
+    <tr>
             <td>
                 <xsl:value-of select="position()"/>
             </td>
@@ -150,14 +148,14 @@
     </xsl:template>
 
     <!-- CONSTRAINT/CONCEPT TABLE -->
-    <xsl:template match="jqa-report:constraint | jqa-report:concept">
-        <xsl:variable name="resultId" select="generate-id(jqa-report:result)"/>
+    <xsl:template match="constraint | concept">
+        <xsl:variable name="resultId" select="generate-id(result)"/>
         <tr>
             <xsl:attribute name="class">
                 <xsl:choose>
-                    <xsl:when test="jqa-report:result and name()='constraint'">constraint_error</xsl:when>
-                    <xsl:when test="not(jqa-report:result) and name()='constraint'">constraint_success</xsl:when>
-                    <xsl:when test="not(jqa-report:result) and name()='concept'">concept_warn</xsl:when>
+                    <xsl:when test="result and name()='constraint'">constraint_error</xsl:when>
+                    <xsl:when test="not(result) and name()='constraint'">constraint_success</xsl:when>
+                    <xsl:when test="not(result) and name()='concept'">concept_warn</xsl:when>
                     <xsl:otherwise></xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
@@ -166,11 +164,11 @@
                 <xsl:value-of select="position()"/>
             </td>
             <td>
-                <span class="ruleName" title="{jqa-report:description/text()}"
+                <span class="ruleName" title="{description/text()}"
                       onclick="javascript:toggle('{$resultId}');">
                     <xsl:attribute name="class">
                         <xsl:choose>
-                            <xsl:when test="jqa-report:result">ruleName nameWithResult</xsl:when>
+                            <xsl:when test="result">ruleName nameWithResult</xsl:when>
                             <xsl:otherwise>ruleName</xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
@@ -178,48 +176,47 @@
                 </span>
             </td>
             <td class="right">
-                <xsl:value-of select="jqa-report:duration/text()"/>
+                <xsl:value-of select="duration/text()"/>
             </td>
         </tr>
-        <xsl:if test="jqa-report:result">
+        <xsl:if test="result">
             <tr id="{$resultId}" style="display:table-row;" name="resultRow">
                 <xsl:if test="name()='constraint'">
                     <xsl:attribute name="class">
                         <xsl:choose>
-                            <xsl:when test="jqa-report:result">constraint_error</xsl:when>
+                            <xsl:when test="result">constraint_error</xsl:when>
                             <xsl:otherwise>constraint_success</xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
                 </xsl:if>
                 <td colspan="3">
-                    <xsl:apply-templates select="jqa-report:result"/>
+                    <xsl:apply-templates select="result"/>
                 </td>
             </tr>
         </xsl:if>
     </xsl:template>
 
     <!-- RESULT PART -->
-    <xsl:template match="jqa-report:result">
+    <xsl:template match="result">
         <div class="result">
             <p>
-                <xsl:value-of select="../jqa-report:description/text()"/>
+                <xsl:value-of select="../description/text()"/>
             </p>
             <table>
                 <tr>
-                    <xsl:for-each select="jqa-report:columns/jqa-report:column">
-                        <th>
+                    <xsl:for-each select="columns/column">
+                    <th>
                             <xsl:value-of select="text()"/>
                         </th>
                     </xsl:for-each>
                 </tr>
-                <xsl:for-each select="jqa-report:rows/jqa-report:row">
+                <xsl:for-each select="rows/row">
                     <xsl:variable name="row" select="position()"/>
                     <tr>
-                        <xsl:for-each select="../../jqa-report:columns/jqa-report:column">
+                        <xsl:for-each select="../../columns/column">
                             <xsl:variable name="col" select="text()"/>
                             <td>
-                                <xsl:value-of
-                                        select="../../jqa-report:rows/jqa-report:row[$row]/jqa-report:column[@name=$col]"/>
+                                <xsl:value-of select="../../rows/row[$row]/column[@name=$col]"/>
                             </td>
                         </xsl:for-each>
                     </tr>
