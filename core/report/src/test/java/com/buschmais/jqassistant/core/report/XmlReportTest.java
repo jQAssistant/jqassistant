@@ -2,14 +2,7 @@ package com.buschmais.jqassistant.core.report;
 
 
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
-import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
-import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import org.junit.Assert;
+import com.buschmais.jqassistant.core.report.schema.v1.*;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -21,45 +14,32 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class XmlReportTest {
 
     @Test
     public void writeAndReadReport() throws JAXBException, SAXException, ExecutionListenerException {
-        StringWriter writer = new StringWriter();
-        XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
-        xmlReportWriter.begin();
-        Group group = new Group();
-        group.setId("default");
-        Concept concept = new Concept();
-        concept.setId("my:concept");
-        concept.setDescription("My concept description");
-
-        xmlReportWriter.beginGroup(group);
-        xmlReportWriter.beginConcept(concept);
-        Result<Concept> result = new Result<>(concept, Arrays.asList("column1"), Collections.<Map<String, Object>>emptyList());
-        xmlReportWriter.setResult(result);
-        xmlReportWriter.endConcept();
-        xmlReportWriter.endGroup();
-        xmlReportWriter.end();
+        String xmlReport = XmlReportTestHelper.createXmlReport();
 
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.0.xsd")));
         JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        StreamSource source = new StreamSource(new StringReader(writer.toString()));
+        StreamSource source = new StreamSource(new StringReader(xmlReport));
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         unmarshaller.setSchema(schema);
         JqassistantReport report = unmarshaller.unmarshal(source, JqassistantReport.class).getValue();
-        Assert.assertThat(report, notNullValue());
-        Assert.assertThat(report.getGroup().size(), equalTo(1));
+        assertThat(report, notNullValue());
+        assertThat(report.getGroup().size(), equalTo(1));
         GroupType groupType = report.getGroup().get(0);
-        Assert.assertThat(groupType.getDate(), notNullValue());
+        assertThat(groupType.getDate(), notNullValue());
+        assertThat(groupType.getId(), equalTo("default"));
+        assertThat(groupType.getConceptOrConstraint().size(), equalTo(1));
+        RuleType ruleType = groupType.getConceptOrConstraint().get(0);
+        assertThat(ruleType, instanceOf(ConceptType.class));
+        assertThat(ruleType.getId(), equalTo("my:concept"));
+        assertThat(ruleType.getDescription(), equalTo("My concept description"));
     }
 }
