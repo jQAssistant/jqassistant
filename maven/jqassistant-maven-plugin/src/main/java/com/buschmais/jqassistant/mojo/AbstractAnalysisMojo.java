@@ -1,20 +1,5 @@
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
@@ -28,6 +13,19 @@ import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
 import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -53,7 +51,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * The url to retrieve rules.
      */
-    @Parameter(property = "jqassistant.rules.directory")
+    @Parameter(property = "jqassistant.rules.url")
     protected URL rulesUrl;
 
 	/**
