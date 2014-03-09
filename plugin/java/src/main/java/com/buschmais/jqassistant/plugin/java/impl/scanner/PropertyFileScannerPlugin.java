@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
@@ -13,7 +12,7 @@ import java.util.Properties;
 /**
  * Implementation of a {@link AbstractFileScannerPlugin} for property files.
  */
-public class PropertyFileScannerPlugin extends AbstractFileScannerPlugin<PropertyFileDescriptor> {
+public class PropertyFileScannerPlugin extends AbstractFileScannerPlugin {
 
     @Override
     protected void initialize() {
