@@ -106,14 +106,14 @@ public class FileScannerImpl implements FileScanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerImpl.class);
 
-    private Collection<FileScannerPlugin<?>> plugins;
+    private Collection<FileScannerPlugin> plugins;
 
     /**
      * Constructor.
      *
      * @param plugins The {@link FileScannerPlugin}s to use for scanning.
      */
-    public FileScannerImpl(Collection<FileScannerPlugin<?>> plugins) {
+    public FileScannerImpl(Collection<FileScannerPlugin> plugins) {
         this.plugins = plugins;
     }
 
