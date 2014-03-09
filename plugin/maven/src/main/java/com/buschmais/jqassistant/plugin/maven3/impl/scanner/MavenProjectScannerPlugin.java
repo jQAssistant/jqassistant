@@ -38,7 +38,6 @@ public class MavenProjectScannerPlugin implements ProjectScannerPlugin {
 
     @Override
     public void scan(FileScanner fileScanner) throws IOException {
-        LOGGER.info("Scanning...!!!");
         scanDirectory(fileScanner, project.getBuild().getOutputDirectory(), false);
         scanDirectory(fileScanner, project.getBuild().getTestOutputDirectory(), true);
         scanTestReports(fileScanner, project.getBuild().getDirectory() + "/surefire-reports");
