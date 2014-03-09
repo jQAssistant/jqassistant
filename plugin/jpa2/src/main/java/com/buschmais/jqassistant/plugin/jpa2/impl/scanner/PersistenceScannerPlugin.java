@@ -22,7 +22,7 @@ import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Proper
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractFileScannerPlugin<PersistenceDescriptor> {
+public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
 
 	private JAXBContext jaxbContext;
 
@@ -40,7 +40,7 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin<Persiste
 
 	@Override
 	public boolean matches(String file, boolean isDirectory) {
-		return "META-INF/persistence.xml".equals(file) || "WEB-INF/model.xml".equals(file);
+		return "META-INF/persistence.xml".equals(file) || "WEB-INF/persistence.xml".equals(file);
 	}
 
 	@Override

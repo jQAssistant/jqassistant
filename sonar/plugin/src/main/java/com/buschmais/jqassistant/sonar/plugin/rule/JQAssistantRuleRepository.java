@@ -1,19 +1,21 @@
 package com.buschmais.jqassistant.sonar.plugin.rule;
 
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
-import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
+import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginManager;
+import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginManagerImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 import org.sonar.api.resources.Java;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.api.rules.RuleRepository;
+import org.sonar.api.utils.SonarException;
 
 import javax.xml.transform.Source;
 import java.util.ArrayList;
@@ -48,7 +50,12 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     @Override
     public List<Rule> createRules() {
         List<Rule> rules = new ArrayList<Rule>();
-        PluginManager pluginManager = new PluginManagerImpl();
+        RulePluginManager pluginManager = null;
+        try {
+            pluginManager = new RulePluginManagerImpl();
+        } catch (PluginReaderException e) {
+            throw new SonarException("Cannot read rules.", e);
+        }
         List<Source> ruleSources = pluginManager.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         RuleSet ruleSet = ruleSetReader.read(ruleSources);

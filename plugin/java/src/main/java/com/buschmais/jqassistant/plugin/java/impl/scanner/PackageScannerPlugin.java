@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Implementation of the {@link AbstractFileScannerPlugin} for java packages.
  */
-public class PackageScannerPlugin extends AbstractFileScannerPlugin<PackageDescriptor> {
+public class PackageScannerPlugin extends AbstractFileScannerPlugin {
 
     @Override
     protected void initialize() {

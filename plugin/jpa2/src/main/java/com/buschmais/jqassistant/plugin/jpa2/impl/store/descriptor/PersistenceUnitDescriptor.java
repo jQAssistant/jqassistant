@@ -16,7 +16,7 @@ import java.util.Set;
 @Label("PERSISTENCEUNIT")
 public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, JpaDescriptor {
 
-    @Property("DESCRITPION")
+    @Property("DESCRIPTION")
     public String getDescription();
 
     public void setDescription(String description);

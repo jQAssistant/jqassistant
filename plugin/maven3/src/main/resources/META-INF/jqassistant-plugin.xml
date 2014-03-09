@@ -1,5 +1,5 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
     <scanner>
-        <plugin>com.buschmais.jqassistant.plugin.tycho.impl.scanner.TychoProjectScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin</plugin>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

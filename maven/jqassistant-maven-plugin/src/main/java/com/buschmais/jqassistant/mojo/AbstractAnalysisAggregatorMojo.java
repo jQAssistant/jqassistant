@@ -8,6 +8,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import static com.buschmais.jqassistant.mojo.Aggregator.AggregatedGoal;
@@ -34,12 +35,12 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
 		Aggregator.execute(new AggregatedGoal() {
 			public void execute(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
 				List<Class<?>> descriptorTypes;
+                Store store = getStore(baseProject);
 				try {
-					descriptorTypes = pluginManager.getDescriptorTypes();
+					descriptorTypes = getScannerPluginManager(store, new Properties()).getDescriptorTypes();
 				} catch (PluginReaderException e) {
 					throw new MojoExecutionException("Cannot get descriptor mappers.", e);
 				}
-				Store store = getStore(baseProject);
 				try {
 					store.start(descriptorTypes);
 					AbstractAnalysisAggregatorMojo.this.aggregate(baseProject, projects, store);

@@ -15,7 +15,7 @@ import java.util.jar.Manifest;
 /**
  * Implementation of the {@link AbstractFileScannerPlugin} for java MANIFEST.MF files.
  */
-public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin<ManifestFileDescriptor> {
+public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin {
 
     public static final String SECTION_MAIN = "Main";
 

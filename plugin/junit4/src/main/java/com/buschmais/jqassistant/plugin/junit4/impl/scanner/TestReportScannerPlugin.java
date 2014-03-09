@@ -17,7 +17,7 @@ import java.text.ParseException;
 import java.util.Iterator;
 import java.util.Locale;
 
-public class TestReportScannerPlugin extends AbstractFileScannerPlugin<TestSuiteDescriptor> {
+public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 

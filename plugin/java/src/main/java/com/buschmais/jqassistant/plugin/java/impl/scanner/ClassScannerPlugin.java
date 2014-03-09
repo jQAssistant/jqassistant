@@ -13,7 +13,7 @@ import java.io.IOException;
 /**
  * Implementation of the {@link AbstractFileScannerPlugin} for java classes.
  */
-public class ClassScannerPlugin extends AbstractFileScannerPlugin<TypeDescriptor> {
+public class ClassScannerPlugin extends AbstractFileScannerPlugin {
 
     private VisitorHelper visitorHelper;
 
