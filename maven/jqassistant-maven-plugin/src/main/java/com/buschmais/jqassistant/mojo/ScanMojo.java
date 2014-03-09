@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.mojo;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginManager;
+import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
@@ -36,7 +36,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
             List<ProjectScannerPlugin> projectScannerPlugins;
                 Properties pluginProperties = getPluginProperties();
                 pluginProperties.put(MavenProject.class.getName(), project);
-                ScannerPluginManager pluginManager = getScannerPluginManager(store, pluginProperties);
+                ScannerPluginRepository pluginManager = getScannerPluginManager(store, pluginProperties);
             try {
                 fileScannerPlugins = pluginManager.getFileScannerPlugins();
                 projectScannerPlugins = pluginManager.getProjectScannerPlugins();

@@ -7,9 +7,9 @@ import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import java.util.List;
 
 /**
- * Defines the interface for plugin readers.
+ * Defines the interface for the scanner plugin repository.
  */
-public interface ScannerPluginManager {
+public interface ScannerPluginRepository extends PluginRepository {
 
     /**
      * Return the instances of the configured descriptor mappers.

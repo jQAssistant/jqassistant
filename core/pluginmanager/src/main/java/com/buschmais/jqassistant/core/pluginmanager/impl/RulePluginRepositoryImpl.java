@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ResourcesType;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.RulesType;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginManager;
+import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,16 +20,16 @@ import java.util.List;
 /**
  * Rule repository implementation.
  */
-public class RulePluginManagerImpl extends PluginManagerImpl implements RulePluginManager {
+public class RulePluginRepositoryImpl extends PluginRepositoryImpl implements RulePluginRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RulePluginManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RulePluginRepositoryImpl.class);
 
     private List<Source> sources;
 
     /**
      * Constructor.
      */
-    public RulePluginManagerImpl() throws PluginReaderException {
+    public RulePluginRepositoryImpl() throws PluginReaderException {
         this.sources = getRuleSources(getPlugins());
     }
 
@@ -51,7 +51,7 @@ public class RulePluginManagerImpl extends PluginManagerImpl implements RulePlug
                             fullResource.append(directory);
                         }
                         fullResource.append(resource);
-                        URL url = RulePluginManagerImpl.class.getResource(fullResource.toString());
+                        URL url = RulePluginRepositoryImpl.class.getResource(fullResource.toString());
                         String systemId = null;
                         if (url != null) {
                             try {

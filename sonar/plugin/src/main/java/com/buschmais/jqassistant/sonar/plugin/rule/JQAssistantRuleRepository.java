@@ -7,8 +7,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginManager;
-import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginManagerImpl;
+import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 import org.sonar.api.resources.Java;
 import org.sonar.api.rules.AnnotationRuleParser;
@@ -50,9 +50,9 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     @Override
     public List<Rule> createRules() {
         List<Rule> rules = new ArrayList<Rule>();
-        RulePluginManager pluginManager = null;
+        RulePluginRepository pluginManager = null;
         try {
-            pluginManager = new RulePluginManagerImpl();
+            pluginManager = new RulePluginRepositoryImpl();
         } catch (PluginReaderException e) {
             throw new SonarException("Cannot read rules.", e);
         }
