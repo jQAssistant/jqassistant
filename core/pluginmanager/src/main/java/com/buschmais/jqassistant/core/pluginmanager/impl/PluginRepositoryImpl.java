@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.pluginmanager.impl;
 import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
+import com.buschmais.jqassistant.core.pluginmanager.api.PluginRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +21,9 @@ import java.util.List;
 /**
  * Plugin reader implementation.
  */
-public class PluginManagerImpl implements PluginManager {
+public class PluginRepositoryImpl implements PluginRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PluginManagerImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginRepositoryImpl.class);
 
     private JAXBContext jaxbContext;
 
@@ -32,7 +32,7 @@ public class PluginManagerImpl implements PluginManager {
     /**
      * Constructor.
      */
-    public PluginManagerImpl() {
+    public PluginRepositoryImpl() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -72,7 +72,7 @@ public class PluginManagerImpl implements PluginManager {
         if (this.plugins == null) {
             final Enumeration<URL> resources;
             try {
-                resources = PluginManagerImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
+                resources = PluginRepositoryImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
             } catch (IOException e) {
                 throw new IllegalStateException("Cannot get plugin resources.", e);
             }

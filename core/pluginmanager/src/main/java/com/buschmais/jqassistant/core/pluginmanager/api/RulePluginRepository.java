@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Defines the interface for plugin readers.
+ * Defines the interface for the scanner plugin repository.
  */
-public interface RulePluginManager {
+public interface RulePluginRepository extends PluginRepository {
 
     /**
      * Get a list of sources providing rules.

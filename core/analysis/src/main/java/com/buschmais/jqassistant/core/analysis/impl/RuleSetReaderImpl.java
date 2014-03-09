@@ -42,10 +42,10 @@ public class RuleSetReaderImpl implements RuleSetReader {
 			try {
 				Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 				unmarshaller.setSchema(XmlHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
-				if (LOGGER.isInfoEnabled()) LOGGER.info("Reading rules descriptor from '{}'.", source.getSystemId());
+				if (LOGGER.isInfoEnabled()) LOGGER.info("Reading rules descriptor '{}'.", source.getSystemId());
 				rules.add(unmarshaller.unmarshal(source, JqassistantRules.class).getValue());
 			} catch (JAXBException e) {
-				throw new IllegalArgumentException("Cannot read rules from " + source.getSystemId(), e);
+				throw new IllegalArgumentException("Cannot read rules from '" + source.getSystemId() +"'.", e);
 			}
 		}
 		return convert(rules);
