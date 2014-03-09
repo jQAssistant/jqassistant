@@ -10,10 +10,10 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginManager;
-import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginManager;
-import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginManagerImpl;
-import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginManagerImpl;
+import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
@@ -80,13 +80,13 @@ public class AbstractPluginIT {
 
     protected InMemoryReportWriter reportWriter;
 
-    private RulePluginManager rulePluginManager;
-    private ScannerPluginManager scannerPluginManager;
+    private RulePluginRepository rulePluginRepository;
+    private ScannerPluginRepository scannerPluginRepository;
 
     @Before
     public void readRules() throws PluginReaderException {
-        rulePluginManager = new RulePluginManagerImpl();
-        List<Source> sources = rulePluginManager.getRuleSources();
+        rulePluginRepository = new RulePluginRepositoryImpl();
+        List<Source> sources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
@@ -111,7 +111,7 @@ public class AbstractPluginIT {
     @Before
     public void startStore() throws PluginReaderException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        scannerPluginManager = new ScannerPluginManagerImpl(store, new Properties());
+        scannerPluginRepository = new ScannerPluginRepositoryImpl(store, new Properties());
         store.start(getDescriptorTypes());
         store.reset();
     }
@@ -344,7 +344,7 @@ public class AbstractPluginIT {
 
     private List<Class<?>> getDescriptorTypes() {
         try {
-            return scannerPluginManager.getDescriptorTypes();
+            return scannerPluginRepository.getDescriptorTypes();
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get descriptor mappers.", e);
         }
@@ -352,7 +352,7 @@ public class AbstractPluginIT {
 
     private List<FileScannerPlugin> getFileScannerPlugins() {
         try {
-            return scannerPluginManager.getFileScannerPlugins();
+            return scannerPluginRepository.getFileScannerPlugins();
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
