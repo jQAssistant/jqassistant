@@ -10,8 +10,10 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.PluginManager;
-import com.buschmais.jqassistant.core.pluginmanager.impl.PluginManagerImpl;
+import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginManager;
+import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginManager;
+import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginManagerImpl;
+import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginManagerImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
@@ -23,7 +25,6 @@ import com.buschmais.jqassistant.plugin.common.impl.descriptor.ArtifactDescripto
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 import javax.xml.transform.Source;
 import java.io.File;
@@ -79,12 +80,13 @@ public class AbstractPluginIT {
 
     protected InMemoryReportWriter reportWriter;
 
-    private PluginManager pluginManager = new PluginManagerImpl();
+    private RulePluginManager rulePluginManager;
+    private ScannerPluginManager scannerPluginManager;
 
-    @BeforeClass
-    public static void readRules() {
-        PluginManager pluginManager = new PluginManagerImpl();
-        List<Source> sources = pluginManager.getRuleSources();
+    @Before
+    public void readRules() throws PluginReaderException {
+        rulePluginManager = new RulePluginManagerImpl();
+        List<Source> sources = rulePluginManager.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
@@ -107,9 +109,10 @@ public class AbstractPluginIT {
      * Initializes and resets the store.
      */
     @Before
-    public void startStore() {
+    public void startStore() throws PluginReaderException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        store.start(getDescriptorMappers());
+        scannerPluginManager = new ScannerPluginManagerImpl(store, new Properties());
+        store.start(getDescriptorTypes());
         store.reset();
     }
 
@@ -126,8 +129,8 @@ public class AbstractPluginIT {
      *
      * @return The artifact scanner instance.
      */
-    protected FileScanner getArtifactScanner() {
-        return new FileScannerImpl(getScannerPlugins());
+    protected FileScanner getFileScanner() {
+        return new FileScannerImpl(getFileScannerPlugins());
     }
 
     /**
@@ -175,7 +178,7 @@ public class AbstractPluginIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
-        for (Descriptor descriptor : getArtifactScanner().scanClasses(classes)) {
+        for (Descriptor descriptor : getFileScanner().scanClasses(classes)) {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();
@@ -201,7 +204,7 @@ public class AbstractPluginIT {
     protected void scanURLs(String artifactId, URL... urls) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
-        for (Descriptor descriptor : getArtifactScanner().scanURLs(urls)) {
+        for (Descriptor descriptor : getFileScanner().scanURLs(urls)) {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();
@@ -222,7 +225,7 @@ public class AbstractPluginIT {
         // Scan.
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
-        for (Descriptor descriptor : getArtifactScanner().scanDirectory(directory)) {
+        for (Descriptor descriptor : getFileScanner().scanDirectory(directory)) {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();
@@ -339,18 +342,17 @@ public class AbstractPluginIT {
         return artifact;
     }
 
-
-    private List<Class<?>> getDescriptorMappers() {
+    private List<Class<?>> getDescriptorTypes() {
         try {
-            return pluginManager.getDescriptorTypes();
+            return scannerPluginManager.getDescriptorTypes();
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get descriptor mappers.", e);
         }
     }
 
-    private List<FileScannerPlugin<?>> getScannerPlugins() {
+    private List<FileScannerPlugin> getFileScannerPlugins() {
         try {
-            return pluginManager.getScannerPlugins(store, new Properties());
+            return scannerPluginManager.getFileScannerPlugins();
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
