@@ -1,0 +1,26 @@
+= Analyzing A Project Using SonarQube
+
+Demonstrates the setup of a project being analyzed using SonarQube.
+
+As a pre-condition the jQAssistant SonarQube plugin must be deployed in the directory "extensions/plugins" of the SonarQube server. This makes the repository 'jQAssistant' and its rules available in the 'Coding rules' view of a quality profile. Rules can be created in two ways:
+
+- by creating new concepts and constraints from the pre-defined templates (i.e. "Concept Template" and "Constraint Template")
+- by deploying a rule extension, this is demonstrated by the example project "ruleextension"
+
+Now the following settings can be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
+
+[source]
+----
+<configuration>
+    <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=MyQualityProfile</rulesUrl>
+    <groups>
+        <group>MyQualityProfile</group>
+    </groups>
+    <failOnConstraintViolations>false</failOnConstraintViolations>
+</configuration>
+----
+
+* Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI. Note that special characters must be replaced by XML entities.
+* The specified 'group' must be the name of the quality profile used to analyze the project.
+* The build shall not be broken if a violation is detected, therefore 'failOnConstraintViolations' is set to 'false'.
+
