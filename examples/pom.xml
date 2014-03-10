@@ -57,6 +57,7 @@
 
     <modules>
         <module>namingrules</module>
+        <module>sonar</module>
     </modules>
 
 </project>

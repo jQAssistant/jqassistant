@@ -1,0 +1,15 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <constraint id="rules:ExampleConstraint">
+        <description>Defines a constraint checking all classes to have the name 'Foo'.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:CLASS)
+            WHERE NOT
+              type.NAME = 'Foo'
+            RETURN
+              type as InvalidClass
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant.examples</groupId>
+        <artifactId>jqassistant.examples.sonar</artifactId>
+        <version>1.0.0-M3-SNAPSHOT</version>
+    </parent>
+    <artifactId>jqassistant.examples.sonar.project</artifactId>
+
+    <profiles>
+        <profile>
+            <id>sonar</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.buschmais.jqassistant.maven</groupId>
+                        <artifactId>jqassistant-maven-plugin</artifactId>
+                        <version>${project.version}</version>
+                        <executions>
+                            <execution>
+                                <id>scan</id>
+                                <goals>
+                                    <goal>scan</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>analyze</id>
+                                <goals>
+                                    <goal>analyze</goal>
+                                </goals>
+                                <configuration>
+                                    <groups>
+                                        <group>MyQualityProfile</group>
+                                    </groups>
+                                    <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=MyQualityProfile</rulesUrl>
+                                    <failOnConstraintViolations>false</failOnConstraintViolations>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
