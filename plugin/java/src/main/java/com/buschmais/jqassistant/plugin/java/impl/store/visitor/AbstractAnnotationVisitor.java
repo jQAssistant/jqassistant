@@ -126,5 +126,4 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
         }
         return values;
     }
-
 }
