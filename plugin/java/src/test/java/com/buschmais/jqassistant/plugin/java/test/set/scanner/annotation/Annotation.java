@@ -21,4 +21,5 @@ public @interface Annotation {
 
 	NestedAnnotation nestedAnnotationValue() default @NestedAnnotation("default");
 
+    NestedAnnotation[] nestedAnnotationValues() default @NestedAnnotation("default");
 }
