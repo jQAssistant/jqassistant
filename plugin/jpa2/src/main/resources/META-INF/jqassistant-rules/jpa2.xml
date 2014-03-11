@@ -10,4 +10,27 @@
         ]]></cypher>
     </concept>
 
+    <concept id="jpa2:NamedQuery">
+        <requiresConcept refId="jpa2:Entity"/>
+        <description>Creates a node labeled with JPA2 and NAMEDQUERY for each @NamedQuery defined for an entity. Furthermore a relation DEFINES is created
+            between the entity and the named query.
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (entity:JPA:ENTITY)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:TYPE),
+              (namedQueries)-[:HAS]->(:VALUE:ARRAY)-[:HAS]->(namedQuery:VALUE:ANNOTATION)-[:OF_TYPE]->(namedQueryType:TYPE),
+              (namedQuery)-[:HAS]->(nameAttribute:VALUE),
+              (namedQuery)-[:HAS]->(queryAttribute:VALUE)
+            WHERE
+              namedQueriesType.FQN = 'javax.persistence.NamedQueries'
+              and namedQueryType.FQN = 'javax.persistence.NamedQuery'
+              and nameAttribute.NAME = 'name'
+              and queryAttribute.NAME = 'query'
+            CREATE UNIQUE
+              (entity)-[:DEFINES]->(n:JPA2:NAMEDQUERY {NAME : nameAttribute.VALUE, QUERY:queryAttribute.VALUE})
+            RETURN
+              entity.FQN as Entity, n.NAME as Name , n.QUERY as Query
+        ]]></cypher>
+    </concept>
+
 </jqa:jqassistant-rules>
