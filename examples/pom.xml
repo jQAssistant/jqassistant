@@ -25,6 +25,13 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>export-database</id>
+                        <goals>
+                            <goal>export-database</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                    </execution>
+                    <execution>
                         <id>analyze</id>
                         <goals>
                             <goal>analyze</goal>

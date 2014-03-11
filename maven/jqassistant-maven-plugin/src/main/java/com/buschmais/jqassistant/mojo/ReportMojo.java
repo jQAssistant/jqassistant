@@ -32,16 +32,19 @@ public class ReportMojo extends AbstractMavenReport {
      */
     @Parameter(property = "project.reporting.outputDirectory")
     protected String outputDirectory;
+
     /**
      * The file to write the XML report to.
      */
     @Parameter(property = "jqassistant.report.xml")
     protected File xmlReportFile;
+
     /**
      * The Maven project.
      */
     @Parameter(property = "project")
     protected MavenProject project;
+
     @Component
     protected Renderer siteRenderer;
 
@@ -51,7 +54,7 @@ public class ReportMojo extends AbstractMavenReport {
         File selectedXmlReportFile;
         try {
             baseProject = BaseProjectResolver.getBaseProject(project);
-            selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
+            selectedXmlReportFile = BaseProjectResolver.getOutputFile(baseProject, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
         } catch (MojoExecutionException e) {
             throw new MavenReportException("Cannot resolve XML report.", e);
         }

@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.mojo;
 
-import java.io.File;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+
+import java.io.File;
 
 /**
  * Resolver for base projects in a multi-module hierarchy.
@@ -58,12 +58,12 @@ public final class BaseProjectResolver {
     }
 
     /**
-     * Determines the directory for writing report files.
+     * Determines the directory for writing output files.
      *
      * @param baseProject The base project.
      * @return The report directory.
      */
-    static File getReportDirectory(MavenProject baseProject) {
+    static File getOutputDirectory(MavenProject baseProject) {
         String directoryName = baseProject.getBuild().getDirectory() + "/" + OUTPUT_DIRECTORY;
         File directory = new File(directoryName);
         directory.mkdirs();
@@ -79,12 +79,12 @@ public final class BaseProjectResolver {
      * @return The resolved {@link java.io.File}.
      * @throws org.apache.maven.plugin.MojoExecutionException If the file cannot be determined.
      */
-    static File getReportFile(MavenProject baseProject, File reportFile, String defaultFile) throws MojoExecutionException {
+    static File getOutputFile(MavenProject baseProject, File reportFile, String defaultFile) throws MojoExecutionException {
         File selectedXmlReportFile;
         if (reportFile != null) {
             selectedXmlReportFile = reportFile;
         } else if (baseProject != null) {
-            selectedXmlReportFile = new File(getReportDirectory(baseProject) + "/" + defaultFile);
+            selectedXmlReportFile = new File(getOutputDirectory(baseProject) + "/" + defaultFile);
         } else {
             throw new MojoExecutionException("Cannot determine report file.");
         }

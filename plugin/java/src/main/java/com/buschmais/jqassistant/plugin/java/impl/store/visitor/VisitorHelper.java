@@ -21,13 +21,15 @@ public class VisitorHelper {
      * The name of constructor methods.
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
+    private static final int TYPE_CACHE_SIZE = 16384;
+    private static final int MEMBER_CACHE_SIZE = 256;
 
     private DescriptorResolverFactory resolverFactory;
     private Store store;
 
-    private Map<String, TypeDescriptor> typeCache = new LRUMap(16384);
-    private Map<TypeDescriptor, Map<String, MethodDescriptor>> methodCache = new LRUMap(16384);
-    private Map<TypeDescriptor, Map<String, FieldDescriptor>> fieldCache = new LRUMap(16384);
+    private Map<String, TypeDescriptor> typeCache = new LRUMap(TYPE_CACHE_SIZE);
+    private Map<TypeDescriptor, Map<String, MethodDescriptor>> methodCache = new LRUMap(TYPE_CACHE_SIZE);
+    private Map<TypeDescriptor, Map<String, FieldDescriptor>> fieldCache = new LRUMap(TYPE_CACHE_SIZE);
 
     /**
      * Constructor.
@@ -106,7 +108,7 @@ public class VisitorHelper {
     private <T extends Descriptor> Map<String, T> getMemberCache(TypeDescriptor type, Map<TypeDescriptor, Map<String, T>> memberCache) {
         Map<String, T> membersOfType = memberCache.get(type);
         if (membersOfType == null) {
-            membersOfType = new LRUMap(256);
+            membersOfType = new LRUMap(MEMBER_CACHE_SIZE);
             memberCache.put(type, membersOfType);
         }
         return membersOfType;

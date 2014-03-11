@@ -159,7 +159,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
      * @throws MojoExecutionException If the file cannot be determined.
      */
     private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
-        File selectedXmlReportFile = BaseProjectResolver.getReportFile(baseProject, xmlReportFile, REPORT_XML);
+        File selectedXmlReportFile = BaseProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
     }
