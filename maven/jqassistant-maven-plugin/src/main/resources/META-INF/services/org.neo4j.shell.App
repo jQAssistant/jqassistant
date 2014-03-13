@@ -1,0 +1,1 @@
+com.buschmais.jqassistant.mojo.shell.AvailableRulesApp

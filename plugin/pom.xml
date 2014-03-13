@@ -11,6 +11,89 @@
     <artifactId>jqassistant.plugin</artifactId>
     <packaging>pom</packaging>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.7</version>
+                    <executions>
+                        <execution>
+                            <id>copy-rules2asciidoc-stylesheet</id>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                            <phase>initialize</phase>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/rules2asciidoc</outputDirectory>
+                                <includeTypes>xsl</includeTypes>
+                                <includeClassifiers>rules2asciidoc</includeClassifiers>
+                                <stripVersion>true</stripVersion>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <version>1.0</version>
+                    <executions>
+                        <execution>
+                            <id>transform-rules2asciidoc</id>
+                            <goals>
+                                <goal>transform</goal>
+                            </goals>
+                            <phase>process-sources</phase>
+                            <configuration>
+                                <transformationSets>
+                                    <transformationSet>
+                                        <dir>src/main/resources/META-INF/jqassistant-rules</dir>
+                                        <includes>
+                                            <include>*.xml</include>
+                                        </includes>
+                                        <stylesheet>${project.build.directory}/rules2asciidoc/jqassistant.plugin.common-rules2asciidoc.xsl</stylesheet>
+                                        <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                        <fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                                <targetExtension>.adoc</targetExtension>
+                                            </fileMapper>
+                                        </fileMappers>
+                                    </transformationSet>
+                                </transformationSets>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sf.saxon</groupId>
+                            <artifactId>saxon</artifactId>
+                            <version>8.7</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.asciidoctor</groupId>
+                    <artifactId>asciidoctor-maven-plugin</artifactId>
+                    <version>0.1.4</version>
+                    <executions>
+                        <execution>
+                            <id>output-html</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>process-asciidoc</goal>
+                            </goals>
+                            <configuration>
+                                <sourceDirectory>${project.build.directory}/generated-sources/asciidoc</sourceDirectory>
+                                <backend>html</backend>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -34,6 +117,13 @@
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>jqassistant.plugin.common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.common</artifactId>
+                <type>xsl</type>
+                <classifier>rules2asciidoc</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

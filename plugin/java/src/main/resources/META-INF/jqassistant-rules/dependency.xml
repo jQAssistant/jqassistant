@@ -4,23 +4,23 @@
         <description>Creates a DEPENDS_ON relationship between an annotated element and the types of the annotation and its values.</description>
         <cypher><![CDATA[
             MATCH
-            	(e)-[:ANNOTATED_BY]->(a:ANNOTATION)-[:OF_TYPE]->(at:TYPE)
-			WHERE
-				e:TYPE
-				OR e:METHOD
-				OR e:PARAMETER
-				OR e:FIELD
-			CREATE UNIQUE
-				(e)-[:DEPENDS_ON]->(at)
-			WITH
-			    e, a
-			MATCH
-            	(a)-[:HAS|OF_TYPE*0..]->(vt:TYPE)
+                (e)-[:ANNOTATED_BY]->(a:ANNOTATION)-[:OF_TYPE]->(at:TYPE)
+            WHERE
+                e:TYPE
+                OR e:METHOD
+                OR e:PARAMETER
+                OR e:FIELD
             CREATE UNIQUE
-				(e)-[:DEPENDS_ON]->(vt)
+                (e)-[:DEPENDS_ON]->(at)
+            WITH
+                e, a
+            MATCH
+                (a)-[:HAS|OF_TYPE*0..]->(vt:TYPE)
+            CREATE UNIQUE
+                (e)-[:DEPENDS_ON]->(vt)
             RETURN
-				COUNT(DISTINCT e) as element
-	    ]]></cypher>
+                COUNT(DISTINCT e) as element
+        ]]></cypher>
     </concept>
 
     <concept id="dependency:MethodParameter">
@@ -28,12 +28,12 @@
         <description>Creates a DEPENDS_ON relationship between a method and the types of its parameters.</description>
         <cypher><![CDATA[
             MATCH
-            	(m:METHOD)-[:HAS]->(p:PARAMETER)-[:OF_TYPE|DEPENDS_ON]->(t:TYPE)
-			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(t)
-			RETURN
-				COUNT(DISTINCT p) as parameter
-	    ]]></cypher>
+                (m:METHOD)-[:HAS]->(p:PARAMETER)-[:OF_TYPE|DEPENDS_ON]->(t:TYPE)
+            CREATE UNIQUE
+                (m)-[:DEPENDS_ON]->(t)
+            RETURN
+                COUNT(DISTINCT p) as parameter
+        ]]></cypher>
     </concept>
 
     <concept id="dependency:MethodInvocation">
@@ -41,44 +41,44 @@
         <description>Creates a DEPENDS_ON relationship between a method and the dependencies of the method signature it invokes.</description>
         <cypher><![CDATA[
             MATCH
-            	(m:METHOD)-[:INVOKES]->(target:METHOD),
-            	(dt:TYPE)-[:DECLARES]->(target)
-			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(dt)
-			WITH
-			    m, target
-			MATCH
-            	(target)-[:HAS]->(:PARAMETER)-[:DEPENDS_ON]->(pt)
-			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(pt)
-	        WITH
-			    m, target
-			MATCH
-            	(target)-[:RETURNS]->(rt)
-			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(rt)
-			RETURN
-				COUNT(DISTINCT m) as methodInvocation
-	    ]]></cypher>
+                (m:METHOD)-[:INVOKES]->(target:METHOD),
+                (dt:TYPE)-[:DECLARES]->(target)
+            CREATE UNIQUE
+                (m)-[:DEPENDS_ON]->(dt)
+            WITH
+                m, target
+            MATCH
+                (target)-[:HAS]->(:PARAMETER)-[:DEPENDS_ON]->(pt)
+            CREATE UNIQUE
+                (m)-[:DEPENDS_ON]->(pt)
+            WITH
+                m, target
+            MATCH
+                (target)-[:RETURNS]->(rt)
+            CREATE UNIQUE
+                (m)-[:DEPENDS_ON]->(rt)
+            RETURN
+                COUNT(DISTINCT m) as methodInvocation
+        ]]></cypher>
     </concept>
 
     <concept id="dependency:FieldAccess">
         <description>Creates a DEPENDS_ON relationship between a method and all fields types it reads and writes.</description>
         <cypher><![CDATA[
             MATCH
-            	(m:METHOD)-[:READS|WRITES]->(target:FIELD),
-            	(dt:TYPE)-[:DECLARES]->(target)
-			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(dt)
-		    WITH
-		        m, target
-		    MATCH
-              	(target)-[:OF_TYPE|DEPENDS_ON]->(ft)
-			CREATE UNIQUE
-				(m)-[:DEPENDS_ON]->(ft)
-			RETURN
-				COUNT(DISTINCT m) as fieldAccess
-	    ]]></cypher>
+                (m:METHOD)-[:READS|WRITES]->(target:FIELD),
+                (dt:TYPE)-[:DECLARES]->(target)
+            CREATE UNIQUE
+                (m)-[:DEPENDS_ON]->(dt)
+            WITH
+                m, target
+            MATCH
+                  (target)-[:OF_TYPE|DEPENDS_ON]->(ft)
+            CREATE UNIQUE
+                (m)-[:DEPENDS_ON]->(ft)
+            RETURN
+                COUNT(DISTINCT m) as fieldAccess
+        ]]></cypher>
     </concept>
 
     <concept id="dependency:TypeBody">
@@ -89,15 +89,15 @@
         <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
         <cypher><![CDATA[
             MATCH
-            	(t1:TYPE)-[:DECLARES*0..1]->(fieldOrMethod)-[:OF_TYPE|RETURNS|DEPENDS_ON|THROWS]->(t2:TYPE)
-			WHERE
-				t1<>t2
-				AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)
-			CREATE UNIQUE
-				(t1)-[:DEPENDS_ON]->(t2)
-			RETURN
-				COUNT(DISTINCT t1) as type
-	    ]]></cypher>
+                (t1:TYPE)-[:DECLARES*0..1]->(fieldOrMethod)-[:OF_TYPE|RETURNS|DEPENDS_ON|THROWS]->(t2:TYPE)
+            WHERE
+                t1<>t2
+                AND (fieldOrMethod:FIELD OR fieldOrMethod:METHOD)
+            CREATE UNIQUE
+                (t1)-[:DEPENDS_ON]->(t2)
+            RETURN
+                COUNT(DISTINCT t1) as type
+        ]]></cypher>
     </concept>
 
     <concept id="dependency:Type">
@@ -105,13 +105,13 @@
         <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.</description>
         <cypher><![CDATA[
             MATCH
-            	(t1:TYPE)-[:EXTENDS|IMPLEMENTS]->(t2:TYPE)
-			WHERE
-				t1<>t2
-			CREATE UNIQUE
-				(t1)-[:DEPENDS_ON]->(t2)
-			RETURN
-				COUNT(DISTINCT t1) as type
+                (t1:TYPE)-[:EXTENDS|IMPLEMENTS]->(t2:TYPE)
+            WHERE
+                t1<>t2
+            CREATE UNIQUE
+                (t1)-[:DEPENDS_ON]->(t2)
+            RETURN
+                COUNT(DISTINCT t1) as type
         ]]></cypher>
     </concept>
 
@@ -119,14 +119,14 @@
         <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.</description>
         <cypher><![CDATA[
-			MATCH
-				(p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
-			WHERE
-				p1<>p2
-			CREATE UNIQUE
-				(p1)-[:DEPENDS_ON]->(p2)
-			RETURN
-				COUNT(DISTINCT p1) as package
+            MATCH
+                (p1:PACKAGE)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(p2:PACKAGE)
+            WHERE
+                p1<>p2
+            CREATE UNIQUE
+                (p1)-[:DEPENDS_ON]->(p2)
+            RETURN
+                COUNT(DISTINCT p1) as package
         ]]></cypher>
     </concept>
 
@@ -134,14 +134,14 @@
         <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.</description>
         <cypher><![CDATA[
-			MATCH
-				(a1:ARTIFACT)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(a2:ARTIFACT)
-			WHERE
-				a1<>a2
-			CREATE UNIQUE
-				(a1)-[:DEPENDS_ON]->(a2)
-			RETURN
-				a1 AS artifact, COLLECT(DISTINCT a2.NAME) AS dependencies
+            MATCH
+                (a1:ARTIFACT)-[:CONTAINS]->(t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE)<-[:CONTAINS]-(a2:ARTIFACT)
+            WHERE
+                a1<>a2
+            CREATE UNIQUE
+                (a1)-[:DEPENDS_ON]->(a2)
+            RETURN
+                a1 AS artifact, COLLECT(DISTINCT a2.NAME) AS dependencies
         ]]></cypher>
     </concept>
 
@@ -149,15 +149,15 @@
         <requiresConcept refId="dependency:Package"/>
         <description>There must be no cyclic package dependencies.</description>
         <cypher><![CDATA[
-			MATCH
-				(p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE),
-				path=shortestPath((p2)-[:DEPENDS_ON*]->(p1:PACKAGE))
-			WHERE
-				p1<>p2
-			RETURN
-				p1 AS package, EXTRACT(p IN NODES(path) | p.FQN) AS cycle
-			ORDER BY
-				package.FQN
+            MATCH
+                (p1:PACKAGE)-[:DEPENDS_ON]->(p2:PACKAGE),
+                path=shortestPath((p2)-[:DEPENDS_ON*]->(p1:PACKAGE))
+            WHERE
+                p1<>p2
+            RETURN
+                p1 AS package, EXTRACT(p IN NODES(path) | p.FQN) AS cycle
+            ORDER BY
+                package.FQN
         ]]></cypher>
     </constraint>
 
@@ -188,15 +188,15 @@
         <requiresConcept refId="dependency:Artifact"/>
         <description>There must be no cyclic artifact dependencies.</description>
         <cypher><![CDATA[
-			MATCH
-				(a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT),
-				path=shortestPath((a2)-[:DEPENDS_ON*]->(a1:ARTIFACT))
-			WHERE
-				a1<>a2
-			RETURN
-				a1 AS artifact, EXTRACT(a IN NODES(path) | a.FQN) AS cycle
-			ORDER BY
-				artifact.FQN
+            MATCH
+                (a1:ARTIFACT)-[:DEPENDS_ON]->(a2:ARTIFACT),
+                path=shortestPath((a2)-[:DEPENDS_ON*]->(a1:ARTIFACT))
+            WHERE
+                a1<>a2
+            RETURN
+                a1 AS artifact, EXTRACT(a IN NODES(path) | a.FQN) AS cycle
+            ORDER BY
+                artifact.FQN
         ]]></cypher>
     </constraint>
 

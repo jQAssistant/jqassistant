@@ -4,26 +4,26 @@
         <description>Returns the top 10 artifacts regarding the number of contained types.</description>
         <cypher><![CDATA[
             MATCH
-            	(a:ARTIFACT)-[:CONTAINS]->(t:TYPE)
-			RETURN
-				a.FQN as Artifact, COUNT(t) as Types
-		    ORDER BY
-		        Types DESC
-		    LIMIT 10
-	    ]]></cypher>
+                (a:ARTIFACT)-[:CONTAINS]->(t:TYPE)
+            RETURN
+                a.FQN as Artifact, COUNT(t) as Types
+            ORDER BY
+                Types DESC
+            LIMIT 10
+        ]]></cypher>
     </concept>
 
     <concept id="metric:Top10TypesPerPackage">
         <description>Returns the top 10 packages regarding the number of contained types.</description>
         <cypher><![CDATA[
             MATCH
-            	(p:PACKAGE)-[:CONTAINS]->(t:TYPE)
-			RETURN
-				p.FQN as Package, COUNT(t) as Types
-		    ORDER BY
-		        Types DESC
-		    LIMIT 10
-	    ]]></cypher>
+                (p:PACKAGE)-[:CONTAINS]->(t:TYPE)
+            RETURN
+                p.FQN as Package, COUNT(t) as Types
+            ORDER BY
+                Types DESC
+            LIMIT 10
+        ]]></cypher>
     </concept>
 
     <concept id="metric:Top10MethodsPerType">
@@ -31,13 +31,13 @@
         <description>Returns the top 10 types regarding to the number of declared methods (including constructors).</description>
         <cypher><![CDATA[
             MATCH
-            	(t:TYPE)-[:DECLARES]->(m:METHOD)
-			RETURN
-				t.FQN as Type, COUNT(m) as MethodCount
-		    ORDER BY
-		        MethodCount DESC
-		    LIMIT 10
-	    ]]></cypher>
+                (t:TYPE)-[:DECLARES]->(m:METHOD)
+            RETURN
+                t.FQN as Type, COUNT(m) as MethodCount
+            ORDER BY
+                MethodCount DESC
+            LIMIT 10
+        ]]></cypher>
     </concept>
 
     <concept id="metric:Top10FieldsPerType">
@@ -45,13 +45,13 @@
         <description>Returns the top 10 types regarding to the number of declared fields.</description>
         <cypher><![CDATA[
             MATCH
-            	(t:TYPE)-[:DECLARES]->(f:FIELD)
-			RETURN
-				t.FQN as Type, COUNT(f) as FieldCount
-		    ORDER BY
-		        FieldCount DESC
-		    LIMIT 10
-	    ]]></cypher>
+                (t:TYPE)-[:DECLARES]->(f:FIELD)
+            RETURN
+                t.FQN as Type, COUNT(f) as FieldCount
+            ORDER BY
+                FieldCount DESC
+            LIMIT 10
+        ]]></cypher>
     </concept>
 
     <concept id="metric:Top10TypeFanOut">
@@ -59,13 +59,13 @@
         <description>Returns the top 10 types regarding the number of other types they depend on.</description>
         <cypher><![CDATA[
             MATCH
-            	(t:TYPE)-[:DEPENDS_ON]->(dependency:TYPE)
-			RETURN
-				t.FQN as Type, COUNT(dependency) as Dependencies
-		    ORDER BY
-		        Dependencies DESC
-		    LIMIT 10
-	    ]]></cypher>
+                (t:TYPE)-[:DEPENDS_ON]->(dependency:TYPE)
+            RETURN
+                t.FQN as Type, COUNT(dependency) as Dependencies
+            ORDER BY
+                Dependencies DESC
+            LIMIT 10
+        ]]></cypher>
     </concept>
 
     <concept id="metric:Top10TypeFanIn">
@@ -73,13 +73,13 @@
         <description>Returns the top 10 types regarding the number of other types depending on them.</description>
         <cypher><![CDATA[
             MATCH
-            	(t:TYPE)<-[:DEPENDS_ON]-(dependent:TYPE)
-			RETURN
-				t.FQN as Type, COUNT(dependent) as Dependents
-		    ORDER BY
-		        Dependents DESC
-		    LIMIT 10
-	    ]]></cypher>
+                (t:TYPE)<-[:DEPENDS_ON]-(dependent:TYPE)
+            RETURN
+                t.FQN as Type, COUNT(dependent) as Dependents
+            ORDER BY
+                Dependents DESC
+            LIMIT 10
+        ]]></cypher>
     </concept>
 
 </jqa:jqassistant-rules>
