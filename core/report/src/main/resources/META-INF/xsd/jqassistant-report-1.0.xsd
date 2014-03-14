@@ -75,10 +75,14 @@
     <xs:complexType name="ColumnType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="name" type="xs:string">
-                </xs:attribute>
+                <xs:attribute name="name" type="xs:string"/>
+                <xs:attributeGroup ref="jqassistant-report:LanguageElement"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
 
+    <xs:attributeGroup name="LanguageElement">
+        <xs:attribute name="language" type="xs:string" use="optional"/>
+        <xs:attribute name="element" type="xs:string" use="optional"/>
+    </xs:attributeGroup>
 </xs:schema>
