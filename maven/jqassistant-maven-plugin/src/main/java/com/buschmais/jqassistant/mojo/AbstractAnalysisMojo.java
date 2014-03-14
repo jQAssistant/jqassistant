@@ -138,7 +138,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * @throws MojoExecutionException If the rules cannot be read.
      */
     protected RuleSet readRules(MavenProject baseProject) throws MojoExecutionException {
-        File selectedDirectory = null;
+        File selectedDirectory;
         if (rulesDirectory != null) {
             selectedDirectory = rulesDirectory;
         } else {

@@ -1,22 +1,30 @@
 package com.buschmais.jqassistant.mojo.shell;
 
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import org.neo4j.helpers.Service;
 import org.neo4j.shell.*;
-import org.neo4j.shell.impl.AbstractApp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service.Implementation(App.class)
-public class AvailableRulesApp extends AbstractApp {
+public class AvailableRulesApp extends AbstractJQAssistantApp {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvailableRulesApp.class);
+    private RuleSet availableRules;
 
-    public AvailableRulesApp() {
-        LOGGER.debug("initialize available rules");
+    public AvailableRulesApp() throws PluginReaderException {
+        super();
+        availableRules = readRuleSet();
+    }
+
+    @Override
+    public String getCommand() {
+        return "available-rules";
     }
 
     @Override
     public Continuation execute(AppCommandParser parser, Session session, Output out) throws Exception {
+        printRuleSet(availableRules, out);
         return Continuation.INPUT_COMPLETE;
     }
+
+
 }
