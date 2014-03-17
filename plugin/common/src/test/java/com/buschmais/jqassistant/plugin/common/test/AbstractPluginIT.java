@@ -217,11 +217,17 @@ public class AbstractPluginIT {
      * @throws IOException If scanning fails.
      */
     protected void scanClassesDirectory(Class<?> rootClass) throws IOException {
-        // Determine test classes directory.
-        URL resource = rootClass.getResource("/");
-        String file = resource.getFile();
-        File directory = new File(file);
-        Assert.assertTrue("Expected a directory.", directory.isDirectory());
+        File directory = getClassesDirectory(rootClass);
+        scanDirectory(directory);
+    }
+
+    /**
+     * Scans the a directory.
+     *
+     * @param directory The directory.
+     * @throws IOException If scanning fails.
+     */
+    protected void scanDirectory(File directory) throws IOException {
         // Scan.
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
@@ -229,6 +235,21 @@ public class AbstractPluginIT {
             artifact.getContains().add(descriptor);
         }
         store.commitTransaction();
+    }
+
+    /**
+     * Determines the directory a class is located in (e.g. target/test-classes).
+     *
+     * @param rootClass The class.
+     * @return The directory.
+     */
+    protected File getClassesDirectory(Class<?> rootClass) {
+        // Determine test classes directory.
+        URL resource = rootClass.getResource("/");
+        String file = resource.getFile();
+        File directory = new File(file);
+        Assert.assertTrue("Expected a directory.", directory.isDirectory());
+        return directory;
     }
 
     /**
