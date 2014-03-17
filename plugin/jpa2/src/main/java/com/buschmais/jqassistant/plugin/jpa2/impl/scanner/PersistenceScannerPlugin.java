@@ -78,12 +78,15 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
                 TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz);
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
-            // Create model unit properties
-            for (Property property : persistenceUnit.getProperties().getProperty()) {
-                PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-                propertyDescriptor.setName(property.getName());
-                propertyDescriptor.setValue(property.getValue());
-                persistenceUnitDescriptor.getProperties().add(propertyDescriptor);
+            // Create persistence unit properties
+            PersistenceUnit.Properties properties = persistenceUnit.getProperties();
+            if (properties != null) {
+                for (Property property : properties.getProperty()) {
+                    PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
+                    propertyDescriptor.setName(property.getName());
+                    propertyDescriptor.setValue(property.getValue());
+                    persistenceUnitDescriptor.getProperties().add(propertyDescriptor);
+                }
             }
             // Add model unit to model descriptor
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);

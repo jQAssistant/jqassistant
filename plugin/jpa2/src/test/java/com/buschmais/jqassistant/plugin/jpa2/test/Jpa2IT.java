@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -62,14 +63,14 @@ public class Jpa2IT extends AbstractPluginIT {
     }
 
     /**
-     * Verifies scanning of model descriptors.
+     * Verifies scanning of persistence descriptors.
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void persistenceDescriptor() throws IOException, AnalyzerException {
-        scanClassesDirectory(JpaEntity.class);
+    public void fullPersistenceDescriptor() throws IOException, AnalyzerException {
+        scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -82,14 +83,14 @@ public class Jpa2IT extends AbstractPluginIT {
     }
 
     /**
-     * Verifies scanning of model unit descriptors.
+     * Verifies scanning of persistence unit descriptors.
      *
      * @throws java.io.IOException If the test fails.
      * @throws AnalyzerException   If the test fails.
      */
     @Test
-    public void persistenceUnitDescriptor() throws IOException, AnalyzerException {
-        scanClassesDirectory(JpaEntity.class);
+    public void fullPersistenceUnitDescriptor() throws IOException, AnalyzerException {
+        scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (pu:JPA:PERSISTENCEUNIT) RETURN pu");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -105,6 +106,26 @@ public class Jpa2IT extends AbstractPluginIT {
         assertThat(persistenceUnitDescriptor.getContains(), hasItem(typeDescriptor(JpaEntity.class)));
         Matcher<? super PropertyDescriptor> valueMatcher = valueDescriptor("stringProperty", equalTo("stringValue"));
         assertThat(persistenceUnitDescriptor.getProperties(), hasItem(valueMatcher));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies scanning of persistence descriptors.
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void minimalPersistenceDescriptor() throws IOException, AnalyzerException {
+        scanDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
+        store.beginTransaction();
+        TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
+        PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);
+        assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
+        Set<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
+        assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
     }
 }

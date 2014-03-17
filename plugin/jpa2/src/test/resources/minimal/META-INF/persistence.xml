@@ -1,0 +1,3 @@
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="persistence-unit" transaction-type="RESOURCE_LOCAL"/>
+</persistence>
