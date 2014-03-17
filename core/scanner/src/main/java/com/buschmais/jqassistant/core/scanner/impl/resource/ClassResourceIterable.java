@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- * A resource iterable for processing array of classes.
+ * A resource iterable for processing an array of classes.
  */
 public class ClassResourceIterable extends AbstractResourceIterable<Class<?>> {
     private final Class<?>[] classes;
