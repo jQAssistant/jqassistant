@@ -14,6 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.StringReader;
+import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -41,5 +42,19 @@ public class XmlReportTest {
         assertThat(ruleType, instanceOf(ConceptType.class));
         assertThat(ruleType.getId(), equalTo("my:concept"));
         assertThat(ruleType.getDescription(), equalTo("My concept description"));
+        assertThat(ruleType.getResult(), notNullValue());
+        ResultType result = ruleType.getResult();
+        assertThat(result.getColumns().getCount(), equalTo(1));
+        assertThat(result.getColumns().getColumn(), hasItems("test"));
+        assertThat(result.getRows().getCount(), equalTo(1));
+        List<RowType> rows = result.getRows().getRow();
+        assertThat(rows.size(), equalTo(1));
+        RowType rowType = rows.get(0);
+        List<ColumnType> columns = rowType.getColumn();
+        assertThat(columns.size(), equalTo(1));
+        ColumnType column = columns.get(0);
+        assertThat(column.getLanguage(), equalTo("testLanguage"));
+        assertThat(column.getElement(), equalTo("testElement"));
+        assertThat(column.getValue(), equalTo("testValue"));
     }
 }

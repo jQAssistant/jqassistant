@@ -7,14 +7,14 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Provides functionality for XML report tests.
  */
 public final class XmlReportTestHelper {
+
+    public static final String TEST_COLUMN = "test";
 
     /**
      * Constructor.
@@ -40,7 +40,16 @@ public final class XmlReportTestHelper {
 
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConcept(concept);
-        Result<Concept> result = new Result<>(concept, Arrays.asList("column1"), Collections.<Map<String, Object>>emptyList());
+        List<Map<String, Object>> rows = new ArrayList<>();
+        Map<String, Object> row = new HashMap<>();
+        row.put(TEST_COLUMN, new TestDescriptor() {
+            @Override
+            public String toString() {
+                return "testValue";
+            }
+        });
+        rows.add(row);
+        Result<Concept> result = new Result<>(concept, Arrays.asList(TEST_COLUMN), rows);
         xmlReportWriter.setResult(result);
         xmlReportWriter.endConcept();
         xmlReportWriter.endGroup();

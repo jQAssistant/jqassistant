@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.report.impl;
 
+import com.buschmais.cdo.spi.reflection.AnnotatedType;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -7,13 +8,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.Language;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -167,10 +172,12 @@ public class XmlReportWriter implements ExecutionListener {
                             for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
                                 String columnName = rowEntry.getKey();
                                 Object value = rowEntry.getValue();
-                                String stringValue = value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value)
-                                        .getFullQualifiedName() : value.toString();
                                 xmlStreamWriter.writeStartElement("column");
                                 xmlStreamWriter.writeAttribute("name", columnName);
+                                String stringValue = value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value).getFullQualifiedName() : value.toString();
+                                if (value instanceof Descriptor) {
+                                    writeLanguageElement(value);
+                                }
                                 xmlStreamWriter.writeCharacters(stringValue);
                                 xmlStreamWriter.writeEndElement(); // column
                             }
@@ -183,6 +190,37 @@ public class XmlReportWriter implements ExecutionListener {
                     xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
             });
+        }
+    }
+
+    /**
+     * Determines the language and language element of a value from a result column.
+     *
+     * @param value The value.
+     * @throws XMLStreamException If a problem occurs.
+     */
+    private void writeLanguageElement(Object value) throws XMLStreamException {
+        for (Class<?> descriptorType : value.getClass().getInterfaces()) {
+            AnnotatedType annotatedType = new AnnotatedType(descriptorType);
+            Annotation annotation = annotatedType.getByMetaAnnotation(Language.class);
+            if (annotation != null) {
+                Class<? extends Annotation> annotationType = annotation.annotationType();
+                String language = annotationType.getAnnotation(Language.class).value();
+                Method valueMethod;
+                try {
+                    valueMethod = annotationType.getDeclaredMethod("value");
+                } catch (NoSuchMethodException e) {
+                    throw new XMLStreamException("Cannot resolve required method value() for " + annotationType);
+                }
+                Object elementValue;
+                try {
+                    elementValue = valueMethod.invoke(annotation);
+                } catch (ReflectiveOperationException e) {
+                    throw new XMLStreamException("Cannot invoke method value() for " + annotationType);
+                }
+                xmlStreamWriter.writeAttribute("language", language);
+                xmlStreamWriter.writeAttribute("element", elementValue.toString());
+            }
         }
     }
 
