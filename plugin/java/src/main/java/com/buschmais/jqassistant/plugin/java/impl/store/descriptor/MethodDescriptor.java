@@ -7,9 +7,12 @@ import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
 
 import java.util.Set;
 
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Method;
+
 /**
  * Describes a method of a Java class.
  */
+@Java(Method)
 @Label(value = "METHOD")
 public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 

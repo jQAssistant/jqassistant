@@ -6,9 +6,12 @@ import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDesc
 
 import java.util.Set;
 
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Type;
+
 /**
  * Describes a Java type.
  */
+@Java(Type)
 @Label(value = "TYPE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface TypeDescriptor extends PackageMemberDescriptor, TypeMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
