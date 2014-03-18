@@ -17,7 +17,7 @@ public @interface Java {
 
     JavaLanguageElement value();
 
-    enum JavaLanguageElement {
+    public enum JavaLanguageElement {
         Package,
         Type,
         Field,

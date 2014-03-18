@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.sonar.plugin.rule;
 
 /**
- * Created by dimahler on 2/25/14.
+ * Defines the parameters of a rule (i.e. concept, constraint).
  */
 public enum RuleParameter {
 

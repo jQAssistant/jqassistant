@@ -8,11 +8,15 @@ import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.checks.AnnotationCheckFactory;
+import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.issue.Issuable;
+import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
+import org.sonar.api.resources.JavaFile;
+import org.sonar.api.resources.JavaPackage;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.Violation;
 import org.sonar.api.utils.SonarException;
 
 import javax.xml.bind.JAXBContext;
@@ -30,16 +34,19 @@ public class JQAssistantSensor implements Sensor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
 
+    private final ResourcePerspectives perspectives;
+
     private final AnnotationCheckFactory annotationCheckFactory;
 
     private final JAXBContext reportContext;
 
     private final Map<String, ActiveRule> rules;
 
-    public JQAssistantSensor(RulesProfile profile) throws JAXBException {
+    public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives) throws JAXBException {
+        this.perspectives = perspectives;
         this.annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
         this.reportContext = JAXBContext.newInstance(ObjectFactory.class);
-        this.rules = new HashMap<String, ActiveRule>();
+        this.rules = new HashMap<>();
         for (Object check : annotationCheckFactory.getChecks()) {
             ActiveRule rule = annotationCheckFactory.getActiveRule(check);
             rules.put(rule.getRule().getName(), rule);
@@ -89,34 +96,71 @@ public class JQAssistantSensor implements Sensor {
                     ResultType result = ruleType.getResult();
                     boolean hasRows = result != null && result.getRows().getCount() > 0;
                     if (ruleType instanceof ConceptType && !hasRows) {
-                        createViolation(project, sensorContext, activeRule, "The concept did not return a result.");
+                        createIssue(project, "The concept did not return a result.", activeRule, sensorContext);
                     } else if (ruleType instanceof ConstraintType && hasRows) {
-                        StringBuilder message = new StringBuilder();
                         for (RowType rowType : result.getRows().getRow()) {
-                            StringBuilder row = new StringBuilder();
+                            StringBuilder message = new StringBuilder();
+                            Resource<?> resource = null;
                             for (ColumnType columnType : rowType.getColumn()) {
-                                if (row.length() > 0) {
-                                    row.append(", ");
+                                String value = columnType.getValue();
+                                // if a language element is found use it as a resource for creating an issue
+                                if (resource == null && "Java".equals(columnType.getLanguage())) {
+                                    String element = columnType.getElement();
+                                    if ("Type".equals(element)) {
+                                        resource = new JavaFile(value);
+                                    } else if ("Package".equals(element)) {
+                                        resource = new JavaPackage(value);
+                                    }
                                 }
-                                row.append(columnType.getName());
-                                row.append('=');
-                                row.append(columnType.getValue());
+                                if (message.length() > 0) {
+                                    message.append(", ");
+                                }
+                                message.append(columnType.getName());
+                                message.append('=');
+                                message.append(value);
                             }
-                            if (message.length() > 0) {
-                                message.append('\n');
+                            if (resource == null) {
+                                resource = project;
                             }
-                            message.append(row);
+                            createIssue(project, resource, message.toString(), activeRule, sensorContext);
                         }
-                        createViolation(project, sensorContext, activeRule, message.toString());
                     }
                 }
             }
         }
+
     }
 
-    private void createViolation(Project project, SensorContext sensorContext, ActiveRule activeRule, String message) {
-        Violation violation = Violation.create(activeRule, project);
-        violation.setMessage(message);
-        sensorContext.saveViolation(violation);
+    /**
+     * Creates an issue.
+     *
+     * @param project       The project to create the issue for.
+     * @param message       The message to use.
+     * @param rule          The rule which has been violated.
+     * @param sensorContext The sensor context.
+     */
+    private void createIssue(Project project, String message, ActiveRule rule, SensorContext sensorContext) {
+        createIssue(project, project, message, rule, sensorContext);
+    }
+
+    /**
+     * Creates an issue.
+     *
+     * @param project       The project to create the issue for.
+     * @param message       The message to use.
+     * @param rule          The rule which has been violated.
+     * @param sensorContext The sensor context.
+     */
+    private void createIssue(Project project, Resource<?> resource, String message, ActiveRule rule, SensorContext sensorContext) {
+        Issuable issuable;
+        if (sensorContext.getResource(resource) != null) {
+            issuable = perspectives.as(Issuable.class, resource);
+        } else {
+            LOGGER.warn("Resource '{}' not found.", resource.getLongName());
+            issuable = perspectives.as(Issuable.class, (Resource<?>) project);
+        }
+        Issue issue = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message).build();
+        issuable.addIssue(issue);
+        LOGGER.info("Issue added for resource '{}'.", resource.getLongName());
     }
 }
