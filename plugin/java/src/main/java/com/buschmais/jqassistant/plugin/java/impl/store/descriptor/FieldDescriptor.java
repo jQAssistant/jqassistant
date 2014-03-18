@@ -4,9 +4,12 @@ import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
 
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Field;
+
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
+@Java(Field)
 @Label(value = "FIELD")
 public interface FieldDescriptor extends TypeMemberDescriptor, SignatureDescriptor, NamedDescriptor, TypedDescriptor, DependentDescriptor, AnnotatedDescriptor,
         AccessModifierDescriptor {
