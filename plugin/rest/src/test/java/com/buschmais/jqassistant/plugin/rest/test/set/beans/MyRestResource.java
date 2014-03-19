@@ -3,10 +3,13 @@ package com.buschmais.jqassistant.plugin.rest.test.set.beans;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.xml.ws.Response;
 
 /**
  * A simple REST resource.
@@ -36,4 +39,12 @@ public interface MyRestResource {
 	@Path("/testDelete")
 	@Produces({ "application/json" })
 	String testDelete();
+
+	@HEAD
+	@Path("/testHead")
+	void testHead();
+	
+	@OPTIONS
+	@Path("/testOptions")
+	Response<String> testOptions();
 }

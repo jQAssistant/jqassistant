@@ -82,4 +82,26 @@
         ]]></cypher>
 	</concept>
 
+	<concept id="rest:HeadResourceMethod">
+		<requiresConcept refId="rest:ResourceMethod" />
+		<description>Finds resource methods annotated with "@javax.ws.rs.HEAD" and labels them with 'HeadResourceMethod'. </description>
+		<cypher><![CDATA[
+            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            WHERE a.FQN = "javax.ws.rs.HEAD"
+            SET m:HeadResourceMethod
+            RETURN m as headMethod
+        ]]></cypher>
+	</concept>
+
+	<concept id="rest:OptionsResourceMethod">
+		<requiresConcept refId="rest:ResourceMethod" />
+		<description>Finds resource methods annotated with "@javax.ws.rs.OPTIONS" and labels them with 'OptionsResourceMethod'. </description>
+		<cypher><![CDATA[
+            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            WHERE a.FQN = "javax.ws.rs.OPTIONS"
+            SET m:OptionsResourceMethod
+            RETURN m as optionsMethod
+        ]]></cypher>
+	</concept>
+	
 </jqa:jqassistant-rules>

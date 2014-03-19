@@ -102,4 +102,46 @@ public class ResourceMethodIT extends AbstractPluginIT {
 				hasItem(methodDescriptor(MyRestResource.class, "testDelete")));
 		store.commitTransaction();
 	}
+
+	/**
+	 * Verifies the concept {@code rest:HeadResourceMethod}.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws AnalyzerException
+	 *             If the test fails.
+	 * @throws NoSuchMethodException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_HeadResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+		scanClasses(MyRestResource.class);
+		applyConcept("rest:HeadResourceMethod");
+		store.beginTransaction();
+		assertThat("Expected HeadResourceMethod",
+				query("MATCH (restMethod:Rest:HeadResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				hasItem(methodDescriptor(MyRestResource.class, "testHead")));
+		store.commitTransaction();
+	}
+
+	/**
+	 * Verifies the concept {@code rest:OptionsResourceMethod}.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws AnalyzerException
+	 *             If the test fails.
+	 * @throws NoSuchMethodException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_OptionsResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+		scanClasses(MyRestResource.class);
+		applyConcept("rest:OptionsResourceMethod");
+		store.beginTransaction();
+		assertThat("Expected OptionsResourceMethod",
+				query("MATCH (restMethod:Rest:OptionsResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				hasItem(methodDescriptor(MyRestResource.class, "testOptions")));
+		store.commitTransaction();
+	}
 }
