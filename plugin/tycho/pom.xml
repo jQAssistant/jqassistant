@@ -17,7 +17,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-rules2asciidoc-stylesheet</id>
+                        <id>copy-asciidoc-stylesheets</id>
                     </execution>
                 </executions>
             </plugin>
@@ -26,7 +26,7 @@
                 <artifactId>xml-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>transform-rules2asciidoc</id>
+                        <id>transform-xml2asciidoc</id>
                     </execution>
                 </executions>
             </plugin>
@@ -41,6 +41,18 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
+            <type>xsl</type>
+            <classifier>plugin2asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
+            <type>xsl</type>
+            <classifier>rules2asciidoc</classifier>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>

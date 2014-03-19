@@ -30,6 +30,11 @@
                                     <type>xsl</type>
                                     <classifier>rules2asciidoc</classifier>
                                 </artifact>
+                                <artifact>
+                                    <file>src/main/xsl/plugin2asciidoc.xsl</file>
+                                    <type>xsl</type>
+                                    <classifier>plugin2asciidoc</classifier>
+                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>
