@@ -12,8 +12,6 @@ import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.JavaFile;
-import org.sonar.api.resources.JavaPackage;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.rules.ActiveRule;
@@ -38,14 +36,17 @@ public class JQAssistantSensor implements Sensor {
 
     private final AnnotationCheckFactory annotationCheckFactory;
 
-    private final JAXBContext reportContext;
+    private final Map<String, LanguageResourceResolver> languageResourceResolvers;
 
     private final Map<String, ActiveRule> rules;
+    private final JAXBContext reportContext;
 
     public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives) throws JAXBException {
         this.perspectives = perspectives;
         this.annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
-        this.reportContext = JAXBContext.newInstance(ObjectFactory.class);
+        this.languageResourceResolvers = new HashMap<>();
+        JavaResourceResolver javaResourceResolver = new JavaResourceResolver();
+        this.languageResourceResolvers.put(javaResourceResolver.getLanguage(), javaResourceResolver);
         this.rules = new HashMap<>();
         for (Object check : annotationCheckFactory.getChecks()) {
             ActiveRule rule = annotationCheckFactory.getActiveRule(check);
@@ -54,6 +55,7 @@ public class JQAssistantSensor implements Sensor {
         for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
             rules.put(activeRule.getRule().getName(), activeRule);
         }
+        this.reportContext = JAXBContext.newInstance(ObjectFactory.class);
     }
 
     public void analyse(Project project, SensorContext sensorContext) {
@@ -104,12 +106,12 @@ public class JQAssistantSensor implements Sensor {
                             for (ColumnType columnType : rowType.getColumn()) {
                                 String value = columnType.getValue();
                                 // if a language element is found use it as a resource for creating an issue
-                                if (resource == null && "Java".equals(columnType.getLanguage())) {
-                                    String element = columnType.getElement();
-                                    if ("Type".equals(element)) {
-                                        resource = new JavaFile(value);
-                                    } else if ("Package".equals(element)) {
-                                        resource = new JavaPackage(value);
+                                String language = columnType.getLanguage();
+                                if (language != null) {
+                                    LanguageResourceResolver resourceResolver = languageResourceResolvers.get(language);
+                                    if (resourceResolver != null) {
+                                        String element = columnType.getElement();
+                                        resource = resourceResolver.resolve(element, value);
                                     }
                                 }
                                 if (message.length() > 0) {
