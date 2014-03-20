@@ -1,0 +1,114 @@
+= rest.xml
+
+== Constraints
+
+None
+
+== Concepts
+=== rest:DeleteResourceMethod
+
+Requires concepts:
+
+* rest:ResourceMethod
+
+Finds resource methods annotated with +@javax.ws.rs.DELETE+ and labels them with +Rest+ and +DeleteResourceMethod+.
+
+[source,cypher]
+----
+MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+WHERE a.FQN = "javax.ws.rs.DELETE"
+SET m:DeleteResourceMethod
+RETURN m as deleteMethod
+----
+=== rest:GetResourceMethod
+
+Requires concepts:
+
+* rest:ResourceMethod
+
+Finds resource methods annotated with +@javax.ws.rs.GET+ and labels them with +Rest+ and +GetResourceMethod+.
+
+[source,cypher]
+----
+MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+WHERE a.FQN = "javax.ws.rs.GET"
+SET m:GetResourceMethod
+RETURN m as getMethod
+----
+=== rest:PostResourceMethod
+
+Requires concepts:
+
+* rest:ResourceMethod
+
+Finds resource methods annotated with +@javax.ws.rs.POST+ and labels them with +Rest+ and +PostResourceMethod+.
+
+[source,cypher]
+----
+MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+WHERE a.FQN = "javax.ws.rs.POST"
+SET m:PostResourceMethod
+RETURN m as postMethod
+----
+=== rest:PutResourceMethod
+
+Requires concepts:
+
+* rest:ResourceMethod
+
+Finds resource methods annotated with +@javax.ws.rs.PUT+ and labels them with +Rest+ and +PutResourceMethod+.
+
+[source,cypher]
+----
+MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+WHERE a.FQN = "javax.ws.rs.PUT"
+SET m:PutResourceMethod
+RETURN m as putMethod
+----
+
+=== rest:RequestMethodDesignator
+
+Requires concepts: +N/A+
+
+Finds request method designator annotations (i.e. +@GET+, +@POST+, +@PUT+, +@DELETE+, +@HEAD+, +@OPTIONS+) and labels them with +Rest+ and +RequestMethodDesignator+.
+
+[source,cypher]
+----
+MATCH (a:TYPE)
+WHERE a.FQN IN ["javax.ws.rs.GET", "javax.ws.rs.POST", "javax.ws.rs.PUT", "javax.ws.rs.DELETE", "javax.ws.rs.HEAD", "javax.ws.rs.OPTIONS"]
+SET a:Rest:RequestMethodDesignator
+RETURN a as requestMethodDesignator
+----
+
+=== rest:Resource
+
+Requires concepts:
+
+* rest:RequestMethodDesignator
+
+Finds classes or interfaces with atleast one method annotated with +@javax.ws.rs.Path+ or with request method designator (i.e. +@GET+, +@POST+, +@PUT+, +@DELETE+, +@HEAD+, +@OPTIONS+) and labels them with +Rest+ and +Resource+.
+
+[source,cypher]
+----
+MATCH (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+WHERE (a:Rest:RequestMethodDesignator OR a.FQN="javax.ws.rs.Path")
+AND (t:CLASS OR t:INTERFACE)
+SET t:Rest:Resource
+RETURN DISTINCT t as restResource
+----
+
+=== rest:ResourceMethod
+
+Requires concepts:
+
+* rest:Resource
+
+Finds methods that belong to resource class or interface and annotated with request method designator (i.e. +@GET+, +@POST+, +@PUT+, +@DELETE+, +@HEAD+, +@OPTIONS+) and labels them with +Rest+ and +ResourceMethod+.
+
+[source,cypher]
+----
+MATCH (c:Rest:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+SET m:Rest:ResourceMethod
+RETURN m as resourceMethod
+----
+
