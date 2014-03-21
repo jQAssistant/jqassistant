@@ -1,7 +1,6 @@
-package com.buschmais.jqassistant.core.scanner.api.descriptor;
+package com.buschmais.jqassistant.core.store.api.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Property;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 
 /**
  * Defines a descriptor having a name.

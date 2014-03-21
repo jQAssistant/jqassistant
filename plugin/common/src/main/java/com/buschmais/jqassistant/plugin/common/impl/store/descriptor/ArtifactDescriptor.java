@@ -1,10 +1,12 @@
-package com.buschmais.jqassistant.core.scanner.api.descriptor;
+package com.buschmais.jqassistant.plugin.common.impl.store.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
 import java.util.Set;
 
