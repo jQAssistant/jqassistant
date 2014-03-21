@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Field;
 

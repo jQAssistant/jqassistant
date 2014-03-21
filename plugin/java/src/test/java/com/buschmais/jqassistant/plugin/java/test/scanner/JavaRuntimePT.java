@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import org.junit.Assume;
 import org.junit.Test;
