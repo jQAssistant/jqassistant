@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.java;
 
 /**
- * A class type.
+ * A sub class type.
  */
-public class ClassType implements InterfaceType {
+public class SubClassType extends ClassType {
 
     @Override
     public void doSomething(String value) {
@@ -16,4 +16,5 @@ public class ClassType implements InterfaceType {
     @SuppressWarnings("unused")
     private void doSomething() {
     }
+
 }
