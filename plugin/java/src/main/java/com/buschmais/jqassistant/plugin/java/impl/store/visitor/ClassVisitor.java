@@ -51,7 +51,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public FieldVisitor visitField(final int access, final String name, final String desc, final String signature, final Object value) {
         final FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, SignatureHelper.getFieldSignature(name, desc));
-        typeDescriptor.getDeclaredMembers().add(fieldDescriptor);
+        typeDescriptor.getDeclaredFields().add(fieldDescriptor);
         fieldDescriptor.setName(name);
         fieldDescriptor.setVolatile(hasFlag(access, Opcodes.ACC_VOLATILE));
         fieldDescriptor.setTransient(hasFlag(access, Opcodes.ACC_TRANSIENT));
@@ -92,7 +92,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
                                      final String[] exceptions) {
         MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, SignatureHelper.getMethodSignature(name, desc));
-        typeDescriptor.getDeclaredMembers().add(methodDescriptor);
+        typeDescriptor.getDeclaredMethods().add(methodDescriptor);
         methodDescriptor.setName(name);
         setModifiers(access, methodDescriptor);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT)) {
@@ -219,7 +219,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      */
     private void addInnerClass(TypeDescriptor outerClass, TypeDescriptor innerClass) {
         if (!innerClass.equals(outerClass)) {
-            outerClass.getDeclaredMembers().add(innerClass);
+            outerClass.getDeclaredInnerClasses().add(innerClass);
         }
     }
 }

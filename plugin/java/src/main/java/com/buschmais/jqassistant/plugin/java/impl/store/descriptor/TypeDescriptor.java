@@ -13,7 +13,7 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
  */
 @Java(Type)
 @Label(value = "TYPE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface TypeDescriptor extends PackageMemberDescriptor, TypeMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
+public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
     /**
      * Return the super class.
@@ -39,10 +39,26 @@ public interface TypeDescriptor extends PackageMemberDescriptor, TypeMemberDescr
     public Set<TypeDescriptor> getInterfaces();
 
     /**
-     * Return the declared members.
+     * Return the declared methods.
      *
-     * @return The declared members.
+     * @return The declared methods.
      */
     @Relation("DECLARES")
-    public Set<TypeMemberDescriptor> getDeclaredMembers();
+    public Set<MethodDescriptor> getDeclaredMethods();
+
+    /**
+     * Return the declared fields.
+     *
+     * @return The declared fields.
+     */
+    @Relation("DECLARES")
+    public Set<FieldDescriptor> getDeclaredFields();
+
+    /**
+     * Return the declared inner classes.
+     *
+     * @return The declared inner classes.
+     */
+    @Relation("DECLARES")
+    public Set<TypeDescriptor> getDeclaredInnerClasses();
 }

@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 import com.buschmais.cdo.neo4j.api.annotation.Label;
 import com.buschmais.cdo.neo4j.api.annotation.Property;
 import com.buschmais.cdo.neo4j.api.annotation.Relation;
-import com.buschmais.jqassistant.plugin.common.impl.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.core.scanner.api.descriptor.NamedDescriptor;
 
 import java.util.Set;
 
@@ -14,7 +14,7 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
  */
 @Java(Method)
 @Label(value = "METHOD")
-public interface MethodDescriptor extends TypeMemberDescriptor, SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
+public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
     @Relation("HAS")
     public Set<ParameterDescriptor> getParameters();

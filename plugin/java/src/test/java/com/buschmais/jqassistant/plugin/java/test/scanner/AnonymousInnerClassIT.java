@@ -55,7 +55,7 @@ public class AnonymousInnerClassIT extends AbstractPluginIT {
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");
         assertThat(outerClass, typeDescriptor(AnonymousInnerClass.class));
         Matcher<Iterable<? super TypeDescriptor>> matcher = hasItem(typeDescriptor(INNERCLASS_NAME));
-        assertThat(outerClass.getDeclaredMembers(), matcher);
+        assertThat(outerClass.getDeclaredInnerClasses(), matcher);
         store.commitTransaction();
     }
 
