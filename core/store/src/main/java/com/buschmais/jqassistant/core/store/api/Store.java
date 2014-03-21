@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import static com.buschmais.cdo.api.Query.Result;
-import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 
 import java.util.Collection;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import static com.buschmais.cdo.api.Query.Result;
+import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 
 /**
  * Defines the store for {@link Descriptor}s.
@@ -121,5 +121,5 @@ public interface Store {
      * @param parameters The {@link java.util.Map} of parameters for the given query.
      * @return The {@link Result}.
      */
-    Result<CompositeRowObject> executeQuery(Class<?> query, Map<String, Object> parameters);
+    <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
 }

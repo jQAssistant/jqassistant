@@ -81,7 +81,7 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public Result<CompositeRowObject> executeQuery(Class<?> query, Map<String, Object> parameters) {
+    public <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters) {
         return cdoManager.createQuery(query).withParameters(parameters).execute();
     }
 
@@ -100,11 +100,8 @@ public abstract class AbstractGraphStore implements Store {
 
     private void runQueryUntilResultIsZero(String deleteNodesAndRels) {
         beginTransaction();
-        Query deleteNodesAndRelQuery = cdoManager.createQuery(deleteNodesAndRels, DeletedCount.class);
-        Long result;
-        do {
-            result = ((DeletedCount) deleteNodesAndRelQuery.execute().getSingleResult()).getDeleted();
-        } while (result > 0);
+        Query<Long> deleteNodesAndRelQuery = cdoManager.createQuery(deleteNodesAndRels, Long.class);
+        while (deleteNodesAndRelQuery.execute().getSingleResult() > 0) ;
         commitTransaction();
     }
 

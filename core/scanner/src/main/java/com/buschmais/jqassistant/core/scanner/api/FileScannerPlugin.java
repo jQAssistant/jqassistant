@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
@@ -26,7 +26,7 @@ public interface FileScannerPlugin extends ScannerPlugin {
      * @return The descriptor representing the file.
      * @throws IOException If scanning fails.
      */
-    Descriptor scanFile(StreamSource streamSource) throws IOException;
+    FileDescriptor scanFile(StreamSource streamSource) throws IOException;
 
     /**
      * Perform scanning of a file.
@@ -34,5 +34,5 @@ public interface FileScannerPlugin extends ScannerPlugin {
      * @return The descriptor representing the file.
      * @throws IOException If scanning fails.
      */
-    Descriptor scanDirectory(String name) throws IOException;
+    FileDescriptor scanDirectory(String name) throws IOException;
 }

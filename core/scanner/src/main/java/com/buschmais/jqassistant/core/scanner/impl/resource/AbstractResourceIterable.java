@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl.resource;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
  *
  * @param <R> The resource type.
  */
-public abstract class AbstractResourceIterable<R> implements Iterable<Descriptor> {
+public abstract class AbstractResourceIterable<R> implements Iterable<FileDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResourceIterable.class);
 
@@ -41,10 +41,10 @@ public abstract class AbstractResourceIterable<R> implements Iterable<Descriptor
     protected abstract void close() throws IOException;
 
     @Override
-    public Iterator<Descriptor> iterator() {
-        return new Iterator<Descriptor>() {
+    public Iterator<FileDescriptor> iterator() {
+        return new Iterator<FileDescriptor>() {
 
-            private Descriptor next = null;
+            private FileDescriptor next = null;
 
             @Override
             public boolean hasNext() {
@@ -76,14 +76,14 @@ public abstract class AbstractResourceIterable<R> implements Iterable<Descriptor
                 }
             }
 
-            private Descriptor doScan(R resource, FileScannerPlugin plugin, String name, boolean directory) throws IOException {
+            private FileDescriptor doScan(R resource, FileScannerPlugin plugin, String name, boolean directory) throws IOException {
                 try {
                     if (directory) {
                         return plugin.scanDirectory(name);
                     } else {
                         BufferedInputStream inputStream = new BufferedInputStream(openInputStream(name, resource));
                         StreamSource streamSource = new StreamSource(inputStream, name);
-                        Descriptor descriptor = plugin.scanFile(streamSource);
+                        FileDescriptor descriptor = plugin.scanFile(streamSource);
                         inputStream.close();
                         return descriptor;
                     }
@@ -93,9 +93,9 @@ public abstract class AbstractResourceIterable<R> implements Iterable<Descriptor
             }
 
             @Override
-            public Descriptor next() {
+            public FileDescriptor next() {
                 if (hasNext()) {
-                    Descriptor result = next;
+                    FileDescriptor result = next;
                     next = null;
                     return result;
                 }
