@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.impl.resource;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

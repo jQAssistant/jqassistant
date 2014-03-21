@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.resource.ClassResourceIterable;
 import com.buschmais.jqassistant.core.scanner.impl.resource.FileResourceIterable;
 import com.buschmais.jqassistant.core.scanner.impl.resource.UrlResourceIterable;
 import com.buschmais.jqassistant.core.scanner.impl.resource.ZipResourceIterable;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
