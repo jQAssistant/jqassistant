@@ -30,6 +30,7 @@
             WHERE
               method.NAME = otherMethod.NAME
               AND method.SIGNATURE = otherMethod.SIGNATURE
+              AND method.VISIBILITY <> 'PRIVATE'
             CREATE UNIQUE
                 (method)-[:OVERRIDES]->(otherMethod)
             RETURN count(method) AS OverriddenMethods
