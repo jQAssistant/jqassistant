@@ -17,11 +17,11 @@ import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepository
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -350,10 +350,10 @@ public class AbstractPluginIT {
     }
 
     /**
-     * Get or create an {@link com.buschmais.jqassistant.core.scanner.api.descriptor.ArtifactDescriptor}.
+     * Get or create an {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}.
      *
      * @param artifactId The artifact id.
-     * @return The {@link com.buschmais.jqassistant.core.scanner.api.descriptor.ArtifactDescriptor}.
+     * @return The {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}.
      */
     private ArtifactDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
