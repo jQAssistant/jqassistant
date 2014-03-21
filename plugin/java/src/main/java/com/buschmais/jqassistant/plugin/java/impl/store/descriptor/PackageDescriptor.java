@@ -1,8 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 import com.buschmais.cdo.neo4j.api.annotation.Label;
+import com.buschmais.cdo.neo4j.api.annotation.Relation;
+import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.descriptor.ContainingDescriptor;
+
+import java.util.Set;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Package;
 
@@ -11,5 +14,13 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
  */
 @Java(Package)
 @Label(value = "PACKAGE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface PackageDescriptor extends PackageMemberDescriptor, ContainingDescriptor {
+public interface PackageDescriptor extends PackageMemberDescriptor {
+
+    /**
+     * Return the contained descriptors.
+     *
+     * @return The contained descriptors.
+     */
+    @Relation("CONTAINS")
+    public Set<FileDescriptor> getContains();
 }

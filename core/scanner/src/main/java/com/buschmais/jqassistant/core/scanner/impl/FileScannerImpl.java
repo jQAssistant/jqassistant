@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.core.scanner.impl;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.scanner.impl.resource.ClassResourceIterable;
 import com.buschmais.jqassistant.core.scanner.impl.resource.FileResourceIterable;
 import com.buschmais.jqassistant.core.scanner.impl.resource.UrlResourceIterable;
 import com.buschmais.jqassistant.core.scanner.impl.resource.ZipResourceIterable;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +38,7 @@ public class FileScannerImpl implements FileScanner {
     }
 
     @Override
-    public Iterable<Descriptor> scanArchive(File archive) throws IOException {
+    public Iterable<FileDescriptor> scanArchive(File archive) throws IOException {
         if (!archive.exists()) {
             throw new IOException("Archive '" + archive.getAbsolutePath() + "' not found.");
         }
@@ -50,12 +50,12 @@ public class FileScannerImpl implements FileScanner {
     }
 
     @Override
-    public Iterable<Descriptor> scanDirectory(File directory) throws IOException {
+    public Iterable<FileDescriptor> scanDirectory(File directory) throws IOException {
         return scanDirectory(directory, true);
     }
 
     @Override
-    public Iterable<Descriptor> scanDirectory(File directory, final boolean recursive) throws IOException {
+    public Iterable<FileDescriptor> scanDirectory(File directory, final boolean recursive) throws IOException {
         final List<File> files = new ArrayList<>();
         new DirectoryWalker<File>() {
 
@@ -84,7 +84,7 @@ public class FileScannerImpl implements FileScanner {
     }
 
     @Override
-    public Iterable<Descriptor> scanFiles(File directory, List<File> files) {
+    public Iterable<FileDescriptor> scanFiles(File directory, List<File> files) {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Scanning directory '{}' [{} files].", directory.getAbsolutePath(), files.size());
         }
@@ -92,12 +92,12 @@ public class FileScannerImpl implements FileScanner {
     }
 
     @Override
-    public Iterable<Descriptor> scanClasses(final Class<?>... classes) throws IOException {
+    public Iterable<FileDescriptor> scanClasses(final Class<?>... classes) throws IOException {
         return new ClassResourceIterable(plugins, classes);
     }
 
     @Override
-    public Iterable<Descriptor> scanURLs(final URL... urls) throws IOException {
+    public Iterable<FileDescriptor> scanURLs(final URL... urls) throws IOException {
         return new UrlResourceIterable(plugins, urls);
     }
 

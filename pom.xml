@@ -42,6 +42,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <com.buschmais.cdo_version>0.3.0-SNAPSHOT</com.buschmais.cdo_version>
     </properties>
 
     <profiles>

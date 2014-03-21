@@ -11,7 +11,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <org.neo4j_version>2.0.0</org.neo4j_version>
+        <org.neo4j_version>2.0.1</org.neo4j_version>
     </properties>
 
     <dependencyManagement>
@@ -19,7 +19,7 @@
             <dependency>
                 <groupId>com.buschmais.cdo</groupId>
                 <artifactId>cdo.neo4j</artifactId>
-                <version>0.1.0</version>
+                <version>${com.buschmais.cdo_version}</version>
             </dependency>
             <dependency>
                 <groupId>org.neo4j.app</groupId>

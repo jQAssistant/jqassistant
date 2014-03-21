@@ -87,8 +87,7 @@ public class VisitorHelper {
             Map<String, Object> params = new HashMap<>();
             params.put("type", type);
             params.put("signature", signature);
-            methodDescriptor = store.executeQuery(GetOrCreateMethodQuery.class, params).getSingleResult()
-                    .as(GetOrCreateMethodQuery.class).getMethod();
+            methodDescriptor = store.executeQuery(GetOrCreateMethodQuery.class, params).getSingleResult().getMethod();
             if (signature.startsWith(CONSTRUCTOR_METHOD) && !ConstructorDescriptor.class.isAssignableFrom(methodDescriptor.getClass())) {
                 methodDescriptor = store.migrate(methodDescriptor, ConstructorDescriptor.class);
             }
@@ -128,7 +127,7 @@ public class VisitorHelper {
             Map<String, Object> params = new HashMap<>();
             params.put("type", type);
             params.put("signature", signature);
-            fieldDescriptor = store.executeQuery(GetOrCreateFieldQuery.class, params).getSingleResult().as(GetOrCreateFieldQuery.class).getField();
+            fieldDescriptor = store.executeQuery(GetOrCreateFieldQuery.class, params).getSingleResult().getField();
             fieldsOfType.put(signature, fieldDescriptor);
         }
         return fieldDescriptor;
@@ -191,7 +190,7 @@ public class VisitorHelper {
         Map<String, Object> params = new HashMap<>();
         params.put("method", methodDescriptor);
         params.put("index", index);
-        return store.executeQuery(FindParameterQuery.class, params).getSingleResult().as(FindParameterQuery.class).getParameter();
+        return store.executeQuery(FindParameterQuery.class, params).getSingleResult().getParameter();
     }
 
     /**

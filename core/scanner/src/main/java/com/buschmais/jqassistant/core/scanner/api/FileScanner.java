@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
+import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 
 /**
  * Defines the interface for an artifact scanner.
@@ -18,7 +18,7 @@ public interface FileScanner {
      * @param archive The archive.
      * @throws IOException If scanning fails.
      */
-    Iterable<Descriptor> scanArchive(File archive) throws IOException;
+    Iterable<FileDescriptor> scanArchive(File archive) throws IOException;
 
     /**
      * Scans a directory recursively.
@@ -26,7 +26,7 @@ public interface FileScanner {
      * @param directory The directory.
      * @throws IOException If Scanning fails.
      */
-    Iterable<Descriptor> scanDirectory(File directory) throws IOException;
+    Iterable<FileDescriptor> scanDirectory(File directory) throws IOException;
 
     /**
      * Scans a directory.
@@ -35,7 +35,7 @@ public interface FileScanner {
      * @param recursive if <code>true</code> sub directories will be scanned recursively.
      * @throws IOException If Scanning fails.
      */
-    Iterable<Descriptor> scanDirectory(File directory, boolean recursive) throws IOException;
+    Iterable<FileDescriptor> scanDirectory(File directory, boolean recursive) throws IOException;
 
     /**
      * Scans the given classes.
@@ -43,7 +43,7 @@ public interface FileScanner {
      * @param classes The classes.
      * @throws IOException If Scanning fails.
      */
-    Iterable<Descriptor> scanClasses(Class<?>... classes) throws IOException;
+    Iterable<FileDescriptor> scanClasses(Class<?>... classes) throws IOException;
 
     /**
      * Scans the given URLs.
@@ -51,17 +51,14 @@ public interface FileScanner {
      * @param urls The URLs.
      * @throws IOException If Scanning fails.
      */
-    Iterable<Descriptor> scanURLs(URL... urls) throws IOException;
+    Iterable<FileDescriptor> scanURLs(URL... urls) throws IOException;
 
-	/**
-	 * Scan the given files.
-	 * 
-	 * @param directory
-	 *            reference directory for scanners
-	 * @param files
-	 *            given files to scan
-	 * @throws IOException
-	 *             If Scanning fails.
-	 */
-	Iterable<Descriptor> scanFiles(File directory, List<File> files) throws IOException;
+    /**
+     * Scan the given files.
+     *
+     * @param directory reference directory for scanners
+     * @param files     given files to scan
+     * @throws IOException If Scanning fails.
+     */
+    Iterable<FileDescriptor> scanFiles(File directory, List<File> files) throws IOException;
 }

@@ -134,7 +134,7 @@
               (bundle)-[:CONTAINS]->(otherPackage:PACKAGE),
               (otherPackage)-[:CONTAINS]->()-[:DEPENDS_ON]->(internalType)
             where
-              internalType:PUBLIC
+              internalType.VISIBILITY='PUBLIC'
             with
               bundle, internalPackage, internalType, collect(otherPackage) as otherPackages
             where
