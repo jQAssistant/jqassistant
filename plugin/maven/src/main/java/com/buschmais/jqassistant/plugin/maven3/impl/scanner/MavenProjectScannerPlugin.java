@@ -2,10 +2,10 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.core.scanner.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
