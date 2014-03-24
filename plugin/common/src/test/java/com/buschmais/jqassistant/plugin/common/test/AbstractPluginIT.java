@@ -32,8 +32,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static com.buschmais.cdo.api.Query.Result;
-import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base class for analysis tests.

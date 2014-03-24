@@ -7,35 +7,32 @@
     </xsl:variable>
 
     <xsl:template match="/">
-        ==
-        <xsl:call-template name="filename"/>
-        <xsl:value-of select="$newline"/>
-        === Constraints
+== <xsl:call-template name="filename"/>
+<xsl:value-of select="$newline"/>
+=== Constraints
         <xsl:apply-templates select="//constraint">
             <xsl:sort select="@id" order="ascending"/>
         </xsl:apply-templates>
-        === Concepts
+=== Concepts
         <xsl:apply-templates select="//concept">
             <xsl:sort select="@id" order="ascending"/>
         </xsl:apply-templates>
     </xsl:template>
 
     <xsl:template match="constraint | concept">
-        ====
-        <xsl:value-of select="@id"/>
-        <xsl:value-of select="$newline"/>
-        Requires concepts:
+==== <xsl:value-of select="@id"/>
+<xsl:value-of select="$newline"/>
+Requires concepts:
         <xsl:for-each select="requiresConcept">
-            *
-            <xsl:value-of select="@refId"/><xsl:value-of select="$newline"/>
+* <xsl:value-of select="@refId"/><xsl:value-of select="$newline"/>
         </xsl:for-each>
-        <xsl:value-of select="$newline"/>
-        <xsl:value-of select="description"/>
-        <xsl:value-of select="$newline"/>
-        [source,cypher]
-        ----
-        <xsl:value-of select="cypher"/>
-        ----
+<xsl:value-of select="$newline"/>
+<xsl:value-of select="description"/>
+<xsl:value-of select="$newline"/>
+[source,cypher]
+----
+<xsl:value-of select="cypher"/>
+----
     </xsl:template>
 
     <xsl:template name="filename">
