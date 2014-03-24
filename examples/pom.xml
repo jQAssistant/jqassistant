@@ -81,6 +81,7 @@
 
     <modules>
         <module>namingrules</module>
+        <module>forbiddenmethod</module>
         <module>sonar</module>
     </modules>
 
