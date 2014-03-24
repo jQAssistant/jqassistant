@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import com.buschmais.cdo.spi.reflection.AnnotatedType;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -11,6 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.Language;
+import com.buschmais.xo.spi.reflection.AnnotatedType;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 import javax.xml.stream.XMLOutputFactory;

@@ -1,16 +1,15 @@
-package com.buschmais.jqassistant.plugin.rest.test;
+package com.buschmais.jqassistant.plugin.jaxrs.test;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.MyRestResource;
+import org.junit.Test;
+
+import java.io.IOException;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.rest.test.set.beans.MyRestResource;
 
 /**
  * Test to verify REST Resource method concepts.
@@ -32,10 +31,10 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	@Test
 	public void test_GetResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(MyRestResource.class);
-		applyConcept("rest:GetResourceMethod");
+		applyConcept("jaxrs:GetResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected GetResourceMethod",
-				query("MATCH (restMethod:Rest:GetResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (restMethod:JaxRS:GetResourceMethod) RETURN restMethod").getColumn("restMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testGet")));
 		store.commitTransaction();
 	}
@@ -53,10 +52,10 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	@Test
 	public void test_PutResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(MyRestResource.class);
-		applyConcept("rest:PutResourceMethod");
+		applyConcept("jaxrs:PutResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected PutResourceMethod",
-				query("MATCH (restMethod:Rest:PutResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (restMethod:JaxRS:PutResourceMethod) RETURN restMethod").getColumn("restMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testPut")));
 		store.commitTransaction();
 	}
@@ -74,10 +73,10 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	@Test
 	public void test_PostResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(MyRestResource.class);
-		applyConcept("rest:PostResourceMethod");
+		applyConcept("jaxrs:PostResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected PostResourceMethod",
-				query("MATCH (restMethod:Rest:PostResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (restMethod:JaxRS:PostResourceMethod) RETURN restMethod").getColumn("restMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testPost", String.class)));
 		store.commitTransaction();
 	}
@@ -95,10 +94,10 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	@Test
 	public void test_DeleteResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(MyRestResource.class);
-		applyConcept("rest:DeleteResourceMethod");
+		applyConcept("jaxrs:DeleteResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected DeleteResourceMethod",
-				query("MATCH (restMethod:Rest:DeleteResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (restMethod:JaxRS:DeleteResourceMethod) RETURN restMethod").getColumn("restMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testDelete")));
 		store.commitTransaction();
 	}
@@ -116,10 +115,10 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	@Test
 	public void test_HeadResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(MyRestResource.class);
-		applyConcept("rest:HeadResourceMethod");
+		applyConcept("jaxrs:HeadResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected HeadResourceMethod",
-				query("MATCH (restMethod:Rest:HeadResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (restMethod:JaxRS:HeadResourceMethod) RETURN restMethod").getColumn("restMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testHead")));
 		store.commitTransaction();
 	}
@@ -137,10 +136,10 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	@Test
 	public void test_OptionsResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(MyRestResource.class);
-		applyConcept("rest:OptionsResourceMethod");
+		applyConcept("jaxrs:OptionsResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected OptionsResourceMethod",
-				query("MATCH (restMethod:Rest:OptionsResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (restMethod:JaxRS:OptionsResourceMethod) RETURN restMethod").getColumn("restMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testOptions")));
 		store.commitTransaction();
 	}

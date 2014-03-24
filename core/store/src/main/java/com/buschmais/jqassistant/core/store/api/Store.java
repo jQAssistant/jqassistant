@@ -6,8 +6,8 @@ import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDesc
 import java.util.Collection;
 import java.util.Map;
 
-import static com.buschmais.cdo.api.Query.Result;
-import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Defines the store for {@link Descriptor}s.

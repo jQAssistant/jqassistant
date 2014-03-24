@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import com.buschmais.cdo.api.CdoManager;
-import com.buschmais.cdo.api.CdoManagerFactory;
-import com.buschmais.cdo.api.Query;
-import com.buschmais.cdo.api.ResultIterable;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.ResultIterable;
+import com.buschmais.xo.api.XOManager;
+import com.buschmais.xo.api.XOManagerFactory;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.slf4j.Logger;
@@ -15,8 +15,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.buschmais.cdo.api.Query.Result;
-import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -28,13 +28,13 @@ import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
 public abstract class AbstractGraphStore implements Store {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
-    private CdoManagerFactory cdoManagerFactory;
-    private CdoManager cdoManager;
+    private XOManagerFactory cdoManagerFactory;
+    private XOManager cdoManager;
 
     @Override
     public void start(Collection<Class<?>> types) {
         cdoManagerFactory = createCdoManagerFactory(types);
-        cdoManager = cdoManagerFactory.createCdoManager();
+        cdoManager = cdoManagerFactory.createXOManager();
     }
 
     @Override
@@ -94,10 +94,6 @@ public abstract class AbstractGraphStore implements Store {
         if (LOGGER.isInfoEnabled()) LOGGER.info("Reset finished.");
     }
 
-    public interface DeletedCount {
-        Long getDeleted();
-    }
-
     private void runQueryUntilResultIsZero(String deleteNodesAndRels) {
         beginTransaction();
         Query<Long> deleteNodesAndRelQuery = cdoManager.createQuery(deleteNodesAndRels, Long.class);
@@ -129,20 +125,20 @@ public abstract class AbstractGraphStore implements Store {
         }
     }
 
-    protected abstract GraphDatabaseAPI getDatabaseAPI(CdoManager cdoManager);
+    protected abstract GraphDatabaseAPI getDatabaseAPI(XOManager cdoManager);
 
     /**
      * Delegates to the sub class to start the database.
      *
      * @return The {@link GraphDatabaseService} instance to use.
      */
-    protected abstract CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types);
+    protected abstract XOManagerFactory createCdoManagerFactory(Collection<Class<?>> types);
 
     /**
      * Delegates to the sub class to stop the database.
      *
      * @param database The used {@link GraphDatabaseService} instance.
      */
-    protected abstract void closeCdoManagerFactory(CdoManagerFactory database);
+    protected abstract void closeCdoManagerFactory(XOManagerFactory database);
 
 }

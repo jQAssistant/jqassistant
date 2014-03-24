@@ -9,13 +9,12 @@
     </xsl:variable>
 
     <xsl:template match="/">
-        =
-        <xsl:value-of select="$pluginName"/>
-        <xsl:apply-templates select="//resource"/>
+= <xsl:value-of select="$pluginName"/>
+<xsl:apply-templates select="//resource"/>
     </xsl:template>
 
     <xsl:template match="resource">
-        include::<xsl:value-of select="text()"/>.adoc.include[]
-        <xsl:value-of select="$newline"/>
+include::<xsl:value-of select="text()"/>.adoc.include[]
+<xsl:value-of select="$newline"/>
     </xsl:template>
 </xsl:stylesheet>

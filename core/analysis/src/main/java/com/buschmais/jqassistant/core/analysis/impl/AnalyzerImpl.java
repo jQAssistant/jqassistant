@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static com.buschmais.cdo.api.Query.Result.CompositeRowObject;
-
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.store.api.Store;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Implementation of the
@@ -184,7 +183,7 @@ public class AnalyzerImpl implements Analyzer {
      */
     private <T extends AbstractExecutable> Result<T> execute(T executable) throws AnalyzerException {
         List<Map<String, Object>> rows = new ArrayList<>();
-        try (com.buschmais.cdo.api.Query.Result<CompositeRowObject> compositeRowObjects = executeQuery(executable.getQuery())) {
+        try (com.buschmais.xo.api.Query.Result<CompositeRowObject> compositeRowObjects = executeQuery(executable.getQuery())) {
             List<String> columns = null;
             for (CompositeRowObject rowObject : compositeRowObjects) {
                 if (columns == null) {
@@ -208,7 +207,7 @@ public class AnalyzerImpl implements Analyzer {
      * @param query The query.
      * @return The query result.
      */
-    private com.buschmais.cdo.api.Query.Result<CompositeRowObject> executeQuery(Query query) {
+    private com.buschmais.xo.api.Query.Result<CompositeRowObject> executeQuery(Query query) {
         String cypher = query.getCypher();
         Map<String, Object> parameters = query.getParameters();
         if (LOGGER.isDebugEnabled()) LOGGER.debug("Executing query '{}' with parameters [{}]", cypher, parameters);

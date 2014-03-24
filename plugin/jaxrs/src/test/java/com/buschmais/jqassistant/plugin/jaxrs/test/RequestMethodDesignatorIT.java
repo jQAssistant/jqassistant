@@ -1,23 +1,16 @@
-package com.buschmais.jqassistant.plugin.rest.test;
+package com.buschmais.jqassistant.plugin.jaxrs.test;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import org.junit.Test;
+
+import javax.ws.rs.*;
+import java.io.IOException;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 /**
  * Test to verify REST Resource method designator concepts.
@@ -27,7 +20,7 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 public class RequestMethodDesignatorIT extends AbstractPluginIT {
 
 	/**
-	 * Verifies the concept {@code rest:RequestMethodDesignator}.
+	 * Verifies the concept {@code jaxrs:RequestMethodDesignator}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -39,31 +32,31 @@ public class RequestMethodDesignatorIT extends AbstractPluginIT {
 	@Test
 	public void test_RequestMethodDesignator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(GET.class, PUT.class, POST.class, DELETE.class, HEAD.class, OPTIONS.class);
-		applyConcept("rest:RequestMethodDesignator");
+		applyConcept("jaxrs:RequestMethodDesignator");
 		store.beginTransaction();
 		assertThat("Expected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				hasItem(typeDescriptor(GET.class)));
 		assertThat("Expected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				hasItem(typeDescriptor(PUT.class)));
 		assertThat("Expected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				hasItem(typeDescriptor(POST.class)));
 		assertThat("Expected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				hasItem(typeDescriptor(DELETE.class)));
 		assertThat("Expected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				hasItem(typeDescriptor(HEAD.class)));
 		assertThat("Expected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				hasItem(typeDescriptor(OPTIONS.class)));
 		store.commitTransaction();
 	}
 
 	/**
-	 * Verifies the concept {@code rest:RequestMethodDesignator} is not applied to invalid annotations.
+	 * Verifies the concept {@code jaxrs:RequestMethodDesignator} is not applied to invalid annotations.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -75,10 +68,10 @@ public class RequestMethodDesignatorIT extends AbstractPluginIT {
 	@Test
 	public void testInvalid_RequestMethodDesignator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
 		scanClasses(Test.class);
-		applyConcept("rest:RequestMethodDesignator");
+		applyConcept("jaxrs:RequestMethodDesignator");
 		store.beginTransaction();
 		assertThat("Unexpected RequestMethodDesignator",
-				query("MATCH (methodDesignator:Rest:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
+				query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
 				nullValue());
 		store.commitTransaction();
 	}

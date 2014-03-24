@@ -1,103 +1,102 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-
-	<concept id="rest:RequestMethodDesignator">
+	<concept id="jaxrs:RequestMethodDesignator">
 		<description>Finds request method designator annotations (i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'Rest' and 'RequestMethodDesignator'
 		</description>
 		<cypher><![CDATA[
             MATCH (a:TYPE)
             WHERE a.FQN IN ["javax.ws.rs.GET", "javax.ws.rs.POST", "javax.ws.rs.PUT", "javax.ws.rs.DELETE", "javax.ws.rs.HEAD", "javax.ws.rs.OPTIONS"]
-            SET a:Rest:RequestMethodDesignator
+            SET a:JaxRS:RequestMethodDesignator
             RETURN a as requestMethodDesignator
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:Resource">
-		<requiresConcept refId="rest:RequestMethodDesignator" />
+	<concept id="jaxrs:Resource">
+		<requiresConcept refId="jaxrs:RequestMethodDesignator" />
 		<description>Finds classes or interfaces with atleast one method annotated with "@javax.ws.rs.Path" or with request method designator 
 		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'Rest' and 'Resource'.
 		</description>
 		<cypher><![CDATA[
             MATCH (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
-			WHERE (a:Rest:RequestMethodDesignator OR a.FQN="javax.ws.rs.Path")
+			WHERE (a:JaxRS:RequestMethodDesignator OR a.FQN="javax.ws.rs.Path")
 			AND (t:CLASS OR t:INTERFACE)
-            SET t:Rest:Resource
+            SET t:JaxRS:Resource
             RETURN DISTINCT t as restResource
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:ResourceMethod">
-		<requiresConcept refId="rest:Resource" />
+	<concept id="jaxrs:ResourceMethod">
+		<requiresConcept refId="jaxrs:Resource" />
 		<description>Finds methods that belong to resource class or interface and annotated with request method designator 
 		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'Rest' and 'ResourceMethod'.
 		</description>
 		<cypher><![CDATA[
-            MATCH (c:Rest:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
-            SET m:Rest:ResourceMethod
+            MATCH (c:JaxRS:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            SET m:JaxRS:ResourceMethod
             RETURN m as resourceMethod
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:GetResourceMethod">
-		<requiresConcept refId="rest:ResourceMethod" />
+	<concept id="jaxrs:GetResourceMethod">
+		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.GET" and labels them with 'GetResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE a.FQN = "javax.ws.rs.GET"
             SET m:GetResourceMethod
             RETURN m as getMethod
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:PutResourceMethod">
-		<requiresConcept refId="rest:ResourceMethod" />
+	<concept id="jaxrs:PutResourceMethod">
+		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.PUT" and labels them with 'PutResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE a.FQN = "javax.ws.rs.PUT"
             SET m:PutResourceMethod
             RETURN m as putMethod
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:PostResourceMethod">
-		<requiresConcept refId="rest:ResourceMethod" />
+	<concept id="jaxrs:PostResourceMethod">
+		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.POST" and labels them with 'PostResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE a.FQN = "javax.ws.rs.POST"
             SET m:PostResourceMethod
             RETURN m as postMethod
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:DeleteResourceMethod">
-		<requiresConcept refId="rest:ResourceMethod" />
+	<concept id="jaxrs:DeleteResourceMethod">
+		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.DELETE" and labels them with 'DeleteResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE a.FQN = "javax.ws.rs.DELETE"
             SET m:DeleteResourceMethod
             RETURN m as deleteMethod
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:HeadResourceMethod">
-		<requiresConcept refId="rest:ResourceMethod" />
+	<concept id="jaxrs:HeadResourceMethod">
+		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.HEAD" and labels them with 'HeadResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE a.FQN = "javax.ws.rs.HEAD"
             SET m:HeadResourceMethod
             RETURN m as headMethod
         ]]></cypher>
 	</concept>
 
-	<concept id="rest:OptionsResourceMethod">
-		<requiresConcept refId="rest:ResourceMethod" />
+	<concept id="jaxrs:OptionsResourceMethod">
+		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.OPTIONS" and labels them with 'OptionsResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:Rest:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Rest:RequestMethodDesignator)
+            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE a.FQN = "javax.ws.rs.OPTIONS"
             SET m:OptionsResourceMethod
             RETURN m as optionsMethod

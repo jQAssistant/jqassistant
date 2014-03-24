@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import com.buschmais.cdo.neo4j.api.annotation.Label;
-import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.xo.neo4j.api.annotation.Label;
+import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
  * Describes a parameter of a method.

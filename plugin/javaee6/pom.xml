@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.rest</artifactId>
+            <artifactId>jqassistant.plugin.jaxrs</artifactId>
         </dependency>
     </dependencies>
 </project>

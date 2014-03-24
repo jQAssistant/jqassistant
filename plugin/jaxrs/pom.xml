@@ -8,7 +8,7 @@
         <version>1.0.0-M3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant.plugin.rest</artifactId>
+    <artifactId>jqassistant.plugin.jaxrs</artifactId>
 
     <build>
         <plugins>

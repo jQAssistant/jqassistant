@@ -25,8 +25,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.buschmais.cdo</groupId>
-            <artifactId>cdo.neo4j</artifactId>
+            <groupId>com.buschmais.xo</groupId>
+            <artifactId>xo.neo4j</artifactId>
         </dependency>
         <dependency>
             <groupId>org.neo4j.app</groupId>
