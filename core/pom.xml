@@ -17,9 +17,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.buschmais.cdo</groupId>
-                <artifactId>cdo.neo4j</artifactId>
-                <version>${com.buschmais.cdo_version}</version>
+                <groupId>com.buschmais.xo</groupId>
+                <artifactId>xo.neo4j</artifactId>
+                <version>${com.buschmais.xo_version}</version>
             </dependency>
             <dependency>
                 <groupId>org.neo4j.app</groupId>

@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.core.store.api.descriptor;
 
-import com.buschmais.cdo.neo4j.api.annotation.Indexed;
-import com.buschmais.cdo.neo4j.api.annotation.Property;
+import com.buschmais.xo.neo4j.api.annotation.Indexed;
+import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
  * Base interface for all indexed descriptors having a property full qualified

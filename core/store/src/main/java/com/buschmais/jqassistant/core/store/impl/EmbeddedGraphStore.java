@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import com.buschmais.cdo.api.CdoManager;
-import com.buschmais.cdo.api.CdoManagerFactory;
-import com.buschmais.cdo.api.bootstrap.Cdo;
-import com.buschmais.cdo.api.bootstrap.CdoUnit;
-import com.buschmais.cdo.api.bootstrap.CdoUnitBuilder;
-import com.buschmais.cdo.neo4j.api.Neo4jCdoProvider;
-import com.buschmais.cdo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.xo.api.XOManager;
+import com.buschmais.xo.api.XOManagerFactory;
+import com.buschmais.xo.api.bootstrap.XO;
+import com.buschmais.xo.api.bootstrap.XOUnit;
+import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
+import com.buschmais.xo.neo4j.api.Neo4jXOProvider;
+import com.buschmais.xo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
 import java.io.File;
@@ -33,19 +33,19 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseAPI getDatabaseAPI(CdoManager cdoManager) {
+    protected GraphDatabaseAPI getDatabaseAPI(XOManager cdoManager) {
         return (GraphDatabaseAPI) cdoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
     @Override
-    protected CdoManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
+    protected XOManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
-        CdoUnit cdoUnit = CdoUnitBuilder.create(database.toURI(), Neo4jCdoProvider.class, types.toArray(new Class<?>[0])).create();
-        return Cdo.createCdoManagerFactory(cdoUnit);
+        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).create();
+        return XO.createXOManagerFactory(xoUnit);
     }
 
     @Override
-    protected void closeCdoManagerFactory(CdoManagerFactory cdoManagerFactory) {
+    protected void closeCdoManagerFactory(XOManagerFactory cdoManagerFactory) {
         cdoManagerFactory.close();
     }
 
