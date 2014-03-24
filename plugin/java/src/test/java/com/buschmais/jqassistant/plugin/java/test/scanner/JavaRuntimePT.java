@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -12,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
 
 public class JavaRuntimePT extends AbstractPluginIT {
 
@@ -50,7 +53,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
             } while (descriptor != null && count < 50);
             store.commitTransaction();
         } while (descriptor != null);
-        /*
+
         applyConcept("metric:Top10TypesPerArtifact");
         applyConcept("metric:Top10TypesPerPackage");
         applyConcept("metric:Top10MethodsPerType");
@@ -68,7 +71,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 				LOGGER.info(sb.toString());
 			}
 		}
-		*/
+
     }
 
 }
