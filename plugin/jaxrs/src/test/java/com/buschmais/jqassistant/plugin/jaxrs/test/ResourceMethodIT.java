@@ -143,4 +143,26 @@ public class ResourceMethodIT extends AbstractPluginIT {
 				hasItem(methodDescriptor(MyRestResource.class, "testOptions")));
 		store.commitTransaction();
 	}
+
+	/**
+	 * Verifies the concept {@code jaxrs:SubResourceLocator}.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws AnalyzerException
+	 *             If the test fails.
+	 * @throws NoSuchMethodException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_SubResourceLocator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+		scanClasses(MyRestResource.class);
+		applyConcept("jaxrs:SubResourceLocator");
+		store.beginTransaction();
+		System.err.println(query("MATCH (restMethod:JaxRS:SubResourceLocator) RETURN restMethod"));
+		assertThat("Expected SubResourceLocator",
+				query("MATCH (restMethod:JaxRS:SubResourceLocator) RETURN restMethod").getColumn("restMethod"),
+				hasItem(methodDescriptor(MyRestResource.class, "getMySubResource", String.class)));
+		store.commitTransaction();
+	}
 }
