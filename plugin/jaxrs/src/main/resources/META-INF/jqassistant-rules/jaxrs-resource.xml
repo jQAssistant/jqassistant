@@ -1,7 +1,7 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
 	<concept id="jaxrs:RequestMethodDesignator">
-		<description>Finds request method designator annotations (i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'Rest' and 'RequestMethodDesignator'
+		<description>Finds request method designator annotations (i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'RequestMethodDesignator'
 		</description>
 		<cypher><![CDATA[
             MATCH (a:TYPE)
@@ -14,7 +14,7 @@
 	<concept id="jaxrs:Resource">
 		<requiresConcept refId="jaxrs:RequestMethodDesignator" />
 		<description>Finds classes or interfaces with atleast one method annotated with "@javax.ws.rs.Path" or with request method designator 
-		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'Rest' and 'Resource'.
+		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'Resource'.
 		</description>
 		<cypher><![CDATA[
             MATCH (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
@@ -28,7 +28,7 @@
 	<concept id="jaxrs:ResourceMethod">
 		<requiresConcept refId="jaxrs:Resource" />
 		<description>Finds methods that belong to resource class or interface and annotated with request method designator 
-		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'Rest' and 'ResourceMethod'.
+		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'ResourceMethod'.
 		</description>
 		<cypher><![CDATA[
             MATCH (c:JaxRS:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)

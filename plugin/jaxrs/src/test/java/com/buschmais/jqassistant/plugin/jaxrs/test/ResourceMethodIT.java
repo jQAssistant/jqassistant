@@ -12,14 +12,14 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test to verify REST Resource method concepts.
+ * Test to verify JAX-RS Resource method concepts.
  * 
  * @author Aparna Chaudhary
  */
 public class ResourceMethodIT extends AbstractPluginIT {
 
 	/**
-	 * Verifies the concept {@code rest:GetResourceMethod}.
+	 * Verifies the concept {@code jaxrs:GetResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -40,7 +40,7 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies the concept {@code rest:PutResourceMethod}.
+	 * Verifies the concept {@code jaxrs:PutResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -61,7 +61,7 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies the concept {@code rest:PostResourceMethod}.
+	 * Verifies the concept {@code jaxrs:PostResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -82,7 +82,7 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies the concept {@code rest:DeleteResourceMethod}.
+	 * Verifies the concept {@code jaxrs:DeleteResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -103,7 +103,7 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies the concept {@code rest:HeadResourceMethod}.
+	 * Verifies the concept {@code jaxrs:HeadResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -124,7 +124,7 @@ public class ResourceMethodIT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies the concept {@code rest:OptionsResourceMethod}.
+	 * Verifies the concept {@code jaxrs:OptionsResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.

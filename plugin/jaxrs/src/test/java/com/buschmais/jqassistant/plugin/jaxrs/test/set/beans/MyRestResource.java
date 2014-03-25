@@ -39,4 +39,5 @@ public interface MyRestResource {
 	@OPTIONS
 	@Path("/testOptions")
 	Response<String> testOptions();
+	
 }
