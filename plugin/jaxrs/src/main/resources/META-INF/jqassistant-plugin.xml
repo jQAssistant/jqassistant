@@ -2,6 +2,7 @@
     <rules>
         <resources>
             <resource>jaxrs-resource.xml</resource>
+            <resource>jaxrs-provider.xml</resource>
         </resources>
     </rules>
 </v1:jqassistant-plugin>
