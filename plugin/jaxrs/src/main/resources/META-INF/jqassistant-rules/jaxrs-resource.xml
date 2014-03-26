@@ -4,10 +4,14 @@
 		<description>Finds request method designator annotations (i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'RequestMethodDesignator'
 		</description>
 		<cypher><![CDATA[
-            MATCH (a:TYPE)
-            WHERE a.FQN IN ["javax.ws.rs.GET", "javax.ws.rs.POST", "javax.ws.rs.PUT", "javax.ws.rs.DELETE", "javax.ws.rs.HEAD", "javax.ws.rs.OPTIONS"]
-            SET a:JaxRS:RequestMethodDesignator
-            RETURN a as requestMethodDesignator
+            MATCH 
+              (a:TYPE)
+            WHERE
+              a.FQN IN ["javax.ws.rs.GET", "javax.ws.rs.POST", "javax.ws.rs.PUT", "javax.ws.rs.DELETE", "javax.ws.rs.HEAD", "javax.ws.rs.OPTIONS"]
+            SET
+              a:JaxRS:RequestMethodDesignator
+            RETURN
+              a as requestMethodDesignator
         ]]></cypher>
 	</concept>
 
@@ -17,11 +21,16 @@
 		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'Resource'.
 		</description>
 		<cypher><![CDATA[
-            MATCH (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
-			WHERE (a:JaxRS:RequestMethodDesignator OR a.FQN="javax.ws.rs.Path")
-			AND (t:CLASS OR t:INTERFACE)
-            SET t:JaxRS:Resource
-            RETURN DISTINCT t as restResource
+            MATCH
+              (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+			WHERE
+              (a:JaxRS:RequestMethodDesignator OR a.FQN="javax.ws.rs.Path")
+			AND
+              (t:CLASS OR t:INTERFACE)
+            SET
+              t:JaxRS:Resource
+            RETURN
+              DISTINCT t as restResource
         ]]></cypher>
 	</concept>
 
@@ -31,13 +40,20 @@
 		and no entity parameters and labels the methods with 'JaxRS' and 'SubResourceLocator'.
 		</description>
 		<cypher><![CDATA[
-            MATCH (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
-			WHERE a.FQN = "javax.ws.rs.Path"
-			AND (t:CLASS OR t:INTERFACE)
-			AND NOT (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:JaxRS:RequestMethodDesignator)
-			AND (m)-[:HAS]->(:PARAMETER)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:TYPE)
-            SET m:JaxRS:SubResourceLocator
-            RETURN DISTINCT m as restSubResourceLocator
+            MATCH
+              (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+			WHERE
+              a.FQN = "javax.ws.rs.Path"
+			AND
+              (t:CLASS OR t:INTERFACE)
+			AND
+              NOT (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:JaxRS:RequestMethodDesignator)
+			AND
+              (m)-[:HAS]->(:PARAMETER)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:TYPE)
+            SET
+              m:JaxRS:SubResourceLocator
+            RETURN
+              DISTINCT m as restSubResourceLocator
         ]]></cypher>
 	</concept>
 
@@ -47,9 +63,12 @@
 		(i.e. @GET, @POST, @PUT, @DELETE, @HEAD, @OPTIONS) and labels them with 'JaxRS' and 'ResourceMethod'.
 		</description>
 		<cypher><![CDATA[
-            MATCH (c:JaxRS:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            SET m:JaxRS:ResourceMethod
-            RETURN m as resourceMethod
+            MATCH
+              (c:JaxRS:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            SET
+              m:JaxRS:ResourceMethod
+            RETURN
+              m as resourceMethod
         ]]></cypher>
 	</concept>
 
@@ -57,10 +76,14 @@
 		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.GET" and labels them with 'GetResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            WHERE a.FQN = "javax.ws.rs.GET"
-            SET m:GetResourceMethod
-            RETURN m as getMethod
+            MATCH
+              (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            WHERE
+              a.FQN = "javax.ws.rs.GET"
+            SET
+              m:GetResourceMethod
+            RETURN
+              m as getMethod
         ]]></cypher>
 	</concept>
 
@@ -68,10 +91,14 @@
 		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.PUT" and labels them with 'PutResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            WHERE a.FQN = "javax.ws.rs.PUT"
-            SET m:PutResourceMethod
-            RETURN m as putMethod
+            MATCH
+              (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            WHERE
+              a.FQN = "javax.ws.rs.PUT"
+            SET
+              m:PutResourceMethod
+            RETURN
+              m as putMethod
         ]]></cypher>
 	</concept>
 
@@ -79,10 +106,14 @@
 		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.POST" and labels them with 'PostResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            WHERE a.FQN = "javax.ws.rs.POST"
-            SET m:PostResourceMethod
-            RETURN m as postMethod
+            MATCH
+              (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            WHERE
+              a.FQN = "javax.ws.rs.POST"
+            SET
+              m:PostResourceMethod
+            RETURN
+              m as postMethod
         ]]></cypher>
 	</concept>
 
@@ -90,10 +121,14 @@
 		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.DELETE" and labels them with 'DeleteResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            WHERE a.FQN = "javax.ws.rs.DELETE"
-            SET m:DeleteResourceMethod
-            RETURN m as deleteMethod
+            MATCH
+              (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            WHERE
+              a.FQN = "javax.ws.rs.DELETE"
+            SET
+              m:DeleteResourceMethod
+            RETURN
+              m as deleteMethod
         ]]></cypher>
 	</concept>
 
@@ -101,10 +136,14 @@
 		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.HEAD" and labels them with 'HeadResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            WHERE a.FQN = "javax.ws.rs.HEAD"
-            SET m:HeadResourceMethod
-            RETURN m as headMethod
+            MATCH
+              (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            WHERE
+              a.FQN = "javax.ws.rs.HEAD"
+            SET
+              m:HeadResourceMethod
+            RETURN
+              m as headMethod
         ]]></cypher>
 	</concept>
 
@@ -112,10 +151,14 @@
 		<requiresConcept refId="jaxrs:ResourceMethod" />
 		<description>Finds resource methods annotated with "@javax.ws.rs.OPTIONS" and labels them with 'OptionsResourceMethod'. </description>
 		<cypher><![CDATA[
-            MATCH (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
-            WHERE a.FQN = "javax.ws.rs.OPTIONS"
-            SET m:OptionsResourceMethod
-            RETURN m as optionsMethod
+            MATCH
+              (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+            WHERE
+              a.FQN = "javax.ws.rs.OPTIONS"
+            SET
+              m:OptionsResourceMethod
+            RETURN
+              m as optionsMethod
         ]]></cypher>
 	</concept>
 	
