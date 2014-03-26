@@ -42,4 +42,7 @@ public interface MyRestResource {
 
 	@Path("/subResource/{id}")
 	MySubResource getMySubResource(@PathParam("id") String id);
+
+	@Path("/invalidSubResource")
+	MySubResource getMyInvalidSubResource(String id);
 }

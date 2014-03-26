@@ -28,13 +28,14 @@
 	<concept id="jaxrs:SubResourceLocator">
 		<requiresConcept refId="jaxrs:RequestMethodDesignator" />
 		<description>Finds classes or interfaces with method annotated with "@javax.ws.rs.Path" but no request method designator 
-		and labels the methods with 'JaxRS' and 'SubResourceLocator'.
+		and no entity parameters and labels the methods with 'JaxRS' and 'SubResourceLocator'.
 		</description>
 		<cypher><![CDATA[
             MATCH (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
-			WHERE a.FQN="javax.ws.rs.Path"
-			AND NOT a:JaxRS:RequestMethodDesignator
+			WHERE a.FQN = "javax.ws.rs.Path"
 			AND (t:CLASS OR t:INTERFACE)
+			AND NOT (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:JaxRS:RequestMethodDesignator)
+			AND (m)-[:HAS]->(:PARAMETER)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:TYPE)
             SET m:JaxRS:SubResourceLocator
             RETURN DISTINCT m as restSubResourceLocator
         ]]></cypher>
