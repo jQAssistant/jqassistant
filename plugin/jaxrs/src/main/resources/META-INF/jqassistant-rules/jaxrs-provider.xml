@@ -30,5 +30,20 @@
               DISTINCT c as contextProvider
         ]]></cypher>
 	</concept>
+
+	<concept id="jaxrs:ExceptionMappingProvider">
+		<description>Finds classes that implement "javax.ws.rs.ext.ExceptionMapper" and labels them with 'JaxRS' and 'ExceptionMappingProvider'
+		</description>
+		<cypher><![CDATA[
+            MATCH 
+              (c:TYPE:CLASS)-[:IMPLEMENTS]->(a:TYPE)
+			WHERE 
+              a.FQN = "javax.ws.rs.ext.ExceptionMapper"
+            SET 
+              c:JaxRS:ExceptionMappingProvider
+            RETURN 
+              DISTINCT c as exceptionMappingProvider
+        ]]></cypher>
+	</concept>
 	
 </jqa:jqassistant-rules>
