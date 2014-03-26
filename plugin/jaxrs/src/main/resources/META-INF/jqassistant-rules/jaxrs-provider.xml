@@ -16,4 +16,19 @@
         ]]></cypher>
 	</concept>
 
+	<concept id="jaxrs:ContextProvider">
+		<description>Finds classes that implement "javax.ws.rs.ext.ContextResolver" and labels them with 'JaxRS' and 'ContextProvider'
+		</description>
+		<cypher><![CDATA[
+            MATCH 
+              (c:TYPE:CLASS)-[:IMPLEMENTS]->(a:TYPE)
+			WHERE 
+              a.FQN = "javax.ws.rs.ext.ContextResolver"
+            SET 
+              c:JaxRS:ContextProvider
+            RETURN 
+              DISTINCT c as contextProvider
+        ]]></cypher>
+	</concept>
+	
 </jqa:jqassistant-rules>
