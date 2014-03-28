@@ -12,7 +12,7 @@
             MATCH
               (type)-[:IMPLEMENTS|EXTENDS*]->(superType:TYPE)
             CREATE UNIQUE
-                (superType)-[:ASSIGNABLE_FROM]->(type)
+              (superType)-[:ASSIGNABLE_FROM]->(type)
             RETURN count(type) AS assignableTypes
         ]]></cypher>
     </concept>
@@ -32,8 +32,22 @@
               AND method.SIGNATURE = otherMethod.SIGNATURE
               AND method.VISIBILITY <> 'PRIVATE'
             CREATE UNIQUE
-                (method)-[:OVERRIDES]->(otherMethod)
+              (method)-[:OVERRIDES]->(otherMethod)
             RETURN count(method) AS OverriddenMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:InvokesOverriddenMethod">
+        <requiresConcept refId="java:MethodOverrides"/>
+        <requiresConcept refId="java:TypeAssignableFrom"/>
+        <description>Propagates INVOKE relationships to methods implementing or overriding the invoked method.</description>
+        <cypher><![CDATA[
+            MATCH
+              (method:METHOD)-[:INVOKES]->(invokedMethod:METHOD),
+              (overridingMethod:METHOD)-[:OVERRIDES]->(invokedMethod)
+            CREATE UNIQUE
+              (method)-[r:INVOKES]->(overridingMethod)
+            RETURN count(r) AS OverridingInvocations
         ]]></cypher>
     </concept>
 
@@ -52,7 +66,6 @@
             CREATE UNIQUE
                 (method)-[:OVERLOADS]->(otherMethod)
             RETURN count(method) AS OverloadedMethods
-
         ]]></cypher>
     </concept>
 
