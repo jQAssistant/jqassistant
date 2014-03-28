@@ -13,7 +13,7 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test to verify REST Resource method designator concepts.
+ * Test to verify JAX-RS Resource method designator concepts.
  * 
  * @author Aparna Chaudhary
  */

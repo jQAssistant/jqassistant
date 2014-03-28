@@ -8,18 +8,18 @@ import org.junit.Test;
 import java.io.IOException;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test to verify REST Resource method concepts.
+ * Test to verify JAX-RS Resource method concepts.
  * 
  * @author Aparna Chaudhary
  */
 public class ResourceMethodIT extends AbstractPluginIT {
 
 	/**
-	 * Verifies the concept {@code rest:GetResourceMethod}.
+	 * Verifies the concept {@code jaxrs:GetResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -34,13 +34,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
 		applyConcept("jaxrs:GetResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected GetResourceMethod",
-				query("MATCH (restMethod:JaxRS:GetResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (resourceMethod:JaxRS:GetResourceMethod) RETURN resourceMethod").getColumn("resourceMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testGet")));
 		store.commitTransaction();
 	}
 
 	/**
-	 * Verifies the concept {@code rest:PutResourceMethod}.
+	 * Verifies the concept {@code jaxrs:PutResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -55,13 +55,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
 		applyConcept("jaxrs:PutResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected PutResourceMethod",
-				query("MATCH (restMethod:JaxRS:PutResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (resourceMethod:JaxRS:PutResourceMethod) RETURN resourceMethod").getColumn("resourceMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testPut")));
 		store.commitTransaction();
 	}
 
 	/**
-	 * Verifies the concept {@code rest:PostResourceMethod}.
+	 * Verifies the concept {@code jaxrs:PostResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -76,13 +76,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
 		applyConcept("jaxrs:PostResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected PostResourceMethod",
-				query("MATCH (restMethod:JaxRS:PostResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (resourceMethod:JaxRS:PostResourceMethod) RETURN resourceMethod").getColumn("resourceMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testPost", String.class)));
 		store.commitTransaction();
 	}
 
 	/**
-	 * Verifies the concept {@code rest:DeleteResourceMethod}.
+	 * Verifies the concept {@code jaxrs:DeleteResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -96,14 +96,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
 		scanClasses(MyRestResource.class);
 		applyConcept("jaxrs:DeleteResourceMethod");
 		store.beginTransaction();
-		assertThat("Expected DeleteResourceMethod",
-				query("MATCH (restMethod:JaxRS:DeleteResourceMethod) RETURN restMethod").getColumn("restMethod"),
-				hasItem(methodDescriptor(MyRestResource.class, "testDelete")));
+		assertThat("Expected DeleteResourceMethod", query("MATCH (resourceMethod:JaxRS:DeleteResourceMethod) RETURN resourceMethod")
+				.getColumn("resourceMethod"), hasItem(methodDescriptor(MyRestResource.class, "testDelete")));
 		store.commitTransaction();
 	}
 
 	/**
-	 * Verifies the concept {@code rest:HeadResourceMethod}.
+	 * Verifies the concept {@code jaxrs:HeadResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -118,13 +117,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
 		applyConcept("jaxrs:HeadResourceMethod");
 		store.beginTransaction();
 		assertThat("Expected HeadResourceMethod",
-				query("MATCH (restMethod:JaxRS:HeadResourceMethod) RETURN restMethod").getColumn("restMethod"),
+				query("MATCH (resourceMethod:JaxRS:HeadResourceMethod) RETURN resourceMethod").getColumn("resourceMethod"),
 				hasItem(methodDescriptor(MyRestResource.class, "testHead")));
 		store.commitTransaction();
 	}
 
 	/**
-	 * Verifies the concept {@code rest:OptionsResourceMethod}.
+	 * Verifies the concept {@code jaxrs:OptionsResourceMethod}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -138,9 +137,53 @@ public class ResourceMethodIT extends AbstractPluginIT {
 		scanClasses(MyRestResource.class);
 		applyConcept("jaxrs:OptionsResourceMethod");
 		store.beginTransaction();
-		assertThat("Expected OptionsResourceMethod",
-				query("MATCH (restMethod:JaxRS:OptionsResourceMethod) RETURN restMethod").getColumn("restMethod"),
-				hasItem(methodDescriptor(MyRestResource.class, "testOptions")));
+		assertThat("Expected OptionsResourceMethod", query("MATCH (resourceMethod:JaxRS:OptionsResourceMethod) RETURN resourceMethod")
+				.getColumn("resourceMethod"), hasItem(methodDescriptor(MyRestResource.class, "testOptions")));
+		store.commitTransaction();
+	}
+
+	/**
+	 * Verifies the concept {@code jaxrs:SubResourceLocator}.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws AnalyzerException
+	 *             If the test fails.
+	 * @throws NoSuchMethodException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_SubResourceLocator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+		scanClasses(MyRestResource.class);
+		applyConcept("jaxrs:SubResourceLocator");
+		store.beginTransaction();
+		assertThat("Expected SubResourceLocator",
+				query("MATCH (resourceMethod:JaxRS:SubResourceLocator) RETURN resourceMethod").getColumn("resourceMethod"),
+				hasItem(methodDescriptor(MyRestResource.class, "getMySubResource", String.class)));
+		assertThat("Expected SubResourceLocator",
+				query("MATCH (resourceMethod:JaxRS:SubResourceLocator) RETURN resourceMethod").getColumn("resourceMethod"),
+				not(hasItem(methodDescriptor(MyRestResource.class, "testGet"))));
+		store.commitTransaction();
+	}
+
+	/**
+	 * Verifies the concept {@code jaxrs:SubResourceLocator} is not applied to resource methods with entity parameters.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws AnalyzerException
+	 *             If the test fails.
+	 * @throws NoSuchMethodException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_invalid_SubResourceLocator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+		scanClasses(MyRestResource.class);
+		applyConcept("jaxrs:SubResourceLocator");
+		store.beginTransaction();
+		assertThat("Expected SubResourceLocator",
+				query("MATCH (resourceMethod:JaxRS:SubResourceLocator) RETURN resourceMethod").getColumn("resourceMethod"),
+				not(hasItem(methodDescriptor(MyRestResource.class, "getMyInvalidSubResource", String.class))));
 		store.commitTransaction();
 	}
 }

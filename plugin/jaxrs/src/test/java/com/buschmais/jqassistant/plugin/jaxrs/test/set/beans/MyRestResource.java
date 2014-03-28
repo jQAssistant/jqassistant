@@ -35,8 +35,14 @@ public interface MyRestResource {
 	@HEAD
 	@Path("/testHead")
 	void testHead();
-	
+
 	@OPTIONS
 	@Path("/testOptions")
 	Response<String> testOptions();
+
+	@Path("/subResource/{id}")
+	MySubResource getMySubResource(@PathParam("id") String id);
+
+	@Path("/invalidSubResource")
+	MySubResource getMyInvalidSubResource(String id);
 }

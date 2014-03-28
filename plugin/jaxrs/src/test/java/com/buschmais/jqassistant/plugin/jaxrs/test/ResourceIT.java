@@ -13,14 +13,14 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 /**
- * Test to verify REST Resource concepts.
+ * Test to verify JAX-RS Resource concepts.
  * 
  * @author Aparna Chaudhary
  */
 public class ResourceIT extends AbstractPluginIT {
 
 	/**
-	 * Verifies the concept {@code rest:Resource}.
+	 * Verifies the concept {@code jaxrs:Resource}.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
@@ -40,7 +40,7 @@ public class ResourceIT extends AbstractPluginIT {
 	}
 
 	/**
-	 * Verifies the concept {@code rest:Resource} is not applied to invalid Resource classes.
+	 * Verifies the concept {@code jaxrs:Resource} is not applied to invalid Resource classes.
 	 * 
 	 * @throws java.io.IOException
 	 *             If the test fails.
