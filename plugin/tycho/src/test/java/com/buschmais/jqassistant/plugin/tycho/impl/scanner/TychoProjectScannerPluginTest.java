@@ -1,19 +1,11 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.util.*;
-
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.tycho.core.TychoConstants;
 import org.eclipse.tycho.core.facade.BuildProperties;
@@ -23,8 +15,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class TychoProjectScannerPluginTest {
@@ -48,10 +49,12 @@ public class TychoProjectScannerPluginTest {
     }
 
     public TychoProjectScannerPluginTest(List<String> includes, List<String> excludes,
-                                         Matcher<? super Collection<? extends File>> matcher) {
+                                         Matcher<? super Collection<? extends File>> matcher) throws IOException {
         this.fileScanner = mock(FileScanner.class);
         this.project = mock(MavenProject.class);
         this.matcher = matcher;
+
+        when(fileScanner.scanFiles(Mockito.any(File.class), Mockito.any(List.class))).thenReturn(Collections.<FileDescriptor>emptyList());
 
         EclipsePluginProject pdeProject = mock(EclipsePluginProject.class);
         BuildProperties properties = mock(BuildProperties.class);

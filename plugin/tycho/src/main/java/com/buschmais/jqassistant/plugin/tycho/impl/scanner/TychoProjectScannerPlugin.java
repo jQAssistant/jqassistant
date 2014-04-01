@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -20,10 +21,12 @@ import java.util.*;
  */
 public class TychoProjectScannerPlugin implements ProjectScannerPlugin {
 
+    private Store store;
     private MavenProject project;
 
     @Override
     public void initialize(Store store, Properties properties) {
+        this.store = store;
         this.project = (MavenProject) properties.get(MavenProject.class.getName());
     }
 
@@ -48,7 +51,10 @@ public class TychoProjectScannerPlugin implements ProjectScannerPlugin {
 
     @Override
     public void scan(FileScanner fileScanner) throws IOException {
-        fileScanner.scanFiles(project.getBasedir(), getPdeFiles());
+        store.beginTransaction();
+        for (FileDescriptor fileDescriptor : fileScanner.scanFiles(project.getBasedir(), getPdeFiles())) {
+        }
+        store.commitTransaction();
     }
 
     private Iterator<PlexusIoResource> getPDEBinaries(MavenProject project, EclipsePluginProject pdeProject) throws IOException {

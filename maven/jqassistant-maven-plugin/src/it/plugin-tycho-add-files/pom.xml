@@ -6,7 +6,6 @@
 		<groupId>@project.groupId@</groupId>
 		<artifactId>@project.artifactId@.integration</artifactId>
 		<version>@project.version@</version>
-		<relativePath>../integration.xml</relativePath>
 	</parent>
 	<artifactId>com.buschmais.jqassistant.maven.it.tycho.add.files</artifactId>
 	<packaging>eclipse-plugin</packaging>
