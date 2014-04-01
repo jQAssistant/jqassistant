@@ -164,4 +164,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         return selectedXmlReportFile;
     }
 
+    @Override
+    protected boolean isResetStoreOnInitialization() {
+        return false;
+    }
 }

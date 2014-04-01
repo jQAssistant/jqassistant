@@ -15,9 +15,9 @@ import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
@@ -81,6 +81,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     @Parameter(property = "jqassistant.report.xml")
     protected File xmlReportFile;
+
+    @Component
+    private StoreRepository storeRepository;
 
     /**
      * The rules reader instance.
@@ -280,8 +283,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     }
 
     /**
-     * Return the store instance to use.
+     * Return the store instance to use for the given base project.
      *
+     * @param baseProject The base project
      * @return The store instance.
      * @throws MojoExecutionException If the store cannot be created.
      */
@@ -292,9 +296,8 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         } else {
             directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
         }
-        getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
-        directory.getParentFile().mkdirs();
-        Store store = new EmbeddedGraphStore(directory.getAbsolutePath());
-        return store;
+        return storeRepository.getStore(directory, isResetStoreOnInitialization());
     }
+
+    protected abstract boolean isResetStoreOnInitialization();
 }

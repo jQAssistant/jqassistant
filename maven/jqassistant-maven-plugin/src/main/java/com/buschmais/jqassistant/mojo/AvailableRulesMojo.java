@@ -16,16 +16,15 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.util.Set;
-
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.util.Set;
 
 /**
  * Lists all available rules.
@@ -40,4 +39,10 @@ public class AvailableRulesMojo extends AbstractAnalysisAggregatorMojo {
 		RuleSet ruleSet = readRules(baseProject);
 		logRuleSet(ruleSet);
 	}
+
+    @Override
+    protected boolean isResetStoreOnInitialization() {
+        return false;
+    }
+
 }

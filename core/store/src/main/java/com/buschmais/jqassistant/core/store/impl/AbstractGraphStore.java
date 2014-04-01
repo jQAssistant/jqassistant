@@ -95,10 +95,13 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     private void runQueryUntilResultIsZero(String deleteNodesAndRels) {
-        beginTransaction();
-        Query<Long> deleteNodesAndRelQuery = cdoManager.createQuery(deleteNodesAndRels, Long.class);
-        while (deleteNodesAndRelQuery.execute().getSingleResult() > 0) ;
-        commitTransaction();
+        boolean hasResult;
+        do {
+            beginTransaction();
+            Query<Long> deleteNodesAndRelQuery = cdoManager.createQuery(deleteNodesAndRels, Long.class);
+            hasResult = deleteNodesAndRelQuery.execute().getSingleResult() > 0;
+            commitTransaction();
+        } while (hasResult);
     }
 
     @Override

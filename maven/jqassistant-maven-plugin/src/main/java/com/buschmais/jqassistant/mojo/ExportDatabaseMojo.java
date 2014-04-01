@@ -108,4 +108,10 @@ public class ExportDatabaseMojo extends AbstractAnalysisAggregatorMojo {
             throw new MojoExecutionException("Cannot execute dump command.", e);
         }
     }
+
+    @Override
+    protected boolean isResetStoreOnInitialization() {
+        return false;
+    }
+
 }

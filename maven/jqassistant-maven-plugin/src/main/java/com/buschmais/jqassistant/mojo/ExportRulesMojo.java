@@ -34,4 +34,9 @@ public class ExportRulesMojo extends AbstractAnalysisAggregatorMojo {
         }
         ruleSetWriter.write(ruleSet, writer);
     }
+
+    @Override
+    protected boolean isResetStoreOnInitialization() {
+        return false;
+    }
 }

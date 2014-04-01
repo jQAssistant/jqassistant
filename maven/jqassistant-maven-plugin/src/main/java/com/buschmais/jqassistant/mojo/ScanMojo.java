@@ -29,8 +29,6 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
     @Override
     protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
             MojoFailureException {
-        // reset the store if the current project is the base project (i.e. where the rules are located).
-        store.reset();
         for (MavenProject project : projects) {
             List<FileScannerPlugin> fileScannerPlugins;
             List<ProjectScannerPlugin> projectScannerPlugins;
@@ -51,5 +49,10 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
                 throw new MojoExecutionException("Cannot scan project '" + project.getBasedir() + "'", e);
             }
         }
+    }
+
+    @Override
+    protected boolean isResetStoreOnInitialization() {
+        return true;
     }
 }

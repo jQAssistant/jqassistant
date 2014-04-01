@@ -16,14 +16,13 @@
 
 package com.buschmais.jqassistant.mojo;
 
-import java.util.Set;
-
+import com.buschmais.jqassistant.core.store.api.Store;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.util.Set;
 
 /**
  * Resets the store.
@@ -35,7 +34,12 @@ public class ResetMojo extends AbstractAnalysisAggregatorMojo {
 	protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
 			MojoFailureException {
 		getLog().info("Resetting store.");
-		store.reset();
 	}
+
+    @Override
+    protected boolean isResetStoreOnInitialization() {
+        return true;
+    }
+
 
 }
