@@ -4,6 +4,8 @@ import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.AbstractMavenProjectScannerPlugin;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -19,18 +21,10 @@ import java.util.*;
 /**
  * Implementation of a {@link ProjectScannerPlugin} for tycho projects
  */
-public class TychoProjectScannerPlugin implements ProjectScannerPlugin {
-
-    private Store store;
-    private MavenProject project;
-
-    @Override
-    public void initialize(Store store, Properties properties) {
-        this.store = store;
-        this.project = (MavenProject) properties.get(MavenProject.class.getName());
-    }
+public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
     private List<File> getPdeFiles() throws IOException {
+        MavenProject project = getProject();
         Object value = project.getContextValue(TychoConstants.CTX_ECLIPSE_PLUGIN_PROJECT);
         final List<File> pdeFiles = new ArrayList<>();
         if (value instanceof EclipsePluginProject) {
@@ -51,8 +45,12 @@ public class TychoProjectScannerPlugin implements ProjectScannerPlugin {
 
     @Override
     public void scan(FileScanner fileScanner) throws IOException {
+        Store store = getStore();
+        MavenProject project = getProject();
         store.beginTransaction();
+        ArtifactDescriptor artifact = getArtifact(false);
         for (FileDescriptor fileDescriptor : fileScanner.scanFiles(project.getBasedir(), getPdeFiles())) {
+            artifact.getContains().add(fileDescriptor);
         }
         store.commitTransaction();
     }

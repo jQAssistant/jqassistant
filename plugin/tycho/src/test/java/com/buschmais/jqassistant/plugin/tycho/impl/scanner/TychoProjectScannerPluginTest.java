@@ -6,6 +6,8 @@ import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.tycho.core.TychoConstants;
 import org.eclipse.tycho.core.facade.BuildProperties;
@@ -34,6 +36,7 @@ public class TychoProjectScannerPluginTest {
 
     private final FileScanner fileScanner;
     private final MavenProject project;
+    private final Store store;
     private final Matcher<? super Collection<? extends File>> matcher;
 
     @Parameters
@@ -51,6 +54,7 @@ public class TychoProjectScannerPluginTest {
     public TychoProjectScannerPluginTest(List<String> includes, List<String> excludes,
                                          Matcher<? super Collection<? extends File>> matcher) throws IOException {
         this.fileScanner = mock(FileScanner.class);
+        this.store = mock(Store.class);
         this.project = mock(MavenProject.class);
         this.matcher = matcher;
 
@@ -64,6 +68,15 @@ public class TychoProjectScannerPluginTest {
         when(project.getContextValue(TychoConstants.CTX_ECLIPSE_PLUGIN_PROJECT)).thenReturn(pdeProject);
         when(pdeProject.getBuildProperties()).thenReturn(properties);
         when(project.getBasedir()).thenReturn(new File(getClass().getResource(".").getFile()));
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getType()).thenReturn("jar");
+        when(artifact.getGroupId()).thenReturn("group");
+        when(artifact.getArtifactId()).thenReturn("artifact");
+        when(project.getArtifact()).thenReturn(artifact);
+
+        ArtifactDescriptor artifactDescriptor = mock(ArtifactDescriptor.class);
+        when(artifactDescriptor.getContains()).thenReturn(new HashSet<FileDescriptor>());
+        when(store.create(Mockito.any(Class.class), Mockito.anyString())).thenReturn(artifactDescriptor);
     }
 
     @Test
@@ -71,7 +84,7 @@ public class TychoProjectScannerPluginTest {
         TychoProjectScannerPlugin plugin = new TychoProjectScannerPlugin();
         Properties properties = new Properties();
         properties.put(MavenProject.class.getName(), project);
-        plugin.initialize(mock(Store.class), properties);
+        plugin.initialize(store, properties);
         ProjectScanner projectScanner = new ProjectScannerImpl(fileScanner, Arrays.<ProjectScannerPlugin>asList(plugin));
         projectScanner.scan();
     }
