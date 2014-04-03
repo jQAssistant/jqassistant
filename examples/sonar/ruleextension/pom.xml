@@ -22,7 +22,7 @@
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
-                    <basePlugin>jQAssistant</basePlugin>
+                    <basePlugin>jqassistant</basePlugin>
                     <pluginClass>com.buschmais.jqassistant.examples.sonar.ruleextension.MyJQAssistantExtension</pluginClass>
                 </configuration>
             </plugin>

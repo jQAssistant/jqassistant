@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.sonar.plugin.sensor;
 
+import org.sonar.api.BatchExtension;
 import org.sonar.api.resources.Resource;
 
 /**
  * Defines an interface for resolving resources representing language specific elements, e.g. java classes.
  */
-public interface LanguageResourceResolver {
+public interface LanguageResourceResolver extends BatchExtension {
 
     /**
      * Return the language this resolver represents.

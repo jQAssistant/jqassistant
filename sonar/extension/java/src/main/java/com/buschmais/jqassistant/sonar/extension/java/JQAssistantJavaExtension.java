@@ -6,13 +6,13 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Defines the jQAssistant JUnit4 extension.
+ * Defines the jQAssistant Java extension.
  */
 public class JQAssistantJavaExtension extends SonarPlugin {
 
     @Override
     public List getExtensions() {
-        return Arrays.asList();
+        return Arrays.asList(JavaResourceResolver.class);
     }
 
 }

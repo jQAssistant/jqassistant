@@ -29,7 +29,7 @@
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <configuration>
-                    <basePlugin>jQAssistant</basePlugin>
+                    <basePlugin>jqassistant</basePlugin>
                     <outputDirectory>${project.build.directory}/extensions/plugins</outputDirectory>
                 </configuration>
             </plugin>

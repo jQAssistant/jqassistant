@@ -15,7 +15,7 @@ public final class JQAssistant {
      * The repository key.
      */
 
-    public static final String KEY = "jQAssistant";
+    public static final String KEY = "jqassistant";
     /**
      * The repository name.
      */

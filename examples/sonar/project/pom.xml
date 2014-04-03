@@ -31,7 +31,7 @@
                                     <goal>analyze</goal>
                                 </goals>
                                 <configuration>
-                                    <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=MyQualityProfile</rulesUrl>
+                                    <rulesUrl>http://localhost:9000/profiles/export?format=jqassistant&amp;language=java&amp;name=MyQualityProfile</rulesUrl>
                                     <groups>
                                         <group>MyQualityProfile</group>
                                     </groups>

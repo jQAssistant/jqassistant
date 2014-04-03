@@ -18,7 +18,7 @@
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <configuration>
-                    <pluginKey>jQAssistant</pluginKey>
+                    <pluginKey>jqassistant</pluginKey>
                     <pluginName>jQAssistant</pluginName>
                     <pluginClass>com.buschmais.jqassistant.sonar.plugin.JQAssistantPlugin</pluginClass>
                 </configuration>

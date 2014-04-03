@@ -11,6 +11,7 @@ import org.sonar.api.checks.AnnotationCheckFactory;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
+import org.sonar.api.platform.ComponentContainer;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
@@ -41,12 +42,14 @@ public class JQAssistantSensor implements Sensor {
     private final Map<String, ActiveRule> rules;
     private final JAXBContext reportContext;
 
-    public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives) throws JAXBException {
+    public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives, ComponentContainer componentContainerc) throws JAXBException {
         this.perspectives = perspectives;
         this.annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
         this.languageResourceResolvers = new HashMap<>();
-        JavaResourceResolver javaResourceResolver = new JavaResourceResolver();
-        this.languageResourceResolvers.put(javaResourceResolver.getLanguage(), javaResourceResolver);
+        for (LanguageResourceResolver resolver : componentContainerc.getComponentsByType(LanguageResourceResolver.class)) {
+            languageResourceResolvers.put(resolver.getLanguage(), resolver);
+        }
+        LOGGER.info("Found {} language resource resolvers.", languageResourceResolvers.size());
         this.rules = new HashMap<>();
         for (Object check : annotationCheckFactory.getChecks()) {
             ActiveRule rule = annotationCheckFactory.getActiveRule(check);
