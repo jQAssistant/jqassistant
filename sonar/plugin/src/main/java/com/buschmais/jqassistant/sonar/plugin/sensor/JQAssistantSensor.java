@@ -124,7 +124,8 @@ public class JQAssistantSensor implements Sensor {
                             if (resource == null) {
                                 resource = project;
                             }
-                            createIssue(project, resource, message.toString(), activeRule, sensorContext);
+                            String issueDescription = ruleType.getDescription() + "\n" + message.toString();
+                            createIssue(project, resource, issueDescription, activeRule, sensorContext);
                         }
                     }
                 }
