@@ -18,27 +18,22 @@ public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, 
 
     @Property("DESCRIPTION")
     public String getDescription();
-
     public void setDescription(String description);
 
     @Property("PROVIDER")
     public String getProvider();
-
-    public void setProvider(String provider);
+  public void setProvider(String provider);
 
     @Property("JTADATASOURCE")
     public String getJtaDataSource();
-
     public void setJtaDataSource(String jtaDataSource);
 
     @Property("NONJTADATASOURCE")
     public String getNonJtaDataSource();
-
     public void setNonJtaDataSource(String nonJtaDataSource);
 
     @Property("VALIDATIONMODE")
     public String getValidationMode();
-
     public void setValidationMode(String validationMode);
 
     @Relation("CONTAINS")
@@ -46,7 +41,6 @@ public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, 
 
     @Property("SHAREDCACHEMODE")
     public String getSharedCacheMode();
-
     public void setSharedCacheMode(String sharedCacheMode);
 
     @Property("PROPERTIES")

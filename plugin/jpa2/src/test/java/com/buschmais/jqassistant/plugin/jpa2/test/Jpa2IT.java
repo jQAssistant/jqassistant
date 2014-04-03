@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.jpa2.test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -126,6 +130,64 @@ public class Jpa2IT extends AbstractPluginIT {
         assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
         Set<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if it is not set.
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void validationModeNotSpecified() throws IOException, AnalyzerException {
+        scanDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
+        validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
+        assertThat(constraintViolations, matcher);
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> constraintResult = constraintViolations.get(0);
+        assertThat(constraintResult.isEmpty(),equalTo(false));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if it is set to AUTO.
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void validationModeAuto() throws IOException, AnalyzerException {
+        scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
+        validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
+        assertThat(constraintViolations, matcher);
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> constraintResult = constraintViolations.get(0);
+        assertThat(constraintResult.isEmpty(),equalTo(false));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" for values NONE and CALLBACK.
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalyzerException   If the test fails.
+     */
+    @Test
+    public void validationModeSpecified() throws IOException, AnalyzerException {
+        scanDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
+        validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> constraintResult = constraintViolations.get(0);
+        assertThat(constraintResult.isEmpty(),equalTo(true));
         store.commitTransaction();
     }
 }

@@ -1,0 +1,8 @@
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="persistence-unit-NONE" transaction-type="RESOURCE_LOCAL">
+        <validation-mode>NONE</validation-mode>
+    </persistence-unit>
+    <persistence-unit name="persistence-unit-CALLBACK" transaction-type="RESOURCE_LOCAL">
+        <validation-mode>CALLBACK</validation-mode>
+    </persistence-unit>
+</persistence>

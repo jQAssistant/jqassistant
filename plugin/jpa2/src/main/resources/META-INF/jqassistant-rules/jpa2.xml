@@ -33,4 +33,20 @@
         ]]></cypher>
     </concept>
 
+    <constraint id="jpa2:ValidationModeMustBeExplicitlySpecified">
+        <description>The validation mode of all persistence units must be explicitly specified and either set to CALLBACK or NONE.</description>
+        <cypher><![CDATA[
+            MATCH
+              (pu:PERSISTENCEUNIT)
+            WHERE
+              NOT has(pu.VALIDATIONMODE)
+              OR NOT (
+                pu.VALIDATIONMODE='CALLBACK'
+                OR pu.VALIDATIONMODE='NONE'
+              )
+            RETURN
+              pu.NAME as PersistenceUnit
+        ]]></cypher>
+    </constraint>
+
 </jqa:jqassistant-rules>
