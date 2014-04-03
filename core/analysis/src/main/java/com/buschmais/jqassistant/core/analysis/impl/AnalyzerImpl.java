@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.xo.api.XOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,18 +12,18 @@ import java.util.*;
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
- * Implementation of the
- * {@link com.buschmais.jqassistant.core.analysis.api.Analyzer ).
+ * Implementation of the {@link Analyzer}.
  */
 public class AnalyzerImpl implements Analyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzerImpl.class);
+    private static final String QUERY_GETCONCEPT = "MATCH (c:Concept) WHERE c.id={id} RETURN c.id";
+    private static final String QUERY_CREATECONCEPT = "CREATE (c:Concept {id:{id}})";
+    private static final String QUERY_PARAMETER_ID = "id";
 
     private Store store;
 
     private ExecutionListener reportWriter;
-
-    private Set<Concept> executedConcepts = new HashSet<>();
 
     private Set<Constraint> executedConstraints = new HashSet<>();
 
@@ -125,9 +126,9 @@ public class AnalyzerImpl implements Analyzer {
                 executedConstraints.add(constraint);
                 reportWriter.endConstraint();
                 store.commitTransaction();
-            } catch (RuntimeException e) {
+            } catch (XOException e) {
                 store.rollbackTransaction();
-                throw new AnalyzerException("Cannot validate constraint " + constraint.getId());
+                throw new AnalyzerException("Cannot validate constraint " + constraint.getId(), e);
             }
         }
     }
@@ -153,22 +154,25 @@ public class AnalyzerImpl implements Analyzer {
      * @throws AnalyzerException                                                      If the concept cannot be applied.
      */
     private void applyConcept(Concept concept) throws ExecutionListenerException, AnalyzerException {
-        if (!executedConcepts.contains(concept)) {
-            for (Concept requiredConcept : concept.getRequiredConcepts()) {
-                applyConcept(requiredConcept);
-            }
-            if (LOGGER.isInfoEnabled()) LOGGER.info("Applying concept '{}'.", concept.getId());
-            reportWriter.beginConcept(concept);
-            try {
-                store.beginTransaction();
+        for (Concept requiredConcept : concept.getRequiredConcepts()) {
+            applyConcept(requiredConcept);
+        }
+        try {
+            store.beginTransaction();
+            Map<String, Object> params = new HashMap<>();
+            params.put(QUERY_PARAMETER_ID, concept.getId());
+            com.buschmais.xo.api.Query.Result<CompositeRowObject> result = store.executeQuery(QUERY_GETCONCEPT, params);
+            if (!result.hasResult()) {
+                if (LOGGER.isInfoEnabled()) LOGGER.info("Applying concept '{}'.", concept.getId());
+                reportWriter.beginConcept(concept);
                 reportWriter.setResult(execute(concept));
-                executedConcepts.add(concept);
+                store.executeQuery(QUERY_CREATECONCEPT, params);
                 reportWriter.endConcept();
-                store.commitTransaction();
-            } catch (RuntimeException e) {
-                store.rollbackTransaction();
-                throw new AnalyzerException("Cannot apply concept " + concept.getId(), e);
             }
+            store.commitTransaction();
+        } catch (XOException e) {
+            store.rollbackTransaction();
+            throw new AnalyzerException("Cannot apply concept " + concept.getId(), e);
         }
     }
 
