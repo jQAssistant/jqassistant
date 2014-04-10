@@ -52,11 +52,14 @@
                                         <includes>
                                             <include>jqassistant-plugin.xml</include>
                                         </includes>
-                                        <stylesheet>${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-plugin2asciidoc.xsl</stylesheet>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-plugin2asciidoc.xsl
+                                        </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                                                <targetExtension>.adoc</targetExtension>
+                                            <fileMapper
+                                                    implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                                <targetExtension>.adoc.include</targetExtension>
                                             </fileMapper>
                                         </fileMappers>
                                         <parameters>
@@ -71,10 +74,13 @@
                                         <includes>
                                             <include>*.xml</include>
                                         </includes>
-                                        <stylesheet>${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-rules2asciidoc.xsl</stylesheet>
+                                        <stylesheet>
+                                            ${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-rules2asciidoc.xsl
+                                        </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
+                                            <fileMapper
+                                                    implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
                                                 <targetExtension>.xml.adoc.include</targetExtension>
                                             </fileMapper>
                                         </fileMappers>
@@ -92,19 +98,27 @@
                     </dependencies>
                 </plugin>
                 <plugin>
-                    <groupId>org.asciidoctor</groupId>
-                    <artifactId>asciidoctor-maven-plugin</artifactId>
-                    <version>0.1.4</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>2.4</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>jqassistant.assembly</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
                     <executions>
                         <execution>
-                            <id>output-html</id>
-                            <phase>generate-resources</phase>
+                            <id>attach-asciidoc</id>
+                            <phase>package</phase>
                             <goals>
-                                <goal>process-asciidoc</goal>
+                                <goal>single</goal>
                             </goals>
                             <configuration>
-                                <sourceDirectory>${project.build.directory}/generated-sources/asciidoc</sourceDirectory>
-                                <backend>html</backend>
+                                <descriptorRefs>
+                                    <descriptorRef>asciidoc</descriptorRef>
+                                </descriptorRefs>
                             </configuration>
                         </execution>
                     </executions>
