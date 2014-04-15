@@ -7,25 +7,32 @@
     </xsl:variable>
 
     <xsl:template match="/">
-== <xsl:call-template name="filename"/>
+==== <xsl:call-template name="filename"/>
 <xsl:value-of select="$newline"/>
-=== Constraints
-        <xsl:apply-templates select="//constraint">
-            <xsl:sort select="@id" order="ascending"/>
-        </xsl:apply-templates>
-=== Concepts
-        <xsl:apply-templates select="//concept">
-            <xsl:sort select="@id" order="ascending"/>
-        </xsl:apply-templates>
+        <xsl:if test="//constraint">
+===== Constraints
+            <xsl:apply-templates select="//constraint">
+                <xsl:sort select="@id" order="ascending"/>
+            </xsl:apply-templates>
+        </xsl:if>
+        <xsl:if test="//concept">
+===== Concepts
+            <xsl:apply-templates select="//concept">
+                <xsl:sort select="@id" order="ascending"/>
+            </xsl:apply-templates>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="constraint | concept">
-==== <xsl:value-of select="@id"/>
+[id="<xsl:value-of select="@id"/>"]
+====== <xsl:value-of select="@id"/>
 <xsl:value-of select="$newline"/>
+    <xsl:if test="requiresConcept">
 Requires concepts:
         <xsl:for-each select="requiresConcept">
-* <xsl:value-of select="@refId"/><xsl:value-of select="$newline"/>
+* &lt;&lt;<xsl:value-of select="@refId"/>&gt;&gt;<xsl:value-of select="$newline"/>
         </xsl:for-each>
+    </xsl:if>
 <xsl:value-of select="$newline"/>
 <xsl:value-of select="description"/>
 <xsl:value-of select="$newline"/>
