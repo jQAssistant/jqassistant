@@ -1,14 +1,21 @@
 package com.buschmais.jqassistant.sonar.plugin.sensor;
 
-import com.buschmais.jqassistant.core.report.schema.v1.*;
-import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
-import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.checks.AnnotationCheckFactory;
 import org.sonar.api.component.ResourcePerspectives;
+import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
 import org.sonar.api.issue.Issue;
 import org.sonar.api.platform.ComponentContainer;
@@ -16,33 +23,48 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.rules.ActiveRule;
+import org.sonar.api.scan.filesystem.ModuleFileSystem;
 import org.sonar.api.utils.SonarException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
+import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
+import com.buschmais.jqassistant.core.report.schema.v1.RowType;
+import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
+import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
+import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 
 /**
- * {@link Sensor} implementation scanning for jqassistant-report.xml files.
- */
+* {@link Sensor} implementation scanning for jqassistant-report.xml files.
+*/
 public class JQAssistantSensor implements Sensor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
 
-    private final ResourcePerspectives perspectives;
+	private final Settings settings;
 
-    private final AnnotationCheckFactory annotationCheckFactory;
+	private final ModuleFileSystem moduleFileSystem;
 
-    private final Map<String, LanguageResourceResolver> languageResourceResolvers;
+	private final ResourcePerspectives perspectives;
 
-    private final Map<String, ActiveRule> rules;
-    private final JAXBContext reportContext;
+	private final AnnotationCheckFactory annotationCheckFactory;
 
-    public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives, ComponentContainer componentContainerc) throws JAXBException {
+	private final Map<String, LanguageResourceResolver> languageResourceResolvers;
+
+	private final Map<String, ActiveRule> rules;
+
+	private final JAXBContext reportContext;
+
+    public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives,
+            ComponentContainer componentContainerc, Settings settings, ModuleFileSystem moduleFileSystem)
+            throws JAXBException
+    {
+        this.settings = settings;
+        this.moduleFileSystem = moduleFileSystem;
         this.perspectives = perspectives;
         this.annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
         this.languageResourceResolvers = new HashMap<>();
@@ -61,11 +83,10 @@ public class JQAssistantSensor implements Sensor {
         this.reportContext = JAXBContext.newInstance(ObjectFactory.class);
     }
 
+    @Override
     public void analyse(Project project, SensorContext sensorContext) {
-        File buildDir = project.getFileSystem().getBuildDir();
-        File reportFile = new File(buildDir, "jqassistant/jqassistant-report.xml");
-        if (reportFile.exists()) {
-            LOGGER.info("Reading report from " + reportFile);
+        File reportFile = getReportFile();
+        if (reportFile != null) {
             JqassistantReport report = readReport(reportFile);
             evaluateReport(project, sensorContext, report);
         }
@@ -90,6 +111,7 @@ public class JQAssistantSensor implements Sensor {
     }
 
     private void evaluateReport(Project project, SensorContext sensorContext, JqassistantReport report) {
+        boolean createEmptyConceptIssue = isCreateEmptyConceptIssue();
         for (GroupType groupType : report.getGroup()) {
             LOGGER.info("Processing group '{}'", groupType.getId());
             for (RuleType ruleType : groupType.getConceptOrConstraint()) {
@@ -100,7 +122,7 @@ public class JQAssistantSensor implements Sensor {
                 } else {
                     ResultType result = ruleType.getResult();
                     boolean hasRows = result != null && result.getRows().getCount() > 0;
-                    if (ruleType instanceof ConceptType && !hasRows) {
+                    if (ruleType instanceof ConceptType && createEmptyConceptIssue && !hasRows) {
                         createIssue(project, "The concept did not return a result.", activeRule, sensorContext);
                     } else if (ruleType instanceof ConstraintType && hasRows) {
                         for (RowType rowType : result.getRows().getRow()) {
@@ -138,35 +160,77 @@ public class JQAssistantSensor implements Sensor {
     }
 
     /**
-     * Creates an issue.
-     *
-     * @param project       The project to create the issue for.
-     * @param message       The message to use.
-     * @param rule          The rule which has been violated.
-     * @param sensorContext The sensor context.
-     */
+	* Creates an issue.
+	*
+	* @param project The project to create the issue for.
+	* @param message The message to use.
+	* @param rule The rule which has been violated.
+	* @param sensorContext The sensor context.
+	*/
     private void createIssue(Project project, String message, ActiveRule rule, SensorContext sensorContext) {
         createIssue(project, project, message, rule, sensorContext);
     }
 
     /**
-     * Creates an issue.
-     *
-     * @param project       The project to create the issue for.
-     * @param message       The message to use.
-     * @param rule          The rule which has been violated.
-     * @param sensorContext The sensor context.
-     */
+	* Creates an issue.
+	*
+	* @param project The project to create the issue for.
+	* @param message The message to use.
+	* @param rule The rule which has been violated.
+	* @param sensorContext The sensor context.
+	*/
     private void createIssue(Project project, Resource<?> resource, String message, ActiveRule rule, SensorContext sensorContext) {
         Issuable issuable;
         if (sensorContext.getResource(resource) != null) {
             issuable = perspectives.as(Issuable.class, resource);
+			Issue issue = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message).build();
+			issuable.addIssue(issue);
+			LOGGER.info("Issue added for resource '{}'.", resource.getLongName());
         } else {
-            LOGGER.warn("Resource '{}' not found.", resource.getLongName());
-            issuable = perspectives.as(Issuable.class, (Resource<?>) project);
+            LOGGER.warn("Resource '{}' not found, issue not created.", resource.getLongName());
         }
-        Issue issue = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message).build();
-        issuable.addIssue(issue);
-        LOGGER.info("Issue added for resource '{}'.", resource.getLongName());
+    }
+
+    /**
+	* Return the report xml file or null if not found.
+	* Checks whether {@link JQAssistant.SETTINGS_REPORT_PATH_KEY} is set or not and
+	* looks up the passed path or the default build directory.
+	*
+	* @return reportFile File object of report xml or null if not found.
+	*/
+    private File getReportFile() {
+        File reportFile;
+
+        String configReportPath = settings.getString(JQAssistant.SETTINGS_KEY_REPORT_PATH);
+        if (configReportPath != null && !configReportPath.isEmpty()) {
+            LOGGER.info("Using setting '{}' = '{}' to find report file.", JQAssistant.SETTINGS_KEY_REPORT_PATH, configReportPath);
+            reportFile = new File(configReportPath);
+        } else {
+            File buildDir = moduleFileSystem.buildDir();
+            LOGGER.info("Using build directory '{}' to find report file.", buildDir);
+            reportFile = new File(buildDir, JQAssistant.REPORT_FILE_NAME);
+        }
+
+        if (reportFile.exists()) {
+            LOGGER.info("Report found at '{}'.", reportFile.getAbsolutePath());
+            return reportFile;
+        } else {
+            LOGGER.info("No report found at '{}'.", reportFile.getAbsolutePath());
+            return null;
+        }
+    }
+
+    /**
+	* Check settings whether to create issues for empty concepts or not.
+	* True is default.
+	*
+	* @return true to create issues for empty concepts.
+	*/
+    private boolean isCreateEmptyConceptIssue() {
+        if (!settings.hasKey(JQAssistant.SETTINGS_KEY_CREATE_EMPTY_CONCEPT_ISSUE)) {
+            return true;
+        } else {
+            return settings.getBoolean(JQAssistant.SETTINGS_KEY_CREATE_EMPTY_CONCEPT_ISSUE);
+        }
     }
 }
