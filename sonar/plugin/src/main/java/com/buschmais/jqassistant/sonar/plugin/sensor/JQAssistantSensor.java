@@ -43,21 +43,21 @@ import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 */
 public class JQAssistantSensor implements Sensor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
 
-	private final Settings settings;
+    private final Settings settings;
 
-	private final ModuleFileSystem moduleFileSystem;
+    private final ModuleFileSystem moduleFileSystem;
 
-	private final ResourcePerspectives perspectives;
+    private final ResourcePerspectives perspectives;
 
-	private final AnnotationCheckFactory annotationCheckFactory;
+    private final AnnotationCheckFactory annotationCheckFactory;
 
-	private final Map<String, LanguageResourceResolver> languageResourceResolvers;
+    private final Map<String, LanguageResourceResolver> languageResourceResolvers;
 
-	private final Map<String, ActiveRule> rules;
+    private final Map<String, ActiveRule> rules;
 
-	private final JAXBContext reportContext;
+    private final JAXBContext reportContext;
 
     public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives,
             ComponentContainer componentContainerc, Settings settings, ModuleFileSystem moduleFileSystem)
@@ -160,44 +160,44 @@ public class JQAssistantSensor implements Sensor {
     }
 
     /**
-	* Creates an issue.
-	*
-	* @param project The project to create the issue for.
-	* @param message The message to use.
-	* @param rule The rule which has been violated.
-	* @param sensorContext The sensor context.
-	*/
+     * Creates an issue.
+     *
+     * @param project The project to create the issue for.
+     * @param message The message to use.
+     * @param rule The rule which has been violated.
+     * @param sensorContext The sensor context.
+     */
     private void createIssue(Project project, String message, ActiveRule rule, SensorContext sensorContext) {
         createIssue(project, project, message, rule, sensorContext);
     }
 
     /**
-	* Creates an issue.
-	*
-	* @param project The project to create the issue for.
-	* @param message The message to use.
-	* @param rule The rule which has been violated.
-	* @param sensorContext The sensor context.
-	*/
+     * Creates an issue.
+     *
+     * @param project The project to create the issue for.
+     * @param message The message to use.
+     * @param rule The rule which has been violated.
+     * @param sensorContext The sensor context.
+     */
     private void createIssue(Project project, Resource<?> resource, String message, ActiveRule rule, SensorContext sensorContext) {
         Issuable issuable;
         if (sensorContext.getResource(resource) != null) {
             issuable = perspectives.as(Issuable.class, resource);
-			Issue issue = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message).build();
-			issuable.addIssue(issue);
-			LOGGER.info("Issue added for resource '{}'.", resource.getLongName());
+            Issue issue = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message).build();
+            issuable.addIssue(issue);
+            LOGGER.info("Issue added for resource '{}'.", resource.getLongName());
         } else {
             LOGGER.warn("Resource '{}' not found, issue not created.", resource.getLongName());
         }
     }
 
     /**
-	* Return the report xml file or null if not found.
-	* Checks whether {@link JQAssistant.SETTINGS_REPORT_PATH_KEY} is set or not and
-	* looks up the passed path or the default build directory.
-	*
-	* @return reportFile File object of report xml or null if not found.
-	*/
+     * Return the report xml file or null if not found.
+     * Checks whether {@link JQAssistant.SETTINGS_REPORT_PATH_KEY} is set or not and
+     * looks up the passed path or the default build directory.
+     *
+     * @return reportFile File object of report xml or null if not found.
+     */
     private File getReportFile() {
         File reportFile;
 
@@ -221,11 +221,11 @@ public class JQAssistantSensor implements Sensor {
     }
 
     /**
-	* Check settings whether to create issues for empty concepts or not.
-	* True is default.
-	*
-	* @return true to create issues for empty concepts.
-	*/
+     * Check settings whether to create issues for empty concepts or not.
+     * True is default.
+     *
+     * @return true to create issues for empty concepts.
+     */
     private boolean isCreateEmptyConceptIssue() {
         if (!settings.hasKey(JQAssistant.SETTINGS_KEY_CREATE_EMPTY_CONCEPT_ISSUE)) {
             return true;
