@@ -57,9 +57,9 @@
                                         </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper
-                                                    implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                                                <targetExtension>.adoc.include</targetExtension>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^jqassistant-plugin\.xml$</pattern>
+                                                <replacement>${project.artifactId}.adoc</replacement>
                                             </fileMapper>
                                         </fileMappers>
                                         <parameters>
@@ -79,9 +79,9 @@
                                         </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper
-                                                    implementation="org.codehaus.plexus.components.io.filemappers.FileExtensionMapper">
-                                                <targetExtension>.xml.adoc.include</targetExtension>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^(.*)\.xml$</pattern>
+                                                <replacement>${project.artifactId}-$1.xml.adoc</replacement>
                                             </fileMapper>
                                         </fileMappers>
                                     </transformationSet>

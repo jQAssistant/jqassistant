@@ -5,7 +5,7 @@
     <formats>
         <format>zip</format>
     </formats>
-    <baseDirectory>${project.artifactId}</baseDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}/generated-sources/asciidoc</directory>

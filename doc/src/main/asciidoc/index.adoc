@@ -1,0 +1,25 @@
+= jQAssistant
+Dirk Mahler <dirk.mahler@buschmais.com>
+
+This document describes the concepts of jQAssistant and usage information.
+
+:numbered!:
+[abstract]
+== Introduction
+
+jQAssistant is a tool supporting the process for developing Java applications. It can be plugged into the Maven build process to break the build on detection of constraint violations and generate reports about user defined concepts and metrics.
+
+Here are some examples illustrating the possibilities:
+- define technical layers (e.g. presentation, business logic, persistence) and/or business components (e.g. shopping cart, user management) and validate dependencies between them
+- enforce naming conventions, e.g. EJBs, JPA entities, test classes, package names etc.
+- separate APIs and implementation classes (e.g. a component must only have dependencies to API classes of other components)
+- detect common problems, e.g cyclic package dependencies, dead code
+
+== Plugins
+include::{pluginDoc}/jqassistant.plugin.ejb3.adoc[]
+include::{pluginDoc}/jqassistant.plugin.jaxrs.adoc[]
+include::{pluginDoc}/jqassistant.plugin.java.adoc[]
+include::{pluginDoc}/jqassistant.plugin.jpa2.adoc[]
+include::{pluginDoc}/jqassistant.plugin.junit4.adoc[]
+include::{pluginDoc}/jqassistant.plugin.osgi.adoc[]
+include::{pluginDoc}/jqassistant.plugin.tycho.adoc[]
