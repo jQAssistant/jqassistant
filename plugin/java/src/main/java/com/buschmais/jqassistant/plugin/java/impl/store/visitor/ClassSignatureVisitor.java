@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
-
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
 public class ClassSignatureVisitor extends SignatureVisitor {
 
@@ -68,7 +67,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
 			@Override
 			public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-				typeDescriptor.getInterfaces().add(resolvedTypeDescriptor);
+				typeDescriptor.addInterface(resolvedTypeDescriptor);
 			}
 		};
 	}

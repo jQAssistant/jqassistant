@@ -91,7 +91,7 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
             descriptor = store.create(concreteType, fullQualifiedName);
             descriptor.setName(name);
             if (parent != null) {
-                parent.getContains().add(descriptor);
+                parent.addContains(descriptor);
             }
             return descriptor;
         }

@@ -1,9 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import org.objectweb.asm.signature.SignatureVisitor;
-
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.DependentDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * Type signature visitor which adds a dependency to a resolved types.
@@ -44,6 +43,6 @@ public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<
 
 	@Override
 	public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-		getUsingDescriptor().getDependencies().add(resolvedTypeDescriptor);
+		getUsingDescriptor().addDependency(resolvedTypeDescriptor);
 	}
 }

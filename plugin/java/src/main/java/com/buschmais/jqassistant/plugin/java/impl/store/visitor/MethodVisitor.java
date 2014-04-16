@@ -39,11 +39,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         switch (opcode) {
             case Opcodes.GETFIELD:
             case Opcodes.GETSTATIC:
-                this.methodDescriptor.getReads().add(fieldDescriptor);
+                this.methodDescriptor.addReads(fieldDescriptor);
                 break;
             case Opcodes.PUTFIELD:
             case Opcodes.PUTSTATIC:
-                this.methodDescriptor.getWrites().add(fieldDescriptor);
+                this.methodDescriptor.addWrites(fieldDescriptor);
                 break;
         }
     }
@@ -53,7 +53,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(owner));
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
-        this.methodDescriptor.getInvokes().add(invokedMethodDescriptor);
+        this.methodDescriptor.addInvokes(invokedMethodDescriptor);
         visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));
     }
 

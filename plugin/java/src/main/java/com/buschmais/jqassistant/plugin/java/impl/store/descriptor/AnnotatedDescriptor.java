@@ -1,9 +1,13 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import java.util.Set;
+
+import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 
 /**
  * Interface describing an {@link Descriptor} which is annotated by
@@ -18,4 +22,8 @@ public interface AnnotatedDescriptor extends Descriptor {
 	 */
     @Relation("ANNOTATED_BY")
 	Set<AnnotationValueDescriptor> getAnnotatedBy();
+
+    @ResultOf
+    @Cypher("match (a),(v) where id(a)={this} and id(v)={value} create unique (a)-[:ANNOTATED_BY]->(v)")
+    public void addAnnotatedBy(@Parameter("value") AnnotationValueDescriptor value);
 }
