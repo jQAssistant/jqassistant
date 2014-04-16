@@ -4,6 +4,8 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
+import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
@@ -68,4 +70,8 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
      */
     @Relation("CONTAINS")
     public Set<FileDescriptor> getContains();
+
+    @ResultOf
+    @Cypher("match (a),(f) where id(a)={this} and id(f)={file} create unique (p)-[:CONTAINS]->(f)")
+    public void addContains(@ResultOf.Parameter("file") FileDescriptor file);
 }
