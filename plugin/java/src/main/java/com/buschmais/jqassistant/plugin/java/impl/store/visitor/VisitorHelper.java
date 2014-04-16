@@ -157,7 +157,7 @@ public class VisitorHelper {
             TypeDescriptor type = getTypeDescriptor(typeName);
             AnnotationValueDescriptor annotationDescriptor = store.create(AnnotationValueDescriptor.class);
             annotationDescriptor.setType(type);
-            annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
+            annotatedDescriptor.addAnnotatedBy(annotationDescriptor);
             return annotationDescriptor;
         }
         return null;
@@ -174,7 +174,7 @@ public class VisitorHelper {
     ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
         ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class);
         parameterDescriptor.setIndex(index);
-        methodDescriptor.getParameters().add(parameterDescriptor);
+        methodDescriptor.addParameter(parameterDescriptor);
         return parameterDescriptor;
     }
 
@@ -202,7 +202,7 @@ public class VisitorHelper {
     void addDependency(DependentDescriptor dependentDescriptor, String typeName) {
         if (typeName != null) {
             TypeDescriptor dependency = getTypeDescriptor(typeName);
-            dependentDescriptor.getDependencies().add(dependency);
+            dependentDescriptor.addDependency(dependency);
         }
     }
 }
