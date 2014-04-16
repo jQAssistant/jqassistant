@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 import org.apache.maven.project.MavenProject;
@@ -44,7 +43,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
             try {
                 ArtifactDescriptor artifactDescriptor = getArtifact(testJar);
                 for (FileDescriptor descriptor : fileScanner.scanDirectory(directory)) {
-                    artifactDescriptor.getContains().add(descriptor);
+                    artifactDescriptor.addContains(descriptor);
                 }
             } finally {
                 store.commitTransaction();
