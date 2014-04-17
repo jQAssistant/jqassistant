@@ -12,7 +12,6 @@ import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.report.JUnitReportWriter;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -23,16 +22,21 @@ import org.apache.maven.project.MavenProject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Runs analysis according to the defined rules.
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY)
 public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
+
+    /**
+     * Defines the supported report types.
+     */
+    public enum ReportType {
+        JQA,
+        JUNIT;
+    }
 
     /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
@@ -43,37 +47,47 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
     @Parameter(property = "jqassistant.junitReportDirectory")
     private java.io.File junitReportDirectory;
 
+    @Parameter(property = "jqassistant.reportTypes")
+    private List<ReportType> reportTypes;
+
     @Override
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
-        FileWriter xmlReportFileWriter;
-        try {
-            xmlReportFileWriter = new FileWriter(getXmlReportFile(baseProject));
-        } catch (IOException e) {
-            throw new MojoExecutionException("Cannot create XML report file.", e);
-        }
-        XmlReportWriter xmlReportWriter;
-        try {
-            xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
-        } catch (ExecutionListenerException e) {
-            throw new MojoExecutionException("Cannot create XML report file writer.", e);
-        }
         List<ExecutionListener> reportWriters = new LinkedList<>();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         reportWriters.add(inMemoryReportWriter);
-        reportWriters.add(xmlReportWriter);
-        reportWriters.add(getJunitReportWriter(baseProject));
-        try {
-            CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
-            try {
-                analyzer.execute(ruleSet);
-            } catch (AnalyzerException e) {
-                throw new MojoExecutionException("Analysis failed.", e);
+        if (reportTypes == null || reportTypes.isEmpty()) {
+            reportTypes = Arrays.asList(ReportType.JQA);
+        }
+        for (ReportType reportType : reportTypes) {
+            switch (reportType) {
+                case JQA:
+                    FileWriter xmlReportFileWriter;
+                    try {
+                        xmlReportFileWriter = new FileWriter(getXmlReportFile(baseProject));
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Cannot create XML report file.", e);
+                    }
+                    XmlReportWriter xmlReportWriter;
+                    try {
+                        xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
+                    } catch (ExecutionListenerException e) {
+                        throw new MojoExecutionException("Cannot create XML report file writer.", e);
+                    }
+                    reportWriters.add(xmlReportWriter);
+                    break;
+                case JUNIT:
+                    reportWriters.add(getJunitReportWriter(baseProject));
+                    break;
             }
-        } finally {
-            IOUtils.closeQuietly(xmlReportFileWriter);
+        }
+        CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
+        Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
+        try {
+            analyzer.execute(ruleSet);
+        } catch (AnalyzerException e) {
+            throw new MojoExecutionException("Analysis failed.", e);
         }
         store.beginTransaction();
         try {
