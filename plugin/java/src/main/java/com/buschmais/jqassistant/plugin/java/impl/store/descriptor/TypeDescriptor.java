@@ -9,6 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import java.util.Set;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Type;
+import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 
 /**
  * Describes a Java type.
@@ -42,7 +43,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     @ResultOf
     @Cypher("match (t),(i) where id(t)={this} and id(i)={i} create unique (t)-[:IMPLEMENTS]->(i)")
-    public void addInterface(@ResultOf.Parameter("i") TypeDescriptor i);
+    public void addInterface(@Parameter("i") TypeDescriptor i);
 
     /**
      * Return the declared methods.
@@ -54,7 +55,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     @ResultOf
     @Cypher("match (t),(m) where id(t)={this} and id(m)={method} create unique (t)-[:DECLARES]->(m)")
-    public void addDeclaredMethod(@ResultOf.Parameter("method") MethodDescriptor method);
+    public void addDeclaredMethod(@Parameter("method") MethodDescriptor method);
 
     /**
      * Return the declared fields.
@@ -66,7 +67,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     @ResultOf
     @Cypher("match (t),(f) where id(t)={this} and id(f)={field} create unique (t)-[:DECLARES]->(f)")
-    public void addDeclaredField(@ResultOf.Parameter("field") FieldDescriptor field);
+    public void addDeclaredField(@Parameter("field") FieldDescriptor field);
 
     /**
      * Return the declared inner classes.
@@ -78,5 +79,13 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     @ResultOf
     @Cypher("match (t),(i) where id(t)={this} and id(i)={innerClass} create unique (t)-[:DECLARES]->(i)")
-    public void addDeclaredInnerClass(@ResultOf.Parameter("innerClass") TypeDescriptor innerClass);
+    public void addDeclaredInnerClass(@Parameter("innerClass") TypeDescriptor innerClass);
+
+    @ResultOf
+    @Cypher("match (t:TYPE) where id(t)={this} create unique (t)-[:DECLARES]->(f:FIELD {SIGNATURE:{signature}}) return f as field")
+    public FieldDescriptor getOrCreateField(@Parameter("signature") String signature);
+
+    @ResultOf
+    @Cypher("match (t:TYPE) where id(t)={this} create unique (t)-[:DECLARES]->(m:METHOD {SIGNATURE:{signature}}) return m as method")
+    public MethodDescriptor getOrCreateMethod(@Parameter("signature") String signature);
 }

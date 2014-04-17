@@ -7,7 +7,9 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import org.junit.Assume;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JavaRuntimePT extends AbstractPluginIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaRuntimePT.class);
@@ -33,7 +36,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
      * @throws IOException If scanning fails.
      */
     @Test
-    public void javaRuntime() throws IOException, AnalyzerException {
+    public void javaRuntime01Scan() throws IOException, AnalyzerException {
         String javaHome = System.getProperty("java.home");
         Assume.assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
@@ -53,7 +56,11 @@ public class JavaRuntimePT extends AbstractPluginIT {
             } while (descriptor != null && count < 50);
             store.commitTransaction();
         } while (descriptor != null);
+    }
 
+    @Test
+    @TestStore(reset = false)
+    public void javaRuntime02Analyze() throws IOException, AnalyzerException {
         applyConcept("metric:Top10TypesPerArtifact");
         applyConcept("metric:Top10TypesPerPackage");
         applyConcept("metric:Top10MethodsPerType");
@@ -71,7 +78,5 @@ public class JavaRuntimePT extends AbstractPluginIT {
 				LOGGER.info(sb.toString());
 			}
 		}
-
     }
-
 }

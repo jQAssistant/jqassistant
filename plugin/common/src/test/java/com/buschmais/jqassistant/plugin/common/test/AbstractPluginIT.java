@@ -25,10 +25,18 @@ import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDes
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 import javax.xml.transform.Source;
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
@@ -40,7 +48,39 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
  */
 public class AbstractPluginIT {
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    protected @interface TestStore {
+        boolean reset() default true;
+    }
+
+    /**
+     * A rule implementation
+     */
+    private class TestContextRule extends TestWatcher {
+
+        private Method testMethod;
+
+        @Override
+        protected void starting(Description description) {
+            Class<?> testClass = description.getTestClass();
+            try {
+                testMethod = testClass.getDeclaredMethod(description.getMethodName());
+            } catch (NoSuchMethodException e) {
+                Assert.fail(e.getMessage());
+            }
+        }
+
+        public Method getTestMethod() {
+            return testMethod;
+        }
+    }
+
     public static final String ARTIFACT_ID = "artifact";
+
+    @Rule
+    public TestContextRule testContextRule = new TestContextRule();
+
 
     /**
      * Represents a test result which allows fetching values by row or columns.
@@ -113,7 +153,14 @@ public class AbstractPluginIT {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
         scannerPluginRepository = new ScannerPluginRepositoryImpl(store, new Properties());
         store.start(getDescriptorTypes());
-        store.reset();
+        TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
+        boolean resetStore = true;
+        if (testStore != null) {
+            resetStore = testStore.reset();
+        }
+        if (resetStore) {
+            store.reset();
+        }
     }
 
     /**
