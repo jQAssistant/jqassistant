@@ -60,6 +60,10 @@ public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, 
     @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create unique (m1)-[:INVOKES]->(m2)")
     public void addInvokes(@Parameter("target") MethodDescriptor target);
 
+    @ResultOf
+    @Cypher("match (m:METHOD)-[:HAS]->(p:PARAMETER) where id(m)={this} and p.INDEX={index} return p as parameter")
+    ParameterDescriptor findParameter(@Parameter("index") int index);
+
     @Property("NATIVE")
     public Boolean isNative();
 

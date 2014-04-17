@@ -3,13 +3,9 @@ package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
-import com.buschmais.jqassistant.plugin.java.impl.store.query.FindParameterQuery;
-import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateFieldQuery;
-import com.buschmais.jqassistant.plugin.java.impl.store.query.GetOrCreateMethodQuery;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 import org.apache.commons.collections.map.LRUMap;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -84,10 +80,7 @@ public class VisitorHelper {
         Map<String, MethodDescriptor> methodsOfType = getMemberCache(type, methodCache);
         MethodDescriptor methodDescriptor = methodsOfType.get(signature);
         if (methodDescriptor == null) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("type", type);
-            params.put("signature", signature);
-            methodDescriptor = store.executeQuery(GetOrCreateMethodQuery.class, params).getSingleResult().getMethod();
+            methodDescriptor = type.getOrCreateMethod(signature);
             if (signature.startsWith(CONSTRUCTOR_METHOD) && !ConstructorDescriptor.class.isAssignableFrom(methodDescriptor.getClass())) {
                 methodDescriptor = store.migrate(methodDescriptor, ConstructorDescriptor.class);
             }
@@ -124,10 +117,7 @@ public class VisitorHelper {
         Map<String, FieldDescriptor> fieldsOfType = getMemberCache(type, fieldCache);
         FieldDescriptor fieldDescriptor = fieldsOfType.get(signature);
         if (fieldDescriptor == null) {
-            Map<String, Object> params = new HashMap<>();
-            params.put("type", type);
-            params.put("signature", signature);
-            fieldDescriptor = store.executeQuery(GetOrCreateFieldQuery.class, params).getSingleResult().getField();
+            fieldDescriptor = type.getOrCreateField(signature);
             fieldsOfType.put(signature, fieldDescriptor);
         }
         return fieldDescriptor;
@@ -176,21 +166,6 @@ public class VisitorHelper {
         parameterDescriptor.setIndex(index);
         methodDescriptor.addParameter(parameterDescriptor);
         return parameterDescriptor;
-    }
-
-    /**
-     * Return the parameter descriptor for the given methodDescriptor and
-     * parameter index.
-     *
-     * @param methodDescriptor The declaring methodDescriptor.
-     * @param index            The parameter index.
-     * @return The parameter descriptor.
-     */
-    ParameterDescriptor getParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("method", methodDescriptor);
-        params.put("index", index);
-        return store.executeQuery(FindParameterQuery.class, params).getSingleResult().getParameter();
     }
 
     /**
