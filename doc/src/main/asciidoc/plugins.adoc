@@ -1,0 +1,8 @@
+== Plugins
+include::{pluginDoc}/jqassistant.plugin.ejb3.adoc[]
+include::{pluginDoc}/jqassistant.plugin.jaxrs.adoc[]
+include::{pluginDoc}/jqassistant.plugin.java.adoc[]
+include::{pluginDoc}/jqassistant.plugin.jpa2.adoc[]
+include::{pluginDoc}/jqassistant.plugin.junit4.adoc[]
+include::{pluginDoc}/jqassistant.plugin.osgi.adoc[]
+include::{pluginDoc}/jqassistant.plugin.tycho.adoc[]
