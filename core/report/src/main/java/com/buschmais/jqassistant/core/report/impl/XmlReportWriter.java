@@ -78,6 +78,11 @@ public class XmlReportWriter implements ExecutionListener {
                 xmlStreamWriter.writeEndDocument();
             }
         });
+        try {
+            xmlStreamWriter.close();
+        } catch (XMLStreamException e) {
+            throw new ExecutionListenerException("Cannot close XML stream writer", e);
+        }
     }
 
     @Override
