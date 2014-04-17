@@ -33,19 +33,19 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseAPI getDatabaseAPI(XOManager cdoManager) {
-        return (GraphDatabaseAPI) cdoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
+    protected GraphDatabaseAPI getDatabaseAPI(XOManager xoManager) {
+        return (GraphDatabaseAPI) xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
     @Override
-    protected XOManagerFactory createCdoManagerFactory(Collection<Class<?>> types) {
+    protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
         XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).create();
         return XO.createXOManagerFactory(xoUnit);
     }
 
     @Override
-    protected void closeCdoManagerFactory(XOManagerFactory cdoManagerFactory) {
+    protected void closeXOManagerFactory(XOManagerFactory cdoManagerFactory) {
         cdoManagerFactory.close();
     }
 
