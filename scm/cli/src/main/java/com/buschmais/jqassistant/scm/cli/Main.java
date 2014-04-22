@@ -2,22 +2,19 @@ package com.buschmais.jqassistant.scm.cli;
 
 import org.apache.commons.cli.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
 public class Main {
-    private final static Map<String, JqAssistantTask> functions = new HashMap<>();
+    private static final Map<String, JqAssistantTask> functions = new HashMap<>();
 
     public static void main(String[] args) {
         putTasksIntoMap(Arrays.asList(
                 new ClassToNeo4JImporter(),
                 new CmdlineServer(),
-                new AnalyzeTask(),
+                new AnalyzeTask(new Properties()),
                 new ResetDatabase()
         ));
         interpretCommandLine(args, gatherOptions());

@@ -29,14 +29,15 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
     private final List<String> directoryNames = new ArrayList<>();
 
     public ClassToNeo4JImporter() {
-        super("scan");
+        super("scan", new Properties());
     }
 
     protected void doTheTask(final Store store) {
         store.reset();
         try {
             for (String directoryName : directoryNames) {
-                scanDirectory(store, directoryName, getScannerPluginRepository(store, new Properties()).getFileScannerPlugins());
+                properties = new Properties();
+                scanDirectory(store, directoryName, getScannerPluginRepository(store, properties).getFileScannerPlugins());
             }
         } catch (PluginReaderException e) {
             throw new RuntimeException(e);

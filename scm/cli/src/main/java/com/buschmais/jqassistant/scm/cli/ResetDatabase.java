@@ -10,7 +10,7 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
  */
 public class ResetDatabase extends CommonJqAssistantTask {
     public ResetDatabase() {
-        super("reset");
+        super("reset", new Properties());
     }
 
     @Override
