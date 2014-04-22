@@ -15,7 +15,7 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 public class CmdlineServer extends CommonJqAssistantTask {
 
     public CmdlineServer() {
-        super("server");
+        super("server", new Properties());
     }
 
     protected void doTheTask(final Store store) {

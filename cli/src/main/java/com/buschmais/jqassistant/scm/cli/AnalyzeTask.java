@@ -49,8 +49,8 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
     private List<String> constraints = new ArrayList<>();
     private List<String> groups = new ArrayList<>();
 
-    public AnalyzeTask() {
-        super("analyze");
+    public AnalyzeTask(Properties properties) {
+        super("analyze", properties);
     }
 
     @Override

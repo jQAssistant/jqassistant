@@ -6,7 +6,6 @@ import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepository
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import org.apache.commons.cli.Option;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -20,11 +19,12 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
  * @author jn4, Kontext E GmbH, 24.01.14
  */
 public abstract class CommonJqAssistantTask implements JqAssistantTask {
-    private File storeDirectory;
     protected final String taskName;
+    protected Properties properties;
 
-    protected CommonJqAssistantTask(final String taskName) {
+    protected CommonJqAssistantTask(final String taskName, final Properties properties) {
         this.taskName = taskName;
+        this.properties = properties;
     }
 
     @Override
@@ -33,12 +33,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     }
 
     protected Store getStore() {
-        File directory;
-        if (this.storeDirectory != null) {
-            directory = this.storeDirectory;
-        } else {
-            directory = new File("./tmp/store");
-        }
+        File directory = new File("./tmp/store");
         getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         directory.getParentFile().mkdirs();
         return new EmbeddedGraphStore(directory.getAbsolutePath());
@@ -50,7 +45,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
         final Store store = getStore();
 
         try {
-            descriptorTypes = getScannerPluginRepository(store, new Properties()).getDescriptorTypes();
+            descriptorTypes = getScannerPluginRepository(store, properties).getDescriptorTypes();
         } catch (PluginReaderException e) {
             throw new RuntimeException("Cannot get descriptor mappers.", e);
         }
