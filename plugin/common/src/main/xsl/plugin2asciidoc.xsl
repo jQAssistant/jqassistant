@@ -14,7 +14,7 @@
     </xsl:template>
 
     <xsl:template match="resource">
-include::{pluginDoc}/<xsl:value-of select="$pluginName"/>-<xsl:value-of select="text()"/>.adoc[]
+include::{pluginDoc}/<xsl:value-of select="$pluginName"/>/<xsl:value-of select="text()"/>.adoc[]
 <xsl:value-of select="$newline"/>
     </xsl:template>
 </xsl:stylesheet>
