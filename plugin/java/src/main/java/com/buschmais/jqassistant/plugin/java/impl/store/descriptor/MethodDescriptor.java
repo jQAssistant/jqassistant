@@ -10,7 +10,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import java.util.Set;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Method;
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor.Declares;
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 /**
  * Describes a method of a Java class.
@@ -18,6 +20,10 @@ import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 @Java(Method)
 @Label(value = "METHOD")
 public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
+
+    @Incoming
+    @Declares
+    public TypeDescriptor getDeclaringType();
 
     @Relation("HAS")
     public Set<ParameterDescriptor> getParameters();

@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
-import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
+
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
@@ -14,7 +14,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private VisitorHelper visitorHelper;
 
     protected MethodVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
     }
@@ -49,7 +49,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
+    public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc, boolean itf) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(owner));
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
@@ -83,69 +83,13 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public void visitCode() {
-    }
-
-    @Override
-    public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
-    }
-
-    @Override
-    public void visitInsn(final int opcode) {
-    }
-
-    @Override
-    public void visitIntInsn(final int opcode, final int operand) {
-    }
-
-    @Override
-    public void visitVarInsn(final int opcode, final int var) {
-    }
-
-    @Override
-    public void visitJumpInsn(final int opcode, final Label label) {
-    }
-
-    @Override
-    public void visitLabel(final Label label) {
-    }
-
-    @Override
-    public void visitIincInsn(final int var, final int increment) {
-    }
-
-    @Override
-    public void visitTableSwitchInsn(final int min, final int max, final Label dflt, final Label[] labels) {
-    }
-
-    @Override
-    public void visitLookupSwitchInsn(final Label dflt, final int[] keys, final Label[] labels) {
-    }
-
-    @Override
     public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
         visitorHelper.addDependency(methodDescriptor, type);
-    }
-
-    @Override
-    public void visitLineNumber(final int line, final Label start) {
-    }
-
-    @Override
-    public void visitMaxs(final int maxStack, final int maxLocals) {
     }
 
     @Override
     public AnnotationVisitor visitAnnotation(final String desc, final boolean visible) {
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(methodDescriptor, SignatureHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
-    }
-
-    @Override
-    public void visitAttribute(Attribute arg0) {
-    }
-
-    @Override
-    public void visitEnd() {
     }
 }

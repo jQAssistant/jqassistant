@@ -6,10 +6,15 @@ import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Set;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Type;
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
  * Describes a Java type.
@@ -17,6 +22,11 @@ import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 @Java(Type)
 @Label(value = "TYPE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
+
+    @Relation("DECLARES")
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface Declares {}
 
     /**
      * Return the super class.
@@ -50,7 +60,8 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      *
      * @return The declared methods.
      */
-    @Relation("DECLARES")
+    @Outgoing
+    @Declares
     public Set<MethodDescriptor> getDeclaredMethods();
 
     @ResultOf
@@ -62,7 +73,8 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      *
      * @return The declared fields.
      */
-    @Relation("DECLARES")
+    @Outgoing
+    @Declares
     public Set<FieldDescriptor> getDeclaredFields();
 
     @ResultOf
