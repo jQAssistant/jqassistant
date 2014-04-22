@@ -59,7 +59,7 @@
                                         <fileMappers>
                                             <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                                 <pattern>^jqassistant-plugin\.xml$</pattern>
-                                                <replacement>${project.artifactId}.adoc</replacement>
+                                                <replacement>plugin.adoc</replacement>
                                             </fileMapper>
                                         </fileMappers>
                                         <parameters>
@@ -81,7 +81,7 @@
                                         <fileMappers>
                                             <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                                 <pattern>^(.*)\.xml$</pattern>
-                                                <replacement>${project.artifactId}-$1.xml.adoc</replacement>
+                                                <replacement>$1.xml.adoc</replacement>
                                             </fileMapper>
                                         </fileMappers>
                                     </transformationSet>
@@ -100,26 +100,9 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.4</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.buschmais.jqassistant</groupId>
-                            <artifactId>jqassistant.assembly</artifactId>
-                            <version>${project.version}</version>
-                        </dependency>
-                    </dependencies>
                     <executions>
                         <execution>
                             <id>attach-asciidoc</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                            <configuration>
-                                <descriptorRefs>
-                                    <descriptorRef>asciidoc</descriptorRef>
-                                </descriptorRefs>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>

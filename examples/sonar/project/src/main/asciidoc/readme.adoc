@@ -1,4 +1,4 @@
-= Analyzing A Project Using SonarQube
+==== Analyzing A Project Using SonarQube
 
 Demonstrates the setup of a project being analyzed using SonarQube.
 

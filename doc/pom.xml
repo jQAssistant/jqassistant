@@ -7,7 +7,7 @@
         <artifactId>jqassistant</artifactId>
         <version>1.0.0-M3-SNAPSHOT</version>
     </parent>
-    <groupId>com.buschmais.jqassistant.plugin</groupId>
+    <groupId>com.buschmais.jqassistant.doc</groupId>
     <artifactId>jqassistant.doc</artifactId>
     <packaging>pom</packaging>
 
@@ -105,6 +105,34 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.tycho</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.forbiddenmethod</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.namingrules</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.sonar.ruleextension</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.sonar.project</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>

@@ -1,4 +1,4 @@
-= Extending The jQAssistant SonarQube Plugin With Rules
+==== Extending The jQAssistant SonarQube Plugin With Rules
 
 Demonstrates how project specific rules can be deployed as extensions to the jQAssistant SonarQube plugin
 
