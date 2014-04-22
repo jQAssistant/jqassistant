@@ -19,3 +19,4 @@ Here are some examples illustrating the possibilities:
 jQAssistant is contributed under http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0].
 
 include::plugins.adoc[]
+include::devguide.adoc[]
