@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.impl.store.descriptor.ConceptDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOException;
 import org.slf4j.Logger;
@@ -17,9 +18,6 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 public class AnalyzerImpl implements Analyzer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzerImpl.class);
-    private static final String QUERY_GETCONCEPT = "MATCH (c:Concept) WHERE c.id={id} RETURN c.id";
-    private static final String QUERY_CREATECONCEPT = "CREATE (c:Concept {id:{id}})";
-    private static final String QUERY_PARAMETER_ID = "id";
 
     private Store store;
 
@@ -159,14 +157,13 @@ public class AnalyzerImpl implements Analyzer {
         }
         try {
             store.beginTransaction();
-            Map<String, Object> params = new HashMap<>();
-            params.put(QUERY_PARAMETER_ID, concept.getId());
-            com.buschmais.xo.api.Query.Result<CompositeRowObject> result = store.executeQuery(QUERY_GETCONCEPT, params);
-            if (!result.hasResult()) {
+            ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
+            if (conceptDescriptor == null) {
                 if (LOGGER.isInfoEnabled()) LOGGER.info("Applying concept '{}'.", concept.getId());
                 reportWriter.beginConcept(concept);
                 reportWriter.setResult(execute(concept));
-                store.executeQuery(QUERY_CREATECONCEPT, params);
+                conceptDescriptor = store.create(ConceptDescriptor.class);
+                conceptDescriptor.setId(concept.getId());
                 reportWriter.endConcept();
             }
             store.commitTransaction();
