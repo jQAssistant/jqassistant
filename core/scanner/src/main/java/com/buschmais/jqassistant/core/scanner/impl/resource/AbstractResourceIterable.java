@@ -85,6 +85,7 @@ public abstract class AbstractResourceIterable<R> implements Iterable<FileDescri
                         StreamSource streamSource = new StreamSource(inputStream, name);
                         FileDescriptor descriptor = plugin.scanFile(streamSource);
                         inputStream.close();
+                        descriptor.setFileName(name);
                         return descriptor;
                     }
                 } catch (Exception e) {
