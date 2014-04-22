@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.scm.maven.shell;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.scm.common.AnalysisHelper;
 import org.neo4j.helpers.Service;
 import org.neo4j.shell.*;
 
@@ -22,7 +23,7 @@ public class AvailableRulesApp extends AbstractJQAssistantApp {
 
     @Override
     public Continuation execute(AppCommandParser parser, Session session, Output out) throws Exception {
-        printRuleSet(availableRules, out);
+        new AnalysisHelper(new ShellConsole(out)).printRuleSet(availableRules);
         return Continuation.INPUT_COMPLETE;
     }
 
