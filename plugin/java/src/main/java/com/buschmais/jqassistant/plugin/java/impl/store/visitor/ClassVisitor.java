@@ -14,7 +14,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     private VisitorHelper visitorHelper;
 
     public ClassVisitor(VisitorHelper visitorHelper) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.visitorHelper = visitorHelper;
     }
 

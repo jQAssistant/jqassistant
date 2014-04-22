@@ -12,7 +12,7 @@ public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
     private VisitorHelper visitorHelper;
 
     protected FieldVisitor(FieldDescriptor fieldDescriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.fieldDescriptor = fieldDescriptor;
         this.visitorHelper = visitorHelper;
     }
@@ -22,13 +22,4 @@ public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(fieldDescriptor, SignatureHelper.getType(arg0));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
-
-    @Override
-    public void visitAttribute(Attribute attribute) {
-    }
-
-    @Override
-    public void visitEnd() {
-    }
-
 }

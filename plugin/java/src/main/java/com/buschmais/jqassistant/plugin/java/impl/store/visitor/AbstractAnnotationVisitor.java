@@ -22,7 +22,7 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
      * @param visitorHelper The {@link VisitorHelper}.
      */
     protected AbstractAnnotationVisitor(D descriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.descriptor = descriptor;
         this.visitorHelper = visitorHelper;
     }
@@ -66,10 +66,6 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
         this.arrayValueDescriptor = createValue(ArrayValueDescriptor.class, name);
         setValue(descriptor, arrayValueDescriptor);
         return this;
-    }
-
-    @Override
-    public void visitEnd() {
     }
 
     protected abstract void setValue(D descriptor, ValueDescriptor value);

@@ -3,8 +3,11 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Field;
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor.Declares;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 /**
  * Describes a field (i.e. static or instance variable) of a Java class.
@@ -14,6 +17,9 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
 public interface FieldDescriptor extends SignatureDescriptor, NamedDescriptor, TypedDescriptor, DependentDescriptor, AnnotatedDescriptor,
         AccessModifierDescriptor {
 
+    @Incoming
+    @Declares
+    public TypeDescriptor getDeclaringType();
     /**
      * @return the transientField
      */

@@ -30,7 +30,7 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
      * @param visitorHelper   The {@link VisitorHelper}.
      */
     protected AbstractTypeSignatureVisitor(T usingDescriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.usingDescriptor = usingDescriptor;
         this.visitorHelper = visitorHelper;
     }
@@ -44,54 +44,6 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     }
 
     @Override
-    public void visitFormalTypeParameter(String name) {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitClassBound() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitInterfaceBound() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitSuperclass() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitInterface() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitParameterType() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitReturnType() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public SignatureVisitor visitExceptionType() {
-        throw new UnsupportedOperationException("Method is not implemented.");
-    }
-
-    @Override
-    public void visitBaseType(char descriptor) {
-    }
-
-    @Override
-    public void visitTypeVariable(String name) {
-    }
-
-    @Override
     public void visitClassType(String name) {
         resolvedTypeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(name));
     }
@@ -100,10 +52,6 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     public void visitInnerClassType(String name) {
         String innerClassName = resolvedTypeDescriptor.getFullQualifiedName() + "$" + name;
         resolvedTypeDescriptor = visitorHelper.getTypeDescriptor(innerClassName);
-    }
-
-    @Override
-    public void visitTypeArgument() {
     }
 
     @Override

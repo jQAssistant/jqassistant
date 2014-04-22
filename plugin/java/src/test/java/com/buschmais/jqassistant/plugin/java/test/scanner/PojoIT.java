@@ -21,6 +21,7 @@ public class PojoIT extends AbstractPluginIT {
         assertThat(testResult.getRows().size(), equalTo(1));
         TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
+        assertThat(typeDescriptor.getFileName(), notNullValue());
         assertThat(query("MATCH (t:TYPE:CLASS) WHERE t.FQN =~ '.*Pojo' RETURN t.NAME as name").getColumn("name"),
                 hasItem(equalTo("Pojo")));
 
