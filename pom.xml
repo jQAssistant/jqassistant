@@ -260,7 +260,7 @@
         <module>doc</module>
         <module>core</module>
         <module>plugin</module>
-        <module>maven</module>
+        <module>scm</module>
         <module>sonar</module>
         <module>examples</module>
     </modules>
