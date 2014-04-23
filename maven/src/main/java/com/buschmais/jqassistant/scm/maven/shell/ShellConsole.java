@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.maven.shell;
 
-import com.buschmais.jqassistant.scm.common.AnalysisHelper;
+import com.buschmais.jqassistant.scm.common.Console;
 import org.neo4j.shell.Output;
 
 import java.rmi.RemoteException;
@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 /**
 * Created by Dirk Mahler on 22.04.2014.
 */
-class ShellConsole implements AnalysisHelper.Console {
+class ShellConsole implements Console {
 
     private final Output out;
 
