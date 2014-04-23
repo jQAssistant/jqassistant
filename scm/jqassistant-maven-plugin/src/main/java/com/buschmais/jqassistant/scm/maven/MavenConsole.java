@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.scm.common.AnalysisHelper;
+import com.buschmais.jqassistant.scm.common.Console;
 import org.apache.maven.plugin.logging.Log;
 
 /**
  * Created by Dirk Mahler on 22.04.2014.
  */
-public class MavenConsole implements AnalysisHelper.Console {
+public class MavenConsole implements Console {
 
 	private Log log;
 

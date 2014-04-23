@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.scm.common;
 
-import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+
+import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Provides common functionality for analysis implementations.
@@ -16,37 +16,7 @@ public class AnalysisHelper {
 
     public static final String LOG_LINE_PREFIX = "  \"";
 
-	/**
-	 * Defines an abstraction for a console.
-	 */
-	public interface Console {
-
-		/**
-		 * Print an info message.
-		 * 
-		 * @param message
-		 *            The message.
-		 */
-		void info(String message);
-
-		/**
-		 * Print a warning message.
-		 * 
-		 * @param message
-		 *            The message.
-		 */
-		void warn(String message);
-
-		/**
-		 * Print an error message.
-		 * 
-		 * @param message
-		 *            The message.
-		 */
-		void error(String message);
-	}
-
-	/**
+    /**
 	 * Constructor.
 	 * 
 	 * @param console
