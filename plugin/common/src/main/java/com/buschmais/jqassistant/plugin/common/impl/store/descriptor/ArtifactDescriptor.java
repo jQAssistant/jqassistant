@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.store.descriptor;
 
+import java.util.Set;
+
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
@@ -10,11 +12,9 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-import java.util.Set;
-
 /**
  * Describes an artifact.
- *
+ * 
  * @author Herklotz
  */
 @Label(value = "ARTIFACT", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
@@ -27,7 +27,8 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     public String getGroup();
 
     /**
-     * @param group the group to set
+     * @param group
+     *            the group to set
      */
     public void setGroup(String group);
 
@@ -38,7 +39,8 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     public String getName();
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name);
 
@@ -49,7 +51,8 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     public String getVersion();
 
     /**
-     * @param version the version to set
+     * @param version
+     *            the version to set
      */
     public void setVersion(String version);
 
@@ -65,7 +68,7 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
 
     /**
      * Return the contained descriptors.
-     *
+     * 
      * @return The contained descriptors.
      */
     @Relation("CONTAINS")

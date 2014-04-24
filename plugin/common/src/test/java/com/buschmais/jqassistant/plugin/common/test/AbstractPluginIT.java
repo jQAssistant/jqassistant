@@ -1,5 +1,27 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.*;
+
+import javax.xml.transform.Source;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
@@ -22,26 +44,6 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-
-import javax.xml.transform.Source;
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.*;
-
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base class for analysis tests.
@@ -81,7 +83,6 @@ public class AbstractPluginIT {
     @Rule
     public TestContextRule testContextRule = new TestContextRule();
 
-
     /**
      * Represents a test result which allows fetching values by row or columns.
      */
@@ -96,7 +97,7 @@ public class AbstractPluginIT {
 
         /**
          * Return all rows.
-         *
+         * 
          * @return All rows.
          */
         public List<Map<String, Object>> getRows() {
@@ -105,8 +106,9 @@ public class AbstractPluginIT {
 
         /**
          * Return a column identified by its name.
-         *
-         * @param <T> The expected type.
+         * 
+         * @param <T>
+         *            The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {
@@ -173,7 +175,7 @@ public class AbstractPluginIT {
 
     /**
      * Return an initialized artifact scanner instance.
-     *
+     * 
      * @return The artifact scanner instance.
      */
     protected FileScanner getFileScanner() {
@@ -182,9 +184,11 @@ public class AbstractPluginIT {
 
     /**
      * Scans the given classes.
-     *
-     * @param classes The classes.
-     * @throws java.io.IOException If scanning fails.
+     * 
+     * @param classes
+     *            The classes.
+     * @throws java.io.IOException
+     *             If scanning fails.
      */
     protected void scanClasses(Class<?>... classes) throws IOException {
         this.scanClasses(ARTIFACT_ID, classes);
@@ -192,10 +196,13 @@ public class AbstractPluginIT {
 
     /**
      * Scans the given classes.
-     *
-     * @param outerClass     The outer classes.
-     * @param innerClassName The outer classes.
-     * @throws java.io.IOException If scanning fails.
+     * 
+     * @param outerClass
+     *            The outer classes.
+     * @param innerClassName
+     *            The outer classes.
+     * @throws java.io.IOException
+     *             If scanning fails.
      */
     protected void scanInnerClass(Class<?> outerClass, String innerClassName) throws IOException, ClassNotFoundException {
         Class<?> innerClass = getInnerClass(outerClass, innerClassName);
@@ -204,11 +211,14 @@ public class AbstractPluginIT {
 
     /**
      * Loads an inner class.
-     *
-     * @param outerClass     The out class.
-     * @param innerClassName The name of the inner class.
+     * 
+     * @param outerClass
+     *            The out class.
+     * @param innerClassName
+     *            The name of the inner class.
      * @return The inner class.
-     * @throws ClassNotFoundException If the class cannot be loaded.
+     * @throws ClassNotFoundException
+     *             If the class cannot be loaded.
      */
     protected Class<?> getInnerClass(Class<?> outerClass, String innerClassName) throws ClassNotFoundException {
         String className = outerClass.getName() + "$" + innerClassName;
@@ -217,10 +227,13 @@ public class AbstractPluginIT {
 
     /**
      * Scans the given classes.
-     *
-     * @param artifactId The id of the containing artifact.
-     * @param classes    The classes.
-     * @throws IOException If scanning fails.
+     * 
+     * @param artifactId
+     *            The id of the containing artifact.
+     * @param classes
+     *            The classes.
+     * @throws IOException
+     *             If scanning fails.
      */
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
@@ -233,9 +246,11 @@ public class AbstractPluginIT {
 
     /**
      * Scans the given URLs.
-     *
-     * @param urls The URLs.
-     * @throws IOException If scanning fails.
+     * 
+     * @param urls
+     *            The URLs.
+     * @throws IOException
+     *             If scanning fails.
      */
     protected void scanURLs(URL... urls) throws IOException {
         this.scanURLs(ARTIFACT_ID, urls);
@@ -243,10 +258,13 @@ public class AbstractPluginIT {
 
     /**
      * Scans the given URLs (e.g. for anonymous inner classes).
-     *
-     * @param artifactId The id of the containing artifact.
-     * @param urls       The URLs.
-     * @throws IOException If scanning fails.
+     * 
+     * @param artifactId
+     *            The id of the containing artifact.
+     * @param urls
+     *            The URLs.
+     * @throws IOException
+     *             If scanning fails.
      */
     protected void scanURLs(String artifactId, URL... urls) throws IOException {
         store.beginTransaction();
@@ -259,9 +277,11 @@ public class AbstractPluginIT {
 
     /**
      * Scans the test classes directory.
-     *
-     * @param rootClass A class within the test directory.
-     * @throws IOException If scanning fails.
+     * 
+     * @param rootClass
+     *            A class within the test directory.
+     * @throws IOException
+     *             If scanning fails.
      */
     protected void scanClassesDirectory(Class<?> rootClass) throws IOException {
         File directory = getClassesDirectory(rootClass);
@@ -270,9 +290,11 @@ public class AbstractPluginIT {
 
     /**
      * Scans the a directory.
-     *
-     * @param directory The directory.
-     * @throws IOException If scanning fails.
+     * 
+     * @param directory
+     *            The directory.
+     * @throws IOException
+     *             If scanning fails.
      */
     protected void scanDirectory(File directory) throws IOException {
         // Scan.
@@ -285,9 +307,11 @@ public class AbstractPluginIT {
     }
 
     /**
-     * Determines the directory a class is located in (e.g. target/test-classes).
-     *
-     * @param rootClass The class.
+     * Determines the directory a class is located in (e.g.
+     * target/test-classes).
+     * 
+     * @param rootClass
+     *            The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
@@ -300,9 +324,11 @@ public class AbstractPluginIT {
     }
 
     /**
-     * Deletes the node representing the test class and all its relationships from the store.
-     *
-     * @throws IOException If an error occurs.
+     * Deletes the node representing the test class and all its relationships
+     * from the store.
+     * 
+     * @throws IOException
+     *             If an error occurs.
      */
     protected void removeTestClass() throws IOException {
         store.beginTransaction();
@@ -316,20 +342,23 @@ public class AbstractPluginIT {
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
-     *
-     * @param query The query.
+     * 
+     * @param query
+     *            The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object>emptyMap());
+        return query(query, Collections.<String, Object> emptyMap());
     }
 
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
-     *
-     * @param query      The query.
-     * @param parameters The query parameters.
+     * 
+     * @param query
+     *            The query.
+     * @param parameters
+     *            The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -356,9 +385,11 @@ public class AbstractPluginIT {
 
     /**
      * Applies the concept identified by id.
-     *
-     * @param id The id.
-     * @throws AnalyzerException If the analyzer reports an error.
+     * 
+     * @param id
+     *            The id.
+     * @throws AnalyzerException
+     *             If the analyzer reports an error.
      */
     protected void applyConcept(String id) throws AnalyzerException {
         Concept concept = ruleSet.getConcepts().get(id);
@@ -370,9 +401,11 @@ public class AbstractPluginIT {
 
     /**
      * Validates the constraint identified by id.
-     *
-     * @param id The id.
-     * @throws AnalyzerException If the analyzer reports an error.
+     * 
+     * @param id
+     *            The id.
+     * @throws AnalyzerException
+     *             If the analyzer reports an error.
      */
     protected void validateConstraint(String id) throws AnalyzerException {
         Constraint constraint = ruleSet.getConstraints().get(id);
@@ -384,9 +417,11 @@ public class AbstractPluginIT {
 
     /**
      * Executes the group identified by id.
-     *
-     * @param id The id.
-     * @throws AnalyzerException If the analyzer reports an error.
+     * 
+     * @param id
+     *            The id.
+     * @throws AnalyzerException
+     *             If the analyzer reports an error.
      */
     protected void executeGroup(String id) throws AnalyzerException {
         Group group = ruleSet.getGroups().get(id);
@@ -397,10 +432,15 @@ public class AbstractPluginIT {
     }
 
     /**
-     * Get or create an {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}.
-     *
-     * @param artifactId The artifact id.
-     * @return The {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}.
+     * Get or create an
+     * {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}
+     * .
+     * 
+     * @param artifactId
+     *            The artifact id.
+     * @return The
+     *         {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}
+     *         .
      */
     private ArtifactDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
