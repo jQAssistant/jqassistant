@@ -6,13 +6,13 @@ package com.buschmais.jqassistant.core.analysis.api;
  */
 public class ExecutionListenerException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public ExecutionListenerException(String message) {
-		super(message);
-	}
+    public ExecutionListenerException(String message) {
+        super(message);
+    }
 
-	public ExecutionListenerException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ExecutionListenerException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.core.scanner.impl.resource;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 
 /**
  * A resource iterable for processing an array of URLs.

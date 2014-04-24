@@ -1,5 +1,9 @@
 package com.buschmais.jqassistant.core.pluginmanager.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ScannerType;
@@ -9,10 +13,6 @@ import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Scanner plugin repository implementation.
@@ -61,7 +61,8 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
         return types;
     }
 
-    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Class<T> pluginClass, Store store, Properties properties) throws PluginReaderException {
+    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Class<T> pluginClass, Store store, Properties properties)
+            throws PluginReaderException {
         List<T> scannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             ScannerType scannerType = plugin.getScanner();
@@ -80,11 +81,14 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
 
     /**
      * Create and return an instance of the given type name.
-     *
-     * @param typeName The type name.
-     * @param <T>      The type.
+     * 
+     * @param typeName
+     *            The type name.
+     * @param <T>
+     *            The type.
      * @return The instance.
-     * @throws com.buschmais.jqassistant.core.analysis.api.PluginReaderException If the instance cannot be created.
+     * @throws com.buschmais.jqassistant.core.analysis.api.PluginReaderException
+     *             If the instance cannot be created.
      */
     private <T> Class<T> getType(String typeName) throws PluginReaderException {
         try {
@@ -96,10 +100,13 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
 
     /**
      * Create an instance of the given scanner plugin class.
-     *
-     * @param clazz    The expected class to be cast to.
-     * @param typeName The type name.
-     * @param <T>      The type.
+     * 
+     * @param clazz
+     *            The expected class to be cast to.
+     * @param typeName
+     *            The type name.
+     * @param <T>
+     *            The type.
      * @return The scanner plugin instance.
      * @throws com.buschmais.jqassistant.core.analysis.api.PluginReaderException
      */

@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.report;
 
+import java.io.StringWriter;
+import java.util.*;
+
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
-
-import java.io.StringWriter;
-import java.util.*;
 
 /**
  * Provides functionality for XML report tests.
@@ -24,9 +24,10 @@ public final class XmlReportTestHelper {
 
     /**
      * Creates a test report.
-     *
+     * 
      * @return The test report.
-     * @throws ExecutionListenerException If the test fails.
+     * @throws ExecutionListenerException
+     *             If the test fails.
      */
     public static String createXmlReport() throws ExecutionListenerException {
         StringWriter writer = new StringWriter();

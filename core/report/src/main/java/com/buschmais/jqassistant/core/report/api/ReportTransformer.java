@@ -9,5 +9,5 @@ import javax.xml.transform.Source;
  */
 public interface ReportTransformer {
 
-	void transform(Source source, Result target) throws ReportTransformerException;
+    void transform(Source source, Result target) throws ReportTransformerException;
 }

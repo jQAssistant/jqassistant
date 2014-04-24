@@ -6,25 +6,30 @@ package com.buschmais.jqassistant.core.analysis.api;
  */
 public class PluginReaderException extends Exception {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            The message.
-	 * @param cause
-	 *            The cause.
-	 */
-	public PluginReaderException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = -2317389179258285099L;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            The message.
-	 */
-	public PluginReaderException(String message) {
-		super(message);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            The message.
+     * @param cause
+     *            The cause.
+     */
+    public PluginReaderException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            The message.
+     */
+    public PluginReaderException(String message) {
+        super(message);
+    }
 }

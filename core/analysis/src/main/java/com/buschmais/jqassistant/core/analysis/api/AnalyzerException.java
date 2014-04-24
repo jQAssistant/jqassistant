@@ -5,25 +5,30 @@ package com.buschmais.jqassistant.core.analysis.api;
  */
 public class AnalyzerException extends Exception {
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            The message.
-	 * @param cause
-	 *            The cause.
-	 */
-	public AnalyzerException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * The serial version UID.
+     */
+    private static final long serialVersionUID = 4006069318251056205L;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param message
-	 *            The message.
-	 */
-	public AnalyzerException(String message) {
-		super(message);
-	}
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            The message.
+     * @param cause
+     *            The cause.
+     */
+    public AnalyzerException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param message
+     *            The message.
+     */
+    public AnalyzerException(String message) {
+        super(message);
+    }
 }

@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.scanner.impl.resource;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 
 /**
  * A resource iterable for processing a ZIP file.
