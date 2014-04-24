@@ -34,7 +34,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.pluginmanager</artifactId>
-            <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.buschmais.jqassistant.core</groupId>
@@ -49,7 +48,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.report</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <dependency>

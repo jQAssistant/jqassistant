@@ -12,8 +12,8 @@ import javax.jms.MessageListener;
 @Local
 public class MessageDrivenBean implements MessageListener {
 
-	@Override
-	public void onMessage(Message message) {
-	}
+    @Override
+    public void onMessage(Message message) {
+    }
 
 }

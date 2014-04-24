@@ -1,13 +1,17 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.regex.Pattern;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 /**
- * A [@link XMLStreamWriter} which transparently writes CDATA blocks if special characters are detected.
- *
- * @see <a href="http://blog.mi-ernst.de/2012/05/04/jaxb-and-cdata-sections/"/>here</a>.
+ * A [@link XMLStreamWriter} which transparently writes CDATA blocks if special
+ * characters are detected.
+ * 
+ * @see <a
+ *      href="http://blog.mi-ernst.de/2012/05/04/jaxb-and-cdata-sections/"/>here</a>
+ *      .
  */
 public class CDataXMLStreamWriter extends AbstractStreamWriterDelegate {
 

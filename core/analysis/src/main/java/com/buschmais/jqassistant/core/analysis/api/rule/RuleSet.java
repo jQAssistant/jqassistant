@@ -45,10 +45,6 @@ public class RuleSet {
 
     @Override
     public String toString() {
-        return "RuleSet{" +
-                "groups=" + groups +
-                ", constraints=" + constraints +
-                ", concepts=" + concepts +
-                '}';
+        return "RuleSet{" + "groups=" + groups + ", constraints=" + constraints + ", concepts=" + concepts + '}';
     }
 }

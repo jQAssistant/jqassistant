@@ -1,5 +1,20 @@
 package com.buschmais.jqassistant.scm.maven.shell;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.transform.Source;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.shell.AppCommandParser;
+import org.neo4j.shell.AppShellServer;
+import org.neo4j.shell.impl.AbstractApp;
+import org.neo4j.shell.kernel.GraphDatabaseShellServer;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
@@ -13,19 +28,6 @@ import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImp
 import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.GraphDbStore;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.shell.AppCommandParser;
-import org.neo4j.shell.AppShellServer;
-import org.neo4j.shell.impl.AbstractApp;
-import org.neo4j.shell.kernel.GraphDatabaseShellServer;
-
-import javax.xml.transform.Source;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Abstract base implementation for shell commands.
@@ -85,9 +87,12 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
         List<String> constraintNames = new ArrayList<>();
         List<String> groupNames = new ArrayList<>();
         for (String argument : parser.arguments()) {
-            if (parseArgument(CONCEPTS_PATTERN, argument, conceptNames)) ;
-            else if (parseArgument(CONSTRAINTS_PATTERN, argument, constraintNames)) ;
-            else if (parseArgument(GROUPS_PATTERN, argument, groupNames)) ;
+            if (parseArgument(CONCEPTS_PATTERN, argument, conceptNames))
+                ;
+            else if (parseArgument(CONSTRAINTS_PATTERN, argument, constraintNames))
+                ;
+            else if (parseArgument(GROUPS_PATTERN, argument, groupNames))
+                ;
             else {
                 throw new IllegalArgumentException("Illegal argument " + argument);
             }

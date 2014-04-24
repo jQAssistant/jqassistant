@@ -11,38 +11,38 @@ import javax.xml.ws.Response;
 @Path("/")
 public interface MyRestResource {
 
-	@GET
-	@Path("/testGet")
-	@Produces({ "application/json" })
-	String testGet();
+    @GET
+    @Path("/testGet")
+    @Produces({ "application/json" })
+    String testGet();
 
-	@POST
-	@Path("/testPost")
-	@Consumes("text/plain")
-	@Produces("text/plain")
-	String testPost(String message);
+    @POST
+    @Path("/testPost")
+    @Consumes("text/plain")
+    @Produces("text/plain")
+    String testPost(String message);
 
-	@PUT
-	@Path("/testPut")
-	@Produces({ "application/json" })
-	String testPut();
+    @PUT
+    @Path("/testPut")
+    @Produces({ "application/json" })
+    String testPut();
 
-	@DELETE
-	@Path("/testDelete")
-	@Produces({ "application/json" })
-	String testDelete();
+    @DELETE
+    @Path("/testDelete")
+    @Produces({ "application/json" })
+    String testDelete();
 
-	@HEAD
-	@Path("/testHead")
-	void testHead();
+    @HEAD
+    @Path("/testHead")
+    void testHead();
 
-	@OPTIONS
-	@Path("/testOptions")
-	Response<String> testOptions();
+    @OPTIONS
+    @Path("/testOptions")
+    Response<String> testOptions();
 
-	@Path("/subResource/{id}")
-	MySubResource getMySubResource(@PathParam("id") String id);
+    @Path("/subResource/{id}")
+    MySubResource getMySubResource(@PathParam("id") String id);
 
-	@Path("/invalidSubResource")
-	MySubResource getMyInvalidSubResource(String id);
+    @Path("/invalidSubResource")
+    MySubResource getMyInvalidSubResource(String id);
 }

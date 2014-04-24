@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.util.LinkedList;
-import java.util.List;
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 
 public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.AnnotationVisitor {
 
@@ -18,8 +19,9 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
 
     /**
      * Constructor.
-     *
-     * @param visitorHelper The {@link VisitorHelper}.
+     * 
+     * @param visitorHelper
+     *            The {@link VisitorHelper}.
      */
     protected AbstractAnnotationVisitor(D descriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);
@@ -72,10 +74,13 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
 
     /**
      * Create a value descriptor of given type and name and initializes it.
-     *
-     * @param type The class type.
-     * @param name The name
-     * @param <T>  The type.
+     * 
+     * @param type
+     *            The class type.
+     * @param name
+     *            The name
+     * @param <T>
+     *            The type.
      * @return The initialized descriptor.
      */
     private <T extends ValueDescriptor> T createValue(Class<T> type, String name) {
@@ -95,9 +100,11 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
 
     /**
      * Add the descriptor as value to the current annotation or array value.
-     *
-     * @param name  The name.
-     * @param value The value.
+     * 
+     * @param name
+     *            The name.
+     * @param value
+     *            The value.
      */
     private void addValue(String name, ValueDescriptor value) {
         if (arrayValueDescriptor != null && name == null) {
@@ -109,9 +116,11 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
 
     /**
      * Get the list of referenced values.
-     *
-     * @param valueDescriptor The value descriptor containing a list value.
-     * @param <T>             The type of the value descriptor.
+     * 
+     * @param valueDescriptor
+     *            The value descriptor containing a list value.
+     * @param <T>
+     *            The type of the value descriptor.
      * @return The list of referenced values.
      */
     private <T extends ValueDescriptor<List<ValueDescriptor>>> List<ValueDescriptor> getListValue(T valueDescriptor) {

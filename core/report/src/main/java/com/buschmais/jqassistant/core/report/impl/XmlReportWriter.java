@@ -1,5 +1,18 @@
 package com.buschmais.jqassistant.core.report.impl;
 
+import java.io.Writer;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -13,20 +26,10 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Language;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 /**
- * Implementation of an {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} which writes the results of an analysis to an XML file.
+ * Implementation of an
+ * {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} which
+ * writes the results of an analysis to an XML file.
  */
 public class XmlReportWriter implements ExecutionListener {
 
@@ -179,7 +182,8 @@ public class XmlReportWriter implements ExecutionListener {
                                 Object value = rowEntry.getValue();
                                 xmlStreamWriter.writeStartElement("column");
                                 xmlStreamWriter.writeAttribute("name", columnName);
-                                String stringValue = value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value).getFullQualifiedName() : value.toString();
+                                String stringValue = value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value)
+                                        .getFullQualifiedName() : value.toString();
                                 if (value instanceof Descriptor) {
                                     writeLanguageElement(value);
                                 }
@@ -199,10 +203,13 @@ public class XmlReportWriter implements ExecutionListener {
     }
 
     /**
-     * Determines the language and language element of a value from a result column.
-     *
-     * @param value The value.
-     * @throws XMLStreamException If a problem occurs.
+     * Determines the language and language element of a value from a result
+     * column.
+     * 
+     * @param value
+     *            The value.
+     * @throws XMLStreamException
+     *             If a problem occurs.
      */
     private void writeLanguageElement(Object value) throws XMLStreamException {
         for (Class<?> descriptorType : value.getClass().getInterfaces()) {

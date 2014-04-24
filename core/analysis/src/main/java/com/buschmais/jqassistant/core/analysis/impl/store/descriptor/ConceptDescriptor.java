@@ -12,5 +12,6 @@ public interface ConceptDescriptor extends Descriptor {
 
     @Indexed
     String getId();
+
     void setId(String id);
 }

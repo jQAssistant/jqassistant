@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.signature.SignatureVisitor;
+
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * Abstract implementation of a types signature visitor.
@@ -25,9 +26,11 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
 
     /**
      * Constructor.
-     *
-     * @param usingDescriptor The descriptor using the resolved types descriptor.
-     * @param visitorHelper   The {@link VisitorHelper}.
+     * 
+     * @param usingDescriptor
+     *            The descriptor using the resolved types descriptor.
+     * @param visitorHelper
+     *            The {@link VisitorHelper}.
      */
     protected AbstractTypeSignatureVisitor(T usingDescriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);

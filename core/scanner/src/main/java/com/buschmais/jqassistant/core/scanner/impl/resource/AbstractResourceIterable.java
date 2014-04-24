@@ -1,11 +1,5 @@
 package com.buschmais.jqassistant.core.scanner.impl.resource;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.transform.stream.StreamSource;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +7,20 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+
 /**
- * Abstract implementation of an {@link Iterable} for scanning resources using a collection of {@link FileScannerPlugin}s.
- *
- * @param <R> The resource type.
+ * Abstract implementation of an {@link Iterable} for scanning resources using a
+ * collection of {@link FileScannerPlugin}s.
+ * 
+ * @param <R>
+ *            The resource type.
  */
 public abstract class AbstractResourceIterable<R> implements Iterable<FileDescriptor> {
 

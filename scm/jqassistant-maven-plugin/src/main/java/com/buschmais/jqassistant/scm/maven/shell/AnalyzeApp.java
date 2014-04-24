@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.scm.maven.shell;
 
+import org.neo4j.helpers.Service;
+import org.neo4j.shell.*;
+
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -7,8 +10,6 @@ import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.common.AnalysisHelper;
-import org.neo4j.helpers.Service;
-import org.neo4j.shell.*;
 
 @Service.Implementation(App.class)
 public class AnalyzeApp extends AbstractJQAssistantApp {
@@ -35,7 +36,5 @@ public class AnalyzeApp extends AbstractJQAssistantApp {
         store.stop();
         return Continuation.INPUT_COMPLETE;
     }
-
-
 
 }

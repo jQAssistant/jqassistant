@@ -1,12 +1,15 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
-import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.tycho.core.TychoConstants;
@@ -19,15 +22,13 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 
 @RunWith(Parameterized.class)
 public class TychoProjectScannerPluginTest {
@@ -41,24 +42,23 @@ public class TychoProjectScannerPluginTest {
 
     @Parameters
     public static List<Object[]> data() {
-        Object[] nothingSelected = new Object[]{new ArrayList<String>(), new ArrayList<String>(), is(empty())};
-        Object[] oneFileSelected = new Object[]{Collections.singletonList("log"), new ArrayList<String>(),
-                hasItems(new File(clazz.getResource("log").getFile()))};
-        Object[] oneFileAndFolderSelected = new Object[]{Arrays.asList(new String[]{"log", "cache"}), new ArrayList<String>(),
-                hasItems(new File(clazz.getResource("log").getFile()))};
-        Object[] oneFileExcluded = new Object[]{Collections.singletonList("log"), Collections.singletonList("log"), is(empty())};
+        Object[] nothingSelected = new Object[] { new ArrayList<String>(), new ArrayList<String>(), is(empty()) };
+        Object[] oneFileSelected = new Object[] { Collections.singletonList("log"), new ArrayList<String>(),
+                hasItems(new File(clazz.getResource("log").getFile())) };
+        Object[] oneFileAndFolderSelected = new Object[] { Arrays.asList(new String[] { "log", "cache" }), new ArrayList<String>(),
+                hasItems(new File(clazz.getResource("log").getFile())) };
+        Object[] oneFileExcluded = new Object[] { Collections.singletonList("log"), Collections.singletonList("log"), is(empty()) };
 
-        return Arrays.asList(new Object[][]{nothingSelected, oneFileSelected, oneFileAndFolderSelected, oneFileExcluded});
+        return Arrays.asList(new Object[][] { nothingSelected, oneFileSelected, oneFileAndFolderSelected, oneFileExcluded });
     }
 
-    public TychoProjectScannerPluginTest(List<String> includes, List<String> excludes,
-                                         Matcher<? super Collection<? extends File>> matcher) throws IOException {
+    public TychoProjectScannerPluginTest(List<String> includes, List<String> excludes, Matcher<? super Collection<? extends File>> matcher) throws IOException {
         this.fileScanner = mock(FileScanner.class);
         this.store = mock(Store.class);
         this.project = mock(MavenProject.class);
         this.matcher = matcher;
 
-        when(fileScanner.scanFiles(Mockito.any(File.class), Mockito.any(List.class))).thenReturn(Collections.<FileDescriptor>emptyList());
+        when(fileScanner.scanFiles(Mockito.any(File.class), Mockito.any(List.class))).thenReturn(Collections.<FileDescriptor> emptyList());
 
         EclipsePluginProject pdeProject = mock(EclipsePluginProject.class);
         BuildProperties properties = mock(BuildProperties.class);
@@ -85,7 +85,7 @@ public class TychoProjectScannerPluginTest {
         Properties properties = new Properties();
         properties.put(MavenProject.class.getName(), project);
         plugin.initialize(store, properties);
-        ProjectScanner projectScanner = new ProjectScannerImpl(fileScanner, Arrays.<ProjectScannerPlugin>asList(plugin));
+        ProjectScanner projectScanner = new ProjectScannerImpl(fileScanner, Arrays.<ProjectScannerPlugin> asList(plugin));
         projectScanner.scan();
     }
 }

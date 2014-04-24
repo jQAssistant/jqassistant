@@ -23,28 +23,28 @@ import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.NotFoundExceptionMa
  */
 public class ExceptionMappingProviderIT extends AbstractPluginIT {
 
-	/**
-	 * Verifies the concept {@code jaxrs:ExceptionMappingProvider} for {@link ExceptionMapper}.
-	 * 
-	 * @throws java.io.IOException
-	 *             If the test fails.
-	 * @throws AnalyzerException
-	 *             If the test fails.
-	 * @throws NoSuchMethodException
-	 *             If the test fails.
-	 */
-	@Test
-	public void test_ExceptionMappingProvider_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
-		scanClasses(NotFoundExceptionMapper.class, BookResolver.class);
-		applyConcept("jaxrs:ExceptionMappingProvider");
-		store.beginTransaction();
-		assertThat("Expected exceptionMappingProvider",
-				query("MATCH (provider:JaxRS:ExceptionMappingProvider) RETURN provider").getColumn("provider"),
-				hasItem(typeDescriptor(NotFoundExceptionMapper.class)));
+    /**
+     * Verifies the concept {@code jaxrs:ExceptionMappingProvider} for
+     * {@link ExceptionMapper}.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void test_ExceptionMappingProvider_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+        scanClasses(NotFoundExceptionMapper.class, BookResolver.class);
+        applyConcept("jaxrs:ExceptionMappingProvider");
+        store.beginTransaction();
+        assertThat("Expected exceptionMappingProvider", query("MATCH (provider:JaxRS:ExceptionMappingProvider) RETURN provider").getColumn("provider"),
+                hasItem(typeDescriptor(NotFoundExceptionMapper.class)));
 
-		assertThat("UnExpected exceptionMappingProvider", query("MATCH (provider:JaxRS:ExceptionMappingProvider) RETURN provider")
-				.getColumn("provider"), not(hasItem(typeDescriptor(BookResolver.class))));
-		store.commitTransaction();
-	}
+        assertThat("UnExpected exceptionMappingProvider", query("MATCH (provider:JaxRS:ExceptionMappingProvider) RETURN provider").getColumn("provider"),
+                not(hasItem(typeDescriptor(BookResolver.class))));
+        store.commitTransaction();
+    }
 
 }

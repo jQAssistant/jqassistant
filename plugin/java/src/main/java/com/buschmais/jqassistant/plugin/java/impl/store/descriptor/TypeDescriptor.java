@@ -1,10 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.xo.api.annotation.ResultOf;
-import com.buschmais.xo.neo4j.api.annotation.Cypher;
-import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Relation;
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Type;
+import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,9 +10,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Set;
 
-import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Type;
-import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
-import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.neo4j.api.annotation.Cypher;
+import com.buschmais.xo.neo4j.api.annotation.Label;
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
  * Describes a Java type.
@@ -26,11 +26,12 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
     @Relation("DECLARES")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Declares {}
+    public @interface Declares {
+    }
 
     /**
      * Return the super class.
-     *
+     * 
      * @return The super class.
      */
     @Relation("EXTENDS")
@@ -38,14 +39,15 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     /**
      * Set the super class.
-     *
-     * @param superClass The super class.
+     * 
+     * @param superClass
+     *            The super class.
      */
     public void setSuperClass(TypeDescriptor superClass);
 
     /**
      * Return the implemented interfaces.
-     *
+     * 
      * @return The implemented interfaces.
      */
     @Relation("IMPLEMENTS")
@@ -57,7 +59,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     /**
      * Return the declared methods.
-     *
+     * 
      * @return The declared methods.
      */
     @Outgoing
@@ -70,7 +72,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     /**
      * Return the declared fields.
-     *
+     * 
      * @return The declared fields.
      */
     @Outgoing
@@ -83,7 +85,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
 
     /**
      * Return the declared inner classes.
-     *
+     * 
      * @return The declared inner classes.
      */
     @Relation("DECLARES")

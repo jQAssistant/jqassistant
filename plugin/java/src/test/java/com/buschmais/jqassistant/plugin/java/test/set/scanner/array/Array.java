@@ -5,13 +5,13 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.array;
  */
 public class Array {
 
-	private String[] stringArray;
+    private String[] stringArray;
 
-	public String[] getStringArray() {
-		return stringArray;
-	}
+    public String[] getStringArray() {
+        return stringArray;
+    }
 
-	public void setStringArray(String[] stringArray) {
-		this.stringArray = stringArray;
-	}
+    public void setStringArray(String[] stringArray) {
+        this.stringArray = stringArray;
+    }
 }

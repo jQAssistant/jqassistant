@@ -1,19 +1,21 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+
+import javax.xml.transform.stream.StreamSource;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestEntryDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestSectionDescriptor;
 
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
 /**
- * Implementation of the {@link AbstractFileScannerPlugin} for java MANIFEST.MF files.
+ * Implementation of the {@link AbstractFileScannerPlugin} for java MANIFEST.MF
+ * files.
  */
 public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin {
 

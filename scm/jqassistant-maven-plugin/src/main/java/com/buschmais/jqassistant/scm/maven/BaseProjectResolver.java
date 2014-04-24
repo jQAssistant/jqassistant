@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
 
 /**
  * Resolver for base projects in a multi-module hierarchy.
@@ -34,10 +34,12 @@ public final class BaseProjectResolver {
      * current project over its parents until a project is found containing a
      * directory "jqassistant" or no parent can be determined.
      * </p>
-     *
-     * @param project The current project.
+     * 
+     * @param project
+     *            The current project.
      * @return The {@link MavenProject} containing a rules directory.
-     * @throws MojoExecutionException If the directory cannot be resolved.
+     * @throws MojoExecutionException
+     *             If the directory cannot be resolved.
      */
     static MavenProject getBaseProject(MavenProject project) throws MojoExecutionException {
         MavenProject currentProject = project;
@@ -59,8 +61,9 @@ public final class BaseProjectResolver {
 
     /**
      * Determines the directory for writing output files.
-     *
-     * @param baseProject The base project.
+     * 
+     * @param baseProject
+     *            The base project.
      * @return The report directory.
      */
     static File getOutputDirectory(MavenProject baseProject) {
@@ -72,12 +75,15 @@ public final class BaseProjectResolver {
 
     /**
      * Determines a report file name.
-     *
-     * @param baseProject The base project.
-     * @param reportFile  The report file as specified in the pom.xml file or on the
-     *                    command line.
+     * 
+     * @param baseProject
+     *            The base project.
+     * @param reportFile
+     *            The report file as specified in the pom.xml file or on the
+     *            command line.
      * @return The resolved {@link java.io.File}.
-     * @throws org.apache.maven.plugin.MojoExecutionException If the file cannot be determined.
+     * @throws org.apache.maven.plugin.MojoExecutionException
+     *             If the file cannot be determined.
      */
     static File getOutputFile(MavenProject baseProject, File reportFile, String defaultFile) throws MojoExecutionException {
         File selectedXmlReportFile;

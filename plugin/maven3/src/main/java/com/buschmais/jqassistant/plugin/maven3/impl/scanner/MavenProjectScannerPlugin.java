@@ -1,15 +1,16 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 
 /**
  * A project scanner plugin for maven projects.
@@ -29,9 +30,11 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     /**
      * Scan the given directory for classes.
-     *
-     * @param directoryName The directory.
-     * @throws java.io.IOException If scanning fails.
+     * 
+     * @param directoryName
+     *            The directory.
+     * @throws java.io.IOException
+     *             If scanning fails.
      */
     private void scanDirectory(FileScanner fileScanner, final String directoryName, boolean testJar) throws IOException {
         final File directory = new File(directoryName);
@@ -53,9 +56,11 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     /**
      * Scans a directory for test reports.
-     *
-     * @param directoryName The directory name.
-     * @throws java.io.IOException If scanning fails.
+     * 
+     * @param directoryName
+     *            The directory name.
+     * @throws java.io.IOException
+     *             If scanning fails.
      */
     private void scanTestReports(FileScanner fileScanner, String directoryName) throws IOException {
         final File directory = new File(directoryName);

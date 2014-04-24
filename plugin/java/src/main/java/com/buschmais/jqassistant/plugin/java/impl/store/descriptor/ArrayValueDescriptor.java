@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
+import java.util.List;
+
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-
-import java.util.List;
 
 /**
  * Represents an array value.

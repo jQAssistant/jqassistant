@@ -1,15 +1,16 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import org.codehaus.plexus.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.codehaus.plexus.component.annotations.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * Repository holding stores identified by their directory.
@@ -32,8 +33,9 @@ public class StoreRepository {
             directory.getParentFile().mkdirs();
             store = new EmbeddedGraphStore(directory.getAbsolutePath());
             if (reset) {
-                // reset the store if the current project is the base project (i.e. where the rules are located).
-                store.start(Collections.<Class<?>>emptyList());
+                // reset the store if the current project is the base project
+                // (i.e. where the rules are located).
+                store.start(Collections.<Class<?>> emptyList());
                 store.reset();
                 store.stop();
             }

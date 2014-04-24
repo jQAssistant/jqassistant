@@ -7,7 +7,7 @@ public interface Console {
 
     /**
      * Print an info message.
-     *
+     * 
      * @param message
      *            The message.
      */
@@ -15,7 +15,7 @@ public interface Console {
 
     /**
      * Print a warning message.
-     *
+     * 
      * @param message
      *            The message.
      */
@@ -23,7 +23,7 @@ public interface Console {
 
     /**
      * Print an error message.
-     *
+     * 
      * @param message
      *            The message.
      */

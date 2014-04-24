@@ -17,17 +17,17 @@ import javax.ws.rs.ext.Provider;
  * @author Aparna Chaudhary
  */
 @Provider
-public class BookReader implements MessageBodyReader<Book>{
+public class BookReader implements MessageBodyReader<Book> {
 
-	@Override
-	public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return true;
-	}
+    @Override
+    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return true;
+    }
 
-	@Override
-	public Book readFrom(Class<Book> type, Type genericType, Annotation[] annotations, MediaType mediaType,
-			MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
-		return new Book();
-	}
+    @Override
+    public Book readFrom(Class<Book> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders,
+            InputStream entityStream) throws IOException, WebApplicationException {
+        return new Book();
+    }
 
 }

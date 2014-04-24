@@ -1,16 +1,5 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.resource.ClassResourceIterable;
-import com.buschmais.jqassistant.core.scanner.impl.resource.FileResourceIterable;
-import com.buschmais.jqassistant.core.scanner.impl.resource.UrlResourceIterable;
-import com.buschmais.jqassistant.core.scanner.impl.resource.ZipResourceIterable;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import org.apache.commons.io.DirectoryWalker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +7,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipFile;
+
+import org.apache.commons.io.DirectoryWalker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.resource.ClassResourceIterable;
+import com.buschmais.jqassistant.core.scanner.impl.resource.FileResourceIterable;
+import com.buschmais.jqassistant.core.scanner.impl.resource.UrlResourceIterable;
+import com.buschmais.jqassistant.core.scanner.impl.resource.ZipResourceIterable;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 
 /**
  * Implementation of the {@link FileScanner}.
@@ -30,8 +31,9 @@ public class FileScannerImpl implements FileScanner {
 
     /**
      * Constructor.
-     *
-     * @param plugins The {@link FileScannerPlugin}s to use for scanning.
+     * 
+     * @param plugins
+     *            The {@link FileScannerPlugin}s to use for scanning.
      */
     public FileScannerImpl(Collection<FileScannerPlugin> plugins) {
         this.plugins = plugins;

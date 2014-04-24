@@ -1,5 +1,22 @@
 package com.buschmais.jqassistant.plugin.jpa2.test;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.assertThat;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -9,22 +26,6 @@ import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDe
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
 import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the JPA concepts.
@@ -33,9 +34,11 @@ public class Jpa2IT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "jpa2:Entity".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void entity() throws IOException, AnalyzerException {
@@ -48,9 +51,11 @@ public class Jpa2IT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "jpa2:NamedQuery".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void namedQuery() throws IOException, AnalyzerException {
@@ -68,9 +73,11 @@ public class Jpa2IT extends AbstractPluginIT {
 
     /**
      * Verifies scanning of persistence descriptors.
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void fullPersistenceDescriptor() throws IOException, AnalyzerException {
@@ -88,9 +95,11 @@ public class Jpa2IT extends AbstractPluginIT {
 
     /**
      * Verifies scanning of persistence unit descriptors.
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void fullPersistenceUnitDescriptor() throws IOException, AnalyzerException {
@@ -115,9 +124,11 @@ public class Jpa2IT extends AbstractPluginIT {
 
     /**
      * Verifies scanning of persistence descriptors.
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void minimalPersistenceDescriptor() throws IOException, AnalyzerException {
@@ -134,10 +145,13 @@ public class Jpa2IT extends AbstractPluginIT {
     }
 
     /**
-     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if it is not set.
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if
+     * it is not set.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void validationModeNotSpecified() throws IOException, AnalyzerException {
@@ -149,15 +163,18 @@ public class Jpa2IT extends AbstractPluginIT {
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> constraintResult = constraintViolations.get(0);
-        assertThat(constraintResult.isEmpty(),equalTo(false));
+        assertThat(constraintResult.isEmpty(), equalTo(false));
         store.commitTransaction();
     }
 
     /**
-     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if it is set to AUTO.
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if
+     * it is set to AUTO.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void validationModeAuto() throws IOException, AnalyzerException {
@@ -169,15 +186,18 @@ public class Jpa2IT extends AbstractPluginIT {
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> constraintResult = constraintViolations.get(0);
-        assertThat(constraintResult.isEmpty(),equalTo(false));
+        assertThat(constraintResult.isEmpty(), equalTo(false));
         store.commitTransaction();
     }
 
     /**
-     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" for values NONE and CALLBACK.
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified"
+     * for values NONE and CALLBACK.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void validationModeSpecified() throws IOException, AnalyzerException {
@@ -187,7 +207,7 @@ public class Jpa2IT extends AbstractPluginIT {
         List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> constraintResult = constraintViolations.get(0);
-        assertThat(constraintResult.isEmpty(),equalTo(true));
+        assertThat(constraintResult.isEmpty(), equalTo(true));
         store.commitTransaction();
     }
 }

@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import org.objectweb.asm.Opcodes;
+
 import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
-import org.objectweb.asm.Attribute;
-import org.objectweb.asm.Opcodes;
 
 public class FieldVisitor extends org.objectweb.asm.FieldVisitor {
 

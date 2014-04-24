@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
+
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
@@ -20,7 +21,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Return the type descriptor created by visiting the class.
-     *
+     * 
      * @return The type descriptor.
      */
     public TypeDescriptor getTypeDescriptor() {
@@ -28,8 +29,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     @Override
-    public void visit(final int version, final int access, final String name, final String signature, final String superName,
-                      final String[] interfaces) {
+    public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         Class<? extends TypeDescriptor> javaType = getJavaType(access);
         typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(name), javaType);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
@@ -89,8 +89,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     }
 
     @Override
-    public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature,
-                                     final String[] exceptions) {
+    public MethodVisitor visitMethod(final int access, final String name, final String desc, final String signature, final String[] exceptions) {
         MethodDescriptor methodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, SignatureHelper.getMethodSignature(name, desc));
         typeDescriptor.addDeclaredMethod(methodDescriptor);
         methodDescriptor.setName(name);
@@ -166,11 +165,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Checks whether the value contains the flag.
-     *
-     * @param value the value
-     * @param flag  the flag
+     * 
+     * @param value
+     *            the value
+     * @param flag
+     *            the flag
      * @return <code>true</code> if (value & flag) == flag, otherwise
-     * <code>false</code>.
+     *         <code>false</code>.
      */
     private boolean hasFlag(int value, int flag) {
         return (value & flag) == flag;
@@ -178,8 +179,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Returns the AccessModifier for the flag pattern.
-     *
-     * @param flags the flags
+     * 
+     * @param flags
+     *            the flags
      * @return the AccessModifier
      */
     private VisibilityModifier getVisibility(int flags) {
@@ -196,8 +198,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Determine the types label to be applied to a class node.
-     *
-     * @param flags The access flags.
+     * 
+     * @param flags
+     *            The access flags.
      * @return The types label.
      */
     private Class<? extends TypeDescriptor> getJavaType(int flags) {
@@ -213,9 +216,11 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     /**
      * Adds an inner class relation.
-     *
-     * @param outerClass The outer class.
-     * @param innerClass The inner class.
+     * 
+     * @param outerClass
+     *            The outer class.
+     * @param innerClass
+     *            The inner class.
      */
     private void addInnerClass(TypeDescriptor outerClass, TypeDescriptor innerClass) {
         if (!innerClass.equals(outerClass)) {

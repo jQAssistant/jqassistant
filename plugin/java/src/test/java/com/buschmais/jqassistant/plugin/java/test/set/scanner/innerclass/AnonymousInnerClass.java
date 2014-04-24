@@ -8,21 +8,21 @@ import java.util.Iterator;
  */
 public class AnonymousInnerClass<X> {
 
-	public Iterator<X> iterator() {
-		return new Iterator<X>() {
-			@Override
-			public boolean hasNext() {
-				return false;
-			}
+    public Iterator<X> iterator() {
+        return new Iterator<X>() {
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
 
-			@Override
-			public X next() {
-				return null;
-			}
+            @Override
+            public X next() {
+                return null;
+            }
 
-			@Override
-			public void remove() {
-			}
-		};
-	}
+            @Override
+            public void remove() {
+            }
+        };
+    }
 }

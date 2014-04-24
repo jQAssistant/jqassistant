@@ -7,10 +7,10 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  */
 public interface EnumValueDescriptor extends TypedDescriptor, ValueDescriptor<FieldDescriptor>, EnumDescriptor {
 
-	@Relation("HAS")
-	@Override
-	FieldDescriptor getValue();
+    @Relation("HAS")
+    @Override
+    FieldDescriptor getValue();
 
-	@Override
-	void setValue(FieldDescriptor fieldDescriptor);
+    @Override
+    void setValue(FieldDescriptor fieldDescriptor);
 }

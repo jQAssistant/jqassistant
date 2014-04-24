@@ -1,13 +1,14 @@
 package com.buschmais.jqassistant.scm.maven.shell;
 
-import com.buschmais.jqassistant.scm.common.Console;
-import org.neo4j.shell.Output;
-
 import java.rmi.RemoteException;
 
+import org.neo4j.shell.Output;
+
+import com.buschmais.jqassistant.scm.common.Console;
+
 /**
-* Created by Dirk Mahler on 22.04.2014.
-*/
+ * Created by Dirk Mahler on 22.04.2014.
+ */
 class ShellConsole implements Console {
 
     private final Output out;
@@ -24,6 +25,7 @@ class ShellConsole implements Console {
             throw new IllegalStateException("Cannot print error message.", e);
         }
     }
+
     @Override
     public void warn(String message) {
         try {

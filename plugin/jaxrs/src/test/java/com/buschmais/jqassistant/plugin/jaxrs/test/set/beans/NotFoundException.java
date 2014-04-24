@@ -9,10 +9,10 @@ import javax.ws.rs.ext.ExceptionMapper;
  */
 public class NotFoundException extends RuntimeException {
 
-	private static final long serialVersionUID = 4426747053663869059L;
+    private static final long serialVersionUID = 4426747053663869059L;
 
-	public NotFoundException(String message) {
-		super(message);
-	}
+    public NotFoundException(String message) {
+        super(message);
+    }
 
 }

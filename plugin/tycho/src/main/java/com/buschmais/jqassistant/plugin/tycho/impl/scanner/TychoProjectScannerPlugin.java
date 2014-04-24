@@ -1,11 +1,9 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.AbstractMavenProjectScannerPlugin;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
@@ -14,9 +12,12 @@ import org.eclipse.tycho.core.TychoConstants;
 import org.eclipse.tycho.core.facade.BuildProperties;
 import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.AbstractMavenProjectScannerPlugin;
 
 /**
  * Implementation of a {@link ProjectScannerPlugin} for tycho projects
@@ -57,20 +58,19 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     private Iterator<PlexusIoResource> getPDEBinaries(MavenProject project, EclipsePluginProject pdeProject) throws IOException {
         BuildProperties buildProperties = pdeProject.getBuildProperties();
-        return getResourceFileCollection(project.getBasedir(), buildProperties.getBinIncludes(), buildProperties.getBinExcludes())
-                .getResources();
+        return getResourceFileCollection(project.getBasedir(), buildProperties.getBinIncludes(), buildProperties.getBinExcludes()).getResources();
     }
 
     /**
      * @return a {@link PlexusIoFileResourceCollection} with the given includes
-     * and excludes and the configured default excludes. An empty list
-     * of includes leads to an empty collection.
+     *         and excludes and the configured default excludes. An empty list
+     *         of includes leads to an empty collection.
      */
     protected PlexusIoFileResourceCollection getResourceFileCollection(File basedir, List<String> includes, List<String> excludes) {
         PlexusIoFileResourceCollection collection = new PlexusIoFileResourceCollection();
         collection.setBaseDir(basedir);
         if (includes.isEmpty()) {
-            collection.setIncludes(new String[]{""});
+            collection.setIncludes(new String[] { "" });
         } else {
             collection.setIncludes(includes.toArray(new String[includes.size()]));
         }

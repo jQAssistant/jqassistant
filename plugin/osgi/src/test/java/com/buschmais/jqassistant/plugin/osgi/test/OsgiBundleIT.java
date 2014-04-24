@@ -1,5 +1,26 @@
 package com.buschmais.jqassistant.plugin.osgi.test;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.collection.IsMapContaining.hasValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -13,25 +34,6 @@ import com.buschmais.jqassistant.plugin.osgi.test.impl.Activator;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.ServiceImpl;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.a.UsedPublicClass;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.b.UnusedPublicClass;
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.collection.IsMapContaining.hasValue;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Contains tests regarding manifest files.
@@ -40,24 +42,31 @@ public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "osgi-bundle:Bundle".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void bundle() throws IOException, AnalyzerException {
         scanURLs(getManifestUrl());
         applyConcept("osgi-bundle:Bundle");
         store.beginTransaction();
-        assertThat(query("MATCH (bundle:OSGI:BUNDLE) WHERE bundle.BUNDLESYMBOLICNAME='com.buschmais.jqassistant.plugin.osgi.test' and bundle.BUNDLEVERSION='0.1.0' RETURN bundle").getColumn("bundle").size(), equalTo(1));
+        assertThat(
+                query(
+                        "MATCH (bundle:OSGI:BUNDLE) WHERE bundle.BUNDLESYMBOLICNAME='com.buschmais.jqassistant.plugin.osgi.test' and bundle.BUNDLEVERSION='0.1.0' RETURN bundle")
+                        .getColumn("bundle").size(), equalTo(1));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "osgi-bundle:ExportPackage".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void exportedPackages() throws IOException, AnalyzerException {
@@ -73,9 +82,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "osgi-bundle:ImportPackage".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void importedPackages() throws IOException, AnalyzerException {
@@ -91,9 +102,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "osgi-bundle:Activator".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void activator() throws IOException, AnalyzerException {
@@ -109,9 +122,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "osgi-bundle:InternalType".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void internalType() throws IOException, AnalyzerException {
@@ -121,15 +136,20 @@ public class OsgiBundleIT extends AbstractPluginIT {
         applyConcept("osgi-bundle:InternalType");
         store.beginTransaction();
         List<TypeDescriptor> internalTypes = query("MATCH (t:TYPE:INTERNAL) RETURN t").getColumn("t");
-        assertThat(internalTypes, hasItems(typeDescriptor(Activator.class), typeDescriptor(UsedPublicClass.class), typeDescriptor(UnusedPublicClass.class), typeDescriptor(ServiceImpl.class)));
+        assertThat(
+                internalTypes,
+                hasItems(typeDescriptor(Activator.class), typeDescriptor(UsedPublicClass.class), typeDescriptor(UnusedPublicClass.class),
+                        typeDescriptor(ServiceImpl.class)));
         store.commitTransaction();
     }
 
     /**
      * Verifies the constraint "osgi-bundle:UnusedInternalType".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void unusedInternalType() throws IOException, AnalyzerException {
@@ -152,9 +172,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
      * Verifies the constraint "osgi-bundle:InternalTypeMustNotBePublic".
-     *
-     * @throws IOException       If the test fails.
-     * @throws AnalyzerException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void internalTypeMustNotBePublic() throws IOException, AnalyzerException {
@@ -177,9 +199,10 @@ public class OsgiBundleIT extends AbstractPluginIT {
 
     /**
      * Retrieves the URL of the test MANIFEST.MF file.
-     *
+     * 
      * @return The URL.
-     * @throws IOException If a problem occurs.
+     * @throws IOException
+     *             If a problem occurs.
      */
     private URL getManifestUrl() throws IOException {
         return new File(OsgiBundleIT.class.getResource("/").getFile(), "/META-INF/MANIFEST.MF").toURI().toURL();

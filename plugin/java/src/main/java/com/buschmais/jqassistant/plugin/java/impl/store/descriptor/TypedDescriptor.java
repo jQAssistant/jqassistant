@@ -7,8 +7,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  */
 public interface TypedDescriptor {
 
-	@Relation("OF_TYPE")
-	TypeDescriptor getType();
+    @Relation("OF_TYPE")
+    TypeDescriptor getType();
 
-	void setType(TypeDescriptor type);
+    void setType(TypeDescriptor type);
 }

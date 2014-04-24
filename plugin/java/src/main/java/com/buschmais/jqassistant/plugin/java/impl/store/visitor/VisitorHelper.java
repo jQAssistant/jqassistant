@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
+import java.util.Map;
+
+import org.apache.commons.collections.map.LRUMap;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
-import org.apache.commons.collections.map.LRUMap;
-
-import java.util.Map;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -29,9 +30,11 @@ public class VisitorHelper {
 
     /**
      * Constructor.
-     *
-     * @param store           The store.
-     * @param resolverFactory The resolver factory used for looking up descriptors.
+     * 
+     * @param store
+     *            The store.
+     * @param resolverFactory
+     *            The resolver factory used for looking up descriptors.
      */
     public VisitorHelper(Store store, DescriptorResolverFactory resolverFactory) {
         this.store = store;
@@ -40,8 +43,9 @@ public class VisitorHelper {
 
     /*
      * Return the type descriptor for the given type name.
-     *
-     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
+     * 
+     * @param typeName The full qualified name of the type (e.g.
+     * java.lang.Object).
      */
     TypeDescriptor getTypeDescriptor(String fullQualifiedName) {
         return getTypeDescriptor(fullQualifiedName, TypeDescriptor.class);
@@ -49,9 +53,10 @@ public class VisitorHelper {
 
     /*
      * Return the type descriptor for the given type name.
-     *
-     * @param typeName The full qualified name of the type (e.g. java.lang.Object).
-     *
+     * 
+     * @param typeName The full qualified name of the type (e.g.
+     * java.lang.Object).
+     * 
      * @param type The expected type.
      */
     TypeDescriptor getTypeDescriptor(String fullQualifiedName, Class<? extends TypeDescriptor> type) {
@@ -71,9 +76,11 @@ public class VisitorHelper {
 
     /**
      * Return the method descriptor for the given type and method signature.
-     *
-     * @param type      The containing type.
-     * @param signature The method signature.
+     * 
+     * @param type
+     *            The containing type.
+     * @param signature
+     *            The method signature.
      * @return The method descriptor.
      */
     MethodDescriptor getMethodDescriptor(TypeDescriptor type, String signature) {
@@ -91,10 +98,13 @@ public class VisitorHelper {
 
     /**
      * Get the member cache for a type descriptor.
-     *
-     * @param type        The type descriptor.
-     * @param memberCache The cache holding members by their type.
-     * @param <T>         The member type.
+     * 
+     * @param type
+     *            The type descriptor.
+     * @param memberCache
+     *            The cache holding members by their type.
+     * @param <T>
+     *            The member type.
      * @return The member cache.
      */
     private <T extends Descriptor> Map<String, T> getMemberCache(TypeDescriptor type, Map<TypeDescriptor, Map<String, T>> memberCache) {
@@ -108,9 +118,11 @@ public class VisitorHelper {
 
     /**
      * Return the field descriptor for the given type and field signature.
-     *
-     * @param type      The containing type.
-     * @param signature The field signature.
+     * 
+     * @param type
+     *            The containing type.
+     * @param signature
+     *            The field signature.
      * @return The field descriptor.
      */
     FieldDescriptor getFieldDescriptor(TypeDescriptor type, String signature) {
@@ -125,9 +137,11 @@ public class VisitorHelper {
 
     /**
      * Creates a {@link ValueDescriptor}.
-     *
-     * @param valueDescriptorType The type of the value descriptor.
-     * @param <T>                 The type of the value descriptor.
+     * 
+     * @param valueDescriptorType
+     *            The type of the value descriptor.
+     * @param <T>
+     *            The type of the value descriptor.
      * @return The value descriptor.
      */
     <T extends ValueDescriptor> T getValueDescriptor(Class<T> valueDescriptorType) {
@@ -137,9 +151,11 @@ public class VisitorHelper {
     /**
      * Add an annotation descriptor of the given type name to an annotated
      * descriptor.
-     *
-     * @param annotatedDescriptor The annotated descriptor.
-     * @param typeName            The type name of the annotation.
+     * 
+     * @param annotatedDescriptor
+     *            The annotated descriptor.
+     * @param typeName
+     *            The type name of the annotation.
      * @return The annotation descriptor.
      */
     AnnotationValueDescriptor addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
@@ -156,9 +172,11 @@ public class VisitorHelper {
     /**
      * Create and return the parameter descriptor for the given methodDescriptor
      * and parameter index.
-     *
-     * @param methodDescriptor The declaring methodDescriptor.
-     * @param index            The parameter index.
+     * 
+     * @param methodDescriptor
+     *            The declaring methodDescriptor.
+     * @param index
+     *            The parameter index.
      * @return The parameter descriptor.
      */
     ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
@@ -170,9 +188,11 @@ public class VisitorHelper {
 
     /**
      * Adds a dependency to the given type name to a dependent descriptor.
-     *
-     * @param dependentDescriptor The dependent descriptor.
-     * @param typeName            The type name of the dependency.
+     * 
+     * @param dependentDescriptor
+     *            The dependent descriptor.
+     * @param typeName
+     *            The type name of the dependency.
      */
     void addDependency(DependentDescriptor dependentDescriptor, String typeName) {
         if (typeName != null) {
