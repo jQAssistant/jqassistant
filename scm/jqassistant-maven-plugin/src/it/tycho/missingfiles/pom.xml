@@ -6,8 +6,9 @@
 		<groupId>@project.groupId@</groupId>
 		<artifactId>@project.artifactId@.integration</artifactId>
 		<version>@project.version@</version>
+        <relativePath>../../pom.xml</relativePath>
 	</parent>
-	<artifactId>com.buschmais.jqassistant.scm.maven.it.tycho.add.files</artifactId>
+	<artifactId>com.buschmais.jqassistant.scm.maven.it.tycho.missingfiles</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 
@@ -19,18 +20,7 @@
 				<version>0.19.0</version>
 				<extensions>true</extensions>
 			</plugin>
-
-			<plugin>
-				<groupId>@project.groupId@</groupId>
-				<artifactId>@project.artifactId@</artifactId>
-				<dependencies>
-					<dependency>
-						<groupId>com.buschmais.jqassistant.plugin</groupId>
-						<artifactId>jqassistant.plugin.tycho</artifactId>
-						<version>@project.version@</version>
-					</dependency>
-				</dependencies>
-			</plugin>
 		</plugins>
 	</build>
 </project>
+

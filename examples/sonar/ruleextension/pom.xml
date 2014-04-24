@@ -20,6 +20,7 @@
             <plugin>
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
+                <version>1.9</version>
                 <extensions>true</extensions>
                 <configuration>
                     <basePlugin>jqassistant</basePlugin>
