@@ -6,19 +6,19 @@ import org.neo4j.helpers.Service;
 import org.neo4j.shell.*;
 
 @Service.Implementation(App.class)
-public class AvailableRulesApp extends AbstractJQAssistantApp {
+public class EffectiveRulesApp extends AbstractJQAssistantApp {
 
-    public AvailableRulesApp() throws PluginReaderException {
+    public EffectiveRulesApp() throws PluginReaderException {
     }
 
     @Override
     public String getCommand() {
-        return "available-rules";
+        return "effective-rules";
     }
 
     @Override
     public Continuation execute(AppCommandParser parser, Session session, Output out) throws Exception {
-        new AnalysisHelper(new ShellConsole(out)).printRuleSet(getAvailableRules());
+        new AnalysisHelper(new ShellConsole(out)).printRuleSet(getEffectiveRuleSet(parser));
         return Continuation.INPUT_COMPLETE;
     }
 }
