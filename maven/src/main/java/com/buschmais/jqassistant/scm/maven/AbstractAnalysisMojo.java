@@ -1,5 +1,21 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
@@ -15,20 +31,6 @@ import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -93,7 +95,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the plugin properties.
-     *
+     * 
      * @return The plugin properties.
      */
     protected Properties getPluginProperties() {
@@ -102,11 +104,14 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the scanner plugin repository.
-     *
-     * @param store      The store.
-     * @param properties The properties.
+     * 
+     * @param store
+     *            The store.
+     * @param properties
+     *            The properties.
      * @return The scanner plugin repository.
-     * @throws MojoExecutionException If the repository cannot be created.
+     * @throws MojoExecutionException
+     *             If the repository cannot be created.
      */
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Properties properties) throws MojoExecutionException {
         try {
@@ -118,9 +123,10 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the rule plugin repository.
-     *
+     * 
      * @return The rule plugin repository.
-     * @throws MojoExecutionException If the repository cannot be created.
+     * @throws MojoExecutionException
+     *             If the repository cannot be created.
      */
     protected RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
         try {
@@ -132,9 +138,11 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
-     *
-     * @return A {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}.
-     * @throws MojoExecutionException If the rules cannot be read.
+     * 
+     * @return A
+     *         {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}.
+     * @throws MojoExecutionException
+     *             If the rules cannot be read.
      */
     protected RuleSet readRules(MavenProject baseProject) throws MojoExecutionException {
         File selectedDirectory;
@@ -166,9 +174,10 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Resolves the effective rules.
-     *
+     * 
      * @return The resolved rules set.
-     * @throws MojoExecutionException If resolving fails.
+     * @throws MojoExecutionException
+     *             If resolving fails.
      */
     protected RuleSet resolveEffectiveRules(MavenProject baseProject) throws MojoExecutionException {
         RuleSet ruleSet = readRules(baseProject);
@@ -182,11 +191,13 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Retrieves the list of available rules from the rules directory.
-     *
-     * @param rulesDirectory The rules directory.
+     * 
+     * @param rulesDirectory
+     *            The rules directory.
      * @return The {@link java.util.List} of available rules
-     * {@link java.io.File}s.
-     * @throws MojoExecutionException If the rules directory cannot be read.
+     *         {@link java.io.File}s.
+     * @throws MojoExecutionException
+     *             If the rules directory cannot be read.
      */
     private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
@@ -217,9 +228,11 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * Validates the given rules set for unresolved concepts, constraints or
      * groups.
-     *
-     * @param ruleSet The rules set.
-     * @throws MojoExecutionException If there are unresolved concepts, constraints or groups.
+     * 
+     * @param ruleSet
+     *            The rules set.
+     * @throws MojoExecutionException
+     *             If there are unresolved concepts, constraints or groups.
      */
     private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {
         StringBuffer message = new StringBuffer();
@@ -242,8 +255,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Logs the given {@link RuleSet} on level info.
-     *
-     * @param ruleSet The {@link RuleSet}.
+     * 
+     * @param ruleSet
+     *            The {@link RuleSet}.
      */
     protected void logRuleSet(RuleSet ruleSet) {
         getLog().info("Groups [" + ruleSet.getGroups().size() + "]");

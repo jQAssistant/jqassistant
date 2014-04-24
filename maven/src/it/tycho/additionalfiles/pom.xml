@@ -6,7 +6,7 @@
 		<groupId>@project.groupId@</groupId>
 		<artifactId>@project.artifactId@.integration</artifactId>
 		<version>@project.version@</version>
-        <relativePath>../../pom.xml</relativePath>
+		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>com.buschmais.jqassistant.scm.maven.it.tycho.additionalfiles</artifactId>
 	<packaging>eclipse-plugin</packaging>

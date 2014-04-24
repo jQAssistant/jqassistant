@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import java.io.*;
+import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.Set;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -16,10 +19,8 @@ import org.neo4j.shell.impl.RemoteOutput;
 import org.neo4j.shell.impl.SameJvmClient;
 import org.neo4j.shell.kernel.GraphDatabaseShellServer;
 
-import java.io.*;
-import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Set;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * Exports the database as a file containing cypher statements.
@@ -97,7 +98,7 @@ public class ExportDatabaseMojo extends AbstractAnalysisAggregatorMojo {
         }
         ShellClient shellClient;
         try {
-            shellClient = new SameJvmClient(Collections.<String, Serializable>singletonMap("quiet", true), shellServer, output);
+            shellClient = new SameJvmClient(Collections.<String, Serializable> singletonMap("quiet", true), shellServer, output);
         } catch (ShellException e) {
             throw new MojoExecutionException("Cannot create shell client.", e);
         }
