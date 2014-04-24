@@ -10,21 +10,21 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
  */
 public enum VisibilityModifier {
 
-	/**
-	 * Modifier: private.
-	 */
-	PRIVATE,
-	/**
-	 * Modifier: default.
-	 */
-	DEFAULT,
-	/**
-	 * Modifier: protected.
-	 */
-	PROTECTED,
-	/**
-	 * Modifier: public.
-	 */
-	PUBLIC;
+    /**
+     * Modifier: private.
+     */
+    PRIVATE,
+    /**
+     * Modifier: default.
+     */
+    DEFAULT,
+    /**
+     * Modifier: protected.
+     */
+    PROTECTED,
+    /**
+     * Modifier: public.
+     */
+    PUBLIC;
 
 }

@@ -1,17 +1,18 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.enumeration.EnumerationType;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
-
-import java.io.IOException;
-
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
+
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.enumeration.EnumerationType;
 
 /**
  * Contains test which verify correct scanning of constructors.
@@ -20,9 +21,11 @@ public class EnumerationIT extends AbstractPluginIT {
 
     /**
      * Verifies scanning of {@link EnumerationType}.
-     *
-     * @throws java.io.IOException   If the test fails.
-     * @throws NoSuchMethodException If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
      */
     @Test
     public void implicitDefaultConstructor() throws IOException, NoSuchMethodException, NoSuchFieldException {

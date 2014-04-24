@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ValueDescriptor;
 
@@ -14,8 +13,11 @@ public class AnnotationDefaultVisitor extends AbstractAnnotationVisitor<MethodDe
 
     /**
      * Constructor.
-     *
-     * @param visitorHelper The {@link com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper}.
+     * 
+     * @param visitorHelper
+     *            The
+     *            {@link com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper}
+     *            .
      */
     protected AnnotationDefaultVisitor(MethodDescriptor descriptor, VisitorHelper visitorHelper) {
         super(descriptor, visitorHelper);

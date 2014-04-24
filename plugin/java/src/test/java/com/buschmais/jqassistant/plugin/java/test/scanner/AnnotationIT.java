@@ -1,21 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
-import org.hamcrest.CoreMatchers;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import static com.buschmais.jqassistant.plugin.java.test.matcher.AnnotationValueDescriptorMatcher.annotationValueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -27,15 +11,34 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
+
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
+
 /**
- * Contains test which verify correct scanning of annotations and annotated types.
+ * Contains test which verify correct scanning of annotations and annotated
+ * types.
  */
 public class AnnotationIT extends AbstractPluginIT {
 
     /**
      * Verifies an annotation on class level.
-     *
-     * @throws IOException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
      */
     @Test
     public void annotatedClass() throws IOException, NoSuchFieldException {
@@ -57,14 +60,16 @@ public class AnnotationIT extends AbstractPluginIT {
         assertThat(values, hasItem(valueDescriptor("arrayValue", allOf(hasItem(valueDescriptor("[0]", is("a"))), hasItem(valueDescriptor("[1]", is("b")))))));
         assertThat(values, hasItem(valueDescriptor("enumerationValue", fieldDescriptor(NON_DEFAULT))));
         assertThat(values, hasItem(valueDescriptor("nestedAnnotationValue", hasItem(valueDescriptor("value", is("nestedClass"))))));
-        assertThat(values, hasItem(valueDescriptor("nestedAnnotationValues", hasItem(valueDescriptor("[0]", hasItem(valueDescriptor("value", is("nestedClasses"))))))));
+        assertThat(values,
+                hasItem(valueDescriptor("nestedAnnotationValues", hasItem(valueDescriptor("[0]", hasItem(valueDescriptor("value", is("nestedClasses"))))))));
         store.commitTransaction();
     }
 
     /**
      * Verifies an annotation on method level.
-     *
-     * @throws IOException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
      */
     @Test
     public void annotatedMethod() throws IOException, NoSuchFieldException, NoSuchMethodException {
@@ -87,8 +92,9 @@ public class AnnotationIT extends AbstractPluginIT {
 
     /**
      * Verifies an annotation on method parameter level.
-     *
-     * @throws IOException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
      */
     @Test
     public void annotatedMethodParameter() throws IOException, NoSuchFieldException, NoSuchMethodException {
@@ -111,8 +117,9 @@ public class AnnotationIT extends AbstractPluginIT {
 
     /**
      * Verifies an annotation on field level.
-     *
-     * @throws IOException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
      */
     @Test
     public void annotatedField() throws IOException, NoSuchFieldException, NoSuchMethodException {
@@ -135,19 +142,26 @@ public class AnnotationIT extends AbstractPluginIT {
 
     /**
      * Verifies dependencies generated by default values of annotation methods.
-     *
-     * @throws IOException If the test fails.
+     * 
+     * @throws IOException
+     *             If the test fails.
      */
     @Test
     public void annotationDefaultValues() throws IOException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(AnnotationWithDefaultValue.class);
         store.beginTransaction();
         assertThat(query("MATCH (t:TYPE:ANNOTATION) RETURN t").getColumn("t"), hasItem(typeDescriptor(AnnotationWithDefaultValue.class)));
-        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='classValue' RETURN v").getColumn("v"), hasItem(valueDescriptor(null, typeDescriptor(Number.class))));
-        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='enumerationValue' RETURN v").getColumn("v"), hasItem(valueDescriptor(null, fieldDescriptor(DEFAULT))));
-        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='primitiveValue' RETURN v").getColumn("v"), hasItem(valueDescriptor(null, is(0d))));
-        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='arrayValue' RETURN v").getColumn("v"), hasItem(valueDescriptor(null, hasItem(valueDescriptor("[0]", typeDescriptor(Integer.class))))));
-        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='annotationValue' RETURN v").getColumn("v"), hasItem(annotationValueDescriptor(NestedAnnotation.class, hasItem(valueDescriptor("value", is("test"))))));
+        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='classValue' RETURN v").getColumn("v"),
+                hasItem(valueDescriptor(null, typeDescriptor(Number.class))));
+        assertThat(
+                query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='enumerationValue' RETURN v").getColumn("v"),
+                hasItem(valueDescriptor(null, fieldDescriptor(DEFAULT))));
+        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='primitiveValue' RETURN v").getColumn("v"),
+                hasItem(valueDescriptor(null, is(0d))));
+        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='arrayValue' RETURN v").getColumn("v"),
+                hasItem(valueDescriptor(null, hasItem(valueDescriptor("[0]", typeDescriptor(Integer.class))))));
+        assertThat(query("MATCH (t:TYPE:ANNOTATION)-[:DECLARES]->(m:METHOD)-[:HAS_DEFAULT]->(v:VALUE) WHERE m.NAME='annotationValue' RETURN v").getColumn("v"),
+                hasItem(annotationValueDescriptor(NestedAnnotation.class, hasItem(valueDescriptor("value", is("test"))))));
         store.commitTransaction();
     }
 }

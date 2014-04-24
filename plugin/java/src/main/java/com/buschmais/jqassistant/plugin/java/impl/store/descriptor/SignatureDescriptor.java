@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 public interface SignatureDescriptor {
 
     @Property("SIGNATURE")
-	String getSignature();
+    String getSignature();
 
-	void setSignature(String signature);
+    void setSignature(String signature);
 }

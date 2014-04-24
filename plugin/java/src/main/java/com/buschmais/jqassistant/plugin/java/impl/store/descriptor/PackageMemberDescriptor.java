@@ -5,7 +5,8 @@ import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDesc
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 
 /**
- * Defines a common base descriptor for all members of a {@link PackageDescriptor}s.
+ * Defines a common base descriptor for all members of a
+ * {@link PackageDescriptor}s.
  */
 public interface PackageMemberDescriptor extends FullQualifiedNameDescriptor, NamedDescriptor, FileDescriptor {
 }

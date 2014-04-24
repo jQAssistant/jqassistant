@@ -11,9 +11,11 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageMember
  * A full qualified name consists of the full qualified name of the parent
  * descriptor and the signature of the descriptor.
  * </p>
- *
- * @param <P> The type of the parent descriptor.
- * @param <T> The type of the descriptor to be resolved.
+ * 
+ * @param <P>
+ *            The type of the parent descriptor.
+ * @param <T>
+ *            The type of the descriptor to be resolved.
  */
 public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageDescriptor, T extends PackageMemberDescriptor> {
 
@@ -26,9 +28,11 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
 
     /**
      * Constructor.
-     *
-     * @param store          The store.
-     * @param parentResolver The parent resolver instance.
+     * 
+     * @param store
+     *            The store.
+     * @param parentResolver
+     *            The parent resolver instance.
      */
     protected AbstractPackageMemberDescriptorResolver(Store store, AbstractPackageMemberDescriptorResolver<?, P> parentResolver) {
         this.store = store;
@@ -37,8 +41,9 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
 
     /**
      * Constructor.
-     *
-     * @param store The store.
+     * 
+     * @param store
+     *            The store.
      */
     @SuppressWarnings("unchecked")
     protected AbstractPackageMemberDescriptorResolver(Store store) {
@@ -48,8 +53,9 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
 
     /**
      * Resolve a descriptor from a given full qualified name.
-     *
-     * @param fullQualifiedName The full qualified name.
+     * 
+     * @param fullQualifiedName
+     *            The full qualified name.
      * @return The descriptor.
      */
     public T resolve(String fullQualifiedName) {
@@ -58,9 +64,11 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
 
     /**
      * Resolve a descriptor from a given full qualified name.
-     *
-     * @param fullQualifiedName The full qualified name.
-     * @param concreteType      The concrete type to use if an instance is created.
+     * 
+     * @param fullQualifiedName
+     *            The full qualified name.
+     * @param concreteType
+     *            The concrete type to use if an instance is created.
      * @return The descriptor.
      */
     public T resolve(String fullQualifiedName, Class<? extends T> concreteType) {

@@ -1,19 +1,20 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericMembers;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Test;
+
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericMembers;
 
 public class GenericsIT extends AbstractPluginIT {
 
@@ -85,8 +86,7 @@ public class GenericsIT extends AbstractPluginIT {
         store.beginTransaction();
         assertThat(query("MATCH (igi:TYPE)-[:IMPLEMENTS]->(i) RETURN i").getColumn("i"), hasItem(typeDescriptor(Iterable.class)));
         assertThat(query("MATCH (igi:TYPE)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
-        assertThat(
-                query("MATCH (igi:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (igi:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ImplementsGenericInterface.class)));
         assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
         store.commitTransaction();

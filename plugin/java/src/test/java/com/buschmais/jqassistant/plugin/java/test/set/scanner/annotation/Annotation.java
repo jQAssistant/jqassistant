@@ -11,15 +11,15 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Annotation {
 
-	String value();
+    String value();
 
-	String[] arrayValue() default {};
+    String[] arrayValue() default {};
 
-	Class<?> classValue() default Object.class;
+    Class<?> classValue() default Object.class;
 
-	Enumeration enumerationValue() default DEFAULT;
+    Enumeration enumerationValue() default DEFAULT;
 
-	NestedAnnotation nestedAnnotationValue() default @NestedAnnotation("default");
+    NestedAnnotation nestedAnnotationValue() default @NestedAnnotation("default");
 
     NestedAnnotation[] nestedAnnotationValues() default @NestedAnnotation("default");
 }

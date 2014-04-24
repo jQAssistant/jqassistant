@@ -5,13 +5,13 @@ package com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation;
  */
 public @interface AnnotationWithDefaultValue {
 
-	Class<?> classValue() default Number.class;
+    Class<?> classValue() default Number.class;
 
-	Enumeration enumerationValue() default Enumeration.DEFAULT;
+    Enumeration enumerationValue() default Enumeration.DEFAULT;
 
-	double primitiveValue() default 0;
+    double primitiveValue() default 0;
 
-	Class[] arrayValue() default { Integer.class, Double.class };
+    Class<?>[] arrayValue() default { Integer.class, Double.class };
 
-	NestedAnnotation annotationValue() default @NestedAnnotation("test");
+    NestedAnnotation annotationValue() default @NestedAnnotation("test");
 }

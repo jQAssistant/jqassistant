@@ -21,6 +21,7 @@ public class Public {
         }
     }
 
+    @SuppressWarnings("unused")
     private class Private {
         private int field;
 
