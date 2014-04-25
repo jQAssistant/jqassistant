@@ -1,10 +1,15 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -36,6 +41,12 @@ public class PojoIT extends AbstractPluginIT {
                         hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
         assertThat(testResult.getColumn("name"),
                 allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")), hasItem(equalTo("setIntValue"))));
+        List<int[]> lines = query("MATCH ()-[i:INVOKES]->() return i.LINENUMBERS as lines").getColumn("lines");
+        assertThat(lines.size(), equalTo(1));
+        lines = query("MATCH ()-[i:READS]->() return i.LINENUMBERS as lines").getColumn("lines");
+        assertThat(lines.size(), equalTo(2));
+        lines = query("MATCH ()-[i:WRITES]->() return i.LINENUMBERS as lines").getColumn("lines");
+        assertThat(lines.size(), equalTo(2));
         store.commitTransaction();
     }
 
