@@ -4,6 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor.Declares;
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.util.Set;
 
@@ -24,56 +25,57 @@ public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, 
 
     @Incoming
     @Declares
-    public TypeDescriptor getDeclaringType();
+    TypeDescriptor getDeclaringType();
 
     @Relation("HAS")
-    public Set<ParameterDescriptor> getParameters();
+    Set<ParameterDescriptor> getParameters();
 
     @ResultOf
     @Cypher("match (m),(p) where id(m)={this} and id(p)={parameter} create unique (m)-[:HAS]->(p)")
-    public void addParameter(@Parameter("parameter") ParameterDescriptor target);
+    void addParameter(@Parameter("parameter") ParameterDescriptor target);
 
     @Relation("RETURNS")
-    public TypeDescriptor getReturns();
+    TypeDescriptor getReturns();
 
-    public void setReturns(TypeDescriptor returns);
+    void setReturns(TypeDescriptor returns);
 
     @Relation("HAS_DEFAULT")
-    public ValueDescriptor getHasDefault();
+    ValueDescriptor getHasDefault();
 
-    public void setHasDefault(ValueDescriptor hasDefault);
+    void setHasDefault(ValueDescriptor hasDefault);
 
     @Relation("THROWS")
-    public Set<TypeDescriptor> getDeclaredThrowables();
+    Set<TypeDescriptor> getDeclaredThrowables();
 
-    @Relation("READS")
-    public Set<FieldDescriptor> getReads();
-
-    @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create unique (m)-[:READS]->(f)")
-    public void addReads(@Parameter("target") FieldDescriptor target);
-
-    @Relation("WRITES")
-    public Set<FieldDescriptor> getWrites();
+    Set<ReadsDescriptor> getReads();
 
     @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create unique (m)-[:WRITES]->(f)")
-    public void addWrites(@Parameter("target") FieldDescriptor target);
+    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create unique (m)-[r:READS]->(f) return r")
+    ReadsDescriptor addReads(@Parameter("target") FieldDescriptor target);
 
-    @Relation("INVOKES")
-    public Set<MethodDescriptor> getInvokes();
+    Set<WritesDescriptor> getWrites();
 
     @ResultOf
-    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create unique (m1)-[:INVOKES]->(m2)")
-    public void addInvokes(@Parameter("target") MethodDescriptor target);
+    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create unique (m)-[w:WRITES]->(f) return w")
+    WritesDescriptor addWrites(@Parameter("target") FieldDescriptor target);
+
+    @Outgoing
+    Set<InvokesDescriptor> getInvokes();
+
+    @Incoming
+    Set<InvokesDescriptor> getInvokedBy();
+
+    @ResultOf
+    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create unique (m1)-[i:INVOKES]->(m2) return i")
+    InvokesDescriptor addInvokes(@Parameter("target") MethodDescriptor target);
 
     @ResultOf
     @Cypher("match (m:METHOD)-[:HAS]->(p:PARAMETER) where id(m)={this} and p.INDEX={index} return p as parameter")
     ParameterDescriptor findParameter(@Parameter("index") int index);
 
     @Property("NATIVE")
-    public Boolean isNative();
+    Boolean isNative();
 
-    public void setNative(Boolean nativeMethod);
+    void setNative(Boolean nativeMethod);
 
 }

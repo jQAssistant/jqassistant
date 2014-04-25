@@ -18,30 +18,30 @@ public interface FieldDescriptor extends SignatureDescriptor, NamedDescriptor, T
 
     @Incoming
     @Declares
-    public TypeDescriptor getDeclaringType();
+    TypeDescriptor getDeclaringType();
 
     /**
      * @return the transientField
      */
     @Property("TRANSIENT")
-    public Boolean isTransient();
+    Boolean isTransient();
 
     /**
      * @param transientField
      *            the transientField to set
      */
-    public void setTransient(Boolean transientField);
+    void setTransient(Boolean transientField);
 
     /**
      * @return the volatileField
      */
     @Property("VOLATILE")
-    public Boolean isVolatile();
+    Boolean isVolatile();
 
     /**
      * @param volatileField
      *            the volatileField to set
      */
-    public void setVolatile(Boolean volatileField);
+    void setVolatile(Boolean volatileField);
 
 }

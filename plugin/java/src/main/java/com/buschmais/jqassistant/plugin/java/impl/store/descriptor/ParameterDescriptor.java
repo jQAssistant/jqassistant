@@ -10,8 +10,8 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 public interface ParameterDescriptor extends TypedDescriptor, DependentDescriptor, AnnotatedDescriptor {
 
     @Property("INDEX")
-    public int getIndex();
+    int getIndex();
 
-    public void setIndex(int index);
+    void setIndex(int index);
 
 }

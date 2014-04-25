@@ -26,7 +26,15 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.scan.filesystem.ModuleFileSystem;
 import org.sonar.api.utils.SonarException;
 
-import com.buschmais.jqassistant.core.report.schema.v1.*;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
+import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
+import com.buschmais.jqassistant.core.report.schema.v1.RowType;
+import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 
@@ -121,8 +129,7 @@ public class JQAssistantSensor implements Sensor {
                             Resource<?> resource = null;
                             for (ColumnType columnType : rowType.getColumn()) {
                                 String value = columnType.getValue();
-                                // if a language element is found use it as a
-                                // resource for creating an issue
+                                // if a language element is found use it as a resource for creating an issue
                                 String language = columnType.getLanguage();
                                 if (language != null) {
                                     LanguageResourceResolver resourceResolver = languageResourceResolvers.get(language);
@@ -193,7 +200,7 @@ public class JQAssistantSensor implements Sensor {
 
     /**
      * Return the report xml file or null if not found. Checks whether
-     * {@link JQAssistant.SETTINGS_REPORT_PATH_KEY} is set or not and looks up
+     * {@link JQAssistant#SETTINGS_KEY_REPORT_PATH} is set or not and looks up
      * the passed path or the default build directory.
      * 
      * @return reportFile File object of report xml or null if not found.

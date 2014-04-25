@@ -25,9 +25,9 @@ public interface PackageDescriptor extends PackageMemberDescriptor {
      * @return The contained descriptors.
      */
     @Relation("CONTAINS")
-    public Set<FileDescriptor> getContains();
+    Set<FileDescriptor> getContains();
 
     @ResultOf
     @Cypher("match (p),(f) where id(p)={this} and id(f)={file} create unique (p)-[:CONTAINS]->(f)")
-    public void addContains(@Parameter("file") FileDescriptor file);
+    void addContains(@Parameter("file") FileDescriptor file);
 }

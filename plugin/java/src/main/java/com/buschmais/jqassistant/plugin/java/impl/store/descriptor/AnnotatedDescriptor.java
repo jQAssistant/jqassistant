@@ -25,5 +25,5 @@ public interface AnnotatedDescriptor extends Descriptor {
 
     @ResultOf
     @Cypher("match (a),(v) where id(a)={this} and id(v)={value} create unique (a)-[:ANNOTATED_BY]->(v)")
-    public void addAnnotatedBy(@Parameter("value") AnnotationValueDescriptor value);
+    void addAnnotatedBy(@Parameter("value") AnnotationValueDescriptor value);
 }
