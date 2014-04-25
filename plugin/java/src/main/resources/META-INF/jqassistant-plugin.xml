@@ -7,6 +7,9 @@
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationTypeDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.InvokesDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ReadsDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.WritesDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ConstructorDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ParameterDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ArrayValueDescriptor</type>

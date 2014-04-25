@@ -25,7 +25,7 @@ public interface AccessModifierDescriptor {
     void setFinal(Boolean f);
 
     @Property("SYNTHETIC")
-    public Boolean isSynthetic();
+    Boolean isSynthetic();
 
-    public void setSynthetic(Boolean s);
+    void setSynthetic(Boolean s);
 }

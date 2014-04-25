@@ -26,7 +26,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
     @Relation("DECLARES")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface Declares {
+    @interface Declares {
     }
 
     /**
@@ -35,7 +35,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      * @return The super class.
      */
     @Relation("EXTENDS")
-    public TypeDescriptor getSuperClass();
+    TypeDescriptor getSuperClass();
 
     /**
      * Set the super class.
@@ -43,7 +43,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      * @param superClass
      *            The super class.
      */
-    public void setSuperClass(TypeDescriptor superClass);
+    void setSuperClass(TypeDescriptor superClass);
 
     /**
      * Return the implemented interfaces.
@@ -51,11 +51,11 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      * @return The implemented interfaces.
      */
     @Relation("IMPLEMENTS")
-    public Set<TypeDescriptor> getInterfaces();
+    Set<TypeDescriptor> getInterfaces();
 
     @ResultOf
     @Cypher("match (t),(i) where id(t)={this} and id(i)={i} create unique (t)-[:IMPLEMENTS]->(i)")
-    public void addInterface(@Parameter("i") TypeDescriptor i);
+    void addInterface(@Parameter("i") TypeDescriptor i);
 
     /**
      * Return the declared methods.
@@ -64,11 +64,11 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      */
     @Outgoing
     @Declares
-    public Set<MethodDescriptor> getDeclaredMethods();
+    Set<MethodDescriptor> getDeclaredMethods();
 
     @ResultOf
     @Cypher("match (t),(m) where id(t)={this} and id(m)={method} create unique (t)-[:DECLARES]->(m)")
-    public void addDeclaredMethod(@Parameter("method") MethodDescriptor method);
+    void addDeclaredMethod(@Parameter("method") MethodDescriptor method);
 
     /**
      * Return the declared fields.
@@ -77,11 +77,11 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      */
     @Outgoing
     @Declares
-    public Set<FieldDescriptor> getDeclaredFields();
+    Set<FieldDescriptor> getDeclaredFields();
 
     @ResultOf
     @Cypher("match (t),(f) where id(t)={this} and id(f)={field} create unique (t)-[:DECLARES]->(f)")
-    public void addDeclaredField(@Parameter("field") FieldDescriptor field);
+    void addDeclaredField(@Parameter("field") FieldDescriptor field);
 
     /**
      * Return the declared inner classes.
@@ -89,17 +89,17 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      * @return The declared inner classes.
      */
     @Relation("DECLARES")
-    public Set<TypeDescriptor> getDeclaredInnerClasses();
+    Set<TypeDescriptor> getDeclaredInnerClasses();
 
     @ResultOf
     @Cypher("match (t),(i) where id(t)={this} and id(i)={innerClass} create unique (t)-[:DECLARES]->(i)")
-    public void addDeclaredInnerClass(@Parameter("innerClass") TypeDescriptor innerClass);
+    void addDeclaredInnerClass(@Parameter("innerClass") TypeDescriptor innerClass);
 
     @ResultOf
     @Cypher("match (t:TYPE) where id(t)={this} create unique (t)-[:DECLARES]->(f:FIELD {SIGNATURE:{signature}}) return f as field")
-    public FieldDescriptor getOrCreateField(@Parameter("signature") String signature);
+    FieldDescriptor getOrCreateField(@Parameter("signature") String signature);
 
     @ResultOf
     @Cypher("match (t:TYPE) where id(t)={this} create unique (t)-[:DECLARES]->(m:METHOD {SIGNATURE:{signature}}) return m as method")
-    public MethodDescriptor getOrCreateMethod(@Parameter("signature") String signature);
+    MethodDescriptor getOrCreateMethod(@Parameter("signature") String signature);
 }
