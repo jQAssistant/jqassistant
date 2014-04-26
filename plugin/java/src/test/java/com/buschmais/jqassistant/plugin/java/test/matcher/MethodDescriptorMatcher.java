@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescrip
 /**
  * A matcher for {@link MethodDescriptorMatcher}s.
  */
-public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<MethodDescriptor> {
+public class MethodDescriptorMatcher extends AbstractMemberDescriptorMatcher<MethodDescriptor> {
 
     /**
      * Constructor.
