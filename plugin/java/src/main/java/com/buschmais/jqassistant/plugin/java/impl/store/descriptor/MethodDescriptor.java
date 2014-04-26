@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Method;
-import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor.Declares;
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
@@ -20,12 +19,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  */
 @Java(Method)
 @Label(value = "METHOD")
-public interface MethodDescriptor extends SignatureDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
+public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
         AbstractDescriptor {
-
-    @Incoming
-    @Declares
-    TypeDescriptor getDeclaringType();
 
     @Relation("HAS")
     Set<ParameterDescriptor> getParameters();

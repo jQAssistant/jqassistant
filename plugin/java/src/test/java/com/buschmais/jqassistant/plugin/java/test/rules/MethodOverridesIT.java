@@ -70,11 +70,11 @@ public class MethodOverridesIT extends AbstractPluginIT {
         assertThat((MethodDescriptor) row0.get("method"), constructorDescriptor(SubClassType.class));
         assertThat((MethodDescriptor) row0.get("otherMethod"), constructorDescriptor(ClassType.class));
         Map<String, Object> row1 = rows.get(1);
-        assertThat((MethodDescriptor) row1.get("method"), methodDescriptor(ClassType.class, "doSomething", int.class));
-        assertThat((MethodDescriptor) row1.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", int.class));
+        assertThat((MethodDescriptor) row1.get("method"), methodDescriptor(SubClassType.class, "doSomething", int.class));
+        assertThat((MethodDescriptor) row1.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", int.class));
         Map<String, Object> row2 = rows.get(2);
-        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(ClassType.class, "doSomething", String.class));
-        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(InterfaceType.class, "doSomething", String.class));
+        assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(SubClassType.class, "doSomething", String.class));
+        assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", String.class));
         store.commitTransaction();
     }
 }

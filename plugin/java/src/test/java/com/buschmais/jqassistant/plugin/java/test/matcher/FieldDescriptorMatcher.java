@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescript
 /**
  * A matcher for {@FieldDescriptor}s.
  */
-public class FieldDescriptorMatcher extends AbstractSignatureDescriptorMatcher<FieldDescriptor> {
+public class FieldDescriptorMatcher extends AbstractMemberDescriptorMatcher<FieldDescriptor> {
 
     /**
      * Constructor.
