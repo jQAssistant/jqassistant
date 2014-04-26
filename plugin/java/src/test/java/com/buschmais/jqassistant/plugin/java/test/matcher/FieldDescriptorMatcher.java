@@ -18,7 +18,7 @@ public class FieldDescriptorMatcher extends AbstractSignatureDescriptorMatcher<F
      *            The expected field.
      */
     protected FieldDescriptorMatcher(Field field) {
-        super(FieldDescriptor.class, field.getType().getCanonicalName() + " " + field.getName());
+        super(FieldDescriptor.class, field, field.getType().getCanonicalName() + " " + field.getName());
     }
 
     /**

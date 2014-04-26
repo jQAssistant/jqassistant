@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
 import org.hamcrest.Matcher;
@@ -18,8 +19,8 @@ public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<
      * @param signature
      *            The expected signature.
      */
-    protected MethodDescriptorMatcher(String signature) {
-        super(MethodDescriptor.class, signature);
+    protected MethodDescriptorMatcher(Member member, String signature) {
+        super(MethodDescriptor.class, member, signature);
     }
 
     /**
@@ -45,7 +46,7 @@ public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<
      * @return The {@link MethodDescriptorMatcher}.
      */
     public static Matcher<? super MethodDescriptor> methodDescriptor(Method method) {
-        StringBuffer signature = new StringBuffer();
+        StringBuilder signature = new StringBuilder();
         signature.append(method.getReturnType().getCanonicalName());
         signature.append(' ');
         signature.append(method.getName());
@@ -59,7 +60,7 @@ public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<
             parameterCount++;
         }
         signature.append(')');
-        return new MethodDescriptorMatcher(signature.toString());
+        return new MethodDescriptorMatcher(method, signature.toString());
     }
 
     /**
@@ -83,7 +84,7 @@ public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<
      * @return The {@link MethodDescriptorMatcher}.
      */
     public static Matcher<? super MethodDescriptor> methodDescriptor(Constructor<?> constructor) {
-        StringBuffer signature = new StringBuffer();
+        StringBuilder signature = new StringBuilder();
         signature.append("void");
         signature.append(' ');
         signature.append("<init>");
@@ -97,6 +98,6 @@ public class MethodDescriptorMatcher extends AbstractSignatureDescriptorMatcher<
             parameterCount++;
         }
         signature.append(')');
-        return new MethodDescriptorMatcher(signature.toString());
+        return new MethodDescriptorMatcher(constructor, signature.toString());
     }
 }
