@@ -5,16 +5,20 @@ import org.hamcrest.TypeSafeMatcher;
 
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.SignatureDescriptor;
 
+import java.lang.reflect.Member;
+
 /**
  * A matcher for {@link SignatureDescriptor}s.
  */
 public class AbstractSignatureDescriptorMatcher<T extends SignatureDescriptor> extends TypeSafeMatcher<T> {
 
     private Class<T> type;
+    private Member member;
     private String signature;
 
-    AbstractSignatureDescriptorMatcher(Class<T> type, String signature) {
+    AbstractSignatureDescriptorMatcher(Class<T> type, Member member, String signature) {
         this.type = type;
+        this.member = member;
         this.signature = signature;
     }
 

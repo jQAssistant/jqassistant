@@ -2,6 +2,7 @@
 include::{pluginDoc}/jqassistant.plugin.ejb3/plugin.adoc[]
 include::{pluginDoc}/jqassistant.plugin.jaxrs/plugin.adoc[]
 include::{pluginDoc}/jqassistant.plugin.java/plugin.adoc[]
+include::{pluginDoc}/jqassistant.plugin.java8/plugin.adoc[]
 include::{pluginDoc}/jqassistant.plugin.jpa2/plugin.adoc[]
 include::{pluginDoc}/jqassistant.plugin.junit4/plugin.adoc[]
 include::{pluginDoc}/jqassistant.plugin.osgi/plugin.adoc[]

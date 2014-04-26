@@ -67,7 +67,7 @@ public class RulePluginRepositoryImpl extends PluginRepositoryImpl implements Ru
                                 throw new IllegalStateException("Cannot create URI from url: " + url.toString());
                             }
                         } else {
-                            LOGGER.warn("Cannot read rulesType from resource '{}'" + resource);
+                            LOGGER.warn("Cannot read rules from resource '{}'", fullResource);
                         }
                     }
                 }

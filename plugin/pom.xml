@@ -246,6 +246,7 @@
 	<modules>
 		<module>common</module>
 		<module>java</module>
+        <module>java8</module>
 		<module>jpa2</module>
 		<module>ejb3</module>
 		<module>jaxrs</module>
