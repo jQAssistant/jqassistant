@@ -1,102 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.0"
-	targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.0"
-	elementFormDefault="unqualified">
+           xmlns:jqassistant-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.0"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/report/schema/v1.0"
+           elementFormDefault="unqualified">
 
-	<xs:element name="jqassistant-report">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="group" type="jqassistant-report:GroupType"
-					minOccurs="0" maxOccurs="unbounded" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+    <xs:element name="jqassistant-report">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="group" type="jqassistant-report:GroupType"
+                            minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:complexType name="GroupType">
-		<xs:sequence>
-			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element name="concept" type="jqassistant-report:ConceptType"
-					minOccurs="0" />
-				<xs:element name="constraint" type="jqassistant-report:ConstraintType"
-					minOccurs="0" />
-			</xs:choice>
-			<xs:element name="duration" type="xs:int" minOccurs="1"
-				maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="id" type="xs:string" use="required" />
-		<xs:attribute name="date" type="xs:dateTime" use="required" />
-	</xs:complexType>
+    <xs:complexType name="GroupType">
+        <xs:sequence>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="concept" type="jqassistant-report:ConceptType"
+                            minOccurs="0"/>
+                <xs:element name="constraint" type="jqassistant-report:ConstraintType"
+                            minOccurs="0"/>
+            </xs:choice>
+            <xs:element name="duration" type="xs:int" minOccurs="1"
+                        maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute name="date" type="xs:dateTime" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="RuleType" abstract="true">
-		<xs:sequence>
-			<xs:element name="description" type="xs:string" minOccurs="1"
-				maxOccurs="1" />
-			<xs:element name="result" type="jqassistant-report:ResultType"
-				minOccurs="0" maxOccurs="1" />
-			<xs:element name="duration" type="xs:int" minOccurs="1"
-				maxOccurs="1" />
-		</xs:sequence>
-		<xs:attribute name="id" type="xs:string" use="required" />
-	</xs:complexType>
+    <xs:complexType name="RuleType" abstract="true">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="1"
+                        maxOccurs="1"/>
+            <xs:element name="result" type="jqassistant-report:ResultType"
+                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="duration" type="xs:int" minOccurs="1"
+                        maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="ConceptType">
-		<xs:complexContent>
-			<xs:extension base="jqassistant-report:RuleType" />
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="ConceptType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-report:RuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="ConstraintType">
-		<xs:complexContent>
-			<xs:extension base="jqassistant-report:RuleType" />
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="ConstraintType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-report:RuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="ResultType">
-		<xs:sequence>
-			<xs:element name="columns" type="jqassistant-report:ColumnsHeaderType"
-				minOccurs="1" maxOccurs="1" />
-			<xs:element name="rows" type="jqassistant-report:RowsType"
-				minOccurs="0" maxOccurs="1" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="ResultType">
+        <xs:sequence>
+            <xs:element name="columns" type="jqassistant-report:ColumnsHeaderType"
+                        minOccurs="1" maxOccurs="1"/>
+            <xs:element name="rows" type="jqassistant-report:RowsType"
+                        minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="ColumnsHeaderType">
-		<xs:sequence>
-			<xs:element name="column" type="xs:string" minOccurs="1"
-				maxOccurs="unbounded" />
-		</xs:sequence>
-		<xs:attribute name="count" type="xs:int" use="required" />
-	</xs:complexType>
+    <xs:complexType name="ColumnsHeaderType">
+        <xs:sequence>
+            <xs:element name="column" type="xs:string" minOccurs="1"
+                        maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="count" type="xs:int" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="RowsType">
-		<xs:sequence>
-			<xs:element name="row" type="jqassistant-report:RowType"
-				minOccurs="1" maxOccurs="unbounded" />
-		</xs:sequence>
-		<xs:attribute name="count" type="xs:int" use="required" />
-	</xs:complexType>
+    <xs:complexType name="RowsType">
+        <xs:sequence>
+            <xs:element name="row" type="jqassistant-report:RowType"
+                        minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="count" type="xs:int" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="RowType">
-		<xs:sequence>
-			<xs:element name="column" type="jqassistant-report:ColumnType"
-				minOccurs="1" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="RowType">
+        <xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element name="primitive" type="jqassistant-report:PrimitiveColumnType"/>
+                <xs:element name="complex" type="jqassistant-report:ComplexColumnType"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="ColumnType">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="name" type="xs:string" />
-				<xs:attributeGroup ref="jqassistant-report:LanguageElement" />
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
+    <xs:complexType name="PrimitiveColumnType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
 
-	<xs:attributeGroup name="LanguageElement">
-		<xs:attribute name="language" type="xs:string" use="optional" />
-		<xs:attribute name="element" type="xs:string" use="optional" />
-        <xs:attribute name="source" type="xs:string" use="optional" />
-        <xs:attribute name="lines" type="xs:string" use="optional" />
-	</xs:attributeGroup>
+    <xs:complexType name="ComplexColumnType">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string"/>
+            <xs:element name="source" type="jqassistant-report:SourceType" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="optional"/>
+        <xs:attribute name="language" type="xs:string" use="optional"/>
+        <xs:attribute name="element" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="SourceType">
+        <xs:sequence>
+            <xs:element name="line" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="optional" />
+    </xs:complexType>
+
 </xs:schema>

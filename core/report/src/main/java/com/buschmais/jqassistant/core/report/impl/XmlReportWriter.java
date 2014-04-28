@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.core.report.impl;
 
 import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,11 +18,10 @@ import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
+import com.buschmais.jqassistant.core.report.api.ReportWriterHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.xo.spi.reflection.AnnotatedType;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
@@ -181,16 +178,14 @@ public class XmlReportWriter implements ExecutionListener {
                             for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
                                 String columnName = rowEntry.getKey();
                                 Object value = rowEntry.getValue();
-                                xmlStreamWriter.writeStartElement("column");
-                                xmlStreamWriter.writeAttribute("name", columnName);
-                                String stringValue;
                                 if (value instanceof Descriptor) {
-                                    stringValue = writeLanguageElement((Descriptor) value);
+                                    writeComplexValue(columnName, (Descriptor) value);
                                 } else {
-                                    stringValue = value.toString();
+                                    xmlStreamWriter.writeStartElement("primitive");
+                                    xmlStreamWriter.writeAttribute("name", columnName);
+                                    xmlStreamWriter.writeCharacters(value.toString());
+                                    xmlStreamWriter.writeEndElement(); // primitive
                                 }
-                                xmlStreamWriter.writeCharacters(stringValue);
-                                xmlStreamWriter.writeEndElement(); // column
                             }
                             xmlStreamWriter.writeEndElement();
                         }
@@ -213,54 +208,34 @@ public class XmlReportWriter implements ExecutionListener {
      * @throws XMLStreamException
      *             If a problem occurs.
      */
-    private String writeLanguageElement(Descriptor descriptor) throws XMLStreamException {
-        String name = null;
-        for (Class<?> descriptorType : descriptor.getClass().getInterfaces()) {
-            AnnotatedType annotatedType = new AnnotatedType(descriptorType);
-            Annotation annotation = annotatedType.getByMetaAnnotation(Language.class);
-            if (annotation != null) {
-                Class<? extends Annotation> annotationType = annotation.annotationType();
-                String language = annotationType.getAnnotation(Language.class).value();
-                LanguageElement elementValue = getAnnotationValue(annotation, "value", LanguageElement.class);
-                SourceProvider sourceProvider = elementValue.getSourceProvider();
-                name = sourceProvider.getName(descriptor);
-                String source = sourceProvider.getSource(descriptor);
-                int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
-                xmlStreamWriter.writeAttribute("language", language);
-                xmlStreamWriter.writeAttribute("element", elementValue.name());
-                if (source != null) {
-                    xmlStreamWriter.writeAttribute("source", source);
-                }
-                if (lineNumbers != null) {
-                    StringBuilder b = new StringBuilder();
-                    for (int i = 0; i<lineNumbers.length; i++) {
-                        if (b.length()>0) {
-                            b.append(",");
-                        }
-                        b.append(lineNumbers[i]);
-                    }
-                    xmlStreamWriter.writeAttribute("lines", b.toString());
+    private void writeComplexValue(String columnName, Descriptor descriptor) throws XMLStreamException {
+        LanguageElement elementValue = ReportWriterHelper.getLanguageElement(descriptor);
+        SourceProvider sourceProvider = elementValue.getSourceProvider();
+        String name = sourceProvider.getName(descriptor);
+        String source = sourceProvider.getSource(descriptor);
+        int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
+        xmlStreamWriter.writeStartElement("complex");
+        xmlStreamWriter.writeAttribute("name", columnName);
+        xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
+        xmlStreamWriter.writeAttribute("element", elementValue.name());
+        xmlStreamWriter.writeStartElement("value");
+        xmlStreamWriter.writeCharacters(name);
+        xmlStreamWriter.writeEndElement(); // value
+        if (source != null || lineNumbers !=null) {
+            xmlStreamWriter.writeStartElement("source");
+            if (source != null) {
+                xmlStreamWriter.writeAttribute("name", source);
+            }
+            if (lineNumbers != null) {
+                for (int lineNumber : lineNumbers) {
+                    xmlStreamWriter.writeStartElement("line");
+                    xmlStreamWriter.writeCharacters(Integer.toString(lineNumber));
+                    xmlStreamWriter.writeEndElement(); // line
                 }
             }
+            xmlStreamWriter.writeEndElement(); // source
         }
-        return name;
-    }
-
-    private <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws XMLStreamException {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        Method valueMethod;
-        try {
-            valueMethod = annotationType.getDeclaredMethod(value);
-        } catch (NoSuchMethodException e) {
-            throw new XMLStreamException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
-        }
-        Object elementValue;
-        try {
-            elementValue = valueMethod.invoke(annotation);
-        } catch (ReflectiveOperationException e) {
-            throw new XMLStreamException("Cannot invoke method value() for " + annotationType);
-        }
-        return elementValue != null ? expectedType.cast(elementValue) : null;
+        xmlStreamWriter.writeEndElement(); // complex
     }
 
     private void writeDuration(long beginTime) throws XMLStreamException {

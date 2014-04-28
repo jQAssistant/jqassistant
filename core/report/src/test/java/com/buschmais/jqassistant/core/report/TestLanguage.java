@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 /**
  * A test language to be verified in the XML report.
  */
-@Language("TestLanguage")
+@Language()
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface TestLanguage {
@@ -42,5 +42,10 @@ public @interface TestLanguage {
                 };
             }
         };
+
+        @Override
+        public String getLanguage() {
+            return "TestLanguage";
+        }
     }
 }
