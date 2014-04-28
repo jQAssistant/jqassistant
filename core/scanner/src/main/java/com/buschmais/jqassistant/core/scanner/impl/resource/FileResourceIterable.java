@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.core.scanner.impl.resource;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import org.apache.commons.lang.StringUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +8,10 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 
 /**
  * A resource iterable for processing a list of files.

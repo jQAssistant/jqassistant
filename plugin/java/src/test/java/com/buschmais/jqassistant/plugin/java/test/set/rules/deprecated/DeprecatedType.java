@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.deprecated;
 
-@SuppressWarnings("deprecation")
 @Deprecated
 public class DeprecatedType {
 

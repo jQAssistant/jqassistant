@@ -5,9 +5,7 @@ package com.buschmais.jqassistant.sonar.plugin.rule;
  */
 public enum RuleParameter {
 
-    Type("Type"),
-    RequiresConcepts("Requires Concepts"),
-    Cypher("Cypher");
+    Type("Type"), RequiresConcepts("Requires Concepts"), Cypher("Cypher");
 
     private String name;
 

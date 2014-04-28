@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-
 import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 
@@ -14,12 +13,12 @@ import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 public class ProjectScannerImpl implements ProjectScanner {
 
     private final FileScanner fileScanner;
-	private final List<ProjectScannerPlugin> projectScannerPlugins;
+    private final List<ProjectScannerPlugin> projectScannerPlugins;
 
-	public ProjectScannerImpl(FileScanner fileScanner, List<ProjectScannerPlugin> projectScannerPlugins) {
+    public ProjectScannerImpl(FileScanner fileScanner, List<ProjectScannerPlugin> projectScannerPlugins) {
         this.fileScanner = fileScanner;
         this.projectScannerPlugins = projectScannerPlugins;
-	}
+    }
 
     @Override
     public void scan() throws IOException {

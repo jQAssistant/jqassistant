@@ -7,15 +7,15 @@ import org.sonar.api.rules.RulePriority;
  */
 public enum RuleType {
 
-    Concept(RulePriority.MAJOR),
-    Constraint(RulePriority.CRITICAL);
+    Concept(RulePriority.MAJOR), Constraint(RulePriority.CRITICAL);
 
     private RulePriority priority;
 
     /**
      * Constructor.
-     *
-     * @param priority The default priority.
+     * 
+     * @param priority
+     *            The default priority.
      */
     private RuleType(RulePriority priority) {
         this.priority = priority;
@@ -23,7 +23,7 @@ public enum RuleType {
 
     /**
      * Return the default priority.
-     *
+     * 
      * @return The default priority.
      */
     public RulePriority getPriority() {

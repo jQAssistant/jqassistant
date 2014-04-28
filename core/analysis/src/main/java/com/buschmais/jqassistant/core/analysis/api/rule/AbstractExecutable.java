@@ -68,11 +68,7 @@ public class AbstractExecutable implements Rule {
 
     @Override
     public String toString() {
-        return "AbstractExecutable{" +
-                "id='" + id + '\'' +
-                ", description='" + description + '\'' +
-                ", query=" + query +
-                ", requiredConcepts=" + requiredConcepts +
-                '}';
+        return "AbstractExecutable{" + "id='" + id + '\'' + ", description='" + description + '\'' + ", query=" + query + ", requiredConcepts="
+                + requiredConcepts + '}';
     }
 }

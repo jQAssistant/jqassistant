@@ -1,18 +1,19 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
-import org.junit.Test;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 
 /**
  * Tests for the concept java:MethodOverloads.
@@ -21,9 +22,11 @@ public class MethodOverloadsIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "java:MethodOverloads".
-     *
-     * @throws java.io.IOException                                           If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalyzerException If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void methodOverloads() throws IOException, AnalyzerException, NoSuchMethodException {

@@ -7,8 +7,8 @@ import org.junit.Test;
  */
 public class TestClass {
 
-	@Test
-	public void activeTestMethod() {
-	}
+    @Test
+    public void activeTestMethod() {
+    }
 
 }

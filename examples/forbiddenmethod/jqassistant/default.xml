@@ -15,7 +15,7 @@
     </constraint>
 
     <group id="default">
-        <includeConstraint refId="example:ConstructorOfDateMustNotBeUsed"/>
+        <includeConstraint refId="example:ConstructorOfDateMustNotBeUsed" />
     </group>
 
 </jqa:jqassistant-rules>

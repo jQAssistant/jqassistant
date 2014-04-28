@@ -21,25 +21,25 @@ import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookResolver;
  */
 public class ContextProviderIT extends AbstractPluginIT {
 
-	/**
-	 * Verifies the concept {@code jaxrs:ContextProvider} for {@link ContextResolver}.
-	 * 
-	 * @throws java.io.IOException
-	 *             If the test fails.
-	 * @throws AnalyzerException
-	 *             If the test fails.
-	 * @throws NoSuchMethodException
-	 *             If the test fails.
-	 */
-	@Test
-	public void test_ContextProvider_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
-		scanClasses(BookResolver.class);
-		applyConcept("jaxrs:ContextProvider");
-		store.beginTransaction();
-		assertThat("Expected contextProvider",
-				query("MATCH (contextProvider:JaxRS:ContextProvider) RETURN contextProvider").getColumn("contextProvider"),
-				hasItem(typeDescriptor(BookResolver.class)));
-		store.commitTransaction();
-	}
+    /**
+     * Verifies the concept {@code jaxrs:ContextProvider} for
+     * {@link ContextResolver}.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void test_ContextProvider_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+        scanClasses(BookResolver.class);
+        applyConcept("jaxrs:ContextProvider");
+        store.beginTransaction();
+        assertThat("Expected contextProvider", query("MATCH (contextProvider:JaxRS:ContextProvider) RETURN contextProvider").getColumn("contextProvider"),
+                hasItem(typeDescriptor(BookResolver.class)));
+        store.commitTransaction();
+    }
 
 }

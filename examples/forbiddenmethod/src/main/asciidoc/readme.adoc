@@ -1,4 +1,4 @@
-= Forbidden Method
+==== Forbidden Method
 
 Demonstrates a constraint to define methods which must not be invoked by the application. The example denies usage of all constructors of java.util.Date.
 

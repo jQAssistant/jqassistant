@@ -1,24 +1,26 @@
 package com.buschmais.jqassistant.plugin.junit4.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 
 public class TestReportScannerIT extends AbstractPluginIT {
 
     /**
      * Verifies that test reports files are scanned.
-     *
-     * @throws java.io.IOException If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
      */
     @Test
     public void reportFile() throws IOException {

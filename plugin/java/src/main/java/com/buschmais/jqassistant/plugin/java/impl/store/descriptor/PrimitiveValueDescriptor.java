@@ -9,10 +9,10 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 @Label("PRIMITIVE")
 public interface PrimitiveValueDescriptor extends TypedDescriptor, ValueDescriptor<Object> {
 
-	@Property("VALUE")
-	@Override
-	Object getValue();
+    @Property("VALUE")
+    @Override
+    Object getValue();
 
-	@Override
-	void setValue(Object value);
+    @Override
+    void setValue(Object value);
 }

@@ -14,8 +14,11 @@ public class AnnotationVisitor extends AbstractAnnotationVisitor<AnnotationValue
 
     /**
      * Constructor.
-     *
-     * @param visitorHelper The {@link com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper}.
+     * 
+     * @param visitorHelper
+     *            The
+     *            {@link com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper}
+     *            .
      */
     protected AnnotationVisitor(AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
         super(descriptor, visitorHelper);

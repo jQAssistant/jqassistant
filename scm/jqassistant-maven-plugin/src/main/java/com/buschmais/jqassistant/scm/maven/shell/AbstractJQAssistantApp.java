@@ -1,32 +1,42 @@
 package com.buschmais.jqassistant.scm.maven.shell;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.GraphDbStore;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.transform.Source;
+
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.shell.AppCommandParser;
 import org.neo4j.shell.AppShellServer;
-import org.neo4j.shell.Output;
 import org.neo4j.shell.impl.AbstractApp;
 import org.neo4j.shell.kernel.GraphDatabaseShellServer;
 
-import javax.xml.transform.Source;
-import java.rmi.RemoteException;
-import java.util.List;
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.GraphDbStore;
 
 /**
  * Abstract base implementation for shell commands.
  */
 public abstract class AbstractJQAssistantApp extends AbstractApp {
 
-    public static final String LOG_LINE_PREFIX = "  \"";
+    private static final Pattern CONCEPTS_PATTERN = Pattern.compile("concepts=(.*)");
+    private static final Pattern CONSTRAINTS_PATTERN = Pattern.compile("constraints=(.*)");
+    private static final Pattern GROUPS_PATTERN = Pattern.compile("groups=(.*)");
     /**
      * The rules reader instance.
      */
@@ -35,10 +45,9 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
 
     private Store store = null;
 
-    AbstractJQAssistantApp() throws PluginReaderException {
+    protected AbstractJQAssistantApp() throws PluginReaderException {
         rulePluginRepository = new RulePluginRepositoryImpl();
         ruleSetReader = new RuleSetReaderImpl();
-
     }
 
     @Override
@@ -48,47 +57,9 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
 
     protected abstract String getCommand();
 
-    protected RuleSet readRuleSet() {
+    protected RuleSet getAvailableRules() {
         List<Source> ruleSources = rulePluginRepository.getRuleSources();
         return ruleSetReader.read(ruleSources);
-    }
-
-    /**
-     * Logs the given {@link RuleSet} on level info.
-     *
-     * @param ruleSet The {@link RuleSet}.
-     */
-    protected void printRuleSet(RuleSet ruleSet, Output output) throws RemoteException {
-        output.println("Groups [" + ruleSet.getGroups().size() + "]");
-        for (Group group : ruleSet.getGroups().values()) {
-            output.println(LOG_LINE_PREFIX + group.getId() + "\"");
-        }
-        output.println("Constraints [" + ruleSet.getConstraints().size() + "]");
-        for (Constraint constraint : ruleSet.getConstraints().values()) {
-            output.println(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
-        }
-        output.println("Concepts [" + ruleSet.getConcepts().size() + "]");
-        for (Concept concept : ruleSet.getConcepts().values()) {
-            output.println(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
-        }
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            output.println("Missing concepts [" + ruleSet.getMissingConcepts().size() + "]");
-            for (String missingConcept : ruleSet.getMissingConcepts()) {
-                output.println(LOG_LINE_PREFIX + missingConcept);
-            }
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            output.println("Missing constraints [" + ruleSet.getMissingConstraints().size() + "]");
-            for (String missingConstraint : ruleSet.getMissingConstraints()) {
-                output.println(LOG_LINE_PREFIX + missingConstraint);
-            }
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            output.println("Missing groups [" + ruleSet.getMissingGroups().size() + "]");
-            for (String missingGroup : ruleSet.getMissingGroups()) {
-                output.println(LOG_LINE_PREFIX + missingGroup);
-            }
-        }
     }
 
     protected Store getStore() {
@@ -103,4 +74,40 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
         return store;
     }
 
+    protected ScannerPluginRepository getScannerPluginRepository() {
+        try {
+            return new ScannerPluginRepositoryImpl(getStore(), new Properties());
+        } catch (PluginReaderException e) {
+            throw new IllegalStateException("Cannot get scanner plugin repository", e);
+        }
+    }
+
+    protected RuleSet getEffectiveRuleSet(AppCommandParser parser) throws RuleSetResolverException {
+        List<String> conceptNames = new ArrayList<>();
+        List<String> constraintNames = new ArrayList<>();
+        List<String> groupNames = new ArrayList<>();
+        for (String argument : parser.arguments()) {
+            if (parseArgument(CONCEPTS_PATTERN, argument, conceptNames))
+                ;
+            else if (parseArgument(CONSTRAINTS_PATTERN, argument, constraintNames))
+                ;
+            else if (parseArgument(GROUPS_PATTERN, argument, groupNames))
+                ;
+            else {
+                throw new IllegalArgumentException("Illegal argument " + argument);
+            }
+        }
+        RuleSet availableRules = getAvailableRules();
+        RuleSelector ruleSelector = new RuleSelectorImpl();
+        return ruleSelector.getEffectiveRuleSet(availableRules, conceptNames, constraintNames, groupNames);
+    }
+
+    private boolean parseArgument(Pattern pattern, String argument, List<String> values) {
+        Matcher matcher = pattern.matcher(argument);
+        if (matcher.matches()) {
+            values.addAll(Arrays.asList(matcher.group(1).split(",")));
+            return true;
+        }
+        return false;
+    }
 }

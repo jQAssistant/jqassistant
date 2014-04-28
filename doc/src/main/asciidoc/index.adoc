@@ -18,4 +18,6 @@ Here are some examples illustrating the possibilities:
 == License
 jQAssistant is contributed under http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0].
 
+include::examples.adoc[]
 include::plugins.adoc[]
+include::devguide.adoc[]

@@ -1,20 +1,27 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.visitor;
 
-import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
-import org.objectweb.asm.Attribute;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
+import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.LineNumberDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
+    private int line;
 
     protected MethodVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
     }
@@ -37,24 +44,44 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(owner));
         FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(typeDescriptor, fieldSignature);
         switch (opcode) {
-            case Opcodes.GETFIELD:
-            case Opcodes.GETSTATIC:
-                this.methodDescriptor.addReads(fieldDescriptor);
-                break;
-            case Opcodes.PUTFIELD:
-            case Opcodes.PUTSTATIC:
-                this.methodDescriptor.addWrites(fieldDescriptor);
-                break;
+        case Opcodes.GETFIELD:
+        case Opcodes.GETSTATIC:
+            addLineNumber(this.methodDescriptor.addReads(fieldDescriptor));
+            break;
+        case Opcodes.PUTFIELD:
+        case Opcodes.PUTSTATIC:
+           addLineNumber(this.methodDescriptor.addWrites(fieldDescriptor));
+            break;
         }
     }
 
     @Override
-    public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc) {
+    public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc, boolean itf) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(owner));
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
-        this.methodDescriptor.addInvokes(invokedMethodDescriptor);
+        InvokesDescriptor invokesDescriptor = this.methodDescriptor.addInvokes(invokedMethodDescriptor);
+        addLineNumber(invokesDescriptor);
         visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));
+    }
+
+    /**
+     * Adds the current line number to the given descriptor.
+     * 
+     * @param lineNumberDescriptor
+     *            The descriptor.
+     */
+    private void addLineNumber(LineNumberDescriptor lineNumberDescriptor) {
+        int[] lineNumbers = lineNumberDescriptor.getLineNumbers();
+        int[] newLineNumbers;
+        if (lineNumbers == null) {
+            newLineNumbers = new int[1];
+        } else {
+            newLineNumbers = new int[lineNumbers.length + 1];
+            System.arraycopy(lineNumbers, 0, newLineNumbers, 0, lineNumbers.length);
+        }
+        newLineNumbers[newLineNumbers.length - 1] = line;
+        lineNumberDescriptor.setLineNumbers(newLineNumbers);
     }
 
     @Override
@@ -70,8 +97,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end,
-                                   final int index) {
+    public void visitLocalVariable(final String name, final String desc, final String signature, final Label start, final Label end, final int index) {
         if (signature != null) {
             new SignatureReader(signature).accept(new DependentTypeSignatureVisitor(methodDescriptor, visitorHelper));
         }
@@ -83,56 +109,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public void visitCode() {
-    }
-
-    @Override
-    public void visitFrame(final int type, final int nLocal, final Object[] local, final int nStack, final Object[] stack) {
-    }
-
-    @Override
-    public void visitInsn(final int opcode) {
-    }
-
-    @Override
-    public void visitIntInsn(final int opcode, final int operand) {
-    }
-
-    @Override
-    public void visitVarInsn(final int opcode, final int var) {
-    }
-
-    @Override
-    public void visitJumpInsn(final int opcode, final Label label) {
-    }
-
-    @Override
-    public void visitLabel(final Label label) {
-    }
-
-    @Override
-    public void visitIincInsn(final int var, final int increment) {
-    }
-
-    @Override
-    public void visitTableSwitchInsn(final int min, final int max, final Label dflt, final Label[] labels) {
-    }
-
-    @Override
-    public void visitLookupSwitchInsn(final Label dflt, final int[] keys, final Label[] labels) {
-    }
-
-    @Override
     public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
         visitorHelper.addDependency(methodDescriptor, type);
-    }
-
-    @Override
-    public void visitLineNumber(final int line, final Label start) {
-    }
-
-    @Override
-    public void visitMaxs(final int maxStack, final int maxLocals) {
     }
 
     @Override
@@ -142,10 +120,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     }
 
     @Override
-    public void visitAttribute(Attribute arg0) {
-    }
-
-    @Override
-    public void visitEnd() {
+    public void visitLineNumber(int line, Label start) {
+        this.line = line;
     }
 }

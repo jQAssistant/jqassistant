@@ -1,5 +1,19 @@
 package com.buschmais.jqassistant.sonar.plugin.rule;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import javax.xml.transform.Source;
+
+import org.sonar.api.rules.AnnotationRuleParser;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
+import org.sonar.api.rules.RuleRepository;
+import org.sonar.api.utils.SonarException;
+import org.sonar.plugins.java.Java;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
@@ -10,36 +24,29 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
-import org.sonar.api.resources.Java;
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleParam;
-import org.sonar.api.rules.RuleRepository;
-import org.sonar.api.utils.SonarException;
-
-import javax.xml.transform.Source;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * The jQAssistant rule repository.
- * <p>It provides two types of rules:
+ * <p>
+ * It provides two types of rules:
  * <ul>
- * <li>Rules from jQAssistant plugin descriptors which are deployed as extensions.</li>
+ * <li>Rules from jQAssistant plugin descriptors which are deployed as
+ * extensions.</li>
  * <li>Template rules which can be configured by the user in the UI.</li>
  * </ul>
  */
 public final class JQAssistantRuleRepository extends RuleRepository {
 
-    public static final List<Class> RULE_CLASSES = Arrays.<Class>asList(ConceptTemplateRule.class, ConstraintTemplateRule.class);
+    @SuppressWarnings("rawtypes")
+    public static final Collection<Class> RULE_CLASSES = Arrays.<Class> asList(ConceptTemplateRule.class, ConstraintTemplateRule.class);
 
     private final AnnotationRuleParser annotationRuleParser;
 
     /**
      * Constructor.
-     *
-     * @param annotationRuleParser The {@link AnnotationRuleParser} to use for template rules.
+     * 
+     * @param annotationRuleParser
+     *            The {@link AnnotationRuleParser} to use for template rules.
      */
     public JQAssistantRuleRepository(AnnotationRuleParser annotationRuleParser) {
         super(JQAssistant.KEY, Java.KEY);
@@ -71,9 +78,11 @@ public final class JQAssistantRuleRepository extends RuleRepository {
 
     /**
      * Create a rule from an executable.
-     *
-     * @param executable The executable.
-     * @param ruleType   The rule type.
+     * 
+     * @param executable
+     *            The executable.
+     * @param ruleType
+     *            The rule type.
      * @return The rule.
      */
     private Rule createRule(AbstractExecutable executable, RuleType ruleType) {
@@ -95,10 +104,13 @@ public final class JQAssistantRuleRepository extends RuleRepository {
 
     /**
      * Create a rule parameter.
-     *
-     * @param rule                    The rule.
-     * @param ruleParameterDefinition The parameter name.
-     * @param value                   The default value.
+     * 
+     * @param rule
+     *            The rule.
+     * @param ruleParameterDefinition
+     *            The parameter name.
+     * @param value
+     *            The default value.
      * @return The parameter.
      */
     private RuleParam createRuleParameter(Rule rule, RuleParameter ruleParameterDefinition, String value) {

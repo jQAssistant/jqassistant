@@ -1,4 +1,4 @@
-= Naming Rules
+==== Naming Rules
 
 Demonstrates concepts and constraints to enforce names and locations of classes with dedicated roles.
 

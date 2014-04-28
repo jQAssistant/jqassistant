@@ -1,8 +1,10 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
+import java.io.IOException;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Iterator;
+import java.util.Locale;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -11,11 +13,10 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Iterator;
-import java.util.Locale;
+
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
+import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
 
 public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
 
@@ -46,67 +47,68 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
             if (event.isStartElement()) {
                 StartElement element = event.asStartElement();
                 String elementName = element.getName().getLocalPart();
-                Iterator attributes = element.getAttributes();
+                @SuppressWarnings("unchecked")
+                Iterator<Attribute> attributes = element.getAttributes();
                 switch (elementName) {
-                    case "testsuite":
-                        testSuiteDescriptor = getStore().create(TestSuiteDescriptor.class);
-                        testSuiteDescriptor.setFileName(streamSource.getSystemId());
-                        while (attributes.hasNext()) {
-                            Attribute attribute = (Attribute) attributes.next();
-                            String attributeName = attribute.getName().getLocalPart();
-                            String value = attribute.getValue();
-                            switch (attributeName) {
-                                case "name":
-                                    testSuiteDescriptor.setName(value);
-                                    break;
-                                case "time":
-                                    testSuiteDescriptor.setTime(parseTime(value));
-                                    break;
-                                case "tests":
-                                    testSuiteDescriptor.setTests(Integer.parseInt(value));
-                                    break;
-                                case "failures":
-                                    testSuiteDescriptor.setFailures(Integer.parseInt(value));
-                                    break;
-                                case "errors":
-                                    testSuiteDescriptor.setErrors(Integer.parseInt(value));
-                                    break;
-                                case "skipped":
-                                    testSuiteDescriptor.setSkipped(Integer.parseInt(value));
-                                    break;
-                            }
+                case "testsuite":
+                    testSuiteDescriptor = getStore().create(TestSuiteDescriptor.class);
+                    testSuiteDescriptor.setFileName(streamSource.getSystemId());
+                    while (attributes.hasNext()) {
+                        Attribute attribute = attributes.next();
+                        String attributeName = attribute.getName().getLocalPart();
+                        String value = attribute.getValue();
+                        switch (attributeName) {
+                        case "name":
+                            testSuiteDescriptor.setName(value);
+                            break;
+                        case "time":
+                            testSuiteDescriptor.setTime(parseTime(value));
+                            break;
+                        case "tests":
+                            testSuiteDescriptor.setTests(Integer.parseInt(value));
+                            break;
+                        case "failures":
+                            testSuiteDescriptor.setFailures(Integer.parseInt(value));
+                            break;
+                        case "errors":
+                            testSuiteDescriptor.setErrors(Integer.parseInt(value));
+                            break;
+                        case "skipped":
+                            testSuiteDescriptor.setSkipped(Integer.parseInt(value));
+                            break;
                         }
-                        break;
-                    case "testcase":
-                        testCaseDescriptor = getStore().create(TestCaseDescriptor.class);
-                        testCaseDescriptor.setResult(TestCaseDescriptor.Result.SUCCESS);
-                        testSuiteDescriptor.getTestCases().add(testCaseDescriptor);
-                        while (attributes.hasNext()) {
-                            Attribute attribute = (Attribute) attributes.next();
-                            String attributeName = attribute.getName().getLocalPart();
-                            String value = attribute.getValue();
-                            switch (attributeName) {
-                                case "name":
-                                    testCaseDescriptor.setName(value);
-                                    break;
-                                case "time":
-                                    testCaseDescriptor.setTime(parseTime(value));
-                                    break;
-                                case "classname":
-                                    testCaseDescriptor.setClassName(value);
-                                    break;
-                            }
+                    }
+                    break;
+                case "testcase":
+                    testCaseDescriptor = getStore().create(TestCaseDescriptor.class);
+                    testCaseDescriptor.setResult(TestCaseDescriptor.Result.SUCCESS);
+                    testSuiteDescriptor.getTestCases().add(testCaseDescriptor);
+                    while (attributes.hasNext()) {
+                        Attribute attribute = (Attribute) attributes.next();
+                        String attributeName = attribute.getName().getLocalPart();
+                        String value = attribute.getValue();
+                        switch (attributeName) {
+                        case "name":
+                            testCaseDescriptor.setName(value);
+                            break;
+                        case "time":
+                            testCaseDescriptor.setTime(parseTime(value));
+                            break;
+                        case "classname":
+                            testCaseDescriptor.setClassName(value);
+                            break;
                         }
-                        break;
-                    case "failure":
-                        testCaseDescriptor.setResult(TestCaseDescriptor.Result.FAILURE);
-                        break;
-                    case "error":
-                        testCaseDescriptor.setResult(TestCaseDescriptor.Result.ERROR);
-                        break;
-                    case "skipped":
-                        testCaseDescriptor.setResult(TestCaseDescriptor.Result.SKIPPED);
-                        break;
+                    }
+                    break;
+                case "failure":
+                    testCaseDescriptor.setResult(TestCaseDescriptor.Result.FAILURE);
+                    break;
+                case "error":
+                    testCaseDescriptor.setResult(TestCaseDescriptor.Result.ERROR);
+                    break;
+                case "skipped":
+                    testCaseDescriptor.setResult(TestCaseDescriptor.Result.SKIPPED);
+                    break;
                 }
             }
         }

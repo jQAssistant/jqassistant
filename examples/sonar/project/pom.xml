@@ -9,13 +9,27 @@
     </parent>
     <artifactId>jqassistant.examples.sonar.project</artifactId>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>sonar</id>
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.buschmais.jqassistant.maven</groupId>
+                        <groupId>com.buschmais.jqassistant.scm</groupId>
                         <artifactId>jqassistant-maven-plugin</artifactId>
                         <version>${project.version}</version>
                         <executions>

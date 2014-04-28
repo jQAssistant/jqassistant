@@ -1,5 +1,20 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
+import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.*;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -19,20 +34,6 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodie
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.*;
-
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
-import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
-import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the dependency concepts and result.
@@ -41,39 +42,35 @@ public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "dependency:Annotation".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void annotations() throws IOException, AnalyzerException {
         scanClasses(AnnotatedType.class);
         applyConcept("dependency:Annotation");
         store.beginTransaction();
-        assertThat(
-                query("MATCH (e:TYPE:CLASS)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)),
-                        hasItem(typeDescriptor(String.class))));
-        assertThat(
-                query("MATCH (e:FIELD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)),
-                        hasItem(typeDescriptor(String.class))));
-        assertThat(
-                query("MATCH (e:METHOD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)),
-                        hasItem(typeDescriptor(String.class))));
-        assertThat(
-                query("MATCH (e:PARAMETER)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)),
-                        hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:TYPE:CLASS)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
+                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:FIELD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
+                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:METHOD)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
+                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
+        assertThat(query("MATCH (e:PARAMETER)-[:DEPENDS_ON]->(t:TYPE) RETURN t").getColumn("t"),
+                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "dependency:MethodParameter".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void parameters() throws IOException, AnalyzerException {
@@ -87,9 +84,11 @@ public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "dependency:MethodInvocation".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void methodInvocations() throws IOException, AnalyzerException {
@@ -99,16 +98,18 @@ public class DependencyIT extends AbstractPluginIT {
         TestResult testResult = query("MATCH (m:METHOD)-[:DEPENDS_ON]->(t:TYPE) RETURN t");
         assertThat(
                 testResult.getColumn("t"),
-                allOf(hasItem(typeDescriptor(MethodDependency.class)), hasItem(typeDescriptor(Map.class)),
-                        hasItem(typeDescriptor(SortedSet.class)), hasItem(typeDescriptor(Number.class))));
+                allOf(hasItem(typeDescriptor(MethodDependency.class)), hasItem(typeDescriptor(Map.class)), hasItem(typeDescriptor(SortedSet.class)),
+                        hasItem(typeDescriptor(Number.class))));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "dependency:FieldAccess".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void fieldAccess() throws IOException, AnalyzerException {
@@ -118,25 +119,23 @@ public class DependencyIT extends AbstractPluginIT {
         String query = "MATCH (m:METHOD)-[:DEPENDS_ON]->(t:TYPE) WHERE m.SIGNATURE =~ {method} RETURN t";
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("method", "void readField.*");
-        assertThat(query(query, parameters).getColumn("t"),
-                allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
         parameters.put("method", "void writeField.*");
-        assertThat(query(query, parameters).getColumn("t"),
-                allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
         parameters.put("method", "void readStaticField.*");
-        assertThat(query(query, parameters).getColumn("t"),
-                allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
         parameters.put("method", "void writeStaticField.*");
-        assertThat(query(query, parameters).getColumn("t"),
-                allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
+        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "dependency:TypeBody".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void typeBodies() throws IOException, AnalyzerException {
@@ -145,25 +144,24 @@ public class DependencyIT extends AbstractPluginIT {
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:TYPE)-[:DEPENDS_ON]->(t2:TYPE) RETURN t2");
         // field
-        assertThat(
-                testResult.getColumn("t2"),
-                allOf(hasItem(typeDescriptor(List.class)), hasItem(typeDescriptor(String.class)),
-                        hasItem(typeDescriptor(FieldAnnotation.class))));
+        assertThat(testResult.getColumn("t2"),
+                allOf(hasItem(typeDescriptor(List.class)), hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(FieldAnnotation.class))));
         // method
         assertThat(
                 testResult.getColumn("t2"),
-                allOf(hasItem(typeDescriptor(Iterator.class)), hasItem(typeDescriptor(Number.class)),
-                        hasItem(typeDescriptor(Integer.class)), hasItem(typeDescriptor(Exception.class)),
-                        hasItem(typeDescriptor(Double.class)), hasItem(typeDescriptor(Boolean.class)),
+                allOf(hasItem(typeDescriptor(Iterator.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(Integer.class)),
+                        hasItem(typeDescriptor(Exception.class)), hasItem(typeDescriptor(Double.class)), hasItem(typeDescriptor(Boolean.class)),
                         hasItem(typeDescriptor(MethodAnnotation.class))));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "dependency:Type".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void types() throws IOException, AnalyzerException {
@@ -174,16 +172,18 @@ public class DependencyIT extends AbstractPluginIT {
         // field
         assertThat(
                 testResult.getColumn("t2"),
-                allOf(hasItem(typeDescriptor(SuperType.class)), hasItem(typeDescriptor(Comparable.class)),
-                        hasItem(typeDescriptor(Integer.class)), hasItem(typeDescriptor(TypeAnnotation.class))));
+                allOf(hasItem(typeDescriptor(SuperType.class)), hasItem(typeDescriptor(Comparable.class)), hasItem(typeDescriptor(Integer.class)),
+                        hasItem(typeDescriptor(TypeAnnotation.class))));
         store.commitTransaction();
     }
 
     /**
      * Verifies the concept "dependency:Package".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void packages() throws IOException, AnalyzerException {
@@ -202,9 +202,11 @@ public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the concept "dependency:Artifact".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void artifacts() throws IOException, AnalyzerException {
@@ -224,9 +226,11 @@ public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the constraint "dependency:PackageCycles".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void packageCycles() throws IOException, AnalyzerException {
@@ -242,9 +246,11 @@ public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the constraint "dependency:TypeCycles".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void typeCycles() throws IOException, AnalyzerException {
@@ -260,9 +266,11 @@ public class DependencyIT extends AbstractPluginIT {
 
     /**
      * Verifies the constraint "dependency:ArtifactCycles".
-     *
-     * @throws java.io.IOException If the test fails.
-     * @throws AnalyzerException   If the test fails.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws AnalyzerException
+     *             If the test fails.
      */
     @Test
     public void artifactCycles() throws IOException, AnalyzerException {

@@ -1,17 +1,18 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.io.File;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Abstract base implementation for analysis mojos running as aggregator.
@@ -57,13 +58,14 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
         }, currentProject, reactorProjects);
     }
 
-
     /**
      * Return the store instance to use for the given base project.
-     *
-     * @param baseProject The base project
+     * 
+     * @param baseProject
+     *            The base project
      * @return The store instance.
-     * @throws MojoExecutionException If the store cannot be created.
+     * @throws MojoExecutionException
+     *             If the store cannot be created.
      */
     protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
         File directory;
@@ -77,17 +79,18 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
 
     /**
      * Determine if a goal needs to reset the store on initialization.
-     *
+     * 
      * @return <code>true</code> If the store shall be reset initially.
      */
     protected abstract boolean isResetStoreOnInitialization();
 
     /**
      * Execute the aggregated analysis.
-     *
-     * @throws MojoExecutionException If execution fails.
-     * @throws MojoFailureException   If execution fails.
+     * 
+     * @throws MojoExecutionException
+     *             If execution fails.
+     * @throws MojoFailureException
+     *             If execution fails.
      */
-    protected abstract void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
-            MojoFailureException;
+    protected abstract void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException;
 }

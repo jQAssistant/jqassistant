@@ -13,20 +13,20 @@ import javax.xml.bind.JAXBContext;
 @Produces(MediaType.APPLICATION_XML)
 public class BookResolver implements ContextResolver<JAXBContext> {
 
-	private JAXBContext jaxbContext;
+    private JAXBContext jaxbContext;
 
-	public BookResolver() {
-		// initialize the context
-		this.jaxbContext = null;
-	}
+    public BookResolver() {
+        // initialize the context
+        this.jaxbContext = null;
+    }
 
-	@Override
-	public JAXBContext getContext(Class<?> type) {
-		if (type.equals(Book.class)) {
-			return jaxbContext;
-		} else {
-			return null;
-		}
-	}
+    @Override
+    public JAXBContext getContext(Class<?> type) {
+        if (type.equals(Book.class)) {
+            return jaxbContext;
+        } else {
+            return null;
+        }
+    }
 
 }

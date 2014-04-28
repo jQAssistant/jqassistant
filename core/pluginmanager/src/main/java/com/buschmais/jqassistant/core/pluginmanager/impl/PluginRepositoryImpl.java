@@ -1,22 +1,24 @@
 package com.buschmais.jqassistant.core.pluginmanager.impl;
 
-import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.pluginmanager.api.PluginRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.pluginmanager.api.PluginRepository;
 
 /**
  * Plugin reader implementation.
@@ -42,8 +44,9 @@ public class PluginRepositoryImpl implements PluginRepository {
 
     /**
      * Read the catalogs from an {@link URL}.
-     *
-     * @param pluginUrl The {@link URL}.
+     * 
+     * @param pluginUrl
+     *            The {@link URL}.
      * @return The {@link JqassistantPlugin}.
      */
     private JqassistantPlugin readPlugin(URL pluginUrl) {
@@ -65,7 +68,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     /**
      * Returns an {@link Iterable} over all plugins which can be resolved from
      * the current classpath.
-     *
+     * 
      * @return The plugins which can be resolved from the current classpath.
      */
     protected List<JqassistantPlugin> getPlugins() {

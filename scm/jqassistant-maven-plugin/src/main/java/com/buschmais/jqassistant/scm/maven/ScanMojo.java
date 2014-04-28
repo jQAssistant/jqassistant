@@ -1,5 +1,16 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.project.MavenProject;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
@@ -9,16 +20,6 @@ import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.project.MavenProject;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Scans the the output directory and test output directory.
@@ -27,14 +28,13 @@ import java.util.Set;
 public class ScanMojo extends AbstractAnalysisAggregatorMojo {
 
     @Override
-    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException,
-            MojoFailureException {
+    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         for (MavenProject project : projects) {
             List<FileScannerPlugin> fileScannerPlugins;
             List<ProjectScannerPlugin> projectScannerPlugins;
-                Properties pluginProperties = getPluginProperties();
-                pluginProperties.put(MavenProject.class.getName(), project);
-                ScannerPluginRepository pluginManager = getScannerPluginRepository(store, pluginProperties);
+            Properties pluginProperties = getPluginProperties();
+            pluginProperties.put(MavenProject.class.getName(), project);
+            ScannerPluginRepository pluginManager = getScannerPluginRepository(store, pluginProperties);
             try {
                 fileScannerPlugins = pluginManager.getFileScannerPlugins();
                 projectScannerPlugins = pluginManager.getProjectScannerPlugins();

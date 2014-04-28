@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.report;
 
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.report.schema.v1.*;
-import org.junit.Test;
-import org.xml.sax.SAXException;
+import java.io.StringReader;
+import java.util.List;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -13,11 +13,12 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import java.io.StringReader;
-import java.util.List;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import org.junit.Test;
+import org.xml.sax.SAXException;
+
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.report.schema.v1.*;
 
 public class XmlReportTest {
 

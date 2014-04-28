@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import org.xml.sax.SAXException;
-
 import javax.xml.XMLConstants;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+
+import org.xml.sax.SAXException;
+
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 
 /**
  * Provides utility functions for working with XML files.
@@ -14,8 +15,9 @@ public class XmlHelper {
 
     /**
      * Return a {@link Schema} instance for the given resource.
-     *
-     * @param resource The resource.
+     * 
+     * @param resource
+     *            The resource.
      * @return The {@link Schema} instance.
      */
     public static Schema getSchema(String resource) {

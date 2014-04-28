@@ -1,13 +1,16 @@
 package com.buschmais.jqassistant.sonar.extension.java;
 
-import com.buschmais.jqassistant.sonar.plugin.sensor.LanguageResourceResolver;
 import org.sonar.api.BatchExtension;
 import org.sonar.api.resources.JavaFile;
 import org.sonar.api.resources.JavaPackage;
 import org.sonar.api.resources.Resource;
 
+import com.buschmais.jqassistant.sonar.plugin.sensor.LanguageResourceResolver;
+
 /**
- * Implementation of a {@link com.buschmais.jqassistant.sonar.plugin.sensor.LanguageResourceResolver} for java elements.
+ * Implementation of a
+ * {@link com.buschmais.jqassistant.sonar.plugin.sensor.LanguageResourceResolver}
+ * for java elements.
  */
 public class JavaResourceResolver implements LanguageResourceResolver, BatchExtension {
 

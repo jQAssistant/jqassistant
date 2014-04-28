@@ -5,8 +5,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * Abstract {@link javax.xml.stream.XMLStreamWriter} implementation which just delegates to another instance.
- * <p>Its purpose is to be extended by classes which want to override specific methods.</p>
+ * Abstract {@link javax.xml.stream.XMLStreamWriter} implementation which just
+ * delegates to another instance.
+ * <p>
+ * Its purpose is to be extended by classes which want to override specific
+ * methods.
+ * </p>
  */
 public abstract class AbstractStreamWriterDelegate implements XMLStreamWriter {
 

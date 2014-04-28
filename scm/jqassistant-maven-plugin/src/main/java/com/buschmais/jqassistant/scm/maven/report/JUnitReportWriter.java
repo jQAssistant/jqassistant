@@ -1,5 +1,14 @@
 package com.buschmais.jqassistant.scm.maven.report;
 
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -8,19 +17,16 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.Error;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.*;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.buschmais.jqassistant.plugin.junit4.impl.schema.Failure;
+import com.buschmais.jqassistant.plugin.junit4.impl.schema.ObjectFactory;
+import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testcase;
+import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite;
 
 /**
  * {@link ExecutionListener} implementation to write JUnit style reports.
- * <p>Each group is rendered as a test suite to a separate file.</p>
+ * <p>
+ * Each group is rendered as a test suite to a separate file.
+ * </p>
  */
 public class JUnitReportWriter implements ExecutionListener {
 
@@ -30,7 +36,7 @@ public class JUnitReportWriter implements ExecutionListener {
     private Group group;
     private long executableBeginTimestamp;
     private long groupBeginTimestamp;
-    private Map<Result, Long> results = new LinkedHashMap<>();
+    private Map<Result<? extends AbstractExecutable>, Long> results = new LinkedHashMap<>();
 
     public JUnitReportWriter(File directory) throws ExecutionListenerException {
         this.directory = directory;
@@ -62,9 +68,9 @@ public class JUnitReportWriter implements ExecutionListener {
         int tests = 0;
         int failures = 0;
         int errors = 0;
-        for (Map.Entry<Result, Long> entry : results.entrySet()) {
+        for (Map.Entry<Result<? extends AbstractExecutable>, Long> entry : results.entrySet()) {
             // TestCase
-            Result result = entry.getKey();
+            Result<? extends AbstractExecutable> result = entry.getKey();
             long time = entry.getValue().longValue();
             Testcase testcase = new Testcase();
             AbstractExecutable executable = result.getExecutable();

@@ -5,8 +5,16 @@
     <formats>
         <format>zip</format>
     </formats>
-    <includeBaseDirectory>false</includeBaseDirectory>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <baseDirectory>${project.artifactId}</baseDirectory>
     <fileSets>
+        <fileSet>
+            <directory>src/main/asciidoc</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>*</include>
+            </includes>
+        </fileSet>
         <fileSet>
             <directory>${project.build.directory}/generated-sources/asciidoc</directory>
             <outputDirectory>.</outputDirectory>

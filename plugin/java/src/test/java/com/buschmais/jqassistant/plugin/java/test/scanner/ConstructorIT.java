@@ -18,40 +18,37 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.Overlo
  */
 public class ConstructorIT extends AbstractPluginIT {
 
-	/**
-	 * Verifies scanning of {@link ImplicitDefaultConstructor}.
-	 * 
-	 * @throws java.io.IOException
-	 *             If the test fails.
-	 * @throws NoSuchMethodException
-	 *             If the test fails.
-	 */
-	@Test
-	public void implicitDefaultConstructor() throws IOException, NoSuchMethodException {
-		scanClasses(ImplicitDefaultConstructor.class);
+    /**
+     * Verifies scanning of {@link ImplicitDefaultConstructor}.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void implicitDefaultConstructor() throws IOException, NoSuchMethodException {
+        scanClasses(ImplicitDefaultConstructor.class);
         store.beginTransaction();
-		assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"),
-				hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
+        assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
         store.commitTransaction();
-	}
+    }
 
-	/**
-	 * Verifies scanning of {@link OverloadedConstructor}.
-	 * 
-	 * @throws java.io.IOException
-	 *             If the test fails.
-	 * @throws NoSuchMethodException
-	 *             If the test fails.
-	 */
+    /**
+     * Verifies scanning of {@link OverloadedConstructor}.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
 
-	@Test
-	public void overloadedConstructors() throws IOException, NoSuchMethodException {
-		scanClasses(OverloadedConstructor.class);
+    @Test
+    public void overloadedConstructors() throws IOException, NoSuchMethodException {
+        scanClasses(OverloadedConstructor.class);
         store.beginTransaction();
-		assertThat(
-				query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"),
-				allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)),
-						hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
+        assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"),
+                allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)), hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
         store.commitTransaction();
-	}
+    }
 }

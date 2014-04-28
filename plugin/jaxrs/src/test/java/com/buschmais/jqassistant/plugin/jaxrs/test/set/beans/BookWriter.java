@@ -17,22 +17,22 @@ import javax.ws.rs.ext.Provider;
  * @author Aparna Chaudhary
  */
 @Provider
-public class BookWriter implements MessageBodyWriter<Book>{
+public class BookWriter implements MessageBodyWriter<Book> {
 
-	@Override
-	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return true;
-	}
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return true;
+    }
 
-	@Override
-	public long getSize(Book t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return -1;
-	}
+    @Override
+    public long getSize(Book t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return -1;
+    }
 
-	@Override
-	public void writeTo(Book t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
-			MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
-		
-	}
+    @Override
+    public void writeTo(Book t, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders,
+            OutputStream entityStream) throws IOException, WebApplicationException {
+
+    }
 
 }
