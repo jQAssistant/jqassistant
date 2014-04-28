@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 /**
  * Defines the language elements for "Java".
  */
-@Language("Java")
+@Language
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface Java {
@@ -66,7 +66,7 @@ public @interface Java {
         Field {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new MemberSourceDescriptor();
+                return new MemberSourceProvider();
             }
         },
         ReadField {
@@ -75,7 +75,7 @@ public @interface Java {
                 return new SourceProvider<ReadsDescriptor>() {
                     @Override
                     public String getName(ReadsDescriptor descriptor) {
-                        return new MemberSourceDescriptor().getName(descriptor.getMethod());
+                        return new MemberSourceProvider().getName(descriptor.getMethod());
                     }
 
                     @Override
@@ -96,7 +96,7 @@ public @interface Java {
                 return new SourceProvider<WritesDescriptor>() {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
-                        return new MemberSourceDescriptor().getName(descriptor.getMethod());
+                        return new MemberSourceProvider().getName(descriptor.getMethod());
                     }
 
                     @Override
@@ -114,13 +114,13 @@ public @interface Java {
         Method {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new MemberSourceDescriptor();
+                return new MemberSourceProvider();
             }
         },
         Constructor {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new MemberSourceDescriptor();
+                return new MemberSourceProvider();
             }
         },
         MethodInvocation {
@@ -129,7 +129,7 @@ public @interface Java {
                 return new SourceProvider<InvokesDescriptor>() {
                     @Override
                     public String getName(InvokesDescriptor descriptor) {
-                        return new MemberSourceDescriptor().getName(descriptor.getInvokedMethod());
+                        return new MemberSourceProvider().getName(descriptor.getInvokedMethod());
                     }
 
                     @Override
@@ -145,11 +145,16 @@ public @interface Java {
             }
         };
 
+        @Override
+        public String getLanguage() {
+            return "Java";
+        }
+
         /**
          * {@link com.buschmais.jqassistant.core.report.api.SourceProvider}
          * implementation for type members.
          */
-        private static class MemberSourceDescriptor implements SourceProvider<MemberDescriptor> {
+        private static class MemberSourceProvider implements SourceProvider<MemberDescriptor> {
             @Override
             public String getName(MemberDescriptor descriptor) {
                 return descriptor.getDeclaringType().getFullQualifiedName() + "#" + descriptor.getSignature();

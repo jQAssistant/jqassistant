@@ -8,6 +8,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
  */
 public interface LanguageElement {
 
+    String getLanguage();
     /**
      * The name of the language element.
      * 
