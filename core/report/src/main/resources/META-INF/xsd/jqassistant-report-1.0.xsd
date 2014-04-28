@@ -96,5 +96,7 @@
 	<xs:attributeGroup name="LanguageElement">
 		<xs:attribute name="language" type="xs:string" use="optional" />
 		<xs:attribute name="element" type="xs:string" use="optional" />
+        <xs:attribute name="source" type="xs:string" use="optional" />
+        <xs:attribute name="lines" type="xs:string" use="optional" />
 	</xs:attributeGroup>
 </xs:schema>
