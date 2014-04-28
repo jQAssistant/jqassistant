@@ -1,7 +1,11 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -45,7 +49,7 @@ public final class XmlReportTestHelper {
         Map<String, Object> row = new HashMap<>();
         row.put(TEST_COLUMN, new TestDescriptor() {
             @Override
-            public String toString() {
+            public String getValue() {
                 return "testValue";
             }
         });

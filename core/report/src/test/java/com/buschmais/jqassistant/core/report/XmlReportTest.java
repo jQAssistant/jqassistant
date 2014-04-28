@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.core.report;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.StringReader;
@@ -18,7 +21,14 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.report.schema.v1.*;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
+import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
+import com.buschmais.jqassistant.core.report.schema.v1.RowType;
+import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
 
 public class XmlReportTest {
 
@@ -54,8 +64,8 @@ public class XmlReportTest {
         List<ColumnType> columns = rowType.getColumn();
         assertThat(columns.size(), equalTo(1));
         ColumnType column = columns.get(0);
-        assertThat(column.getLanguage(), equalTo("testLanguage"));
-        assertThat(column.getElement(), equalTo("testElement"));
+        assertThat(column.getLanguage(), equalTo("TestLanguage"));
+        assertThat(column.getElement(), equalTo("TestElement"));
         assertThat(column.getValue(), equalTo("testValue"));
     }
 }
