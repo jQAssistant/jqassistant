@@ -26,12 +26,13 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.scan.filesystem.ModuleFileSystem;
 import org.sonar.api.utils.SonarException;
 
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ComplexColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
 import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
 import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
 import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.report.schema.v1.PrimitiveColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
 import com.buschmais.jqassistant.core.report.schema.v1.RowType;
 import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
@@ -127,21 +128,34 @@ public class JQAssistantSensor implements Sensor {
                         for (RowType rowType : result.getRows().getRow()) {
                             StringBuilder message = new StringBuilder();
                             Resource<?> resource = null;
-                            for (ColumnType columnType : rowType.getColumn()) {
-                                String value = columnType.getValue();
-                                // if a language element is found use it as a resource for creating an issue
-                                String language = columnType.getLanguage();
-                                if (language != null) {
-                                    LanguageResourceResolver resourceResolver = languageResourceResolvers.get(language);
-                                    if (resourceResolver != null) {
-                                        String element = columnType.getElement();
-                                        resource = resourceResolver.resolve(element, value);
+                            for (Object o : rowType.getPrimitiveOrComplex()) {
+                                String name;
+                                String value;
+                                if (o instanceof ComplexColumnType) {
+                                    ComplexColumnType complexColumn = (ComplexColumnType) o;
+                                    name = complexColumn.getName();
+                                    value = complexColumn.getValue();
+                                    // if a language element is found use it as
+                                    // a resource for creating an issue
+                                    String language = complexColumn.getLanguage();
+                                    if (language != null) {
+                                        LanguageResourceResolver resourceResolver = languageResourceResolvers.get(language);
+                                        if (resourceResolver != null) {
+                                            String element = complexColumn.getElement();
+                                            resource = resourceResolver.resolve(element, value);
+                                        }
                                     }
+                                } else if (o instanceof PrimitiveColumnType) {
+                                    PrimitiveColumnType primitiveColumn = (PrimitiveColumnType) o;
+                                    name = primitiveColumn.getName();
+                                    value = primitiveColumn.getValue();
+                                } else {
+                                    throw new SonarException("Unknown column type " + o);
                                 }
                                 if (message.length() > 0) {
                                     message.append(", ");
                                 }
-                                message.append(columnType.getName());
+                                message.append(name);
                                 message.append('=');
                                 message.append(value);
                             }

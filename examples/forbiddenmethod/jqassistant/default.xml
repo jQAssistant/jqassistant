@@ -10,7 +10,7 @@
 			    dateType.FQN = 'java.util.Date'
                 and forbiddenMethod:CONSTRUCTOR
 			return
-			    type as Type, method.SIGNATURE as Method
+			    method as Method
         ]]></cypher>
     </constraint>
 
