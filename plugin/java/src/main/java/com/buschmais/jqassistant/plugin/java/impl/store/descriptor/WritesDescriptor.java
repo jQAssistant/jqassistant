@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
+import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.WriteField;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
@@ -10,6 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Defines a WRITES relation between a method and a field.
  */
 @Relation("WRITES")
+@Java(WriteField)
 public interface WritesDescriptor extends Descriptor, LineNumberDescriptor {
 
     @Outgoing

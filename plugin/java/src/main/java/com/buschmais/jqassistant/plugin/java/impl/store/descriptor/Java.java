@@ -53,7 +53,7 @@ public @interface Java {
 
                     @Override
                     public String getSource(TypeDescriptor descriptor) {
-                        return null;
+                        return descriptor.getFileName();
                     }
 
                     @Override

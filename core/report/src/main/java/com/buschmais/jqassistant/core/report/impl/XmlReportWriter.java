@@ -178,14 +178,7 @@ public class XmlReportWriter implements ExecutionListener {
                             for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
                                 String columnName = rowEntry.getKey();
                                 Object value = rowEntry.getValue();
-                                if (value instanceof Descriptor) {
-                                    writeComplexValue(columnName, (Descriptor) value);
-                                } else {
-                                    xmlStreamWriter.writeStartElement("primitive");
-                                    xmlStreamWriter.writeAttribute("name", columnName);
-                                    xmlStreamWriter.writeCharacters(value.toString());
-                                    xmlStreamWriter.writeEndElement(); // primitive
-                                }
+                                writeColumn(columnName, value);
                             }
                             xmlStreamWriter.writeEndElement();
                         }
@@ -203,39 +196,49 @@ public class XmlReportWriter implements ExecutionListener {
      * Determines the language and language element of a descriptor from a
      * result column.
      * 
-     * @param descriptor
-     *            The descriptor.
+     * @param value
+     *            The value.
      * @throws XMLStreamException
      *             If a problem occurs.
      */
-    private void writeComplexValue(String columnName, Descriptor descriptor) throws XMLStreamException {
-        LanguageElement elementValue = ReportWriterHelper.getLanguageElement(descriptor);
-        SourceProvider sourceProvider = elementValue.getSourceProvider();
-        String name = sourceProvider.getName(descriptor);
-        String source = sourceProvider.getSource(descriptor);
-        int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
-        xmlStreamWriter.writeStartElement("complex");
+    private void writeColumn(String columnName, Object value) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
-        xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
-        xmlStreamWriter.writeAttribute("element", elementValue.name());
-        xmlStreamWriter.writeStartElement("value");
-        xmlStreamWriter.writeCharacters(name);
-        xmlStreamWriter.writeEndElement(); // value
-        if (source != null || lineNumbers !=null) {
-            xmlStreamWriter.writeStartElement("source");
+        String stringValue;
+        if (value == null) {
+            stringValue = null;
+        } else if (value instanceof Descriptor) {
+            Descriptor descriptor = (Descriptor) value;
+            LanguageElement elementValue = ReportWriterHelper.getLanguageElement(descriptor);
+            if (elementValue != null) {
+                xmlStreamWriter.writeStartElement("element");
+                xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
+                xmlStreamWriter.writeCharacters(elementValue.name());
+                xmlStreamWriter.writeEndElement(); // element
+            }
+            SourceProvider sourceProvider = elementValue.getSourceProvider();
+            stringValue = sourceProvider.getName(descriptor);
+            String source = sourceProvider.getSource(descriptor);
+            int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
             if (source != null) {
+                xmlStreamWriter.writeStartElement("source");
                 xmlStreamWriter.writeAttribute("name", source);
-            }
-            if (lineNumbers != null) {
-                for (int lineNumber : lineNumbers) {
-                    xmlStreamWriter.writeStartElement("line");
-                    xmlStreamWriter.writeCharacters(Integer.toString(lineNumber));
-                    xmlStreamWriter.writeEndElement(); // line
+                if (lineNumbers != null) {
+                    for (int lineNumber : lineNumbers) {
+                        xmlStreamWriter.writeStartElement("line");
+                        xmlStreamWriter.writeCharacters(Integer.toString(lineNumber));
+                        xmlStreamWriter.writeEndElement(); // line
+                    }
                 }
+                xmlStreamWriter.writeEndElement(); // source
             }
-            xmlStreamWriter.writeEndElement(); // source
+        } else {
+            stringValue = value.toString();
         }
-        xmlStreamWriter.writeEndElement(); // complex
+        xmlStreamWriter.writeStartElement("value");
+        xmlStreamWriter.writeCharacters(stringValue);
+        xmlStreamWriter.writeEndElement(); // value
+        xmlStreamWriter.writeEndElement(); // column
     }
 
     private void writeDuration(long beginTime) throws XMLStreamException {

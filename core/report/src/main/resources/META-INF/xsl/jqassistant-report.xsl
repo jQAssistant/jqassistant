@@ -220,8 +220,7 @@
 						<xsl:for-each select="../../columns/column">
 							<xsl:variable name="col" select="text()" />
 							<td>
-								<xsl:value-of select="../../rows/row[$row]/primitive[@name=$col]" />
-                                <xsl:value-of select="../../rows/row[$row]/complex[@name=$col]/value" />
+                                <xsl:value-of select="../../rows/row[$row]/column[@name=$col]/value" />
 							</td>
 						</xsl:for-each>
 					</tr>

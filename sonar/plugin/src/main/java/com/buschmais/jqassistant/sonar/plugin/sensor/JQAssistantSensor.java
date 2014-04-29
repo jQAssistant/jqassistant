@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.sonar.plugin.sensor;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -17,7 +18,6 @@ import org.sonar.api.checks.AnnotationCheckFactory;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
-import org.sonar.api.issue.Issue;
 import org.sonar.api.platform.ComponentContainer;
 import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
@@ -26,16 +26,17 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.scan.filesystem.ModuleFileSystem;
 import org.sonar.api.utils.SonarException;
 
-import com.buschmais.jqassistant.core.report.schema.v1.ComplexColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.report.schema.v1.ElementType;
 import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
 import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
 import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.report.schema.v1.PrimitiveColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
 import com.buschmais.jqassistant.core.report.schema.v1.RowType;
 import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
+import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 
@@ -123,34 +124,28 @@ public class JQAssistantSensor implements Sensor {
                     ResultType result = ruleType.getResult();
                     boolean hasRows = result != null && result.getRows().getCount() > 0;
                     if (ruleType instanceof ConceptType && createEmptyConceptIssue && !hasRows) {
-                        createIssue(project, "The concept did not return a result.", activeRule, sensorContext);
+                        createIssue(project, null, "The concept did not return a result.", activeRule, sensorContext);
                     } else if (ruleType instanceof ConstraintType && hasRows) {
                         for (RowType rowType : result.getRows().getRow()) {
                             StringBuilder message = new StringBuilder();
                             Resource<?> resource = null;
-                            for (Object o : rowType.getPrimitiveOrComplex()) {
-                                String name;
-                                String value;
-                                if (o instanceof ComplexColumnType) {
-                                    ComplexColumnType complexColumn = (ComplexColumnType) o;
-                                    name = complexColumn.getName();
-                                    value = complexColumn.getValue();
-                                    // if a language element is found use it as
-                                    // a resource for creating an issue
-                                    String language = complexColumn.getLanguage();
-                                    if (language != null) {
-                                        LanguageResourceResolver resourceResolver = languageResourceResolvers.get(language);
-                                        if (resourceResolver != null) {
-                                            String element = complexColumn.getElement();
-                                            resource = resourceResolver.resolve(element, value);
-                                        }
+                            List<Integer> lineNumbers = null;
+                            for (ColumnType column : rowType.getColumn()) {
+                                String name = column.getName();
+                                String value = column.getValue();
+                                // if a language element element is found use it
+                                // as a resource for creating an issue
+                                ElementType languageElement = column.getElement();
+                                if (languageElement != null) {
+                                    LanguageResourceResolver resourceResolver = languageResourceResolvers.get(languageElement.getLanguage());
+                                    if (resourceResolver != null) {
+                                        String element = languageElement.getValue();
+                                        resource = resourceResolver.resolve(element, value);
                                     }
-                                } else if (o instanceof PrimitiveColumnType) {
-                                    PrimitiveColumnType primitiveColumn = (PrimitiveColumnType) o;
-                                    name = primitiveColumn.getName();
-                                    value = primitiveColumn.getValue();
-                                } else {
-                                    throw new SonarException("Unknown column type " + o);
+                                }
+                                SourceType source = column.getSource();
+                                if (source != null) {
+                                    lineNumbers = source.getLine();
                                 }
                                 if (message.length() > 0) {
                                     message.append(", ");
@@ -163,7 +158,14 @@ public class JQAssistantSensor implements Sensor {
                                 resource = project;
                             }
                             String issueDescription = ruleType.getDescription() + "\n" + message.toString();
-                            createIssue(project, resource, issueDescription, activeRule, sensorContext);
+                            if (lineNumbers != null) {
+                                for (Integer lineNumber : lineNumbers) {
+                                    createIssue(resource, lineNumber, issueDescription, activeRule, sensorContext);
+                                }
+                            } else {
+                                createIssue(resource, null, issueDescription, activeRule, sensorContext);
+                            }
+
                         }
                     }
                 }
@@ -175,7 +177,7 @@ public class JQAssistantSensor implements Sensor {
     /**
      * Creates an issue.
      * 
-     * @param project
+     * @param resource
      *            The project to create the issue for.
      * @param message
      *            The message to use.
@@ -184,28 +186,15 @@ public class JQAssistantSensor implements Sensor {
      * @param sensorContext
      *            The sensor context.
      */
-    private void createIssue(Project project, String message, ActiveRule rule, SensorContext sensorContext) {
-        createIssue(project, project, message, rule, sensorContext);
-    }
-
-    /**
-     * Creates an issue.
-     * 
-     * @param project
-     *            The project to create the issue for.
-     * @param message
-     *            The message to use.
-     * @param rule
-     *            The rule which has been violated.
-     * @param sensorContext
-     *            The sensor context.
-     */
-    private void createIssue(Project project, Resource<?> resource, String message, ActiveRule rule, SensorContext sensorContext) {
+    private void createIssue(Resource<?> resource, Integer lineNumber, String message, ActiveRule rule, SensorContext sensorContext) {
         Issuable issuable;
         if (sensorContext.getResource(resource) != null) {
             issuable = perspectives.as(Issuable.class, resource);
-            Issue issue = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message).build();
-            issuable.addIssue(issue);
+            Issuable.IssueBuilder issueBuilder = issuable.newIssueBuilder().ruleKey(rule.getRule().ruleKey()).message(message);
+            if (lineNumber != null) {
+                issueBuilder.line(lineNumber);
+            }
+            issuable.addIssue(issueBuilder.build());
             LOGGER.info("Issue added for resource '{}'.", resource.getLongName());
         } else {
             LOGGER.warn("Resource '{}' not found, issue not created.", resource.getLongName());

@@ -5,4 +5,14 @@ package com.buschmais.jqassistant.examples.sonar.project;
  * plugin extension.
  */
 public class Foo {
+
+    private int value;
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
 }
