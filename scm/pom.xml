@@ -70,6 +70,7 @@
     <modules>
         <module>common</module>
         <module>jqassistant-maven-plugin</module>
+        <module>cli</module>
     </modules>
 
 </project>
