@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,8 +10,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
@@ -30,14 +34,11 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.common.AnalysisHelper;
-
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -81,7 +82,7 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
         reportWriters.add(xmlReportWriter);
         try {
             CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
+            Analyzer analyzer = new AnalyzerImpl(store, reportWriter, getLog());
             try {
                 analyzer.execute(ruleSet);
             } catch (AnalyzerException e) {
@@ -92,9 +93,9 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
         }
         store.beginTransaction();
         try {
-            final AnalysisHelper analysisHelper = new AnalysisHelper(getLog());
-            analysisHelper.verifyConceptResults(inMemoryReportWriter);
-            analysisHelper.verifyConstraintViolations(inMemoryReportWriter);
+            final ReportHelper reportHelper = new ReportHelper(getLog());
+            reportHelper.verifyConceptResults(inMemoryReportWriter);
+            reportHelper.verifyConstraintViolations(inMemoryReportWriter);
         } finally {
             store.commitTransaction();
         }
@@ -134,7 +135,6 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }
     }
-
 
     private File createSelectedDirectoryFile() {
         return new File(baseDir, RULES_DIRECTORY);
@@ -188,9 +188,10 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
 
     /**
      * Returns the {@link java.io.File} to write the XML report to.
-     *
+     * 
      * @return The {@link java.io.File} to write the XML report to.
-     * @throws MojoExecutionException If the file cannot be determined.
+     * @throws MojoExecutionException
+     *             If the file cannot be determined.
      */
     private File getXmlReportFile() {
         File selectedXmlReportFile = new File(REPORT_XML);
@@ -200,10 +201,10 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
 
     @Override
     public void withOptions(final CommandLine options) {
-        if(options.hasOption("c")) {
+        if (options.hasOption("c")) {
             baseDir = options.getOptionValue("c");
         } else {
-            System.out.println("No jQAssistant rules directory given, using default "+createSelectedDirectoryFile().getAbsolutePath());
+            System.out.println("No jQAssistant rules directory given, using default " + createSelectedDirectoryFile().getAbsolutePath());
         }
     }
 
