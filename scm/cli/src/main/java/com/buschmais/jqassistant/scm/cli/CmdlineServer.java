@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import java.io.IOException;
+import java.util.Properties;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.core.store.impl.Server;
-
-import java.io.IOException;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
