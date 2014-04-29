@@ -1,8 +1,20 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import org.apache.commons.cli.*;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -11,6 +23,7 @@ public class Main {
     private static final Map<String, JqAssistantTask> functions = new HashMap<>();
 
     public static void main(String[] args) {
+        StaticLoggerBinder.getSingleton().setLog(new SystemStreamLog());
         putTasksIntoMap(Arrays.asList(
                 new ClassToNeo4JImporter(),
                 new CmdlineServer(),
