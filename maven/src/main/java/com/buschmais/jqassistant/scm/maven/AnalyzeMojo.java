@@ -21,11 +21,11 @@ import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.common.AnalysisHelper;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
 
 /**
@@ -86,17 +86,18 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
             }
         }
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
+        MavenConsole console = new MavenConsole(getLog());
+        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         try {
             analyzer.execute(ruleSet);
         } catch (AnalyzerException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
-        AnalysisHelper analysisHelper = new AnalysisHelper(new MavenConsole(getLog()));
+        ReportHelper reportHelper = new ReportHelper(console);
         store.beginTransaction();
         try {
-            analysisHelper.verifyConceptResults(inMemoryReportWriter);
-            int violations = analysisHelper.verifyConstraintViolations(inMemoryReportWriter);
+            reportHelper.verifyConceptResults(inMemoryReportWriter);
+            int violations = reportHelper.verifyConstraintViolations(inMemoryReportWriter);
             if (failOnConstraintViolations && violations > 0) {
                 throw new MojoFailureException(violations + " constraints have been violated!");
             }
