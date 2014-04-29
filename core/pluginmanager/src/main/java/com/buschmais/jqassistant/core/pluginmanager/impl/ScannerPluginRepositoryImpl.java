@@ -68,10 +68,16 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
             ScannerType scannerType = plugin.getScanner();
             if (scannerType != null) {
                 for (String scannerPluginName : scannerType.getPlugin()) {
-                    T scannerPlugin = createInstance(pluginClass, scannerPluginName);
-                    if (scannerPlugin != null) {
-                        scannerPlugin.initialize(store, properties);
-                        scannerPlugins.add(scannerPlugin);
+                    // if one plugin fails, continue with other plugins
+                    // catch throwable because of NoClassDefFoundError
+                    try {
+                        T scannerPlugin = createInstance(pluginClass, scannerPluginName);
+                        if (scannerPlugin != null) {
+                            scannerPlugin.initialize(store, properties);
+                            scannerPlugins.add(scannerPlugin);
+                        }
+                    } catch (Throwable e) {
+                        System.err.println(String.format("Could not create plugin %s of class %s because of exception %s", scannerPluginName, pluginClass, e.toString())); // FIXME use logger here
                     }
                 }
             }
