@@ -60,6 +60,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.report</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.buschmais.jqassistant.core</groupId>
+                    <artifactId>jqassistant.core.store</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.sonar</groupId>
             <artifactId>jqassistant.sonar.plugin</artifactId>
             <version>${project.version}</version>

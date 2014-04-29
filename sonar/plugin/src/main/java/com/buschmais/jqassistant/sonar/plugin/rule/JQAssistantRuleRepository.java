@@ -56,8 +56,8 @@ public final class JQAssistantRuleRepository extends RuleRepository {
 
     @Override
     public List<Rule> createRules() {
-        List<Rule> rules = new ArrayList<Rule>();
-        RulePluginRepository pluginManager = null;
+        List<Rule> rules = new ArrayList<>();
+        RulePluginRepository pluginManager;
         try {
             pluginManager = new RulePluginRepositoryImpl();
         } catch (PluginReaderException e) {

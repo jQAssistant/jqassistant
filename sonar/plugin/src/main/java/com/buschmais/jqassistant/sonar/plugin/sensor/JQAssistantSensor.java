@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
-import org.sonar.api.checks.AnnotationCheckFactory;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
@@ -38,7 +37,6 @@ import com.buschmais.jqassistant.core.report.schema.v1.RowType;
 import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
 import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
-import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 
 /**
  * {@link Sensor} implementation scanning for jqassistant-report.xml files.
@@ -53,8 +51,6 @@ public class JQAssistantSensor implements Sensor {
 
     private final ResourcePerspectives perspectives;
 
-    private final AnnotationCheckFactory annotationCheckFactory;
-
     private final Map<String, LanguageResourceResolver> languageResourceResolvers;
 
     private final Map<String, ActiveRule> rules;
@@ -66,18 +62,12 @@ public class JQAssistantSensor implements Sensor {
         this.settings = settings;
         this.moduleFileSystem = moduleFileSystem;
         this.perspectives = perspectives;
-        this.annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY, JQAssistantRuleRepository.RULE_CLASSES);
         this.languageResourceResolvers = new HashMap<>();
         for (LanguageResourceResolver resolver : componentContainerc.getComponentsByType(LanguageResourceResolver.class)) {
             languageResourceResolvers.put(resolver.getLanguage(), resolver);
         }
         LOGGER.info("Found {} language resource resolvers.", languageResourceResolvers.size());
         this.rules = new HashMap<>();
-        for (Object check : annotationCheckFactory.getChecks()) {
-            @SuppressWarnings("unchecked")
-            ActiveRule rule = annotationCheckFactory.getActiveRule(check);
-            rules.put(rule.getRule().getName(), rule);
-        }
         for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
             rules.put(activeRule.getRule().getName(), activeRule);
         }
