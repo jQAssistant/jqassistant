@@ -4,10 +4,12 @@ import java.rmi.RemoteException;
 
 import org.neo4j.shell.Output;
 
-import com.buschmais.jqassistant.scm.common.Console;
+import com.buschmais.jqassistant.core.analysis.api.Console;
 
 /**
- * Created by Dirk Mahler on 22.04.2014.
+ * Implementation of a
+ * {@link com.buschmais.jqassistant.core.analysis.api.Console} delegating to the
+ * neo4j shell output.
  */
 class ShellConsole implements Console {
 
@@ -15,6 +17,15 @@ class ShellConsole implements Console {
 
     public ShellConsole(Output out) {
         this.out = out;
+    }
+
+    @Override
+    public void debug(String message) {
+        try {
+            out.println(message);
+        } catch (RemoteException e) {
+            throw new IllegalStateException("Cannot print error message.", e);
+        }
     }
 
     @Override

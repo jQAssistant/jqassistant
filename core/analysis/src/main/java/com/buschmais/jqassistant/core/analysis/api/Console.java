@@ -1,9 +1,17 @@
-package com.buschmais.jqassistant.scm.common;
+package com.buschmais.jqassistant.core.analysis.api;
 
 /**
  * Defines an abstraction for a console.
  */
 public interface Console {
+
+    /**
+     * Print a debug message.
+     *
+     * @param message
+     *            The message.
+     */
+    void debug(String message);
 
     /**
      * Print an info message.
@@ -28,4 +36,5 @@ public interface Console {
      *            The message.
      */
     void error(String message);
+
 }

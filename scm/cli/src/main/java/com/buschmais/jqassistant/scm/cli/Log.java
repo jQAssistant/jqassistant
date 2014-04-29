@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import com.buschmais.jqassistant.scm.common.Console;
+import com.buschmais.jqassistant.core.analysis.api.Console;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14

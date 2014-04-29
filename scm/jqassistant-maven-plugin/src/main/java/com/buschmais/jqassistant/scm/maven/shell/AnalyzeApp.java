@@ -1,15 +1,19 @@
 package com.buschmais.jqassistant.scm.maven.shell;
 
 import org.neo4j.helpers.Service;
-import org.neo4j.shell.*;
+import org.neo4j.shell.App;
+import org.neo4j.shell.AppCommandParser;
+import org.neo4j.shell.Continuation;
+import org.neo4j.shell.Output;
+import org.neo4j.shell.Session;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.common.AnalysisHelper;
 
 @Service.Implementation(App.class)
 public class AnalyzeApp extends AbstractJQAssistantApp {
@@ -28,11 +32,12 @@ public class AnalyzeApp extends AbstractJQAssistantApp {
         InMemoryReportWriter reportWriter = new InMemoryReportWriter();
         Store store = getStore();
         store.start(getScannerPluginRepository().getDescriptorTypes());
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter);
+        ShellConsole console = new ShellConsole(out);
+        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         analyzer.execute(effectiveRuleSet);
-        AnalysisHelper analysisHelper = new AnalysisHelper(new ShellConsole(out));
-        analysisHelper.verifyConceptResults(reportWriter);
-        analysisHelper.verifyConstraintViolations(reportWriter);
+        ReportHelper reportHelper = new ReportHelper(console);
+        reportHelper.verifyConceptResults(reportWriter);
+        reportHelper.verifyConstraintViolations(reportWriter);
         store.stop();
         return Continuation.INPUT_COMPLETE;
     }

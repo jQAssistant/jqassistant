@@ -1,38 +1,72 @@
-package com.buschmais.jqassistant.scm.common;
+package com.buschmais.jqassistant.core.report.api;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.Console;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.xo.spi.reflection.AnnotatedType;
 
 /**
- * Provides common functionality for analysis implementations.
+ * Provides utility functionality for creating reports.
  */
-public class AnalysisHelper {
+public final class ReportHelper {
 
-    public static final String LOG_LINE_PREFIX = "  \"";
+    private Console console;
 
     /**
      * Constructor.
-     * 
+     *
      * @param console
      *            The console to use for printing messages.
      */
-    public AnalysisHelper(Console console) {
+    public ReportHelper(Console console) {
         this.console = console;
     }
 
-    private Console console;
+    /**
+     * Return the
+     * {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
+     * associated with a
+     * {@link com.buschmais.jqassistant.core.store.api.descriptor.Descriptor}.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @return The resolved
+     *         {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
+     * 
+     * @throws ExecutionListenerException
+     */
+    public static LanguageElement getLanguageElement(Descriptor descriptor) throws ExecutionListenerException {
+        for (Class<?> descriptorType : descriptor.getClass().getInterfaces()) {
+            AnnotatedType annotatedType = new AnnotatedType(descriptorType);
+            Annotation languageAnnotation = annotatedType.getByMetaAnnotation(Language.class);
+            if (languageAnnotation != null) {
+                return getAnnotationValue(languageAnnotation, "value", LanguageElement.class);
+            }
+        }
+        return null;
+    }
+
+    public static final String LOG_LINE_PREFIX = "  \"";
 
     /**
      * Logs the given
      * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet} on level
      * info.
-     * 
+     *
      * @param ruleSet
      *            The
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
@@ -78,7 +112,7 @@ public class AnalysisHelper {
      * A warning is logged for each concept which did not return a result (i.e.
      * has not been applied).
      * </p>
-     * 
+     *
      * @param inMemoryReportWriter
      *            The
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
@@ -96,7 +130,7 @@ public class AnalysisHelper {
     /**
      * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}.
-     * 
+     *
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
@@ -125,5 +159,37 @@ public class AnalysisHelper {
             }
         }
         return violations;
+    }
+
+    /**
+     * Return a value from an annotation.
+     * 
+     * @param annotation
+     *            The annotation.
+     * @param value
+     *            The value.
+     * @param expectedType
+     *            The expected type.
+     * @param <T>
+     *            The expected type.
+     * @return The value.
+     * @throws ExecutionListenerException
+     *             If the value cannot be determined from the annotation.
+     */
+    private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws ExecutionListenerException {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        Method valueMethod;
+        try {
+            valueMethod = annotationType.getDeclaredMethod(value);
+        } catch (NoSuchMethodException e) {
+            throw new ExecutionListenerException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
+        }
+        Object elementValue;
+        try {
+            elementValue = valueMethod.invoke(annotation);
+        } catch (ReflectiveOperationException e) {
+            throw new ExecutionListenerException("Cannot invoke method value() for " + annotationType);
+        }
+        return elementValue != null ? expectedType.cast(elementValue) : null;
     }
 }

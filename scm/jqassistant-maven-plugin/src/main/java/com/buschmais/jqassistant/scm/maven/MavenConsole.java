@@ -2,10 +2,11 @@ package com.buschmais.jqassistant.scm.maven;
 
 import org.apache.maven.plugin.logging.Log;
 
-import com.buschmais.jqassistant.scm.common.Console;
+import com.buschmais.jqassistant.core.analysis.api.Console;
 
 /**
- * Created by Dirk Mahler on 22.04.2014.
+ * Implementation of a
+ * {@link com.buschmais.jqassistant.core.analysis.api.Console} delegating to the maven logger.
  */
 public class MavenConsole implements Console {
 
@@ -13,6 +14,11 @@ public class MavenConsole implements Console {
 
     public MavenConsole(Log log) {
         this.log = log;
+    }
+
+    @Override
+    public void debug(String message) {
+        log.debug(message);
     }
 
     @Override
