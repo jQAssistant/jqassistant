@@ -15,6 +15,7 @@ import java.util.*;
 
 import javax.xml.transform.Source;
 
+import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -139,7 +140,7 @@ public class AbstractPluginIT {
     @Before
     public void initializeAnalyzer() {
         reportWriter = new InMemoryReportWriter();
-        analyzer = new AnalyzerImpl(store, reportWriter);
+        analyzer = new AnalyzerImpl(store, reportWriter, new TestConsole());
     }
 
     /**
