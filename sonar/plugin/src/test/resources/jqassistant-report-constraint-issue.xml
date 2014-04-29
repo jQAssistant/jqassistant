@@ -1,12 +1,8 @@
 <?xml version="1.0" ?>
 <jqa-report:jqassistant-report xmlns:jqa-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.0">
   <group id="MyQualityProfile" date="2014-04-29T18:11:46">
-    <constraint id="package:PackageNameMustContainArtifactName">
-      <description>Verifies that all package names within an artifact contain the artifact name.</description>
-      <duration>68</duration>
-    </constraint>
-    <constraint id="example:FieldsMustBeReadOnly">
-      <description>All declared fields must be read-only (i.e. not be written).</description>
+    <constraint id="example:TestConstraint">
+      <description>A test constraint.</description>
       <result>
         <columns count="1">
           <column>WriteAccess</column>
