@@ -35,7 +35,7 @@ public class XmlReportWriter implements ExecutionListener {
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
     private static interface XmlOperation {
-        void run() throws XMLStreamException;
+        void run() throws XMLStreamException, ExecutionListenerException;
     }
 
     private XMLStreamWriter xmlStreamWriter;
@@ -154,7 +154,7 @@ public class XmlReportWriter implements ExecutionListener {
             final List<String> columnNames = result.getColumnNames();
             run(new XmlOperation() {
                 @Override
-                public void run() throws XMLStreamException {
+                public void run() throws XMLStreamException, ExecutionListenerException {
                     xmlStreamWriter.writeStartElement(elementName);
                     xmlStreamWriter.writeAttribute("id", executable.getId());
                     xmlStreamWriter.writeStartElement("description");
@@ -196,12 +196,16 @@ public class XmlReportWriter implements ExecutionListener {
      * Determines the language and language element of a descriptor from a
      * result column.
      * 
+     * @param columnName
+     *            The name of the column.
      * @param value
      *            The value.
      * @throws XMLStreamException
      *             If a problem occurs.
+     * @throws ExecutionListenerException
+     *             If a problem occurs.
      */
-    private void writeColumn(String columnName, Object value) throws XMLStreamException {
+    private void writeColumn(String columnName, Object value) throws XMLStreamException, ExecutionListenerException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         String stringValue;
@@ -241,12 +245,28 @@ public class XmlReportWriter implements ExecutionListener {
         xmlStreamWriter.writeEndElement(); // column
     }
 
+    /**
+     * Writes the duration.
+     * 
+     * @param beginTime
+     *            The begin time.
+     * @throws XMLStreamException
+     *             If writing fails.
+     */
     private void writeDuration(long beginTime) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("duration");
         xmlStreamWriter.writeCharacters(Long.toString(System.currentTimeMillis() - beginTime));
         xmlStreamWriter.writeEndElement(); // duration
     }
 
+    /**
+     * Defines an operation to write XML elements.
+     * 
+     * @param operation
+     *            The operation.
+     * @throws ExecutionListenerException
+     *             If writing fails.
+     */
     private void run(XmlOperation operation) throws ExecutionListenerException {
         try {
             operation.run();

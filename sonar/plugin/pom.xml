@@ -34,16 +34,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.pluginmanager</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.buschmais.jqassistant.core</groupId>
-                    <artifactId>jqassistant.core.store</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.buschmais.jqassistant.core</groupId>
-                    <artifactId>jqassistant.core.scanner</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
