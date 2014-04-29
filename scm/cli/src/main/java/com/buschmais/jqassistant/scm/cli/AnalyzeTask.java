@@ -1,9 +1,29 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Properties;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.MojoExecutionException;
+
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
+import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
@@ -14,19 +34,7 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
+import com.buschmais.jqassistant.scm.common.AnalysisHelper;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
@@ -38,11 +46,9 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
     public static final String RULES_DIRECTORY = "jqassistant-rules";
     public static final String REPORT_XML = "./jqassistant/jqassistant-report.xml";
 
-    private File rulesDirectory;
     private String baseDir = ".";
     private final RuleSelector ruleSelector = new RuleSelectorImpl();
     private final RuleSetReader ruleSetReader = new RuleSetReaderImpl();
-    protected boolean failOnConstraintViolations = true;
 
     // todo where to get concepts, constraints, and groups?
     private List<String> concepts = new ArrayList<>();
@@ -86,8 +92,9 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
         }
         store.beginTransaction();
         try {
-            verifyConceptResults(inMemoryReportWriter);
-            verifyConstraintViolations(inMemoryReportWriter);
+            final AnalysisHelper analysisHelper = new AnalysisHelper(getLog());
+            analysisHelper.verifyConceptResults(inMemoryReportWriter);
+            analysisHelper.verifyConstraintViolations(inMemoryReportWriter);
         } finally {
             store.commitTransaction();
         }
@@ -106,12 +113,8 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
 
     // copied from AbstractAnalysisMojo
     protected RuleSet readRules() {
-        File selectedDirectory = null;
-        if (rulesDirectory != null) {
-            selectedDirectory = rulesDirectory;
-        } else {
-            selectedDirectory = createSelectedDirectoryFile();
-        }
+        File selectedDirectory;
+        selectedDirectory = createSelectedDirectoryFile();
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
         List<File> ruleFiles = readRulesDirectory(selectedDirectory);
@@ -142,7 +145,7 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
         }
         getLog().info("Reading rules from rulesDirectory " + rulesDirectory.getAbsolutePath());
-        final List<File> ruleFiles = new ArrayList<File>();
+        final List<File> ruleFiles = new ArrayList<>();
         try {
             new DirectoryWalker<File>() {
 
@@ -180,60 +183,6 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
         }
         if (message.length() > 0) {
             throw new RuntimeException("The following rules are referenced but are not available;" + message);
-        }
-    }
-
-    /**
-     * Verifies the concept results returned by the {@link InMemoryReportWriter}
-     * .
-     * <p>
-     * A warning is logged for each concept which did not return a result (i.e.
-     * has not been applied).
-     * </p>
-     *
-     * @param inMemoryReportWriter The {@link InMemoryReportWriter}.
-     */
-    private void verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
-        List<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults();
-        for (Result<Concept> conceptResult : conceptResults) {
-            if (conceptResult.getRows().isEmpty()) {
-                getLog().warn("Concept '" + conceptResult.getExecutable().getId() + "' returned an empty result.");
-            }
-        }
-    }
-
-    /**
-     * Verifies the constraint violations returned by the
-     * {@link InMemoryReportWriter}.
-     *
-     * @param inMemoryReportWriter The {@link InMemoryReportWriter}.
-     * @throws org.apache.maven.plugin.MojoFailureException If constraint violations are detected.
-     */
-    private void verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) {
-        List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
-        int violations = 0;
-        for (Result<Constraint> constraintViolation : constraintViolations) {
-            if (!constraintViolation.isEmpty()) {
-                AbstractExecutable constraint = constraintViolation.getExecutable();
-                getLog().error(constraint.getId() + ": " + constraint.getDescription());
-                for (Map<String, Object> columns : constraintViolation.getRows()) {
-                    StringBuilder message = new StringBuilder();
-                    for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                        if (message.length() > 0) {
-                            message.append(", ");
-                        }
-                        message.append(entry.getKey());
-                        message.append('=');
-                        Object value = entry.getValue();
-                        message.append(value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value).getFullQualifiedName() : value.toString());
-                    }
-                    getLog().error("  " + message.toString());
-                }
-                violations++;
-            }
-        }
-        if (failOnConstraintViolations && violations > 0) {
-            throw new RuntimeException(violations + " constraints have been violated!");
         }
     }
 
