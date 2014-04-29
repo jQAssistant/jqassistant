@@ -41,7 +41,15 @@ public class Main {
     }
 
     private static void gatherStandardOptions(final Options options) {
-        options.addOption(OptionBuilder.withArgName("f").withDescription("Function to be called, one of "+ gatherNamesOfFunctions()).withLongOpt("function").hasArg().isRequired().create("f"));
+        options.addOption(
+                OptionBuilder
+                        .withArgName("f")
+                        .withDescription("Function to be called, one of "+ gatherNamesOfFunctions())
+                        .withLongOpt("function")
+                        .hasArg()
+                        .isRequired()
+                        .create("f")
+        );
         options.addOption(new Option("help", "print this message"));
     }
 

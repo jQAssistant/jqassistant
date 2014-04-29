@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import com.buschmais.jqassistant.scm.common.Console;
+
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class Log {
+public class Log implements Console {
     private static final Log log = new Log();
 
     public static Log getLog() {
