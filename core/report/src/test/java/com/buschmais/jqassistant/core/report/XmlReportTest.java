@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.core.report;
 
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.StringReader;
 import java.util.List;
@@ -18,21 +18,19 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
-import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.report.schema.v1.ComplexColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
 import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
 import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.report.schema.v1.PrimitiveColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
 import com.buschmais.jqassistant.core.report.schema.v1.RowType;
 import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
+import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
 
 public class XmlReportTest {
 
@@ -65,25 +63,20 @@ public class XmlReportTest {
         List<RowType> rows = result.getRows().getRow();
         assertThat(rows.size(), equalTo(1));
         RowType rowType = rows.get(0);
-        assertThat(rowType.getPrimitiveOrComplex().size(), equalTo(2));
-        for (Object o : rowType.getPrimitiveOrComplex()) {
-            if (o instanceof PrimitiveColumnType) {
-                PrimitiveColumnType primitiveColumn = (PrimitiveColumnType) o;
-                assertThat(primitiveColumn.getName(), equalTo("c1"));
-                assertThat(primitiveColumn.getValue(), equalTo("simpleValue"));
-            } else if (o instanceof ComplexColumnType) {
-                ComplexColumnType complexColumn = (ComplexColumnType) o;
-                assertThat(complexColumn.getName(), equalTo("c2"));
-                assertThat(complexColumn.getLanguage(), equalTo("TestLanguage"));
-                assertThat(complexColumn.getElement(), equalTo("TestElement"));
-                assertThat(complexColumn.getValue(), equalTo("descriptorValue"));
-                SourceType source = complexColumn.getSource();
+        assertThat(rowType.getColumn().size(), equalTo(2));
+        for (ColumnType column : rowType.getColumn()) {
+            assertThat(column.getName(), anyOf(equalTo("c1"), equalTo("c2")));
+            if ("c1".equals(column.getName())) {
+                assertThat(column.getValue(), equalTo("simpleValue"));
+            } else if ("c2".equals(column.getName())) {
+                assertThat(column.getElement().getLanguage(), equalTo("TestLanguage"));
+                assertThat(column.getElement().getValue(), equalTo("TestElement"));
+                assertThat(column.getValue(), equalTo("descriptorValue"));
+                SourceType source = column.getSource();
                 assertThat(source.getName(), equalTo("Test.java"));
                 assertThat(source.getLine().size(), equalTo(2));
                 assertThat(source.getLine().get(0), equalTo(1));
                 assertThat(source.getLine().get(1), equalTo(2));
-            } else {
-                fail("Unknown column " + o);
             }
         }
     }

@@ -79,36 +79,32 @@
 
     <xs:complexType name="RowType">
         <xs:sequence>
-            <xs:choice maxOccurs="unbounded">
-                <xs:element name="primitive" type="jqassistant-report:PrimitiveColumnType"/>
-                <xs:element name="complex" type="jqassistant-report:ComplexColumnType"/>
-            </xs:choice>
+            <xs:element name="column" type="jqassistant-report:ColumnType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="PrimitiveColumnType">
+    <xs:complexType name="ColumnType">
+        <xs:sequence>
+            <xs:element name="element" type="jqassistant-report:ElementType" minOccurs="0"/>
+            <xs:element name="source" type="jqassistant-report:SourceType" minOccurs="0"/>
+            <xs:element name="value" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="ElementType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute name="name" type="xs:string"/>
+                <xs:attribute name="language" type="xs:string"/>
             </xs:extension>
         </xs:simpleContent>
-    </xs:complexType>
-
-    <xs:complexType name="ComplexColumnType">
-        <xs:sequence>
-            <xs:element name="value" type="xs:string"/>
-            <xs:element name="source" type="jqassistant-report:SourceType" minOccurs="0" />
-        </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="optional"/>
-        <xs:attribute name="language" type="xs:string" use="optional"/>
-        <xs:attribute name="element" type="xs:string" use="optional"/>
     </xs:complexType>
 
     <xs:complexType name="SourceType">
         <xs:sequence>
             <xs:element name="line" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="name" type="xs:string" use="optional" />
+        <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
 
 </xs:schema>
