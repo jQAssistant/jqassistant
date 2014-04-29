@@ -4,9 +4,6 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.store.descriptor.ConceptDescriptor;
@@ -18,11 +15,11 @@ import com.buschmais.xo.api.XOException;
  */
 public class AnalyzerImpl implements Analyzer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnalyzerImpl.class);
-
     private Store store;
 
     private ExecutionListener reportWriter;
+
+    private Console console;
 
     private Set<Constraint> executedConstraints = new HashSet<>();
 
@@ -34,9 +31,10 @@ public class AnalyzerImpl implements Analyzer {
      * @param store
      *            The Store to use.
      */
-    public AnalyzerImpl(Store store, ExecutionListener reportWriter) {
+    public AnalyzerImpl(Store store, ExecutionListener reportWriter, Console console) {
         this.store = store;
         this.reportWriter = reportWriter;
+        this.console = console;
     }
 
     @Override
@@ -83,8 +81,7 @@ public class AnalyzerImpl implements Analyzer {
      */
     private void executeGroup(Group group) throws ExecutionListenerException, AnalyzerException {
         if (!executedGroups.contains(group)) {
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Executing group '{}'", group.getId());
+            console.info("Executing group '" + group.getId() + "'");
             for (Group includedGroup : group.getGroups()) {
                 executeGroup(includedGroup);
             }
@@ -131,8 +128,7 @@ public class AnalyzerImpl implements Analyzer {
             for (Concept requiredConcept : constraint.getRequiredConcepts()) {
                 applyConcept(requiredConcept);
             }
-            if (LOGGER.isInfoEnabled())
-                LOGGER.info("Validating constraint '{}'.", constraint.getId());
+            console.info("Validating constraint '" + constraint.getId() + "'.");
             try {
                 store.beginTransaction();
                 reportWriter.beginConstraint(constraint);
@@ -181,8 +177,7 @@ public class AnalyzerImpl implements Analyzer {
             store.beginTransaction();
             ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
             if (conceptDescriptor == null) {
-                if (LOGGER.isInfoEnabled())
-                    LOGGER.info("Applying concept '{}'.", concept.getId());
+                console.info("Applying concept '" + concept.getId() + "'.");
                 reportWriter.beginConcept(concept);
                 reportWriter.setResult(execute(concept));
                 conceptDescriptor = store.create(ConceptDescriptor.class);
@@ -238,8 +233,7 @@ public class AnalyzerImpl implements Analyzer {
     private com.buschmais.xo.api.Query.Result<CompositeRowObject> executeQuery(Query query) {
         String cypher = query.getCypher();
         Map<String, Object> parameters = query.getParameters();
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Executing query '{}' with parameters [{}]", cypher, parameters);
+        console.debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
         return store.executeQuery(cypher, parameters);
     }
 }

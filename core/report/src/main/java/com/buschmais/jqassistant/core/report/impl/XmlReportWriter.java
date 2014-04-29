@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
-import com.buschmais.jqassistant.core.report.api.ReportWriterHelper;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -213,7 +213,7 @@ public class XmlReportWriter implements ExecutionListener {
             stringValue = null;
         } else if (value instanceof Descriptor) {
             Descriptor descriptor = (Descriptor) value;
-            LanguageElement elementValue = ReportWriterHelper.getLanguageElement(descriptor);
+            LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
             if (elementValue != null) {
                 xmlStreamWriter.writeStartElement("element");
                 xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
