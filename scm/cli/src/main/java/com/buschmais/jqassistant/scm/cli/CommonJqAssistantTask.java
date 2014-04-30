@@ -1,16 +1,16 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import org.apache.commons.cli.Option;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import org.apache.commons.cli.Option;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
@@ -22,8 +22,12 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected final String taskName;
     protected Properties properties;
 
-    protected CommonJqAssistantTask(final String taskName, final Properties properties) {
+    protected CommonJqAssistantTask(final String taskName) {
         this.taskName = taskName;
+    }
+
+    @Override
+    public void initialize(Properties properties) {
         this.properties = properties;
     }
 
@@ -33,7 +37,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     }
 
     protected Store getStore() {
-        File directory = new File("./tmp/store");
+        File directory = new File("./tmp/store"); // TODO take directory from properties
         getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         directory.getParentFile().mkdirs();
         return new EmbeddedGraphStore(directory.getAbsolutePath());
