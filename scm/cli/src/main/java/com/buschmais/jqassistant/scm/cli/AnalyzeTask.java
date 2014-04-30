@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,11 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
@@ -40,6 +35,8 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
+
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
@@ -56,8 +53,8 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
     private List<String> constraints = new ArrayList<>();
     private List<String> groups = new ArrayList<>();
 
-    public AnalyzeTask(Properties properties) {
-        super("analyze", properties);
+    public AnalyzeTask() {
+        super("analyze");
     }
 
     @Override
