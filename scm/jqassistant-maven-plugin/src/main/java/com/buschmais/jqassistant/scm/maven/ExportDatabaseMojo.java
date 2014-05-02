@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Set;
 
+import com.buschmais.jqassistant.scm.maven.export.GraphExporter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -51,14 +52,7 @@ public class ExportDatabaseMojo extends AbstractAnalysisAggregatorMojo {
         store.beginTransaction();
         SubGraph graph = DatabaseSubGraph.from(databaseService);
         try {
-            new SubGraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")) {
-                @Override
-                public void println() {
-                    print(";");
-                    print(lineSeparator);
-                    flush();
-                }
-            });
+            new GraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")));
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot export database.", e);
         } finally {
