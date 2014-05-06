@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.pluginmanager.impl;
+package com.buschmais.jqassistant.core.pluginrepository.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ScannerType;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.StoreType;
-import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
