@@ -28,7 +28,7 @@ public final class ReportHelper {
 
     /**
      * Constructor.
-     *
+     * 
      * @param console
      *            The console to use for printing messages.
      */
@@ -66,7 +66,7 @@ public final class ReportHelper {
      * Logs the given
      * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet} on level
      * info.
-     *
+     * 
      * @param ruleSet
      *            The
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
@@ -112,7 +112,7 @@ public final class ReportHelper {
      * A warning is logged for each concept which did not return a result (i.e.
      * has not been applied).
      * </p>
-     *
+     * 
      * @param inMemoryReportWriter
      *            The
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
@@ -130,11 +130,11 @@ public final class ReportHelper {
     /**
      * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}.
-     *
+     * 
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
-    public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws ExecutionListenerException {
         List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
@@ -150,8 +150,18 @@ public final class ReportHelper {
                         message.append(entry.getKey());
                         message.append('=');
                         Object value = entry.getValue();
-                        message.append(value instanceof FullQualifiedNameDescriptor ? ((FullQualifiedNameDescriptor) value).getFullQualifiedName() : value
-                                .toString());
+                        if (value != null) {
+                            if (value instanceof Descriptor) {
+                                Descriptor descriptor = (Descriptor) value;
+                                LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
+                                if (elementValue != null) {
+                                    SourceProvider sourceProvider = elementValue.getSourceProvider();
+                                    message.append(sourceProvider.getName(descriptor));
+                                } else {
+                                    message.append(value.toString());
+                                }
+                            }
+                        }
                     }
                     console.error("  " + message.toString());
                 }
