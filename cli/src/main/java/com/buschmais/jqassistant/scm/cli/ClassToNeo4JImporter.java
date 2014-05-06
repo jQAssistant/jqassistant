@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
-import com.buschmais.jqassistant.core.pluginmanager.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.pluginmanager.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
