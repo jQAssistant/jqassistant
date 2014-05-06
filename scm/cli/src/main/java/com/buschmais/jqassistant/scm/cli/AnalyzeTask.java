@@ -32,8 +32,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
@@ -96,6 +96,8 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
             final ReportHelper reportHelper = new ReportHelper(getLog());
             reportHelper.verifyConceptResults(inMemoryReportWriter);
             reportHelper.verifyConstraintViolations(inMemoryReportWriter);
+        } catch (ExecutionListenerException e) {
+            throw new RuntimeException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
         }

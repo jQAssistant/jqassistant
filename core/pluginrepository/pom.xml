@@ -8,7 +8,7 @@
 		<version>1.0.0-M3-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>jqassistant.core.pluginmanager</artifactId>
+	<artifactId>jqassistant.core.pluginrepository</artifactId>
 
 	<dependencies>
 		<dependency>

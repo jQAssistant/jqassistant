@@ -21,8 +21,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 
 /**

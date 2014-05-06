@@ -84,7 +84,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.pluginmanager</artifactId>
+            <artifactId>jqassistant.core.pluginrepository</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>

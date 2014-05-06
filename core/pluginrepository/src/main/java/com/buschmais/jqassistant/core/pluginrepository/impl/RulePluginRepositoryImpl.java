@@ -1,10 +1,10 @@
-package com.buschmais.jqassistant.core.pluginmanager.impl;
+package com.buschmais.jqassistant.core.pluginrepository.impl;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ResourcesType;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.RulesType;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

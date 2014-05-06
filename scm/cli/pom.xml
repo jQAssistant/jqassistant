@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.pluginmanager</artifactId>
+            <artifactId>jqassistant.core.pluginrepository</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

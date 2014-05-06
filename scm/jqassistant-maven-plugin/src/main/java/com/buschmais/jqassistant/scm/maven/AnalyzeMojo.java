@@ -101,6 +101,8 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
             if (failOnConstraintViolations && violations > 0) {
                 throw new MojoFailureException(violations + " constraints have been violated!");
             }
+        } catch (ExecutionListenerException e) {
+            throw new MojoExecutionException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
         }

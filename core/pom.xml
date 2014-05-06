@@ -94,7 +94,7 @@
         <module>analysis</module>
         <module>scanner</module>
         <module>store</module>
-        <module>pluginmanager</module>
+        <module>pluginrepository</module>
     </modules>
 
 </project>

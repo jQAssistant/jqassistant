@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.pluginmanager.api;
+package com.buschmais.jqassistant.core.pluginrepository.api;
 
 /**
  * Defines the interface for plugin readers.

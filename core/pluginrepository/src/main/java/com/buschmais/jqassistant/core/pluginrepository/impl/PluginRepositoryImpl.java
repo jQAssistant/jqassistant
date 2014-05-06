@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.pluginmanager.impl;
+package com.buschmais.jqassistant.core.pluginrepository.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.pluginmanager.api.PluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
 
 /**
  * Plugin reader implementation.
