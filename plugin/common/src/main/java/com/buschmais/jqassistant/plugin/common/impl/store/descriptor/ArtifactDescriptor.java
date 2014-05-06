@@ -12,6 +12,8 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
+import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+
 /**
  * Describes an artifact.
  * 
@@ -75,6 +77,6 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     public Set<FileDescriptor> getContains();
 
     @ResultOf
-    @Cypher("match (a),(f) where id(a)={this} and id(f)={file} create unique (p)-[:CONTAINS]->(f)")
-    public void addContains(@ResultOf.Parameter("file") FileDescriptor file);
+    @Cypher("match (a),(f) where id(a)={this} and id(f)={file} create unique (a)-[:CONTAINS]->(f)")
+    public void addContains(@Parameter("file") FileDescriptor file);
 }
