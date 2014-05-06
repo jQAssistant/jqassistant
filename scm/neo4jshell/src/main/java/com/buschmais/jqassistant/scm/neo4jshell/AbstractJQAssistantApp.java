@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.shell;
+package com.buschmais.jqassistant.scm.neo4jshell;
 
 import java.util.ArrayList;
 import java.util.Arrays;

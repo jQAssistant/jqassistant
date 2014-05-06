@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.shell;
+package com.buschmais.jqassistant.scm.neo4jshell;
 
 import org.neo4j.helpers.Service;
 import org.neo4j.shell.App;

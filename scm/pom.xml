@@ -64,13 +64,19 @@
                 <artifactId>jqassistant.scm.common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant.scm.neo4jshell</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>common</module>
-        <module>jqassistant-maven-plugin</module>
         <module>cli</module>
+        <module>jqassistant-maven-plugin</module>
+        <module>neo4jshell</module>
     </modules>
 
 </project>
