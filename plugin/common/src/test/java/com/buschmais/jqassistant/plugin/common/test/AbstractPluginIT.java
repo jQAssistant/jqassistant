@@ -240,7 +240,7 @@ public class AbstractPluginIT {
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
         for (FileDescriptor descriptor : getFileScanner().scanClasses(classes)) {
-            artifact.getContains().add(descriptor);
+            artifact.addContains(descriptor);
         }
         store.commitTransaction();
     }
@@ -271,7 +271,7 @@ public class AbstractPluginIT {
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
         for (FileDescriptor descriptor : getFileScanner().scanURLs(urls)) {
-            artifact.getContains().add(descriptor);
+            artifact.addContains(descriptor);
         }
         store.commitTransaction();
     }
@@ -302,7 +302,7 @@ public class AbstractPluginIT {
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
         for (FileDescriptor descriptor : getFileScanner().scanDirectory(directory)) {
-            artifact.getContains().add(descriptor);
+            artifact.addContains(descriptor);
         }
         store.commitTransaction();
     }
