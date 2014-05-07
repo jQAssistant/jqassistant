@@ -6,7 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -94,15 +94,6 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     private RuleSelector ruleSelector = new RuleSelectorImpl();
 
     /**
-     * Return the plugin properties.
-     * 
-     * @return The plugin properties.
-     */
-    protected Properties getPluginProperties() {
-        return new Properties();
-    }
-
-    /**
      * Return the scanner plugin repository.
      * 
      * @param store
@@ -113,7 +104,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * @throws MojoExecutionException
      *             If the repository cannot be created.
      */
-    protected ScannerPluginRepository getScannerPluginRepository(Store store, Properties properties) throws MojoExecutionException {
+    protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
         try {
             return new ScannerPluginRepositoryImpl(store, properties);
         } catch (PluginReaderException e) {

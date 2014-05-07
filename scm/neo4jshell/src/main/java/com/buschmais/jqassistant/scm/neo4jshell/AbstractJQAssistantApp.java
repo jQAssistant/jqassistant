@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.scm.neo4jshell;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -76,7 +77,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
 
     protected ScannerPluginRepository getScannerPluginRepository() {
         try {
-            return new ScannerPluginRepositoryImpl(getStore(), new Properties());
+            return new ScannerPluginRepositoryImpl(getStore(), Collections.<String, Object> emptyMap());
         } catch (PluginReaderException e) {
             throw new IllegalStateException("Cannot get scanner plugin repository", e);
         }

@@ -1,8 +1,9 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -44,7 +45,7 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
                 List<Class<?>> descriptorTypes;
                 Store store = getStore(baseProject);
                 try {
-                    descriptorTypes = getScannerPluginRepository(store, new Properties()).getDescriptorTypes();
+                    descriptorTypes = getScannerPluginRepository(store, getPluginProperties()).getDescriptorTypes();
                 } catch (PluginReaderException e) {
                     throw new MojoExecutionException("Cannot get descriptor mappers.", e);
                 }
@@ -56,6 +57,17 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
                 }
             }
         }, currentProject, reactorProjects);
+    }
+
+    /**
+     * Return the plugin properties.
+     * 
+     * @return The plugin properties.
+     */
+    protected Map<String, Object> getPluginProperties() {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(MavenProject.class.getName(), currentProject);
+        return properties;
     }
 
     /**

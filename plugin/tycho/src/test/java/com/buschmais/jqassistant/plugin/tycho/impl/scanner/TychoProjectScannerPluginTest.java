@@ -82,7 +82,7 @@ public class TychoProjectScannerPluginTest {
     @Test
     public void testGetAdditionalFiles() throws Exception {
         TychoProjectScannerPlugin plugin = new TychoProjectScannerPlugin();
-        Properties properties = new Properties();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(MavenProject.class.getName(), project);
         plugin.initialize(store, properties);
         ProjectScanner projectScanner = new ProjectScannerImpl(fileScanner, Arrays.<ProjectScannerPlugin> asList(plugin));

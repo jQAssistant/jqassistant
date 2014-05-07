@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
@@ -23,7 +24,7 @@ public abstract class AbstractMavenProjectScannerPlugin implements ProjectScanne
     private MavenProject project;
 
     @Override
-    public void initialize(Store store, Properties properties) {
+    public void initialize(Store store, Map<String, Object> properties) {
         this.store = store;
         this.project = (MavenProject) properties.get(MavenProject.class.getName());
     }

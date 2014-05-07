@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
-
-import java.util.Properties;
 
 /**
  * Abstract base implementation of a {@link FileScannerPlugin}.
@@ -12,10 +12,10 @@ public abstract class AbstractFileScannerPlugin implements FileScannerPlugin {
 
     private Store store;
 
-    private Properties properties;
+    private Map<String, Object> properties;
 
     @Override
-    public void initialize(Store store, Properties properties) {
+    public void initialize(Store store, Map<String, Object> properties) {
         this.store = store;
         this.properties = properties;
         initialize();
@@ -30,7 +30,7 @@ public abstract class AbstractFileScannerPlugin implements FileScannerPlugin {
         return store;
     }
 
-    protected Properties getProperties() {
+    protected Map<String, Object> getProperties() {
         return properties;
     }
 }

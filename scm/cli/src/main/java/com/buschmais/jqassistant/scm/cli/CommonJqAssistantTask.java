@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.scm.cli;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.cli.Option;
 
@@ -14,20 +15,19 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
-
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
 public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected final String taskName;
-    protected Properties properties;
+    protected Map<String,Object> properties;
 
     protected CommonJqAssistantTask(final String taskName) {
         this.taskName = taskName;
     }
 
     @Override
-    public void initialize(Properties properties) {
+    public void initialize(Map<String,Object> properties) {
         this.properties = properties;
     }
 
@@ -37,7 +37,8 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     }
 
     protected Store getStore() {
-        File directory = new File("./tmp/store"); // TODO take directory from properties
+        File directory = new File("./tmp/store"); // TODO take directory from
+                                                  // properties
         getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         directory.getParentFile().mkdirs();
         return new EmbeddedGraphStore(directory.getAbsolutePath());
@@ -62,7 +63,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
         }
     }
 
-    protected ScannerPluginRepository getScannerPluginRepository(Store store, Properties properties) {
+    protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
             return new ScannerPluginRepositoryImpl(store, properties);
         } catch (PluginReaderException e) {

@@ -8,8 +8,9 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -37,7 +38,7 @@ public class MavenProjectScannerPluginTest {
         build.setOutputDirectory("target/classes");
         build.setTestOutputDirectory("target/test-classes");
         when(project.getBuild()).thenReturn(build);
-        Properties properties = new Properties();
+        Map<String, Object> properties = new HashMap<>();
         properties.put(MavenProject.class.getName(), project);
         Store store = mock(Store.class);
         ArtifactDescriptor mainArtifact = mock(ArtifactDescriptor.class);
