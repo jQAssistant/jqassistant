@@ -1,4 +1,5 @@
 <v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+    <description>Provides rules for EJB3.</description>
     <rules>
         <resources>
             <resource>ejb3.xml</resource>

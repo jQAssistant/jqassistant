@@ -7,6 +7,7 @@
 	<xs:element name="jqassistant-plugin">
 		<xs:complexType>
 			<xs:sequence>
+                <xs:element name="description" type="xs:string" />
 				<xs:element name="store" type="jqassistant-plugin:StoreType"
 					minOccurs="0" />
 				<xs:element name="scanner" type="jqassistant-plugin:ScannerType"

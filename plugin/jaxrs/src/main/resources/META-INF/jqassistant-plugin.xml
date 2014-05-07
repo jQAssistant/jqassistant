@@ -1,4 +1,5 @@
 <v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+    <description>Provides rules for JAX-RS.</description>
     <rules>
         <resources>
             <resource>jaxrs-resource.xml</resource>
