@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
@@ -24,11 +24,11 @@ public class TypeAssignableFromIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void assignableFrom() throws IOException, AnalyzerException {
+    public void assignableFrom() throws IOException, AnalysisException {
         scanClasses(ClassType.class);
         applyConcept("java:TypeAssignableFrom");
         store.beginTransaction();

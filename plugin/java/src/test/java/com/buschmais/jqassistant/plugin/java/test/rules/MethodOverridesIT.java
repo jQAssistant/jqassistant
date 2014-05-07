@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
@@ -29,11 +29,11 @@ public class MethodOverridesIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void methodOverrides() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void methodOverrides() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, InterfaceType.class);
         applyConcept("java:MethodOverrides");
         store.beginTransaction();
@@ -55,11 +55,11 @@ public class MethodOverridesIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void methodOverridesSubClass() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void methodOverridesSubClass() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, SubClassType.class);
         applyConcept("java:MethodOverrides");
         store.beginTransaction();

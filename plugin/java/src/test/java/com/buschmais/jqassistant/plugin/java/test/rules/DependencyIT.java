@@ -12,10 +12,10 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.*;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -45,11 +45,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void annotations() throws IOException, AnalyzerException {
+    public void annotations() throws IOException, AnalysisException {
         scanClasses(AnnotatedType.class);
         applyConcept("dependency:Annotation");
         store.beginTransaction();
@@ -69,11 +69,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void parameters() throws IOException, AnalyzerException {
+    public void parameters() throws IOException, AnalysisException {
         scanClasses(Parameters.class);
         applyConcept("dependency:MethodParameter");
         store.beginTransaction();
@@ -87,11 +87,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void methodInvocations() throws IOException, AnalyzerException {
+    public void methodInvocations() throws IOException, AnalysisException {
         scanClasses(MethodInvocation.class, MethodDependency.class);
         applyConcept("dependency:MethodInvocation");
         store.beginTransaction();
@@ -108,11 +108,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void fieldAccess() throws IOException, AnalyzerException {
+    public void fieldAccess() throws IOException, AnalysisException {
         scanClasses(FieldAccess.class, FieldDependency.class);
         applyConcept("dependency:FieldAccess");
         store.beginTransaction();
@@ -134,11 +134,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void typeBodies() throws IOException, AnalyzerException {
+    public void typeBodies() throws IOException, AnalysisException {
         scanClasses(TypeBody.class);
         applyConcept("dependency:TypeBody");
         store.beginTransaction();
@@ -160,11 +160,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void types() throws IOException, AnalyzerException {
+    public void types() throws IOException, AnalysisException {
         scanClasses(DependentType.class);
         applyConcept("dependency:Type");
         store.beginTransaction();
@@ -182,11 +182,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void packages() throws IOException, AnalyzerException {
+    public void packages() throws IOException, AnalysisException {
         scanClasses(A.class, B.class);
         applyConcept("dependency:Package");
         store.beginTransaction();
@@ -205,11 +205,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void artifacts() throws IOException, AnalyzerException {
+    public void artifacts() throws IOException, AnalysisException {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
         applyConcept("dependency:Artifact");
@@ -229,11 +229,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void packageCycles() throws IOException, AnalyzerException {
+    public void packageCycles() throws IOException, AnalysisException {
         scanClasses(A.class);
         scanClasses(B.class);
         validateConstraint("dependency:PackageCycles");
@@ -249,11 +249,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void typeCycles() throws IOException, AnalyzerException {
+    public void typeCycles() throws IOException, AnalysisException {
         scanClasses(A.class);
         scanClasses(B.class);
         validateConstraint("dependency:TypeCycles");
@@ -269,11 +269,11 @@ public class DependencyIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void artifactCycles() throws IOException, AnalyzerException {
+    public void artifactCycles() throws IOException, AnalysisException {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
         validateConstraint("dependency:ArtifactCycles");

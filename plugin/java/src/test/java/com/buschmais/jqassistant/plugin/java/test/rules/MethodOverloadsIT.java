@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
@@ -25,11 +25,11 @@ public class MethodOverloadsIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void methodOverloads() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void methodOverloads() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(InterfaceType.class);
         applyConcept("java:MethodOverloads");
         store.beginTransaction();
