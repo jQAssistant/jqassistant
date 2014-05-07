@@ -1,5 +1,14 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
@@ -9,15 +18,6 @@ import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
@@ -29,7 +29,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
     private final List<String> directoryNames = new ArrayList<>();
 
     public ClassToNeo4JImporter() {
-        super("scan", new Properties());
+        super("scan");
     }
 
     protected void doTheTask(final Store store) {

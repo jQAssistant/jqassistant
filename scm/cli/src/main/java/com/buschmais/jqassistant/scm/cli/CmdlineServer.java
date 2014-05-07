@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -16,7 +15,7 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 public class CmdlineServer extends CommonJqAssistantTask {
 
     public CmdlineServer() {
-        super("server", new Properties());
+        super("server");
     }
 
     protected void doTheTask(final Store store) {
