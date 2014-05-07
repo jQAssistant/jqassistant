@@ -11,11 +11,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,6 +48,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 
 /**
  * Abstract base class for analysis tests.
@@ -154,7 +158,7 @@ public class AbstractPluginIT {
     @Before
     public void startStore() throws PluginReaderException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        scannerPluginRepository = new ScannerPluginRepositoryImpl(store, new Properties());
+        scannerPluginRepository = new ScannerPluginRepositoryImpl(store, Collections.<String, Object> emptyMap());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         boolean resetStore = true;
