@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,9 +31,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
         for (MavenProject project : projects) {
             List<FileScannerPlugin> fileScannerPlugins;
             List<ProjectScannerPlugin> projectScannerPlugins;
-            Properties pluginProperties = getPluginProperties();
-            pluginProperties.put(MavenProject.class.getName(), project);
-            ScannerPluginRepository pluginManager = getScannerPluginRepository(store, pluginProperties);
+            ScannerPluginRepository pluginManager = getScannerPluginRepository(store, getPluginProperties());
             try {
                 fileScannerPlugins = pluginManager.getFileScannerPlugins();
                 projectScannerPlugins = pluginManager.getProjectScannerPlugins();
