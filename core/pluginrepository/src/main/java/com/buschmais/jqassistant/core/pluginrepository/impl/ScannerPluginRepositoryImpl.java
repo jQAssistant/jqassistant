@@ -1,8 +1,9 @@
 package com.buschmais.jqassistant.core.pluginrepository.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
@@ -26,7 +27,7 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
     /**
      * Constructor.
      */
-    public ScannerPluginRepositoryImpl(Store store, Properties properties) throws PluginReaderException {
+    public ScannerPluginRepositoryImpl(Store store, Map<String, Object> properties) throws PluginReaderException {
         List<JqassistantPlugin> plugins = getPlugins();
         this.descriptorTypes = getDescriptorTypes(plugins);
         this.projectScannerPlugins = getScannerPlugins(plugins, ProjectScannerPlugin.class, store, properties);
@@ -61,8 +62,8 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
         return types;
     }
 
-    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Class<T> pluginClass, Store store, Properties properties)
-            throws PluginReaderException {
+    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Class<T> pluginClass, Store store,
+            Map<String, Object> properties) throws PluginReaderException {
         List<T> scannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             ScannerType scannerType = plugin.getScanner();
@@ -73,11 +74,14 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
                     try {
                         T scannerPlugin = createInstance(pluginClass, scannerPluginName);
                         if (scannerPlugin != null) {
-                            scannerPlugin.initialize(store, new Properties(properties)); // properties is mutable, so every plugin should get its own copy
+                            scannerPlugin.initialize(store, new HashMap<>(properties));
+                            // properties is mutable, so every plugin should get
+                            // its own copy
                             scannerPlugins.add(scannerPlugin);
                         }
                     } catch (Throwable e) {
-                        System.err.println(String.format("Could not create plugin %s of class %s because of exception %s", scannerPluginName, pluginClass, e.toString())); // FIXME use logger here
+                        System.err.println(String.format("Could not create plugin %s of class %s because of exception %s", scannerPluginName, pluginClass,
+                                e.toString())); // FIXME use logger here
                     }
                 }
             }
