@@ -11,12 +11,12 @@ import java.util.Map;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
@@ -107,7 +107,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
         try {
             return new ScannerPluginRepositoryImpl(store, properties);
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
     }
@@ -122,7 +122,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     protected RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
         try {
             return new RulePluginRepositoryImpl();
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
     }

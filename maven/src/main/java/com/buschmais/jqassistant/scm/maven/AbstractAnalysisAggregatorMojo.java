@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -46,7 +46,7 @@ public abstract class AbstractAnalysisAggregatorMojo extends AbstractAnalysisMoj
                 Store store = getStore(baseProject);
                 try {
                     descriptorTypes = getScannerPluginRepository(store, getPluginProperties()).getDescriptorTypes();
-                } catch (PluginReaderException e) {
+                } catch (PluginRepositoryException e) {
                     throw new MojoExecutionException("Cannot get descriptor mappers.", e);
                 }
                 try {

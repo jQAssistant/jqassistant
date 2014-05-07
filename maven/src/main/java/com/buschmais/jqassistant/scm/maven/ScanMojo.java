@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
@@ -35,7 +35,7 @@ public class ScanMojo extends AbstractAnalysisAggregatorMojo {
             try {
                 fileScannerPlugins = pluginManager.getFileScannerPlugins();
                 projectScannerPlugins = pluginManager.getProjectScannerPlugins();
-            } catch (PluginReaderException e) {
+            } catch (PluginRepositoryException e) {
                 throw new MojoExecutionException("Cannot determine scanner plugins.", e);
             }
             FileScanner fileScanner = new FileScannerImpl(fileScannerPlugins);
