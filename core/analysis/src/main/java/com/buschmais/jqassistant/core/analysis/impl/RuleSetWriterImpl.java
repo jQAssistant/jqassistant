@@ -95,8 +95,8 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void addRequiredConcepts(AbstractExecutable executable, Map<String, Concept> concepts) {
-        for (Concept concept : executable.getRequiredConcepts()) {
+    private void addRequiredConcepts(AbstractRule executable, Map<String, Concept> concepts) {
+        for (Concept concept : executable.getRequiresConcepts()) {
             addConcept(concept, concepts);
         }
     }
@@ -130,7 +130,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
             conceptType.setCypher(concept.getQuery().getCypher());
-            for (Concept requiresConcept : concept.getRequiredConcepts()) {
+            for (Concept requiresConcept : concept.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
                 conceptReferenceType.setRefId(requiresConcept.getId());
                 conceptType.getRequiresConcept().add(conceptReferenceType);
@@ -145,7 +145,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
             constraintType.setCypher(constraint.getQuery().getCypher());
-            for (Concept requiresConcept : constraint.getRequiredConcepts()) {
+            for (Concept requiresConcept : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
                 conceptReferenceType.setRefId(requiresConcept.getId());
                 constraintType.getRequiresConcept().add(conceptReferenceType);

@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.MyRestResource;
 
@@ -25,13 +25,13 @@ public class ResourceIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_Resource_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_Resource_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:Resource");
         store.beginTransaction();
@@ -46,13 +46,13 @@ public class ResourceIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void testInvalid_Resource_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void testInvalid_Resource_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ResourceIT.class);
         applyConcept("jaxrs:Resource");
         store.beginTransaction();

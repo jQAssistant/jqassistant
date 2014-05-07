@@ -9,10 +9,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
@@ -23,12 +23,12 @@ import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testcase;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite;
 
 /**
- * {@link ExecutionListener} implementation to write JUnit style reports.
+ * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener} implementation to write JUnit style reports.
  * <p>
  * Each group is rendered as a test suite to a separate file.
  * </p>
  */
-public class JUnitReportWriter implements ExecutionListener {
+public class JUnitReportWriter implements AnalysisListener {
 
     private File directory;
     private JAXBContext jaxbContext;
@@ -36,44 +36,44 @@ public class JUnitReportWriter implements ExecutionListener {
     private Group group;
     private long executableBeginTimestamp;
     private long groupBeginTimestamp;
-    private Map<Result<? extends AbstractExecutable>, Long> results = new LinkedHashMap<>();
+    private Map<Result<? extends AbstractRule>, Long> results = new LinkedHashMap<>();
 
-    public JUnitReportWriter(File directory) throws ExecutionListenerException {
+    public JUnitReportWriter(File directory) throws AnalysisListenerException {
         this.directory = directory;
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
-            throw new ExecutionListenerException("Cannot create jaxb context instance.", e);
+            throw new AnalysisListenerException("Cannot create jaxb context instance.", e);
         }
     }
 
     @Override
-    public void begin() throws ExecutionListenerException {
+    public void begin() throws AnalysisListenerException {
     }
 
     @Override
-    public void end() throws ExecutionListenerException {
+    public void end() throws AnalysisListenerException {
     }
 
     @Override
-    public void beginGroup(Group group) throws ExecutionListenerException {
+    public void beginGroup(Group group) throws AnalysisListenerException {
         this.group = group;
         this.groupBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endGroup() throws ExecutionListenerException {
+    public void endGroup() throws AnalysisListenerException {
         // TestSuite
         Testsuite testsuite = new Testsuite();
         int tests = 0;
         int failures = 0;
         int errors = 0;
-        for (Map.Entry<Result<? extends AbstractExecutable>, Long> entry : results.entrySet()) {
+        for (Map.Entry<Result<? extends AbstractRule>, Long> entry : results.entrySet()) {
             // TestCase
-            Result<? extends AbstractExecutable> result = entry.getKey();
+            Result<? extends AbstractRule> result = entry.getKey();
             long time = entry.getValue().longValue();
             Testcase testcase = new Testcase();
-            AbstractExecutable executable = result.getExecutable();
+            AbstractRule executable = result.getExecutable();
             testcase.setName(executable.getId());
             testcase.setClassname(group.getId());
             testcase.setTime(Long.toString(time));
@@ -116,32 +116,32 @@ public class JUnitReportWriter implements ExecutionListener {
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.marshal(testsuite, file);
         } catch (JAXBException e) {
-            throw new ExecutionListenerException("Cannot write JUNIT4 report.", e);
+            throw new AnalysisListenerException("Cannot write JUNIT4 report.", e);
         }
         this.group = null;
         this.results.clear();
     }
 
     @Override
-    public void beginConcept(Concept concept) throws ExecutionListenerException {
+    public void beginConcept(Concept concept) throws AnalysisListenerException {
         this.executableBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endConcept() throws ExecutionListenerException {
+    public void endConcept() throws AnalysisListenerException {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws ExecutionListenerException {
+    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
         this.executableBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
-    public void endConstraint() throws ExecutionListenerException {
+    public void endConstraint() throws AnalysisListenerException {
     }
 
     @Override
-    public void setResult(Result<? extends AbstractExecutable> result) throws ExecutionListenerException {
+    public void setResult(Result<? extends AbstractRule> result) throws AnalysisListenerException {
         long executableEndTimestamp = System.currentTimeMillis();
         long time = executableEndTimestamp - executableBeginTimestamp;
         this.results.put(result, Long.valueOf(time));

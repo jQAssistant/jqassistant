@@ -12,9 +12,9 @@ public interface Analyzer {
      * 
      * @param ruleSet
      *            The rules set.
-     * @throws ExecutionListenerException
+     * @throws AnalysisListenerException
      *             If the report cannot be written.
      */
-    void execute(RuleSet ruleSet) throws AnalyzerException;
+    void execute(RuleSet ruleSet) throws AnalysisException;
 
 }

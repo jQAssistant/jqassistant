@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.*;
 
@@ -23,11 +23,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void statelessSessionBean() throws IOException, AnalyzerException {
+    public void statelessSessionBean() throws IOException, AnalysisException {
         scanClasses(StatelessLocalBean.class);
         applyConcept("ejb3:StatelessSessionBean");
         store.beginTransaction();
@@ -40,11 +40,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void statefulSessionBean() throws IOException, AnalyzerException {
+    public void statefulSessionBean() throws IOException, AnalysisException {
         scanClasses(StatefulBean.class);
         applyConcept("ejb3:StatefulSessionBean");
         store.beginTransaction();
@@ -57,11 +57,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void singletonBean() throws IOException, AnalyzerException {
+    public void singletonBean() throws IOException, AnalysisException {
         scanClasses(SingletonBean.class);
         applyConcept("ejb3:SingletonBean");
         store.beginTransaction();
@@ -74,11 +74,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void messageDrivenBean() throws IOException, AnalyzerException {
+    public void messageDrivenBean() throws IOException, AnalysisException {
         scanClasses(MessageDrivenBean.class);
         applyConcept("ejb3:MessageDrivenBean");
         store.beginTransaction();
@@ -91,11 +91,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void localSessionBean() throws IOException, AnalyzerException {
+    public void localSessionBean() throws IOException, AnalysisException {
         scanClasses(StatelessLocalBean.class);
         applyConcept("ejb3:Local");
         store.beginTransaction();
@@ -108,11 +108,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void remoteSessionBean() throws IOException, AnalyzerException {
+    public void remoteSessionBean() throws IOException, AnalysisException {
         scanClasses(StatelessRemoteBean.class);
         applyConcept("ejb3:Remote");
         store.beginTransaction();
@@ -125,11 +125,11 @@ public class Ejb3IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void enterpriseJavaBean() throws IOException, AnalyzerException {
+    public void enterpriseJavaBean() throws IOException, AnalysisException {
         scanClasses(StatelessLocalBean.class, StatelessRemoteBean.class, StatefulBean.class, MessageDrivenBean.class);
         executeGroup("ejb3:EJB");
         store.beginTransaction();

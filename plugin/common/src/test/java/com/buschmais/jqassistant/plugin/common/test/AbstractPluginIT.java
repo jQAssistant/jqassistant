@@ -19,6 +19,8 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,8 +29,6 @@ import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -131,7 +131,7 @@ public class AbstractPluginIT {
     private ScannerPluginRepository scannerPluginRepository;
 
     @Before
-    public void readRules() throws PluginReaderException {
+    public void readRules() throws PluginRepositoryException {
         rulePluginRepository = new RulePluginRepositoryImpl();
         List<Source> sources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
@@ -156,7 +156,7 @@ public class AbstractPluginIT {
      * Initializes and resets the store.
      */
     @Before
-    public void startStore() throws PluginReaderException {
+    public void startStore() throws PluginRepositoryException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
         scannerPluginRepository = new ScannerPluginRepositoryImpl(store, Collections.<String, Object> emptyMap());
         store.start(getDescriptorTypes());
@@ -393,10 +393,10 @@ public class AbstractPluginIT {
      * 
      * @param id
      *            The id.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void applyConcept(String id) throws AnalyzerException {
+    protected void applyConcept(String id) throws AnalysisException {
         Concept concept = ruleSet.getConcepts().get(id);
         Assert.assertNotNull("The concept must not be null", concept);
         RuleSet targetRuleSet = new RuleSet();
@@ -409,10 +409,10 @@ public class AbstractPluginIT {
      * 
      * @param id
      *            The id.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void validateConstraint(String id) throws AnalyzerException {
+    protected void validateConstraint(String id) throws AnalysisException {
         Constraint constraint = ruleSet.getConstraints().get(id);
         Assert.assertNotNull("The constraint must not be null", constraint);
         RuleSet targetRuleSet = new RuleSet();
@@ -425,10 +425,10 @@ public class AbstractPluginIT {
      * 
      * @param id
      *            The id.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void executeGroup(String id) throws AnalyzerException {
+    protected void executeGroup(String id) throws AnalysisException {
         Group group = ruleSet.getGroups().get(id);
         Assert.assertNotNull("The group must not be null", group);
         RuleSet targetRuleSet = new RuleSet();
@@ -458,7 +458,7 @@ public class AbstractPluginIT {
     private List<Class<?>> getDescriptorTypes() {
         try {
             return scannerPluginRepository.getDescriptorTypes();
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get descriptor mappers.", e);
         }
     }
@@ -466,7 +466,7 @@ public class AbstractPluginIT {
     private List<FileScannerPlugin> getFileScannerPlugins() {
         try {
             return scannerPluginRepository.getFileScannerPlugins();
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
     }

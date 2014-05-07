@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
@@ -41,7 +41,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
                 properties = new HashMap<>();
                 scanDirectory(store, directoryName, getScannerPluginRepository(store, properties).getFileScannerPlugins());
             }
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new RuntimeException(e);
         }
     }
@@ -49,7 +49,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
             return new ScannerPluginRepositoryImpl(store, properties);
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }
     }

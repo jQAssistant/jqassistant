@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.MyRestResource;
 
@@ -25,13 +25,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_GetResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_GetResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:GetResourceMethod");
         store.beginTransaction();
@@ -45,13 +45,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_PutResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_PutResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:PutResourceMethod");
         store.beginTransaction();
@@ -65,13 +65,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_PostResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_PostResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:PostResourceMethod");
         store.beginTransaction();
@@ -85,13 +85,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_DeleteResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_DeleteResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:DeleteResourceMethod");
         store.beginTransaction();
@@ -105,13 +105,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_HeadResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_HeadResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:HeadResourceMethod");
         store.beginTransaction();
@@ -125,13 +125,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_OptionsResourceMethod_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_OptionsResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:OptionsResourceMethod");
         store.beginTransaction();
@@ -146,13 +146,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_SubResourceLocator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_SubResourceLocator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:SubResourceLocator");
         store.beginTransaction();
@@ -169,13 +169,13 @@ public class ResourceMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_invalid_SubResourceLocator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_invalid_SubResourceLocator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
         applyConcept("jaxrs:SubResourceLocator");
         store.beginTransaction();

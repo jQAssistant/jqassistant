@@ -18,10 +18,10 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
@@ -35,7 +35,7 @@ import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
 public class XmlReportTest {
 
     @Test
-    public void writeAndReadReport() throws JAXBException, SAXException, ExecutionListenerException {
+    public void writeAndReadReport() throws JAXBException, SAXException, AnalysisListenerException {
         String xmlReport = XmlReportTestHelper.createXmlReport();
 
         SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);

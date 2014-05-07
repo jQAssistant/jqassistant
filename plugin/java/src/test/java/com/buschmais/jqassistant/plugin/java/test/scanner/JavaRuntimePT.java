@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -12,7 +13,6 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
@@ -37,7 +37,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
      *             If scanning fails.
      */
     @Test
-    public void javaRuntime01Scan() throws IOException, AnalyzerException {
+    public void javaRuntime01Scan() throws IOException, AnalysisException {
         String javaHome = System.getProperty("java.home");
         Assume.assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
@@ -61,7 +61,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
 
     @Test
     @TestStore(reset = false)
-    public void javaRuntime02Analyze() throws IOException, AnalyzerException {
+    public void javaRuntime02Analyze() throws IOException, AnalysisException {
         applyConcept("metric:Top10TypesPerArtifact");
         applyConcept("metric:Top10TypesPerPackage");
         applyConcept("metric:Top10MethodsPerType");

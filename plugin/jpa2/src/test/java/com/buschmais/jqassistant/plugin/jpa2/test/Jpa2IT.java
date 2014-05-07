@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -37,11 +37,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void entity() throws IOException, AnalyzerException {
+    public void entity() throws IOException, AnalysisException {
         scanClasses(JpaEntity.class);
         applyConcept("jpa2:Entity");
         store.beginTransaction();
@@ -54,11 +54,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void namedQuery() throws IOException, AnalyzerException {
+    public void namedQuery() throws IOException, AnalysisException {
         scanClasses(JpaEntity.class);
         applyConcept("jpa2:NamedQuery");
         store.beginTransaction();
@@ -76,11 +76,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceDescriptor() throws IOException, AnalyzerException {
+    public void fullPersistenceDescriptor() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
@@ -98,11 +98,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceUnitDescriptor() throws IOException, AnalyzerException {
+    public void fullPersistenceUnitDescriptor() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (pu:JPA:PERSISTENCEUNIT) RETURN pu");
@@ -127,11 +127,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void minimalPersistenceDescriptor() throws IOException, AnalyzerException {
+    public void minimalPersistenceDescriptor() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
@@ -150,11 +150,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void validationModeNotSpecified() throws IOException, AnalyzerException {
+    public void validationModeNotSpecified() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
@@ -173,11 +173,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void validationModeAuto() throws IOException, AnalyzerException {
+    public void validationModeAuto() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
@@ -196,11 +196,11 @@ public class Jpa2IT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void validationModeSpecified() throws IOException, AnalyzerException {
+    public void validationModeSpecified() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();

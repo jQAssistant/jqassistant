@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.report;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertThat;
 public class HtmlReportTransformerTest {
 
     @Test
-    public void transform() throws ExecutionListenerException, SAXException, JAXBException, ReportTransformerException {
+    public void transform() throws AnalysisListenerException, SAXException, JAXBException, ReportTransformerException {
         String xmlReport = XmlReportTestHelper.createXmlReport();
         HtmlReportTransformer transformer = new HtmlReportTransformer();
         Source xmlSource = new StreamSource(new StringReader(xmlReport));

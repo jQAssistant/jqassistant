@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestClass;
@@ -25,13 +25,13 @@ public class Junit4IT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void testClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void testClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
         applyConcept("junit4:TestClassOrMethod");
         store.beginTransaction();
@@ -45,13 +45,13 @@ public class Junit4IT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void ignoreTestClassOrMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void ignoreTestClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(IgnoredTestClass.class);
         applyConcept("junit4:IgnoreTestClassOrMethod");
         store.beginTransaction();
@@ -65,13 +65,13 @@ public class Junit4IT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void testCaseImplementedByMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void testCaseImplementedByMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Example.class);
         scanURLs(Junit4IT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
         applyConcept("junit4:TestCaseImplementedByMethod");

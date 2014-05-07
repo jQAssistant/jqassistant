@@ -6,9 +6,9 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
@@ -27,11 +27,11 @@ public class InvokesOverriddenMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void invokeInterfaceMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void invokeInterfaceMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
         applyConcept("java:InvokesOverriddenMethod");
         store.beginTransaction();
@@ -49,11 +49,11 @@ public class InvokesOverriddenMethodIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void invokeClassMethod() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void invokeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, SubClassType.class, InvokeClient.class);
         applyConcept("java:InvokesOverriddenMethod");
         store.beginTransaction();

@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.transform.Source;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.shell.AppCommandParser;
 import org.neo4j.shell.AppShellServer;
 import org.neo4j.shell.impl.AbstractApp;
 import org.neo4j.shell.kernel.GraphDatabaseShellServer;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
@@ -46,7 +45,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
 
     private Store store = null;
 
-    protected AbstractJQAssistantApp() throws PluginReaderException {
+    protected AbstractJQAssistantApp() throws PluginRepositoryException {
         rulePluginRepository = new RulePluginRepositoryImpl();
         ruleSetReader = new RuleSetReaderImpl();
     }
@@ -78,7 +77,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
     protected ScannerPluginRepository getScannerPluginRepository() {
         try {
             return new ScannerPluginRepositoryImpl(getStore(), Collections.<String, Object> emptyMap());
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugin repository", e);
         }
     }

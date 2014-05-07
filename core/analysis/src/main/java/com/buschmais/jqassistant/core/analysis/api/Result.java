@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 
 /**
  * The result of a
  * {@link com.buschmais.jqassistant.core.analysis.api.rule.Query} using an
- * {@link AbstractExecutable}.
+ * {@link com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule}.
  */
-public class Result<T extends AbstractExecutable> {
+public class Result<T extends AbstractRule> {
 
     private T executable;
 

@@ -9,6 +9,11 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
@@ -16,10 +21,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
@@ -71,10 +72,10 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
         XmlReportWriter xmlReportWriter;
         try {
             xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
-        } catch (ExecutionListenerException e) {
+        } catch (AnalysisListenerException e) {
             throw new RuntimeException("Cannot create XML report file writer.", e);
         }
-        List<ExecutionListener> reportWriters = new LinkedList<>();
+        List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.add(inMemoryReportWriter);
         reportWriters.add(xmlReportWriter);
         try {
@@ -82,7 +83,7 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
             Analyzer analyzer = new AnalyzerImpl(store, reportWriter, getLog());
             try {
                 analyzer.execute(ruleSet);
-            } catch (AnalyzerException e) {
+            } catch (AnalysisException e) {
                 throw new RuntimeException("Analysis failed.", e);
             }
         } finally {
@@ -93,7 +94,7 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
             final ReportHelper reportHelper = new ReportHelper(getLog());
             reportHelper.verifyConceptResults(inMemoryReportWriter);
             reportHelper.verifyConstraintViolations(inMemoryReportWriter);
-        } catch (ExecutionListenerException e) {
+        } catch (AnalysisListenerException e) {
             throw new RuntimeException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
@@ -130,7 +131,7 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
     protected RulePluginRepository getRulePluginRepository() {
         try {
             return new RulePluginRepositoryImpl();
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }
     }

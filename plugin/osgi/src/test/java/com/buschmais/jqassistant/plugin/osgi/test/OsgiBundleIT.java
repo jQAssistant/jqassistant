@@ -18,10 +18,10 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -45,11 +45,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void bundle() throws IOException, AnalyzerException {
+    public void bundle() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         applyConcept("osgi-bundle:Bundle");
         store.beginTransaction();
@@ -65,11 +65,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void exportedPackages() throws IOException, AnalyzerException {
+    public void exportedPackages() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:ExportPackage");
@@ -85,11 +85,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void importedPackages() throws IOException, AnalyzerException {
+    public void importedPackages() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:ImportPackage");
@@ -105,11 +105,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void activator() throws IOException, AnalyzerException {
+    public void activator() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:Activator");
@@ -125,11 +125,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void internalType() throws IOException, AnalyzerException {
+    public void internalType() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         scanClassesDirectory(Service.class);
         removeTestClass();
@@ -148,11 +148,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void unusedInternalType() throws IOException, AnalyzerException {
+    public void unusedInternalType() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         scanClassesDirectory(Service.class);
         removeTestClass();
@@ -175,11 +175,11 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void internalTypeMustNotBePublic() throws IOException, AnalyzerException {
+    public void internalTypeMustNotBePublic() throws IOException, AnalysisException {
         scanURLs(getManifestUrl());
         scanClassesDirectory(Service.class);
         removeTestClass();

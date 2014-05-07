@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.xml.transform.Source;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
@@ -14,9 +16,7 @@ import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -60,7 +60,7 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         RulePluginRepository pluginManager;
         try {
             pluginManager = new RulePluginRepositoryImpl();
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new SonarException("Cannot read rules.", e);
         }
         List<Source> ruleSources = pluginManager.getRuleSources();
@@ -85,12 +85,12 @@ public final class JQAssistantRuleRepository extends RuleRepository {
      *            The rule type.
      * @return The rule.
      */
-    private Rule createRule(AbstractExecutable executable, RuleType ruleType) {
+    private Rule createRule(AbstractRule executable, RuleType ruleType) {
         Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
         rule.setDescription(executable.getDescription());
         rule.setSeverity(ruleType.getPriority());
         StringBuilder requiresConcepts = new StringBuilder();
-        for (Concept requiredConcept : executable.getRequiredConcepts()) {
+        for (Concept requiredConcept : executable.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {
                 requiresConcepts.append(",");
             }

@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scm.neo4jshell;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.neo4j.helpers.Service;
 import org.neo4j.shell.App;
 import org.neo4j.shell.AppCommandParser;
@@ -8,7 +9,6 @@ import org.neo4j.shell.Output;
 import org.neo4j.shell.Session;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -18,7 +18,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 @Service.Implementation(App.class)
 public class AnalyzeApp extends AbstractJQAssistantApp {
 
-    public AnalyzeApp() throws PluginReaderException {
+    public AnalyzeApp() throws PluginRepositoryException {
     }
 
     @Override

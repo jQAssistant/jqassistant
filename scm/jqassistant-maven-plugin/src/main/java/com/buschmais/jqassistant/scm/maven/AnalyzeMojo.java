@@ -8,6 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -16,9 +19,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -57,7 +57,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
-        List<ExecutionListener> reportWriters = new LinkedList<>();
+        List<AnalysisListener> reportWriters = new LinkedList<>();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         reportWriters.add(inMemoryReportWriter);
         if (reportTypes == null || reportTypes.isEmpty()) {
@@ -75,7 +75,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
                 XmlReportWriter xmlReportWriter;
                 try {
                     xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
-                } catch (ExecutionListenerException e) {
+                } catch (AnalysisListenerException e) {
                     throw new MojoExecutionException("Cannot create XML report file writer.", e);
                 }
                 reportWriters.add(xmlReportWriter);
@@ -90,7 +90,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         try {
             analyzer.execute(ruleSet);
-        } catch (AnalyzerException e) {
+        } catch (AnalysisException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
         ReportHelper reportHelper = new ReportHelper(console);
@@ -101,7 +101,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
             if (failOnConstraintViolations && violations > 0) {
                 throw new MojoFailureException(violations + " constraints have been violated!");
             }
-        } catch (ExecutionListenerException e) {
+        } catch (AnalysisListenerException e) {
             throw new MojoExecutionException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
@@ -116,7 +116,7 @@ public class AnalyzeMojo extends AbstractAnalysisAggregatorMojo {
         junitReportDirectory.mkdirs();
         try {
             junitReportWriter = new JUnitReportWriter(junitReportDirectory);
-        } catch (ExecutionListenerException e) {
+        } catch (AnalysisListenerException e) {
             throw new MojoExecutionException("Cannot create XML report file writer.", e);
         }
         return junitReportWriter;

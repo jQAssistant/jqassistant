@@ -9,9 +9,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.deprecated.DeprecatedType;
 
@@ -26,11 +26,11 @@ public class DeprecatedIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void deprecated() throws IOException, AnalyzerException, NoSuchMethodException, NoSuchFieldException {
+    public void deprecated() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
         scanURLs(DeprecatedIT.class.getResource("/" + packageInfoName.replaceAll("\\.", "/") + ".class"));

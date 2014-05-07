@@ -72,7 +72,7 @@ public class RuleSelectorImpl implements RuleSelector {
         for (Constraint constraint : constraints) {
             if (!targetRuleSet.getConstraints().containsKey(constraint.getId())) {
                 targetRuleSet.getConstraints().put(constraint.getId(), constraint);
-                resolveConcepts(constraint.getRequiredConcepts(), targetRuleSet);
+                resolveConcepts(constraint.getRequiresConcepts(), targetRuleSet);
             }
         }
     }
@@ -89,7 +89,7 @@ public class RuleSelectorImpl implements RuleSelector {
         for (Concept concept : concepts) {
             if (!targetRuleSet.getConcepts().containsKey(concept.getId())) {
                 targetRuleSet.getConcepts().put(concept.getId(), concept);
-                resolveConcepts(concept.getRequiredConcepts(), targetRuleSet);
+                resolveConcepts(concept.getRequiresConcepts(), targetRuleSet);
             }
         }
     }

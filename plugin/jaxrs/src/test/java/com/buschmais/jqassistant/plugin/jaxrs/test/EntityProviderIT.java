@@ -9,9 +9,9 @@ import java.io.IOException;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookReader;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookWriter;
@@ -29,13 +29,13 @@ public class EntityProviderIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_EntityProvider_Writer_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_EntityProvider_Writer_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(BookWriter.class);
         applyConcept("jaxrs:EntityProvider");
         store.beginTransaction();
@@ -50,13 +50,13 @@ public class EntityProviderIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_EntityProvider_Reader_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_EntityProvider_Reader_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(BookReader.class);
         applyConcept("jaxrs:EntityProvider");
         store.beginTransaction();
