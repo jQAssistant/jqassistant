@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
+
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.cli.Option;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -51,7 +51,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
 
         try {
             descriptorTypes = getScannerPluginRepository(store, properties).getDescriptorTypes();
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot get descriptor mappers.", e);
         }
 
@@ -66,7 +66,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
             return new ScannerPluginRepositoryImpl(store, properties);
-        } catch (PluginReaderException e) {
+        } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }
     }
