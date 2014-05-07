@@ -11,14 +11,18 @@ jQAssistant is a tool supporting the process for developing Java applications. I
 
 Here are some examples:
 
-* Enforce naming conventions, e.g. EJBs, JPA entities, test classes, package names etc.
-* Define business modules (e.g. shopping cart, user management) and technical modules (e.g. presentation, business logic, persistence) and validate dependencies between them
-* separate APIs and implementation classes (e.g. a module must only have dependencies to API classes of other components)
-* detect common problems, e.g cyclic package dependencies, dead code
+- Enforce naming conventions, e.g. EJBs, JPA entities, test classes, package names etc.
+- Define business modules (e.g. shopping cart, user management) and technical modules (e.g. presentation, business logic, persistence) and validate dependencies between them
+- separate APIs and implementation classes (e.g. a module must only have dependencies to API classes of other components)
+- detect common problems, e.g cyclic package dependencies, dead code
 
 == License
 jQAssistant is contributed under http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0].
 
+include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
+
 include::examples.adoc[]
-include::plugins.adoc[]
+
+include::plugins.adoc[toclevels="1"]
+
 include::devguide.adoc[]

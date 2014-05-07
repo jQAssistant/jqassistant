@@ -1,0 +1,109 @@
+== Maven Plugin
+
+=== Setup
+Add the following lines should be added to settings.xml (usually located in the $HOME/.m2)), this makes execution of jQAssistant goals from the command line easier:
+
+[source,xml]
+----
+	<pluginGroups>
+		<pluginGroup>com.buschmais.scm.maven</pluginGroup>
+	</pluginGroups>
+----
+
+=== Goals
+
+* <<scan>>
+* <<reset>>
+* <<server>>
+* <<analyze>>
+* <<effective-rules>>
+* <<available-rules>>
+* <<report>>
+
+*Note:* Some goals refer to a project called ${analysisRoot}. It is determined by searching in the tree of Maven modules starting from the current module following the parent relation until either a module is found where a directory "jqassistant" exists or no parent is defined (i.e. root module).
+
+[[scan]]
+==== jqassistant:scan
+===== Description
+Scans the directories of compiled classes and test classes and stores the gathered information in database.
+
+===== Configuration
+* storeDirectory (-Djqassistant.store.directory)
+** specifies the location of the database
+** default: '${analysisRoot}/target/jqassistant/store'
+
+[[reset]]
+==== jqassistant:reset
+===== Description
+Resets the database by deleting all nodes and relationships.
+
+===== Configuration
+* storeDirectory (-Djqassistant.store.directory)
+** specifies the location of the database
+** default: '${analysisRoot}/target/jqassistant/store'
+
+[[server]]
+==== jqassistant:server
+===== Description
+Starts the integrated Neo4j web server (http://localhost:7474).
+
+===== Configuration
+* storeDirectory (-Djqassistant.store.directory)
+** specifies the location of the database
+** default: '${analysisRoot}/target/jqassistant/store'
+
+[[analyze]]
+==== jqassistant:analyze
+===== Description
+Executes an analysis.
+
+===== Configuration
+* storeDirectory (-Djqassistant.store.directory)
+** specifies the location of the database
+** default: '${analysisRoot}/target/jqassistant/store'
+* concepts (-Djqassistant.concepts)
+** specifies the ids of the concepts to be applied
+* constraints (-Djqassistant.constraints)
+** specifies the ids of the constraints to be validated
+* groups (-Djqassistant.groups)
+** specifies the ids of the groups to be executed
+** default: 'default'
+* xmlReportFile (-Djqassistant.report.xml)
+** specifes the target file for writing the XML report
+** default: '${analysisRoot}/target/jqassistant/jqassistant-report.xml'
+* failOnConstraintViolations (-Djqassistant.failOnConstraintViolations)
+** determines the jQAssistant shall break the build if constraint violations are detected
+** default: 'true'
+
+[[effective-rules]]
+==== jqassistant:effective-rules
+===== Description
+List the rules which would be executed for an analysis and the given concepts, constraints or groups.
+
+===== Configuration
+* concepts (-Djqassistant.concepts)
+** specifies the ids of the concepts to be applied
+* constraints (-Djqassistant.constraints)
+** specifies the ids of the constraints to be validated
+* groups (-Djqassistant.groups)
+** specifies the ids of the groups to be executed
+** default: 'default'
+
+[[available-rules]]
+==== jqassistant:available-rules
+===== Description
+List all available rules.
+
+[[report]]
+==== jqassistant:report
+===== Description
+Transforms an XML report into HTML.
+
+===== Configuration
+* xmlReportFile (-Djqassistant.report.xml)
+** specifes the file containing the XML report from an analysis
+** default: '${analysisRoot}/target/jqassistant/jqassistant-report.xml'
+* htmlReportFile (-Djqassistant.report.html)
+** specifes the target file for writing the HTML report
+** default: '${analysisRoot}/target/site/jqassistant.html'
+

@@ -1,4 +1,4 @@
-==== Analyzing A Project Using SonarQube
+==== Integration of jQAssistant
 
 Demonstrates the setup of a project being analyzed using SonarQube.
 
@@ -9,7 +9,7 @@ As a pre-condition the jQAssistant SonarQube plugin must be deployed in the dire
 
 Now the following settings can be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
 
-[source]
+[source,xml]
 ----
 <configuration>
     <rulesUrl>http://localhost:9000/profiles/export?format=jQAssistant&amp;language=java&amp;name=MyQualityProfile</rulesUrl>

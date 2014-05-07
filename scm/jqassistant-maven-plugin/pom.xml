@@ -85,7 +85,16 @@
 				<groupId>org.codehaus.plexus</groupId>
 				<artifactId>plexus-component-metadata</artifactId>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
 	</build>
 
 	<dependencyManagement>

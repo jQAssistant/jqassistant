@@ -1,6 +1,6 @@
-==== Extending The jQAssistant SonarQube Plugin With Rules
+==== Rule Extension
 
-Demonstrates how project specific rules can be deployed as extensions to the jQAssistant SonarQube plugin
+Demonstrates how project specific rules can be deployed as extensions to the jQAssistant SonarQube plugin.
 
 The project itself is a sonar plugin. Therefore the file pom.xml specifies the sonar-packaging-maven-plugin:
 
