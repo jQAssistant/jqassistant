@@ -21,8 +21,10 @@ jQAssistant is contributed under http://www.apache.org/licenses/LICENSE-2.0[Apac
 
 include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
 
+include::{docRoot}/jqassistant.scm.cli/readme.adoc[]
+
 include::examples.adoc[]
 
-include::plugins.adoc[toclevels="1"]
+include::plugins.adoc[]
 
 include::devguide.adoc[]
