@@ -3,7 +3,9 @@ package com.buschmais.jqassistant.scm.cli;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -36,7 +38,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         store.reset();
         try {
             for (String directoryName : directoryNames) {
-                properties = new Properties();
+                properties = new HashMap<>();
                 scanDirectory(store, directoryName, getScannerPluginRepository(store, properties).getFileScannerPlugins());
             }
         } catch (PluginReaderException e) {
@@ -44,7 +46,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         }
     }
 
-    protected ScannerPluginRepository getScannerPluginRepository(Store store, Properties properties) {
+    protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
             return new ScannerPluginRepositoryImpl(store, properties);
         } catch (PluginReaderException e) {
