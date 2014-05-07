@@ -10,6 +10,10 @@
 
     <artifactId>jqassistant.plugin.java</artifactId>
 
+    <properties>
+        <org.ow2.asm_version>5.0.2</org.ow2.asm_version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -53,6 +57,18 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -75,10 +91,6 @@
             <artifactId>jqassistant.core.store</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.neo4j</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.scanner</artifactId>
         </dependency>
@@ -89,6 +101,10 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.pluginrepository</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.xo</groupId>
+            <artifactId>xo.neo4j</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -108,12 +124,12 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>5.0.2</version>
+            <version>${org.ow2.asm_version}</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-util</artifactId>
-            <version>5.0.2</version>
+            <version>${org.ow2.asm_version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
