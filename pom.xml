@@ -214,6 +214,18 @@
 								</descriptorRefs>
 							</configuration>
 						</execution>
+                        <execution>
+                            <id>attach-lib</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>lib</descriptorRef>
+                                </descriptorRefs>
+                            </configuration>
+                        </execution>
 					</executions>
 				</plugin>
 				<plugin>
