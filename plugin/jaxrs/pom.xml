@@ -45,6 +45,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.ws.rs</groupId>
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>2.0</version>
@@ -69,10 +76,6 @@
             <artifactId>jqassistant.plugin.common</artifactId>
             <type>xsl</type>
             <classifier>rules2asciidoc</classifier>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.scanner</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
