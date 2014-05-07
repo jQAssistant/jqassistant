@@ -6,17 +6,16 @@ import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 
 /**
@@ -47,9 +46,9 @@ public final class ReportHelper {
      * @return The resolved
      *         {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
      * 
-     * @throws ExecutionListenerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
      */
-    public static LanguageElement getLanguageElement(Descriptor descriptor) throws ExecutionListenerException {
+    public static LanguageElement getLanguageElement(Descriptor descriptor) throws AnalysisListenerException {
         for (Class<?> descriptorType : descriptor.getClass().getInterfaces()) {
             AnnotatedType annotatedType = new AnnotatedType(descriptorType);
             Annotation languageAnnotation = annotatedType.getByMetaAnnotation(Language.class);
@@ -134,12 +133,12 @@ public final class ReportHelper {
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
-    public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws ExecutionListenerException {
+    public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
         List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
             if (!constraintViolation.isEmpty()) {
-                AbstractExecutable constraint = constraintViolation.getExecutable();
+                AbstractRule constraint = constraintViolation.getExecutable();
                 console.error(constraint.getId() + ": " + constraint.getDescription());
                 for (Map<String, Object> columns : constraintViolation.getRows()) {
                     StringBuilder message = new StringBuilder();
@@ -183,22 +182,22 @@ public final class ReportHelper {
      * @param <T>
      *            The expected type.
      * @return The value.
-     * @throws ExecutionListenerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
      *             If the value cannot be determined from the annotation.
      */
-    private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws ExecutionListenerException {
+    private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws AnalysisListenerException {
         Class<? extends Annotation> annotationType = annotation.annotationType();
         Method valueMethod;
         try {
             valueMethod = annotationType.getDeclaredMethod(value);
         } catch (NoSuchMethodException e) {
-            throw new ExecutionListenerException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
+            throw new AnalysisListenerException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
         }
         Object elementValue;
         try {
             elementValue = valueMethod.invoke(annotation);
         } catch (ReflectiveOperationException e) {
-            throw new ExecutionListenerException("Cannot invoke method value() for " + annotationType);
+            throw new AnalysisListenerException("Cannot invoke method value() for " + annotationType);
         }
         return elementValue != null ? expectedType.cast(elementValue) : null;
     }

@@ -1,10 +1,10 @@
-package com.buschmais.jqassistant.core.analysis.api;
+package com.buschmais.jqassistant.core.pluginrepository.api;
 
 /**
  * Exception thrown by the
- * {@link com.buschmais.jqassistant.core.pluginrepository.api.PluginReader}.
+ * {@link com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository}.
  */
-public class PluginReaderException extends Exception {
+public class PluginRepositoryException extends Exception {
 
     /**
      * The serial version UID.
@@ -19,7 +19,7 @@ public class PluginReaderException extends Exception {
      * @param cause
      *            The cause.
      */
-    public PluginReaderException(String message, Throwable cause) {
+    public PluginRepositoryException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -29,7 +29,7 @@ public class PluginReaderException extends Exception {
      * @param message
      *            The message.
      */
-    public PluginReaderException(String message) {
+    public PluginRepositoryException(String message) {
         super(message);
     }
 }

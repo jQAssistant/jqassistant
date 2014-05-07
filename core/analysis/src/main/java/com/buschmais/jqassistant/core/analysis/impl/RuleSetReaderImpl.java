@@ -112,7 +112,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
             } else {
                 concept.setQuery(createQuery(conceptType.getCypher(), conceptType.getParameter()));
             }
-            concept.setRequiredConcepts(getRequiredConcepts(conceptType.getRequiresConcept(), conceptTypes, ruleSet));
+            concept.setRequiresConcepts(getRequiredConcepts(conceptType.getRequiresConcept(), conceptTypes, ruleSet));
         }
     }
 
@@ -139,7 +139,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
             } else {
                 constraint.setQuery(createQuery(constraintType.getCypher(), constraintType.getParameter()));
             }
-            constraint.setRequiredConcepts(getRequiredConcepts(constraintType.getRequiresConcept(), conceptTypes, ruleSet));
+            constraint.setRequiresConcepts(getRequiredConcepts(constraintType.getRequiresConcept(), conceptTypes, ruleSet));
         }
     }
 

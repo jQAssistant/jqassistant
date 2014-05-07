@@ -4,10 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Defines an executable which is has an unique identifier and references a
+ * Defines an abstract rule which is has an unique identifier and references a
  * Query.
  */
-public class AbstractExecutable implements Rule {
+public abstract class AbstractRule implements Rule {
 
     private String id;
 
@@ -15,7 +15,7 @@ public class AbstractExecutable implements Rule {
 
     private Query query;
 
-    private Set<Concept> requiredConcepts = new HashSet<Concept>();
+    private Set<Concept> requiresConcepts = new HashSet<>();
 
     public String getId() {
         return id;
@@ -33,12 +33,12 @@ public class AbstractExecutable implements Rule {
         this.description = description;
     }
 
-    public Set<Concept> getRequiredConcepts() {
-        return requiredConcepts;
+    public Set<Concept> getRequiresConcepts() {
+        return requiresConcepts;
     }
 
-    public void setRequiredConcepts(Set<Concept> requiredConcepts) {
-        this.requiredConcepts = requiredConcepts;
+    public void setRequiresConcepts(Set<Concept> requiresConcepts) {
+        this.requiresConcepts = requiresConcepts;
     }
 
     public Query getQuery() {
@@ -55,7 +55,7 @@ public class AbstractExecutable implements Rule {
             return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        AbstractExecutable executable = (AbstractExecutable) o;
+        AbstractRule executable = (AbstractRule) o;
         if (!id.equals(executable.id))
             return false;
         return true;
@@ -68,7 +68,7 @@ public class AbstractExecutable implements Rule {
 
     @Override
     public String toString() {
-        return "AbstractExecutable{" + "id='" + id + '\'' + ", description='" + description + '\'' + ", query=" + query + ", requiredConcepts="
-                + requiredConcepts + '}';
+        return "AbstractRule {" + "id='" + id + '\'' + ", description='" + description + '\'' + ", query=" + query + ", requiresConcepts="
+                + requiresConcepts + '}';
     }
 }

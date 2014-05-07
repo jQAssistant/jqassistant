@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 /**
  * Exception thrown by the {@link Analyzer}.
  */
-public class AnalyzerException extends Exception {
+public class AnalysisException extends Exception {
 
     /**
      * The serial version UID.
@@ -18,7 +18,7 @@ public class AnalyzerException extends Exception {
      * @param cause
      *            The cause.
      */
-    public AnalyzerException(String message, Throwable cause) {
+    public AnalysisException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -28,7 +28,7 @@ public class AnalyzerException extends Exception {
      * @param message
      *            The message.
      */
-    public AnalyzerException(String message) {
+    public AnalysisException(String message) {
         super(message);
     }
 }

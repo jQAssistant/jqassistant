@@ -11,10 +11,10 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
@@ -26,21 +26,21 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * Implementation of an
- * {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener} which
+ * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener} which
  * writes the results of an analysis to an XML file.
  */
-public class XmlReportWriter implements ExecutionListener {
+public class XmlReportWriter implements AnalysisListener {
 
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.0";
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
     private static interface XmlOperation {
-        void run() throws XMLStreamException, ExecutionListenerException;
+        void run() throws XMLStreamException, AnalysisListenerException;
     }
 
     private XMLStreamWriter xmlStreamWriter;
 
-    private Result<? extends AbstractExecutable> result;
+    private Result<? extends AbstractRule> result;
 
     private long groupBeginTime;
 
@@ -48,17 +48,17 @@ public class XmlReportWriter implements ExecutionListener {
 
     private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public XmlReportWriter(Writer writer) throws ExecutionListenerException {
+    public XmlReportWriter(Writer writer) throws AnalysisListenerException {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
         try {
             xmlStreamWriter = new IndentingXMLStreamWriter(factory.createXMLStreamWriter(writer));
         } catch (XMLStreamException e) {
-            throw new ExecutionListenerException("Cannot create XML stream writer.", e);
+            throw new AnalysisListenerException("Cannot create XML stream writer.", e);
         }
     }
 
     @Override
-    public void begin() throws ExecutionListenerException {
+    public void begin() throws AnalysisListenerException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -71,7 +71,7 @@ public class XmlReportWriter implements ExecutionListener {
     }
 
     @Override
-    public void end() throws ExecutionListenerException {
+    public void end() throws AnalysisListenerException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -82,22 +82,22 @@ public class XmlReportWriter implements ExecutionListener {
         try {
             xmlStreamWriter.close();
         } catch (XMLStreamException e) {
-            throw new ExecutionListenerException("Cannot close XML stream writer", e);
+            throw new AnalysisListenerException("Cannot close XML stream writer", e);
         }
     }
 
     @Override
-    public void beginConcept(Concept concept) throws ExecutionListenerException {
+    public void beginConcept(Concept concept) throws AnalysisListenerException {
         beginExecutable();
     }
 
     @Override
-    public void endConcept() throws ExecutionListenerException {
+    public void endConcept() throws AnalysisListenerException {
         endExecutable();
     }
 
     @Override
-    public void beginGroup(final Group group) throws ExecutionListenerException {
+    public void beginGroup(final Group group) throws AnalysisListenerException {
         final Date now = new Date();
         run(new XmlOperation() {
             @Override
@@ -111,7 +111,7 @@ public class XmlReportWriter implements ExecutionListener {
     }
 
     @Override
-    public void endGroup() throws ExecutionListenerException {
+    public void endGroup() throws AnalysisListenerException {
         run(new XmlOperation() {
             @Override
             public void run() throws XMLStreamException {
@@ -122,17 +122,17 @@ public class XmlReportWriter implements ExecutionListener {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws ExecutionListenerException {
+    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
         beginExecutable();
     }
 
     @Override
-    public void endConstraint() throws ExecutionListenerException {
+    public void endConstraint() throws AnalysisListenerException {
         endExecutable();
     }
 
     @Override
-    public void setResult(final Result<? extends AbstractExecutable> result) throws ExecutionListenerException {
+    public void setResult(final Result<? extends AbstractRule> result) throws AnalysisListenerException {
         this.result = result;
     }
 
@@ -140,21 +140,21 @@ public class XmlReportWriter implements ExecutionListener {
         this.executableBeginTime = System.currentTimeMillis();
     }
 
-    private void endExecutable() throws ExecutionListenerException {
+    private void endExecutable() throws AnalysisListenerException {
         if (result != null) {
-            final AbstractExecutable executable = result.getExecutable();
+            final AbstractRule executable = result.getExecutable();
             final String elementName;
             if (executable instanceof Concept) {
                 elementName = "concept";
             } else if (executable instanceof Constraint) {
                 elementName = "constraint";
             } else {
-                throw new ExecutionListenerException("Cannot write report for unsupported executable " + executable);
+                throw new AnalysisListenerException("Cannot write report for unsupported executable " + executable);
             }
             final List<String> columnNames = result.getColumnNames();
             run(new XmlOperation() {
                 @Override
-                public void run() throws XMLStreamException, ExecutionListenerException {
+                public void run() throws XMLStreamException, AnalysisListenerException {
                     xmlStreamWriter.writeStartElement(elementName);
                     xmlStreamWriter.writeAttribute("id", executable.getId());
                     xmlStreamWriter.writeStartElement("description");
@@ -202,10 +202,10 @@ public class XmlReportWriter implements ExecutionListener {
      *            The value.
      * @throws XMLStreamException
      *             If a problem occurs.
-     * @throws ExecutionListenerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
      *             If a problem occurs.
      */
-    private void writeColumn(String columnName, Object value) throws XMLStreamException, ExecutionListenerException {
+    private void writeColumn(String columnName, Object value) throws XMLStreamException, AnalysisListenerException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         String stringValue;
@@ -264,14 +264,14 @@ public class XmlReportWriter implements ExecutionListener {
      * 
      * @param operation
      *            The operation.
-     * @throws ExecutionListenerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
      *             If writing fails.
      */
-    private void run(XmlOperation operation) throws ExecutionListenerException {
+    private void run(XmlOperation operation) throws AnalysisListenerException {
         try {
             operation.run();
         } catch (XMLStreamException e) {
-            throw new ExecutionListenerException("Cannot write to XML report.", e);
+            throw new AnalysisListenerException("Cannot write to XML report.", e);
         }
     }
 }

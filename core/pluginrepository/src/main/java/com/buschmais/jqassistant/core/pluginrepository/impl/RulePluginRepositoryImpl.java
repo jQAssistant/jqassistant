@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.pluginrepository.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ResourcesType;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.RulesType;
@@ -29,7 +29,7 @@ public class RulePluginRepositoryImpl extends PluginRepositoryImpl implements Ru
     /**
      * Constructor.
      */
-    public RulePluginRepositoryImpl() throws PluginReaderException {
+    public RulePluginRepositoryImpl() throws PluginRepositoryException {
         this.sources = getRuleSources(getPlugins());
     }
 

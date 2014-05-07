@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
@@ -31,10 +31,10 @@ public final class XmlReportTestHelper {
      * Creates a test report.
      * 
      * @return The test report.
-     * @throws ExecutionListenerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
      *             If the test fails.
      */
-    public static String createXmlReport() throws ExecutionListenerException {
+    public static String createXmlReport() throws AnalysisListenerException {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
