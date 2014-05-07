@@ -10,7 +10,13 @@
 
     <xsl:template match="/">
 === <xsl:value-of select="$pluginName"/>
+<xsl:apply-templates select="//description"/>
 <xsl:apply-templates select="//resource"/>
+    </xsl:template>
+
+    <xsl:template match="description">
+        <xsl:value-of select="$newline"/>
+        <xsl:value-of select="text()"/>
     </xsl:template>
 
     <xsl:template match="resource">
