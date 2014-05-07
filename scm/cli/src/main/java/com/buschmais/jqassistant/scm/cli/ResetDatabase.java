@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import java.util.Properties;
-
 import com.buschmais.jqassistant.core.store.api.Store;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
@@ -12,7 +10,7 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
  */
 public class ResetDatabase extends CommonJqAssistantTask {
     public ResetDatabase() {
-        super("reset", new Properties());
+        super("reset");
     }
 
     @Override
