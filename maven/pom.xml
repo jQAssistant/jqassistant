@@ -91,6 +91,7 @@
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
