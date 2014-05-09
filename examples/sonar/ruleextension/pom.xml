@@ -86,7 +86,7 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>attach-asciidoc</id>
+                        <id>attach-asciidoc-with-sources</id>
                         <phase>package</phase>
 					</execution>
 				</executions>

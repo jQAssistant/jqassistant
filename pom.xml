@@ -215,6 +215,18 @@
 							</configuration>
 						</execution>
                         <execution>
+                            <id>attach-asciidoc-with-sources</id>
+                            <phase />
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptorRefs>
+                                    <descriptorRef>asciidoc-with-sources</descriptorRef>
+                                </descriptorRefs>
+                            </configuration>
+                        </execution>
+                        <execution>
                             <id>attach-lib</id>
                             <phase />
                             <goals>

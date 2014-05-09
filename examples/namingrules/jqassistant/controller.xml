@@ -3,14 +3,14 @@
     <concept id="controller:ControllerClass">
         <description>Labels all classes implementing the Controller interface as CONTROLLER.</description>
         <cypher><![CDATA[
-			match
-				(controllerClass:TYPE:CLASS)-[:IMPLEMENTS*]->(controllerType:TYPE)
-			where
-			    controllerType.FQN = "com.buschmais.jqassistant.examples.namingrules.Controller"
+            match
+                (controllerClass:TYPE:CLASS)-[:IMPLEMENTS*]->(controllerType:TYPE)
+            where
+                controllerType.FQN = "com.buschmais.jqassistant.examples.namingrules.Controller"
             set
                 controllerClass:CONTROLLER
-			return
-			    controllerClass
+            return
+                controllerClass
         ]]></cypher>
     </concept>
 
@@ -18,12 +18,12 @@
         <requiresConcept refId="controller:ControllerClass"/>
         <description>All controller implementations must have a name suffix "Controller".</description>
         <cypher><![CDATA[
-			match
-				(controllerClass:CLASS:CONTROLLER)
-			where
+            match
+                (controllerClass:CLASS:CONTROLLER)
+            where
                 not controllerClass.NAME =~ ".*Controller"
-			return
-			    controllerClass as ControllerClass
+            return
+                controllerClass as ControllerClass
         ]]></cypher>
     </constraint>
 
@@ -31,12 +31,12 @@
         <requiresConcept refId="controller:ControllerClass"/>
         <description>All controller implementations must be located in the package "model".</description>
         <cypher><![CDATA[
-			match
-				(package:PACKAGE)-[:CONTAINS]->(controllerClass:CLASS:CONTROLLER)
-			where
-			    not package.NAME = "controller"
-			return
-			    controllerClass as ControllerClass, package as InvalidPackage
+            match
+                (package:PACKAGE)-[:CONTAINS]->(controllerClass:CLASS:CONTROLLER)
+            where
+                not package.NAME = "controller"
+            return
+                controllerClass as ControllerClass, package as InvalidPackage
         ]]></cypher>
     </constraint>
 

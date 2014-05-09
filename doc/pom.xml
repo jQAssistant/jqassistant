@@ -27,7 +27,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-sources/asciidoc</outputDirectory>
                             <includeTypes>zip</includeTypes>
-                            <includeClassifiers>asciidoc</includeClassifiers>
+                            <includeClassifiers>asciidoc,asciidoc-with-sources</includeClassifiers>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
@@ -50,6 +50,7 @@
                             <attributes>
                                 <toc>auto</toc>
                                 <toclevels>3</toclevels>
+                                <tabsize>4</tabsize>
                                 <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
                             </attributes>
                         </configuration>
@@ -135,28 +136,28 @@
             <artifactId>jqassistant.examples.forbiddenmethod</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
-            <classifier>asciidoc</classifier>
+            <classifier>asciidoc-with-sources</classifier>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
             <artifactId>jqassistant.examples.namingrules</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
-            <classifier>asciidoc</classifier>
+            <classifier>asciidoc-with-sources</classifier>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
             <artifactId>jqassistant.examples.sonar.ruleextension</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
-            <classifier>asciidoc</classifier>
+            <classifier>asciidoc-with-sources</classifier>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
             <artifactId>jqassistant.examples.sonar.project</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
-            <classifier>asciidoc</classifier>
+            <classifier>asciidoc-with-sources</classifier>
         </dependency>
     </dependencies>
 
