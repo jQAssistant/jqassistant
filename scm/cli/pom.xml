@@ -27,10 +27,12 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-bin</id>
+                        <id>attach-lib</id>
+                        <phase>package</phase>
                     </execution>
                     <execution>
                         <id>attach-asciidoc</id>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>

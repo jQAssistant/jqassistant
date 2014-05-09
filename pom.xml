@@ -204,7 +204,7 @@
 					<executions>
 						<execution>
 							<id>attach-asciidoc</id>
-							<phase>package</phase>
+							<phase />
 							<goals>
 								<goal>single</goal>
 							</goals>
@@ -216,7 +216,7 @@
 						</execution>
                         <execution>
                             <id>attach-lib</id>
-                            <phase>package</phase>
+                            <phase />
                             <goals>
                                 <goal>single</goal>
                             </goals>
