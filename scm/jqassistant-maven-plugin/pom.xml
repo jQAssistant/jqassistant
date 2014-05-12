@@ -160,6 +160,11 @@
 		</dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant.scm.neo4jserver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
             <artifactId>jqassistant.scm.neo4jshell</artifactId>
         </dependency>
 		<dependency>
