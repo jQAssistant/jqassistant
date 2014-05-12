@@ -5,27 +5,28 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
@@ -38,8 +39,6 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.AbstractMojo {
 
     public static final String REPORT_XML = "jqassistant-report.xml";
-
-    public static final String LOG_LINE_PREFIX = "  \"";
 
     /**
      * The store directory.
@@ -84,6 +83,25 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     protected File xmlReportFile;
 
     /**
+     * Contains the full list of projects in the reactor.
+     */
+    @Parameter(property = "reactorProjects")
+    private List<MavenProject> reactorProjects;
+
+    /**
+     * The Maven project.
+     */
+    @Parameter(property = "project")
+    private MavenProject currentProject;
+
+    /**
+     * The store repository.
+     */
+    @Component
+    private StoreRepository storeRepository;
+
+
+    /**
      * The rules reader instance.
      */
     private RuleSetReader ruleSetReader = new RuleSetReaderImpl();
@@ -92,6 +110,27 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * The rules selector.
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
+
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        Aggregator.execute(new Aggregator.AggregatedGoal() {
+            public void execute(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
+                List<Class<?>> descriptorTypes;
+                Store store = getStore(baseProject);
+                try {
+                    descriptorTypes = getScannerPluginRepository(store, getPluginProperties(baseProject)).getDescriptorTypes();
+                } catch (PluginRepositoryException e) {
+                    throw new MojoExecutionException("Cannot get descriptor mappers.", e);
+                }
+                try {
+                    store.start(descriptorTypes);
+                    AbstractAnalysisMojo.this.aggregate(baseProject, projects, store);
+                } finally {
+                    store.stop();
+                }
+            }
+        }, currentProject, reactorProjects);
+    }
 
     /**
      * Return the scanner plugin repository.
@@ -181,6 +220,53 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     }
 
     /**
+     * Return the plugin properties.
+     *
+     * @return The plugin properties.
+     */
+    protected Map<String, Object> getPluginProperties(MavenProject project) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(MavenProject.class.getName(), project);
+        return properties;
+    }
+
+    /**
+     * Return the store instance to use for the given base project.
+     *
+     * @param baseProject
+     *            The base project
+     * @return The store instance.
+     * @throws MojoExecutionException
+     *             If the store cannot be created.
+     */
+    protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
+        File directory;
+        if (this.storeDirectory != null) {
+            directory = this.storeDirectory;
+        } else {
+            directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
+        }
+        return storeRepository.getStore(directory, isResetStoreOnInitialization());
+    }
+
+    /**
+     * Determine if a goal needs to reset the store on initialization.
+     *
+     * @return <code>true</code> If the store shall be reset initially.
+     */
+    protected abstract boolean isResetStoreOnInitialization();
+
+    /**
+     * Execute the aggregated analysis.
+     *
+     * @throws MojoExecutionException
+     *             If execution fails.
+     * @throws MojoFailureException
+     *             If execution fails.
+     */
+    protected abstract void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException;
+
+    /**
      * Retrieves the list of available rules from the rules directory.
      * 
      * @param rulesDirectory
@@ -244,42 +330,4 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         }
     }
 
-    /**
-     * Logs the given {@link RuleSet} on level info.
-     * 
-     * @param ruleSet
-     *            The {@link RuleSet}.
-     */
-    protected void logRuleSet(RuleSet ruleSet) {
-        getLog().info("Groups [" + ruleSet.getGroups().size() + "]");
-        for (Group group : ruleSet.getGroups().values()) {
-            getLog().info(LOG_LINE_PREFIX + group.getId() + "\"");
-        }
-        getLog().info("Constraints [" + ruleSet.getConstraints().size() + "]");
-        for (Constraint constraint : ruleSet.getConstraints().values()) {
-            getLog().info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
-        }
-        getLog().info("Concepts [" + ruleSet.getConcepts().size() + "]");
-        for (Concept concept : ruleSet.getConcepts().values()) {
-            getLog().info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
-        }
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            getLog().warn("Missing concepts [" + ruleSet.getMissingConcepts().size() + "]");
-            for (String missingConcept : ruleSet.getMissingConcepts()) {
-                getLog().warn(LOG_LINE_PREFIX + missingConcept);
-            }
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            getLog().warn("Missing constraints [" + ruleSet.getMissingConstraints().size() + "]");
-            for (String missingConstraint : ruleSet.getMissingConstraints()) {
-                getLog().warn(LOG_LINE_PREFIX + missingConstraint);
-            }
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            getLog().warn("Missing groups [" + ruleSet.getMissingGroups().size() + "]");
-            for (String missingGroup : ruleSet.getMissingGroups()) {
-                getLog().warn(LOG_LINE_PREFIX + missingGroup);
-            }
-        }
-    }
 }

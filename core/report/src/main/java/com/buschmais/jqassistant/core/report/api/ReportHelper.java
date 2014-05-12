@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.core.report.api;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
 
@@ -71,7 +70,7 @@ public final class ReportHelper {
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
      *            .
      */
-    public void printRuleSet(RuleSet ruleSet) throws RemoteException {
+    public void printRuleSet(RuleSet ruleSet) {
         console.info("Groups [" + ruleSet.getGroups().size() + "]");
         for (Group group : ruleSet.getGroups().values()) {
             console.info(LOG_LINE_PREFIX + group.getId() + "\"");

@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
 import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
@@ -24,17 +24,17 @@ import com.buschmais.jqassistant.core.store.api.Store;
  * Scans the the output directory and test output directory.
  */
 @Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
-public class ScanMojo extends AbstractAnalysisAggregatorMojo {
+public class ScanMojo extends AbstractAnalysisMojo {
 
     @Override
     protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         for (MavenProject project : projects) {
             List<FileScannerPlugin> fileScannerPlugins;
             List<ProjectScannerPlugin> projectScannerPlugins;
-            ScannerPluginRepository pluginManager = getScannerPluginRepository(store, getPluginProperties());
+            ScannerPluginRepository scannerPluginRepository = getScannerPluginRepository(store, getPluginProperties(project));
             try {
-                fileScannerPlugins = pluginManager.getFileScannerPlugins();
-                projectScannerPlugins = pluginManager.getProjectScannerPlugins();
+                fileScannerPlugins = scannerPluginRepository.getFileScannerPlugins();
+                projectScannerPlugins = scannerPluginRepository.getProjectScannerPlugins();
             } catch (PluginRepositoryException e) {
                 throw new MojoExecutionException("Cannot determine scanner plugins.", e);
             }
