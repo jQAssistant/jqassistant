@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.*;
-import java.rmi.RemoteException;
-import java.util.Collections;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Set;
 
-import com.buschmais.jqassistant.scm.maven.export.GraphExporter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -13,25 +14,17 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.neo4j.cypher.export.DatabaseSubGraph;
 import org.neo4j.cypher.export.SubGraph;
-import org.neo4j.cypher.export.SubGraphExporter;
 import org.neo4j.kernel.GraphDatabaseAPI;
-import org.neo4j.shell.Output;
-import org.neo4j.shell.ShellClient;
-import org.neo4j.shell.ShellException;
-import org.neo4j.shell.ShellServer;
-import org.neo4j.shell.impl.RemoteOutput;
-import org.neo4j.shell.impl.SameJvmClient;
-import org.neo4j.shell.kernel.GraphDatabaseShellServer;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import org.neo4j.shell.kernel.apps.cypher.Exporter;
+import com.buschmais.jqassistant.scm.maven.export.GraphExporter;
 
 /**
  * Exports the database as a file containing cypher statements.
  */
 @Mojo(name = "export-database")
-public class ExportDatabaseMojo extends AbstractAnalysisAggregatorMojo {
+public class ExportDatabaseMojo extends AbstractAnalysisMojo {
 
     private static final String EXPORT_FILE = "jqassistant.cypher";
 

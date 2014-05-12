@@ -25,19 +25,21 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Lists all available rules.
  */
 @Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE)
-public class AvailableRulesMojo extends AbstractAnalysisAggregatorMojo {
+public class AvailableRulesMojo extends AbstractAnalysisMojo {
 
     @Override
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + baseProject.getName() + "'.");
         RuleSet ruleSet = readRules(baseProject);
-        logRuleSet(ruleSet);
+        ReportHelper reportHelper = new ReportHelper(new MavenConsole(getLog()));
+        reportHelper.printRuleSet(ruleSet);
     }
 
     @Override
