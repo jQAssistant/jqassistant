@@ -28,8 +28,6 @@ public class ExportDatabaseMojo extends AbstractAnalysisMojo {
 
     private static final String EXPORT_FILE = "jqassistant.cypher";
 
-    private static final String lineSeparator = System.getProperty("line.separator");
-
     /**
      * The file to write the exported cypher statements to.
      */
