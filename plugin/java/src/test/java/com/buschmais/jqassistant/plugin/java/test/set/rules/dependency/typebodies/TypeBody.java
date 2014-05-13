@@ -13,6 +13,7 @@ public class TypeBody {
 
     @MethodAnnotation
     public Iterator<Integer> iterator(Number n) throws Exception {
+        @SuppressWarnings("unused")
         Double doubleValue = Double.valueOf(0d);
         Boolean.valueOf(true);
         return null;

@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;

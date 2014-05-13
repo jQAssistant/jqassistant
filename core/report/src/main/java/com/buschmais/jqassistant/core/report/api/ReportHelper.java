@@ -120,7 +120,7 @@ public final class ReportHelper {
         List<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults();
         for (Result<Concept> conceptResult : conceptResults) {
             if (conceptResult.getRows().isEmpty()) {
-                console.warn("Concept '" + conceptResult.getExecutable().getId() + "' returned an empty result.");
+                console.warn("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
             }
         }
     }
@@ -137,7 +137,7 @@ public final class ReportHelper {
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
             if (!constraintViolation.isEmpty()) {
-                AbstractRule constraint = constraintViolation.getExecutable();
+                AbstractRule constraint = constraintViolation.getRule();
                 console.error(constraint.getId() + ": " + constraint.getDescription());
                 for (Map<String, Object> columns : constraintViolation.getRows()) {
                     StringBuilder message = new StringBuilder();

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Assume;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
@@ -69,7 +69,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
         applyConcept("metric:Top10TypeFanIn");
         applyConcept("metric:Top10TypeFanOut");
         for (Result<Concept> conceptResult : reportWriter.getConceptResults()) {
-            LOGGER.info(conceptResult.getExecutable().getId());
+            LOGGER.info(conceptResult.getRule().getId());
             for (Map<String, Object> row : conceptResult.getRows()) {
                 StringBuffer sb = new StringBuffer("\t");
                 for (Object value : row.values()) {

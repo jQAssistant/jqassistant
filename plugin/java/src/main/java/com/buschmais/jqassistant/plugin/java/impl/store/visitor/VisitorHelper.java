@@ -6,7 +6,15 @@ import org.apache.commons.collections.map.LRUMap;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotatedDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ConstructorDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.DependentDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 
 /**
@@ -24,8 +32,11 @@ public class VisitorHelper {
     private DescriptorResolverFactory resolverFactory;
     private Store store;
 
+    @SuppressWarnings("unchecked")
     private Map<String, TypeDescriptor> typeCache = new LRUMap(TYPE_CACHE_SIZE);
+    @SuppressWarnings("unchecked")
     private Map<TypeDescriptor, Map<String, MethodDescriptor>> methodCache = new LRUMap(TYPE_CACHE_SIZE);
+    @SuppressWarnings("unchecked")
     private Map<TypeDescriptor, Map<String, FieldDescriptor>> fieldCache = new LRUMap(TYPE_CACHE_SIZE);
 
     /**
@@ -107,6 +118,7 @@ public class VisitorHelper {
      *            The member type.
      * @return The member cache.
      */
+    @SuppressWarnings("unchecked")
     private <T extends Descriptor> Map<String, T> getMemberCache(TypeDescriptor type, Map<TypeDescriptor, Map<String, T>> memberCache) {
         Map<String, T> membersOfType = memberCache.get(type);
         if (membersOfType == null) {
@@ -144,7 +156,7 @@ public class VisitorHelper {
      *            The type of the value descriptor.
      * @return The value descriptor.
      */
-    <T extends ValueDescriptor> T getValueDescriptor(Class<T> valueDescriptorType) {
+    <T extends ValueDescriptor<?>> T getValueDescriptor(Class<T> valueDescriptorType) {
         return store.create(valueDescriptorType);
     }
 
