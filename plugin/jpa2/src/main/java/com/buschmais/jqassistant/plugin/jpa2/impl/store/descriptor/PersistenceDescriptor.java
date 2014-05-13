@@ -10,15 +10,15 @@ import java.util.Set;
 /**
  * A descriptor for JPA model descriptors.
  */
-@Label("PERSISTENCE")
+@Label("Persistence")
 public interface PersistenceDescriptor extends FileDescriptor, NamedDescriptor, JpaDescriptor {
 
-    @Property("VERSION")
+    @Property("Version")
     public String getVersion();
 
     public void setVersion(String version);
 
-    @Property("CONTAINS")
+    @Property("Contains")
     public Set<PersistenceUnitDescriptor> getContains();
 
 }

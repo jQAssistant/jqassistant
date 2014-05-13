@@ -45,7 +45,7 @@ public class Jpa2IT extends AbstractPluginIT {
         scanClasses(JpaEntity.class);
         applyConcept("jpa2:Entity");
         store.beginTransaction();
-        assertThat(query("MATCH (e:TYPE:ENTITY) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
+        assertThat(query("MATCH (e:TYPE:Jpa:Entity) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
         store.commitTransaction();
     }
 
@@ -62,7 +62,7 @@ public class Jpa2IT extends AbstractPluginIT {
         scanClasses(JpaEntity.class);
         applyConcept("jpa2:NamedQuery");
         store.beginTransaction();
-        TestResult query = query("MATCH (e:ENTITY)-[:DEFINES]->(n:JPA2:NAMEDQUERY) RETURN n.NAME as name, n.QUERY as query");
+        TestResult query = query("MATCH (e:Entity)-[:DEFINES]->(n:Jpa:NamedQuery) RETURN n.Name as name, n.Query as query");
         List<Map<String, Object>> rows = query.getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
@@ -83,7 +83,7 @@ public class Jpa2IT extends AbstractPluginIT {
     public void fullPersistenceDescriptor() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
-        TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
+        TestResult testResult = query("MATCH (p:Jpa:Persistence) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);
@@ -105,7 +105,7 @@ public class Jpa2IT extends AbstractPluginIT {
     public void fullPersistenceUnitDescriptor() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
-        TestResult testResult = query("MATCH (pu:JPA:PERSISTENCEUNIT) RETURN pu");
+        TestResult testResult = query("MATCH (pu:Jpa:PersistenceUnit) RETURN pu");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<? super PersistenceUnitDescriptor> persistenceUnitDescriptors = testResult.getColumn("pu");
         PersistenceUnitDescriptor persistenceUnitDescriptor = (PersistenceUnitDescriptor) persistenceUnitDescriptors.get(0);
@@ -134,7 +134,7 @@ public class Jpa2IT extends AbstractPluginIT {
     public void minimalPersistenceDescriptor() throws IOException, AnalysisException {
         scanDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         store.beginTransaction();
-        TestResult testResult = query("MATCH (p:JPA:PERSISTENCE) RETURN p");
+        TestResult testResult = query("MATCH (p:Jpa:Persistence) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);

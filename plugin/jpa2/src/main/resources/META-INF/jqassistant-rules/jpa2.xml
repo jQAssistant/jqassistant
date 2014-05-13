@@ -1,23 +1,23 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="jpa2:Entity">
-        <description>Labels all types annotated with @javax.persistence.Entity with JPA and ENTITY.</description>
+        <description>Labels all types annotated with @javax.persistence.Entity with "Jpa" and "Entity".</description>
         <cypher><![CDATA[
             MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
             WHERE a.FQN="javax.persistence.Entity"
-            SET t:JPA:ENTITY
-            RETURN t AS jpaEntity
+            SET t:Jpa:Entity
+            RETURN t AS JpaEntity
         ]]></cypher>
     </concept>
 
     <concept id="jpa2:NamedQuery">
         <requiresConcept refId="jpa2:Entity"/>
-        <description>Creates a node labeled with JPA2 and NAMEDQUERY for each @NamedQuery defined for an entity. Furthermore a relation DEFINES is created
+        <description>Creates a node labeled with "Jpa" and "NamedQuery" for each @NamedQuery defined for an entity. Furthermore a relation DEFINES is created
             between the entity and the named query.
         </description>
         <cypher><![CDATA[
             MATCH
-              (entity:JPA:ENTITY)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:TYPE),
+              (entity:Jpa:Entity)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:TYPE),
               (namedQueries)-[:HAS]->(:VALUE:ARRAY)-[:HAS]->(namedQuery:VALUE:ANNOTATION)-[:OF_TYPE]->(namedQueryType:TYPE),
               (namedQuery)-[:HAS]->(nameAttribute:VALUE),
               (namedQuery)-[:HAS]->(queryAttribute:VALUE)
@@ -27,9 +27,9 @@
               and nameAttribute.NAME = 'name'
               and queryAttribute.NAME = 'query'
             CREATE UNIQUE
-              (entity)-[:DEFINES]->(n:JPA2:NAMEDQUERY {NAME : nameAttribute.VALUE, QUERY:queryAttribute.VALUE})
+              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {Name:nameAttribute.VALUE, Query:queryAttribute.VALUE})
             RETURN
-              entity.FQN as Entity, n.NAME as Name , n.QUERY as Query
+              entity.FQN as Entity, n.Name as Name, n.Query as Query
         ]]></cypher>
     </concept>
 
@@ -37,12 +37,12 @@
         <description>The validation mode of all persistence units must be explicitly specified and either set to CALLBACK or NONE.</description>
         <cypher><![CDATA[
             MATCH
-              (pu:PERSISTENCEUNIT)
+              (pu:PersistenceUnit)
             WHERE
-              NOT has(pu.VALIDATIONMODE)
+              NOT has(pu.ValidationMode)
               OR NOT (
-                pu.VALIDATIONMODE='CALLBACK'
-                OR pu.VALIDATIONMODE='NONE'
+                pu.ValidationMode='CALLBACK'
+                OR pu.ValidationMode='NONE'
               )
             RETURN
               pu.NAME as PersistenceUnit

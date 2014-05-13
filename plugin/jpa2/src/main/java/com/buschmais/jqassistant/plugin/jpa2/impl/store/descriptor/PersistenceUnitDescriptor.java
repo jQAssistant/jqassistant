@@ -13,43 +13,43 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * A descriptor for JPA model units.
  */
-@Label("PERSISTENCEUNIT")
+@Label("PersistenceUnit")
 public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, JpaDescriptor {
 
-    @Property("DESCRIPTION")
+    @Property("Description")
     public String getDescription();
 
     public void setDescription(String description);
 
-    @Property("PROVIDER")
+    @Property("Provider")
     public String getProvider();
 
     public void setProvider(String provider);
 
-    @Property("JTADATASOURCE")
+    @Property("JtaDatasource")
     public String getJtaDataSource();
 
     public void setJtaDataSource(String jtaDataSource);
 
-    @Property("NONJTADATASOURCE")
+    @Property("NonJtaDatasource")
     public String getNonJtaDataSource();
 
     public void setNonJtaDataSource(String nonJtaDataSource);
 
-    @Property("VALIDATIONMODE")
+    @Property("ValidationMode")
     public String getValidationMode();
 
     public void setValidationMode(String validationMode);
 
-    @Relation("CONTAINS")
+    @Relation("Contains")
     public Set<TypeDescriptor> getContains();
 
-    @Property("SHAREDCACHEMODE")
+    @Property("SharedCacheMode")
     public String getSharedCacheMode();
 
     public void setSharedCacheMode(String sharedCacheMode);
 
-    @Property("PROPERTIES")
+    @Property("Properties")
     public Set<PropertyDescriptor> getProperties();
 
 }
