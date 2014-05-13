@@ -55,7 +55,7 @@ public class OsgiBundleIT extends AbstractPluginIT {
         store.beginTransaction();
         assertThat(
                 query(
-                        "MATCH (bundle:OSGI:BUNDLE) WHERE bundle.BUNDLESYMBOLICNAME='com.buschmais.jqassistant.plugin.osgi.test' and bundle.BUNDLEVERSION='0.1.0' RETURN bundle")
+                        "MATCH (bundle:Osgi:Bundle) WHERE bundle.bundleSymbolicName='com.buschmais.jqassistant.plugin.osgi.test' and bundle.bundleVersion='0.1.0' RETURN bundle")
                         .getColumn("bundle").size(), equalTo(1));
         store.commitTransaction();
     }
@@ -74,7 +74,7 @@ public class OsgiBundleIT extends AbstractPluginIT {
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:ExportPackage");
         store.beginTransaction();
-        List<PackageDescriptor> packages = query("MATCH (b:OSGI:BUNDLE)-[:EXPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
+        List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:EXPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(2));
         assertThat(packages, hasItems(packageDescriptor(Request.class.getPackage()), packageDescriptor(Service.class.getPackage())));
         store.commitTransaction();
@@ -94,7 +94,7 @@ public class OsgiBundleIT extends AbstractPluginIT {
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:ImportPackage");
         store.beginTransaction();
-        List<PackageDescriptor> packages = query("MATCH (b:OSGI:BUNDLE)-[:IMPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
+        List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(1));
         assertThat(packages, hasItems(packageDescriptor(NotNull.class.getPackage())));
         store.commitTransaction();
@@ -114,7 +114,7 @@ public class OsgiBundleIT extends AbstractPluginIT {
         scanClassesDirectory(Service.class);
         applyConcept("osgi-bundle:Activator");
         store.beginTransaction();
-        List<TypeDescriptor> activators = query("MATCH (a:CLASS)-[:ACTIVATES]->(b:OSGI:BUNDLE) RETURN a").getColumn("a");
+        List<TypeDescriptor> activators = query("MATCH (a:CLASS)-[:ACTIVATES]->(b:Osgi:Bundle) RETURN a").getColumn("a");
         assertThat(activators.size(), equalTo(1));
         assertThat(activators, hasItems(typeDescriptor(Activator.class)));
         store.commitTransaction();
@@ -135,7 +135,7 @@ public class OsgiBundleIT extends AbstractPluginIT {
         removeTestClass();
         applyConcept("osgi-bundle:InternalType");
         store.beginTransaction();
-        List<TypeDescriptor> internalTypes = query("MATCH (t:TYPE:INTERNAL) RETURN t").getColumn("t");
+        List<TypeDescriptor> internalTypes = query("MATCH (t:TYPE:Internal) RETURN t").getColumn("t");
         assertThat(
                 internalTypes,
                 hasItems(typeDescriptor(Activator.class), typeDescriptor(UsedPublicClass.class), typeDescriptor(UnusedPublicClass.class),

@@ -1,7 +1,7 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="osgi-bundle:Bundle">
-        <description>Labels all artifacts with a manifest declaring a bundle name as OSGI and BUNDLE.</description>
+        <description>Labels all artifacts with a manifest declaring a bundle name as "Osgi" and "Bundle" and adds the properties "bundleSymbolicName" and "bundleVersion".</description>
         <cypher><![CDATA[
             MATCH
               (bundle:ARTIFACT)-[:CONTAINS]->(manifest:MANIFEST:FILE),
@@ -12,11 +12,11 @@
               nameEntry.NAME = "Bundle-SymbolicName"
               AND versionEntry.NAME = "Bundle-Version"
             SET
-              bundle:OSGI:BUNDLE,
-              bundle.BUNDLESYMBOLICNAME = nameEntry.VALUE,
-              bundle.BUNDLEVERSION = versionEntry.VALUE
+              bundle:Osgi:Bundle,
+              bundle.bundleSymbolicName = nameEntry.VALUE,
+              bundle.bundleVersion = versionEntry.VALUE
             RETURN
-              bundle.NAME, bundle.BUNDLESYMBOLICNAME, bundle.BUNDLEVERSION
+              bundle.NAME, bundle.BundleSymbolicName, bundle.BundleVersion
         ]]></cypher>
     </concept>
 
@@ -26,7 +26,7 @@
         </description>
         <cypher><![CDATA[
             match
-             (bundle:OSGI:BUNDLE)-[:CONTAINS]->(package:PACKAGE)
+             (bundle:Osgi:Bundle)-[:CONTAINS]->(package:PACKAGE)
             with
               bundle, package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
             match
@@ -53,7 +53,7 @@
             with
               package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
             match
-              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(manifest:FILE:MANIFEST),
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
               (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
               (section)-[:HAS]->(entry:MANIFESTENTRY)
             where
@@ -73,10 +73,10 @@
         </description>
         <cypher><![CDATA[
             match
-              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(manifest:FILE:MANIFEST),
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
               (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
               (section)-[:HAS]->(entry:MANIFESTENTRY),
-              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(activator:CLASS)
+              (bundle)-[:CONTAINS]->(activator:CLASS)
             where
               entry.NAME = "Bundle-Activator"
               and entry.VALUE = activator.FQN
@@ -89,17 +89,17 @@
 
     <concept id="osgi-bundle:InternalType">
         <requiresConcept refId="osgi-bundle:ExportPackage"/>
-        <description>Labels all internal types (i.e. which are neither located in an exported package as INTERNAL.</description>
+        <description>Labels all internal types (i.e. which are not located in an exported package) as "Internal".</description>
         <cypher><![CDATA[
             match
-              (bundle:BUNDLE:OSGI)-[:CONTAINS]->(internalPackage:PACKAGE),
+              (bundle:Bundle:Osgi)-[:CONTAINS]->(internalPackage:PACKAGE),
               (bundle)-[:CONTAINS]->(internalType:TYPE),
               (internalPackage)-[:CONTAINS]->(internalType:TYPE)
             where not
                 (bundle)-[:EXPORTS]->(internalPackage)
             set
-              internalType:INTERNAL
-            return bundle, collect(internalType)
+              internalType:Internal
+            return bundle as Bundle, collect(internalType) as InternalTypes
         ]]></cypher>
     </concept>
 
@@ -110,7 +110,7 @@
         <description>A bundle must not contain internal types which are not used by other types in the bundle.</description>
         <cypher><![CDATA[
             match
-              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(internalType:TYPE:INTERNAL)
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:TYPE:Internal)
             where not (
                 (internalType)-[:ACTIVATES]->(bundle)
               or
@@ -128,7 +128,7 @@
         <description>Internal types must not be public if no depending types exist in other packages of the bundle.</description>
         <cypher><![CDATA[
             match
-              (bundle:OSGI:BUNDLE)-[:CONTAINS]->(internalType:TYPE:INTERNAL),
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:TYPE:Internal),
               (internalPackage:PACKAGE)-[:CONTAINS]->(internalType)
             optional match
               (bundle)-[:CONTAINS]->(otherPackage:PACKAGE),
