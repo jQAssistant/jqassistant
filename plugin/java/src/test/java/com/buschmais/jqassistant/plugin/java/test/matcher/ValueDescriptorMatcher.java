@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ValueDescript
 /**
  * A matcher for {@link ValueDescriptor}s.
  */
-public class ValueDescriptorMatcher<T extends ValueDescriptor> extends TypeSafeMatcher<T> {
+public class ValueDescriptorMatcher<T extends ValueDescriptor<?>> extends TypeSafeMatcher<T> {
 
     private String expectedName;
     private Matcher<T> valueMatcher;
@@ -47,7 +47,7 @@ public class ValueDescriptorMatcher<T extends ValueDescriptor> extends TypeSafeM
      *            The matcher for the value.
      * @return The {@link ValueDescriptorMatcher}.
      */
-    public static <T> Matcher<? super ValueDescriptor> valueDescriptor(String name, Matcher<T> valueMatcher) {
+    public static <T> Matcher<? super ValueDescriptor<?>> valueDescriptor(String name, Matcher<T> valueMatcher) {
         return new ValueDescriptorMatcher(name, valueMatcher);
     }
 }

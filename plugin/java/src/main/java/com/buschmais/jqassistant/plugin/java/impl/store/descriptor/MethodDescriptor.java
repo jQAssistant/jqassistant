@@ -1,18 +1,18 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
 import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Method;
-import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
-import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
-import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
  * Describes a method of a Java class.
@@ -35,9 +35,9 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     void setReturns(TypeDescriptor returns);
 
     @Relation("HAS_DEFAULT")
-    ValueDescriptor getHasDefault();
+    ValueDescriptor<?> getHasDefault();
 
-    void setHasDefault(ValueDescriptor hasDefault);
+    void setHasDefault(ValueDescriptor<?> hasDefault);
 
     @Relation("THROWS")
     Set<TypeDescriptor> getDeclaredThrowables();

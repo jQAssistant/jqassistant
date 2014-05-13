@@ -7,7 +7,14 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ArrayValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PrimitiveValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ValueDescriptor;
 
 public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.AnnotationVisitor {
 
@@ -70,7 +77,7 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
         return this;
     }
 
-    protected abstract void setValue(D descriptor, ValueDescriptor value);
+    protected abstract void setValue(D descriptor, ValueDescriptor<?> value);
 
     /**
      * Create a value descriptor of given type and name and initializes it.
@@ -83,13 +90,13 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
      *            The type.
      * @return The initialized descriptor.
      */
-    private <T extends ValueDescriptor> T createValue(Class<T> type, String name) {
+    private <T extends ValueDescriptor<?>> T createValue(Class<T> type, String name) {
         if (name != null) {
             this.arrayValueDescriptor = null;
         }
         String valueName;
         if (arrayValueDescriptor != null) {
-            valueName = "[" + getListValue(this.arrayValueDescriptor).size() + "]";
+            valueName = "[" + getArrayValue().size() + "]";
         } else {
             valueName = name;
         }
@@ -106,28 +113,24 @@ public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.Ann
      * @param value
      *            The value.
      */
-    private void addValue(String name, ValueDescriptor value) {
+    private void addValue(String name, ValueDescriptor<?> value) {
         if (arrayValueDescriptor != null && name == null) {
-            getListValue(arrayValueDescriptor).add(value);
+            getArrayValue().add(value);
         } else {
             setValue(descriptor, value);
         }
     }
 
     /**
-     * Get the list of referenced values.
+     * Get the array of referenced values.
      * 
-     * @param valueDescriptor
-     *            The value descriptor containing a list value.
-     * @param <T>
-     *            The type of the value descriptor.
-     * @return The list of referenced values.
+     * @return The array of referenced values.
      */
-    private <T extends ValueDescriptor<List<ValueDescriptor>>> List<ValueDescriptor> getListValue(T valueDescriptor) {
-        List<ValueDescriptor> values = valueDescriptor.getValue();
+    private List<ValueDescriptor<?>> getArrayValue() {
+        List<ValueDescriptor<?>> values = arrayValueDescriptor.getValue();
         if (values == null) {
             values = new LinkedList<>();
-            valueDescriptor.setValue(values);
+            arrayValueDescriptor.setValue(values);
         }
         return values;
     }

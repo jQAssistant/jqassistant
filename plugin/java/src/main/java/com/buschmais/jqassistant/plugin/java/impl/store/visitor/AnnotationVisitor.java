@@ -25,7 +25,7 @@ public class AnnotationVisitor extends AbstractAnnotationVisitor<AnnotationValue
     }
 
     @Override
-    protected void setValue(AnnotationValueDescriptor descriptor, ValueDescriptor value) {
+    protected void setValue(AnnotationValueDescriptor descriptor, ValueDescriptor<?> value) {
         descriptor.getValue().add(value);
     }
 }

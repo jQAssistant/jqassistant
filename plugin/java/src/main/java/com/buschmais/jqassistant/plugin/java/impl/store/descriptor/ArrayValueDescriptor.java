@@ -9,13 +9,13 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Represents an array value.
  */
 @Label("ARRAY")
-public interface ArrayValueDescriptor extends ValueDescriptor<List<ValueDescriptor>> {
+public interface ArrayValueDescriptor extends ValueDescriptor<List<ValueDescriptor<?>>> {
 
     @Relation("HAS")
     @Override
-    List<ValueDescriptor> getValue();
+    List<ValueDescriptor<?>> getValue();
 
     @Override
-    void setValue(List<ValueDescriptor> value);
+    void setValue(List<ValueDescriptor<?>> value);
 
 }
