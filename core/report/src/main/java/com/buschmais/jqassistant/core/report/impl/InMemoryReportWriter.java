@@ -6,10 +6,10 @@ import java.util.List;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
@@ -22,7 +22,7 @@ public class InMemoryReportWriter implements AnalysisListener {
 
     private List<Result<Constraint>> constraintViolations = new ArrayList<Result<Constraint>>();
 
-    private Result currentResult;
+    private Result<? extends Rule> currentResult;
 
     @Override
     public void begin() throws AnalysisListenerException {
@@ -59,7 +59,7 @@ public class InMemoryReportWriter implements AnalysisListener {
     }
 
     @Override
-    public void setResult(Result result) throws AnalysisListenerException {
+    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
         this.currentResult = result;
     }
 
@@ -71,9 +71,10 @@ public class InMemoryReportWriter implements AnalysisListener {
         return this.constraintViolations;
     }
 
-    private <T extends AbstractRule> void addResult(List<Result<T>> results) {
+    @SuppressWarnings("unchecked")
+    private <T extends Rule> void addResult(List<Result<T>> results) {
         if (currentResult != null) {
-            results.add(currentResult);
+            results.add((Result<T>) currentResult);
             this.currentResult = null;
         }
     }

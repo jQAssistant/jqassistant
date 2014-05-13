@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.core.analysis.test.matcher;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 
 /**
  * A matcher for {@link Result}s.
@@ -40,7 +40,7 @@ public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Resul
 
     @Override
     public boolean matchesSafely(Result<E> item) {
-        return (this.executableMatcher.matches(item.getExecutable()) && (rowsMatcher == null) || rowsMatcher.matches(item.getRows()));
+        return (this.executableMatcher.matches(item.getRule()) && (rowsMatcher == null) || rowsMatcher.matches(item.getRows()));
     }
 
     @Override
@@ -58,8 +58,8 @@ public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Resul
     @Override
     protected void describeMismatchSafely(Result<E> item, Description mismatchDescription) {
         mismatchDescription.appendText("Result(");
-        if (!executableMatcher.matches(item.getExecutable())) {
-            executableMatcher.describeMismatch(item.getExecutable(), mismatchDescription);
+        if (!executableMatcher.matches(item.getRule())) {
+            executableMatcher.describeMismatch(item.getRule(), mismatchDescription);
         }
         if (rowsMatcher != null && !rowsMatcher.matches(item.getRows())) {
             rowsMatcher.describeMismatch(item.getRows(), mismatchDescription);

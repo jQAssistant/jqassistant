@@ -49,9 +49,9 @@ public class MavenProjectScannerPluginTest {
         when(store.create(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
         scannerPlugin.initialize(store, properties);
         FileScanner fileScanner = mock(FileScanner.class);
-        List<FileDescriptor> mainFiles = new ArrayList();
+        List<FileDescriptor> mainFiles = new ArrayList<>();
         mainFiles.add(mock(FileDescriptor.class));
-        List<FileDescriptor> testFiles = new ArrayList();
+        List<FileDescriptor> testFiles = new ArrayList<>();
         testFiles.add(mock(FileDescriptor.class));
         when(fileScanner.scanDirectory(Mockito.any(File.class))).thenReturn(mainFiles, testFiles);
 

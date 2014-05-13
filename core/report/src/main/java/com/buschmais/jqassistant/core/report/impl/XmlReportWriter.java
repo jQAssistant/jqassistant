@@ -14,10 +14,10 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -40,11 +40,11 @@ public class XmlReportWriter implements AnalysisListener {
 
     private XMLStreamWriter xmlStreamWriter;
 
-    private Result<? extends AbstractRule> result;
+    private Result<? extends Rule> result;
 
     private long groupBeginTime;
 
-    private long executableBeginTime;
+    private long ruleBeginTime;
 
     private static final DateFormat XML_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -132,33 +132,33 @@ public class XmlReportWriter implements AnalysisListener {
     }
 
     @Override
-    public void setResult(final Result<? extends AbstractRule> result) throws AnalysisListenerException {
+    public void setResult(final Result<? extends Rule> result) throws AnalysisListenerException {
         this.result = result;
     }
 
     private void beginExecutable() {
-        this.executableBeginTime = System.currentTimeMillis();
+        this.ruleBeginTime = System.currentTimeMillis();
     }
 
     private void endExecutable() throws AnalysisListenerException {
         if (result != null) {
-            final AbstractRule executable = result.getExecutable();
+            final Rule rule = result.getRule();
             final String elementName;
-            if (executable instanceof Concept) {
+            if (rule instanceof Concept) {
                 elementName = "concept";
-            } else if (executable instanceof Constraint) {
+            } else if (rule instanceof Constraint) {
                 elementName = "constraint";
             } else {
-                throw new AnalysisListenerException("Cannot write report for unsupported executable " + executable);
+                throw new AnalysisListenerException("Cannot write report for unsupported rule " + rule);
             }
             final List<String> columnNames = result.getColumnNames();
             run(new XmlOperation() {
                 @Override
                 public void run() throws XMLStreamException, AnalysisListenerException {
                     xmlStreamWriter.writeStartElement(elementName);
-                    xmlStreamWriter.writeAttribute("id", executable.getId());
+                    xmlStreamWriter.writeAttribute("id", rule.getId());
                     xmlStreamWriter.writeStartElement("description");
-                    xmlStreamWriter.writeCharacters(executable.getDescription());
+                    xmlStreamWriter.writeCharacters(rule.getDescription());
                     xmlStreamWriter.writeEndElement(); // description
                     if (!result.isEmpty()) {
                         xmlStreamWriter.writeStartElement("result");
@@ -185,7 +185,7 @@ public class XmlReportWriter implements AnalysisListener {
                         xmlStreamWriter.writeEndElement(); // rows
                         xmlStreamWriter.writeEndElement(); // result
                     }
-                    writeDuration(executableBeginTime);
+                    writeDuration(ruleBeginTime);
                     xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
             });

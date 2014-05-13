@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
  * Created with IntelliJ IDEA. User: Dirk Mahler Date: 28.07.13 Time: 12:47 To
@@ -27,6 +27,6 @@ public interface AnalysisListener {
 
     void endConstraint() throws AnalysisListenerException;
 
-    void setResult(Result<? extends AbstractRule> result) throws AnalysisListenerException;
+    void setResult(Result<? extends Rule> result) throws AnalysisListenerException;
 
 }

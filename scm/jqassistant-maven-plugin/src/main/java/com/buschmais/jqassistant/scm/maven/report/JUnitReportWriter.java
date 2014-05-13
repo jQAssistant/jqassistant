@@ -12,10 +12,10 @@ import javax.xml.bind.Marshaller;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.Error;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.Failure;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.ObjectFactory;
@@ -23,7 +23,8 @@ import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testcase;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite;
 
 /**
- * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener} implementation to write JUnit style reports.
+ * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
+ * implementation to write JUnit style reports.
  * <p>
  * Each group is rendered as a test suite to a separate file.
  * </p>
@@ -34,9 +35,9 @@ public class JUnitReportWriter implements AnalysisListener {
     private JAXBContext jaxbContext;
 
     private Group group;
-    private long executableBeginTimestamp;
+    private long ruleBeginTimestamp;
     private long groupBeginTimestamp;
-    private Map<Result<? extends AbstractRule>, Long> results = new LinkedHashMap<>();
+    private Map<Result<? extends Rule>, Long> results = new LinkedHashMap<>();
 
     public JUnitReportWriter(File directory) throws AnalysisListenerException {
         this.directory = directory;
@@ -68,25 +69,25 @@ public class JUnitReportWriter implements AnalysisListener {
         int tests = 0;
         int failures = 0;
         int errors = 0;
-        for (Map.Entry<Result<? extends AbstractRule>, Long> entry : results.entrySet()) {
+        for (Map.Entry<Result<? extends Rule>, Long> entry : results.entrySet()) {
             // TestCase
-            Result<? extends AbstractRule> result = entry.getKey();
+            Result<? extends Rule> result = entry.getKey();
             long time = entry.getValue().longValue();
             Testcase testcase = new Testcase();
-            AbstractRule executable = result.getExecutable();
-            testcase.setName(executable.getId());
+            Rule rule = result.getRule();
+            testcase.setName(rule.getId());
             testcase.setClassname(group.getId());
             testcase.setTime(Long.toString(time));
             List<Map<String, Object>> rows = result.getRows();
-            if (executable instanceof Concept && rows.isEmpty()) {
+            if (rule instanceof Concept && rows.isEmpty()) {
                 Failure failure = new Failure();
-                failure.setMessage(executable.getDescription());
+                failure.setMessage(rule.getDescription());
                 failure.setContent("The concept returned an empty result.");
                 testcase.getFailure().add(failure);
                 failures++;
-            } else if (executable instanceof Constraint && !rows.isEmpty()) {
+            } else if (rule instanceof Constraint && !rows.isEmpty()) {
                 Error error = new Error();
-                error.setMessage(executable.getDescription());
+                error.setMessage(rule.getDescription());
                 StringBuilder sb = new StringBuilder();
                 for (Map<String, Object> row : rows) {
                     for (Map.Entry<String, Object> rowEntry : row.entrySet()) {
@@ -116,7 +117,7 @@ public class JUnitReportWriter implements AnalysisListener {
             marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
             marshaller.marshal(testsuite, file);
         } catch (JAXBException e) {
-            throw new AnalysisListenerException("Cannot write JUNIT4 report.", e);
+            throw new AnalysisListenerException("Cannot write JUnit report.", e);
         }
         this.group = null;
         this.results.clear();
@@ -124,7 +125,7 @@ public class JUnitReportWriter implements AnalysisListener {
 
     @Override
     public void beginConcept(Concept concept) throws AnalysisListenerException {
-        this.executableBeginTimestamp = System.currentTimeMillis();
+        this.ruleBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
@@ -133,7 +134,7 @@ public class JUnitReportWriter implements AnalysisListener {
 
     @Override
     public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
-        this.executableBeginTimestamp = System.currentTimeMillis();
+        this.ruleBeginTimestamp = System.currentTimeMillis();
     }
 
     @Override
@@ -141,9 +142,9 @@ public class JUnitReportWriter implements AnalysisListener {
     }
 
     @Override
-    public void setResult(Result<? extends AbstractRule> result) throws AnalysisListenerException {
-        long executableEndTimestamp = System.currentTimeMillis();
-        long time = executableEndTimestamp - executableBeginTimestamp;
+    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
+        long ruleEndTimestamp = System.currentTimeMillis();
+        long time = ruleEndTimestamp - ruleBeginTimestamp;
         this.results.put(result, Long.valueOf(time));
     }
 }

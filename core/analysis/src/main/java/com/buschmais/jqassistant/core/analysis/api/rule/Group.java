@@ -10,6 +10,8 @@ public class Group implements Rule {
 
     private String id;
 
+    private String description;
+
     private Set<Concept> concepts = new HashSet<>();
 
     private Set<Constraint> constraints = new HashSet<Constraint>();
@@ -22,6 +24,14 @@ public class Group implements Rule {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Set<Concept> getConcepts() {
