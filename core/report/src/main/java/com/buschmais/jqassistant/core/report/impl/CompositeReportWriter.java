@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.core.report.impl;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
@@ -107,7 +107,7 @@ public class CompositeReportWriter implements AnalysisListener {
     }
 
     @Override
-    public void setResult(final Result<? extends AbstractRule> result) throws AnalysisListenerException {
+    public void setResult(final Result<? extends Rule> result) throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
             public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
