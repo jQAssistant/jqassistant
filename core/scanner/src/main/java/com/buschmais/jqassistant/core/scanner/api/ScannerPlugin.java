@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
 import java.util.Map;
-import java.util.Properties;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 

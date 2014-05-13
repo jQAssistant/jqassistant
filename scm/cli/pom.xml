@@ -43,27 +43,22 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.analysis</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.scanner</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.store</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.report</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.pluginrepository</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -78,12 +73,10 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
             <artifactId>jqassistant.scm.common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
             <artifactId>jqassistant.scm.neo4jserver</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.slf4j-maven-plugin-log</groupId>
