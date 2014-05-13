@@ -24,7 +24,7 @@ public class AnnotationDefaultVisitor extends AbstractAnnotationVisitor<MethodDe
     }
 
     @Override
-    protected void setValue(MethodDescriptor descriptor, ValueDescriptor value) {
+    protected void setValue(MethodDescriptor descriptor, ValueDescriptor<?> value) {
         descriptor.setHasDefault(value);
     }
 }

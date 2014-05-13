@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,11 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.FileScanner;
@@ -21,13 +23,10 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
-
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ClassToNeo4JImporter extends CommonJqAssistantTask implements OptionsConsumer{
+public class ClassToNeo4JImporter extends CommonJqAssistantTask implements OptionsConsumer {
     private final List<String> directoryNames = new ArrayList<>();
 
     public ClassToNeo4JImporter() {
@@ -92,25 +91,22 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
 
     @Override
     public void withOptions(final CommandLine options) {
-        if(options.hasOption("d")) {
+        if (options.hasOption("d")) {
             for (String dir : options.getOptionValues("d")) {
-                if(dir.trim().length() > 0) directoryNames.add(dir);
+                if (dir.trim().length() > 0)
+                    directoryNames.add(dir);
             }
         }
 
-        if(directoryNames.isEmpty()) {
+        if (directoryNames.isEmpty()) {
             throw new MissingConfigurationParameterException("No directories to be scanned given, use 'dirs' argument to specify some");
         }
     }
 
+    @SuppressWarnings("static-access")
     @Override
     protected void addFunctionSpecificOptions(final List<Option> options) {
-        options.add(OptionBuilder
-                            .withArgName("d")
-                            .withLongOpt("dirs")
-                            .withDescription("directories to be scanned, comma separated")
-                            .withValueSeparator(',')
-                            .hasArgs()
-                            .create("d"));
+        options.add(OptionBuilder.withArgName("d").withLongOpt("dirs").withDescription("directories to be scanned, comma separated").withValueSeparator(',')
+                .hasArgs().create("d"));
     }
 }
