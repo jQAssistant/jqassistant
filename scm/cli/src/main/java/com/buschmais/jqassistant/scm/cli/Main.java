@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import static java.util.Arrays.asList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -21,8 +21,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.slf4j.impl.StaticLoggerBinder;
-
-import static java.util.Arrays.asList;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
