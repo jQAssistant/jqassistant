@@ -31,7 +31,7 @@ public class PropertyFileIT extends AbstractPluginIT {
     public void propertyFile() throws IOException {
         scanURLs(PropertyFileIT.class.getResource("/META-INF/test.properties"));
         store.beginTransaction();
-        List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:PROPERTIES:FILE) RETURN p").getColumn("p");
+        List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
         assertThat(propertyFileDescriptors.size(), equalTo(1));
         PropertyFileDescriptor propertyFileDescriptor = propertyFileDescriptors.get(0);
         Matcher<? super PropertyDescriptor> valueMatcher = valueDescriptor("foo", equalTo("bar"));

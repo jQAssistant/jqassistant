@@ -15,7 +15,7 @@ public interface MemberDescriptor extends Descriptor {
     @Declares
     TypeDescriptor getDeclaringType();
 
-    @Property("SIGNATURE")
+    @Property("signature")
     String getSignature();
 
     void setSignature(String signature);

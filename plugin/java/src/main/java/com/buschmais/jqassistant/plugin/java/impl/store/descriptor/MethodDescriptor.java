@@ -18,7 +18,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  * Describes a method of a Java class.
  */
 @Java(Method)
-@Label(value = "METHOD")
+@Label(value = "Method")
 public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
         AbstractDescriptor {
 
@@ -65,10 +65,10 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     InvokesDescriptor addInvokes(@Parameter("target") MethodDescriptor target);
 
     @ResultOf
-    @Cypher("match (m:METHOD)-[:HAS]->(p:PARAMETER) where id(m)={this} and p.INDEX={index} return p as parameter")
+    @Cypher("match (m:Method)-[:HAS]->(p:Parameter) where id(m)={this} and p.index={index} return p as parameter")
     ParameterDescriptor findParameter(@Parameter("index") int index);
 
-    @Property("NATIVE")
+    @Property("native")
     Boolean isNative();
 
     void setNative(Boolean nativeMethod);

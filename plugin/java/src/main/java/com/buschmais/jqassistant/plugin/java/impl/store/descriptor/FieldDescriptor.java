@@ -10,14 +10,14 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  * Describes a field (i.e. static or instance variable) of a Java class.
  */
 @Java(Field)
-@Label(value = "FIELD")
+@Label(value = "Field")
 public interface FieldDescriptor extends MemberDescriptor, NamedDescriptor, TypedDescriptor, DependentDescriptor, AnnotatedDescriptor,
         AccessModifierDescriptor {
 
     /**
      * @return the transientField
      */
-    @Property("TRANSIENT")
+    @Property("transient")
     Boolean isTransient();
 
     /**
@@ -29,7 +29,7 @@ public interface FieldDescriptor extends MemberDescriptor, NamedDescriptor, Type
     /**
      * @return the volatileField
      */
-    @Property("VOLATILE")
+    @Property("volatile")
     Boolean isVolatile();
 
     /**

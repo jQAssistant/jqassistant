@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * A descriptor representing a property file.
  */
-@Label(value = "PROPERTIES", usingIndexedPropertyOf = FileDescriptor.class)
+@Label(value = "Properties", usingIndexedPropertyOf = FileDescriptor.class)
 public interface PropertyFileDescriptor extends FileDescriptor {
 
     @Relation("HAS")

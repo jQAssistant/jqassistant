@@ -28,13 +28,13 @@ public class ManifestFileIT extends AbstractPluginIT {
     public void manifestFile() throws IOException {
         scanURLs(ManifestFileIT.class.getResource("/META-INF/MANIFEST.MF"));
         store.beginTransaction();
-        List<ManifestFileDescriptor> manifestFileDescriptors = query("MATCH (mf:MANIFEST:FILE) RETURN mf").getColumn("mf");
+        List<ManifestFileDescriptor> manifestFileDescriptors = query("MATCH (mf:Manifest:File) RETURN mf").getColumn("mf");
         assertThat(manifestFileDescriptors.size(), equalTo(1));
 
         ManifestFileDescriptor manifestFileDescriptor = manifestFileDescriptors.get(0);
         assertThat(manifestFileDescriptor.getFileName(), endsWith("/META-INF/MANIFEST.MF"));
 
-        List<ManifestSectionDescriptor> manifestSections = query("MATCH (mf:MANIFEST:FILE)-[:DECLARES]->(ms:MANIFESTSECTION) WHERE ms.NAME='Main' RETURN ms")
+        List<ManifestSectionDescriptor> manifestSections = query("MATCH (mf:Manifest:File)-[:DECLARES]->(ms:ManifestSection) WHERE ms.name='Main' RETURN ms")
                 .getColumn("ms");
         assertThat(manifestSections.size(), equalTo(1));
         store.commitTransaction();

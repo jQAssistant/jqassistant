@@ -4,9 +4,9 @@
         <description>Returns the top 10 artifacts regarding the number of contained types.</description>
         <cypher><![CDATA[
             MATCH
-                (a:ARTIFACT)-[:CONTAINS]->(t:TYPE)
+                (a:Artifact)-[:CONTAINS]->(t:Type)
             RETURN
-                a.FQN as Artifact, COUNT(t) as Types
+                a.fqn as Artifact, COUNT(t) as Types
             ORDER BY
                 Types DESC
             LIMIT 10
@@ -17,9 +17,9 @@
         <description>Returns the top 10 packages regarding the number of contained types.</description>
         <cypher><![CDATA[
             MATCH
-                (p:PACKAGE)-[:CONTAINS]->(t:TYPE)
+                (p:Package)-[:CONTAINS]->(t:Type)
             RETURN
-                p.FQN as Package, COUNT(t) as Types
+                p.fqn as Package, COUNT(t) as Types
             ORDER BY
                 Types DESC
             LIMIT 10
@@ -31,9 +31,9 @@
         <description>Returns the top 10 types regarding to the number of declared methods (including constructors).</description>
         <cypher><![CDATA[
             MATCH
-                (t:TYPE)-[:DECLARES]->(m:METHOD)
+                (t:Type)-[:DECLARES]->(m:Method)
             RETURN
-                t.FQN as Type, COUNT(m) as MethodCount
+                t.fqn as Type, COUNT(m) as MethodCount
             ORDER BY
                 MethodCount DESC
             LIMIT 10
@@ -45,9 +45,9 @@
         <description>Returns the top 10 types regarding to the number of declared fields.</description>
         <cypher><![CDATA[
             MATCH
-                (t:TYPE)-[:DECLARES]->(f:FIELD)
+                (t:Type)-[:DECLARES]->(f:Field)
             RETURN
-                t.FQN as Type, COUNT(f) as FieldCount
+                t.fqn as Type, COUNT(f) as FieldCount
             ORDER BY
                 FieldCount DESC
             LIMIT 10
@@ -59,9 +59,9 @@
         <description>Returns the top 10 types regarding the number of other types they depend on.</description>
         <cypher><![CDATA[
             MATCH
-                (t:TYPE)-[:DEPENDS_ON]->(dependency:TYPE)
+                (t:Type)-[:DEPENDS_ON]->(dependency:Type)
             RETURN
-                t.FQN as Type, COUNT(dependency) as Dependencies
+                t.fqn as Type, COUNT(dependency) as Dependencies
             ORDER BY
                 Dependencies DESC
             LIMIT 10
@@ -73,9 +73,9 @@
         <description>Returns the top 10 types regarding the number of other types depending on them.</description>
         <cypher><![CDATA[
             MATCH
-                (t:TYPE)<-[:DEPENDS_ON]-(dependent:TYPE)
+                (t:Type)<-[:DEPENDS_ON]-(dependent:Type)
             RETURN
-                t.FQN as Type, COUNT(dependent) as Dependents
+                t.fqn as Type, COUNT(dependent) as Dependents
             ORDER BY
                 Dependents DESC
             LIMIT 10

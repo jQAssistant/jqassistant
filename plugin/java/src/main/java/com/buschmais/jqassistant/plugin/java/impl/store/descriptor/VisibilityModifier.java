@@ -27,4 +27,13 @@ public enum VisibilityModifier {
      */
     PUBLIC;
 
+    /**
+     * Return the value to be stored.
+     *
+     * @return The value.
+     */
+    public String getValue() {
+        return name().toLowerCase();
+    }
+
 }

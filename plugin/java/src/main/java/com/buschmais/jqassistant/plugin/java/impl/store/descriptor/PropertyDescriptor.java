@@ -6,10 +6,10 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 /**
  * Represents a property value.
  */
-@Label("PROPERTY")
+@Label("Property")
 public interface PropertyDescriptor extends ValueDescriptor<String> {
 
-    @Property("VALUE")
+    @Property("value")
     @Override
     String getValue();
 

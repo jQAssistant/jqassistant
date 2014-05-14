@@ -9,22 +9,22 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  */
 public interface AccessModifierDescriptor {
 
-    @Property("VISIBILITY")
-    VisibilityModifier getVisibility();
+    @Property("visibility")
+    String getVisibility();
 
-    void setVisibility(VisibilityModifier visibilityModifier);
+    void setVisibility(String visibility);
 
-    @Property("STATIC")
+    @Property("static")
     Boolean isStatic();
 
     void setStatic(Boolean s);
 
-    @Property("FINAL")
+    @Property("final")
     Boolean isFinal();
 
     void setFinal(Boolean f);
 
-    @Property("SYNTHETIC")
+    @Property("synthetic")
     Boolean isSynthetic();
 
     void setSynthetic(Boolean s);

@@ -1,39 +1,38 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="java:TypeAssignableFrom">
-        <description>Creates a relationship ASSIGNABLE_FROM between TYPE labeled nodes if two types are assignable.</description>
+        <description>Creates a relationship ASSIGNABLE_FROM between "Type" labeled nodes if two types are assignable.</description>
         <cypher><![CDATA[
-            MATCH
-              (type:TYPE)
-            CREATE UNIQUE
+            match
+              (type:Type)
+            create unique
               (type)-[:ASSIGNABLE_FROM]->(type)
-            WITH
+            with
               type
-            MATCH
-              (type)-[:IMPLEMENTS|EXTENDS*]->(superType:TYPE)
-            CREATE UNIQUE
+            match
+              (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Type)
+            create unique
               (superType)-[:ASSIGNABLE_FROM]->(type)
-            RETURN count(type) AS assignableTypes
+            return count(type) as AssignableTypes
         ]]></cypher>
     </concept>
 
     <concept id="java:MethodOverrides">
         <requiresConcept refId="java:TypeAssignableFrom"/>
-        <description>Creates a relationship OVERRIDES between two METHOD labeled nodes if one method overrides another one from a super type (i.e. the methods
-            have the same signature).
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods have the same signature).
         </description>
         <cypher><![CDATA[
-            MATCH
-              (type:TYPE)-[:DECLARES]->(method:METHOD),
-              (superType:TYPE)-[:DECLARES]->(otherMethod:METHOD),
+            match
+              (type:Type)-[:DECLARES]->(method:Method),
+              (superType:Type)-[:DECLARES]->(otherMethod:Method),
               (superType)-[:ASSIGNABLE_FROM]->(type)
-            WHERE
-              method.NAME = otherMethod.NAME
-              AND method.SIGNATURE = otherMethod.SIGNATURE
-              AND method.VISIBILITY <> 'PRIVATE'
-            CREATE UNIQUE
+            where
+              method.name = otherMethod.name
+              AND method.signature = otherMethod.signature
+              AND method.visibility <> 'private'
+            create unique
               (method)-[:OVERRIDES]->(otherMethod)
-            RETURN count(method) AS OverriddenMethods
+            return count(method) as OverriddenMethods
         ]]></cypher>
     </concept>
 
@@ -42,43 +41,43 @@
         <requiresConcept refId="java:TypeAssignableFrom"/>
         <description>Propagates INVOKE relationships to methods implementing or overriding the invoked method.</description>
         <cypher><![CDATA[
-            MATCH
-              (method:METHOD)-[:INVOKES]->(invokedMethod:METHOD),
-              (overridingMethod:METHOD)-[:OVERRIDES]->(invokedMethod)
-            CREATE UNIQUE
+            match
+              (method:Method)-[:INVOKES]->(invokedMethod:Method),
+              (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
+            create unique
               (method)-[r:INVOKES]->(overridingMethod)
-            RETURN count(r) AS OverridingInvocations
+            return count(r) AS OverridingInvocations
         ]]></cypher>
     </concept>
 
     <concept id="java:MethodOverloads">
-        <description>Creates a relationship OVERLOADS between two METHOD labeled nodes if one method overloads another one from the same type (i.e. the methods
+        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the methods
             have the same name but not the same signature).
         </description>
         <cypher><![CDATA[
-            MATCH
-              (type:TYPE)-[:DECLARES]->(method:METHOD),
-              (type)-[:DECLARES]->(otherMethod:METHOD)
-            WHERE
+            match
+              (type:Type)-[:DECLARES]->(method:Method),
+              (type)-[:DECLARES]->(otherMethod:Method)
+            where
               method <> otherMethod
-              AND method.NAME = otherMethod.NAME
-              AND method.SIGNATURE <> otherMethod.SIGNATURE
-            CREATE UNIQUE
+              AND method.name = otherMethod.name
+              AND method.signature <> otherMethod.signature
+            create unique
                 (method)-[:OVERLOADS]->(otherMethod)
-            RETURN count(method) AS OverloadedMethods
+            return count(method) AS OverloadedMethods
         ]]></cypher>
     </concept>
 
     <concept id="java:Deprecated">
-        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with DEPRECATED.</description>
+        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with "Deprecated".</description>
         <cypher><![CDATA[
-            MATCH
-              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:TYPE)
-            WHERE
-              dt.FQN='java.lang.Deprecated'
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Type)
+            where
+              dt.fqn='java.lang.Deprecated'
             SET
-              e:DEPRECATED
-            RETURN
+              e:Deprecated
+            return
               count(e) AS DeprecatedElements
         ]]></cypher>
     </concept>

@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
-@Label("MANIFESTENTRY")
+@Label("ManifestEntry")
 public interface ManifestEntryDescriptor extends ValueDescriptor<String> {
 
     /**
@@ -19,6 +19,6 @@ public interface ManifestEntryDescriptor extends ValueDescriptor<String> {
      * 
      * @return The value.
      */
-    @Property("VALUE")
+    @Property("value")
     String getValue();
 }

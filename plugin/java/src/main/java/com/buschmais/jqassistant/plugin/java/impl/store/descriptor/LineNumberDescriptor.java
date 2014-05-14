@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  */
 public interface LineNumberDescriptor {
 
-    @Property("LINENUMBERS")
+    @Property("lineNumbers")
     int[] getLineNumbers();
 
     void setLineNumbers(int[] lineNumbers);

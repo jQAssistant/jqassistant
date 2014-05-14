@@ -7,9 +7,9 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
@@ -32,7 +32,7 @@ public class TypeAssignableFromIT extends AbstractPluginIT {
         scanClasses(ClassType.class);
         applyConcept("java:TypeAssignableFrom");
         store.beginTransaction();
-        assertThat(query("MATCH (types:TYPE)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumn("assignableType"),
+        assertThat(query("MATCH (types:Type)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumn("assignableType"),
                 allOf(hasItem(typeDescriptor(ClassType.class)), hasItem(typeDescriptor(InterfaceType.class)), hasItem(typeDescriptor(Object.class))));
         store.commitTransaction();
     }

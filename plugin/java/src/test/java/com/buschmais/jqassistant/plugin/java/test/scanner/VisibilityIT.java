@@ -1,16 +1,17 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.vsibility.Public;
-import org.junit.Test;
-
-import java.io.IOException;
-
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+
+import org.junit.Test;
+
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.vsibility.Public;
 
 public class VisibilityIT extends AbstractPluginIT {
 
@@ -18,9 +19,9 @@ public class VisibilityIT extends AbstractPluginIT {
     public void publicModifier() throws IOException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(Public.class);
         store.beginTransaction();
-        assertThat(query("MATCH (t:TYPE) WHERE t.VISIBILITY='PUBLIC' RETURN t").getColumn("t"), hasItem(typeDescriptor(Public.class)));
-        assertThat(query("MATCH (f:FIELD) WHERE f.VISIBILITY='PUBLIC' RETURN f").getColumn("f"), hasItem(fieldDescriptor(Public.class, "field")));
-        assertThat(query("MATCH (m:METHOD) WHERE m.VISIBILITY='PUBLIC' RETURN m").getColumn("m"), hasItem(methodDescriptor(Public.class, "method")));
+        assertThat(query("MATCH (t:Type) WHERE t.visibility='public' RETURN t").getColumn("t"), hasItem(typeDescriptor(Public.class)));
+        assertThat(query("MATCH (f:Field) WHERE f.visibility='public' RETURN f").getColumn("f"), hasItem(fieldDescriptor(Public.class, "field")));
+        assertThat(query("MATCH (m:Method) WHERE m.visibility='public' RETURN m").getColumn("m"), hasItem(methodDescriptor(Public.class, "method")));
         store.commitTransaction();
     }
 
@@ -29,9 +30,9 @@ public class VisibilityIT extends AbstractPluginIT {
         Class<?> innerClass = getInnerClass(Public.class, "Protected");
         scanClasses(innerClass);
         store.beginTransaction();
-        assertThat(query("MATCH (t:TYPE) WHERE t.VISIBILITY='PUBLIC' RETURN t").getColumn("t"), hasItem(typeDescriptor(innerClass))); // ?
-        assertThat(query("MATCH (f:FIELD) WHERE f.VISIBILITY='PROTECTED' RETURN f").getColumn("f"), hasItem(fieldDescriptor(innerClass, "field")));
-        assertThat(query("MATCH (m:METHOD) WHERE m.VISIBILITY='PROTECTED' RETURN m").getColumn("m"), hasItem(methodDescriptor(innerClass, "method")));
+        assertThat(query("MATCH (t:Type) WHERE t.visibility='public' RETURN t").getColumn("t"), hasItem(typeDescriptor(innerClass))); // ?
+        assertThat(query("MATCH (f:Field) WHERE f.visibility='protected' RETURN f").getColumn("f"), hasItem(fieldDescriptor(innerClass, "field")));
+        assertThat(query("MATCH (m:Method) WHERE m.visibility='protected' RETURN m").getColumn("m"), hasItem(methodDescriptor(innerClass, "method")));
         store.commitTransaction();
     }
 
@@ -40,9 +41,9 @@ public class VisibilityIT extends AbstractPluginIT {
         Class<?> innerClass = getInnerClass(Public.class, "Default");
         scanClasses(innerClass);
         store.beginTransaction();
-        assertThat(query("MATCH (t:TYPE) WHERE t.VISIBILITY='DEFAULT' RETURN t").getColumn("t"), hasItem(typeDescriptor(innerClass)));
-        assertThat(query("MATCH (f:FIELD) WHERE f.VISIBILITY='DEFAULT' RETURN f").getColumn("f"), hasItem(fieldDescriptor(innerClass, "field")));
-        assertThat(query("MATCH (m:METHOD) WHERE m.VISIBILITY='DEFAULT' RETURN m").getColumn("m"), hasItem(methodDescriptor(innerClass, "method")));
+        assertThat(query("MATCH (t:Type) WHERE t.visibility='default' RETURN t").getColumn("t"), hasItem(typeDescriptor(innerClass)));
+        assertThat(query("MATCH (f:Field) WHERE f.visibility='default' RETURN f").getColumn("f"), hasItem(fieldDescriptor(innerClass, "field")));
+        assertThat(query("MATCH (m:Method) WHERE m.visibility='default' RETURN m").getColumn("m"), hasItem(methodDescriptor(innerClass, "method")));
         store.commitTransaction();
     }
 
@@ -51,9 +52,9 @@ public class VisibilityIT extends AbstractPluginIT {
         Class<?> innerClass = getInnerClass(Public.class, "Private");
         scanClasses(innerClass);
         store.beginTransaction();
-        assertThat(query("MATCH (t:TYPE) WHERE t.VISIBILITY='DEFAULT' RETURN t").getColumn("t"), hasItem(typeDescriptor(innerClass))); // ?
-        assertThat(query("MATCH (f:FIELD) WHERE f.VISIBILITY='PRIVATE' RETURN f").getColumn("f"), hasItem(fieldDescriptor(innerClass, "field")));
-        assertThat(query("MATCH (m:METHOD) WHERE m.VISIBILITY='PRIVATE' RETURN m").getColumn("m"), hasItem(methodDescriptor(innerClass, "method")));
+        assertThat(query("MATCH (t:Type) WHERE t.visibility='default' RETURN t").getColumn("t"), hasItem(typeDescriptor(innerClass))); // ?
+        assertThat(query("MATCH (f:Field) WHERE f.visibility='private' RETURN f").getColumn("f"), hasItem(fieldDescriptor(innerClass, "field")));
+        assertThat(query("MATCH (m:Method) WHERE m.visibility='private' RETURN m").getColumn("m"), hasItem(methodDescriptor(innerClass, "method")));
         store.commitTransaction();
     }
 }
