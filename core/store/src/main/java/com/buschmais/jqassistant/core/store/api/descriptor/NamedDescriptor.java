@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  */
 public interface NamedDescriptor extends Descriptor {
 
-    @Property("NAME")
+    @Property("name")
     String getName();
 
     void setName(String name);

@@ -7,11 +7,11 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 /**
  * Defines a descriptor representing a file.
  */
-@Label("FILE")
+@Label("File")
 public interface FileDescriptor extends Descriptor {
 
     @Indexed
-    @Property("FILENAME")
+    @Property("fileName")
     String getFileName();
 
     void setFileName(String fileName);
