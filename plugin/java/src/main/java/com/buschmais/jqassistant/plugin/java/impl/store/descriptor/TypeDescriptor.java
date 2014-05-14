@@ -20,7 +20,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Describes a Java type.
  */
 @Java(Type)
-@Label(value = "TYPE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
+@Label(value = "Type", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
     @Relation("DECLARES")
@@ -96,10 +96,10 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
     void addDeclaredInnerClass(@Parameter("innerClass") TypeDescriptor innerClass);
 
     @ResultOf
-    @Cypher("match (t:TYPE) where id(t)={this} create unique (t)-[:DECLARES]->(f:FIELD {SIGNATURE:{signature}}) return f as field")
+    @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(f:Field {signature:{signature}}) return f as field")
     FieldDescriptor getOrCreateField(@Parameter("signature") String signature);
 
     @ResultOf
-    @Cypher("match (t:TYPE) where id(t)={this} create unique (t)-[:DECLARES]->(m:METHOD {SIGNATURE:{signature}}) return m as method")
+    @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(m:Method {signature:{signature}}) return m as method")
     MethodDescriptor getOrCreateMethod(@Parameter("signature") String signature);
 }

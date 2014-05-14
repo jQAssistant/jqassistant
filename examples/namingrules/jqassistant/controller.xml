@@ -1,14 +1,14 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="controller:ControllerClass">
-        <description>Labels all classes implementing the Controller interface as CONTROLLER.</description>
+        <description>Labels all classes implementing the Controller interface as "Controller".</description>
         <cypher><![CDATA[
             match
-                (controllerClass:TYPE:CLASS)-[:IMPLEMENTS*]->(controllerType:TYPE)
+                (controllerClass:Type:Class)-[:IMPLEMENTS*]->(controllerType:Type)
             where
-                controllerType.FQN = "com.buschmais.jqassistant.examples.namingrules.Controller"
+                controllerType.fqn = "com.buschmais.jqassistant.examples.namingrules.Controller"
             set
-                controllerClass:CONTROLLER
+                controllerClass:Controller
             return
                 controllerClass
         ]]></cypher>
@@ -19,9 +19,9 @@
         <description>All controller implementations must have a name suffix "Controller".</description>
         <cypher><![CDATA[
             match
-                (controllerClass:CLASS:CONTROLLER)
+                (controllerClass:Class:Controller)
             where
-                not controllerClass.NAME =~ ".*Controller"
+                not controllerClass.name =~ ".*Controller"
             return
                 controllerClass as ControllerClass
         ]]></cypher>
@@ -32,9 +32,9 @@
         <description>All controller implementations must be located in the package "model".</description>
         <cypher><![CDATA[
             match
-                (package:PACKAGE)-[:CONTAINS]->(controllerClass:CLASS:CONTROLLER)
+                (package:PACKAGE)-[:CONTAINS]->(controllerClass:Class:Controller)
             where
-                not package.NAME = "controller"
+                not package.name = "controller"
             return
                 controllerClass as ControllerClass, package as InvalidPackage
         ]]></cypher>

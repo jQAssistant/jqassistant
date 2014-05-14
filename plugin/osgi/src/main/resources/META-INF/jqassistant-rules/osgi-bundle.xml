@@ -4,19 +4,19 @@
         <description>Labels all artifacts with a manifest declaring a bundle name as "Osgi" and "Bundle" and adds the properties "bundleSymbolicName" and "bundleVersion".</description>
         <cypher><![CDATA[
             MATCH
-              (bundle:ARTIFACT)-[:CONTAINS]->(manifest:MANIFEST:FILE),
-              (manifest)-[DECLARES]->(section:MANIFESTSECTION),
-              (section)-[:HAS]->(nameEntry:MANIFESTENTRY),
-              (section)-[:HAS]->(versionEntry:MANIFESTENTRY)
+              (bundle:Artifact)-[:CONTAINS]->(manifest:Manifest:File),
+              (manifest)-[DECLARES]->(section:ManifestSection),
+              (section)-[:HAS]->(nameEntry:ManifestEntry),
+              (section)-[:HAS]->(versionEntry:ManifestEntry)
             WHERE
-              nameEntry.NAME = "Bundle-SymbolicName"
-              AND versionEntry.NAME = "Bundle-Version"
+              nameEntry.name = "Bundle-SymbolicName"
+              AND versionEntry.name = "Bundle-Version"
             SET
               bundle:Osgi:Bundle,
-              bundle.bundleSymbolicName = nameEntry.VALUE,
-              bundle.bundleVersion = versionEntry.VALUE
+              bundle.bundleSymbolicName = nameEntry.value,
+              bundle.bundleVersion = versionEntry.value
             RETURN
-              bundle.NAME, bundle.BundleSymbolicName, bundle.BundleVersion
+              bundle as Bundle, bundle.BundleSymbolicName as BundleSymbolicName, bundle.BundleVersion as BundleVersion
         ]]></cypher>
     </concept>
 
@@ -26,16 +26,16 @@
         </description>
         <cypher><![CDATA[
             match
-             (bundle:Osgi:Bundle)-[:CONTAINS]->(package:PACKAGE)
+             (bundle:Osgi:Bundle)-[:CONTAINS]->(package:Package)
             with
-              bundle, package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
+              bundle, package, "(^|.*,)\\s*"+ replace(package.fqn, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
             match
-              (bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
-              (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
-              (section)-[:HAS]->(entry:MANIFESTENTRY)
+              (bundle)-[:CONTAINS]->(manifest:File:Manifest),
+              (manifest)-[:DECLARES]->(section:ManifestSection),
+              (section)-[:HAS]->(entry:ManifestEntry)
             where
-              entry.NAME = "Export-Package"
-              AND entry.VALUE =~ pattern
+              entry.name = "Export-Package"
+              AND entry.value=~ pattern
             create unique
               (bundle)-[:EXPORTS]->(package)
             return
@@ -49,16 +49,16 @@
         </description>
         <cypher><![CDATA[
             match
-             (package:PACKAGE)
+             (package:Package)
             with
-              package, "(^|.*,)\\s*"+ replace(package.FQN, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
+              package, "(^|.*,)\\s*"+ replace(package.fqn, ".", "\\.")+"\\s*((;|,).*|$)" as pattern
             match
-              (bundle:Osgi:Bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
-              (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
-              (section)-[:HAS]->(entry:MANIFESTENTRY)
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(manifest:File:Manifest),
+              (manifest)-[:DECLARES]->(section:ManifestSection),
+              (section)-[:HAS]->(entry:ManifestEntry)
             where
-              entry.NAME = "Import-Package"
-              and entry.VALUE =~ pattern
+              entry.name = "Import-Package"
+              and entry.value =~ pattern
             create unique
               (bundle)-[:IMPORTS]->(package)
             return
@@ -73,13 +73,13 @@
         </description>
         <cypher><![CDATA[
             match
-              (bundle:Osgi:Bundle)-[:CONTAINS]->(manifest:FILE:MANIFEST),
-              (manifest)-[:DECLARES]->(section:MANIFESTSECTION),
-              (section)-[:HAS]->(entry:MANIFESTENTRY),
-              (bundle)-[:CONTAINS]->(activator:CLASS)
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(manifest:File:Manifest),
+              (manifest)-[:DECLARES]->(section:ManifestSection),
+              (section)-[:HAS]->(entry:ManifestEntry),
+              (bundle)-[:CONTAINS]->(activator:Class)
             where
-              entry.NAME = "Bundle-Activator"
-              and entry.VALUE = activator.FQN
+              entry.name = "Bundle-Activator"
+              and entry.value = activator.fqn
             create unique
               (activator)-[:ACTIVATES]->(bundle)
             return
@@ -92,9 +92,9 @@
         <description>Labels all internal types (i.e. which are not located in an exported package) as "Internal".</description>
         <cypher><![CDATA[
             match
-              (bundle:Bundle:Osgi)-[:CONTAINS]->(internalPackage:PACKAGE),
-              (bundle)-[:CONTAINS]->(internalType:TYPE),
-              (internalPackage)-[:CONTAINS]->(internalType:TYPE)
+              (bundle:Bundle:Osgi)-[:CONTAINS]->(internalPackage:Package),
+              (bundle)-[:CONTAINS]->(internalType:Type),
+              (internalPackage)-[:CONTAINS]->(internalType:Type)
             where not
                 (bundle)-[:EXPORTS]->(internalPackage)
             set
@@ -110,11 +110,11 @@
         <description>A bundle must not contain internal types which are not used by other types in the bundle.</description>
         <cypher><![CDATA[
             match
-              (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:TYPE:Internal)
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:Type:Internal)
             where not (
                 (internalType)-[:ACTIVATES]->(bundle)
               or
-                (bundle)-[:CONTAINS]->(:TYPE)-[:DEPENDS_ON]->(internalType)
+                (bundle)-[:CONTAINS]->(:Type)-[:DEPENDS_ON]->(internalType)
             )
             return
               bundle as Bundle, internalType as InternalType
@@ -128,13 +128,13 @@
         <description>Internal types must not be public if no depending types exist in other packages of the bundle.</description>
         <cypher><![CDATA[
             match
-              (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:TYPE:Internal),
-              (internalPackage:PACKAGE)-[:CONTAINS]->(internalType)
+              (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:Type:Internal),
+              (internalPackage:Package)-[:CONTAINS]->(internalType)
             optional match
-              (bundle)-[:CONTAINS]->(otherPackage:PACKAGE),
+              (bundle)-[:CONTAINS]->(otherPackage:Package),
               (otherPackage)-[:CONTAINS]->()-[:DEPENDS_ON]->(internalType)
             where
-              internalType.VISIBILITY='PUBLIC'
+              internalType.visibility='public'
             with
               bundle, internalPackage, internalType, collect(otherPackage) as otherPackages
             where

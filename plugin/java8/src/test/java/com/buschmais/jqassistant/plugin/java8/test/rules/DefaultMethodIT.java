@@ -31,7 +31,7 @@ public class DefaultMethodIT extends AbstractPluginIT {
         scanClasses(DefaultMethod.class);
         applyConcept("java8:DefaultMethod");
         store.beginTransaction();
-        TestResult result = query("MATCH (m:METHOD:Default) RETURN m");
+        TestResult result = query("MATCH (m:Method:Default) RETURN m");
         assertThat(result.getRows().size(), equalTo(1));
         assertThat(result.getColumn("m"), hasItem(methodDescriptor(DefaultMethod.class, "add", int.class, int.class)));
         store.commitTransaction();

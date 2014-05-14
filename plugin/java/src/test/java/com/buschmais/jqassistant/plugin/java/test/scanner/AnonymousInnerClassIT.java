@@ -52,7 +52,7 @@ public class AnonymousInnerClassIT extends AbstractPluginIT {
      */
     private void assertOuterClassContainsInnerClass() {
         store.beginTransaction();
-        TestResult testResult = query("MATCH (outerClass:TYPE)-[:DECLARES]->(innerClass:TYPE) RETURN outerClass");
+        TestResult testResult = query("MATCH (outerClass:Type)-[:DECLARES]->(innerClass:Type) RETURN outerClass");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");

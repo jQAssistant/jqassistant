@@ -16,7 +16,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Describes a Java package.
  */
 @Java(Package)
-@Label(value = "PACKAGE", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
+@Label(value = "Package", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface PackageDescriptor extends PackageMemberDescriptor {
 
     /**

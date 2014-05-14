@@ -3,8 +3,8 @@
     <concept id="ejb3:StatelessSessionBean">
         <description>Labels all types annotated with @javax.ejb.Stateless with "Ejb" and "Stateless".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.Stateless"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.ejb.Stateless"
             SET t:Ejb:Stateless
             RETURN t AS StatelessEjb
         ]]></cypher>
@@ -13,8 +13,8 @@
     <concept id="ejb3:StatefulSessionBean">
         <description>Labels all types annotated with @javax.ejb.Stateful with "Ejb" and "Stateful".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.Stateful"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.ejb.Stateful"
             SET t:Ejb:Stateful
             RETURN t AS StatefulEjb
         ]]></cypher>
@@ -23,8 +23,8 @@
     <concept id="ejb3:SingletonBean">
         <description>Labels all classes annotated with @javax.ejb.Singleton with "Ejb" and "Singleton".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.Singleton"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.ejb.Singleton"
             SET t:Ejb:Singleton
             RETURN t AS SingletonEjb
         ]]></cypher>
@@ -33,8 +33,8 @@
     <concept id="ejb3:MessageDrivenBean">
         <description>Labels all types annotated with @javax.ejb.MessageDriven with "Ejb" and "MessageDriven".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.MessageDriven"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.ejb.MessageDriven"
             SET t:Ejb:MessageDriven
             RETURN t AS MessageDrivenBean
         ]]></cypher>
@@ -43,8 +43,8 @@
     <concept id="ejb3:Local">
         <description>Labels all types annotated with @javax.ejb.Local with "Ejb" and "Local".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.Local"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.ejb.Local"
             SET t:Ejb:Local
             RETURN t AS LocalBean
         ]]></cypher>
@@ -53,8 +53,8 @@
     <concept id="ejb3:Remote">
         <description>Labels all types annotated with @javax.ejb.Remote with "Ejb" and "Remote".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.ejb.Remote"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.ejb.Remote"
             SET t:Ejb:Remote
             RETURN t AS RemoteBean
         ]]></cypher>

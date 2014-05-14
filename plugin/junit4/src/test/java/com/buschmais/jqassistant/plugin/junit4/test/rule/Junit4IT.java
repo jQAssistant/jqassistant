@@ -35,8 +35,8 @@ public class Junit4IT extends AbstractPluginIT {
         scanClasses(TestClass.class);
         applyConcept("junit4:TestClassOrMethod");
         store.beginTransaction();
-        assertThat(query("MATCH (m:METHOD:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
-        assertThat(query("MATCH (c:TYPE:CLASS:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
+        assertThat(query("MATCH (m:Method:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        assertThat(query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
         store.commitTransaction();
     }
 
@@ -55,8 +55,8 @@ public class Junit4IT extends AbstractPluginIT {
         scanClasses(IgnoredTestClass.class);
         applyConcept("junit4:IgnoreTestClassOrMethod");
         store.beginTransaction();
-        assertThat(query("MATCH (m:METHOD:Junit4:Ignore) RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
-        assertThat(query("MATCH (c:TYPE:CLASS:Junit4:Ignore) RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
+        assertThat(query("MATCH (m:Method:Junit4:Ignore) RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
+        assertThat(query("MATCH (c:Type:Class:Junit4:Ignore) RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
         store.commitTransaction();
     }
 
@@ -93,7 +93,7 @@ public class Junit4IT extends AbstractPluginIT {
      *             If the test fails.
      */
     private void verifyTestCaseImplementedByMethod(String testcase) throws NoSuchMethodException {
-        assertThat(query("MATCH (testcase:TestCase)-[:IMPLEMENTED_BY]->(testmethod:METHOD) WHERE testcase.NAME ='" + testcase + "' RETURN testmethod")
+        assertThat(query("MATCH (testcase:TestCase)-[:IMPLEMENTED_BY]->(testmethod:Method) WHERE testcase.name ='" + testcase + "' RETURN testmethod")
                 .getColumn("testmethod"), hasItem(methodDescriptor(Example.class, testcase)));
     }
 }

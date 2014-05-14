@@ -6,13 +6,13 @@
 		</description>
 		<cypher><![CDATA[
             MATCH 
-              (c:TYPE:CLASS)-[:IMPLEMENTS]->(a:TYPE)
+              (c:Type:Class)-[:IMPLEMENTS]->(a:Type)
 			WHERE 
-              a.FQN IN ["javax.ws.rs.ext.MessageBodyReader", "javax.ws.rs.ext.MessageBodyWriter"]
+              a.fqn IN ["javax.ws.rs.ext.MessageBodyReader", "javax.ws.rs.ext.MessageBodyWriter"]
             SET 
               c:JaxRS:EntityProvider
             RETURN 
-              DISTINCT c as entityProvider
+              DISTINCT c as EntityProvider
         ]]></cypher>
 	</concept>
 
@@ -21,13 +21,13 @@
 		</description>
 		<cypher><![CDATA[
             MATCH 
-              (c:TYPE:CLASS)-[:IMPLEMENTS]->(a:TYPE)
+              (c:Type:Class)-[:IMPLEMENTS]->(a:Type)
 			WHERE 
-              a.FQN = "javax.ws.rs.ext.ContextResolver"
+              a.fqn = "javax.ws.rs.ext.ContextResolver"
             SET 
               c:JaxRS:ContextProvider
             RETURN 
-              DISTINCT c as contextProvider
+              DISTINCT c as ContextProvider
         ]]></cypher>
 	</concept>
 
@@ -36,13 +36,13 @@
 		</description>
 		<cypher><![CDATA[
             MATCH 
-              (c:TYPE:CLASS)-[:IMPLEMENTS]->(a:TYPE)
+              (c:Type:Class)-[:IMPLEMENTS]->(a:Type)
 			WHERE 
-              a.FQN = "javax.ws.rs.ext.ExceptionMapper"
+              a.fqn = "javax.ws.rs.ext.ExceptionMapper"
             SET 
               c:JaxRS:ExceptionMappingProvider
             RETURN 
-              DISTINCT c as exceptionMappingProvider
+              DISTINCT c as ExceptionMappingProvider
         ]]></cypher>
 	</concept>
 	

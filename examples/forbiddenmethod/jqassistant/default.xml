@@ -4,11 +4,11 @@
         <description>Constructors of java.util.Date must not be used.</description>
         <cypher><![CDATA[
             match
-                (dateType:TYPE)-[:DECLARES]->(forbiddenMethod:METHOD),
-                (type:TYPE)-[:DECLARES]->(method:METHOD)-[:INVOKES]->(forbiddenMethod)
+                (dateType:Type)-[:DECLARES]->(forbiddenMethod:Method),
+                (type:Type)-[:DECLARES]->(method:Method)-[:INVOKES]->(forbiddenMethod)
             where
-                dateType.FQN = 'java.util.Date'
-                and forbiddenMethod:CONSTRUCTOR
+                dateType.fqn = 'java.util.Date'
+                and forbiddenMethod:Constructor
             return
                 method as Method
         ]]></cypher>

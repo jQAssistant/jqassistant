@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
@@ -33,7 +33,7 @@ public class MethodOverloadsIT extends AbstractPluginIT {
         scanClasses(InterfaceType.class);
         applyConcept("java:MethodOverloads");
         store.beginTransaction();
-        TestResult result = query("MATCH (method:METHOD)-[:OVERLOADS]->(otherMethod:METHOD) RETURN method, otherMethod ORDER BY method.SIGNATURE");
+        TestResult result = query("MATCH (method:Method)-[:OVERLOADS]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(2));
         Map<String, Object> row0 = rows.get(0);

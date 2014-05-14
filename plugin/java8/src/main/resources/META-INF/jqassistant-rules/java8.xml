@@ -4,9 +4,9 @@
         <description>Labels functional interfaces (i.e. to be used as lambda expressions) with "FunctionalInterface".</description>
         <cypher><![CDATA[
             MATCH
-              (functionalInterface:INTERFACE)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(functionalInterfaceType)
+              (functionalInterface:Interface)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(functionalInterfaceType)
             WHERE
-              functionalInterfaceType.FQN = 'java.lang.FunctionalInterface'
+              functionalInterfaceType.fqn = 'java.lang.FunctionalInterface'
             SET
               functionalInterface:FunctionalInterface
             RETURN
@@ -18,9 +18,9 @@
         <description>Labels default methods of interfaces with "Default".</description>
         <cypher><![CDATA[
             MATCH
-              (type:TYPE:INTERFACE)-[:DECLARES]->(defaultMethod:METHOD)
+              (type:Type:Interface)-[:DECLARES]->(defaultMethod:Method)
             WHERE NOT
-              has(defaultMethod.ABSTRACT)
+              has(defaultMethod.abstract)
             SET
               defaultMethod:Default
             RETURN

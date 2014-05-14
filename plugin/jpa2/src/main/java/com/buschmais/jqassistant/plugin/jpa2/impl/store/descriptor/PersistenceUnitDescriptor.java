@@ -16,27 +16,27 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("PersistenceUnit")
 public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, JpaDescriptor {
 
-    @Property("Description")
+    @Property("description")
     public String getDescription();
 
     public void setDescription(String description);
 
-    @Property("Provider")
+    @Property("provider")
     public String getProvider();
 
     public void setProvider(String provider);
 
-    @Property("JtaDatasource")
+    @Property("jtaDatasource")
     public String getJtaDataSource();
 
     public void setJtaDataSource(String jtaDataSource);
 
-    @Property("NonJtaDatasource")
+    @Property("nonJtaDatasource")
     public String getNonJtaDataSource();
 
     public void setNonJtaDataSource(String nonJtaDataSource);
 
-    @Property("ValidationMode")
+    @Property("validationMode")
     public String getValidationMode();
 
     public void setValidationMode(String validationMode);
@@ -44,12 +44,12 @@ public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, 
     @Relation("Contains")
     public Set<TypeDescriptor> getContains();
 
-    @Property("SharedCacheMode")
+    @Property("sharedCacheMode")
     public String getSharedCacheMode();
 
     public void setSharedCacheMode(String sharedCacheMode);
 
-    @Property("Properties")
+    @Relation("HAS")
     public Set<PropertyDescriptor> getProperties();
 
 }

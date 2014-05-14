@@ -8,7 +8,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-@Label("MANIFESTSECTION")
+@Label("ManifestSection")
 public interface ManifestSectionDescriptor extends NamedDescriptor {
 
     @Relation("HAS")

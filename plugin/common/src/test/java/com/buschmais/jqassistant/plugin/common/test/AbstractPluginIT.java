@@ -19,8 +19,6 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,6 +26,7 @@ import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -36,6 +35,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
@@ -339,8 +339,8 @@ public class AbstractPluginIT {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("className", this.getClass().getName());
-        store.executeQuery("MATCH (t:TYPE)-[r]-() WHERE t.FQN={className} DELETE r", parameters).close();
-        store.executeQuery("MATCH (t:TYPE) WHERE t.FQN={className} DELETE t", parameters).close();
+        store.executeQuery("MATCH (t:Type)-[r]-() WHERE t.fqn={className} DELETE r", parameters).close();
+        store.executeQuery("MATCH (t:Type) WHERE t.fqn={className} DELETE t", parameters).close();
         store.commitTransaction();
     }
 

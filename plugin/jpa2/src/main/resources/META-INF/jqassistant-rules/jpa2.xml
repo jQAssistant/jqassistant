@@ -3,8 +3,8 @@
     <concept id="jpa2:Entity">
         <description>Labels all types annotated with @javax.persistence.Entity with "Jpa" and "Entity".</description>
         <cypher><![CDATA[
-            MATCH (t:TYPE)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="javax.persistence.Entity"
+            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE a.fqn="javax.persistence.Entity"
             SET t:Jpa:Entity
             RETURN t AS JpaEntity
         ]]></cypher>
@@ -17,19 +17,19 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (entity:Jpa:Entity)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:TYPE),
-              (namedQueries)-[:HAS]->(:VALUE:ARRAY)-[:HAS]->(namedQuery:VALUE:ANNOTATION)-[:OF_TYPE]->(namedQueryType:TYPE),
-              (namedQuery)-[:HAS]->(nameAttribute:VALUE),
-              (namedQuery)-[:HAS]->(queryAttribute:VALUE)
+              (entity:Jpa:Entity)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:Type),
+              (namedQueries)-[:HAS]->(:Value:Array)-[:HAS]->(namedQuery:Value:Annotation)-[:OF_TYPE]->(namedQueryType:Type),
+              (namedQuery)-[:HAS]->(nameAttribute:Value),
+              (namedQuery)-[:HAS]->(queryAttribute:Value)
             WHERE
-              namedQueriesType.FQN = 'javax.persistence.NamedQueries'
-              and namedQueryType.FQN = 'javax.persistence.NamedQuery'
-              and nameAttribute.NAME = 'name'
-              and queryAttribute.NAME = 'query'
+              namedQueriesType.fqn = 'javax.persistence.NamedQueries'
+              and namedQueryType.fqn = 'javax.persistence.NamedQuery'
+              and nameAttribute.name = 'name'
+              and queryAttribute.name = 'query'
             CREATE UNIQUE
-              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {Name:nameAttribute.VALUE, Query:queryAttribute.VALUE})
+              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value, query:queryAttribute.value})
             RETURN
-              entity.FQN as Entity, n.Name as Name, n.Query as Query
+              entity as Entity, n.name as Name, n.query as Query
         ]]></cypher>
     </concept>
 
@@ -39,13 +39,13 @@
             MATCH
               (pu:PersistenceUnit)
             WHERE
-              NOT has(pu.ValidationMode)
+              not has(pu.validationMode)
               OR NOT (
-                pu.ValidationMode='CALLBACK'
-                OR pu.ValidationMode='NONE'
+                pu.validationMode='CALLBACK'
+                OR pu.validationMode='NONE'
               )
             RETURN
-              pu.NAME as PersistenceUnit
+              pu as PersistenceUnit
         ]]></cypher>
     </constraint>
 

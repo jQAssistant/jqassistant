@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * Represents an array value.
  */
-@Label("ARRAY")
+@Label("Array")
 public interface ArrayValueDescriptor extends ValueDescriptor<List<ValueDescriptor<?>>> {
 
     @Relation("HAS")

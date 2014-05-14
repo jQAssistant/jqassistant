@@ -21,12 +21,12 @@ public interface TestSuiteDescriptor extends NamedDescriptor, FileDescriptor {
 
     void setFailures(int failures);
 
-    @Property("erros")
+    @Property("errors")
     int getErrors();
 
     void setErrors(int errors);
 
-    @Property("skipepd")
+    @Property("skipped")
     int getSkipped();
 
     void setSkipped(int skipped);

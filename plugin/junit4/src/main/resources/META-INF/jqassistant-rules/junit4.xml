@@ -4,9 +4,9 @@
         <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with "Test" and "Junit4".</description>
         <cypher><![CDATA[
             match
-              (c:TYPE:CLASS)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+              (c:Type:Class)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
             where
-              a.FQN="org.junit.Test"
+              a.fqn="org.junit.Test"
             set
               c:Test:Junit4, m:Test:Junit4
             return
@@ -18,9 +18,9 @@
         <description>Labels all classes or methods annotated with "@org.junit.Ignore" with "Junit4" and "Ignore".</description>
         <cypher><![CDATA[
             match
-              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
             where
-              a.FQN="org.junit.Ignore"
+              a.fqn="org.junit.Ignore"
             set
               e:Junit4:Ignore
             return
@@ -36,10 +36,10 @@
             with
               testcase
             match
-              (testclass:TYPE)-[:DECLARES]->(testmethod:METHOD)
+              (testclass:Type)-[:DECLARES]->(testmethod:Method)
             where
-              testclass.FQN = testcase.className
-              and testmethod.NAME = testcase.NAME
+              testclass.fqn = testcase.className
+              and testmethod.name = testcase.name
             create unique
               (testcase)-[:IMPLEMENTED_BY]->(testmethod)
             return

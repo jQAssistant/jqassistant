@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  */
 public interface AbstractDescriptor {
 
-    @Property("ABSTRACT")
+    @Property("abstract")
     Boolean isAbstract();
 
     void setAbstract(Boolean isAbstract);

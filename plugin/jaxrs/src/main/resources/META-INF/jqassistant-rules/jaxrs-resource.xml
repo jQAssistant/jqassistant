@@ -5,13 +5,13 @@
 		</description>
 		<cypher><![CDATA[
             MATCH 
-              (a:TYPE)
+              (a:Type)
             WHERE
-              a.FQN IN ["javax.ws.rs.GET", "javax.ws.rs.POST", "javax.ws.rs.PUT", "javax.ws.rs.DELETE", "javax.ws.rs.HEAD", "javax.ws.rs.OPTIONS"]
+              a.fqn IN ["javax.ws.rs.GET", "javax.ws.rs.POST", "javax.ws.rs.PUT", "javax.ws.rs.DELETE", "javax.ws.rs.HEAD", "javax.ws.rs.OPTIONS"]
             SET
               a:JaxRS:RequestMethodDesignator
             RETURN
-              a as requestMethodDesignator
+              a as RequestMethodDesignator
         ]]></cypher>
 	</concept>
 
@@ -22,15 +22,15 @@
 		</description>
 		<cypher><![CDATA[
             MATCH
-              (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+              (t:Type)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
 			WHERE
-              (a:JaxRS:RequestMethodDesignator OR a.FQN="javax.ws.rs.Path")
+              (a:JaxRS:RequestMethodDesignator OR a.fqn="javax.ws.rs.Path")
 			AND
-              (t:CLASS OR t:INTERFACE)
+              (t:Class OR t:Interface)
             SET
               t:JaxRS:Resource
             RETURN
-              DISTINCT t as restResource
+              DISTINCT t as RestResource
         ]]></cypher>
 	</concept>
 
@@ -41,19 +41,19 @@
 		</description>
 		<cypher><![CDATA[
             MATCH
-              (t:TYPE)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+              (t:Type)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
 			WHERE
-              a.FQN = "javax.ws.rs.Path"
+              a.fqn = "javax.ws.rs.Path"
 			AND
-              (t:CLASS OR t:INTERFACE)
+              (t:Class OR t:Interface)
 			AND
               NOT (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:JaxRS:RequestMethodDesignator)
 			AND
-              (m)-[:HAS]->(:PARAMETER)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:TYPE)
+              (m)-[:HAS]->(:Parameter)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:Type)
             SET
               m:JaxRS:SubResourceLocator
             RETURN
-              DISTINCT m as restSubResourceLocator
+              DISTINCT m as RestSubResourceLocator
         ]]></cypher>
 	</concept>
 
@@ -64,11 +64,11 @@
 		</description>
 		<cypher><![CDATA[
             MATCH
-              (c:JaxRS:Resource)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
+              (c:JaxRS:Resource)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             SET
               m:JaxRS:ResourceMethod
             RETURN
-              m as resourceMethod
+              m as ResourceMethod
         ]]></cypher>
 	</concept>
 
@@ -79,11 +79,11 @@
             MATCH
               (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE
-              a.FQN = "javax.ws.rs.GET"
+              a.fqn = "javax.ws.rs.GET"
             SET
               m:GetResourceMethod
             RETURN
-              m as getMethod
+              m as GetMethod
         ]]></cypher>
 	</concept>
 
@@ -94,11 +94,11 @@
             MATCH
               (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE
-              a.FQN = "javax.ws.rs.PUT"
+              a.fqn = "javax.ws.rs.PUT"
             SET
               m:PutResourceMethod
             RETURN
-              m as putMethod
+              m as PutMethod
         ]]></cypher>
 	</concept>
 
@@ -109,11 +109,11 @@
             MATCH
               (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE
-              a.FQN = "javax.ws.rs.POST"
+              a.fqn = "javax.ws.rs.POST"
             SET
               m:PostResourceMethod
             RETURN
-              m as postMethod
+              m as PostMethod
         ]]></cypher>
 	</concept>
 
@@ -124,11 +124,11 @@
             MATCH
               (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE
-              a.FQN = "javax.ws.rs.DELETE"
+              a.fqn = "javax.ws.rs.DELETE"
             SET
               m:DeleteResourceMethod
             RETURN
-              m as deleteMethod
+              m as DeleteMethod
         ]]></cypher>
 	</concept>
 
@@ -139,11 +139,11 @@
             MATCH
               (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE
-              a.FQN = "javax.ws.rs.HEAD"
+              a.fqn = "javax.ws.rs.HEAD"
             SET
               m:HeadResourceMethod
             RETURN
-              m as headMethod
+              m as HeadMethod
         ]]></cypher>
 	</concept>
 
@@ -154,11 +154,11 @@
             MATCH
               (m:JaxRS:ResourceMethod)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:JaxRS:RequestMethodDesignator)
             WHERE
-              a.FQN = "javax.ws.rs.OPTIONS"
+              a.fqn = "javax.ws.rs.OPTIONS"
             SET
               m:OptionsResourceMethod
             RETURN
-              m as optionsMethod
+              m as OptionsMethod
         ]]></cypher>
 	</concept>
 	

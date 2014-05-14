@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -45,7 +45,7 @@ public class Jpa2IT extends AbstractPluginIT {
         scanClasses(JpaEntity.class);
         applyConcept("jpa2:Entity");
         store.beginTransaction();
-        assertThat(query("MATCH (e:TYPE:Jpa:Entity) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
+        assertThat(query("MATCH (e:Type:Jpa:Entity) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
         store.commitTransaction();
     }
 
@@ -62,7 +62,7 @@ public class Jpa2IT extends AbstractPluginIT {
         scanClasses(JpaEntity.class);
         applyConcept("jpa2:NamedQuery");
         store.beginTransaction();
-        TestResult query = query("MATCH (e:Entity)-[:DEFINES]->(n:Jpa:NamedQuery) RETURN n.Name as name, n.Query as query");
+        TestResult query = query("MATCH (e:Entity)-[:DEFINES]->(n:Jpa:NamedQuery) RETURN n.name as name, n.query as query");
         List<Map<String, Object>> rows = query.getRows();
         assertThat(rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);

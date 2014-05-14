@@ -30,7 +30,7 @@ public class FunctionalInterfaceIT extends AbstractPluginIT {
         scanClasses(com.buschmais.jqassistant.plugin.java8.test.set.rules.FunctionalInterface.class);
         applyConcept("java8:FunctionalInterface");
         store.beginTransaction();
-        TestResult result = query("MATCH (fi:TYPE:FunctionalInterface) RETURN fi");
+        TestResult result = query("MATCH (fi:Type:FunctionalInterface) RETURN fi");
         assertThat(result.getColumn("fi"), hasItem(typeDescriptor(FunctionalInterface.class)));
         store.commitTransaction();
     }

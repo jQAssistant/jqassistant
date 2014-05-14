@@ -8,6 +8,6 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  * Denotes an interface type.
  */
 @Java(Type)
-@Label("INTERFACE")
+@Label("Interface")
 public interface InterfaceTypeDescriptor extends TypeDescriptor {
 }

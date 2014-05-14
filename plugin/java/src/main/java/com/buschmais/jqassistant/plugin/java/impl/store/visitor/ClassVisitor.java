@@ -7,7 +7,17 @@ import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.*;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AccessModifierDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.InterfaceTypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.VisibilityModifier;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
@@ -121,7 +131,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
         VisibilityModifier visibility = getVisibility(access);
-        descriptor.setVisibility(visibility);
+        descriptor.setVisibility(visibility.getValue());
         if (hasFlag(access, Opcodes.ACC_SYNTHETIC)) {
             descriptor.setSynthetic(Boolean.TRUE);
         }
