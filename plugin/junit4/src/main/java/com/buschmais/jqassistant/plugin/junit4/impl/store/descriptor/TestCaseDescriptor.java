@@ -4,24 +4,24 @@ import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
-@Label("TESTCASE")
+@Label("TestCase")
 public interface TestCaseDescriptor extends NamedDescriptor {
 
     public enum Result {
         SUCCESS, FAILURE, ERROR, SKIPPED;
     }
 
-    @Property("CLASSNAME")
+    @Property("className")
     String getClassName();
 
     void setClassName(String className);
 
-    @Property("TIME")
+    @Property("time")
     float getTime();
 
     void setTime(float time);
 
-    @Property("RESULT")
+    @Property("result")
     Result getResult();
 
     void setResult(Result result);

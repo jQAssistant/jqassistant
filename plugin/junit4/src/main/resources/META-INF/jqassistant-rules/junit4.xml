@@ -1,40 +1,48 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="junit4:TestClassOrMethod">
-        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with TEST and JUNIT4.</description>
+        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with "Test" and "Junit4".</description>
         <cypher><![CDATA[
-            MATCH (c:TYPE:CLASS)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="org.junit.Test"
-            SET c:TEST:JUNIT4, m:TEST:JUNIT4
-            RETURN m as testMethod
+            match
+              (c:TYPE:CLASS)-[:DECLARES]->(m:METHOD)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:TYPE)
+            where
+              a.FQN="org.junit.Test"
+            set
+              c:Test:Junit4, m:Test:Junit4
+            return
+              c as TestClass, collect(m) as TestMethods
         ]]></cypher>
     </concept>
 
     <concept id="junit4:IgnoreTestClassOrMethod">
-        <description>Labels all classes or methods annotated with "@org.junit.Ignore" with JUNIT4 and IGNORE.</description>
+        <description>Labels all classes or methods annotated with "@org.junit.Ignore" with "Junit4" and "Ignore".</description>
         <cypher><![CDATA[
-            MATCH (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
-            WHERE a.FQN="org.junit.Ignore"
-            SET e:JUNIT4:IGNORE
-            RETURN e as ignoreElement
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:TYPE)
+            where
+              a.FQN="org.junit.Ignore"
+            set
+              e:Junit4:Ignore
+            return
+              e as IgnoredElement
         ]]></cypher>
     </concept>
 
     <concept id="junit4:TestCaseImplementedByMethod">
         <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing methods.</description>
         <cypher><![CDATA[
-            MATCH
-              (testcase:TESTCASE)
-            WITH
+            match
+              (testcase:TestCase)
+            with
               testcase
-            MATCH
+            match
               (testclass:TYPE)-[:DECLARES]->(testmethod:METHOD)
-            WHERE
-              testclass.FQN=testcase.CLASSNAME
-              AND testmethod.NAME=testcase.NAME
-            CREATE UNIQUE
+            where
+              testclass.FQN = testcase.className
+              and testmethod.NAME = testcase.NAME
+            create unique
               (testcase)-[:IMPLEMENTED_BY]->(testmethod)
-            RETURN
+            return
               count(testcase) as TestCases
         ]]></cypher>
     </concept>
