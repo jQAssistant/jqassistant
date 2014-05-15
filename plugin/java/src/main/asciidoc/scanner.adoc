@@ -1,3 +1,0 @@
-==== Scanner
-===== Packages and Classes
-===== Manifest Files

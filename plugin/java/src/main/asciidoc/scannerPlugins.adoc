@@ -1,0 +1,48 @@
+==== Package Scanner
+Imports java packages.
+
+==== Class Scanner
+
+Type::
+A Java type. Can be qualified by either "Class", "Interface", "Enum" or "Annotation"
+
+.Type Properties
+[options="header"]
+|====
+| Name       | Description
+| fqn        | Fully qualified name, e.g. "java.lang.Object"
+| name       | The local name, e.g. "Object"
+| visibility | The visibility of the type, can be either "public", "protected", "default" or "private"
+| abstract   | "true" indicates that the type is abstract, e.g. "public abstract class ..."
+| static     | "true" indicates that the type has the static modifier, e.g. "private static class ..."
+| final      | "true" indicates that the type is final, e.g. "public final class..."
+| synthetic  | "true" indicates that the type is synthetic, i.e. it has been generated.
+|====
+
+.Type Relations
+[options="header"]
+|====
+| Name         | Target label(s)   | Cardinality | Description
+| DECLARES     | Type              | 0..n        | Declares an inner type of the type
+| DECLARES     | Method            | 0..n        | Declares a method of the type
+| DECLARES     | Field             | 0..n        | Declares a field of the type
+| EXTENDS      | Type              | 0..1        | References a type this type extends from.
+| IMPLEMENTS   | Type              | 0..1        | References an "Interface" type this type implements.
+| ANNOTATED_BY | Annotation, Value | 0..n        | References an annotation which is present on the type.
+| DEPENDS_ON   | Type              | 0..n        | References a type which this type depends on according to its signature
+|====
+
+Class::
+A Java class. The "Type" label is always present.
+
+Interface::
+A Java interface. The "Type" label is always present.
+
+Enum::
+A Java enumeration. The "Type" label is always present.
+
+Annotation::
+A Java annotation. The "Type" label is always present.
+
+==== Manifest Scanner
+==== Property File Scanner
