@@ -49,7 +49,7 @@
                             <sourceHighlighter>coderay</sourceHighlighter>
                             <attributes>
                                 <toc>auto</toc>
-                                <toclevels>3</toclevels>
+                                <toclevels>2</toclevels>
                                 <tabsize>4</tabsize>
                                 <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
                             </attributes>
