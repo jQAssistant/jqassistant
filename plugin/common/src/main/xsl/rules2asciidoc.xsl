@@ -7,17 +7,16 @@
     </xsl:variable>
 
     <xsl:template match="/">
-==== <xsl:call-template name="filename"/>
 <xsl:value-of select="$newline"/>
-        <xsl:if test="//constraint">
-===== Constraints
-            <xsl:apply-templates select="//constraint">
-                <xsl:sort select="@id" order="ascending"/>
-            </xsl:apply-templates>
-        </xsl:if>
         <xsl:if test="//concept">
 ===== Concepts
             <xsl:apply-templates select="//concept">
+                <xsl:sort select="@id" order="ascending"/>
+            </xsl:apply-templates>
+        </xsl:if>
+        <xsl:if test="//constraint">
+===== Constraints
+            <xsl:apply-templates select="//constraint">
                 <xsl:sort select="@id" order="ascending"/>
             </xsl:apply-templates>
         </xsl:if>
