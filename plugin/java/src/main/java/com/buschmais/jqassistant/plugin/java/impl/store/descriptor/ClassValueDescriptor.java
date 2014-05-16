@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  */
 public interface ClassValueDescriptor extends ValueDescriptor<TypeDescriptor>, ClassDescriptor {
 
-    @Relation("HAS")
+    @Relation("IS")
     @Override
     TypeDescriptor getValue();
 

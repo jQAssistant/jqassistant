@@ -11,7 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("Array")
 public interface ArrayValueDescriptor extends ValueDescriptor<List<ValueDescriptor<?>>> {
 
-    @Relation("HAS")
+    @Relation("CONTAINS")
     @Override
     List<ValueDescriptor<?>> getValue();
 

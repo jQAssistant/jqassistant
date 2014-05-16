@@ -15,7 +15,7 @@
             with
                 e, a
             match
-                (a)-[:HAS|OF_TYPE*0..]->(vt:Type)
+                (a)-[:HAS|IS|CONTAINS|OF_TYPE*0..]->(vt:Type)
             create unique
                 (e)-[:DEPENDS_ON]->(vt)
             return
