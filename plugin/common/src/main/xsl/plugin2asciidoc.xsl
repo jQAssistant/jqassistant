@@ -12,6 +12,7 @@
 === <xsl:value-of select="$pluginName"/>
 <xsl:apply-templates select="//description"/>
 <xsl:value-of select="$newline"/>
+<xsl:value-of select="$newline"/>
 <xsl:for-each select="//resource">&lt;&lt;<xsl:value-of select="text()"/>&gt;&gt; </xsl:for-each>
 <xsl:apply-templates select="//scanner"/>
 <xsl:apply-templates select="//resource"/>
