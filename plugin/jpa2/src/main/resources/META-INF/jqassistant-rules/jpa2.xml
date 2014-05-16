@@ -18,7 +18,7 @@
         <cypher><![CDATA[
             MATCH
               (entity:Jpa:Entity)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:Type),
-              (namedQueries)-[:HAS]->(:Value:Array)-[:HAS]->(namedQuery:Value:Annotation)-[:OF_TYPE]->(namedQueryType:Type),
+              (namedQueries)-[:HAS]->(:Value:Array)-[:CONTAINS]->(namedQuery:Value:Annotation)-[:OF_TYPE]->(namedQueryType:Type),
               (namedQuery)-[:HAS]->(nameAttribute:Value),
               (namedQuery)-[:HAS]->(queryAttribute:Value)
             WHERE

@@ -110,6 +110,7 @@ public class Jpa2IT extends AbstractPluginIT {
         List<? super PersistenceUnitDescriptor> persistenceUnitDescriptors = testResult.getColumn("pu");
         PersistenceUnitDescriptor persistenceUnitDescriptor = (PersistenceUnitDescriptor) persistenceUnitDescriptors.get(0);
         assertThat(persistenceUnitDescriptor.getName(), equalTo("persistence-unit"));
+        assertThat(persistenceUnitDescriptor.getTransactionType(), equalTo("RESOURCE_LOCAL"));
         assertThat(persistenceUnitDescriptor.getDescription(), equalTo("description"));
         assertThat(persistenceUnitDescriptor.getJtaDataSource(), equalTo("jtaDataSource"));
         assertThat(persistenceUnitDescriptor.getNonJtaDataSource(), equalTo("nonJtaDataSource"));

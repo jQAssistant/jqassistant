@@ -1,5 +1,15 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
+
+import java.io.IOException;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
@@ -10,16 +20,8 @@ import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUn
 import com.sun.java.xml.ns.persistence.ObjectFactory;
 import com.sun.java.xml.ns.persistence.Persistence;
 import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitTransactionType;
 import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-
-import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
-import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
 
 /**
  * A scanner for JPA model units.
@@ -56,12 +58,15 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
         }
         Store store = getStore();
         PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
-        persistenceDescriptor.setName(streamSource.getSystemId());
         persistenceDescriptor.setVersion(persistence.getVersion());
         // Create model units
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class);
             persistenceUnitDescriptor.setName(persistenceUnit.getName());
+            PersistenceUnitTransactionType transactionType = persistenceUnit.getTransactionType();
+            if (transactionType != null) {
+                persistenceUnitDescriptor.setTransactionType(transactionType.name());
+            }
             persistenceUnitDescriptor.setDescription(persistenceUnit.getDescription());
             persistenceUnitDescriptor.setJtaDataSource(persistenceUnit.getJtaDataSource());
             persistenceUnitDescriptor.setNonJtaDataSource(persistenceUnit.getNonJtaDataSource());

@@ -16,40 +16,45 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("PersistenceUnit")
 public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, JpaDescriptor {
 
-    @Property("description")
-    public String getDescription();
+    @Property("transactionType")
+    String getTransactionType();
 
-    public void setDescription(String description);
+    void setTransactionType(String name);
+
+    @Property("description")
+    String getDescription();
+
+    void setDescription(String description);
 
     @Property("provider")
-    public String getProvider();
+    String getProvider();
 
-    public void setProvider(String provider);
+    void setProvider(String provider);
 
     @Property("jtaDatasource")
-    public String getJtaDataSource();
+    String getJtaDataSource();
 
-    public void setJtaDataSource(String jtaDataSource);
+    void setJtaDataSource(String jtaDataSource);
 
     @Property("nonJtaDatasource")
-    public String getNonJtaDataSource();
+    String getNonJtaDataSource();
 
-    public void setNonJtaDataSource(String nonJtaDataSource);
+    void setNonJtaDataSource(String nonJtaDataSource);
 
     @Property("validationMode")
-    public String getValidationMode();
+    String getValidationMode();
 
-    public void setValidationMode(String validationMode);
+    void setValidationMode(String validationMode);
 
-    @Relation("Contains")
-    public Set<TypeDescriptor> getContains();
+    @Relation("CONTAINS")
+    Set<TypeDescriptor> getContains();
 
     @Property("sharedCacheMode")
-    public String getSharedCacheMode();
+    String getSharedCacheMode();
 
-    public void setSharedCacheMode(String sharedCacheMode);
+    void setSharedCacheMode(String sharedCacheMode);
 
     @Relation("HAS")
-    public Set<PropertyDescriptor> getProperties();
+    Set<PropertyDescriptor> getProperties();
 
 }
