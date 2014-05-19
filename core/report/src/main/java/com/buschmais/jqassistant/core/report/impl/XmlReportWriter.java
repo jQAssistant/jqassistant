@@ -93,7 +93,7 @@ public class XmlReportWriter implements AnalysisListener {
 
     @Override
     public void endConcept() throws AnalysisListenerException {
-        endExecutable();
+        endRule();
     }
 
     @Override
@@ -128,7 +128,7 @@ public class XmlReportWriter implements AnalysisListener {
 
     @Override
     public void endConstraint() throws AnalysisListenerException {
-        endExecutable();
+        endRule();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class XmlReportWriter implements AnalysisListener {
         this.ruleBeginTime = System.currentTimeMillis();
     }
 
-    private void endExecutable() throws AnalysisListenerException {
+    private void endRule() throws AnalysisListenerException {
         if (result != null) {
             final Rule rule = result.getRule();
             final String elementName;
@@ -208,7 +208,7 @@ public class XmlReportWriter implements AnalysisListener {
     private void writeColumn(String columnName, Object value) throws XMLStreamException, AnalysisListenerException {
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
-        String stringValue;
+        String stringValue = null;
         if (value == null) {
             stringValue = null;
         } else if (value instanceof Descriptor) {
@@ -219,24 +219,25 @@ public class XmlReportWriter implements AnalysisListener {
                 xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
                 xmlStreamWriter.writeCharacters(elementValue.name());
                 xmlStreamWriter.writeEndElement(); // element
-            }
-            SourceProvider sourceProvider = elementValue.getSourceProvider();
-            stringValue = sourceProvider.getName(descriptor);
-            String source = sourceProvider.getSource(descriptor);
-            int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
-            if (source != null) {
-                xmlStreamWriter.writeStartElement("source");
-                xmlStreamWriter.writeAttribute("name", source);
-                if (lineNumbers != null) {
-                    for (int lineNumber : lineNumbers) {
-                        xmlStreamWriter.writeStartElement("line");
-                        xmlStreamWriter.writeCharacters(Integer.toString(lineNumber));
-                        xmlStreamWriter.writeEndElement(); // line
+                SourceProvider sourceProvider = elementValue.getSourceProvider();
+                stringValue = sourceProvider.getName(descriptor);
+                String source = sourceProvider.getSource(descriptor);
+                int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
+                if (source != null) {
+                    xmlStreamWriter.writeStartElement("source");
+                    xmlStreamWriter.writeAttribute("name", source);
+                    if (lineNumbers != null) {
+                        for (int lineNumber : lineNumbers) {
+                            xmlStreamWriter.writeStartElement("line");
+                            xmlStreamWriter.writeCharacters(Integer.toString(lineNumber));
+                            xmlStreamWriter.writeEndElement(); // line
+                        }
                     }
+                    xmlStreamWriter.writeEndElement(); // source
                 }
-                xmlStreamWriter.writeEndElement(); // source
             }
-        } else {
+        }
+        if (stringValue == null) {
             stringValue = value.toString();
         }
         xmlStreamWriter.writeStartElement("value");

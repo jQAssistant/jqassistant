@@ -37,7 +37,7 @@
 			MATCH
 				(implementationPackage:Package)
 			WHERE
-				implementationPackage.fqn = "impl"
+				implementationPackage.name = "impl"
 			SET
 			    implementationPackage:Implementation
 			RETURN
@@ -50,7 +50,7 @@
         <description>Return the number of packages per module.</description>
         <cypher><![CDATA[
             MATCH
-                (module:Package:Module)-[:CONTAINS*0..]->(p:PACKAGE)
+                (module:Package:Module)-[:CONTAINS*0..]->(p:Package)
             RETURN
                 module, COUNT(p) as packages
             ORDER BY
