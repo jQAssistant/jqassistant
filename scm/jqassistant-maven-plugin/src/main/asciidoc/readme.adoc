@@ -1,13 +1,146 @@
 == Maven Plugin
 
+jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build process or manual execution from a command line.
+
 === Setup
-Add the following lines should be added to settings.xml (usually located in the $HOME/.m2)), this makes execution of jQAssistant goals from the command line easier:
+==== Project Scope
+
+Software projects often consist of several modules which are combined to executable or deployable artifacts. In a Maven project these modules are usually organized hierarchically with a common parent module which is referenced directly or indirectly by all sub-modules.
+For each project jQAssistant uses a separate database with its own set of rules. Thus if a goal is executed within a Maven structure jQAssistant first determines the project scope, i.e. the root module, by searching within the tree starting from the current module following the parent relation until either a module is found where a directory "jqassistant/" exists or no parent is defined. The determined root module defines the location of
+
+- the set of rules to apply (from the directory "jqassistant/")
+- the database, default "${project.build.directory}/jqassistant/store"
+- the generated native report, default: "${project.build.directory}/jqassistant/jqassistant-report.xml") 
+- and the generated HTML report, default "${project.build.directory}/site/jqassistant.html")
+
+The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.
+
+.Single project consisting of two modules
+[source]
+----
+root*
+   |-pom.xml
+   |
+   |-jqassistant
+   |           |-rules.xml
+   |
+   |-module1
+   |       |-pom.xml
+   |
+   |-module2
+           |-pom.xml
+----
+
+.Multiple projects, each consisting of two modules
+[source]
+----
+root
+   |-pom.xml
+   |
+   |-project1*
+   |        |-jqassistant
+   |        |           |-rules1.xml
+   |        |
+   |        |-pom.xml
+   |        |-module1
+   |        |       |-pom.xml
+   |        |
+   |        |-module2
+   |                |-pom.xml
+   |
+   |-project2*
+   |        |-jqassistant
+   |        |           |-rules2.xml
+   |        |-pom.xml
+   |        |-module1
+   |        |       |-pom.xml
+   |        |
+   |        |-module2
+                    |-pom.xml
+----
+
+The jQAssistant Maven must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
+
+.Default setup of the jQAssistant Maven plugin
+[source,xml]
+----
+<project ...>
+    ...
+    <build>
+        <plugins>
+            <plugin>
+            <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>scan</id>
+                        <goals>
+                            <goal>scan</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>analyze</id>
+                        <goals>
+                            <goal>analyze</goal>
+                        </goals>
+                        <!--
+                        <configuration>
+                            <groups>
+                                <group>default</group>
+                            </groups>
+                            <failOnConstraintViolations>true</failOnConstraintViolations>
+                        </configuration>
+                         -->
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <version>${project.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+    ...
+</project>
+----
+
+Goals may also be executed from the command line:
+
+[source]
+----
+mvn ${project.groupId}:${project.artifactId}:available-rules
+----
+
+Adding the following lines the file settings.xml (usually located in the $HOME/.m2) this makes execution of jQAssistant goals from the command line easier:
 
 [source,xml]
 ----
-	<pluginGroups>
-		<pluginGroup>com.buschmais.scm.maven</pluginGroup>
-	</pluginGroups>
+<pluginGroups>
+    <pluginGroup>com.buschmais.jqassistant.scm</pluginGroup>
+</pluginGroups>
+----
+
+[source]
+----
+mvn jqassistant:available-rules
 ----
 
 === Goals
@@ -20,8 +153,6 @@ Add the following lines should be added to settings.xml (usually located in the 
 * <<available-rules>>
 * <<report>>
 
-*Note:* Some goals refer to a project called ${analysisRoot}. It is determined by searching in the tree of Maven modules starting from the current module following the parent relation until either a module is found where a directory "jqassistant" exists or no parent is defined (i.e. root module).
-
 [[scan]]
 ==== jqassistant:scan
 ===== Description
@@ -30,7 +161,7 @@ Scans the directories of compiled classes and test classes and stores the gather
 ===== Configuration
 * storeDirectory (-Djqassistant.store.directory)
 ** specifies the location of the database
-** default: '${analysisRoot}/target/jqassistant/store'
+** default: '{rootModule}/target/jqassistant/store'
 
 [[reset]]
 ==== jqassistant:reset
@@ -40,7 +171,7 @@ Resets the database by deleting all nodes and relationships.
 ===== Configuration
 * storeDirectory (-Djqassistant.store.directory)
 ** specifies the location of the database
-** default: '${analysisRoot}/target/jqassistant/store'
+** default: '{rootModule}/target/jqassistant/store'
 
 [[server]]
 ==== jqassistant:server
@@ -50,7 +181,7 @@ Starts the integrated Neo4j web server (http://localhost:7474).
 ===== Configuration
 * storeDirectory (-Djqassistant.store.directory)
 ** specifies the location of the database
-** default: '${analysisRoot}/target/jqassistant/store'
+** default: '{rootModule}/target/jqassistant/store'
 
 [[analyze]]
 ==== jqassistant:analyze
@@ -60,7 +191,7 @@ Executes an analysis.
 ===== Configuration
 * storeDirectory (-Djqassistant.store.directory)
 ** specifies the location of the database
-** default: '${analysisRoot}/target/jqassistant/store'
+** default: '{rootModule}/target/jqassistant/store'
 * concepts (-Djqassistant.concepts)
 ** specifies the ids of the concepts to be applied
 * constraints (-Djqassistant.constraints)
@@ -70,7 +201,7 @@ Executes an analysis.
 ** default: 'default'
 * xmlReportFile (-Djqassistant.report.xml)
 ** specifes the target file for writing the XML report
-** default: '${analysisRoot}/target/jqassistant/jqassistant-report.xml'
+** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
 * failOnConstraintViolations (-Djqassistant.failOnConstraintViolations)
 ** determines the jQAssistant shall break the build if constraint violations are detected
 ** default: 'true'
@@ -102,8 +233,8 @@ Transforms an XML report into HTML.
 ===== Configuration
 * xmlReportFile (-Djqassistant.report.xml)
 ** specifes the file containing the XML report from an analysis
-** default: '${analysisRoot}/target/jqassistant/jqassistant-report.xml'
+** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
 * htmlReportFile (-Djqassistant.report.html)
 ** specifes the target file for writing the HTML report
-** default: '${analysisRoot}/target/site/jqassistant.html'
+** default: '{rootModule}/target/site/jqassistant.html'
 
