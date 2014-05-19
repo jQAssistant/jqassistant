@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import java.io.IOException;
+
+import javax.xml.transform.stream.StreamSource;
+
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.PackageDescriptorResolver;
-
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
 
 /**
  * Implementation of the {@link AbstractFileScannerPlugin} for java packages.
@@ -18,7 +19,7 @@ public class PackageScannerPlugin extends AbstractFileScannerPlugin {
 
     @Override
     public boolean matches(String file, boolean isDirectory) {
-        return isDirectory && !"META-INF".equals(file);
+        return isDirectory && !file.startsWith("META-INF");
     }
 
     @Override

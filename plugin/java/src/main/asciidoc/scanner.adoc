@@ -1,4 +1,4 @@
-<<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>>
+<<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>> <<ServiceLoaderFileScanner>>
 
 [[PackageScanner]]
 ==== Package Scanner
@@ -307,4 +307,29 @@ A key value/pair.
 | Name  | Description
 | name  | The name of the property
 | value | The value of the property
+|====
+
+
+
+[[ServiceLoaderFileScanner]]
+==== Service Loader File Scanner
+Imports service loader descriptors from "META-INF/services" directories.
+
+[[:File:ServiceLoader]]
+===== :File:ServiceLoader
+A file containing the implementation class names for a service interface
+
+.Properties of :File:ServiceLoader
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:ServiceLoader
+[options="header"]
+|====
+| Name     | Target label(s)  | Cardinality | Description
+| OF_TYPE  | <<:Type>> | 1    | The type representing the service interface
+| CONTAINS | <<:Type>> | 0..n | References a type which implements the service interface
 |====
