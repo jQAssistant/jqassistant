@@ -159,6 +159,9 @@ public final class ReportHelper {
                                     message.append(value.toString());
                                 }
                             }
+                            else {
+                                message.append(value.toString());
+                            }
                         }
                     }
                     console.error("  " + message.toString());
