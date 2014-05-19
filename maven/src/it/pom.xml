@@ -6,6 +6,7 @@
 	<artifactId>@project.artifactId@.integration</artifactId>
 	<version>@project.version@</version>
 	<packaging>pom</packaging>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
