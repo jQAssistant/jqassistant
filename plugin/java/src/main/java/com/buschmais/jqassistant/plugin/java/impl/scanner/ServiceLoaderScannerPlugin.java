@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescripto
  */
 public class ServiceLoaderScannerPlugin extends AbstractFileScannerPlugin {
 
-    private static final Pattern PATTERN = Pattern.compile(".*/META-INF/services/(.*)");
+    private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
 
     @Override
     protected void initialize() {
@@ -38,7 +38,7 @@ public class ServiceLoaderScannerPlugin extends AbstractFileScannerPlugin {
         if (!matcher.matches()) {
             return null;
         }
-        String serviceInterface = matcher.group(1);
+        String serviceInterface = matcher.group(2);
         ServiceLoaderDescriptor serviceLoaderDescriptor = getStore().create(ServiceLoaderDescriptor.class);
         TypeDescriptor interfaceTypeDescriptor = getTypeDescriptor(serviceInterface);
         serviceLoaderDescriptor.setType(interfaceTypeDescriptor);
