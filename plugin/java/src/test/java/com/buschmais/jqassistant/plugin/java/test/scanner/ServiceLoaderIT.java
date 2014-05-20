@@ -28,7 +28,7 @@ public class ServiceLoaderIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void manifestFile() throws IOException {
+    public void serviceLoader() throws IOException {
         scanClasses(Service.class, ServiceImpl.class);
         scanURLs(ServiceLoaderIT.class.getResource("/META-INF/services/" + Service.class.getName()));
         store.beginTransaction();
