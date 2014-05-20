@@ -1,6 +1,8 @@
 = jQAssistant
 jQAssistant Developer Team <dev@jqassistant.org>
 
+Your Software. Your Structures. Your Rules.
+
 This document describes the concepts of jQAssistant and usage information.
 
 :numbered!:
