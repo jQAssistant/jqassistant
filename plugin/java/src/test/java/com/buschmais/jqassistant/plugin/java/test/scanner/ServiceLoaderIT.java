@@ -3,12 +3,17 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.any;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ServiceLoader;
 
+import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsIterableContainingInAnyOrder;
+import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -29,6 +34,9 @@ public class ServiceLoaderIT extends AbstractPluginIT {
      */
     @Test
     public void manifestFile() throws IOException {
+
+        ServiceLoader<Service> services = ServiceLoader.load(Service.class);
+        assertThat(services, hasItem(any(ServiceImpl.class)));
         scanClasses(Service.class, ServiceImpl.class);
         scanURLs(ServiceLoaderIT.class.getResource("/META-INF/services/" + Service.class.getName()));
         store.beginTransaction();
