@@ -14,11 +14,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.neo4j.cypher.export.DatabaseSubGraph;
 import org.neo4j.cypher.export.SubGraph;
+import org.neo4j.cypher.export.SubGraphExporter;
 import org.neo4j.kernel.GraphDatabaseAPI;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.maven.export.GraphExporter;
 
 /**
  * Exports the database as a file containing cypher statements.
@@ -43,7 +43,7 @@ public class ExportDatabaseMojo extends AbstractAnalysisMojo {
         store.beginTransaction();
         SubGraph graph = DatabaseSubGraph.from(databaseService);
         try {
-            new GraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")));
+            new SubGraphExporter(graph).export(new PrintWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")));
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot export database.", e);
         } finally {
