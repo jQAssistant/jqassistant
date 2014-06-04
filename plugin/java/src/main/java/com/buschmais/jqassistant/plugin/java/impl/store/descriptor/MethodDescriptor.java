@@ -45,13 +45,13 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     Set<ReadsDescriptor> getReads();
 
     @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create unique (m)-[r:READS]->(f) return r")
+    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[r:READS]->(f) return r")
     ReadsDescriptor addReads(@Parameter("target") FieldDescriptor target);
 
     Set<WritesDescriptor> getWrites();
 
     @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create unique (m)-[w:WRITES]->(f) return w")
+    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[w:WRITES]->(f) return w")
     WritesDescriptor addWrites(@Parameter("target") FieldDescriptor target);
 
     @Outgoing
@@ -61,7 +61,7 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     Set<InvokesDescriptor> getInvokedBy();
 
     @ResultOf
-    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create unique (m1)-[i:INVOKES]->(m2) return i")
+    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create (m1)-[i:INVOKES]->(m2) return i")
     InvokesDescriptor addInvokes(@Parameter("target") MethodDescriptor target);
 
     @ResultOf

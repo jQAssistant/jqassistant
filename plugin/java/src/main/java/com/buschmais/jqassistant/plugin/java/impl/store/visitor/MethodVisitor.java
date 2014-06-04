@@ -72,16 +72,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
      *            The descriptor.
      */
     private void addLineNumber(LineNumberDescriptor lineNumberDescriptor) {
-        int[] lineNumbers = lineNumberDescriptor.getLineNumbers();
-        int[] newLineNumbers;
-        if (lineNumbers == null) {
-            newLineNumbers = new int[1];
-        } else {
-            newLineNumbers = new int[lineNumbers.length + 1];
-            System.arraycopy(lineNumbers, 0, newLineNumbers, 0, lineNumbers.length);
-        }
-        newLineNumbers[newLineNumbers.length - 1] = line;
-        lineNumberDescriptor.setLineNumbers(newLineNumbers);
+        lineNumberDescriptor.setLineNumber(line);
     }
 
     @Override

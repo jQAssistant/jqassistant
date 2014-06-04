@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.sonar.plugin.sensor;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -119,7 +118,7 @@ public class JQAssistantSensor implements Sensor {
                         for (RowType rowType : result.getRows().getRow()) {
                             StringBuilder message = new StringBuilder();
                             Resource<?> resource = null;
-                            List<Integer> lineNumbers = null;
+                            Integer lineNumber = null;
                             for (ColumnType column : rowType.getColumn()) {
                                 String name = column.getName();
                                 String value = column.getValue();
@@ -134,9 +133,7 @@ public class JQAssistantSensor implements Sensor {
                                     }
                                 }
                                 SourceType source = column.getSource();
-                                if (source != null) {
-                                    lineNumbers = source.getLine();
-                                }
+                                lineNumber = source.getLine();
                                 if (message.length() > 0) {
                                     message.append(", ");
                                 }
@@ -148,14 +145,7 @@ public class JQAssistantSensor implements Sensor {
                                 resource = project;
                             }
                             String issueDescription = ruleType.getDescription() + "\n" + message.toString();
-                            if (lineNumbers != null) {
-                                for (Integer lineNumber : lineNumbers) {
-                                    createIssue(resource, lineNumber, issueDescription, activeRule, sensorContext);
-                                }
-                            } else {
-                                createIssue(resource, null, issueDescription, activeRule, sensorContext);
-                            }
-
+                            createIssue(resource, lineNumber, issueDescription, activeRule, sensorContext);
                         }
                     }
                 }
