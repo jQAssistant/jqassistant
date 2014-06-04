@@ -25,13 +25,13 @@ public interface SourceProvider<D extends Descriptor> {
     String getSource(D descriptor);
 
     /**
-     * Return the line numbers where the descriptor is represented in the source
+     * Return the line number where the descriptor is represented in the source
      * code.
      * 
      * @param descriptor
      *            The descriptor.
      * @return The line numbers.
      */
-    int[] getLineNumbers(D descriptor);
+    Integer getLineNumber(D descriptor);
 
 }

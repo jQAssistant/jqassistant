@@ -74,9 +74,7 @@ public class XmlReportTest {
                 assertThat(column.getValue(), equalTo("descriptorValue"));
                 SourceType source = column.getSource();
                 assertThat(source.getName(), equalTo("Test.java"));
-                assertThat(source.getLine().size(), equalTo(2));
-                assertThat(source.getLine().get(0), equalTo(1));
-                assertThat(source.getLine().get(1), equalTo(2));
+                assertThat(source.getLine(), equalTo(1));
             }
         }
     }
