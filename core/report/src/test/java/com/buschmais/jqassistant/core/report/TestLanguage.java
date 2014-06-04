@@ -36,8 +36,8 @@ public @interface TestLanguage {
                     }
 
                     @Override
-                    public int[] getLineNumbers(TestDescriptor descriptor) {
-                        return new int[] { 1, 2 };
+                    public Integer getLineNumber(TestDescriptor descriptor) {
+                        return 1;
                     }
                 };
             }

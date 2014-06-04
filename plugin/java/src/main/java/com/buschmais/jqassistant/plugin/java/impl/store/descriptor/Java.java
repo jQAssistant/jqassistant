@@ -36,7 +36,7 @@ public @interface Java {
                     }
 
                     @Override
-                    public int[] getLineNumbers(PackageDescriptor descriptor) {
+                    public Integer getLineNumber(PackageDescriptor descriptor) {
                         return null;
                     }
                 };
@@ -57,8 +57,8 @@ public @interface Java {
                     }
 
                     @Override
-                    public int[] getLineNumbers(TypeDescriptor descriptor) {
-                        return new int[] { 1 };
+                    public Integer getLineNumber(TypeDescriptor descriptor) {
+                        return null;
                     }
                 };
             }
@@ -84,8 +84,8 @@ public @interface Java {
                     }
 
                     @Override
-                    public int[] getLineNumbers(ReadsDescriptor descriptor) {
-                        return descriptor.getLineNumbers();
+                    public Integer getLineNumber(ReadsDescriptor descriptor) {
+                        return descriptor.getLineNumber();
                     }
                 };
             }
@@ -105,8 +105,8 @@ public @interface Java {
                     }
 
                     @Override
-                    public int[] getLineNumbers(WritesDescriptor descriptor) {
-                        return descriptor.getLineNumbers();
+                    public Integer getLineNumber(WritesDescriptor descriptor) {
+                        return descriptor.getLineNumber();
                     }
                 };
             }
@@ -138,8 +138,8 @@ public @interface Java {
                     }
 
                     @Override
-                    public int[] getLineNumbers(InvokesDescriptor descriptor) {
-                        return descriptor.getLineNumbers();
+                    public Integer getLineNumber(InvokesDescriptor descriptor) {
+                        return descriptor.getLineNumber();
                     }
                 };
             }
@@ -166,7 +166,7 @@ public @interface Java {
             }
 
             @Override
-            public int[] getLineNumbers(MemberDescriptor descriptor) {
+            public Integer getLineNumber(MemberDescriptor descriptor) {
                 return null;
             }
         }

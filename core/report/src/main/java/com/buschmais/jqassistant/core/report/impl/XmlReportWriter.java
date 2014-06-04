@@ -222,16 +222,12 @@ public class XmlReportWriter implements AnalysisListener {
                 SourceProvider sourceProvider = elementValue.getSourceProvider();
                 stringValue = sourceProvider.getName(descriptor);
                 String source = sourceProvider.getSource(descriptor);
-                int[] lineNumbers = sourceProvider.getLineNumbers(descriptor);
+                Integer lineNumber = sourceProvider.getLineNumber(descriptor);
                 if (source != null) {
                     xmlStreamWriter.writeStartElement("source");
                     xmlStreamWriter.writeAttribute("name", source);
-                    if (lineNumbers != null) {
-                        for (int lineNumber : lineNumbers) {
-                            xmlStreamWriter.writeStartElement("line");
-                            xmlStreamWriter.writeCharacters(Integer.toString(lineNumber));
-                            xmlStreamWriter.writeEndElement(); // line
-                        }
+                    if (lineNumber != null) {
+                        xmlStreamWriter.writeAttribute("line", lineNumber.toString());
                     }
                     xmlStreamWriter.writeEndElement(); // source
                 }

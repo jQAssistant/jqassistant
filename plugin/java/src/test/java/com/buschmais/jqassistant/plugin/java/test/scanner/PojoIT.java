@@ -41,11 +41,11 @@ public class PojoIT extends AbstractPluginIT {
                         hasItem(equalTo("int getIntValue()")), hasItem(equalTo("void setIntValue(int)"))));
         assertThat(testResult.getColumn("name"),
                 allOf(hasItem(equalTo("getStringValue")), hasItem(equalTo("setStringValue")), hasItem(equalTo("getIntValue")), hasItem(equalTo("setIntValue"))));
-        List<int[]> lines = query("MATCH ()-[i:INVOKES]->() return i.lineNumbers as lines").getColumn("lines");
+        List<int[]> lines = query("MATCH ()-[i:INVOKES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(1));
-        lines = query("MATCH ()-[i:READS]->() return i.lineNumbers as lines").getColumn("lines");
+        lines = query("MATCH ()-[i:READS]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(2));
-        lines = query("MATCH ()-[i:WRITES]->() return i.lineNumbers as lines").getColumn("lines");
+        lines = query("MATCH ()-[i:WRITES]->() return i.lineNumber as lines").getColumn("lines");
         assertThat(lines.size(), equalTo(2));
         store.commitTransaction();
     }
