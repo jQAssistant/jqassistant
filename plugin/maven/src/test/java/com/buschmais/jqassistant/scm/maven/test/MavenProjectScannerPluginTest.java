@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scm.maven.test;
 
+import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,11 +21,11 @@ import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.MavenProjectScannerPlugin;
 
 public class MavenProjectScannerPluginTest {
 
@@ -48,16 +49,17 @@ public class MavenProjectScannerPluginTest {
         when(store.find(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(null, testArtifact);
         when(store.create(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
         scannerPlugin.initialize(store, properties);
-        FileScanner fileScanner = mock(FileScanner.class);
-        List<FileDescriptor> mainFiles = new ArrayList<>();
+        Scanner scanner = mock(Scanner.class);
+        List mainFiles = new ArrayList<>();
         mainFiles.add(mock(FileDescriptor.class));
-        List<FileDescriptor> testFiles = new ArrayList<>();
+        List testFiles = new ArrayList<>();
         testFiles.add(mock(FileDescriptor.class));
-        when(fileScanner.scanDirectory(Mockito.any(File.class))).thenReturn(mainFiles, testFiles);
 
-        scannerPlugin.scan(fileScanner);
+        when(scanner.scan(Mockito.any(File.class), Mockito.eq(CLASSPATH))).thenReturn(mainFiles, testFiles);
 
-        verify(fileScanner, times(2)).scanDirectory(Mockito.any(File.class));
+        scannerPlugin.scan(project, null, null, scanner);
+
+        verify(scanner, times(2)).scan(Mockito.any(File.class), Mockito.eq(CLASSPATH));
         verify(store).find(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(store).create(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(mainArtifact).addContains(Mockito.any(FileDescriptor.class));

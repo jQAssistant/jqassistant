@@ -1,18 +1,18 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
+package com.buschmais.jqassistant.plugin.maven3.impl.scanner.api;
 
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 
 /**
  * Abstract base class for maven project scanner plugins.
  */
-public abstract class AbstractMavenProjectScannerPlugin implements ProjectScannerPlugin {
+public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin<MavenProject> {
 
     /**
      * The artifact type for test jars.
@@ -20,23 +20,22 @@ public abstract class AbstractMavenProjectScannerPlugin implements ProjectScanne
     public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
 
     private Store store;
-    private MavenProject project;
+
+    @Override
+    public Class getType() {
+        return MavenProject.class;
+    }
 
     @Override
     public void initialize(Store store, Map<String, Object> properties) {
         this.store = store;
-        this.project = (MavenProject) properties.get(MavenProject.class.getName());
     }
 
     protected Store getStore() {
         return store;
     }
 
-    protected MavenProject getProject() {
-        return project;
-    }
-
-    protected ArtifactDescriptor getArtifact(boolean testJar) {
+    protected ArtifactDescriptor getArtifact(MavenProject project, boolean testJar) {
         Artifact artifact = project.getArtifact();
         String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
         String id = createArtifactDescriptorId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
