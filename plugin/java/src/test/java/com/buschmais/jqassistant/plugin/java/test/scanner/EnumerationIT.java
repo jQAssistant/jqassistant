@@ -10,14 +10,14 @@ import java.io.IOException;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.enumeration.EnumerationType;
 
 /**
  * Contains test which verify correct scanning of constructors.
  */
-public class EnumerationIT extends AbstractPluginIT {
+public class EnumerationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link EnumerationType}.

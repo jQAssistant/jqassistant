@@ -10,14 +10,14 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 
 /**
  * Tests for the concept java:TypeAssignableFrom.
  */
-public class TypeAssignableFromIT extends AbstractPluginIT {
+public class TypeAssignableFromIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:AssignableFrom".

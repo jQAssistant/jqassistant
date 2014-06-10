@@ -41,9 +41,10 @@ import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginReposito
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -179,118 +180,12 @@ public class AbstractPluginIT {
     }
 
     /**
-     * Return an initialized artifact scanner instance.
+     * Return an initialized scanner instance.
      * 
      * @return The artifact scanner instance.
      */
-    protected FileScanner getFileScanner() {
-        return new FileScannerImpl(getFileScannerPlugins());
-    }
-
-    /**
-     * Scans the given classes.
-     * 
-     * @param classes
-     *            The classes.
-     * @throws java.io.IOException
-     *             If scanning fails.
-     */
-    protected void scanClasses(Class<?>... classes) throws IOException {
-        this.scanClasses(ARTIFACT_ID, classes);
-    }
-
-    /**
-     * Scans the given classes.
-     * 
-     * @param outerClass
-     *            The outer classes.
-     * @param innerClassName
-     *            The outer classes.
-     * @throws java.io.IOException
-     *             If scanning fails.
-     */
-    protected void scanInnerClass(Class<?> outerClass, String innerClassName) throws IOException, ClassNotFoundException {
-        Class<?> innerClass = getInnerClass(outerClass, innerClassName);
-        scanClasses(innerClass);
-    }
-
-    /**
-     * Loads an inner class.
-     * 
-     * @param outerClass
-     *            The out class.
-     * @param innerClassName
-     *            The name of the inner class.
-     * @return The inner class.
-     * @throws ClassNotFoundException
-     *             If the class cannot be loaded.
-     */
-    protected Class<?> getInnerClass(Class<?> outerClass, String innerClassName) throws ClassNotFoundException {
-        String className = outerClass.getName() + "$" + innerClassName;
-        return outerClass.getClassLoader().loadClass(className);
-    }
-
-    /**
-     * Scans the given classes.
-     * 
-     * @param artifactId
-     *            The id of the containing artifact.
-     * @param classes
-     *            The classes.
-     * @throws IOException
-     *             If scanning fails.
-     */
-    protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
-        store.beginTransaction();
-        ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
-        for (FileDescriptor descriptor : getFileScanner().scanClasses(classes)) {
-            artifact.addContains(descriptor);
-        }
-        store.commitTransaction();
-    }
-
-    /**
-     * Scans the given URLs.
-     * 
-     * @param urls
-     *            The URLs.
-     * @throws IOException
-     *             If scanning fails.
-     */
-    protected void scanURLs(URL... urls) throws IOException {
-        this.scanURLs(ARTIFACT_ID, urls);
-    }
-
-    /**
-     * Scans the given URLs (e.g. for anonymous inner classes).
-     * 
-     * @param artifactId
-     *            The id of the containing artifact.
-     * @param urls
-     *            The URLs.
-     * @throws IOException
-     *             If scanning fails.
-     */
-    protected void scanURLs(String artifactId, URL... urls) throws IOException {
-        store.beginTransaction();
-        ArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
-        for (FileDescriptor descriptor : getFileScanner().scanURLs(urls)) {
-            artifact.addContains(descriptor);
-        }
-        store.commitTransaction();
-    }
-
-    /**
-     * Scans the test classes directory.
-     * 
-     * @param rootClass
-     *            A class within the test directory.
-     * @throws IOException
-     *             If scanning fails.
-     */
-    protected void scanClassesDirectory(Class<?> rootClass) throws IOException {
-        File directory = getClassesDirectory(rootClass);
-        scanDirectory(directory);
+    protected Scanner getScanner() {
+        return new ScannerImpl(getScannerPlugins());
     }
 
     /**
@@ -298,18 +193,20 @@ public class AbstractPluginIT {
      * 
      * @param directory
      *            The directory.
-     * @throws IOException
+     * @throws java.io.IOException
      *             If scanning fails.
      */
-    protected void scanDirectory(File directory) throws IOException {
-        // Scan.
+    protected void scanDirectory(Scope scope, File directory) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
-        for (FileDescriptor descriptor : getFileScanner().scanDirectory(directory)) {
+        for (FileDescriptor descriptor : getScanner().scan(directory, scope)) {
             artifact.addContains(descriptor);
         }
         store.commitTransaction();
     }
+
+
+
 
     /**
      * Determines the directory a class is located in (e.g.
@@ -447,7 +344,7 @@ public class AbstractPluginIT {
      *         {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}
      *         .
      */
-    private ArtifactDescriptor getArtifactDescriptor(String artifactId) {
+    protected ArtifactDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
         if (artifact == null) {
             artifact = store.create(ArtifactDescriptor.class, artifactId);
@@ -463,9 +360,9 @@ public class AbstractPluginIT {
         }
     }
 
-    private List<FileScannerPlugin> getFileScannerPlugins() {
+    private List<ScannerPlugin<?>> getScannerPlugins() {
         try {
-            return scannerPluginRepository.getFileScannerPlugins();
+            return scannerPluginRepository.getScannerPlugins();
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }

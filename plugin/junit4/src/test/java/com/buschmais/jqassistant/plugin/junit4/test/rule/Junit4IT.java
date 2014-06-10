@@ -10,7 +10,8 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.junit4.api.JunitScope;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestClass;
 import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
@@ -18,7 +19,7 @@ import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
 /**
  * Tests for Junit4 concepts.
  */
-public class Junit4IT extends AbstractPluginIT {
+public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "junit4:TestClassOrMethod".
@@ -73,7 +74,7 @@ public class Junit4IT extends AbstractPluginIT {
     @Test
     public void testCaseImplementedByMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Example.class);
-        scanURLs(Junit4IT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
+        scanResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         applyConcept("junit4:TestCaseImplementedByMethod");
         store.beginTransaction();
         verifyTestCaseImplementedByMethod("success");

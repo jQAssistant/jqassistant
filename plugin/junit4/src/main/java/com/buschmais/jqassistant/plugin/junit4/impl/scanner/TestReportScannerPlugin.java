@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.junit4.api.JunitScope.TESTREPORTS;
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Iterator;
@@ -12,13 +16,15 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import javax.xml.transform.stream.StreamSource;
 
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
 
-public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
+public class TestReportScannerPlugin extends AbstractScannerPlugin<InputStream> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
@@ -27,16 +33,21 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
     }
 
     @Override
-    public boolean matches(String file, boolean isDirectory) {
-        return !isDirectory && file.matches(".*TEST-.*\\.xml");
+    public Class<? super InputStream> getType() {
+        return InputStream.class;
     }
 
     @Override
-    public TestSuiteDescriptor scanFile(StreamSource streamSource) throws IOException {
+    public boolean accepts(InputStream item, String path, Scope scope) throws IOException {
+        return TESTREPORTS.equals(scope) && path.matches(".*TEST-.*\\.xml");
+    }
+
+    @Override
+    public Iterable<? extends FileDescriptor> scan(InputStream item, String path, Scope scope, Scanner scanner) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try {
-            reader = inputFactory.createXMLEventReader(streamSource.getInputStream());
+            reader = inputFactory.createXMLEventReader(item);
         } catch (XMLStreamException e) {
             throw new IOException("Cannot create XML event reader.", e);
         }
@@ -52,7 +63,6 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
                 switch (elementName) {
                 case "testsuite":
                     testSuiteDescriptor = getStore().create(TestSuiteDescriptor.class);
-                    testSuiteDescriptor.setFileName(streamSource.getSystemId());
                     while (attributes.hasNext()) {
                         Attribute attribute = attributes.next();
                         String attributeName = attribute.getName().getLocalPart();
@@ -112,7 +122,7 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
                 }
             }
         }
-        return testSuiteDescriptor;
+        return asList(testSuiteDescriptor);
     }
 
     private float parseTime(String value) throws IOException {
@@ -121,10 +131,5 @@ public class TestReportScannerPlugin extends AbstractFileScannerPlugin {
         } catch (ParseException e) {
             throw new IOException("Cannot parse time.", e);
         }
-    }
-
-    @Override
-    public TestSuiteDescriptor scanDirectory(String name) throws IOException {
-        return null;
     }
 }

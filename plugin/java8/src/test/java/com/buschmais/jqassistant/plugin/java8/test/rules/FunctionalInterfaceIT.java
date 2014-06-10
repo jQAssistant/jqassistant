@@ -9,13 +9,13 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java8.test.set.rules.FunctionalInterface;
 
 /**
  * Tests for the concept java8:FunctionalInterface.
  */
-public class FunctionalInterfaceIT extends AbstractPluginIT {
+public class FunctionalInterfaceIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java8:FunctionalInterface".

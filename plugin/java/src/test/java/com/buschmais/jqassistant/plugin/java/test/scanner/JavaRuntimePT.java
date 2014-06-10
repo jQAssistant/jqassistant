@@ -17,10 +17,11 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.api.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class JavaRuntimePT extends AbstractPluginIT {
+public class JavaRuntimePT extends AbstractJavaPluginIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JavaRuntimePT.class);
 
@@ -42,7 +43,7 @@ public class JavaRuntimePT extends AbstractPluginIT {
         Assume.assumeNotNull("java.home is not set.", javaHome);
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
         Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
-        Iterator<FileDescriptor> iterator = getFileScanner().scanArchive(runtimeJar).iterator();
+        Iterator<? extends FileDescriptor> iterator = getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), JavaScope.CLASSPATH).iterator();
         Descriptor descriptor;
         do {
             int count = 0;

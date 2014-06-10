@@ -12,10 +12,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -29,10 +27,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.scanner.api.ProjectScanner;
-import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.ProjectScannerImpl;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
@@ -42,7 +38,7 @@ public class TychoProjectScannerPluginTest {
 
     private final static Class<?> clazz = TychoProjectScannerPluginTest.class;
 
-    private final FileScanner fileScanner;
+    private final Scanner scanner;
     private final MavenProject project;
     private final Store store;
     private final Matcher<? super Collection<? extends File>> matcher;
@@ -60,12 +56,13 @@ public class TychoProjectScannerPluginTest {
     }
 
     public TychoProjectScannerPluginTest(List<String> includes, List<String> excludes, Matcher<? super Collection<? extends File>> matcher) throws IOException {
-        this.fileScanner = mock(FileScanner.class);
+        this.scanner = mock(Scanner.class);
         this.store = mock(Store.class);
         this.project = mock(MavenProject.class);
         this.matcher = matcher;
 
-        when(fileScanner.scanFiles(Mockito.any(File.class), Mockito.any(List.class))).thenReturn(Collections.<FileDescriptor> emptyList());
+        List descriptors = Collections.emptyList();
+        when(scanner.scan(Mockito.any(File.class), Mockito.any(Scope.class))).thenReturn(descriptors);
 
         EclipsePluginProject pdeProject = mock(EclipsePluginProject.class);
         BuildProperties properties = mock(BuildProperties.class);
@@ -89,10 +86,8 @@ public class TychoProjectScannerPluginTest {
     @Test
     public void testGetAdditionalFiles() throws Exception {
         TychoProjectScannerPlugin plugin = new TychoProjectScannerPlugin();
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(MavenProject.class.getName(), project);
-        plugin.initialize(store, properties);
-        ProjectScanner projectScanner = new ProjectScannerImpl(fileScanner, Arrays.<ProjectScannerPlugin> asList(plugin));
-        projectScanner.scan();
+        plugin.initialize(store, Collections.<String, Object> emptyMap());
+        plugin.scan(project, null, null, scanner);
+        // FIXME: add assertions
     }
 }

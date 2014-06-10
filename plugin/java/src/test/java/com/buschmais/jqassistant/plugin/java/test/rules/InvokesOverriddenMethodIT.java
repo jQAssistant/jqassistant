@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
 /**
  * Tests for the concept java:InvokeOverriddenMethod.
  */
-public class InvokesOverriddenMethodIT extends AbstractPluginIT {
+public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:InvokeOverriddenMethod" for a class

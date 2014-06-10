@@ -13,10 +13,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericMembers;
 
-public class GenericsIT extends AbstractPluginIT {
+public class GenericsIT extends AbstractJavaPluginIT {
 
     @Test
     public void genericType() throws IOException, NoSuchMethodException {

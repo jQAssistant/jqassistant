@@ -2,16 +2,22 @@ package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
 import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
 import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
+import static java.util.Arrays.asList;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.java.api.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
@@ -26,7 +32,7 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
+public class PersistenceScannerPlugin extends AbstractScannerPlugin<InputStream> {
 
     private JAXBContext jaxbContext;
 
@@ -43,16 +49,21 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
     }
 
     @Override
-    public boolean matches(String file, boolean isDirectory) {
-        return "META-INF/persistence.xml".equals(file) || "WEB-INF/persistence.xml".equals(file);
+    public Class<? super InputStream> getType() {
+        return InputStream.class;
     }
 
     @Override
-    public PersistenceDescriptor scanFile(StreamSource streamSource) throws IOException {
+    public boolean accepts(InputStream item, String path, Scope scope) throws IOException {
+        return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
+    }
+
+    @Override
+    public Iterable<? extends FileDescriptor> scan(InputStream item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            persistence = unmarshaller.unmarshal(streamSource, Persistence.class).getValue();
+            persistence = unmarshaller.unmarshal(new StreamSource(item), Persistence.class).getValue();
         } catch (JAXBException e) {
             throw new IOException("Cannot read model descriptor.", e);
         }
@@ -96,11 +107,6 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
             // Add model unit to model descriptor
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }
-        return persistenceDescriptor;
-    }
-
-    @Override
-    public PersistenceDescriptor scanDirectory(String name) throws IOException {
-        return null;
+        return asList(persistenceDescriptor);
     }
 }

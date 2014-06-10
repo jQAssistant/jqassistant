@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -13,11 +12,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
-public class PojoIT extends AbstractPluginIT {
+public class PojoIT extends AbstractJavaPluginIT {
 
     @Test
     public void attributes() throws IOException {
@@ -27,7 +26,7 @@ public class PojoIT extends AbstractPluginIT {
         assertThat(testResult.getRows().size(), equalTo(1));
         TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
-        assertThat(typeDescriptor.getFileName(), notNullValue());
+        assertThat(typeDescriptor.getFileName(), equalTo("/" + Pojo.class.getName().replace('.', '/') + ".class"));
         assertThat(query("MATCH (t:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t.name as name").getColumn("name"), hasItem(equalTo("Pojo")));
 
         testResult = query("MATCH (t:Type:Class)-[:DECLARES]->(f:Field) RETURN f.signature as signature, f.name as name");

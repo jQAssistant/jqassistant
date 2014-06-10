@@ -9,12 +9,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.junit4.api.JunitScope;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 
-public class TestReportScannerIT extends AbstractPluginIT {
+public class TestReportScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that test reports files are scanned.
@@ -24,7 +25,7 @@ public class TestReportScannerIT extends AbstractPluginIT {
      */
     @Test
     public void reportFile() throws IOException {
-        scanURLs(TestReportScannerIT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
+        scanResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         store.beginTransaction();
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));

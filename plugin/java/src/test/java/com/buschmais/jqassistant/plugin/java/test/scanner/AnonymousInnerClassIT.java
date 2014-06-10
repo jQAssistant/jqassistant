@@ -11,14 +11,14 @@ import java.util.Map;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.innerclass.AnonymousInnerClass;
 
 /**
  * Contains test on relations between outer and inner classes.
  */
-public class AnonymousInnerClassIT extends AbstractPluginIT {
+public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
 
     private static final String INNERCLASS_NAME = AnonymousInnerClass.class.getName() + "$1";
 

@@ -10,17 +10,17 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.MessageDrivenBean;
 import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.SingletonBean;
 import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.StatefulBean;
 import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.StatelessLocalBean;
 import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.StatelessRemoteBean;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
  * Tests for the EJB3 concepts.
  */
-public class Ejb3IT extends AbstractPluginIT {
+public class Ejb3IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "ejb3:StatelessSessionBean".

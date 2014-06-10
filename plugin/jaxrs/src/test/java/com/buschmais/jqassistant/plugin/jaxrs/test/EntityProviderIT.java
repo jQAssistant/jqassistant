@@ -9,10 +9,10 @@ import java.io.IOException;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookReader;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookWriter;
 
@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookWriter;
  * 
  * @author Aparna Chaudhary
  */
-public class EntityProviderIT extends AbstractPluginIT {
+public class EntityProviderIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept {@code jaxrs:EntityProvider} for

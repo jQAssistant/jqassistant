@@ -7,19 +7,24 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
  * Test to verify JAX-RS Resource method designator concepts.
  * 
  * @author Aparna Chaudhary
  */
-public class RequestMethodDesignatorIT extends AbstractPluginIT {
+public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept {@code jaxrs:RequestMethodDesignator}.
