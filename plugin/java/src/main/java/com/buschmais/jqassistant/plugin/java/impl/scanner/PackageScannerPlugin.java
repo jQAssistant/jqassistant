@@ -1,36 +1,43 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static java.util.Arrays.asList;
+
+import java.io.File;
 import java.io.IOException;
 
-import javax.xml.transform.stream.StreamSource;
-
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.PackageDescriptorResolver;
 
 /**
- * Implementation of the {@link AbstractFileScannerPlugin} for java packages.
+ * Implementation of the {@link AbstractScannerPlugin} for java packages.
  */
-public class PackageScannerPlugin extends AbstractFileScannerPlugin {
+public class PackageScannerPlugin extends AbstractScannerPlugin<File> {
+
+    private PackageDescriptorResolver packageDescriptorResolver;
 
     @Override
     protected void initialize() {
+        packageDescriptorResolver = new PackageDescriptorResolver(getStore());
     }
 
     @Override
-    public boolean matches(String file, boolean isDirectory) {
-        return isDirectory && !file.startsWith("META-INF");
+    public Class<? super File> getType() {
+        return File.class;
     }
 
     @Override
-    public PackageDescriptor scanFile(StreamSource streamSource) throws IOException {
-        return null;
+    public boolean accepts(File item, String path, Scope scope) throws IOException {
+        return (CLASSPATH.equals(scope) && item.isDirectory() && path != null && !path.startsWith("/META-INF"));
     }
 
     @Override
-    public PackageDescriptor scanDirectory(String name) throws IOException {
-        String packageName = name.replaceAll("/", ".");
-        PackageDescriptorResolver packageDescriptorResolver = new PackageDescriptorResolver(getStore());
-        return packageDescriptorResolver.resolve(packageName);
+    public Iterable<? extends FileDescriptor> scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+        String packageName = path.substring(1).replaceAll("/", ".");
+        return asList(packageDescriptorResolver.resolve(packageName));
     }
+
 }

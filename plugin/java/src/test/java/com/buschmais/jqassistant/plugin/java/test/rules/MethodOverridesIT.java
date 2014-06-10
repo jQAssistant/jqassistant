@@ -12,8 +12,8 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.java.SubClassType;
 /**
  * Tests for the concept java:MethodOverrides.
  */
-public class MethodOverridesIT extends AbstractPluginIT {
+public class MethodOverridesIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:MethodOverrides" for a class implementing an

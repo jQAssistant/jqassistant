@@ -23,7 +23,7 @@ import org.junit.Test;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations.AnnotatedType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations.Annotation;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.fieldaccesses.FieldAccess;
@@ -43,7 +43,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.Typ
 /**
  * Tests for the dependency concepts and result.
  */
-public class DependencyIT extends AbstractPluginIT {
+public class DependencyIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "dependency:Annotation".

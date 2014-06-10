@@ -9,14 +9,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.ImplicitDefaultConstructor;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.OverloadedConstructor;
 
 /**
  * Contains test which verify correct scanning of constructors.
  */
-public class ConstructorIT extends AbstractPluginIT {
+public class ConstructorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link ImplicitDefaultConstructor}.

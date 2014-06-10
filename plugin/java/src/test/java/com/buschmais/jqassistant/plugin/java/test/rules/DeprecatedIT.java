@@ -12,14 +12,15 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.api.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.deprecated.DeprecatedType;
 
 /**
  * Tests for the concept java:Deprecated.
  */
 @SuppressWarnings("deprecation")
-public class DeprecatedIT extends AbstractPluginIT {
+public class DeprecatedIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:Deprecated".
@@ -33,7 +34,7 @@ public class DeprecatedIT extends AbstractPluginIT {
     public void deprecated() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
-        scanURLs(DeprecatedIT.class.getResource("/" + packageInfoName.replaceAll("\\.", "/") + ".class"));
+        scanResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");
         applyConcept("java:Deprecated");
         store.beginTransaction();
         assertThat(query("MATCH (element:Type:Class:Deprecated) RETURN element").getColumn("element"), hasItem(typeDescriptor(DeprecatedType.class)));

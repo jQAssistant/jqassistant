@@ -12,10 +12,10 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.array.Array;
 
-public class ArrayIT extends AbstractPluginIT {
+public class ArrayIT extends AbstractJavaPluginIT {
 
     @Test
     public void field() throws IOException, NoSuchFieldException, NoSuchMethodException {

@@ -11,20 +11,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import org.hamcrest.Matchers;
-import org.hamcrest.collection.IsIterableContainingInAnyOrder;
-import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.api.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ServiceLoaderDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.Service;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.ServiceImpl;
 
 /**
  * Contains tests regarding service loader descriptors.
  */
-public class ServiceLoaderIT extends AbstractPluginIT {
+public class ServiceLoaderIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that service loader descriptor files are scanned.
@@ -37,7 +35,7 @@ public class ServiceLoaderIT extends AbstractPluginIT {
         ServiceLoader<Service> services = ServiceLoader.load(Service.class);
         assertThat(services, hasItem(any(ServiceImpl.class)));
         scanClasses(Service.class, ServiceImpl.class);
-        scanURLs(ServiceLoaderIT.class.getResource("/META-INF/services/" + Service.class.getName()));
+        scanResource(JavaScope.CLASSPATH, "/META-INF/services/" + Service.class.getName());
         store.beginTransaction();
         List<ServiceLoaderDescriptor> serviceLoaderDescriptors = query("MATCH (sd:ServiceLoader:File) RETURN sd").getColumn("sd");
         assertThat(serviceLoaderDescriptors.size(), equalTo(1));

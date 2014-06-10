@@ -20,11 +20,11 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue;
@@ -34,7 +34,7 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedA
  * Contains test which verify correct scanning of annotations and annotated
  * types.
  */
-public class AnnotationIT extends AbstractPluginIT {
+public class AnnotationIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies an annotation on class level.
