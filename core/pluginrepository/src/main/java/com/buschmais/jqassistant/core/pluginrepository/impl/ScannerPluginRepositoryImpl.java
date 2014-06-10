@@ -5,13 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ScannerType;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.StoreType;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.ProjectScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -21,8 +19,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements ScannerPluginRepository {
 
     private List<Class<?>> descriptorTypes;
-    private List<ProjectScannerPlugin> projectScannerPlugins;
-    private List<FileScannerPlugin> fileScannerPlugins;
+    private List<ScannerPlugin<?>> scannerPlugins;
 
     /**
      * Constructor.
@@ -30,8 +27,7 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
     public ScannerPluginRepositoryImpl(Store store, Map<String, Object> properties) throws PluginRepositoryException {
         List<JqassistantPlugin> plugins = getPlugins();
         this.descriptorTypes = getDescriptorTypes(plugins);
-        this.projectScannerPlugins = getScannerPlugins(plugins, ProjectScannerPlugin.class, store, properties);
-        this.fileScannerPlugins = getScannerPlugins(plugins, FileScannerPlugin.class, store, properties);
+        this.scannerPlugins = getScannerPlugins(plugins, store, properties);
     }
 
     @Override
@@ -40,13 +36,8 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
     }
 
     @Override
-    public List<FileScannerPlugin> getFileScannerPlugins() throws PluginRepositoryException {
-        return fileScannerPlugins;
-    }
-
-    @Override
-    public List<ProjectScannerPlugin> getProjectScannerPlugins() throws PluginRepositoryException {
-        return projectScannerPlugins;
+    public List<ScannerPlugin<?>> getScannerPlugins() throws PluginRepositoryException {
+        return scannerPlugins;
     }
 
     private List<Class<?>> getDescriptorTypes(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
@@ -62,26 +53,19 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
         return types;
     }
 
-    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Class<T> pluginClass, Store store,
-            Map<String, Object> properties) throws PluginRepositoryException {
+    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Store store, Map<String, Object> properties)
+            throws PluginRepositoryException {
         List<T> scannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             ScannerType scannerType = plugin.getScanner();
             if (scannerType != null) {
                 for (String scannerPluginName : scannerType.getPlugin()) {
-                    // if one plugin fails, continue with other plugins
-                    // catch throwable because of NoClassDefFoundError
-                    try {
-                        T scannerPlugin = createInstance(pluginClass, scannerPluginName);
-                        if (scannerPlugin != null) {
-                            scannerPlugin.initialize(store, new HashMap<>(properties));
-                            // properties is mutable, so every plugin should get
-                            // its own copy
-                            scannerPlugins.add(scannerPlugin);
-                        }
-                    } catch (Throwable e) {
-                        System.err.println(String.format("Could not create plugin %s of class %s because of exception %s", scannerPluginName, pluginClass,
-                                e.toString())); // FIXME use logger here
+                    T scannerPlugin = createInstance(scannerPluginName);
+                    if (scannerPlugin != null) {
+                        scannerPlugin.initialize(store, new HashMap<>(properties));
+                        // properties is mutable, so every plugin should get its
+                        // own copy
+                        scannerPlugins.add(scannerPlugin);
                     }
                 }
             }
@@ -111,8 +95,6 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
     /**
      * Create an instance of the given scanner plugin class.
      * 
-     * @param clazz
-     *            The expected class to be cast to.
      * @param typeName
      *            The type name.
      * @param <T>
@@ -120,11 +102,10 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
      * @return The scanner plugin instance.
      * @throws com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException
      */
-    private <T> T createInstance(Class<? extends ScannerPlugin> clazz, String typeName) throws PluginRepositoryException {
+    private <T> T createInstance(String typeName) throws PluginRepositoryException {
         Class<T> type = getType(typeName);
         try {
-            T newInstance = type.newInstance();
-            return clazz.isInstance(newInstance) ? newInstance : null;
+            return type.newInstance();
         } catch (InstantiationException e) {
             throw new PluginRepositoryException("Cannot create instance of class " + type.getName(), e);
         } catch (IllegalAccessException e) {
