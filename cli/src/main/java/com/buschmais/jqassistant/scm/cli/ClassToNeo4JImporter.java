@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.Consumer;
+import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
+import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
@@ -16,9 +19,9 @@ import org.apache.commons.cli.OptionBuilder;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.scanner.api.FileScanner;
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.FileScannerImpl;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
@@ -38,7 +41,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         try {
             for (String directoryName : directoryNames) {
                 properties = new HashMap<>();
-                scanDirectory(store, directoryName, getScannerPluginRepository(store, properties).getFileScannerPlugins());
+                scanDirectory(store, directoryName, getScannerPluginRepository(store, properties).getScannerPlugins());
             }
         } catch (PluginRepositoryException e) {
             throw new RuntimeException(e);
@@ -53,7 +56,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         }
     }
 
-    private void scanDirectory(Store store, final String directoryName, final List<FileScannerPlugin> scannerPlugins) {
+    private void scanDirectory(Store store, final String directoryName, final List<ScannerPlugin<?>> scannerPlugins) {
         final File directory = new File(directoryName);
         if (!directory.exists()) {
             getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
@@ -61,11 +64,14 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
             store.beginTransaction();
             try {
                 final ArtifactDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store);
-                final FileScanner scanner = new FileScannerImpl(scannerPlugins);
+                final Scanner scanner = new ScannerImpl(scannerPlugins);
                 try {
-                    for (FileDescriptor descriptor : scanner.scanDirectory(directory)) {
-                        artifactDescriptor.addContains(descriptor);
-                    }
+                    consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
+                        @Override
+                        public void next(FileDescriptor fileDescriptor) {
+                            artifactDescriptor.addContains(fileDescriptor);
+                        }
+                    });
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
                 }
