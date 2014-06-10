@@ -2,13 +2,13 @@ package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.scanner.api.FileScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * Abstract base implementation of a {@link FileScannerPlugin}.
+ * Abstract base implementation of a {@link ScannerPlugin}.
  */
-public abstract class AbstractFileScannerPlugin implements FileScannerPlugin {
+public abstract class AbstractScannerPlugin<I> implements ScannerPlugin<I> {
 
     private Store store;
 
@@ -22,7 +22,7 @@ public abstract class AbstractFileScannerPlugin implements FileScannerPlugin {
     }
 
     /**
-     * Initialize the concrete plugin.
+     * Initialize the plugin.
      */
     protected abstract void initialize();
 
