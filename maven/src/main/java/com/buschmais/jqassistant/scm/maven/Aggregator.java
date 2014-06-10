@@ -1,14 +1,20 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Provides a mechanism to run aggregated goals on base projects as determined
- * by {@link BaseProjectResolver}.
+ * Provides a mechanism to consume aggregated goals on base projects as
+ * determined by {@link BaseProjectResolver}.
  */
 public final class Aggregator {
 
