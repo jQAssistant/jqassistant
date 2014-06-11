@@ -30,6 +30,11 @@ public class AggregatingIterable<T> implements Iterable<T> {
             public T next() {
                 return currentIterator.next();
             }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("remove");
+            }
         };
     }
 }

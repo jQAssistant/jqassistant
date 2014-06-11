@@ -29,6 +29,11 @@ public abstract class MappingIterable<S, T> implements Iterable<T> {
                     throw new IllegalStateException(e);
                 }
             }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("remove");
+            }
         };
     }
 
