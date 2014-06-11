@@ -122,6 +122,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<InputStream> 
                 }
             }
         }
+        testSuiteDescriptor.setFileName(path);
         return asList(testSuiteDescriptor);
     }
 

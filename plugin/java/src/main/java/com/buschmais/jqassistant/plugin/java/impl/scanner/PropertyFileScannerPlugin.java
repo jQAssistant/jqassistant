@@ -49,6 +49,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<InputStream
             propertyDescriptor.setValue(value);
             propertyFileDescriptor.getProperties().add(propertyDescriptor);
         }
+        propertyFileDescriptor.setFileName(path);
         return asList(propertyFileDescriptor);
     }
 

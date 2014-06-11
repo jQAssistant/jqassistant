@@ -45,6 +45,7 @@ public class ClassScannerPlugin extends AbstractScannerPlugin<InputStream> {
         ClassVisitor visitor = new ClassVisitor(visitorHelper);
         new ClassReader(item).accept(visitor, 0);
         TypeDescriptor typeDescriptor = visitor.getTypeDescriptor();
+        typeDescriptor.setFileName(path);
         return asList(typeDescriptor);
     }
 

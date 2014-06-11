@@ -107,6 +107,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<InputStream>
             // Add model unit to model descriptor
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }
+        persistenceDescriptor.setFileName(path);
         return asList(persistenceDescriptor);
     }
 }

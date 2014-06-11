@@ -40,16 +40,7 @@ public class ScannerImpl implements Scanner {
                 if (scannerPluginType.isAssignableFrom(item.getClass())) {
                     ScannerPlugin<I> selectedPlugin = (ScannerPlugin<I>) scannerPlugin;
                     if (selectedPlugin.accepts(item, relativePath, scope)) {
-                        Iterable<? extends FileDescriptor> descriptors = selectedPlugin.scan(item, relativePath, scope, ScannerImpl.this);
-                        return new MappingIterable<FileDescriptor, FileDescriptor>(descriptors) {
-                            @Override
-                            protected FileDescriptor map(FileDescriptor element) throws IOException {
-                                if (relativePath != null) {
-                                    element.setFileName(relativePath);
-                                }
-                                return element;
-                            }
-                        };
+                        return selectedPlugin.scan(item, relativePath, scope, ScannerImpl.this);
                     }
                 }
                 return emptyList();

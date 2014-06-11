@@ -56,6 +56,7 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<InputStream
             readSection(sectionEntry.getValue(), sectionDescriptor, store);
             manifestFileDescriptor.getManifestSections().add(sectionDescriptor);
         }
+        manifestFileDescriptor.setFileName(path);
         return asList(manifestFileDescriptor);
     }
 
