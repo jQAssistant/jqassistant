@@ -52,6 +52,11 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
                     public ZipEntry next() {
                         return entries.nextElement();
                     }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException("remove");
+                    }
                 };
             }
         };
