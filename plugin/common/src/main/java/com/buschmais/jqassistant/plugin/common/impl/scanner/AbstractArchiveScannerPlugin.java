@@ -13,8 +13,12 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.iterable.AggregatingIterable;
 import com.buschmais.jqassistant.core.scanner.api.iterable.MappingIterable;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<File> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveScannerPlugin.class);
 
     @Override
     protected void initialize() {
@@ -51,14 +55,15 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
                 };
             }
         };
+        final Scope scope = createScope(currentScope);
         MappingIterable<ZipEntry, Iterable<? extends FileDescriptor>> fileDescriptors = new MappingIterable<ZipEntry, Iterable<? extends FileDescriptor>>(
                 zipEntries) {
             @Override
             protected Iterable<? extends FileDescriptor> map(ZipEntry zipEntry) throws IOException {
                 String name = "/" + zipEntry.getName();
                 InputStream stream = zipFile.getInputStream(zipEntry);
-                Scope scope = createScope(currentScope);
                 beforeEntry(path, scope);
+                LOGGER.info("Scanning entry '{}'.", name);
                 Iterable<? extends FileDescriptor> descriptors = scanner.scan(stream, name, scope);
                 return afterEntry(descriptors);
             }
