@@ -55,6 +55,7 @@ public class ServiceLoaderScannerPlugin extends AbstractScannerPlugin<InputStrea
                 TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation);
                 serviceLoaderDescriptor.getContains().add(implementationTypeDescriptor);
             }
+            serviceLoaderDescriptor.setFileName(path);
             return asList(serviceLoaderDescriptor);
         }
         return emptyList();
