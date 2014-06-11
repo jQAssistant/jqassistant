@@ -1,12 +1,16 @@
 == Maven Plugin
 
-jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build process or manual execution from a command line.
+jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which can be used to provide either fully automated scanning and analysis during the build
+process or manual execution from a command line.
 
 === Setup
-==== Project Scope
+==== Project Scope Definition
 
-Software projects often consist of several modules which are combined to executable or deployable artifacts. In a Maven project these modules are usually organized hierarchically with a common parent module which is referenced directly or indirectly by all sub-modules.
-For each project jQAssistant uses a separate database with its own set of rules. Thus if a goal is executed within a Maven structure jQAssistant first determines the project scope, i.e. the root module, by searching within the tree starting from the current module following the parent relation until either a module is found where a directory "jqassistant/" exists or no parent is defined. The determined root module defines the location of
+Software projects often consist of several modules which are combined to executable or deployable artifacts. In a Maven project these modules are usually organized
+hierarchically with a common parent module which is referenced directly or indirectly by all sub-modules. For each project jQAssistant uses a separate database
+with its own set of rules. Thus if a goal is executed within a Maven structure jQAssistant first determines the project scope, i.e. the root module, by searching
+within the tree starting from the current module following the parent relation until either a module is found where a directory "jqassistant/" exists or no parent
+is defined. The determined root module defines the location of
 
 - the set of rules to apply (from the directory "jqassistant/")
 - the database, default "${project.build.directory}/jqassistant/store"
@@ -59,9 +63,11 @@ root
                     |-pom.xml
 ----
 
-The jQAssistant Maven must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
+==== Plugin Configuration
 
-.Default setup of the jQAssistant Maven plugin
+The jQAssistant Maven plugin must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
+
+.Setup of the jQAssistant Maven plugin
 [source,xml]
 ----
 <project ...>
@@ -94,6 +100,15 @@ The jQAssistant Maven must be configured in the pom.xml of the root module, it s
                          -->
                     </execution>
                 </executions>
+                <!--
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant.plugin</groupId>
+                        <artifactId>jqassistant.plugin.jpa2</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                -->
             </plugin>
         </plugins>
     </build>
@@ -122,6 +137,8 @@ The jQAssistant Maven must be configured in the pom.xml of the root module, it s
 </project>
 ----
 
+==== Command Line
+
 Goals may also be executed from the command line:
 
 [source]
@@ -129,7 +146,7 @@ Goals may also be executed from the command line:
 mvn ${project.groupId}:${project.artifactId}:available-rules
 ----
 
-Adding the following lines the file settings.xml (usually located in the $HOME/.m2) this makes execution of jQAssistant goals from the command line easier:
+Adding the following lines to the file settings.xml (usually located in the $HOME/.m2) eases execution of jQAssistant goals from the command line:
 
 [source,xml]
 ----
@@ -137,6 +154,8 @@ Adding the following lines the file settings.xml (usually located in the $HOME/.
     <pluginGroup>com.buschmais.jqassistant.scm</pluginGroup>
 </pluginGroups>
 ----
+
+The same goal can now be executed using the following command line statement:
 
 [source]
 ----
