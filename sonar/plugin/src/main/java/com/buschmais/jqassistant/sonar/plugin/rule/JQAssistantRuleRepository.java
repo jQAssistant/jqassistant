@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.xml.transform.Source;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
@@ -17,11 +15,15 @@ import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 
@@ -57,13 +59,14 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     @Override
     public List<Rule> createRules() {
         List<Rule> rules = new ArrayList<>();
-        RulePluginRepository pluginManager;
+        PluginRepository pluginRepository = new PluginRepositoryImpl();
+        RulePluginRepository rulePluginRepository;
         try {
-            pluginManager = new RulePluginRepositoryImpl();
+            rulePluginRepository = new RulePluginRepositoryImpl(pluginRepository);
         } catch (PluginRepositoryException e) {
             throw new SonarException("Cannot read rules.", e);
         }
-        List<Source> ruleSources = pluginManager.getRuleSources();
+        List<Source> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         RuleSet ruleSet = ruleSetReader.read(ruleSources);
         for (Concept concept : ruleSet.getConcepts().values()) {

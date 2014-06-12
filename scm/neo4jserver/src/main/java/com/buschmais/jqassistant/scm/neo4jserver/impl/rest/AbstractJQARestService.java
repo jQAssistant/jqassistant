@@ -13,9 +13,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
@@ -29,13 +31,15 @@ public abstract class AbstractJQARestService {
      * The rules reader instance.
      */
     private RuleSetReader ruleSetReader;
+    private PluginRepository pluginRepository;
     private RulePluginRepository rulePluginRepository;
 
     private Store store = null;
 
     protected AbstractJQARestService(Store store) throws PluginRepositoryException {
         this.store = store;
-        rulePluginRepository = new RulePluginRepositoryImpl();
+        pluginRepository = new PluginRepositoryImpl();
+        rulePluginRepository = new RulePluginRepositoryImpl(pluginRepository);
         ruleSetReader = new RuleSetReaderImpl();
     }
 
@@ -50,7 +54,7 @@ public abstract class AbstractJQARestService {
 
     protected ScannerPluginRepository getScannerPluginRepository() {
         try {
-            return new ScannerPluginRepositoryImpl(getStore(), Collections.<String, Object> emptyMap());
+            return new ScannerPluginRepositoryImpl(pluginRepository, getStore(), Collections.<String, Object> emptyMap());
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugin repository", e);
         }
@@ -72,4 +76,5 @@ public abstract class AbstractJQARestService {
         reportHelper.verifyConceptResults(reportWriter);
         reportHelper.verifyConstraintViolations(reportWriter);
         return reportWriter;
-    }}
+    }
+}

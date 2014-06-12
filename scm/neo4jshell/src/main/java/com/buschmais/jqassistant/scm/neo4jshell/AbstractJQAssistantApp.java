@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.transform.Source;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.shell.AppCommandParser;
 import org.neo4j.shell.AppShellServer;
@@ -22,8 +21,11 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -37,16 +39,19 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
     private static final Pattern CONCEPTS_PATTERN = Pattern.compile("concepts=(.*)");
     private static final Pattern CONSTRAINTS_PATTERN = Pattern.compile("constraints=(.*)");
     private static final Pattern GROUPS_PATTERN = Pattern.compile("groups=(.*)");
+
+    private PluginRepository pluginRepository;
+    private RulePluginRepository rulePluginRepository;
     /**
      * The rules reader instance.
      */
     private RuleSetReader ruleSetReader;
-    private RulePluginRepository rulePluginRepository;
 
     private Store store = null;
 
     protected AbstractJQAssistantApp() throws PluginRepositoryException {
-        rulePluginRepository = new RulePluginRepositoryImpl();
+        pluginRepository = new PluginRepositoryImpl();
+        rulePluginRepository = new RulePluginRepositoryImpl(pluginRepository);
         ruleSetReader = new RuleSetReaderImpl();
     }
 
@@ -76,7 +81,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
 
     protected ScannerPluginRepository getScannerPluginRepository() {
         try {
-            return new ScannerPluginRepositoryImpl(getStore(), Collections.<String, Object> emptyMap());
+            return new ScannerPluginRepositoryImpl(pluginRepository, getStore(), Collections.<String, Object> emptyMap());
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugin repository", e);
         }

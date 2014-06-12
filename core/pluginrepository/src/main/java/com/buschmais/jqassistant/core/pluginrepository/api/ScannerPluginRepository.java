@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 /**
  * Defines the interface for the scanner plugin repository.
  */
-public interface ScannerPluginRepository extends PluginRepository {
+public interface ScannerPluginRepository {
 
     /**
      * Return the instances of the configured descriptor mappers.

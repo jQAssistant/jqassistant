@@ -8,6 +8,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ScannerType;
 import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.StoreType;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -16,16 +17,16 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * Scanner plugin repository implementation.
  */
-public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements ScannerPluginRepository {
+public class ScannerPluginRepositoryImpl implements ScannerPluginRepository {
 
-    private List<Class<?>> descriptorTypes;
-    private List<ScannerPlugin<?>> scannerPlugins;
+    private final List<Class<?>> descriptorTypes;
+    private final List<ScannerPlugin<?>> scannerPlugins;
 
     /**
      * Constructor.
      */
-    public ScannerPluginRepositoryImpl(Store store, Map<String, Object> properties) throws PluginRepositoryException {
-        List<JqassistantPlugin> plugins = getPlugins();
+    public ScannerPluginRepositoryImpl(PluginRepository pluginRepository, Store store, Map<String, Object> properties) throws PluginRepositoryException {
+        List<JqassistantPlugin> plugins = pluginRepository.getPlugins();
         this.descriptorTypes = getDescriptorTypes(plugins);
         this.scannerPlugins = getScannerPlugins(plugins, store, properties);
     }

@@ -5,15 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.apache.commons.cli.Option;
 
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -21,9 +21,11 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected final String taskName;
     protected Map<String,Object> properties;
+    protected PluginRepository pluginRepository;
 
     protected CommonJqAssistantTask(final String taskName) {
         this.taskName = taskName;
+        this.pluginRepository = new PluginRepositoryImpl();
     }
 
     @Override
@@ -39,7 +41,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected Store getStore() {
         File directory = new File("./tmp/store"); // TODO take directory from
                                                   // properties
-        getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
+        Log.getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         directory.getParentFile().mkdirs();
         return new EmbeddedGraphStore(directory.getAbsolutePath());
     }
@@ -65,7 +67,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
 
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
-            return new ScannerPluginRepositoryImpl(store, properties);
+            return new ScannerPluginRepositoryImpl(pluginRepository, store, properties);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }

@@ -71,7 +71,7 @@ public class PluginRepositoryImpl implements PluginRepository {
      * 
      * @return The plugins which can be resolved from the current classpath.
      */
-    protected List<JqassistantPlugin> getPlugins() {
+    public List<JqassistantPlugin> getPlugins() {
         if (this.plugins == null) {
             final Enumeration<URL> resources;
             try {
