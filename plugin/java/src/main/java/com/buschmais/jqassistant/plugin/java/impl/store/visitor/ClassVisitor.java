@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.plugin.java.api.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AccessModifierDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationTypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassTypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumTypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
@@ -21,7 +22,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.VisibilityMod
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
-    private TypeDescriptor typeDescriptor;
+    private ClassFileDescriptor typeDescriptor;
     private VisitorHelper visitorHelper;
 
     public ClassVisitor(VisitorHelper visitorHelper) {
@@ -34,13 +35,13 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * 
      * @return The type descriptor.
      */
-    public TypeDescriptor getTypeDescriptor() {
+    public ClassFileDescriptor getTypeDescriptor() {
         return typeDescriptor;
     }
 
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
-        Class<? extends TypeDescriptor> javaType = getJavaType(access);
+        Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
         typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(name), javaType);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
             typeDescriptor.setAbstract(Boolean.TRUE);
@@ -213,7 +214,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      *            The access flags.
      * @return The types label.
      */
-    private Class<? extends TypeDescriptor> getJavaType(int flags) {
+    private Class<? extends ClassFileDescriptor> getJavaType(int flags) {
         if (hasFlag(flags, Opcodes.ACC_ANNOTATION)) {
             return AnnotationTypeDescriptor.class;
         } else if (hasFlag(flags, Opcodes.ACC_ENUM)) {

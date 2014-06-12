@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
@@ -24,7 +24,7 @@ public class PojoIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t as types");
         assertThat(testResult.getRows().size(), equalTo(1));
-        TypeDescriptor typeDescriptor = (TypeDescriptor) testResult.getRows().get(0).get("types");
+        ClassFileDescriptor typeDescriptor = (ClassFileDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
         assertThat(typeDescriptor.getFileName(), equalTo("/" + Pojo.class.getName().replace('.', '/') + ".class"));
         assertThat(query("MATCH (t:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t.name as name").getColumn("name"), hasItem(equalTo("Pojo")));

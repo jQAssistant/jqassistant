@@ -9,5 +9,5 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  */
 @Java(Type)
 @Label("Interface")
-public interface InterfaceTypeDescriptor extends TypeDescriptor {
+public interface InterfaceTypeDescriptor extends ClassFileDescriptor {
 }

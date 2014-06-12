@@ -4,6 +4,7 @@
     </description>
     <store>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDirectoryDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassTypeDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.InterfaceTypeDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.EnumTypeDescriptor</type>
@@ -29,12 +30,12 @@
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.JarScannerPlugin</plugin>
-        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageScannerPlugin</plugin>
-        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageDirectoryScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassTypeScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ManifestFileScannerPlugin</plugin>
-        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ServiceLoaderScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ServiceLoaderFileScannerPlugin</plugin>
     </scanner>
     <rules>
         <resources>

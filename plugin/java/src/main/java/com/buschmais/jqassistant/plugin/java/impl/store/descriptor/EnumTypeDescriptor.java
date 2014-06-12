@@ -6,5 +6,5 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
  * Denotes an enumeration type.
  */
 @Java(Type)
-public interface EnumTypeDescriptor extends TypeDescriptor, EnumDescriptor {
+public interface EnumTypeDescriptor extends ClassFileDescriptor, EnumDescriptor {
 }

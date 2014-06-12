@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.java.impl.store.visitor.ClassVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper;
@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper;
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
-public class ClassScannerPlugin extends AbstractScannerPlugin<InputStream> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<InputStream> {
 
     private VisitorHelper visitorHelper;
 
@@ -44,9 +44,9 @@ public class ClassScannerPlugin extends AbstractScannerPlugin<InputStream> {
     public Iterable<? extends FileDescriptor> scan(InputStream item, String path, Scope scope, Scanner scanner) throws IOException {
         ClassVisitor visitor = new ClassVisitor(visitorHelper);
         new ClassReader(item).accept(visitor, 0);
-        TypeDescriptor typeDescriptor = visitor.getTypeDescriptor();
-        typeDescriptor.setFileName(path);
-        return asList(typeDescriptor);
+        ClassFileDescriptor classFileDescriptor = visitor.getTypeDescriptor();
+        classFileDescriptor.setFileName(path);
+        return asList(classFileDescriptor);
     }
 
 }

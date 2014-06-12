@@ -6,5 +6,5 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
  * Denotes a class type.
  */
 @Java(Type)
-public interface ClassTypeDescriptor extends TypeDescriptor, ClassDescriptor {
+public interface ClassTypeDescriptor extends ClassFileDescriptor, ClassDescriptor {
 }
