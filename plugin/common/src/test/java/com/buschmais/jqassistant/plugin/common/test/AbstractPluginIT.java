@@ -35,9 +35,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
@@ -128,12 +130,13 @@ public class AbstractPluginIT {
 
     protected InMemoryReportWriter reportWriter;
 
+    private PluginRepository pluginRepository = new PluginRepositoryImpl();
     private RulePluginRepository rulePluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
 
     @Before
     public void readRules() throws PluginRepositoryException {
-        rulePluginRepository = new RulePluginRepositoryImpl();
+        rulePluginRepository = new RulePluginRepositoryImpl(pluginRepository);
         List<Source> sources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         ruleSet = ruleSetReader.read(sources);
@@ -159,7 +162,7 @@ public class AbstractPluginIT {
     @Before
     public void startStore() throws PluginRepositoryException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
-        scannerPluginRepository = new ScannerPluginRepositoryImpl(store, Collections.<String, Object> emptyMap());
+        scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginRepository, store, Collections.<String, Object> emptyMap());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         boolean resetStore = true;
@@ -204,9 +207,6 @@ public class AbstractPluginIT {
         }
         store.commitTransaction();
     }
-
-
-
 
     /**
      * Determines the directory a class is located in (e.g.
