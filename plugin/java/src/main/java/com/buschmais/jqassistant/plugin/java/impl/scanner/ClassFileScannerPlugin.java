@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.objectweb.asm.ClassReader;
 
@@ -22,12 +23,15 @@ import com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper;
  */
 public class ClassFileScannerPlugin extends AbstractScannerPlugin<InputStream> {
 
-    private VisitorHelper visitorHelper;
+    private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
+
+    private ClassVisitor visitor;
 
     @Override
     protected void initialize() {
         DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(getStore());
-        this.visitorHelper = new VisitorHelper(getStore(), resolverFactory);
+        VisitorHelper visitorHelper = new VisitorHelper(getStore(), resolverFactory);
+        visitor = new ClassVisitor(visitorHelper);
     }
 
     @Override
@@ -36,14 +40,20 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<InputStream> {
     }
 
     @Override
-    public boolean accepts(InputStream item, String path, Scope scope) throws IOException {
-        return CLASSPATH.equals(scope) && path.endsWith(".class") && !path.contains("apple");
+    public boolean accepts(InputStream stream, String path, Scope scope) throws IOException {
+        if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
+            stream.mark(4);
+            byte[] header = new byte[4];
+            stream.read(header);
+            stream.reset();
+            return Arrays.equals(CAFEBABE, header);
+        }
+        return false;
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(InputStream item, String path, Scope scope, Scanner scanner) throws IOException {
-        ClassVisitor visitor = new ClassVisitor(visitorHelper);
-        new ClassReader(item).accept(visitor, 0);
+    public Iterable<? extends FileDescriptor> scan(InputStream stream, String path, Scope scope, Scanner scanner) throws IOException {
+        new ClassReader(stream).accept(visitor, 0);
         ClassFileDescriptor classFileDescriptor = visitor.getTypeDescriptor();
         classFileDescriptor.setFileName(path);
         return asList(classFileDescriptor);

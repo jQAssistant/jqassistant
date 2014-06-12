@@ -43,7 +43,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.4.0-SNAPSHOT</com.buschmais.xo_version>
-        <org.neo4j_version>2.1.1</org.neo4j_version>
+        <org.neo4j_version>2.1.2</org.neo4j_version>
     </properties>
 
     <profiles>
