@@ -26,9 +26,11 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -100,6 +102,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     @Component
     private StoreRepository storeRepository;
 
+    private PluginRepository pluginRepository = new PluginRepositoryImpl();
 
     /**
      * The rules reader instance.
@@ -145,7 +148,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
         try {
-            return new ScannerPluginRepositoryImpl(store, properties);
+            return new ScannerPluginRepositoryImpl(pluginRepository, store, properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -160,7 +163,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
         try {
-            return new RulePluginRepositoryImpl();
+            return new RulePluginRepositoryImpl(pluginRepository);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
