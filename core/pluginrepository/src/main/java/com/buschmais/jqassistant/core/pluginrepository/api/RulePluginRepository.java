@@ -7,7 +7,7 @@ import javax.xml.transform.Source;
 /**
  * Defines the interface for the scanner plugin repository.
  */
-public interface RulePluginRepository extends PluginRepository {
+public interface RulePluginRepository {
 
     /**
      * Get a list of sources providing rules.

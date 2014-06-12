@@ -1,15 +1,5 @@
 package com.buschmais.jqassistant.core.pluginrepository.impl;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ResourcesType;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.RulesType;
-import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -17,10 +7,23 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ResourcesType;
+import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.RulesType;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
+import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
+
 /**
  * Rule repository implementation.
  */
-public class RulePluginRepositoryImpl extends PluginRepositoryImpl implements RulePluginRepository {
+public class RulePluginRepositoryImpl implements RulePluginRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RulePluginRepositoryImpl.class);
 
@@ -29,8 +32,8 @@ public class RulePluginRepositoryImpl extends PluginRepositoryImpl implements Ru
     /**
      * Constructor.
      */
-    public RulePluginRepositoryImpl() throws PluginRepositoryException {
-        this.sources = getRuleSources(getPlugins());
+    public RulePluginRepositoryImpl(PluginRepository pluginRepository) throws PluginRepositoryException {
+        this.sources = getRuleSources(pluginRepository.getPlugins());
     }
 
     @Override
@@ -40,7 +43,7 @@ public class RulePluginRepositoryImpl extends PluginRepositoryImpl implements Ru
 
     private List<Source> getRuleSources(List<JqassistantPlugin> plugins) {
         List<Source> sources = new ArrayList<>();
-        for (JqassistantPlugin plugin : getPlugins()) {
+        for (JqassistantPlugin plugin : plugins) {
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
                 String directory = rulesType.getDirectory();
