@@ -50,7 +50,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             break;
         case Opcodes.PUTFIELD:
         case Opcodes.PUTSTATIC:
-           addLineNumber(this.methodDescriptor.addWrites(fieldDescriptor));
+            addLineNumber(this.methodDescriptor.addWrites(fieldDescriptor));
             break;
         }
     }
@@ -101,7 +101,9 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
-        visitorHelper.addDependency(methodDescriptor, type);
+        if (type != null) {
+            visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType(type));
+        }
     }
 
     @Override
