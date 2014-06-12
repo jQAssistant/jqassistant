@@ -5,6 +5,7 @@ import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
@@ -29,5 +30,5 @@ public interface PackageDescriptor extends PackageMemberDescriptor {
 
     @ResultOf
     @Cypher("match (p),(f) where id(p)={this} and id(f)={file} create unique (p)-[:CONTAINS]->(f)")
-    void addContains(@Parameter("file") FileDescriptor file);
+    void addContains(@Parameter("file") Descriptor file);
 }

@@ -23,7 +23,7 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescripto
  * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
  * for java packages.
  */
-public class ServiceLoaderScannerPlugin extends AbstractScannerPlugin<InputStream> {
+public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<InputStream> {
 
     private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
 

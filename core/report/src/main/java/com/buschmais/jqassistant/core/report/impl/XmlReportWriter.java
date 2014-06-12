@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
@@ -221,15 +222,15 @@ public class XmlReportWriter implements AnalysisListener {
                 xmlStreamWriter.writeEndElement(); // element
                 SourceProvider sourceProvider = elementValue.getSourceProvider();
                 stringValue = sourceProvider.getName(descriptor);
-                String source = sourceProvider.getSource(descriptor);
+                FileDescriptor sourceFile = sourceProvider.getSourceFile(descriptor);
                 Integer lineNumber = sourceProvider.getLineNumber(descriptor);
-                if (source != null) {
+                if (sourceFile != null) {
                     xmlStreamWriter.writeStartElement("source");
-                    xmlStreamWriter.writeAttribute("name", source);
+                    xmlStreamWriter.writeAttribute("name", sourceFile.getFileName());
                     if (lineNumber != null) {
                         xmlStreamWriter.writeAttribute("line", lineNumber.toString());
                     }
-                    xmlStreamWriter.writeEndElement(); // source
+                    xmlStreamWriter.writeEndElement(); // sourceFile
                 }
             }
         }

@@ -70,7 +70,7 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    TypeDescriptor getTypeDescriptor(String fullQualifiedName, Class<? extends TypeDescriptor> type) {
+    <T extends TypeDescriptor> T getTypeDescriptor(String fullQualifiedName, Class<T> type) {
         TypeDescriptor typeDescriptor = typeCache.get(fullQualifiedName);
         if (typeDescriptor != null && !type.isAssignableFrom(typeDescriptor.getClass())) {
             typeCache.remove(typeDescriptor);
@@ -82,7 +82,7 @@ public class VisitorHelper {
             typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type);
             typeCache.put(fullQualifiedName, typeDescriptor);
         }
-        return typeDescriptor;
+        return type.cast(typeDescriptor);
     }
 
     /**

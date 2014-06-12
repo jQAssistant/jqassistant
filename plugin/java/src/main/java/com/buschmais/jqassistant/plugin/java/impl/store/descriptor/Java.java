@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 
 /**
  * Defines the language elements for "Java".
@@ -24,19 +25,19 @@ public @interface Java {
         Package {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new SourceProvider<PackageDescriptor>() {
+                return new SourceProvider<PackageDirectoryDescriptor>() {
                     @Override
-                    public String getName(PackageDescriptor descriptor) {
+                    public String getName(PackageDirectoryDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public String getSource(PackageDescriptor descriptor) {
-                        return descriptor.getFileName();
+                    public FileDescriptor getSourceFile(PackageDirectoryDescriptor descriptor) {
+                        return descriptor;
                     }
 
                     @Override
-                    public Integer getLineNumber(PackageDescriptor descriptor) {
+                    public Integer getLineNumber(PackageDirectoryDescriptor descriptor) {
                         return null;
                     }
                 };
@@ -45,19 +46,19 @@ public @interface Java {
         Type {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new SourceProvider<TypeDescriptor>() {
+                return new SourceProvider<ClassFileDescriptor>() {
                     @Override
-                    public String getName(TypeDescriptor descriptor) {
+                    public String getName(ClassFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public String getSource(TypeDescriptor descriptor) {
-                        return descriptor.getFileName();
+                    public FileDescriptor getSourceFile(ClassFileDescriptor descriptor) {
+                        return descriptor;
                     }
 
                     @Override
-                    public Integer getLineNumber(TypeDescriptor descriptor) {
+                    public Integer getLineNumber(ClassFileDescriptor descriptor) {
                         return null;
                     }
                 };
@@ -79,8 +80,9 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSource(ReadsDescriptor descriptor) {
-                        return descriptor.getMethod().getDeclaringType().getFileName();
+                    public FileDescriptor getSourceFile(ReadsDescriptor descriptor) {
+                        TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
+                        return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
                     }
 
                     @Override
@@ -100,8 +102,9 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSource(WritesDescriptor descriptor) {
-                        return descriptor.getMethod().getDeclaringType().getFileName();
+                    public FileDescriptor getSourceFile(WritesDescriptor descriptor) {
+                        TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
+                        return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
                     }
 
                     @Override
@@ -133,8 +136,9 @@ public @interface Java {
                     }
 
                     @Override
-                    public String getSource(InvokesDescriptor descriptor) {
-                        return descriptor.getInvokingMethod().getDeclaringType().getFileName();
+                    public FileDescriptor getSourceFile(InvokesDescriptor descriptor) {
+                        TypeDescriptor declaringType = descriptor.getInvokingMethod().getDeclaringType();
+                        return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
                     }
 
                     @Override
@@ -161,8 +165,9 @@ public @interface Java {
             }
 
             @Override
-            public String getSource(MemberDescriptor descriptor) {
-                return descriptor.getDeclaringType().getFileName();
+            public FileDescriptor getSourceFile(MemberDescriptor descriptor) {
+                TypeDescriptor declaringType = descriptor.getDeclaringType();
+                return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
             }
 
             @Override
@@ -170,6 +175,18 @@ public @interface Java {
                 return null;
             }
         }
-    }
 
+        /**
+         * Returns the file name of the given descriptor if it extends
+         * {@link com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor}
+         * .
+         * 
+         * @param descriptor
+         *            The descriptor.
+         * @return The
+         */
+        private static String getFileName(Descriptor descriptor) {
+            return descriptor instanceof FileDescriptor ? ((FileDescriptor) descriptor).getFileName() : null;
+        }
+    }
 }

@@ -71,11 +71,11 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
      *            The concrete type to use if an instance is created.
      * @return The descriptor.
      */
-    public T resolve(String fullQualifiedName, Class<? extends T> concreteType) {
+    public <R extends T> R resolve(String fullQualifiedName, Class<R> concreteType) {
         T descriptor = store.find(getBaseType(), fullQualifiedName);
         if (descriptor != null) {
             if (getBaseType().equals(concreteType)) {
-                return descriptor;
+                return concreteType.cast(descriptor);
             } else {
                 return store.migrate(descriptor, concreteType);
             }
@@ -101,7 +101,7 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
             if (parent != null) {
                 parent.addContains(descriptor);
             }
-            return descriptor;
+            return concreteType.cast(descriptor);
         }
     }
 

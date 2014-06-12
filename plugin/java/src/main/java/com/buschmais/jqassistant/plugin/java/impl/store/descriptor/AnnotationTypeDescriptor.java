@@ -6,5 +6,5 @@ import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.J
  * Denotes an annotation type.
  */
 @Java(Type)
-public interface AnnotationTypeDescriptor extends TypeDescriptor, AnnotationDescriptor {
+public interface AnnotationTypeDescriptor extends ClassFileDescriptor, AnnotationDescriptor {
 }
