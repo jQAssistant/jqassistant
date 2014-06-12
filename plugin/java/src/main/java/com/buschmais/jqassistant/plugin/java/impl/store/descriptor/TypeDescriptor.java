@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.store.descriptor;
 
-import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement.Type;
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
@@ -19,7 +18,6 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 /**
  * Describes a Java type.
  */
-@Java(Type)
 @Label(value = "Type", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
