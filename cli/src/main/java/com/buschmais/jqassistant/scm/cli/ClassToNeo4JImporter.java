@@ -50,7 +50,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
 
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
-            return new ScannerPluginRepositoryImpl(store, properties);
+            return new ScannerPluginRepositoryImpl(pluginRepository, store, properties);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }
