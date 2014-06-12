@@ -1,5 +1,16 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+
+import java.util.Collection;
+import java.util.Map;
+
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.kernel.GraphDatabaseAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
@@ -7,16 +18,6 @@ import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.GraphDatabaseAPI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.Map;
-
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * Abstract base implementation of a {@link Store}.
@@ -65,8 +66,8 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
-    public <T extends Descriptor, C extends T> C migrate(T descriptor, Class<C> concreteType) {
-        return xoManager.migrate(descriptor, concreteType);
+    public <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types) {
+        return xoManager.migrate(descriptor, concreteType, types).as(concreteType);
     }
 
     @Override
@@ -85,13 +86,14 @@ public abstract class AbstractGraphStore implements Store {
         return xoManager.createQuery(query).withParameters(parameters).execute();
     }
 
-
     @Override
     public void reset() {
-        if (LOGGER.isInfoEnabled()) LOGGER.info("Resetting store.");
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Resetting store.");
         runQueryUntilResultIsZero("MATCH (n)-[r]-() WITH n, collect(r) as rels LIMIT 10000 FOREACH (r in rels | DELETE r) DELETE n RETURN COUNT(*) as deleted");
         runQueryUntilResultIsZero("MATCH (n) WITH n LIMIT 50000 DELETE n RETURN COUNT(*) as deleted");
-        if (LOGGER.isInfoEnabled()) LOGGER.info("Reset finished.");
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Reset finished.");
     }
 
     private void runQueryUntilResultIsZero(String deleteNodesAndRels) {
@@ -132,15 +134,16 @@ public abstract class AbstractGraphStore implements Store {
 
     /**
      * Delegates to the sub class to start the database.
-     *
+     * 
      * @return The {@link GraphDatabaseService} instance to use.
      */
     protected abstract XOManagerFactory createXOManagerFactory(Collection<Class<?>> types);
 
     /**
      * Delegates to the sub class to stop the database.
-     *
-     * @param database The used {@link GraphDatabaseService} instance.
+     * 
+     * @param database
+     *            The used {@link GraphDatabaseService} instance.
      */
     protected abstract void closeXOManagerFactory(XOManagerFactory database);
 

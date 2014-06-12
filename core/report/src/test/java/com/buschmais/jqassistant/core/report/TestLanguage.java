@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 
 /**
  * A test language to be verified in the XML report.
@@ -31,8 +32,17 @@ public @interface TestLanguage {
                     }
 
                     @Override
-                    public String getSource(TestDescriptor descriptor) {
-                        return "Test.java";
+                    public FileDescriptor getSourceFile(TestDescriptor descriptor) {
+                        return new FileDescriptor() {
+                            @Override
+                            public String getFileName() {
+                                return "Test.java";
+                            }
+
+                            @Override
+                            public void setFileName(String fileName) {
+                            }
+                        };
                     }
 
                     @Override
