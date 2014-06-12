@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,13 +9,14 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.iterable.AggregatingIterable;
 import com.buschmais.jqassistant.core.scanner.api.iterable.MappingIterable;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<File> {
 
@@ -66,7 +68,7 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
             @Override
             protected Iterable<? extends FileDescriptor> map(ZipEntry zipEntry) throws IOException {
                 String name = "/" + zipEntry.getName();
-                InputStream stream = zipFile.getInputStream(zipEntry);
+                InputStream stream = new BufferedInputStream(zipFile.getInputStream(zipEntry));
                 beforeEntry(path, scope);
                 LOGGER.info("Scanning entry '{}'.", name);
                 Iterable<? extends FileDescriptor> descriptors = scanner.scan(stream, name, scope);
