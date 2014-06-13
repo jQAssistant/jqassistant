@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -27,6 +28,6 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
     @Override
     public Iterable<? extends FileDescriptor> scan(Class<?> item, String path, Scope scope, Scanner scanner) throws IOException {
         String resource = "/" + item.getName().replace('.', '/') + ".class";
-        return scanner.scan(item.getResourceAsStream(resource), resource, scope);
+        return scanner.scan(new BufferedInputStream(item.getResourceAsStream(resource)), resource, scope);
     }
 }
