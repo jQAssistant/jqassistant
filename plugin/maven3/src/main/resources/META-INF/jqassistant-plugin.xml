@@ -1,6 +1,12 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
     <description>Provides a scanner for Maven 3 modules.</description>
+    <store>
+        <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.DependsOnDescriptor</type>
+    </store>
     <scanner>
-        <plugin>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.MavenProjectScannerPlugin</plugin>
+        <plugin>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin</plugin>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

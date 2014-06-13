@@ -59,6 +59,12 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target) {
+        R descriptor = xoManager.create(source, relationType, target);
+        return descriptor;
+    }
+
+    @Override
     public <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName) {
         T descriptor = xoManager.create(type);
         descriptor.setFullQualifiedName(fullQualifiedName);

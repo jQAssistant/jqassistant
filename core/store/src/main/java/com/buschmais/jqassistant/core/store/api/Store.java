@@ -72,18 +72,17 @@ public interface Store {
     <T extends Descriptor> T create(Class<T> type);
 
     /**
-     * Migrates the descriptor instance to the given sub-type.
+     * Creates a relation between to {@link Descriptor}s.
      * 
-     * @param descriptor
-     *            The descriptor.
-     * @param concreteType
-     *            The concrete type.
-     * @param <T>
-     *            The descriptor type.
-     * @param <C>
-     *            The concrete type.
+     * @param source
+     *            The source descriptor.
+     * @param relationType
+     *            The relationt type to create.
+     * @param target
+     *            The target descriptor.
+     * @return The {@link Descriptor}.
      */
-    <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types);
+    <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target);
 
     /**
      * Creates a {@link Descriptor} of the given type with a full qualified name
@@ -97,6 +96,20 @@ public interface Store {
      *         .
      */
     <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);
+
+    /**
+     * Migrates the descriptor instance to the given sub-type.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param concreteType
+     *            The concrete type.
+     * @param <T>
+     *            The descriptor type.
+     * @param <C>
+     *            The concrete type.
+     */
+    <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types);
 
     /**
      * Finds a {@link Descriptor}.
