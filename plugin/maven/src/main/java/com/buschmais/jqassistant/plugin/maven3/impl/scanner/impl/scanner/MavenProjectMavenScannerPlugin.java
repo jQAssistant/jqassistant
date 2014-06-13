@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl;
+package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner;
 
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.Consumer;
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
@@ -8,7 +8,9 @@ import static java.util.Collections.emptyList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +21,15 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.AbstractMavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
 
 /**
  * A project scanner plugin for maven projects.
  */
-public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
+public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectMavenScannerPlugin.class);
 
     @Override
     public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
@@ -38,7 +42,24 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         scanDirectory(project, scanner, project.getBuild().getTestOutputDirectory(), true);
         scanTestReports(scanner, project.getBuild().getDirectory() + "/surefire-reports");
         scanTestReports(scanner, project.getBuild().getDirectory() + "/failsafe-reports");
+        addDependencies(project);
         return emptyList();
+    }
+
+    private void addDependencies(MavenProject project) {
+        Store store = getStore();
+        store.beginTransaction();
+        try {
+            MavenProjectDescriptor moduleDescriptor = resolveProject(project);
+            for (Artifact artifact : (Set<Artifact>) project.getDependencyArtifacts()) {
+                MavenProjectDescriptor dependency = resolveProject(artifact);
+                DependsOnDescriptor dependsOnDescriptor = store.create(moduleDescriptor, DependsOnDescriptor.class, dependency);
+                dependsOnDescriptor.setScope(artifact.getScope());
+                dependsOnDescriptor.setType(artifact.getType());
+            }
+        } finally {
+            store.commitTransaction();
+        }
     }
 
     /**
@@ -57,14 +78,15 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
             Store store = getStore();
             store.beginTransaction();
             try {
-                final ArtifactDescriptor artifactDescriptor = getArtifact(project, testJar);
-                consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
+                final ArtifactDescriptor artifactDescriptor = getArtifact(project.getArtifact(), testJar);
+               consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
                     @Override
                     public void next(FileDescriptor fileDescriptor) {
                         artifactDescriptor.addContains(fileDescriptor);
                     }
                 });
-            } finally {
+                resolveProject(project).getCreatesArtifacts().add(artifactDescriptor);
+          } finally {
                 store.commitTransaction();
             }
         }

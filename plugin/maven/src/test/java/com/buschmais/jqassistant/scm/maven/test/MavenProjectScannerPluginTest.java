@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.scm.maven.test;
 
 import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,16 +26,20 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.MavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor;
 
 public class MavenProjectScannerPluginTest {
 
     @Test
     public void projectScannerPlugin() throws IOException {
-        MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin();
+        MavenProjectMavenScannerPlugin scannerPlugin = new MavenProjectMavenScannerPlugin();
         MavenProject project = mock(MavenProject.class);
         Artifact artifact = new DefaultArtifact("group", "artifact", VersionRange.createFromVersion("1.0.0"), null, "jar", "main", null);
         when(project.getArtifact()).thenReturn(artifact);
+        when(project.getPackaging()).thenReturn("jar");
+        when(project.getFile()).thenReturn(mock(File.class));
         Build build = new Build();
         build.setOutputDirectory("target/classes");
         build.setTestOutputDirectory("target/test-classes");
@@ -42,6 +47,9 @@ public class MavenProjectScannerPluginTest {
         Map<String, Object> properties = new HashMap<>();
         properties.put(MavenProject.class.getName(), project);
         Store store = mock(Store.class);
+        MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
+        when(store.find(MavenProjectDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
+        when(store.create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(projectDescriptor);
         ArtifactDescriptor mainArtifact = mock(ArtifactDescriptor.class);
         when(store.find(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(null, mainArtifact);
         when(store.create(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(mainArtifact);
@@ -60,10 +68,13 @@ public class MavenProjectScannerPluginTest {
         scannerPlugin.scan(project, null, null, scanner);
 
         verify(scanner, times(2)).scan(Mockito.any(File.class), Mockito.eq(CLASSPATH));
-        verify(store).find(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");
+        verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
+        verify(projectDescriptor).setGroupId("group");
+        verify(projectDescriptor).setArtifactId("artifact");
+        verify(projectDescriptor).setVersion("1.0.0");
+        verify(projectDescriptor, atLeast(1)).setPackaging("jar");
         verify(store).create(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(mainArtifact).addContains(Mockito.any(FileDescriptor.class));
-        verify(store).find(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0");
         verify(store).create(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0");
         verify(testArtifact).addContains(Mockito.any(FileDescriptor.class));
     }
