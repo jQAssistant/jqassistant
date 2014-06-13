@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.plugin.jpa2.test;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -26,6 +28,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
+import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEmbeddable;
 import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
 
 /**
@@ -47,6 +50,61 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         applyConcept("jpa2:Entity");
         store.beginTransaction();
         assertThat(query("MATCH (e:Type:Jpa:Entity) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "jpa2:Embeddable".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void embeddable() throws IOException, AnalysisException {
+        scanClasses(JpaEmbeddable.class);
+        applyConcept("jpa2:Embeddable");
+        store.beginTransaction();
+        assertThat(query("MATCH (e:Type:Jpa:Embeddable) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEmbeddable.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "jpa2:Embedded".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void embedded() throws IOException, AnalysisException, NoSuchFieldException, NoSuchMethodException {
+        scanClasses(JpaEntity.class);
+        applyConcept("jpa2:Embedded");
+        store.beginTransaction();
+        List<Object> members = query("MATCH (e:Jpa:Embedded) RETURN e").getColumn("e");
+        assertThat(members, hasItem(fieldDescriptor(JpaEntity.class, "embedded")));
+        assertThat(members, hasItem(methodDescriptor(JpaEntity.class, "getEmbedded")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "jpa2:EmbeddedId".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void embeddedId() throws IOException, AnalysisException, NoSuchFieldException, NoSuchMethodException {
+        scanClasses(JpaEntity.class);
+        applyConcept("jpa2:EmbeddedId");
+        store.beginTransaction();
+        List<Object> members = query("MATCH (e:Jpa:EmbeddedId) RETURN e").getColumn("e");
+        assertThat(members, hasItem(fieldDescriptor(JpaEntity.class, "id")));
+        assertThat(members, hasItem(methodDescriptor(JpaEntity.class, "getId")));
         store.commitTransaction();
     }
 

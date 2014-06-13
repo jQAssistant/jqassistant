@@ -3,10 +3,60 @@
     <concept id="jpa2:Entity">
         <description>Labels all types annotated with @javax.persistence.Entity with "Jpa" and "Entity".</description>
         <cypher><![CDATA[
-            MATCH (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
-            WHERE a.fqn="javax.persistence.Entity"
-            SET t:Jpa:Entity
-            RETURN t AS JpaEntity
+            MATCH
+              (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="javax.persistence.Entity"
+            SET
+              t:Jpa:Entity
+            RETURN
+              t AS JpaEntity
+        ]]></cypher>
+    </concept>
+
+    <concept id="jpa2:Embeddable">
+        <description>Labels all types annotated with @javax.persistence.Embeddable with "Jpa" and "Embeddable".</description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="javax.persistence.Embeddable"
+            SET
+              t:Jpa:Embeddable
+            RETURN
+              t AS JpaEmbeddable
+        ]]></cypher>
+    </concept>
+
+    <concept id="jpa2:Embedded">
+        <description>Labels all fields or methods annotated with @javax.persistence.Embedded with "Jpa" and "Embedded".</description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:DECLARES]->(member),
+              (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              (member:Field or member:Method)
+              and a.fqn="javax.persistence.Embedded"
+            SET
+              member:Jpa:Embedded
+            RETURN
+              member AS JpaEmbedded
+        ]]></cypher>
+    </concept>
+
+    <concept id="jpa2:EmbeddedId">
+        <description>Labels all fields or methods annotated with @javax.persistence.EmbeddedId with "Jpa" and "Embedded".</description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:DECLARES]->(member),
+              (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              (member:Field or member:Method)
+              and a.fqn="javax.persistence.EmbeddedId"
+            SET
+              member:Jpa:EmbeddedId
+            RETURN
+              member AS EmbeddedId
         ]]></cypher>
     </concept>
 
