@@ -41,12 +41,12 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     }
 
     @Override
-    public Iterable<FileDescriptor> scan(MavenProject item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<FileDescriptor> scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = getStore();
         store.beginTransaction();
         try {
-            final ArtifactDescriptor artifact = getArtifact(item, false);
-            for (File file : getPdeFiles(item)) {
+            final ArtifactDescriptor artifact = getArtifact(project, false);
+            for (File file : getPdeFiles(project)) {
                 consume(scanner.scan(file, file.getPath(), CLASSPATH), new IterableConsumer.Consumer<FileDescriptor>() {
                     @Override
                     public void next(FileDescriptor fileDescriptor) {

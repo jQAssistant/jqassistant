@@ -62,7 +62,7 @@ public class TychoProjectScannerPluginTest {
         this.matcher = matcher;
 
         List descriptors = Collections.emptyList();
-        when(scanner.scan(Mockito.any(File.class), Mockito.any(Scope.class))).thenReturn(descriptors);
+        when(scanner.scan(Mockito.any(File.class), Mockito.any(String.class), Mockito.any(Scope.class))).thenReturn(descriptors);
 
         EclipsePluginProject pdeProject = mock(EclipsePluginProject.class);
         BuildProperties properties = mock(BuildProperties.class);
