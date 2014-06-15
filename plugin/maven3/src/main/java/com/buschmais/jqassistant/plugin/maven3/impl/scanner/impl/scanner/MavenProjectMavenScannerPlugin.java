@@ -8,6 +8,7 @@ import static java.util.Collections.emptyList;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -72,19 +73,24 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
                 DependsOnDescriptor dependsOnDescriptor = store.create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
                 dependsOnDescriptor.setScope(Artifact.SCOPE_TEST);
             }
-            for (Artifact artifact : (Set<Artifact>) project.getDependencyArtifacts()) {
-                ArtifactDescriptor dependency = resolveArtifact(artifact);
+            for (MavenProject module : (List<MavenProject>) project.getCollectedProjects()) {
+                MavenProjectDescriptor moduleDescriptor = resolveProject(module, MavenProjectDescriptor.class);
+                projectDescriptor.getModules().add(moduleDescriptor);
+            }
+            for (Artifact dependency : (Set<Artifact>) project.getDependencyArtifacts()) {
+                ArtifactDescriptor dependencyDescriptor = resolveArtifact(dependency);
                 DependsOnDescriptor dependsOnDescriptor;
                 ArtifactDescriptor dependentDescriptor;
-                if (Artifact.SCOPE_TEST.equals(artifact.getScope())) {
+                String scope = dependency.getScope();
+                if (Artifact.SCOPE_TEST.equals(scope)) {
                     dependentDescriptor = testArtifactDescriptor;
                 } else {
                     dependentDescriptor = mainArtifactDescriptor;
                 }
                 if (dependentDescriptor != null) {
-                    dependsOnDescriptor = store.create(dependentDescriptor, DependsOnDescriptor.class, dependency);
-                    dependsOnDescriptor.setScope(artifact.getScope());
-                    dependsOnDescriptor.setOptional(artifact.isOptional());
+                    dependsOnDescriptor = store.create(dependentDescriptor, DependsOnDescriptor.class, dependencyDescriptor);
+                    dependsOnDescriptor.setScope(scope);
+                    dependsOnDescriptor.setOptional(dependency.isOptional());
                 }
             }
         } finally {
