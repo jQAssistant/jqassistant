@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor;
 
 /**
  * Abstract base class for maven project scanner plugins.
@@ -37,32 +36,28 @@ public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin
         return store;
     }
 
-    protected MavenProjectDescriptor resolveProject(MavenProject project) {
-        MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project.getArtifact(), MavenProjectDirectoryDescriptor.class);
-        projectDescriptor.setFileName(project.getFile().getAbsolutePath());
-        projectDescriptor.setPackaging(project.getPackaging());
-        return projectDescriptor;
-    }
-
-    protected MavenProjectDescriptor resolveProject(Artifact artifact) {
-        return resolveProject(artifact, MavenProjectDescriptor.class);
-    }
-
-    protected <T extends MavenProjectDescriptor> T resolveProject(Artifact artifact, Class<T> expectedType) {
+    protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType) {
+        Artifact artifact = project.getArtifact();
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), null, null, artifact.getVersion());
-        MavenProjectDescriptor moduleDescriptor = getStore().find(MavenProjectDescriptor.class, id);
-        if (moduleDescriptor == null) {
-            moduleDescriptor = store.create(expectedType, id);
-            moduleDescriptor.setGroupId(artifact.getGroupId());
-            moduleDescriptor.setArtifactId(artifact.getArtifactId());
-            moduleDescriptor.setVersion(artifact.getVersion());
-        } else if (!expectedType.isAssignableFrom(moduleDescriptor.getClass())) {
-            moduleDescriptor = getStore().migrate(moduleDescriptor, expectedType);
+        MavenProjectDescriptor projectDescriptor = getStore().find(MavenProjectDescriptor.class, id);
+        if (projectDescriptor == null) {
+            projectDescriptor = store.create(expectedType, id);
+            projectDescriptor.setName(project.getName());
+            projectDescriptor.setGroupId(artifact.getGroupId());
+            projectDescriptor.setArtifactId(artifact.getArtifactId());
+            projectDescriptor.setVersion(artifact.getVersion());
+        } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
+            projectDescriptor = getStore().migrate(projectDescriptor, expectedType);
         }
-        return expectedType.cast(moduleDescriptor);
+        return expectedType.cast(projectDescriptor);
     }
 
-    protected ArtifactDescriptor getArtifact(Artifact artifact, boolean testJar) {
+    protected ArtifactDescriptor resolveArtifact(Artifact artifact) {
+        boolean testJar = ARTIFACTTYPE_TEST_JAR.equals(artifact.getType());
+        return resolveArtifact(artifact, testJar);
+    }
+
+    protected ArtifactDescriptor resolveArtifact(Artifact artifact, boolean testJar) {
         String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
         ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);

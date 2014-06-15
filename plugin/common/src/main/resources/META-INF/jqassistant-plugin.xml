@@ -2,6 +2,7 @@
     <description>Provides common elements to be re-used by other plugins.</description>
     <store>
         <type>com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor</type>
+        <type>com.buschmais.jqassistant.plugin.common.impl.store.descriptor.DependsOnDescriptor</type>
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.common.impl.scanner.DirectoryScannerPlugin</plugin>

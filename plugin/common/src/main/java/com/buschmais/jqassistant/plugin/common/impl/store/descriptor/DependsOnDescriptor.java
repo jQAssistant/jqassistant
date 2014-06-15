@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store;
+package com.buschmais.jqassistant.plugin.common.impl.store.descriptor;
 
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
@@ -11,18 +11,18 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 public interface DependsOnDescriptor extends Descriptor {
 
     @Outgoing
-    MavenProjectDescriptor getDependent();
+    ArtifactDescriptor getDependent();
 
     @Incoming
-    MavenProjectDescriptor getDependency();
-
-    @Property("type")
-    String getType();
-
-    void setType(String type);
+    ArtifactDescriptor getDependency();
 
     @Property("scope")
     String getScope();
 
     void setScope(String scope);
+
+    @Property("optional")
+    boolean isOptional();
+
+    void setOptional(boolean optional);
 }

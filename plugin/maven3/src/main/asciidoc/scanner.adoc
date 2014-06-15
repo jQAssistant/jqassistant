@@ -1,0 +1,59 @@
+<<MavenProjectScanner>>
+[[MavenProjectScanner]]
+==== Scanner for Maven projects
+Imports information from Maven projects.
+
+[[:Maven:Project]]
+===== :Maven:Project:File
+A pom.xml file describing a single Maven project.
+
+.Properties of :Maven:Project:File
+[options="header"]
+|====
+| Name       | Description
+| fileName   | The absolute file name of the pom.xml descriptor
+| name       | The name
+| groupId    | The group id
+| artifactId | The artifact id
+| packaging  | The packaging type, e.g. "jar"
+| version    | The version
+|====
+
+.Relations of :Maven:Project:File
+[options="header"]
+|====
+| Name       | Target label(s)          | Cardinality | Description
+| CREATES    | <<:Artifact>>            | 0..n        | References an artifact created by the project
+| HAS_PARENT | <<:Maven:Project>>       | 0..1        | References the parent project (optional)
+|====
+
+[[:Artifact]]
+===== :Artifact
+Represents an artifact, e.g. a JAR-File.
+
+.Properties of :Artifact
+[options="header"]
+|====
+| Name       | Description
+| groupId    | The group id
+| artifactId | The artifact id
+| type       | The type, e.g. "jar"
+| classifier | The classifiert
+| version    | The version
+|====
+
+.Relations of :Artifact
+[options="header"]
+|====
+| Name       | Target label(s)     | Cardinality | Description
+| CONTAINS   | <<:File>>           | 0..n    | References a file contained in the artifact
+| DEPENDS_ON | <<:Artifact>>       | 0..n    | References a artifact which is a declared dependency
+|====
+
+.Properties of :DEPENDS_ON
+[options="header"]
+|====
+| Name     | Description
+| scope    | The declared scope, e.g. "compile"
+| optional | "true" indicates that this dependency is optional.
+|====

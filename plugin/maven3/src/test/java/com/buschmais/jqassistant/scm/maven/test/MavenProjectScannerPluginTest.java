@@ -26,6 +26,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor;
@@ -35,11 +36,22 @@ public class MavenProjectScannerPluginTest {
     @Test
     public void projectScannerPlugin() throws IOException {
         MavenProjectMavenScannerPlugin scannerPlugin = new MavenProjectMavenScannerPlugin();
+
+        // Mock parent project
+        MavenProject parentProject = mock(MavenProject.class);
+        Artifact parentArtifact = new DefaultArtifact("group", "parent-artifact", VersionRange.createFromVersion("1.0.0"), null, "pom", "main", null);
+        when(parentProject.getArtifact()).thenReturn(parentArtifact);
+        when(parentProject.getPackaging()).thenReturn("pom");
+
+        // Mock project
         MavenProject project = mock(MavenProject.class);
+        when(project.getName()).thenReturn("project");
         Artifact artifact = new DefaultArtifact("group", "artifact", VersionRange.createFromVersion("1.0.0"), null, "jar", "main", null);
         when(project.getArtifact()).thenReturn(artifact);
         when(project.getPackaging()).thenReturn("jar");
         when(project.getFile()).thenReturn(mock(File.class));
+        when(project.getParent()).thenReturn(parentProject);
+
         Build build = new Build();
         build.setOutputDirectory("target/classes");
         build.setTestOutputDirectory("target/test-classes");
@@ -48,7 +60,7 @@ public class MavenProjectScannerPluginTest {
         properties.put(MavenProject.class.getName(), project);
         Store store = mock(Store.class);
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
-        when(store.find(MavenProjectDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
+        when(store.find(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
         when(store.create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(projectDescriptor);
         ArtifactDescriptor mainArtifact = mock(ArtifactDescriptor.class);
         when(store.find(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(null, mainArtifact);
@@ -56,6 +68,13 @@ public class MavenProjectScannerPluginTest {
         ArtifactDescriptor testArtifact = mock(ArtifactDescriptor.class);
         when(store.find(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(null, testArtifact);
         when(store.create(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
+        DependsOnDescriptor dependsOnDescriptor = mock(DependsOnDescriptor.class);
+        when(store.create(testArtifact, DependsOnDescriptor.class, mainArtifact)).thenReturn(dependsOnDescriptor);
+
+        MavenProjectDescriptor parentProjectDescriptor = mock(MavenProjectDescriptor.class);
+        when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
+        when(store.create(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(parentProjectDescriptor);
+
         scannerPlugin.initialize(store, properties);
         Scanner scanner = mock(Scanner.class);
         List mainFiles = new ArrayList<>();
@@ -69,6 +88,7 @@ public class MavenProjectScannerPluginTest {
 
         verify(scanner, times(2)).scan(Mockito.any(File.class), Mockito.eq(CLASSPATH));
         verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
+        verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");
         verify(projectDescriptor).setArtifactId("artifact");
         verify(projectDescriptor).setVersion("1.0.0");
@@ -77,5 +97,6 @@ public class MavenProjectScannerPluginTest {
         verify(mainArtifact).addContains(Mockito.any(FileDescriptor.class));
         verify(store).create(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0");
         verify(testArtifact).addContains(Mockito.any(FileDescriptor.class));
+        verify(store).create(testArtifact, DependsOnDescriptor.class, mainArtifact);
     }
 }

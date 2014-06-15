@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.impl.store.descriptor;
 
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
+import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
+import java.util.List;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
@@ -79,4 +82,10 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     @ResultOf
     @Cypher("match (a),(f) where id(a)={this} and id(f)={file} create unique (a)-[:CONTAINS]->(f)")
     public void addContains(@Parameter("file") FileDescriptor file);
+
+    @Outgoing
+    List<DependsOnDescriptor> getDependencies();
+
+    @Incoming
+    List<DependsOnDescriptor> getDependents();
 }
