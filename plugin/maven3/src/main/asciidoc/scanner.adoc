@@ -45,9 +45,9 @@ Represents an artifact, e.g. a JAR-File.
 .Relations of :Artifact
 [options="header"]
 |====
-| Name       | Target label(s)     | Cardinality | Description
-| CONTAINS   | <<:File>>           | 0..n    | References a file contained in the artifact
-| DEPENDS_ON | <<:Artifact>>       | 0..n    | References a artifact which is a declared dependency
+| Name       | Target label(s) | Cardinality | Description
+| CONTAINS   | :File           | 0..n    | References a file contained in the artifact
+| DEPENDS_ON | <<:Artifact>>   | 0..n    | References a artifact which is a declared dependency
 |====
 
 .Properties of :DEPENDS_ON

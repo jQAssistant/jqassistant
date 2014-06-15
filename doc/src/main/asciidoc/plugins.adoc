@@ -1,4 +1,7 @@
 == Plugins
+
+This section provides detailed descriptions of all distributed plugins.
+
 include::{docRoot}/jqassistant.plugin.ejb3/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.jaxrs/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.java/plugin.adoc[]

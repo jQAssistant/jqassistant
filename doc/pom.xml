@@ -140,14 +140,14 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.forbiddenmethod</artifactId>
+            <artifactId>jqassistant.examples.rules.naming</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc-with-sources</classifier>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.namingrules</artifactId>
+            <artifactId>jqassistant.examples.rules.forbiddenmethod</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc-with-sources</classifier>

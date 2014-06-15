@@ -62,8 +62,7 @@
     </reporting>
 
     <modules>
-        <module>namingrules</module>
-        <module>forbiddenmethod</module>
+        <module>rules</module>
         <module>sonar</module>
     </modules>
 

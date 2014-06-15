@@ -1,8 +1,8 @@
 == Examples
 === Rules
 
-include::{docRoot}/jqassistant.examples.forbiddenmethod/readme.adoc[]
-include::{docRoot}/jqassistant.examples.namingrules/readme.adoc[]
+include::{docRoot}/jqassistant.examples.rules.forbiddenmethod/readme.adoc[]
+include::{docRoot}/jqassistant.examples.rules.naming/readme.adoc[]
 
 === Integration with SonarQube
 include::{docRoot}/jqassistant.examples.sonar.project/readme.adoc[]

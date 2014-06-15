@@ -1,0 +1,21 @@
+==== Naming Rules
+
+Demonstrates concepts and constraints to enforce names and locations of classes with dedicated roles.
+
+These roles are assigned by
+
+* implementing a dedicated interface
+
+[source,xml]
+.jqassistant/controller.xml
+----
+include::{docRoot}/jqassistant.examples.rules.naming/src/jqassistant/controller.xml[lines=3..41]
+----
+
+* being marked with a dedicated annotation
+
+[source,xml]
+.jqassistant/model.xml
+----
+include::{docRoot}/jqassistant.examples.rules.naming/src/jqassistant/model.xml[lines=3..41]
+----
