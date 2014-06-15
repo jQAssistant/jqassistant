@@ -4,7 +4,6 @@
         <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor</type>
         <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor</type>
-        <type>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.DependsOnDescriptor</type>
     </store>
     <scanner>
         <plugin>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin</plugin>

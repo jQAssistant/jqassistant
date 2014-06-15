@@ -20,9 +20,10 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.AbstractMavenProjectScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor;
 
 /**
  * A project scanner plugin for maven projects.
@@ -38,24 +39,53 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
 
     @Override
     public Iterable<FileDescriptor> scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
-        scanDirectory(project, scanner, project.getBuild().getOutputDirectory(), false);
-        scanDirectory(project, scanner, project.getBuild().getTestOutputDirectory(), true);
+        Store store = getStore();
+        store.beginTransaction();
+        MavenProjectDirectoryDescriptor projectDescriptor;
+        try {
+            projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class);
+            projectDescriptor.setFileName(project.getFile().getAbsolutePath());
+            projectDescriptor.setPackaging(project.getPackaging());
+        } finally {
+            store.commitTransaction();
+        }
+        Artifact artifact = project.getArtifact();
+        ArtifactDescriptor mainArtifactDescriptor = scanDirectory(projectDescriptor, artifact, false, project.getBuild().getOutputDirectory(), scanner);
+        ArtifactDescriptor testArtifactDescriptor = scanDirectory(projectDescriptor, artifact, true, project.getBuild().getTestOutputDirectory(), scanner);
+        addProjectDetails(project, projectDescriptor, mainArtifactDescriptor, testArtifactDescriptor);
         scanTestReports(scanner, project.getBuild().getDirectory() + "/surefire-reports");
         scanTestReports(scanner, project.getBuild().getDirectory() + "/failsafe-reports");
-        addDependencies(project);
         return emptyList();
     }
 
-    private void addDependencies(MavenProject project) {
+    private void addProjectDetails(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, ArtifactDescriptor mainArtifactDescriptor,
+            ArtifactDescriptor testArtifactDescriptor) {
         Store store = getStore();
         store.beginTransaction();
         try {
-            MavenProjectDescriptor moduleDescriptor = resolveProject(project);
+            MavenProject parent = project.getParent();
+            if (parent != null) {
+                MavenProjectDescriptor parentDescriptor = resolveProject(parent, MavenProjectDescriptor.class);
+                projectDescriptor.setParent(parentDescriptor);
+            }
+            if (mainArtifactDescriptor != null && testArtifactDescriptor != null) {
+                DependsOnDescriptor dependsOnDescriptor = store.create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
+                dependsOnDescriptor.setScope(Artifact.SCOPE_TEST);
+            }
             for (Artifact artifact : (Set<Artifact>) project.getDependencyArtifacts()) {
-                MavenProjectDescriptor dependency = resolveProject(artifact);
-                DependsOnDescriptor dependsOnDescriptor = store.create(moduleDescriptor, DependsOnDescriptor.class, dependency);
-                dependsOnDescriptor.setScope(artifact.getScope());
-                dependsOnDescriptor.setType(artifact.getType());
+                ArtifactDescriptor dependency = resolveArtifact(artifact);
+                DependsOnDescriptor dependsOnDescriptor;
+                ArtifactDescriptor dependentDescriptor;
+                if (Artifact.SCOPE_TEST.equals(artifact.getScope())) {
+                    dependentDescriptor = testArtifactDescriptor;
+                } else {
+                    dependentDescriptor = mainArtifactDescriptor;
+                }
+                if (dependentDescriptor != null) {
+                    dependsOnDescriptor = store.create(dependentDescriptor, DependsOnDescriptor.class, dependency);
+                    dependsOnDescriptor.setScope(artifact.getScope());
+                    dependsOnDescriptor.setOptional(artifact.isOptional());
+                }
             }
         } finally {
             store.commitTransaction();
@@ -70,7 +100,8 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
      * @throws java.io.IOException
      *             If scanning fails.
      */
-    private void scanDirectory(MavenProject project, Scanner scanner, final String directoryName, boolean testJar) throws IOException {
+    private ArtifactDescriptor scanDirectory(MavenProjectDirectoryDescriptor projectDescriptor, Artifact artifact, boolean testJar, final String directoryName,
+            Scanner scanner) throws IOException {
         final File directory = new File(directoryName);
         if (!directory.exists()) {
             LOGGER.info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
@@ -78,18 +109,20 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
             Store store = getStore();
             store.beginTransaction();
             try {
-                final ArtifactDescriptor artifactDescriptor = getArtifact(project.getArtifact(), testJar);
-               consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
+                final ArtifactDescriptor artifactDescriptor = resolveArtifact(artifact, testJar);
+                consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
                     @Override
                     public void next(FileDescriptor fileDescriptor) {
                         artifactDescriptor.addContains(fileDescriptor);
                     }
                 });
-                resolveProject(project).getCreatesArtifacts().add(artifactDescriptor);
-          } finally {
+                projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
+                return artifactDescriptor;
+            } finally {
                 store.commitTransaction();
             }
         }
+        return null;
     }
 
     /**
