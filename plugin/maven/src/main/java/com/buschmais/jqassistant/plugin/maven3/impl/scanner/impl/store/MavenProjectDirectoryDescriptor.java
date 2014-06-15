@@ -15,4 +15,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
     MavenProjectDescriptor getParent();
 
     void setParent(MavenProjectDescriptor parentDescriptor);
+
+    @Relation("HAS_MODULE")
+    List<MavenProjectDescriptor> getModules();
 }
