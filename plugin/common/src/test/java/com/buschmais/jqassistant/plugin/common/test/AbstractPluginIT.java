@@ -45,12 +45,11 @@ import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginReposit
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 
 /**
@@ -192,23 +191,6 @@ public class AbstractPluginIT {
     }
 
     /**
-     * Scans the a directory.
-     * 
-     * @param directory
-     *            The directory.
-     * @throws java.io.IOException
-     *             If scanning fails.
-     */
-    protected void scanDirectory(Scope scope, File directory) throws IOException {
-        store.beginTransaction();
-        ArtifactDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
-        for (FileDescriptor descriptor : getScanner().scan(directory, scope)) {
-            artifact.addContains(descriptor);
-        }
-        store.commitTransaction();
-    }
-
-    /**
      * Determines the directory a class is located in (e.g.
      * target/test-classes).
      * 
@@ -344,12 +326,12 @@ public class AbstractPluginIT {
      *         {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}
      *         .
      */
-    protected ArtifactDescriptor getArtifactDescriptor(String artifactId) {
+    protected ArtifactDirectoryDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
         if (artifact == null) {
-            artifact = store.create(ArtifactDescriptor.class, artifactId);
+            artifact = store.create(ArtifactDirectoryDescriptor.class, artifactId);
         }
-        return artifact;
+        return ArtifactDirectoryDescriptor.class.cast(artifact);
     }
 
     private List<Class<?>> getDescriptorTypes() {

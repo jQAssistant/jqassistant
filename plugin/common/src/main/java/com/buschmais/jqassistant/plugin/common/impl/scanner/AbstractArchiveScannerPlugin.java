@@ -82,9 +82,9 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
 
     protected abstract void beforeEntry(String path, Scope scope);
 
-    protected abstract Iterable<? extends FileDescriptor> afterEntry(Iterable<? extends FileDescriptor> fileDescriptor);
+    protected abstract Iterable<? extends FileDescriptor> afterEntry(Iterable<? extends FileDescriptor> fileDescriptors);
 
-    protected abstract Iterable<? extends FileDescriptor> afterArchive(Iterable<? extends FileDescriptor> fileDescriptor);
+    protected abstract Iterable<? extends FileDescriptor> afterArchive(Iterable<? extends FileDescriptor> fileDescriptors);
 
     protected abstract String getExtension();
 

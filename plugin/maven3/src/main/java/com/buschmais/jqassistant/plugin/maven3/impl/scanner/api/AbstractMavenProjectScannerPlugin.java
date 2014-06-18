@@ -54,22 +54,24 @@ public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin
 
     protected ArtifactDescriptor resolveArtifact(Artifact artifact) {
         boolean testJar = ARTIFACTTYPE_TEST_JAR.equals(artifact.getType());
-        return resolveArtifact(artifact, testJar);
+        return resolveArtifact(artifact, testJar, ArtifactDescriptor.class);
     }
 
-    protected ArtifactDescriptor resolveArtifact(Artifact artifact, boolean testJar) {
+    protected <T extends ArtifactDescriptor> T resolveArtifact(Artifact artifact, boolean testJar, Class<T> expectedType) {
         String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
         ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
         if (artifactDescriptor == null) {
-            artifactDescriptor = store.create(ArtifactDescriptor.class, id);
+            artifactDescriptor = store.create(expectedType, id);
             artifactDescriptor.setGroup(artifact.getGroupId());
             artifactDescriptor.setName(artifact.getArtifactId());
             artifactDescriptor.setVersion(artifact.getVersion());
             artifactDescriptor.setClassifier(artifact.getClassifier());
             artifactDescriptor.setType(type);
+        } else if (!expectedType.isAssignableFrom(artifactDescriptor.getClass())) {
+            artifactDescriptor = getStore().migrate(artifactDescriptor, expectedType);
         }
-        return artifactDescriptor;
+        return expectedType.cast(artifactDescriptor);
     }
 
     /**

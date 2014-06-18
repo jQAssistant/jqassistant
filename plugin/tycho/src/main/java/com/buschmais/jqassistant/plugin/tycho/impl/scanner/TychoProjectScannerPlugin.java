@@ -45,7 +45,7 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         Store store = getStore();
         store.beginTransaction();
         try {
-            final ArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), false);
+            final ArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDescriptor.class);
             for (File file : getPdeFiles(project)) {
                 consume(scanner.scan(file, file.getPath(), CLASSPATH), new IterableConsumer.Consumer<FileDescriptor>() {
                     @Override

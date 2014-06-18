@@ -22,7 +22,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.AbstractMavenProjectScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor;
@@ -52,8 +54,9 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
             store.commitTransaction();
         }
         Artifact artifact = project.getArtifact();
-        ArtifactDescriptor mainArtifactDescriptor = scanDirectory(projectDescriptor, artifact, false, project.getBuild().getOutputDirectory(), scanner);
-        ArtifactDescriptor testArtifactDescriptor = scanDirectory(projectDescriptor, artifact, true, project.getBuild().getTestOutputDirectory(), scanner);
+        ArtifactDescriptor mainArtifactDescriptor = scanClassesDirectory(projectDescriptor, artifact, false, project.getBuild().getOutputDirectory(), scanner);
+        ArtifactDescriptor testArtifactDescriptor = scanClassesDirectory(projectDescriptor, artifact, true, project.getBuild().getTestOutputDirectory(),
+                scanner);
         addProjectDetails(project, projectDescriptor, mainArtifactDescriptor, testArtifactDescriptor);
         scanTestReports(scanner, project.getBuild().getDirectory() + "/surefire-reports");
         scanTestReports(scanner, project.getBuild().getDirectory() + "/failsafe-reports");
@@ -167,8 +170,8 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
      * @throws java.io.IOException
      *             If scanning fails.
      */
-    private ArtifactDescriptor scanDirectory(MavenProjectDirectoryDescriptor projectDescriptor, Artifact artifact, boolean testJar, final String directoryName,
-            Scanner scanner) throws IOException {
+    private ArtifactDescriptor scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, Artifact artifact, boolean testJar,
+            final String directoryName, Scanner scanner) throws IOException {
         final File directory = new File(directoryName);
         if (!directory.exists()) {
             LOGGER.info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
@@ -176,13 +179,8 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
             Store store = getStore();
             store.beginTransaction();
             try {
-                final ArtifactDescriptor artifactDescriptor = resolveArtifact(artifact, testJar);
-                consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
-                    @Override
-                    public void next(FileDescriptor fileDescriptor) {
-                        artifactDescriptor.addContains(fileDescriptor);
-                    }
-                });
+                final ArtifactDirectoryDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, ArtifactDirectoryDescriptor.class);
+                consume(scanner.scan(new ClassesDirectory(directory, artifactDescriptor), directoryName, CLASSPATH));
                 projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
                 return artifactDescriptor;
             } finally {

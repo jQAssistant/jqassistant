@@ -6,14 +6,18 @@ public class IterableConsumer<T> {
     }
 
     public interface Consumer<T> {
-
         void next(T t);
+    }
 
+    public static <T> void consume(Iterable<? extends T> iterable) {
+        consume(iterable, null);
     }
 
     public static <T> void consume(Iterable<? extends T> iterable, Consumer<T> consumer) {
         for (T t : iterable) {
-            consumer.next(t);
+            if (consumer != null) {
+                consumer.next(t);
+            }
         }
     }
 }
