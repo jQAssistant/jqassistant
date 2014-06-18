@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.scm.maven.test;
 import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -91,7 +90,8 @@ public class MavenProjectScannerPluginTest {
 
         scannerPlugin.scan(project, null, null, scanner);
 
-        verify(scanner, times(2)).scan(Mockito.any(ClassesDirectory.class), Mockito.any(String.class), Mockito.eq(CLASSPATH));
+        verify(scanner).scan(Mockito.any(ClassesDirectory.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH));
+        verify(scanner).scan(Mockito.any(ClassesDirectory.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH));
         verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
         verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");

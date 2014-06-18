@@ -32,7 +32,6 @@
                     <plugin>
                         <groupId>com.buschmais.jqassistant.scm</groupId>
                         <artifactId>jqassistant-maven-plugin</artifactId>
-                        <version>${project.version}</version>
                         <executions>
                             <execution>
                                 <id>scan</id>
