@@ -16,10 +16,8 @@ import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryExcep
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.MavenScope;
 
 /**
@@ -40,11 +38,7 @@ public class ScanMojo extends AbstractAnalysisMojo {
             }
             Scanner scanner = new ScannerImpl(scannerPlugins);
             try {
-                consume(scanner.scan(project, project.getFile().getAbsolutePath(), MavenScope.PROJECT), new IterableConsumer.Consumer<FileDescriptor>() {
-                    @Override
-                    public void next(FileDescriptor fileDescriptor) {
-                    }
-                });
+                consume(scanner.scan(project, project.getFile().getAbsolutePath(), MavenScope.PROJECT));
             } catch (IOException e) {
                 throw new MojoExecutionException("Cannot scan project '" + project.getBasedir() + "'", e);
             }
