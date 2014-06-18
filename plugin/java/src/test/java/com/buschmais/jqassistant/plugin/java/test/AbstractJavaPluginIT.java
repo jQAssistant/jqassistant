@@ -6,12 +6,31 @@ import java.io.File;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
 import com.buschmais.jqassistant.plugin.java.api.JavaScope;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
+
+    /**
+     * Scans the a directory.
+     * 
+     * @param directory
+     *            The directory.
+     * @throws java.io.IOException
+     *             If scanning fails.
+     */
+    protected void scanDirectory(Scope scope, File directory) throws IOException {
+        store.beginTransaction();
+        ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
+        Iterable<? extends FileDescriptor> scan = getScanner().scan(new ClassesDirectory(directory, artifact), scope);
+        IterableConsumer.consume(scan);
+        store.commitTransaction();
+    }
 
     /**
      * Scans the given classes.

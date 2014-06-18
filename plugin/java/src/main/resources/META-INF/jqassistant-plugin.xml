@@ -29,6 +29,7 @@
         <type>com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ServiceLoaderDescriptor</type>
     </store>
     <scanner>
+        <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassesDirectoryScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.JarScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.PackageDirectoryScannerPlugin</plugin>
         <plugin>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin</plugin>

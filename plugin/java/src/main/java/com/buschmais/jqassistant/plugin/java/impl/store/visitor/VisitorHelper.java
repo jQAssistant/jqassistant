@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ValueDescript
 import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheStats;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -202,15 +201,5 @@ public class VisitorHelper {
             TypeDescriptor dependency = getTypeDescriptor(typeName);
             dependentDescriptor.addDependency(dependency);
         }
-    }
-
-    void logCacheStatistics() {
-        log("Type", typeCache.stats());
-        log("Field", fieldCache.stats());
-        log("Method", methodCache.stats());
-    }
-
-    private void log(String element, CacheStats cacheStats) {
-        LOGGER.info(element + "cache hit rate: " + cacheStats.hitRate());
     }
 }
