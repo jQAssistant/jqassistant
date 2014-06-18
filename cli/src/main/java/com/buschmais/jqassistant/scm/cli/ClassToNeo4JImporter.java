@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.Consumer;
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
 import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
@@ -23,8 +22,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -63,15 +62,10 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         } else {
             store.beginTransaction();
             try {
-                final ArtifactDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store);
+                final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store);
                 final Scanner scanner = new ScannerImpl(scannerPlugins);
                 try {
-                    consume(scanner.scan(directory, CLASSPATH), new Consumer<FileDescriptor>() {
-                        @Override
-                        public void next(FileDescriptor fileDescriptor) {
-                            artifactDescriptor.addContains(fileDescriptor);
-                        }
-                    });
+                    consume(scanner.scan(new ClassesDirectory(directory, artifactDescriptor), CLASSPATH));
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
                 }
@@ -81,11 +75,11 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         }
     }
 
-    private ArtifactDescriptor getOrCreateArtifactDescriptor(final Store store) {
+    private ArtifactDirectoryDescriptor getOrCreateArtifactDescriptor(final Store store) {
         final String id = "dummy:id";
-        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
+        ArtifactDirectoryDescriptor artifactDescriptor = store.find(ArtifactDirectoryDescriptor.class, id);
         if (artifactDescriptor == null) {
-            artifactDescriptor = store.create(ArtifactDescriptor.class, id);
+            artifactDescriptor = store.create(ArtifactDirectoryDescriptor.class, id);
             artifactDescriptor.setGroup("dummy");
             artifactDescriptor.setName("dummy");
             artifactDescriptor.setVersion("dummy");
