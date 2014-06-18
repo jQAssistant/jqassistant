@@ -34,7 +34,7 @@ public class ClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugi
 
     @Override
     protected void beforeDirectory(ClassesDirectory classesDirectory, String path) {
-        classesDirectory.getDescriptor().setDirectoryName(path);
+        classesDirectory.getDescriptor().setFileName(path);
     }
 
     @Override
