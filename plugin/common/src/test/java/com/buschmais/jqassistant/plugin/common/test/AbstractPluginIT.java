@@ -277,7 +277,7 @@ public class AbstractPluginIT {
      */
     protected void applyConcept(String id) throws AnalysisException {
         Concept concept = ruleSet.getConcepts().get(id);
-        Assert.assertNotNull("The concept must not be null", concept);
+        Assert.assertNotNull("The requested concept cannot be resolved.", concept);
         RuleSet targetRuleSet = new RuleSet();
         targetRuleSet.getConcepts().put(concept.getId(), concept);
         analyzer.execute(targetRuleSet);
