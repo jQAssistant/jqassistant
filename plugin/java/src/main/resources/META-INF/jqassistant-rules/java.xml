@@ -28,7 +28,9 @@
     </concept>
 
     <concept id="java:TypeAssignableFrom">
-        <description>Creates a relationship ASSIGNABLE_FROM between "Type" labeled nodes if two types are assignable.</description>
+        <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable from the other (i.e. a super class or
+            interface).
+        </description>
         <cypher><![CDATA[
             match
               (type:Type)
@@ -46,7 +48,8 @@
 
     <concept id="java:MethodOverrides">
         <requiresConcept refId="java:TypeAssignableFrom"/>
-        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods have the same signature).
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods
+            have the same signature).
         </description>
         <cypher><![CDATA[
             match
@@ -66,7 +69,7 @@
     <concept id="java:InvokesOverriddenMethod">
         <requiresConcept refId="java:MethodOverrides"/>
         <requiresConcept refId="java:TypeAssignableFrom"/>
-        <description>Propagates INVOKE relationships to methods implementing or overriding the invoked method.</description>
+        <description>Propagates INVOKES relationships to methods which implement or override the invoked method.</description>
         <cypher><![CDATA[
             match
               (method:Method)-[:INVOKES]->(invokedMethod:Method),
@@ -78,7 +81,8 @@
     </concept>
 
     <concept id="java:MethodOverloads">
-        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the methods
+        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the
+            methods
             have the same name but not the same signature).
         </description>
         <cypher><![CDATA[
