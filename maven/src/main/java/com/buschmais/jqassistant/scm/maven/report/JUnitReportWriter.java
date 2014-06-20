@@ -23,8 +23,7 @@ import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testcase;
 import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite;
 
 /**
- * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
- * implementation to write JUnit style reports.
+ * {@link AnalysisListener} implementation to write JUnit style reports.
  * <p>
  * Each group is rendered as a test suite to a separate file.
  * </p>

@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -22,6 +24,7 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
@@ -52,6 +55,9 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
 
     @Parameter(property = "jqassistant.reportTypes")
     private List<ReportType> reportTypes;
+
+    @Parameter(property = "jqassistant.reportProperties")
+    private Map<String, Object> reportProperties;
 
     @Override
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
@@ -85,6 +91,9 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
                 break;
             }
         }
+        Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
+        List<ReportPlugin> reportPlugins = getReportPluginRepository(properties).getReportPlugins();
+        reportWriters.addAll(reportPlugins);
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
         MavenConsole console = new MavenConsole(getLog());
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);

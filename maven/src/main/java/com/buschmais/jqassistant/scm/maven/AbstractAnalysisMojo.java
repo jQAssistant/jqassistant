@@ -28,9 +28,11 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.pluginrepository.api.ReportPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.core.pluginrepository.impl.ReportPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -170,6 +172,21 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     }
 
     /**
+     * Return the report plugin repository.
+     * 
+     * @return The report plugin repository.
+     * @throws MojoExecutionException
+     *             If the repository cannot be created.
+     */
+    protected ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
+        try {
+            return new ReportPluginRepositoryImpl(pluginRepository, properties);
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot create rule plugin repository.", e);
+        }
+    }
+
+    /**
      * Reads the available rules from the rules directory and deployed catalogs.
      * 
      * @return A
@@ -224,7 +241,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the plugin properties.
-     *
+     * 
      * @return The plugin properties.
      */
     protected Map<String, Object> getPluginProperties(MavenProject project) {
@@ -235,7 +252,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the store instance to use for the given base project.
-     *
+     * 
      * @param baseProject
      *            The base project
      * @return The store instance.
@@ -254,14 +271,14 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Determine if a goal needs to reset the store on initialization.
-     *
+     * 
      * @return <code>true</code> If the store shall be reset initially.
      */
     protected abstract boolean isResetStoreOnInitialization();
 
     /**
      * Execute the aggregated analysis.
-     *
+     * 
      * @throws MojoExecutionException
      *             If execution fails.
      * @throws MojoFailureException
