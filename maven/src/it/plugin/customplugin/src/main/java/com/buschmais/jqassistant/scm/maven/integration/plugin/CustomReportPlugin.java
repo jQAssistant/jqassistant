@@ -20,7 +20,7 @@ public class CustomReportPlugin implements ReportPlugin {
     private String fileName;
 
     @Override
-    public void initialize(Map<String, Object> properties) throws AnalysisListenerException {
+    public void initialize(Map<String, Object> properties) throws ReportException {
         this.fileName = (String) properties.get(PROPERTY_FILENAME);
         if (this.fileName == null) {
             throw new AnalysisListenerException("Property " + PROPERTY_FILENAME + " is not specified.");
@@ -28,39 +28,39 @@ public class CustomReportPlugin implements ReportPlugin {
     }
 
     @Override
-    public void begin() throws AnalysisListenerException {
+    public void begin() throws ReportException {
     }
 
     @Override
-    public void end() throws AnalysisListenerException {
+    public void end() throws ReportException {
     }
 
     @Override
-    public void beginConcept(Concept concept) throws AnalysisListenerException {
+    public void beginConcept(Concept concept) throws ReportException {
     }
 
     @Override
-    public void endConcept() throws AnalysisListenerException {
+    public void endConcept() throws ReportException {
     }
 
     @Override
-    public void beginGroup(Group group) throws AnalysisListenerException {
+    public void beginGroup(Group group) throws ReportException {
     }
 
     @Override
-    public void endGroup() throws AnalysisListenerException {
+    public void endGroup() throws ReportException {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
+    public void beginConstraint(Constraint constraint) throws ReportException {
     }
 
     @Override
-    public void endConstraint() throws AnalysisListenerException {
+    public void endConstraint() throws ReportException {
     }
 
     @Override
-    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends Rule> result) throws ReportException {
         try {
             Writer writer = new FileWriter(fileName);
             writer.write("CustomReport");
