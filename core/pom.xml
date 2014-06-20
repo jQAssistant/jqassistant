@@ -56,7 +56,7 @@
         <module>analysis</module>
         <module>scanner</module>
         <module>store</module>
-        <module>pluginrepository</module>
+        <module>plugin</module>
     </modules>
 
 </project>

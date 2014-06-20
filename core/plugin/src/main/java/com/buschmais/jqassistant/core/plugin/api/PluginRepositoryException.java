@@ -1,8 +1,7 @@
-package com.buschmais.jqassistant.core.pluginrepository.api;
+package com.buschmais.jqassistant.core.plugin.api;
 
 /**
- * Exception thrown by the
- * {@link com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository}.
+ * Exception thrown by the {@link PluginConfigurationReader}.
  */
 public class PluginRepositoryException extends Exception {
 

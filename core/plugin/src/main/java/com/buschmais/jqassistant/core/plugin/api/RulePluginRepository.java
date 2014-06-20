@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.pluginrepository.api;
+package com.buschmais.jqassistant.core.plugin.api;
 
 import java.util.List;
 
