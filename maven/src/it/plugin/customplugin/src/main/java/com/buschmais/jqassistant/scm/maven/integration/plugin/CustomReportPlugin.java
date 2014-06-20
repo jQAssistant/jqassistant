@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
 public class CustomReportPlugin implements ReportPlugin {
@@ -23,7 +24,7 @@ public class CustomReportPlugin implements ReportPlugin {
     public void initialize(Map<String, Object> properties) throws ReportException {
         this.fileName = (String) properties.get(PROPERTY_FILENAME);
         if (this.fileName == null) {
-            throw new AnalysisListenerException("Property " + PROPERTY_FILENAME + " is not specified.");
+            throw new ReportException("Property " + PROPERTY_FILENAME + " is not specified.");
         }
     }
 
@@ -66,7 +67,7 @@ public class CustomReportPlugin implements ReportPlugin {
             writer.write("CustomReport");
             writer.close();
         } catch (IOException e) {
-            throw new AnalysisListenerException("Cannot write custom report.", e);
+            throw new ReportException("Cannot write custom report.", e);
         }
     }
 }
