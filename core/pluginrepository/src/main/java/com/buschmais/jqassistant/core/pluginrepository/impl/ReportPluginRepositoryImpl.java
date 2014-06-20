@@ -44,7 +44,7 @@ public class ReportPluginRepositoryImpl extends AbstractPluginRepository impleme
                         try {
                             reportPlugin.initialize(new HashMap<>(properties));
                         } catch (AnalysisListenerException e) {
-                            throw new PluginRepositoryException("Cannot initialze plugin " + reportPluginName, e);
+                            throw new PluginRepositoryException("Cannot initialize plugin " + reportPluginName, e);
                         }
                         reportPlugins.add(reportPlugin);
                     }
