@@ -30,9 +30,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
@@ -131,7 +131,7 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
 
     protected RulePluginRepository getRulePluginRepository() {
         try {
-            return new RulePluginRepositoryImpl(pluginRepository);
+            return new RulePluginRepositoryImpl(pluginConfigurationReader);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }

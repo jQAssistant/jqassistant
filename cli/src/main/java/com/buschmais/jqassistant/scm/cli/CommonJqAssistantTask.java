@@ -7,11 +7,11 @@ import java.util.Map;
 
 import org.apache.commons.cli.Option;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
-import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
@@ -20,16 +20,16 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  */
 public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected final String taskName;
-    protected Map<String,Object> properties;
-    protected PluginRepository pluginRepository;
+    protected Map<String, Object> properties;
+    protected PluginConfigurationReader pluginConfigurationReader;
 
     protected CommonJqAssistantTask(final String taskName) {
         this.taskName = taskName;
-        this.pluginRepository = new PluginRepositoryImpl();
+        this.pluginConfigurationReader = new PluginConfigurationReaderImpl();
     }
 
     @Override
-    public void initialize(Map<String,Object> properties) {
+    public void initialize(Map<String, Object> properties) {
         this.properties = properties;
     }
 
@@ -67,7 +67,7 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
 
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
-            return new ScannerPluginRepositoryImpl(pluginRepository, store, properties);
+            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }
