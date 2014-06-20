@@ -23,5 +23,14 @@
                 <include>*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <includes>
+                <include>**</include>
+            </includes>
+            <excludes>
+                <exclude>target/**</exclude>
+            </excludes>
+        </fileSet>
     </fileSets>
 </assembly>

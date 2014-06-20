@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scm.neo4jshell;
 
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
 import org.neo4j.helpers.Service;
 import org.neo4j.shell.App;
 import org.neo4j.shell.AppCommandParser;
@@ -8,6 +7,7 @@ import org.neo4j.shell.Continuation;
 import org.neo4j.shell.Output;
 import org.neo4j.shell.Session;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 
 @Service.Implementation(App.class)

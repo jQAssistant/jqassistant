@@ -26,15 +26,15 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.pluginrepository.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
-import com.buschmais.jqassistant.core.pluginrepository.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.pluginrepository.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -104,7 +104,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     @Component
     private StoreRepository storeRepository;
 
-    private PluginRepository pluginRepository = new PluginRepositoryImpl();
+    private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
 
     /**
      * The rules reader instance.
@@ -150,7 +150,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
         try {
-            return new ScannerPluginRepositoryImpl(pluginRepository, store, properties);
+            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -165,7 +165,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
         try {
-            return new RulePluginRepositoryImpl(pluginRepository);
+            return new RulePluginRepositoryImpl(pluginConfigurationReader);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -180,7 +180,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     protected ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
         try {
-            return new ReportPluginRepositoryImpl(pluginRepository, properties);
+            return new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }

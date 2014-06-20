@@ -18,6 +18,16 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.buschmais.jqassistant.scm</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
                 <executions>

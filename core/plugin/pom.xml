@@ -8,7 +8,16 @@
         <version>1.0.0-M3-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant.core.pluginrepository</artifactId>
+    <artifactId>jqassistant.core.plugin</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

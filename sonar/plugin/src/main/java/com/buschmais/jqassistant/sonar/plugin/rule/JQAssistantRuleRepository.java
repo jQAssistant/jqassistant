@@ -20,11 +20,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.pluginrepository.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.impl.PluginRepositoryImpl;
-import com.buschmais.jqassistant.core.pluginrepository.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 
 /**
@@ -59,10 +59,10 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     @Override
     public List<Rule> createRules() {
         List<Rule> rules = new ArrayList<>();
-        PluginRepository pluginRepository = new PluginRepositoryImpl();
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
         RulePluginRepository rulePluginRepository;
         try {
-            rulePluginRepository = new RulePluginRepositoryImpl(pluginRepository);
+            rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         } catch (PluginRepositoryException e) {
             throw new SonarException("Cannot read rules.", e);
         }

@@ -8,6 +8,6 @@ include::{docRoot}/jqassistant.examples.rules.naming/readme.adoc[]
 include::{docRoot}/jqassistant.examples.plugins.report/readme.adoc[]
 include::{docRoot}/jqassistant.examples.plugins.project/readme.adoc[]
 
-=== Integration with SonarQube
+=== SonarQube
 include::{docRoot}/jqassistant.examples.sonar.project/readme.adoc[]
 include::{docRoot}/jqassistant.examples.sonar.ruleextension/readme.adoc[]

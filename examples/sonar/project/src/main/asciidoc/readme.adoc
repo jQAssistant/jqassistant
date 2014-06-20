@@ -1,17 +1,24 @@
-==== Integration of jQAssistant
+==== jQAssistant Plugin
 
-Demonstrates the setup of a project being analyzed using SonarQube.
+Projects may retrieve jQAssistant rules from a SonarQube instance using a permalink. Furthermore a sensor is provided which will create issues on violated constraints.
+As a pre-condition the jQAssistant SonarQube plugin must be downloaded. It is together with several extensions available from Maven Central Repository using
+group id "com.buschmais.jqassistant.sonar". For analyzing Java projects the plugin itself (jqassistant.sonar.plugin) and the Java extension
+(jqassistant.sonar.extension.java) are required.
 
-As a pre-condition the jQAssistant SonarQube plugin must be deployed in the directory "extensions/plugins" of the SonarQube server. This makes the repository 'jQAssistant' and its rules available in the 'Coding rules' view of a quality profile. Rules can be created in two ways:
+The JAR files must be deployed in the directory "extensions/plugins" of the SonarQube server. This makes a repository 'jQAssistant' and the rules defined in the
+deployed extensions available in the 'Coding rules' view of quality profiles.
+New rules can be added or created in the following ways:
 
 - by creating new concepts and constraints from the pre-defined templates (i.e. "Concept Template" and "Constraint Template")
-- by deploying a rule extension, this is demonstrated by the example "ruleextension"
+- by deploying a pre-defined rule extension available from Maven Central (see above)
+- by deploying a custom rule extension, this is demonstrated by the example "Custom Rule Extension"
 
-Now the following settings can be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
+Next the following settings must be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
 
 [source,xml]
+.pom.xml
 ----
-include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=30..58]
+include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=15..43]
 ----
 
 * Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI. Note that special characters must be replaced by XML entities.

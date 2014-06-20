@@ -5,11 +5,11 @@
     <constraint id="example:AllClassesMustBeNamedFoo">
         <description>All classes must be named 'Foo'.</description>
         <cypher><![CDATA[
-            MATCH
+            match
               (type:Class)
-            WHERE NOT
+            where not
               type.name = 'Foo'
-            RETURN
+            return
               type as InvalidClass
         ]]></cypher>
     </constraint>

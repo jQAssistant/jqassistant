@@ -6,7 +6,7 @@ created which declares the required dependencies:
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.plugins.report/src/pom.xml[lines=27..38]
+include::{docRoot}/jqassistant.examples.plugins.report/src/pom.xml[lines=12..23]
 ----
 
 The artifact 'jqassistant.core.report' provides the report plugin API, 'jqassistant.plugin.java' provides interfaces representing Java types

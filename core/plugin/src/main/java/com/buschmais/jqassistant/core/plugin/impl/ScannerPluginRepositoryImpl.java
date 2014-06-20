@@ -1,16 +1,16 @@
-package com.buschmais.jqassistant.core.pluginrepository.impl;
+package com.buschmais.jqassistant.core.plugin.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ScannerType;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.StoreType;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.pluginrepository.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.plugin.schema.v1.ScannerType;
+import com.buschmais.jqassistant.core.plugin.schema.v1.TypesType;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
 
@@ -25,8 +25,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
     /**
      * Constructor.
      */
-    public ScannerPluginRepositoryImpl(PluginRepository pluginRepository, Store store, Map<String, Object> properties) throws PluginRepositoryException {
-        List<JqassistantPlugin> plugins = pluginRepository.getPlugins();
+    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader, Store store, Map<String, Object> properties)
+            throws PluginRepositoryException {
+        List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.descriptorTypes = getDescriptorTypes(plugins);
         this.scannerPlugins = getScannerPlugins(plugins, store, properties);
     }
@@ -44,9 +45,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
     private List<Class<?>> getDescriptorTypes(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
         List<Class<?>> types = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
-            StoreType storeType = plugin.getStore();
-            if (storeType != null) {
-                for (String typeName : storeType.getType()) {
+            TypesType typeType = plugin.getTypes();
+            if (typeType != null) {
+                for (String typeName : typeType.getClazz()) {
                     types.add(getType(typeName));
                 }
             }
@@ -60,12 +61,12 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
         for (JqassistantPlugin plugin : plugins) {
             ScannerType scannerType = plugin.getScanner();
             if (scannerType != null) {
-                for (String scannerPluginName : scannerType.getPlugin()) {
+                for (String scannerPluginName : scannerType.getClazz()) {
                     T scannerPlugin = createInstance(scannerPluginName);
                     if (scannerPlugin != null) {
-                        scannerPlugin.initialize(store, new HashMap<>(properties));
                         // properties is mutable, so every plugin should get its
                         // own copy
+                        scannerPlugin.initialize(store, new HashMap<>(properties));
                         scannerPlugins.add(scannerPlugin);
                     }
                 }

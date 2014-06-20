@@ -9,21 +9,6 @@
     </parent>
     <artifactId>jqassistant.examples.sonar.project</artifactId>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-asciidoc-with-sources</id>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>sonar</id>
@@ -58,5 +43,18 @@
             </build>
         </profile>
     </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.plugin</artifactId>
+            <version>${com.buschmais.jqassistant_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.extension.java</artifactId>
+            <version>${com.buschmais.jqassistant_version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

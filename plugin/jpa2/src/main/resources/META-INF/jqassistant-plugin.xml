@@ -1,15 +1,13 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides a scanner for persistence.xml descriptors and rules for JPA2 specific elements (e.g. entities).</description>
-    <store>
-        <type>com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor</type>
-        <type>com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor</type>
-    </store>
+    <types>
+        <class>com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor</class>
+    </types>
     <scanner>
-        <plugin>com.buschmais.jqassistant.plugin.jpa2.impl.scanner.PersistenceScannerPlugin</plugin>
+        <class>com.buschmais.jqassistant.plugin.jpa2.impl.scanner.PersistenceScannerPlugin</class>
     </scanner>
     <rules>
-        <resources>
-            <resource>jpa2.xml</resource>
-        </resources>
+        <resource>jpa2.xml</resource>
     </rules>
 </jqa-plugin:jqassistant-plugin>

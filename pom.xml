@@ -215,30 +215,6 @@
                                 </descriptorRefs>
                             </configuration>
                         </execution>
-                        <execution>
-                            <id>attach-asciidoc-with-sources</id>
-                            <phase/>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                            <configuration>
-                                <descriptorRefs>
-                                    <descriptorRef>asciidoc-with-sources</descriptorRef>
-                                </descriptorRefs>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>attach-lib</id>
-                            <phase/>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                            <configuration>
-                                <descriptorRefs>
-                                    <descriptorRef>lib</descriptorRef>
-                                </descriptorRefs>
-                            </configuration>
-                        </execution>
                     </executions>
                 </plugin>
                 <plugin>
@@ -297,6 +273,11 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.4</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -346,7 +327,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.pluginrepository</artifactId>
+                <artifactId>jqassistant.core.plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

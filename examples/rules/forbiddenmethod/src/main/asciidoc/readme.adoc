@@ -5,5 +5,5 @@ Demonstrates a constraint to define methods which must not be invoked by the app
 [source,xml]
 .jqassistant/default.xml
 ----
-include::{docRoot}/jqassistant.examples.rules.forbiddenmethod/src/jqassistant/default.xml[lines=3..19]
+include::{docRoot}/jqassistant.examples.rules.forbiddenmethod/src/jqassistant/default.xml[]
 ----

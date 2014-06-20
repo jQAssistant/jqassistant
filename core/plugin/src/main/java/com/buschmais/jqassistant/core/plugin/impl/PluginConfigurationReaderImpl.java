@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.pluginrepository.impl;
+package com.buschmais.jqassistant.core.plugin.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,16 +16,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.analysis.plugin.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.pluginrepository.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.plugin.schema.v1.ObjectFactory;
 
 /**
  * Plugin reader implementation.
  */
-public class PluginRepositoryImpl implements PluginRepository {
+public class PluginConfigurationReaderImpl implements PluginConfigurationReader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PluginRepositoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfigurationReaderImpl.class);
 
     private JAXBContext jaxbContext;
 
@@ -34,7 +34,7 @@ public class PluginRepositoryImpl implements PluginRepository {
     /**
      * Constructor.
      */
-    public PluginRepositoryImpl() {
+    public PluginConfigurationReaderImpl() {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
@@ -75,7 +75,7 @@ public class PluginRepositoryImpl implements PluginRepository {
         if (this.plugins == null) {
             final Enumeration<URL> resources;
             try {
-                resources = PluginRepositoryImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
+                resources = PluginConfigurationReaderImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
             } catch (IOException e) {
                 throw new IllegalStateException("Cannot get plugin resources.", e);
             }
