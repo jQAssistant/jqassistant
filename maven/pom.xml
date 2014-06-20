@@ -34,8 +34,8 @@
                                 <pomInclude>multimodule/multiparent/singlestore/pom.xml</pomInclude>
                                 <pomInclude>tycho/additionalfiles/pom.xml</pomInclude>
                                 <pomInclude>tycho/missingfiles/pom.xml</pomInclude>
-                                -->
                                 <pomInclude>plugin/pom.xml</pomInclude>
+                                -->
                             </pomIncludes>
                         </configuration>
                         <executions>
@@ -108,7 +108,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.pluginrepository</artifactId>
+            <artifactId>jqassistant.core.plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
