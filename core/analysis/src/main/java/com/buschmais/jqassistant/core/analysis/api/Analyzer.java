@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 
 /**
- * Defines the interface for the constraint analyzer.
+ * Defines the interface for the analyzer.
  */
 public interface Analyzer {
 

@@ -6,16 +6,26 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
- * The result of a
- * {@link com.buschmais.jqassistant.core.analysis.api.rule.Query} using an
- * {@link com.buschmais.jqassistant.core.analysis.api.rule.Rule}.
+ * The result of an executed {@link Rule}.
+ * 
+ * @param <T>
+ *            The rule type.
  */
 public class Result<T extends Rule> {
 
+    /**
+     * The executed rule.
+     */
     private T rule;
 
+    /**
+     * The list of returned columns.
+     */
     private List<String> columnNames;
 
+    /**
+     * The returned rows.
+     */
     private List<Map<String, Object>> rows;
 
     public Result(T rule, List<String> columnNames, List<Map<String, Object>> rows) {

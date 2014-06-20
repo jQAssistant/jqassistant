@@ -9,12 +9,24 @@ import java.util.Set;
  */
 public abstract class AbstractRule implements Rule {
 
+    /**
+     * The id of the rule.
+     */
     private String id;
 
+    /**
+     * The optional description.
+     */
     private String description;
 
+    /**
+     * The cypher query which represents this rule.
+     */
     private Query query;
 
+    /**
+     * The concepts which must be applied before this rule can be executed.
+     */
     private Set<Concept> requiresConcepts = new HashSet<>();
 
     public String getId() {
@@ -68,7 +80,7 @@ public abstract class AbstractRule implements Rule {
 
     @Override
     public String toString() {
-        return "AbstractRule {" + "id='" + id + '\'' + ", description='" + description + '\'' + ", query=" + query + ", requiresConcepts="
-                + requiresConcepts + '}';
+        return "AbstractRule {" + "id='" + id + '\'' + ", description='" + description + '\'' + ", query=" + query + ", requiresConcepts=" + requiresConcepts
+                + '}';
     }
 }

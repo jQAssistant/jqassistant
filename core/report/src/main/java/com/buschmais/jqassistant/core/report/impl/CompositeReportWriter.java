@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
  * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}s
  * provided by the {@link Iterable} constructor argument.
  */
-public class CompositeReportWriter implements AnalysisListener {
+public class CompositeReportWriter implements AnalysisListener<AnalysisListenerException> {
 
     private static interface DelegateOperation {
         void run(AnalysisListener reportWriter) throws AnalysisListenerException;

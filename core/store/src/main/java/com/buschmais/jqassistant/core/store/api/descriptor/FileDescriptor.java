@@ -5,7 +5,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
- * Defines a descriptor representing a file.
+ * Represents a file.
  */
 @Label("File")
 public interface FileDescriptor extends Descriptor {
