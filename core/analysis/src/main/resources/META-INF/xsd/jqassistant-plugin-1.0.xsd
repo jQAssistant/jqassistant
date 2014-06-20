@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0"
-	targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0"
-	elementFormDefault="unqualified">
+           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0"
+           elementFormDefault="unqualified">
 
-	<xs:element name="jqassistant-plugin">
-		<xs:complexType>
-			<xs:sequence>
-                <xs:element name="description" type="xs:string" />
-				<xs:element name="store" type="jqassistant-plugin:StoreType"
-					minOccurs="0" />
-				<xs:element name="scanner" type="jqassistant-plugin:ScannerType"
-					minOccurs="0" />
-				<xs:element name="rules" type="jqassistant-plugin:RulesType"
-					minOccurs="0" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+    <xs:element name="jqassistant-plugin">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="store" type="jqassistant-plugin:StoreType" minOccurs="0"/>
+                <xs:element name="scanner" type="jqassistant-plugin:ScannerType" minOccurs="0"/>
+                <xs:element name="rules" type="jqassistant-plugin:RulesType" minOccurs="0"/>
+                <xs:element name="report" type="jqassistant-plugin:ReportType" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:complexType name="StoreType">
-		<xs:sequence>
-			<xs:element name="type" type="xs:string" minOccurs="0"
-				maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="StoreType">
+        <xs:sequence>
+            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="ScannerType">
-		<xs:sequence>
-			<xs:element name="plugin" type="xs:string" minOccurs="0"
-				maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="ScannerType">
+        <xs:sequence>
+            <xs:element name="plugin" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 
-	<xs:complexType name="RulesType">
-		<xs:sequence>
-			<xs:element name="resources" type="jqassistant-plugin:ResourcesType"
-				minOccurs="1" maxOccurs="unbounded" />
-		</xs:sequence>
-		<xs:attribute name="directory" type="xs:string" use="optional"
-			default="/META-INF/jqassistant-rules/" />
-	</xs:complexType>
+    <xs:complexType name="RulesType">
+        <xs:sequence>
+            <xs:element name="resources" type="jqassistant-plugin:ResourcesType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="directory" type="xs:string" use="optional" default="/META-INF/jqassistant-rules/"/>
+    </xs:complexType>
 
-	<xs:complexType name="ResourcesType">
-		<xs:sequence>
-			<xs:element name="resource" type="xs:string" minOccurs="1"
-				maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:complexType>
+    <xs:complexType name="ResourcesType">
+        <xs:sequence>
+            <xs:element name="resource" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ReportType">
+        <xs:sequence>
+            <xs:element name="plugin" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
 
 </xs:schema>
