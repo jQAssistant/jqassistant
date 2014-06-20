@@ -5,12 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
 
@@ -21,47 +21,47 @@ public class CustomReportPlugin implements ReportPlugin {
     private String fileName;
 
     @Override
-    public void initialize(Map<String, Object> properties) throws AnalysisListenerException {
+    public void initialize(Map<String, Object> properties) throws ReportException {
         this.fileName = (String) properties.get(PROPERTY_FILENAME);
         if (this.fileName == null) {
-            throw new AnalysisListenerException("Property " + PROPERTY_FILENAME + " is not specified.");
+            throw new ReportException("Property " + PROPERTY_FILENAME + " is not specified.");
         }
     }
 
     @Override
-    public void begin() throws AnalysisListenerException {
+    public void begin() throws ReportException {
     }
 
     @Override
-    public void end() throws AnalysisListenerException {
+    public void end() throws ReportException {
     }
 
     @Override
-    public void beginConcept(Concept concept) throws AnalysisListenerException {
+    public void beginConcept(Concept concept) throws ReportException {
     }
 
     @Override
-    public void endConcept() throws AnalysisListenerException {
+    public void endConcept() throws ReportException {
     }
 
     @Override
-    public void beginGroup(Group group) throws AnalysisListenerException {
+    public void beginGroup(Group group) throws ReportException {
     }
 
     @Override
-    public void endGroup() throws AnalysisListenerException {
+    public void endGroup() throws ReportException {
     }
 
     @Override
-    public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
+    public void beginConstraint(Constraint constraint) throws ReportException {
     }
 
     @Override
-    public void endConstraint() throws AnalysisListenerException {
+    public void endConstraint() throws ReportException {
     }
 
     @Override
-    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends Rule> result) throws ReportException {
         Rule rule = result.getRule();
         if (rule instanceof Concept && "example:MethodsPerType".equals(rule.getId())) {
             try {
@@ -75,7 +75,7 @@ public class CustomReportPlugin implements ReportPlugin {
                 }
                 writer.close();
             } catch (IOException e) {
-                throw new AnalysisListenerException("Cannot write custom report.", e);
+                throw new ReportException("Cannot write custom report.", e);
             }
         }
     }

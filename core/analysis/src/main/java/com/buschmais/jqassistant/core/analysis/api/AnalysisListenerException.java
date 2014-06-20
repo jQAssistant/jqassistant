@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
 /**
- * The exception will be thrown by report writer operations to indicate
- * problems.
+ * The exception will be thrown
+ * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}s.
  */
 public class AnalysisListenerException extends Exception {
 

@@ -28,7 +28,7 @@ import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite;
  * Each group is rendered as a test suite to a separate file.
  * </p>
  */
-public class JUnitReportWriter implements AnalysisListener {
+public class JUnitReportWriter implements AnalysisListener<AnalysisListenerException> {
 
     private File directory;
     private JAXBContext jaxbContext;

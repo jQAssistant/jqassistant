@@ -30,7 +30,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener} which
  * writes the results of an analysis to an XML file.
  */
-public class XmlReportWriter implements AnalysisListener {
+public class XmlReportWriter implements AnalysisListener<AnalysisListenerException> {
 
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.0";
     public static final String NAMESPACE_PREFIX = "jqa-report";

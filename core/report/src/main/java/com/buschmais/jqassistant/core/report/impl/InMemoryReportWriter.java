@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
  * implementation collection the concept results and constraint violations
  * in-memory.
  */
-public class InMemoryReportWriter implements AnalysisListener {
+public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerException> {
 
     private List<Result<Concept>> conceptResults = new ArrayList<Result<Concept>>();
 
