@@ -11,7 +11,7 @@ import java.util.Map;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.innerclass.AnonymousInnerClass;
 

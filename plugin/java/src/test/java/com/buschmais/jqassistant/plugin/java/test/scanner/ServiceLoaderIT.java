@@ -13,8 +13,8 @@ import java.util.ServiceLoader;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.java.api.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ServiceLoaderDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.Service;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.ServiceImpl;

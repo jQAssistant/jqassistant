@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

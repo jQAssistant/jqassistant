@@ -8,11 +8,11 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
-import com.buschmais.jqassistant.plugin.java.api.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 

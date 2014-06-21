@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static java.util.Arrays.asList;
 
 import java.io.File;
@@ -10,8 +10,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.resolver.PackageDescriptorResolver;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.PackageDescriptorResolver;
 
 /**
  * Implementation of the {@link AbstractScannerPlugin} for java packages.

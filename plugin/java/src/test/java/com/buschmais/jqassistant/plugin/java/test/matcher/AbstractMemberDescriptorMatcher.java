@@ -1,17 +1,17 @@
 package com.buschmais.jqassistant.plugin.java.test.matcher;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MemberDescriptor;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 
 import java.lang.reflect.Member;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
+
+import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
 
 /**
  * A matcher for
- * {@link com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MemberDescriptor}
- * s.
+ * {@link com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor} s.
  */
 public class AbstractMemberDescriptorMatcher<T extends MemberDescriptor> extends TypeSafeMatcher<T> {
 
