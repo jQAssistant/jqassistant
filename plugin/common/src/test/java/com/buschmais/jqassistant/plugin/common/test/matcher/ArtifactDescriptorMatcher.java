@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.common.test.matcher;
 import org.hamcrest.Matcher;
 
 import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 
 /**
  * A matcher for {@link ArtifactDescriptor}s.

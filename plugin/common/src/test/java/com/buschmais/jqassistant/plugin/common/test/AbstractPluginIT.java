@@ -48,8 +48,8 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 
 /**
@@ -317,13 +317,13 @@ public class AbstractPluginIT {
 
     /**
      * Get or create an
-     * {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}
+     * {@link com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor}
      * .
      * 
      * @param artifactId
      *            The artifact id.
      * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor}
+     *         {@link com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor}
      *         .
      */
     protected ArtifactDirectoryDescriptor getArtifactDescriptor(String artifactId) {

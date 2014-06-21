@@ -1,10 +1,10 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides common elements to be re-used by other plugins.</description>
-    <types>
-        <class>com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.common.impl.store.descriptor.DependsOnDescriptor</class>
-    </types>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor</class>
+    </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.IterableScannerPlugin</class>
