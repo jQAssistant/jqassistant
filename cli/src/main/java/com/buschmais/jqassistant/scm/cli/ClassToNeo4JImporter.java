@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
@@ -22,8 +22,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
