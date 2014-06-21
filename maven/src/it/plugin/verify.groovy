@@ -1,1 +1,1 @@
-assert new File(basedir, 'target/customReport.txt').exists()
+assert new File(basedir, 'site/target/customReport.txt').exists()
