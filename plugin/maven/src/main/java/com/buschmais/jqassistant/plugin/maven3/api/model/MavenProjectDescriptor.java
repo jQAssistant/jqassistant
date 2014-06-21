@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store;
+package com.buschmais.jqassistant.plugin.maven3.api.model;
 
 import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;

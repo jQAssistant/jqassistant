@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.api;
+package com.buschmais.jqassistant.plugin.maven3.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 

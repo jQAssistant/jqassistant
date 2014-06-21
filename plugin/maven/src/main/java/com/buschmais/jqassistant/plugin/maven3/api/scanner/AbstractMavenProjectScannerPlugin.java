@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.api;
+package com.buschmais.jqassistant.plugin.maven3.api.scanner;
 
 import java.util.Map;
 
@@ -7,8 +7,8 @@ import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 
 /**
  * Abstract base class for maven project scanner plugins.
