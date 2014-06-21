@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
@@ -14,9 +14,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestEntryDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestSectionDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor;
 
 /**
  * Implementation of the

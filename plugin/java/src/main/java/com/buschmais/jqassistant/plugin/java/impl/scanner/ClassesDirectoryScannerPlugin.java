@@ -7,8 +7,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.iterable.MappingIterable;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractDirectoryScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
-import com.buschmais.jqassistant.plugin.java.api.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
 public class ClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<ClassesDirectory> {
 

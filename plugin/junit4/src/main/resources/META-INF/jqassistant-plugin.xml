@@ -1,9 +1,9 @@
 <v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides scanner for JUnit test reports and rules (e.g. for test classes/methods and ignored tests).</description>
-    <types>
-        <class>com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor</class>
-    </types>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor</class>
+    </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.junit4.impl.scanner.TestReportScannerPlugin</class>
     </scanner>

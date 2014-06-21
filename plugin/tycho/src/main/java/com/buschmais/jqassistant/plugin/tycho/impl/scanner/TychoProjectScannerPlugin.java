@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static java.util.Collections.emptyList;
 
 import java.io.File;
@@ -27,8 +27,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.AbstractMavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 
 /**
  * Implementation of a {@link ScannerPlugin} for tycho projects

@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.java.test.matcher;
 import org.hamcrest.Matcher;
 
 import com.buschmais.jqassistant.core.store.test.matcher.AbstractDescriptorMatcher;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 
 /**
  * A matcher for {@link PackageDescriptor}s.

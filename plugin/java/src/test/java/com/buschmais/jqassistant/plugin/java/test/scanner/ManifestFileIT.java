@@ -9,9 +9,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.java.api.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestSectionDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**

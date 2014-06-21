@@ -12,9 +12,9 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.java.api.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**

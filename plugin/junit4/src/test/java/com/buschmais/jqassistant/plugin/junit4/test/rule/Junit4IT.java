@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.junit4.api.JunitScope;
+import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestClass;
 import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;

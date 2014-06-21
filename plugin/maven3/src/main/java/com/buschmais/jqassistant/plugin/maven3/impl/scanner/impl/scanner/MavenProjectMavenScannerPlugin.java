@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner;
 
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.Consumer;
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
-import static com.buschmais.jqassistant.plugin.junit4.api.JunitScope.TESTREPORTS;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope.TESTREPORTS;
 import static java.util.Collections.emptyList;
 
 import java.io.File;
@@ -21,13 +21,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.common.impl.store.descriptor.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.ClassesDirectory;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.AbstractMavenProjectScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.store.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 
 /**
  * A project scanner plugin for maven projects.

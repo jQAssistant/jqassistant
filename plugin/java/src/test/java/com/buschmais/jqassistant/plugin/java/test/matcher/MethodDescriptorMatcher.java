@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 
 import org.hamcrest.Matcher;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 
 /**
  * A matcher for {@link MethodDescriptorMatcher}s.

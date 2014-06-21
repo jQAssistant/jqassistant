@@ -8,7 +8,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="description" type="xs:string"/>
-                <xs:element name="types" type="jqassistant-plugin:TypesType" minOccurs="0"/>
+                <xs:element name="model" type="jqassistant-plugin:ModelType" minOccurs="0"/>
                 <xs:element name="scanner" type="jqassistant-plugin:ScannerType" minOccurs="0"/>
                 <xs:element name="rules" type="jqassistant-plugin:RulesType" minOccurs="0"/>
                 <xs:element name="report" type="jqassistant-plugin:ReportType" minOccurs="0"/>
@@ -16,8 +16,8 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:complexType name="TypesType">
-        <xs:sequence>
+    <xs:complexType name="ModelType">
+    <xs:sequence>
             <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>

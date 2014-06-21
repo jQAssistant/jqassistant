@@ -10,9 +10,9 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.junit4.api.JunitScope;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 
 public class TestReportScannerIT extends AbstractJavaPluginIT {

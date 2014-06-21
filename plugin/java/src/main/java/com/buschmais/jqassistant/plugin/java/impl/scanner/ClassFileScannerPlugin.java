@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
@@ -13,10 +13,10 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.plugin.java.impl.store.visitor.ClassVisitor;
-import com.buschmais.jqassistant.plugin.java.impl.store.visitor.VisitorHelper;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.

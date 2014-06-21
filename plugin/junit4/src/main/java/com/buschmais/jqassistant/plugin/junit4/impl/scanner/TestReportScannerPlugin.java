@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.junit4.api.JunitScope.TESTREPORTS;
+import static com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope.TESTREPORTS;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
@@ -21,8 +21,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor;
 
 public class TestReportScannerPlugin extends AbstractScannerPlugin<InputStream> {
 

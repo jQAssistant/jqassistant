@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.sonar.extension.java;
 
-import static com.buschmais.jqassistant.plugin.java.impl.store.descriptor.Java.JavaLanguageElement;
+import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement;
 
 import org.sonar.api.BatchExtension;
 import org.sonar.api.resources.JavaFile;

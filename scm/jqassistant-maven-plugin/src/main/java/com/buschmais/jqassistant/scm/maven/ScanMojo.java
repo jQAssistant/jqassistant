@@ -18,7 +18,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.api.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 /**
  * Scans the the output directory and test output directory.

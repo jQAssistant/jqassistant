@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import org.hamcrest.Matcher;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
 
 /**
  * A matcher for {@FieldDescriptor}s.
