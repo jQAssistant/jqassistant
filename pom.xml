@@ -121,8 +121,10 @@
                                 <rules>
                                     <requireMavenVersion>
                                         <version>(3.0.5,)</version>
-                                        <message>Maven 3.0.5 or higher required.</message>
                                     </requireMavenVersion>
+                                    <requireJavaVersion>
+                                        <version>1.8</version>
+                                    </requireJavaVersion>
                                 </rules>
                             </configuration>
                         </execution>
