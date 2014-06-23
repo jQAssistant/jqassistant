@@ -48,7 +48,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
         MavenProjectDirectoryDescriptor projectDescriptor;
         try {
             projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class);
-            projectDescriptor.setFileName(project.getFile().getAbsolutePath());
+            projectDescriptor.setFileName(project.getBasedir().getAbsolutePath());
             projectDescriptor.setPackaging(project.getPackaging());
         } finally {
             store.commitTransaction();
