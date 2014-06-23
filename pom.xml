@@ -345,6 +345,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
+                    <additionalparam>-Xdoclint:none</additionalparam>
                     <excludePackageNames>*.schema.*</excludePackageNames>
                 </configuration>
             </plugin>
