@@ -20,7 +20,7 @@
 			match
 			  (m:Method)-[w:WRITES]->(f:Field)
 			return
-			    w as WriteAccess
+			   w as WriteAccess
         ]]></cypher>
     </constraint>
 </jqa:jqassistant-rules>

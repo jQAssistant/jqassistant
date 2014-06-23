@@ -42,7 +42,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <com.buschmais.xo_version>0.4.0-SNAPSHOT</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.4.0</com.buschmais.xo_version>
         <org.neo4j_version>2.0.3</org.neo4j_version>
         <github.global.server>github</github.global.server>
         <org_asciidoctor.version>0.1.4</org_asciidoctor.version>
@@ -300,6 +300,15 @@
                     </dependencies>
                     <configuration>
                         <skipDeploy>true</skipDeploy>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <tagNameFormat>@{version}</tagNameFormat>
+                        <arguments>-DskipTests</arguments>
                     </configuration>
                 </plugin>
             </plugins>
