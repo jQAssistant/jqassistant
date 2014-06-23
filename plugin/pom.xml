@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqassistant</artifactId>
-        <version>1.0.0-M3-SNAPSHOT</version>
+        <version>1.0.0-M3</version>
     </parent>
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>jqassistant.plugin</artifactId>
@@ -57,8 +56,7 @@
                                         </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper
-                                                    implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                                 <pattern>^jqassistant-plugin\.xml$</pattern>
                                                 <replacement>plugin.adoc</replacement>
                                             </fileMapper>
@@ -80,8 +78,7 @@
                                         </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper
-                                                    implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                                 <pattern>^(.*)\.xml$</pattern>
                                                 <replacement>$1.xml.adoc</replacement>
                                             </fileMapper>
@@ -116,7 +113,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
