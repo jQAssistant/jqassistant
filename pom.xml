@@ -44,6 +44,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.4.0-SNAPSHOT</com.buschmais.xo_version>
         <org.neo4j_version>2.1.2</org.neo4j_version>
+        <github.global.server>github</github.global.server>
+        <org_asciidoctor.version>0.1.4</org_asciidoctor.version>
     </properties>
 
     <profiles>
@@ -278,6 +280,26 @@
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>2.7</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.3</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.doxia</groupId>
+                            <artifactId>doxia-module-markdown</artifactId>
+                            <version>1.4</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoctor-maven-plugin</artifactId>
+                            <version>${org_asciidoctor.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <skipDeploy>true</skipDeploy>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -290,6 +312,25 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.8</version>
+                <configuration>
+                    <message>Creating site for ${project.artifactId}, ${project.version}</message>
+                    <path>${project.distributionManagement.site.url}</path>
+                    <merge>true</merge>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>github-site</id>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -299,6 +340,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.7</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>*.schema.*</excludePackageNames>
+                </configuration>
             </plugin>
         </plugins>
     </reporting>
