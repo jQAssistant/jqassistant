@@ -1,5 +1,5 @@
 = jQAssistant
-jQAssistant Developer Team <dev@jqassistant.org>
+jQAssistant Developer Team <info@jqassistant.org>
 
 Your Software. Your Structures. Your Rules.
 
