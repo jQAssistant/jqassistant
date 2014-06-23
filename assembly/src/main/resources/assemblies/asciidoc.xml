@@ -31,6 +31,7 @@
             <excludes>
                 <exclude>target/**</exclude>
             </excludes>
+            <filtered>true</filtered>
         </fileSet>
     </fileSets>
 </assembly>

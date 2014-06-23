@@ -45,7 +45,7 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.sonar</groupId>
             <artifactId>jqassistant.sonar.plugin</artifactId>
-            <version>${com.buschmais.jqassistant_version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

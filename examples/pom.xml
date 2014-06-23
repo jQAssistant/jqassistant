@@ -11,10 +11,6 @@
     <artifactId>jqassistant.examples</artifactId>
     <packaging>pom</packaging>
 
-    <properties>
-        <com.buschmais.jqassistant_version>${project.version}</com.buschmais.jqassistant_version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>

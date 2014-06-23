@@ -14,17 +14,17 @@
             <plugin>
                 <groupId>com.buschmais.jqassistant.scm</groupId>
                 <artifactId>jqassistant-maven-plugin</artifactId>
-                <version>${com.buschmais.jqassistant_version}</version>
+                <version>${project.version}</version>
                 <configuration>
                     <reportProperties>
-                        <customReport.fileName>${project.build.directory}/customReport.txt</customReport.fileName>
+                        <customReport.fileName>target/customReport.txt</customReport.fileName>
                     </reportProperties>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant.examples</groupId>
                         <artifactId>jqassistant.examples.plugins.report</artifactId>
-                        <version>${com.buschmais.jqassistant_version}</version>
+                        <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
