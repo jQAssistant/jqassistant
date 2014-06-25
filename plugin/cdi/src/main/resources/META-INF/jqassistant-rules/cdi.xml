@@ -47,21 +47,22 @@
     </concept>
 
     <concept id="cdi:Dependent">
-        <description>Labels all beans annotated with @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</description>
+        <description>Labels all beans, fields or methods annotated with @javax.enterprise.context.Dependent with "Cdi" and "Dependent".</description>
         <cypher><![CDATA[
             match
-              (bean:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
             where
-              scopeType.fqn="javax.enterprise.context.RequestScoped"
+              (e:Type or e:Method or e:Field)
+              and scopeType.fqn="javax.enterprise.context.Dependent"
             set
-              bean:Cdi:RequestScoped
+              e:Cdi:Dependent
             return
-              count(bean) as RequestScopedBeans
+              count(e) as DependentElements
         ]]></cypher>
     </concept>
 
     <concept id="cdi:RequestScoped">
-        <description>Labels all beans, fields or methods with @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</description>
+        <description>Labels all beans, fields or methods annotated with @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</description>
         <cypher><![CDATA[
             match
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
@@ -87,6 +88,40 @@
               e:Cdi:SessionScoped
             return
               count(e) as SessionScopedElements
+        ]]></cypher>
+    </concept>
+
+
+    <concept id="cdi:ConversationScoped">
+        <description>Labels all beans, fields or methods annotated with @javax.enterprise.context.ConversationScoped with "Cdi" and "ConversationScoped".
+        </description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
+            where
+              (e:Type or e:Method or e:Field)
+              and scopeType.fqn="javax.enterprise.context.ConversationScoped"
+            set
+              e:Cdi:ConversationScoped
+            return
+              count(e) as ConversationScopedElements
+        ]]></cypher>
+    </concept>
+
+
+    <concept id="cdi:ApplicationScoped">
+        <description>Labels all beans, fields or methods annotated with @javax.enterprise.context.ApplicationScoped with "Cdi" and "ApplicationScoped".
+        </description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
+            where
+              (e:Type or e:Method or e:Field)
+              and scopeType.fqn="javax.enterprise.context.ApplicationScoped"
+            set
+              e:Cdi:ApplicationScoped
+            return
+              count(e) as ApplicationScopedElements
         ]]></cypher>
     </concept>
 
