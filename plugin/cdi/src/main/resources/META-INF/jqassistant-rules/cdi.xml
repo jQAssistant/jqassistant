@@ -1,0 +1,93 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="cdi:InjectionPoint">
+        <description>Labels all fields or methods annotated with @javax.inject.Inject with "Cdi" and "InjectionPoint".</description>
+        <cypher><![CDATA[
+            match
+              (:Type)-[:DECLARES]->(member),
+              (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
+            where
+              (member:Field or member:Method)
+              and injectType.fqn="javax.inject.Inject"
+            set
+              member:Cdi:InjectionPoint
+            return
+              count(m) as InjectionPoints
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Produces">
+        <description>Labels all fields or methods annotated with @javax.enterprise.inject.Produces with "Cdi" and "Produces".</description>
+        <cypher><![CDATA[
+            match
+              (:Type)-[:DECLARES]->(member),
+              (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(producesType:Type)
+            where
+              (member:Field or member:Method)
+              and producesType.fqn="javax.enterprise.inject.Produces"
+            set
+              member:Cdi:Produces
+            return
+              count(m) as Producer
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Qualifier">
+        <description>Labels all annotation types annotated with @javax.inject.Qualifier with "Cdi" and "Qualifier".</description>
+        <cypher><![CDATA[
+            match
+              (qualifier:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(qualifierType:Type)
+            where
+              qualifier.fqn="javax.inject.Qualifier"
+            set
+              qualifier:Cdi:Qualifier
+            return
+              count(qualifier) as Qualifiers
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Dependent">
+        <description>Labels all beans annotated with @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</description>
+        <cypher><![CDATA[
+            match
+              (bean:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
+            where
+              scopeType.fqn="javax.enterprise.context.RequestScoped"
+            set
+              bean:Cdi:RequestScoped
+            return
+              count(bean) as RequestScopedBeans
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:RequestScoped">
+        <description>Labels all beans, fields or methods with @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
+            where
+              (e:Type or e:Method or e:Field)
+              and scopeType.fqn="javax.enterprise.context.RequestScoped"
+            set
+              e:Cdi:RequestScoped
+            return
+              count(e) as RequestScopedElements
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:SessionScoped">
+        <description>Labels all beans, fields or methods annotated with @javax.enterprise.context.SessionScoped with "Cdi" and "SessionScoped".</description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
+            where
+              (e:Type or e:Method or e:Field)
+              and scopeType.fqn="javax.enterprise.context.SessionScoped"
+            set
+              e:Cdi:SessionScoped
+            return
+              count(e) as SessionScopedElements
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>

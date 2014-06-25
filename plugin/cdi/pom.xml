@@ -8,7 +8,7 @@
         <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant.plugin.ejb3</artifactId>
+    <artifactId>jqassistant.plugin.cdi</artifactId>
 
     <build>
         <plugins>
@@ -53,15 +53,9 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.ejb</groupId>
-                <artifactId>javax.ejb-api</artifactId>
-                <version>3.2</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.jms</groupId>
-                <artifactId>javax.jms-api</artifactId>
-                <version>2.0</version>
+                <groupId>javax.enterprise</groupId>
+                <artifactId>cdi-api</artifactId>
+                <version>1.2</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -89,8 +83,8 @@
             <artifactId>jqassistant.plugin.java</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.cdi</artifactId>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.store</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -129,12 +123,8 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.ejb</groupId>
-            <artifactId>javax.ejb-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
