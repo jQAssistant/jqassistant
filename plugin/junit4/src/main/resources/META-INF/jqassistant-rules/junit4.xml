@@ -47,4 +47,22 @@
         ]]></cypher>
     </concept>
 
+    <constraint id="junit4:AssertionsMustProvideAMessage">
+        <description>All assertions (i.e. invocations of assert methods provided by org.junit.Assert) must provide a message.</description>
+        <cypher><![CDATA[
+            match
+              (assertType:Type)-[:DECLARES]-(assertMethod:Method)
+            where
+              assertType.fqn='org.junit.Assert' and assertMethod.signature =~ 'void assert.*'
+            with
+              assertMethod
+            match
+              (testType:Type)-[:DECLARES]->(testMethod:Method)-[assertion:INVOKES]->(assertMethod)
+            where
+              not assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+            return
+              assertion as Assertion, assertMethod as InvalidMethod
+        ]]></cypher>
+    </constraint>
+
 </jqa:jqassistant-rules>
