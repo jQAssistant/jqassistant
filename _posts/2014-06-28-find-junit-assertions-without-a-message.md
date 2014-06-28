@@ -1,7 +1,6 @@
 ---
 layout: post
 title:  "Find JUnit assertions without a message."
-categories: Rules
 ---
 
 During our last Neo4j tutorial in Leipzig one of the participants pointed out that there could be some useful constraints regarding test implementations based on JUnit. A quite useful and easy thing would be finding all assertions without a human readable message:
