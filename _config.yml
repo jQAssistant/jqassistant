@@ -1,3 +1,4 @@
 name: jQAssistant
+baseUrl: https://buschmais.github.io/jqassistant/
 markdown: redcarpet
 pygments: false
