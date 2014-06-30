@@ -68,7 +68,7 @@ order by
 
 ![Assertions without message]({{ site.baseurl }}/img/posts/2014-06-28-AssertionsWithoutMessage.png "Assertions without message")
 
-This statement with a slightly modified return clause can also be used as a constraint as a jQAssistant rule:
+This statement with a slightly modified return clause can also be used as a constraint (i.e. jQAssistant rule):
 
 ```xml
 <jqa:jqassistant-rules 
