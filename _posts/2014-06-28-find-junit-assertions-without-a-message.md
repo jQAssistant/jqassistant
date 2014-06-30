@@ -63,8 +63,10 @@ return
   testType.fqn + "#" + testMethod.name as TestMethod,
   invocation.lineNumber as LineNumber
 order by
-  LineNumber
+  TestMethod, LineNumber
 ```
+
+!({{ site.baseurl }}}/img/posts/2014-06-28-AssertionsWithoutMessage "Assertions without message")
 
 This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
 
@@ -101,4 +103,49 @@ This statement with a slightly modified return clause can also be used as a cons
 </jqa:jqassistant-rules>
 ```
 
-The described rule will be part of the next jQAssistant release.
+If you're familiar with jQAsisstant you'll notice that there are some concepts hiding in those queries, thus the rules
+could be split up:
+
+```xml
+<jqa:jqassistant-rules 
+  xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+	<includeConstraint refId="my-rules:AssertionMustProvideMessage" />
+    </group>
+
+    <concept id="my-rules:AssertMethod">
+        <description>Labels all assertion methods declared by org.junit.Assert with "Assert".</description>
+        <cypher><![CDATA
+			match
+			  (assertType:Type)-[:DECLARES]->(assertMethod)
+			where
+			  assertType.fqn = 'org.junit.Assert'
+			  and assertMethod.signature =~ 'void assert.*'
+			set
+			  assertMethod:Assert
+			return
+			  assertMethod
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="my-rules:AssertionMustProvideMessage">
+        <requiresConcept refId="AssertMethod" />
+        <description>All assertions must provide a message.</description>
+        <cypher><![CDATA[
+			match
+			  (testType:Type)-[:DECLARES]->(testMethod:Method),
+			  (testMethod)-[invocation:INVOKES]->(assertMethod:Assert:Method)
+			where
+			  not assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+			return
+			  invocation as Invocation,
+			  testType as DeclaringType,
+			  testMethod as Method
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
+```
+
+The described rules will be part of the next jQAssistant release.
