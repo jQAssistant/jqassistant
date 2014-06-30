@@ -22,7 +22,7 @@ information. Therefore each of the assert methods provided by the class org.juni
   }
 ```
 
-Now let's find all the invocations which do not provide a message. First we need scan the project and start the server:
+Now let's find all the invocations which do not provide a message. First we need to scan the project and start the server:
 
 ```raw
 cd <project_root>
@@ -66,17 +66,17 @@ order by
   LineNumber
 ```
 
-This statement with a slightly modified return clause can also be used as a constraint in a rules file:
+This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
 
-```
+```xml
 <jqa:jqassistant-rules 
   xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
 	<group id="default">
-		<includeConstraint refId="my-rules:AssertionsMustProvideAMessage" />
+		<includeConstraint refId="my-rules:AssertionMustProvideMessage" />
 	</group>
 
-    <constraint id="my-rules:AssertionsMustProvideAMessage">
+    <constraint id="my-rules:AssertionMustProvideMessage">
         <description>All assertions must provide a message.</description>
         <cypher><![CDATA[
 			match
