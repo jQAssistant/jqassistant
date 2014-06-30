@@ -68,7 +68,7 @@ order by
 
 This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
 
-```
+```xml
 <jqa:jqassistant-rules 
   xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
