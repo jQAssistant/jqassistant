@@ -66,7 +66,7 @@ order by
   LineNumber
 ```
 
-This statement with a slightly modified return clause can also be used as a constraint in a rules file:
+This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
 
 ```
 <jqa:jqassistant-rules 
