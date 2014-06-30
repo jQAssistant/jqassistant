@@ -53,13 +53,13 @@ root
    |                |-pom.xml
    |
    |-project2*
-   |        |-jqassistant
-   |        |           |-rules2.xml
-   |        |-pom.xml
-   |        |-module1
-   |        |       |-pom.xml
-   |        |
-   |        |-module2
+            |-jqassistant
+            |           |-rules2.xml
+            |-pom.xml
+            |-module1
+            |       |-pom.xml
+            |
+            |-module2
                     |-pom.xml
 ----
 
