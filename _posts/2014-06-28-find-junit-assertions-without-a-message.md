@@ -128,7 +128,7 @@ could be split up for further constraints:
 			return
 			  assertMethod
         ]]></cypher>
-    </constraint>
+    </concept>
 
     <constraint id="my-rules:AssertionMustProvideMessage">
         <requiresConcept refId="my-rules:AssertMethod" />
