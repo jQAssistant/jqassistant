@@ -117,7 +117,7 @@ could be split up for further constraints:
     <concept id="my-rules:AssertMethod">
         <description>Labels all assertion methods declared 
           by org.junit.Assert with "Assert".</description>
-        <cypher><![CDATA
+        <cypher><![CDATA[
 			match
 			  (assertType:Type)-[:DECLARES]->(assertMethod)
 			where
