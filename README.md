@@ -1,5 +1,8 @@
 ![jQAssistant](https://github.com/buschmais/jqassistant/wiki/images/logo_jqa-small.png "jQAssistant")
 
+
+Refer to the [documentation](https://buschmais.github.io/jqassistant/doc/1.0.0-M3) for usage information.
+
 You can read the latest news, releases and articles around jQAssistant on the [blog]
 (https://buschmais.github.io/jqassistant).
 
