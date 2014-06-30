@@ -111,7 +111,7 @@ could be split up for further constraints:
   xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <group id="default">
-	<includeConstraint refId="my-rules:AssertionMustProvideMessage" />
+        <includeConstraint refId="my-rules:AssertionMustProvideMessage" />
     </group>
 
     <concept id="my-rules:AssertMethod">
