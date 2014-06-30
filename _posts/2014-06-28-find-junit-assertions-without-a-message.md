@@ -68,7 +68,7 @@ order by
 
 ![Assertions without message]({{ site.baseurl }}/img/posts/2014-06-28-AssertionsWithoutMessage.png "Assertions without message")
 
-This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
+This statement with a slightly modified return clause can also be used as a constraint as a jQAssistant rule:
 
 ```xml
 <jqa:jqassistant-rules 
@@ -78,7 +78,7 @@ This statement with a slightly modified return clause can also be used as a cons
 		<includeConstraint refId="my-rules:AssertionMustProvideMessage" />
 	</group>
 
-    <constraint id="my-rules:AssertionMustProvideMessage">
+	<constraint id="my-rules:AssertionMustProvideMessage">
         <description>All assertions must provide a message.</description>
         <cypher><![CDATA[
 			match
@@ -103,8 +103,8 @@ This statement with a slightly modified return clause can also be used as a cons
 </jqa:jqassistant-rules>
 ```
 
-If you're familiar with jQAsisstant you'll notice that there are some concepts hiding in those queries, thus the rule
-could be split up:
+If you're familiar with jQAsisstant you'll notice that at least one concept is hiding in those queries. Thus the rule
+could be split up for further constraints:
 
 ```xml
 <jqa:jqassistant-rules 
@@ -131,7 +131,7 @@ could be split up:
     </constraint>
 
     <constraint id="my-rules:AssertionMustProvideMessage">
-        <requiresConcept refId="AssertMethod" />
+        <requiresConcept refId="my-rules:AssertMethod" />
         <description>All assertions must provide a message.</description>
         <cypher><![CDATA[
 			match
