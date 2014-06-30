@@ -66,7 +66,7 @@ order by
   TestMethod, LineNumber
 ```
 
-!({{ site.baseurl }}}/img/posts/2014-06-28-AssertionsWithoutMessage "Assertions without message")
+!({{ site.baseurl }}/img/posts/2014-06-28-AssertionsWithoutMessage "Assertions without message")
 
 This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
 
@@ -103,7 +103,7 @@ This statement with a slightly modified return clause can also be used as a cons
 </jqa:jqassistant-rules>
 ```
 
-If you're familiar with jQAsisstant you'll notice that there are some concepts hiding in those queries, thus the rules
+If you're familiar with jQAsisstant you'll notice that there are some concepts hiding in those queries, thus the rule
 could be split up:
 
 ```xml
@@ -115,7 +115,8 @@ could be split up:
     </group>
 
     <concept id="my-rules:AssertMethod">
-        <description>Labels all assertion methods declared by org.junit.Assert with "Assert".</description>
+        <description>Labels all assertion methods declared 
+          by org.junit.Assert with "Assert".</description>
         <cypher><![CDATA
 			match
 			  (assertType:Type)-[:DECLARES]->(assertMethod)
