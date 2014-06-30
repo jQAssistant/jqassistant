@@ -66,7 +66,7 @@ order by
   TestMethod, LineNumber
 ```
 
-!({{ site.baseurl }}/img/posts/2014-06-28-AssertionsWithoutMessage "Assertions without message")
+![Assertions without message]({{ site.baseurl }}/img/posts/2014-06-28-AssertionsWithoutMessage "Assertions without message")
 
 This statement with a slightly modified return clause can also be used as a constraint in a jQAssistant rules file:
 
