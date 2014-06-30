@@ -73,10 +73,10 @@ This statement with a slightly modified return clause can also be used as a cons
   xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
 	<group id="default">
-		<includeConstraint refId="my-rules:AssertionsMustProvideAMessage" />
+		<includeConstraint refId="my-rules:AssertionMustProvideMessage" />
 	</group>
 
-    <constraint id="my-rules:AssertionsMustProvideAMessage">
+    <constraint id="my-rules:AssertionMustProvideMessage">
         <description>All assertions must provide a message.</description>
         <cypher><![CDATA[
 			match
