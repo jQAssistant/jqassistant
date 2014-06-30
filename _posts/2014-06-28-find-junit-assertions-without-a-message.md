@@ -22,7 +22,7 @@ information. Therefore each of the assert methods provided by the class org.juni
   }
 ```
 
-Now let's find all the invocations which do not provide a message. First we need scan the project and start the server:
+Now let's find all the invocations which do not provide a message. First we need to scan the project and start the server:
 
 ```raw
 cd <project_root>
