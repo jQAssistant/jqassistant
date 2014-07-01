@@ -1,17 +1,28 @@
 package com.buschmais.jqassistant.plugin.junit4.test.rule;
 
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
+import com.buschmais.jqassistant.plugin.junit4.test.set.Assertions;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
 import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestClass;
 import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
@@ -26,7 +37,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -46,7 +57,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -66,7 +77,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     * @throws AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
@@ -81,6 +92,58 @@ public class Junit4IT extends AbstractJavaPluginIT {
         verifyTestCaseImplementedByMethod("failure");
         verifyTestCaseImplementedByMethod("error");
         verifyTestCaseImplementedByMethod("skipped");
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:AssertMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void assertMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(Assertions.class);
+        applyConcept("junit4:AssertMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:Assert:Method) return m").getColumn("m");
+        assertThat(
+                methods,
+                allOf(hasItem(methodDescriptor(Assert.class, "assertTrue", boolean.class)),
+                        hasItem(methodDescriptor(Assert.class, "assertTrue", String.class, boolean.class))));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the constraint "junit4:AssertionMustProvideMessage".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void assertionMustProvideMessage() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(Assertions.class);
+        validateConstraint("junit4:AssertionMustProvideMessage");
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(1));
+        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "assertWithoutMessage"));
         store.commitTransaction();
     }
 

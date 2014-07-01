@@ -47,21 +47,34 @@
         ]]></cypher>
     </concept>
 
-    <constraint id="junit4:AssertionsMustProvideAMessage">
-        <description>All assertions (i.e. invocations of assert methods provided by org.junit.Assert) must provide a message.</description>
+    <concept id="junit4:AssertMethod">
+        <description>Labels all assertion methods declared by org.junit.Assert with "Assert".</description>
         <cypher><![CDATA[
             match
-              (assertType:Type)-[:DECLARES]-(assertMethod:Method)
+            (assertType:Type)-[:DECLARES]->(assertMethod)
             where
-              assertType.fqn='org.junit.Assert' and assertMethod.signature =~ 'void assert.*'
-            with
-              assertMethod
-            match
-              (testType:Type)-[:DECLARES]->(testMethod:Method)-[assertion:INVOKES]->(assertMethod)
-            where
-              not assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+            assertType.fqn = 'org.junit.Assert'
+            and assertMethod.signature =~ 'void assert.*'
+            set
+            assertMethod:Assert
             return
-              assertion as Assertion, assertMethod as InvalidMethod
+            assertMethod
+            ]]></cypher>
+    </concept>
+
+    <constraint id="junit4:AssertionMustProvideMessage">
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <description>All assertions must provide a message.</description>
+        <cypher><![CDATA[
+			match
+			  (testType:Type)-[:DECLARES]->(testMethod:Method),
+			  (testMethod)-[invocation:INVOKES]->(assertMethod:Assert:Method)
+			where
+			  not assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+			return
+			  invocation as Invocation,
+			  testType as DeclaringType,
+			  testMethod as Method
         ]]></cypher>
     </constraint>
 
