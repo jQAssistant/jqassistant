@@ -75,6 +75,6 @@ The following set of jQAssistant rules report such kind of test implementations,
 
 The concept "junit4:TestClassOrMethod" adds a label "Test" to all test methods annotated with @org.junit.Test, the concept "junit4:AssertMethod" adds a label "Assert" to all assert methods provided by org.junit.Assert.
 
-Both are required by the constraint "junit4:TestMethodWithoutAssertion" which does nothing more than checking if within the call graph (i.e.  traversal over all outgoing INVOKE relations) at least one "Assert" labeled method can be found.
+Both are required by the constraint "junit4:TestMethodWithoutAssertion" which does nothing more than checking if within the call graph starting at a test method (i.e. traversal over all outgoing INVOKE relations) at least one "Assert" labeled method can be found.
 
 The constraint has been added to the jQAssistant JUnit4 plugin and thus will be officially available with the next release.
