@@ -112,7 +112,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         scanClasses(Assertions.class);
         applyConcept("junit4:AssertMethod");
         store.beginTransaction();
-        List<Object> methods = query("match (m:Assert:Method) return m").getColumn("m");
+        List<Object> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
         assertThat(
                 methods,
                 allOf(hasItem(methodDescriptor(Assert.class, "assertTrue", boolean.class)),

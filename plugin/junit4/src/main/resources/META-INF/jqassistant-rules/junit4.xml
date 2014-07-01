@@ -48,7 +48,7 @@
     </concept>
 
     <concept id="junit4:AssertMethod">
-        <description>Labels all assertion methods declared by org.junit.Assert with "Assert".</description>
+        <description>Labels all assertion methods declared by org.junit.Assert with "Junit4" and "Assert".</description>
         <cypher><![CDATA[
             match
             (assertType:Type)-[:DECLARES]->(assertMethod)
@@ -56,7 +56,7 @@
             assertType.fqn = 'org.junit.Assert'
             and assertMethod.signature =~ 'void assert.*'
             set
-            assertMethod:Assert
+            assertMethod:Junit4:Assert
             return
             assertMethod
             ]]></cypher>
