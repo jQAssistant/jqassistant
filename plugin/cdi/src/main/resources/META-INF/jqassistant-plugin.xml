@@ -4,6 +4,9 @@
         <class>com.buschmais.jqassistant.plugin.cdi.api.type.CdiDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor</class>
     </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.cdi.api.scanner.BeansDescriptorScannerPlugin</class>
+    </scanner>
     <rules>
         <resource>cdi.xml</resource>
     </rules>
