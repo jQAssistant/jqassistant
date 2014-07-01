@@ -108,7 +108,6 @@
         ]]></cypher>
     </concept>
 
-
     <concept id="cdi:ApplicationScoped">
         <description>Labels all beans, fields or methods annotated with @javax.enterprise.context.ApplicationScoped with "Cdi" and "ApplicationScoped".
         </description>
@@ -122,6 +121,52 @@
               e:Cdi:ApplicationScoped
             return
               count(e) as ApplicationScopedElements
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Stereotype">
+        <description>Labels all annotation types annotated with @javax.enterprise.context.Stereotype with "Cdi" and "Stereotype".
+        </description>
+        <cypher><![CDATA[
+            match
+              (stereotype:Type:Annotation)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(stereotypeType:Type)
+            where
+              stereotypeType.fqn="javax.enterprise.inject.Stereotype"
+            set
+              stereotype:Cdi:Stereotype
+            return
+              count(stereotype) as Stereotypes
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Alternative">
+        <description>Labels all types annotated with @javax.enterprise.context.Alternative with "Cdi" and "Alternative".
+        </description>
+        <cypher><![CDATA[
+            match
+              (alternative:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(alternativeType:Type)
+            where
+              alternativeType.fqn="javax.enterprise.inject.Alternative"
+            set
+              alternative:Cdi:Alternative
+            return
+              count(alternative) as Alternatives
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Specializes">
+        <description>Labels all types and methods annotated with @javax.enterprise.context.Specializes with "Cdi" and "Specializes".
+        </description>
+        <cypher><![CDATA[
+            match
+              (specializes)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(specializesType:Type)
+            where
+              (specializes:Type or specializes:Method)
+              and specializesType.fqn="javax.enterprise.inject.Specializes"
+            set
+              specializes:Cdi:Alternative
+            return
+              count(specializes) as Specializations
         ]]></cypher>
     </concept>
 
