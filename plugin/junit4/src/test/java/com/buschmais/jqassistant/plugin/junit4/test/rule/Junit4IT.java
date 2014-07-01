@@ -148,6 +148,33 @@ public class Junit4IT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the constraint "junit4:TestMethodWithoutAssertion".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void testMethodWithoutAssertion() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(Assertions.class);
+        validateConstraint("junit4:TestMethodWithoutAssertion");
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit4:TestMethodWithoutAssertion")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(1));
+        assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "testWithoutAssertion"));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies if a IMPLEMENTED_BY relation exists between a test case and and
      * test method.
      * 

@@ -78,4 +78,20 @@
         ]]></cypher>
     </constraint>
 
+    <constraint id="junit4:TestMethodWithoutAssertion">
+        <requiresConcept refId="junit4:TestClassOrMethod"/>
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <description>All test methods must perform assertions.</description>
+        <cypher><![CDATA[
+			match
+			  (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+			where
+			  not (testMethod)-[:INVOKES*]->(:Method:Assert)
+			return
+			  testType as DeclaringType,
+			  testMethod as Method
+        ]]></cypher>
+    </constraint>
+
+
 </jqa:jqassistant-rules>
