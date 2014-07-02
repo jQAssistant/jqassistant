@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQualifier;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ApplicationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ConversationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DependentBean;
@@ -201,6 +202,25 @@ public class CdiIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         assertThat(query("MATCH (e:Cdi:Decorator) RETURN e").getColumn("e"), hasItem(typeDescriptor(DecoratorBean.class)));
         assertThat(query("MATCH (e:Cdi:Field:Delegate) RETURN e").getColumn("e"), hasItem(fieldDescriptor(DecoratorBean.class, "delegate")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Qualifier".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void qualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(CustomQualifier.class);
+        applyConcept("cdi:Qualifier");
+        store.beginTransaction();
+        assertThat(query("MATCH (e:Type:Cdi:Qualifier) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomQualifier.class)));
+        assertThat(query("MATCH (q:Qualifier)-[:DECLARES]->(a:Cdi:Method:Nonbinding) RETURN a").getColumn("a"),
+                hasItem(methodDescriptor(CustomQualifier.class, "nonBindingValue")));
         store.commitTransaction();
     }
 
