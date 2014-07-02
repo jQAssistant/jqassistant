@@ -81,17 +81,29 @@
     <constraint id="junit4:TestMethodWithoutAssertion">
         <requiresConcept refId="junit4:TestClassOrMethod"/>
         <requiresConcept refId="junit4:AssertMethod"/>
-        <description>All test methods must perform assertions.</description>
+        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
         <cypher><![CDATA[
 			match
 			  (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
 			where
-			  not (testMethod)-[:INVOKES*]->(:Method:Assert)
+			  not (testMethod)-[:INVOKES*..3]->(:Method:Assert)
 			return
 			  testType as DeclaringType,
 			  testMethod as Method
         ]]></cypher>
     </constraint>
 
+    <constraint id="junit4:IgnoreWithoutMessage">
+        <description>All @Ignore annotations must provide a message.</description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)
+            where
+              ignoreType.fqn= "org.junit.Ignore"
+              and not (ignore)-[:HAS]->(:Value{name:"value"})
+            return
+              e as IgnoredElement
+        ]]></cypher>
+    </constraint>
 
 </jqa:jqassistant-rules>

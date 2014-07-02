@@ -20,11 +20,13 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Assertions;
 import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
-import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestClass;
+import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTest;
+import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
 
 /**
@@ -64,11 +66,45 @@ public class Junit4IT extends AbstractJavaPluginIT {
      */
     @Test
     public void ignoreTestClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
-        scanClasses(IgnoredTestClass.class);
+        scanClasses(IgnoredTest.class);
         applyConcept("junit4:IgnoreTestClassOrMethod");
         store.beginTransaction();
-        assertThat(query("MATCH (m:Method:Junit4:Ignore) RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTestClass.class, "ignoredTestMethod")));
-        assertThat(query("MATCH (c:Type:Class:Junit4:Ignore) RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTestClass.class)));
+        assertThat(query("MATCH (c:Type:Class:Junit4:Ignore) RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTest.class)));
+        assertThat(query("MATCH (m:Method:Junit4:Ignore) RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTest.class, "ignoredTest")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:IgnoreWithoutMessage".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void ignoreWithoutMessage() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
+        validateConstraint("junit4:IgnoreWithoutMessage");
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> result = constraintViolations.get(0);
+        assertThat(result, result(constraint("junit4:IgnoreWithoutMessage")));
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(2));
+        for (Map<String, Object> row : rows) {
+            Object ignoredElement = row.get("IgnoredElement");
+            if (ignoredElement instanceof TypeDescriptor) {
+                assertThat((TypeDescriptor) ignoredElement, typeDescriptor(IgnoredTest.class));
+            } else if (ignoredElement instanceof MethodDescriptor) {
+                assertThat((MethodDescriptor) ignoredElement, methodDescriptor(IgnoredTest.class, "ignoredTest"));
+            } else {
+                Assert.fail("Unexpected result");
+            }
+        }
         store.commitTransaction();
     }
 
