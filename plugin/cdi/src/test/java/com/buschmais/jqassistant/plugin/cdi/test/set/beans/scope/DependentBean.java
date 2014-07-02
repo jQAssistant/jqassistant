@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.cdi.test.set.beans;
+package com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope;
 
 import java.io.Serializable;
 

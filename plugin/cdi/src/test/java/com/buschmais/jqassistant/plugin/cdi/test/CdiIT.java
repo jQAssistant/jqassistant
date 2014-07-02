@@ -15,14 +15,15 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.AlternativeBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.ApplicationScopedBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.ConversationScopedBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.CustomStereotype;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.DependentBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.RequestScopedBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.SessionScopedBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.SpecializesBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ApplicationScopedBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ConversationScopedBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DependentBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.RequestScopedBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.SessionScopedBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.specializes.SpecializesBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.stereotype.CustomStereotype;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
@@ -179,9 +180,27 @@ public class CdiIT extends AbstractJavaPluginIT {
         scanClasses(SpecializesBean.class);
         applyConcept("cdi:Specializes");
         store.beginTransaction();
-        List<Object> column = query("MATCH (e:Cdi) RETURN e").getColumn("e");
+        List<Object> column = query("MATCH (e:Cdi:Specializes) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(SpecializesBean.class)));
         assertThat(column, hasItem(methodDescriptor(SpecializesBean.class, "doSomething")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Decorator".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void decorator() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(DecoratorBean.class);
+        applyConcept("cdi:Decorator");
+        store.beginTransaction();
+        assertThat(query("MATCH (e:Cdi:Decorator) RETURN e").getColumn("e"), hasItem(typeDescriptor(DecoratorBean.class)));
+        assertThat(query("MATCH (e:Cdi:Field:Delegate) RETURN e").getColumn("e"), hasItem(fieldDescriptor(DecoratorBean.class, "delegate")));
         store.commitTransaction();
     }
 

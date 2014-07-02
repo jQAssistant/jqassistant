@@ -125,7 +125,7 @@
     </concept>
 
     <concept id="cdi:Stereotype">
-        <description>Labels all annotation types annotated with @javax.enterprise.context.Stereotype with "Cdi" and "Stereotype".
+        <description>Labels all annotation types annotated with @javax.enterprise.inject.Stereotype with "Cdi" and "Stereotype".
         </description>
         <cypher><![CDATA[
             match
@@ -140,7 +140,7 @@
     </concept>
 
     <concept id="cdi:Alternative">
-        <description>Labels all types annotated with @javax.enterprise.context.Alternative with "Cdi" and "Alternative".
+        <description>Labels all types annotated with @javax.enterprise.inject.Alternative with "Cdi" and "Alternative".
         </description>
         <cypher><![CDATA[
             match
@@ -155,7 +155,7 @@
     </concept>
 
     <concept id="cdi:Specializes">
-        <description>Labels all types and methods annotated with @javax.enterprise.context.Specializes with "Cdi" and "Specializes".
+        <description>Labels all types and methods annotated with @javax.enterprise.inject.Specializes with "Cdi" and "Specializes".
         </description>
         <cypher><![CDATA[
             match
@@ -164,10 +164,43 @@
               (specializes:Type or specializes:Method)
               and specializesType.fqn="javax.enterprise.inject.Specializes"
             set
-              specializes:Cdi:Alternative
+              specializes:Cdi:Specializes
             return
               count(specializes) as Specializations
         ]]></cypher>
     </concept>
+
+    <concept id="cdi:Delegate">
+        <description>Labels all fields annotated with @javax.decorator.Delegate with "Cdi" and "Delegate".
+        </description>
+        <cypher><![CDATA[
+            match
+              (delegate:Field)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(delegateType:Type)
+            where
+              delegateType.fqn="javax.decorator.Delegate"
+            set
+              delegate:Cdi:Delegate
+            return
+              count(delegate) as Delegates
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Decorator">
+        <requiresConcept refId="cdi:Delegate"/>
+        <description>Labels all types with @javax.decorator.Decorator with "Cdi" and "Decorator".
+        </description>
+        <cypher><![CDATA[
+            match
+              (decorator:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(decoratorType:Type)
+            where
+              decoratorType.fqn="javax.decorator.Decorator"
+            set
+              decorator:Cdi:Decorator
+            return
+              count(decorator) as Decorators
+        ]]></cypher>
+    </concept>
+
+    <!-- @Disposes, @InterceptorBinding, @Any, @Default -->
 
 </jqa:jqassistant-rules>

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.cdi.test.set.beans;
+package com.buschmais.jqassistant.plugin.cdi.test.set.beans.stereotype;
 
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
