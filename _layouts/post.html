@@ -5,9 +5,10 @@ layout: default
 <p class="meta">{{ page.date | date_to_string }}
 {% assign author = site.data.authors[page.author] %}
 {% if author %}
-    <span>
-        | {{ author.name }}
-    </span>
+| {{ author.name }}
+	{% if author.twitter %} 
+	   | <a href="https://twitter.com/{{ author.twitter }}">@{{ author.twitter }}</a>
+	{% endif %}  
 {% endif %}
 </p>
 
