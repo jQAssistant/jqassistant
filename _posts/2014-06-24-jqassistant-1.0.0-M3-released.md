@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "jQAssistant 1.0.0-M3 released"
+author: dirkmahler
 ---
 
 jQAssistant 1.0.0-M3 is now available. Beside new scanners, rules and improved performance the most notable change is a SonarQube plugin. It allows to define and activate or deactive rules as a part of a quality profile on a SonarQube server and creating issues for violated constraints. You're strongly encouraged to try it!

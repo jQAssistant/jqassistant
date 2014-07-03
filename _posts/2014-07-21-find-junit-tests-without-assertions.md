@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Find JUnit tests without assertions."
+author: dirkmahler
 ---
 
 As a follow up of the last post ([Find JUnit assertions without a message]({% post_url 2014-06-28-find-junit-assertions-without-a-message %})) another useful constraint can be created using a set of cypher queries.
