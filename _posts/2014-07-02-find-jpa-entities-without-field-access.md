@@ -1,6 +1,7 @@
 ---
 layout: post
 title:  "Find JPA Entities without Field Access"
+author: aparnachaudhary
 ---
 
 The JPA specification allows field vs property based access for entities. Following query can be used to find entities using property access.
@@ -8,7 +9,8 @@ The JPA specification allows field vs property based access for entities. Follow
 
 ```
 MATCH
-  (entity:Jpa:Entity)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+  (entity:Jpa:Entity)-[:DECLARES]->(m:Method),
+  (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
 WHERE
   a.fqn IN ["javax.persistence.Id", "javax.persistence.EmbeddedId"]
 RETURN
@@ -36,17 +38,20 @@ Reference:
 The above cypher query can easily be modelled as a constraint (i.e. jQAssistant rule):
 
 ```xml
-<jqa:jqassistant-rules
-	xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+<jqa:jqassistant-rules xmlns:jqa=
+	"http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
 	<constraint id="my-rules:EntitiesMustUseFieldAccess">
 		<requiresConcept refId="jpa2:Entity" />
-		<description>Verifies that entities prefer field access over property access.</description>
+		<description>Verifies that entities prefer field access 
+			over property access.</description>
 		<cypher><![CDATA[
             MATCH
-               	(entity:Jpa:Entity)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+               	(entity:Jpa:Entity)-[:DECLARES]->(m:Method),
+				(m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
             WHERE 
-               	a.fqn IN ["javax.persistence.Id", "javax.persistence.EmbeddedId"]
+               	a.fqn IN
+				  ["javax.persistence.Id", "javax.persistence.EmbeddedId"]
             RETURN
                	entity.name AS EntityWithoutFieldAccess
         ]]></cypher>
