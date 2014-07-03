@@ -96,7 +96,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(2));
         for (Map<String, Object> row : rows) {
-            Object ignoredElement = row.get("IgnoredElement");
+            Object ignoredElement = row.get("IgnoreWithoutMessage");
             if (ignoredElement instanceof TypeDescriptor) {
                 assertThat((TypeDescriptor) ignoredElement, typeDescriptor(IgnoredTest.class));
             } else if (ignoredElement instanceof MethodDescriptor) {
