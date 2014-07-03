@@ -1,12 +1,9 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.neo4j.server.modules.ServerModule;
 import org.neo4j.server.web.WebServer;
-
-import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.AnalysisRestService;
 
 /**
  * Defines the Neo4j server module for jQAssistant.
@@ -19,9 +16,9 @@ class JQAServerModule implements ServerModule {
     private WebServer webServer;
     private List<String> jaxRsClassNames;
 
-    JQAServerModule(WebServer webServer) {
+    JQAServerModule(WebServer webServer, List<String> jaxRsClassNames) {
         this.webServer = webServer;
-        this.jaxRsClassNames = Arrays.asList(AnalysisRestService.class.getName());
+        this.jaxRsClassNames = jaxRsClassNames;
     }
 
     @Override
