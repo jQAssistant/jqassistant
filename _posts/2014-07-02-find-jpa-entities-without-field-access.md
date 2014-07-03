@@ -32,8 +32,8 @@ CONS:
 
 Reference:
 
-* http://www.oracle.com/technetwork/articles/marx-jpa-087268.html
-* http://www.adam-bien.com/roller/abien/entry/field_vs_property_based_access
+* [http://www.oracle.com/technetwork/articles/marx-jpa-087268.html](http://www.oracle.com/technetwork/articles/marx-jpa-087268.html)
+* [http://www.adam-bien.com/roller/abien/entry/field_vs_property_based_access](http://www.adam-bien.com/roller/abien/entry/field_vs_property_based_access)
 
 The above cypher query can easily be modelled as a constraint (i.e. jQAssistant rule):
 
