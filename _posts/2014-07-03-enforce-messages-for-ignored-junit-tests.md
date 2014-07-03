@@ -20,7 +20,7 @@ Now a colleague came up with the hint that it would be very useful to ensure tha
   }
 ```
 
-The method "test1" does not provide any context information why it has been disabled whereas "test2" provides this information. Thus for setting up a rule we need to find all annotation of type @org.junit.Ignore which do not have a value named ["value"](http://junit.sourceforge.net/javadoc/org/junit/Ignore.html#value):
+The method "test1" does not provide any context information why it has been disabled whereas "test2" does. Thus for setting up a rule we need to find all annotations of type @org.junit.Ignore which do not have an attribute value named ["value"](http://junit.sourceforge.net/javadoc/org/junit/Ignore.html#value):
 
 ```xml
 <jqa:jqassistant-rules
@@ -35,7 +35,7 @@ The method "test1" does not provide any context information why it has been disa
               ignoreType.fqn= "org.junit.Ignore"
               and not (ignore)-[:HAS]->(:Value{name:"value"})
             return
-              e as IgnoredElement
+              e as IgnoreWithoutMessage
         ]]></cypher>
     </constraint>
 
