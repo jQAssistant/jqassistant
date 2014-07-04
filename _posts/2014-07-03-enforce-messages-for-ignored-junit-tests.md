@@ -4,7 +4,7 @@ title:  "Enforce messages for ignored JUnit tests"
 author: dirkmahler
 ---
 
-During the last days two posts ([Find JUnit assertions without a message]({{ site.baseurl }}{% post_url 2014-06-28-find-junit-assertions-without-a-message %})) and [Find JUnit tests without assertions]({{ site.baseurl }}{% post_url 2014-07-21-find-junit-tests-without-assertions %})) have been published here about useful rules regarding proper usage of JUnit.
+During the last days two posts ([Find JUnit assertions without a message]({{ site.baseurl }}{% post_url 2014-06-28-find-junit-assertions-without-a-message %}) and [Find JUnit tests without assertions]({{ site.baseurl }}{% post_url 2014-07-21-find-junit-tests-without-assertions %})) have been published here about useful rules regarding proper usage of JUnit.
 
 Now a colleague came up with the hint that it would be very useful to ensure that every occurrence of the annotation @org.junit.Ignore shall provide a message why a particular test class or method is ignored:
 
