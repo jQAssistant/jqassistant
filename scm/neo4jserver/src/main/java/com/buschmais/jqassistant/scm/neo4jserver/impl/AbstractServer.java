@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
+import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServer;
 import org.neo4j.server.database.InjectableProvider;
 import org.neo4j.server.modules.ServerModule;
@@ -15,49 +15,27 @@ import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
 import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.AnalysisRestService;
 
 /**
- * The customized Neo4j server.
+ * Abstract base class for the customized Neo4j server.
  * <p>
  * The class adds the {@link JQAServerModule}
  * </p>
  */
-public class ServerImpl extends WrappingNeoServer implements Server {
+public abstract class AbstractServer extends WrappingNeoServer implements Server {
+    protected final Store store;
 
-    private final Store store;
-
-    private final List<Class<?>> extensions;
-
-    /**
-     * Constructor.
-     * 
-     * @param graphStore
-     *            The store instance to use.
-     */
-    public ServerImpl(EmbeddedGraphStore graphStore) {
-        this(graphStore, Collections.<Class<?>> emptyList());
-    }
-
-    /**
-     * Constructor.
-     * 
-     * @param graphStore
-     *            The store instance to use.
-     * @param extensions
-     *            The extensions to register (JAX-RS annotated classes).
-     */
-    public ServerImpl(EmbeddedGraphStore graphStore, List<Class<?>> extensions) {
-        super(graphStore.getDatabaseService());
+    public AbstractServer(GraphDatabaseAPI db, EmbeddedGraphStore graphStore) {
+        super(db);
         this.store = graphStore;
-        this.extensions = extensions;
     }
 
     @Override
     protected Iterable<ServerModule> createServerModules() {
-        List<ServerModule> serverModules = new ArrayList<>();
         List<String> extensionNames = new ArrayList<>();
         extensionNames.add(AnalysisRestService.class.getName());
-        for (Class<?> extension : extensions) {
+        for (Class<?> extension : getExtensions()) {
             extensionNames.add(extension.getName());
         }
+        List<ServerModule> serverModules = new ArrayList<>();
         serverModules.add(new JQAServerModule(webServer, extensionNames));
         for (ServerModule serverModule : super.createServerModules()) {
             serverModules.add(serverModule);
@@ -71,4 +49,11 @@ public class ServerImpl extends WrappingNeoServer implements Server {
         defaultInjectables.add(new StoreProvider(store));
         return defaultInjectables;
     }
+
+    /**
+     * Return the extension classes that shall be included.
+     * 
+     * @return The extension classes.
+     */
+    protected abstract Iterable<? extends Class<?>> getExtensions();
 }
