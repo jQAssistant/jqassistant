@@ -9,7 +9,7 @@ During the last days two posts ([Find JUnit assertions without a message]({{ sit
 Now a colleague came up with the hint that it would be very useful to ensure that every occurrence of the annotation @org.junit.Ignore shall provide a message why a particular test class or method is ignored:
 
 ```java
-  @Ignore // N
+  @Ignore // No message is provided
   public void test1() {
     ...
   }
