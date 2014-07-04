@@ -58,7 +58,6 @@ The above cypher query can easily be modelled as a constraint (i.e. jQAssistant 
 	</constraint>
 
 	<group id="default">
-		<includeConcept refId="jpa2:Entity" />
 		<includeConstraint refId="my-rules:EntitiesMustUseFieldAccess" />
 	</group>
 </jqa:jqassistant-rules>
