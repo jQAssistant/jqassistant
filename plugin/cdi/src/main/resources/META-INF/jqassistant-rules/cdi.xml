@@ -12,7 +12,7 @@
             set
               member:Cdi:InjectionPoint
             return
-              count(m) as InjectionPoints
+              count(member) as InjectionPoints
         ]]></cypher>
     </concept>
 
@@ -28,7 +28,7 @@
             set
               member:Cdi:Produces
             return
-              count(m) as Producer
+              count(member) as Producer
         ]]></cypher>
     </concept>
 
