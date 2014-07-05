@@ -245,4 +245,20 @@
         ]]></cypher>
     </concept>
     
+    <concept id="cdi:EventConsumer">
+		<requiresConcept refId="cdi:InjectionPoint" />
+        <description>Labels all beans declaring method that has parameter of type "javax.enterprise.event.Observes" with "Cdi" and "EventConsumer".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
+            WHERE
+              injectType.fqn = "javax.enterprise.event.Observes"
+            SET
+              a:Cdi:EventConsumer
+            RETURN
+              count(distinct a.fqn) AS CdiEventConsumers
+        ]]></cypher>
+    </concept>
+
 </jqa:jqassistant-rules>

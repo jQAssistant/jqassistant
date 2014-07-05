@@ -10,7 +10,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.Bean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.event.CustomEventConsumer;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.event.CustomEventProducer;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
@@ -31,30 +31,61 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	 */
 	@Test
 	public void test_EventProducer_Concept() throws IOException, AnalysisException {
-		scanClasses(Bean.class);
 		scanClasses(CustomEventProducer.class);
 		applyConcept("cdi:EventProducer");
 		store.beginTransaction();
 		assertThat(query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventProducer.class)));
 		store.commitTransaction();
 	}
-	
-    /**
-     * Verifies the concept {@code cdi:EventProducer} is not applied to invalid
-     * EventProducer classes.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void testInvalid_EventProducer_Concept() throws IOException, AnalysisException {
+
+	/**
+	 * Verifies the concept {@code cdi:EventProducer} is not applied to invalid EventProducer classes.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+	 *             If the test fails.
+	 */
+	@Test
+	public void testInvalid_EventProducer_Concept() throws IOException, AnalysisException {
 		scanClasses(CdiEventIT.class);
 		applyConcept("cdi:EventProducer");
-        store.beginTransaction();
-        assertThat("Unexpected EventProducer", query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), nullValue());
-        store.commitTransaction();
+		store.beginTransaction();
+		assertThat("Unexpected EventProducer", query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), nullValue());
+		store.commitTransaction();
+	}
 
-    }	
+	/**
+	 * Verifies the concept "cdi:EventConsumer".
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_EventConsumer_Concept() throws IOException, AnalysisException {
+		scanClasses(CustomEventConsumer.class);
+		applyConcept("cdi:EventConsumer");
+		store.beginTransaction();
+		assertThat(query("MATCH (e:Type:Cdi:EventConsumer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventConsumer.class)));
+		store.commitTransaction();
+	}
+
+	/**
+	 * Verifies the concept {@code cdi:EventConsumer} is not applied to invalid EventConsumer classes.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+	 *             If the test fails.
+	 */
+	@Test
+	public void testInvalid_EventConsumer_Concept() throws IOException, AnalysisException {
+		scanClasses(CdiEventIT.class);
+		applyConcept("cdi:EventConsumer");
+		store.beginTransaction();
+		assertThat("Unexpected EventConsumer", query("MATCH (e:Type:Cdi:EventConsumer) RETURN e").getColumn("e"), nullValue());
+		store.commitTransaction();
+	}
 }
