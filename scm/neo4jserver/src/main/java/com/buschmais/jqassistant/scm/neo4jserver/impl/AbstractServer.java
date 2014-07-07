@@ -9,10 +9,13 @@ import org.neo4j.server.WrappingNeoServer;
 import org.neo4j.server.database.InjectableProvider;
 import org.neo4j.server.modules.ServerModule;
 
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
 import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.AnalysisRestService;
+import com.sun.jersey.api.core.HttpContext;
 
 /**
  * Abstract base class for the customized Neo4j server.
@@ -46,8 +49,19 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
     @Override
     protected Collection<InjectableProvider<?>> createDefaultInjectables() {
         Collection<InjectableProvider<?>> defaultInjectables = super.createDefaultInjectables();
-        defaultInjectables.add(new StoreProvider(store));
+        addInjectable(Store.class, store, defaultInjectables);
+        addInjectable(RulePluginRepository.class, getRulePluginRepository(), defaultInjectables);
+        addInjectable(ScannerPluginRepository.class, getScannerPluginRepository(), defaultInjectables);
         return defaultInjectables;
+    }
+
+    private <T> void addInjectable(Class<T> type, final T injectable, Collection<InjectableProvider<?>> defaultInjectables) {
+        defaultInjectables.add(new InjectableProvider<T>(type) {
+            @Override
+            public T getValue(HttpContext c) {
+                return injectable;
+            }
+        });
     }
 
     /**
@@ -56,4 +70,8 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
      * @return The extension classes.
      */
     protected abstract Iterable<? extends Class<?>> getExtensions();
+
+    protected abstract ScannerPluginRepository getScannerPluginRepository();
+
+    protected abstract RulePluginRepository getRulePluginRepository();
 }

@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.scm.cli;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -19,7 +20,8 @@ public class CmdlineServer extends CommonJqAssistantTask {
     }
 
     protected void doTheTask(final Store store) {
-        Server server = new DefaultServerImpl((EmbeddedGraphStore) store);
+        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, getScannerPluginRepository(store, Collections.<String, Object> emptyMap()),
+                getRulePluginRepository());
         server.start();
         getLog().info("Running server");
         getLog().info("Press <Enter> to finish.");
