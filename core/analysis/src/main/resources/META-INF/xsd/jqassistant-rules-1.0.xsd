@@ -1,122 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0"
-	targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0"
-	elementFormDefault="unqualified">
+           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0"
+           elementFormDefault="unqualified">
 
-	<xs:element name="jqassistant-rules">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="queryDefinition" type="jqassistant-rules:queryDefinitionType"
-					minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="concept" type="jqassistant-rules:conceptType"
-					minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="constraint" type="jqassistant-rules:constraintType"
-					minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="group" type="jqassistant-rules:groupType"
-					minOccurs="0" maxOccurs="unbounded" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+    <xs:element name="jqassistant-rules">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="queryDefinition" type="jqassistant-rules:queryDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:complexType name="referenceableType" abstract="true">
-		<xs:attribute name="id" type="xs:string" use="required" />
-	</xs:complexType>
+    <xs:complexType name="referenceableType" abstract="true">
+        <xs:attribute name="id" type="xs:string" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="referenceType">
-		<xs:attribute name="refId" type="xs:string" use="required" />
-	</xs:complexType>
+    <xs:complexType name="referenceType">
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="queryDefinitionType">
-		<xs:complexContent>
-			<xs:extension base="jqassistant-rules:referenceableType">
-				<xs:sequence>
-					<xs:group ref="jqassistant-rules:queryGroup" />
-					<xs:element name="parameterDefinition"
-						type="jqassistant-rules:parameterDefinitionType" minOccurs="0"
-						maxOccurs="unbounded" />
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="queryDefinitionType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceableType">
+                <xs:sequence>
+                    <xs:group ref="jqassistant-rules:queryGroup"/>
+                    <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="parameterDefinitionType">
-		<xs:attribute name="name" type="xs:string" use="required" />
-		<xs:attribute name="type" type="jqassistant-rules:parameterTypes"
-			use="required" />
-		<xs:attribute name="default" type="xs:string" use="optional" />
-	</xs:complexType>
+    <xs:complexType name="parameterDefinitionType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
+        <xs:attribute name="default" type="xs:string" use="optional"/>
+    </xs:complexType>
 
-	<xs:simpleType name="parameterTypes">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="int" />
-			<xs:enumeration value="string" />
-		</xs:restriction>
-	</xs:simpleType>
+    <xs:simpleType name="parameterTypes">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="int"/>
+            <xs:enumeration value="string"/>
+        </xs:restriction>
+    </xs:simpleType>
 
-	<xs:group name="queryGroup">
-		<xs:sequence>
-			<xs:element name="description" type="xs:string" />
-			<xs:element name="cypher" type="xs:string" />
-		</xs:sequence>
-	</xs:group>
+    <xs:group name="queryGroup">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="cypher" type="xs:string"/>
+        </xs:sequence>
+    </xs:group>
 
-	<xs:group name="useQueryGroup">
-		<xs:sequence>
-			<xs:element name="description" type="xs:string" minOccurs="0" />
-			<xs:choice>
-				<xs:element name="cypher" type="xs:string" />
-				<xs:element name="useQueryDefinition" type="jqassistant-rules:referenceType" />
-			</xs:choice>
-			<xs:element name="parameter" type="jqassistant-rules:parameterType"
-				minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
-	</xs:group>
+    <xs:group name="useQueryGroup">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
+            <xs:choice>
+                <xs:element name="cypher" type="xs:string"/>
+                <xs:element name="useQueryDefinition" type="jqassistant-rules:referenceType"/>
+            </xs:choice>
+            <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
 
-	<xs:complexType name="parameterType">
-		<xs:attribute name="name" type="xs:string" use="required" />
-		<xs:attribute name="type" type="jqassistant-rules:parameterTypes"
-			use="required" />
-		<xs:attribute name="value" type="xs:string" use="required" />
-	</xs:complexType>
+    <xs:complexType name="parameterType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="type" type="jqassistant-rules:parameterTypes" use="required"/>
+        <xs:attribute name="value" type="xs:string" use="required"/>
+    </xs:complexType>
 
-	<xs:complexType name="conceptType">
-		<xs:complexContent>
-			<xs:extension base="jqassistant-rules:referenceableType">
-				<xs:sequence>
-					<xs:element name="requiresConcept" type="jqassistant-rules:referenceType"
-						minOccurs="0" maxOccurs="unbounded" />
-					<xs:group ref="jqassistant-rules:useQueryGroup" />
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="conceptType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceableType">
+                <xs:sequence>
+                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:group ref="jqassistant-rules:useQueryGroup"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="constraintType">
-		<xs:complexContent>
-			<xs:extension base="jqassistant-rules:referenceableType">
-				<xs:sequence>
-					<xs:element name="requiresConcept" type="jqassistant-rules:referenceType"
-						minOccurs="0" maxOccurs="unbounded" />
-					<xs:group ref="jqassistant-rules:useQueryGroup" />
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="constraintType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceableType">
+                <xs:sequence>
+                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:group ref="jqassistant-rules:useQueryGroup"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
-	<xs:complexType name="groupType">
-		<xs:complexContent>
-			<xs:extension base="jqassistant-rules:referenceableType">
-				<xs:sequence>
-					<xs:element name="includeConcept" type="jqassistant-rules:referenceType"
-						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="includeConstraint" type="jqassistant-rules:referenceType"
-						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="includeGroup" type="jqassistant-rules:referenceType"
-						minOccurs="0" maxOccurs="unbounded" />
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
+    <xs:complexType name="groupType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceableType">
+                <xs:sequence>
+                    <xs:element name="includeConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="includeConstraint" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="includeGroup" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 
 </xs:schema>

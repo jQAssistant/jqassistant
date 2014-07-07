@@ -35,6 +35,44 @@ import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
 public class Junit4IT extends AbstractJavaPluginIT {
 
     /**
+     * Verifies the concept "junit4:TestMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:TestMethod");
+        store.beginTransaction();
+        assertThat(query("MATCH (m:Method:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:TestClass".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:TestClass");
+        store.beginTransaction();
+        assertThat(query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies the concept "junit4:TestClassOrMethod".
      * 
      * @throws IOException
