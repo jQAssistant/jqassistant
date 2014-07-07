@@ -87,14 +87,16 @@ The following blog post discusses why you should prefer constructor injection ov
 
 May be I'm bit biased by now for constructor injection; but I do not see any clear drawbacks.
 
-Now that we have seen PROS and CONS of different approaches for Dependency Injection; next big challenge is to be consistent with our choices. jQAssistant to the rescue!
+Now that we have seen pros and cons of different approaches for Dependency Injection; next big challenge is to be consistent with our choices. jQAssistant to the rescue!
 
+
+The current version of jQAssistant introduced CDI plugin with "Cdi:InjectionPoint" concept. Following rule can be defined by using this concept to find out beans that are not using constructor injection.
 
 ```xml
 <jqa:jqassistant-rules
   xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <constraint id="cdi:BeansWithoutConstructorInjection">
+    <constraint id="cdi:BeansMustUseConstructorInjection">
       <requiresConcept refId="cdi:InjectionPoint" />
       <description>All CDI beans must use constructor injection.</description>
       <cypher><![CDATA[
@@ -110,11 +112,13 @@ Now that we have seen PROS and CONS of different approaches for Dependency Injec
 </jqa:jqassistant-rules>  
 ```
 
+If you are absolutely convinced that "Field injections are evil"; but you would like to keep it bit flexible by allowing constructor and setter injection. Following rule can be used to avoid usage of field injections.
+
 ```xml
 <jqa:jqassistant-rules
   xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <constraint id="cdi:BeansWithFieldInjection">
+    <constraint id="cdi:BeansMustNotUseFieldInjection">
       <requiresConcept refId="cdi:InjectionPoint" />
       <description>CDI beans shall not use field injection.</description>
       <cypher><![CDATA[
@@ -128,9 +132,9 @@ Now that we have seen PROS and CONS of different approaches for Dependency Injec
 </jqa:jqassistant-rules>  
 ```
 
-Still not convinced about advantages of constructor injection? Take your time. But meanwhile you can always prevent the existing beans from getting cluttered up with too many dependencies. 
+Still not convinced about advantages of constructor injection? Take your time. But meanwhile you can always prevent the existing beans from getting cluttered up with too many dependencies.
 
-The current version of jQAssistant introduced CDI plugin with "Cdi:InjectionPoint" concept. Following query can be used to set a rule to report beans with more than 5 field injection points.
+Following query can be used to set a rule to report beans with more than 5 field injection points.
 
 ```xml
 <jqa:jqassistant-rules
