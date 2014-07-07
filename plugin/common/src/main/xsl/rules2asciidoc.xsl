@@ -26,7 +26,14 @@
 [id="<xsl:value-of select="@id"/>"]
 ====== <xsl:value-of select="@id"/>
 <xsl:value-of select="$newline"/>
-    <xsl:if test="requiresConcept">
+
+        <xsl:if test="deprecated">
+            <xsl:value-of select="$newline"/>
+            _The rule is deprecated: <xsl:value-of select="deprecated"/>_
+            <xsl:value-of select="$newline"/>
+        </xsl:if>
+
+        <xsl:if test="requiresConcept">
 Requires concepts:
         <xsl:for-each select="requiresConcept">
 * &lt;&lt;<xsl:value-of select="@refId"/>&gt;&gt;<xsl:value-of select="$newline"/>
@@ -35,6 +42,7 @@ Requires concepts:
 <xsl:value-of select="$newline"/>
 <xsl:value-of select="description"/>
 <xsl:value-of select="$newline"/>
+
 [source,cypher]
 ----
 <xsl:value-of select="cypher"/>
