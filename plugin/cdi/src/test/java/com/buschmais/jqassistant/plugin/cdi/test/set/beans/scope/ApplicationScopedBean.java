@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.cdi.test.set.beans;
+package com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope;
 
 import java.io.Serializable;
 
@@ -17,4 +17,5 @@ public class ApplicationScopedBean implements Serializable {
     public String producerMethod() {
         return "value";
     }
+
 }

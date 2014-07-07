@@ -1,8 +1,10 @@
 ![jQAssistant](https://github.com/buschmais/jqassistant/wiki/images/logo_jqa-small.png "jQAssistant")
 
-You can read the latest news, releases and articles around jQAssistant on the http://buschmais.github.io/jqassistant/[blog].
 
-For usage information refer to the [documentation](http://buschmais.github.io/jqassistant/doc/1.0.0-M3/).
+Refer to the [documentation](https://buschmais.github.io/jqassistant/doc/1.0.0-M3) for usage information.
+
+You can read the latest news, releases and articles around jQAssistant on the [blog]
+(https://buschmais.github.io/jqassistant).
 
 You may watch and raise issues (enhancements, bugs, ...) [here](https://github.com/buschmais/jqassistant/issues).
 

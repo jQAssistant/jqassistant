@@ -27,7 +27,7 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.ServerImpl;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 
 /**
  * Starts an embedded Neo4j server.
@@ -37,7 +37,7 @@ public class ServerMojo extends AbstractAnalysisMojo {
 
     @Override
     protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        Server server = new ServerImpl((EmbeddedGraphStore) store);
+        Server server = new DefaultServerImpl((EmbeddedGraphStore) store);
         server.start();
         getLog().info("Running server for module " + baseProject.getGroupId() + ":" + baseProject.getArtifactId() + ":" + baseProject.getVersion());
         getLog().info("Press <Enter> to finish.");

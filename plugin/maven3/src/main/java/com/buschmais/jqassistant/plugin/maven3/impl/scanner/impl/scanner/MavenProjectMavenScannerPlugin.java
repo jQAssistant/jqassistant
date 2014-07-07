@@ -25,6 +25,7 @@ import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.junit4.impl.scanner.TestReportDirectory;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
@@ -204,7 +205,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
         if (directory.exists()) {
             store.beginTransaction();
             try {
-                consume(scanner.scan(directory, TESTREPORTS), new Consumer<FileDescriptor>() {
+                consume(scanner.scan(new TestReportDirectory(directory), TESTREPORTS), new Consumer<FileDescriptor>() {
                     @Override
                     public void next(FileDescriptor fileDescriptor) {
                     }

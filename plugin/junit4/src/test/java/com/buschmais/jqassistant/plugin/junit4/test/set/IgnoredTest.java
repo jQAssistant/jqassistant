@@ -8,10 +8,10 @@ import org.junit.Test;
  * method level.
  */
 @Ignore
-public class IgnoredTestClass {
+public class IgnoredTest {
 
     @Test
     @Ignore
-    public void ignoredTestMethod() {
+    public void ignoredTest() {
     }
 }

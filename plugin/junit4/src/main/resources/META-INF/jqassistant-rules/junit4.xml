@@ -1,7 +1,8 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="junit4:TestClassOrMethod">
-        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with "Test" and "Junit4".</description>
+        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with "Test" and "Junit4".
+        </description>
         <cypher><![CDATA[
             match
               (c:Type:Class)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
@@ -46,5 +47,64 @@
               count(testcase) as TestCases
         ]]></cypher>
     </concept>
+
+    <concept id="junit4:AssertMethod">
+        <description>Labels all assertion methods declared by org.junit.Assert with "Junit4" and "Assert".</description>
+        <cypher><![CDATA[
+            match
+              (assertType:Type)-[:DECLARES]->(assertMethod)
+            where
+              assertType.fqn = 'org.junit.Assert'
+              and assertMethod.signature =~ 'void assert.*'
+            set
+              assertMethod:Junit4:Assert
+            return
+              assertMethod
+            ]]></cypher>
+    </concept>
+
+    <constraint id="junit4:AssertionMustProvideMessage">
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <description>All assertions must provide a message.</description>
+        <cypher><![CDATA[
+			match
+			  (testType:Type)-[:DECLARES]->(testMethod:Method),
+			  (testMethod)-[invocation:INVOKES]->(assertMethod:Assert:Method)
+			where
+			  not assertMethod.signature =~ 'void assert.*\\(java.lang.String,.*\\)'
+			return
+			  invocation as Invocation,
+			  testType as DeclaringType,
+			  testMethod as Method
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="junit4:TestMethodWithoutAssertion">
+        <requiresConcept refId="junit4:TestClassOrMethod"/>
+        <requiresConcept refId="junit4:AssertMethod"/>
+        <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
+        <cypher><![CDATA[
+			match
+			  (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+			where
+			  not (testMethod)-[:INVOKES*..3]->(:Method:Assert)
+			return
+			  testType as DeclaringType,
+			  testMethod as Method
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="junit4:IgnoreWithoutMessage">
+        <description>All @Ignore annotations must provide a message.</description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->(ignore:Annotation)-[:OF_TYPE]->(ignoreType:Type)
+            where
+              ignoreType.fqn= "org.junit.Ignore"
+              and not (ignore)-[:HAS]->(:Value{name:"value"})
+            return
+              e as IgnoreWithoutMessage
+        ]]></cypher>
+    </constraint>
 
 </jqa:jqassistant-rules>

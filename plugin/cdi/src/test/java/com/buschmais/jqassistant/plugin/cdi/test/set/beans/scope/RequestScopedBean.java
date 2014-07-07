@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.cdi.test.set.beans;
+package com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope;
 
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
