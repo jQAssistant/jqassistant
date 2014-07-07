@@ -12,7 +12,7 @@
             set
               member:Cdi:InjectionPoint
             return
-              count(m) as InjectionPoints
+              count(member) as InjectionPoints
         ]]></cypher>
     </concept>
 
@@ -28,7 +28,7 @@
             set
               member:Cdi:Produces
             return
-              count(m) as Producer
+              count(member) as Producer
         ]]></cypher>
     </concept>
 
@@ -227,5 +227,38 @@
     </concept>
 
     <!-- @Disposes, @InterceptorBinding, @Any, @Default -->
+
+
+    <concept id="cdi:EventProducer">
+		<requiresConcept refId="cdi:InjectionPoint" />
+        <description>Labels all beans declaring "InjectionPoint" of type "javax.enterprise.event.Event" with "Cdi" and "EventProducer".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)-[:OF_TYPE]->(injectType:Type)
+            WHERE
+              injectType.fqn = "javax.enterprise.event.Event"
+            SET
+              a:Cdi:EventProducer
+            RETURN
+              count(distinct a.fqn) AS CdiEventProducers
+        ]]></cypher>
+    </concept>
+    
+    <concept id="cdi:EventConsumer">
+		<requiresConcept refId="cdi:InjectionPoint" />
+        <description>Labels all beans declaring method that has parameter of type "javax.enterprise.event.Observes" with "Cdi" and "EventConsumer".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
+            WHERE
+              injectType.fqn = "javax.enterprise.event.Observes"
+            SET
+              a:Cdi:EventConsumer
+            RETURN
+              count(distinct a.fqn) AS CdiEventConsumers
+        ]]></cypher>
+    </concept>
 
 </jqa:jqassistant-rules>
