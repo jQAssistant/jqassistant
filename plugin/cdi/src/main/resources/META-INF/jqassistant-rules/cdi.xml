@@ -17,18 +17,38 @@
     </concept>
 
     <concept id="cdi:Produces">
-        <description>Labels all fields or methods annotated by @javax.enterprise.inject.Produces with "Cdi" and "Produces".</description>
+        <description>Creates a relation PRODUCES between a field and its type or a method and its return type if the parameter is annotated by
+            @javax.enterprise.inject.Disposes.
+        </description>
         <cypher><![CDATA[
             match
               (:Type)-[:DECLARES]->(member),
+              (member)-[:OF_TYPE|RETURNS]->(type),
               (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(producesType:Type)
             where
               (member:Field or member:Method)
               and producesType.fqn="javax.enterprise.inject.Produces"
-            set
-              member:Cdi:Produces
+            create unique
+              (member)-[:PRODUCES]->(type)
             return
               count(member) as Producer
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Disposes">
+        <description>Creates a relation DISPOSES between a parameter and its type if the parameter is annotated by @javax.enterprise.inject.Disposes.
+        </description>
+        <cypher><![CDATA[
+            match
+              (:Type)-[:DECLARES]->(disposeMethod:Method)-[:HAS]->(parameter:Parameter),
+              (parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(disposesType:Type),
+              (parameter)-[:OF_TYPE]->(type)
+            where
+              disposesType.fqn="javax.enterprise.inject.Disposes"
+            create unique
+              (parameter)-[:DISPOSES]->(type)
+            return
+              count(disposeMethod) as DisposeMethods
         ]]></cypher>
     </concept>
 
@@ -227,7 +247,6 @@
     </concept>
 
     <!-- @Disposes, @InterceptorBinding, @Any, @Default -->
-
 
     <concept id="cdi:EventProducer">
 		<requiresConcept refId="cdi:InjectionPoint" />

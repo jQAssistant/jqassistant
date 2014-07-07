@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQuali
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ApplicationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ConversationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DependentBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DisposesBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.RequestScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.SessionScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.specializes.SpecializesBean;
@@ -221,6 +222,51 @@ public class CdiIT extends AbstractJavaPluginIT {
         assertThat(query("MATCH (e:Type:Cdi:Qualifier) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomQualifier.class)));
         assertThat(query("MATCH (q:Qualifier)-[:DECLARES]->(a:Cdi:Method:Nonbinding) RETURN a").getColumn("a"),
                 hasItem(methodDescriptor(CustomQualifier.class, "nonBindingValue")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Produces".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void produces() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(ApplicationScopedBean.class, ConversationScopedBean.class, DependentBean.class, RequestScopedBean.class, SessionScopedBean.class);
+        applyConcept("cdi:Produces");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (p)-[:PRODUCES]->({fqn:'java.lang.String'}) RETURN p").getColumn("p");
+        assertThat(column, hasItem(methodDescriptor(ApplicationScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(ApplicationScopedBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(ConversationScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(ConversationScopedBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(DependentBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(DependentBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(RequestScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(RequestScopedBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(SessionScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(SessionScopedBean.class, "producerField")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Disposes".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void disposes() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(DisposesBean.class);
+        applyConcept("cdi:Disposes");
+        store.beginTransaction();
+        assertThat(query("MATCH (p:Parameter)-[:DISPOSES]->(disposedType:Type) RETURN disposedType").getColumn("disposedType"),
+                hasItem(typeDescriptor(String.class)));
         store.commitTransaction();
     }
 
