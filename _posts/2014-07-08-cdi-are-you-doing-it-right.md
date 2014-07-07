@@ -81,7 +81,7 @@ The following blog post discusses why you should prefer constructor injection ov
 **PROS:**
 
 * Ensures that when a bean instance is constructed; all mandatory collaborators are in place and bean is ready to use.
-* If the number of dependencies start growing; then you get clumsy constructors which is a clear indicator for un-maintaible code. Listen to your bean; probably its saying "Refactor Me!".
+* If the number of dependencies start growing; then you get clumsy constructors which is a clear indicator of un-maintaible code. Listen to your bean; probably its saying "Refactor Me!".
 
 **CONS:**
 
@@ -90,7 +90,7 @@ May be I'm bit biased by now for constructor injection; but I do not see any cle
 Now that we have seen pros and cons of different approaches for Dependency Injection; next big challenge is to be consistent with our choices. jQAssistant to the rescue!
 
 
-The current version of jQAssistant introduced CDI plugin with "Cdi:InjectionPoint" concept. Following rule can be defined by using this concept to find out beans that are not using constructor injection.
+The current version of jQAssistant introduced [CDI plugin](https://github.com/buschmais/jqassistant/issues/78) with "Cdi:InjectionPoint" concept. Following rule can be defined by using this concept to find out beans that are not using constructor injection.
 
 ```xml
 <jqa:jqassistant-rules
@@ -132,7 +132,7 @@ If you are absolutely convinced that "Field injections are evil"; but you would 
 </jqa:jqassistant-rules>  
 ```
 
-Still not convinced about advantages of constructor injection? Take your time. But meanwhile you can always prevent the existing beans from getting cluttered up with too many dependencies.
+If you are already using field injection and not completely convinced yet about advantages of constructor injection? Take your time. But meanwhile you can always prevent the existing beans from getting cluttered up with too many dependencies.
 
 Following query can be used to set a rule to report beans with more than 5 field injection points.
 
