@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit4.test.set;
+package com.buschmais.jqassistant.plugin.junit4.test.set.junit4;
 
 import org.junit.Test;
 

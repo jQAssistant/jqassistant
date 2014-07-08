@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit4.test.set;
+package com.buschmais.jqassistant.plugin.junit4.test.set.assertion;
 
 import static org.junit.Assert.assertTrue;
 

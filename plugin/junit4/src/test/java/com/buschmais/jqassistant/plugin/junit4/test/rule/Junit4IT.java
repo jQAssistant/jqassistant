@@ -23,11 +23,11 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit4.test.set.Assertions;
-import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
-import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTest;
-import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestWithMessage;
-import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
+import com.buschmais.jqassistant.plugin.junit4.test.set.assertion.Assertions;
+import com.buschmais.jqassistant.plugin.junit4.test.set.junit4.IgnoredTest;
+import com.buschmais.jqassistant.plugin.junit4.test.set.junit4.IgnoredTestWithMessage;
+import com.buschmais.jqassistant.plugin.junit4.test.set.junit4.TestClass;
+import com.buschmais.jqassistant.plugin.junit4.test.set.report.Example;
 
 /**
  * Tests for Junit4 concepts.

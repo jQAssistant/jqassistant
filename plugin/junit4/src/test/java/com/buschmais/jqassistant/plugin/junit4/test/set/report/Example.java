@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.junit4.test.set;
+package com.buschmais.jqassistant.plugin.junit4.test.set.report;
 
 import org.junit.Assert;
 import org.junit.Ignore;
