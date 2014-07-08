@@ -76,7 +76,7 @@ public @interface Java {
                 return new SourceProvider<ReadsDescriptor>() {
                     @Override
                     public String getName(ReadsDescriptor descriptor) {
-                        return new MemberSourceProvider().getName(descriptor.getMethod());
+                        return new MemberSourceProvider().getName(descriptor.getMethod()) + ", line " + descriptor.getLineNumber();
                     }
 
                     @Override
@@ -98,7 +98,7 @@ public @interface Java {
                 return new SourceProvider<WritesDescriptor>() {
                     @Override
                     public String getName(WritesDescriptor descriptor) {
-                        return new MemberSourceProvider().getName(descriptor.getMethod());
+                        return new MemberSourceProvider().getName(descriptor.getMethod()) + ", line " + descriptor.getLineNumber();
                     }
 
                     @Override
@@ -132,7 +132,7 @@ public @interface Java {
                 return new SourceProvider<InvokesDescriptor>() {
                     @Override
                     public String getName(InvokesDescriptor descriptor) {
-                        return new MemberSourceProvider().getName(descriptor.getInvokedMethod());
+                        return new MemberSourceProvider().getName(descriptor.getInvokingMethod()) + ", line " + descriptor.getLineNumber();
                     }
 
                     @Override
