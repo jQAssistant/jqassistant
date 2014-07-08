@@ -147,22 +147,8 @@ public final class ReportHelper {
                         }
                         message.append(entry.getKey());
                         message.append('=');
-                        Object value = entry.getValue();
-                        if (value != null) {
-                            if (value instanceof Descriptor) {
-                                Descriptor descriptor = (Descriptor) value;
-                                LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
-                                if (elementValue != null) {
-                                    SourceProvider sourceProvider = elementValue.getSourceProvider();
-                                    message.append(sourceProvider.getName(descriptor));
-                                } else {
-                                    message.append(value.toString());
-                                }
-                            }
-                            else {
-                                message.append(value.toString());
-                            }
-                        }
+                        String stringValue = getStringValue(entry.getValue());
+                        message.append(stringValue);
                     }
                     console.error("  " + message.toString());
                 }
@@ -170,6 +156,49 @@ public final class ReportHelper {
             }
         }
         return violations;
+    }
+
+    /**
+     * Converts a value to its string representation.
+     * 
+     * @param value
+     *            The value.
+     * @return The string representation
+     * @throws AnalysisListenerException
+     */
+    private String getStringValue(Object value) throws AnalysisListenerException {
+        if (value != null) {
+            if (value instanceof Descriptor) {
+                Descriptor descriptor = (Descriptor) value;
+                LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
+                if (elementValue != null) {
+                    SourceProvider sourceProvider = elementValue.getSourceProvider();
+                    return sourceProvider.getName(descriptor);
+                }
+            } else if (value instanceof Iterable) {
+                StringBuffer sb = new StringBuffer();
+                for (Object o : ((Iterable) value)) {
+                    if (sb.length() > 0) {
+                        sb.append(",");
+                    }
+                    sb.append(getStringValue(o));
+                }
+                return "[" + sb.toString() + "]";
+            } else if (value instanceof Map) {
+                StringBuffer sb = new StringBuffer();
+                for (Map.Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
+                    if (sb.length() > 0) {
+                        sb.append(",");
+                    }
+                    sb.append(entry.getKey());
+                    sb.append(":");
+                    sb.append(getStringValue(entry.getValue()));
+                }
+                return "{" + sb.toString() + "}";
+            }
+            return value.toString();
+        }
+        return null;
     }
 
     /**
