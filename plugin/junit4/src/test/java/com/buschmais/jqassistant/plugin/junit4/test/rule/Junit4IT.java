@@ -249,6 +249,94 @@ public class Junit4IT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the concept "junit4:BeforeMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void beforeMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:BeforeMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:Before:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "before")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:AfterMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void afterMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:AfterMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:After:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "after")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:BeforeClassMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void beforeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:BeforeClassMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:BeforeClass:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "beforeClass")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:AfterClassMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void afterClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:AfterClassMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:AfterClass:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "afterClass")));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies if a IMPLEMENTED_BY relation exists between a test case and and
      * test method.
      * 

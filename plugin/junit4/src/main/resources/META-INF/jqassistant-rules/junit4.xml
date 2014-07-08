@@ -56,6 +56,63 @@
         ]]></cypher>
     </concept>
 
+    <concept id="junit4:BeforeMethod">
+        <description>Labels all methods annotated by "@org.junit.Before" with "Junit4" and "Before".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.Before"
+            set
+              m:Junit4:Before
+            return
+              count(m) as BeforeMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AfterMethod">
+        <description>Labels all methods annotated by "@org.junit.After" with "Junit4" and "After".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.After"
+            set
+              m:Junit4:After
+            return
+              count(m) as AfterMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:BeforeClassMethod">
+        <description>Labels all methods annotated by "@org.junit.BeforeClass" with "Junit4" and "BeforeClass".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.BeforeClass"
+            set
+              m:Junit4:BeforeClass
+            return
+              count(m) as BeforeClassMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AfterClassMethod">
+        <description>Labels all methods annotated by "@org.junit.AfterClass" with "Junit4" and "AfterClass".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.AfterClass"
+            set
+              m:Junit4:AfterClass
+            return
+              count(m) as AfterClassMethods
+        ]]></cypher>
+    </concept>
+
+
     <concept id="junit4:TestCaseImplementedByMethod">
         <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing methods.</description>
         <cypher><![CDATA[
