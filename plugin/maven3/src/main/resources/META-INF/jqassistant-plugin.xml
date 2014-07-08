@@ -8,4 +8,7 @@
     <scanner>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin</class>
     </scanner>
+    <rules>
+        <resource>maven3.xml</resource>
+    </rules>
 </jqa-plugin:jqassistant-plugin>
