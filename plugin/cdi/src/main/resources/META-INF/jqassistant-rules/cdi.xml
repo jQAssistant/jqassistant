@@ -246,10 +246,10 @@
         ]]></cypher>
     </concept>
 
-    <!-- @Disposes, @InterceptorBinding, @Any, @Default -->
+    <!-- @InterceptorBinding, @Any, @Default, @New -->
 
     <concept id="cdi:EventProducer">
-		<requiresConcept refId="cdi:InjectionPoint" />
+        <requiresConcept refId="cdi:InjectionPoint"/>
         <description>Labels all beans declaring "InjectionPoint" of type "javax.enterprise.event.Event" with "Cdi" and "EventProducer".
         </description>
         <cypher><![CDATA[
@@ -263,9 +263,9 @@
               count(distinct a.fqn) AS CdiEventProducers
         ]]></cypher>
     </concept>
-    
+
     <concept id="cdi:EventConsumer">
-		<requiresConcept refId="cdi:InjectionPoint" />
+        <requiresConcept refId="cdi:InjectionPoint"/>
         <description>Labels all beans declaring method that has parameter of type "javax.enterprise.event.Observes" with "Cdi" and "EventConsumer".
         </description>
         <cypher><![CDATA[

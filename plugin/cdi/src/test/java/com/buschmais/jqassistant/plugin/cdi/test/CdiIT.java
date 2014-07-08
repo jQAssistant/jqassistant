@@ -4,6 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -16,7 +17,9 @@ import org.junit.Test;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQualifier;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ApplicationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ConversationScopedBean;
@@ -279,13 +282,19 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void beanDescriptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void beansDescriptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanDirectory(CLASSPATH, getClassesDirectory(CdiIT.class));
         store.beginTransaction();
         List<Object> column = query("MATCH (beans:Cdi:Beans:File) RETURN beans").getColumn("beans");
         assertThat(column.size(), equalTo(1));
         BeansDescriptor beansDescriptor = (BeansDescriptor) column.get(0);
         assertThat(beansDescriptor.getFileName(), equalTo("/META-INF/beans.xml"));
+        assertThat(beansDescriptor.getVersion(), equalTo("1.1"));
+        assertThat(beansDescriptor.getBeanDiscoveryMode(), equalTo("annotated"));
+        assertThat(beansDescriptor.getAlternatives(),
+                allOf(hasItem(typeDescriptor(AlternativeBean.class)), hasItem(typeDescriptor(AlternativeStereotype.class))));
+        assertThat(beansDescriptor.getDecorators(), hasItem(typeDescriptor(DecoratorBean.class)));
+        assertThat(beansDescriptor.getInterceptors(), hasItem(typeDescriptor(CustomInterceptor.class)));
         store.commitTransaction();
     }
 }

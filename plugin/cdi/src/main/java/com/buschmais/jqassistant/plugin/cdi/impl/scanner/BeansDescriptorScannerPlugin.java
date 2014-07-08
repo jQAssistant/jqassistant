@@ -70,7 +70,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<InputStr
                 if (o instanceof Interceptors) {
                     addTypes(((Interceptors) o).getClazz(), beansDescriptor.getInterceptors());
                 } else if (o instanceof Decorators) {
-                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getAlternatives());
+                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getDecorators());
                 } else if (o instanceof Alternatives) {
                     List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
                     for (JAXBElement<String> element : clazzOrStereotype) {
