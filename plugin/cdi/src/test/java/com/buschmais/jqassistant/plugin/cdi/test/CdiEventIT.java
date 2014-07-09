@@ -34,7 +34,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 		scanClasses(CustomEventProducer.class);
 		applyConcept("cdi:EventProducer");
 		store.beginTransaction();
-		assertThat(query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventProducer.class)));
+		assertThat("Expected EventProducer", query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventProducer.class)));
 		store.commitTransaction();
 	}
 
@@ -68,7 +68,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 		scanClasses(CustomEventConsumer.class);
 		applyConcept("cdi:EventConsumer");
 		store.beginTransaction();
-		assertThat(query("MATCH (e:Type:Cdi:EventConsumer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventConsumer.class)));
+		assertThat("Expected EventConsumer", query("MATCH (e:Type:Cdi:EventConsumer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventConsumer.class)));
 		store.commitTransaction();
 	}
 

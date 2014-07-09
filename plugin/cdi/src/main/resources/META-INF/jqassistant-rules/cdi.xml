@@ -260,7 +260,7 @@
             SET
               a:Cdi:EventProducer
             RETURN
-              count(distinct a.fqn) AS CdiEventProducers
+              count(distinct a.fqn) AS cdiEventProducers
         ]]></cypher>
     </concept>
 
@@ -276,8 +276,8 @@
             SET
               a:Cdi:EventConsumer
             RETURN
-              count(distinct a.fqn) AS CdiEventConsumers
+              count(distinct a.fqn) AS cdiEventConsumers
         ]]></cypher>
     </concept>
-
+    
 </jqa:jqassistant-rules>
