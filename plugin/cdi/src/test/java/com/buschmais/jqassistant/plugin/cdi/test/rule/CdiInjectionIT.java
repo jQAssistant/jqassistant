@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.BeanWithConstructorInjection;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.BeanWithFieldInjection;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.BeanWithSetterInjection;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
@@ -35,7 +36,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
 	 *             If the test fails.
 	 */
 	@Test
-	public void test_ConstructorInjection_Constraint() throws IOException, AnalysisException {
+	public void test_ConstructorInjection() throws IOException, AnalysisException {
 		scanClasses(BeanWithFieldInjection.class);
 		String ruleName = "cdi:BeansMustUseConstructorInjection";
 		validateConstraint(ruleName);
@@ -77,4 +78,58 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
 
 		store.commitTransaction();
 	}
+
+	/**
+	 * Verifies the constraint "cdi:BeansMustNotUseFieldInjection" results in no violations when applied to beans with
+	 * setter or constructor injection.
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_FieldInjection_No_Violation() throws IOException, AnalysisException {
+		scanClasses(BeanWithConstructorInjection.class);
+		scanClasses(BeanWithSetterInjection.class);
+		String ruleName = "cdi:BeansMustNotUseFieldInjection";
+		validateConstraint(ruleName);
+		store.beginTransaction();
+
+		List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+		assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
+		Result<Constraint> result = constraintViolations.get(0);
+		assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
+		List<Map<String, Object>> violations = result.getRows();
+		assertThat("Unexpected number of violations", violations.size(), equalTo(0));
+
+		store.commitTransaction();
+	}
+	
+	/**
+	 * Verifies the constraint "cdi:BeansMustNotUseFieldInjection".
+	 * 
+	 * @throws java.io.IOException
+	 *             If the test fails.
+	 * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+	 *             If the test fails.
+	 */
+	@Test
+	public void test_BeanInjection() throws IOException, AnalysisException {
+		scanClasses(BeanWithFieldInjection.class);
+		String ruleName = "cdi:BeansMustNotUseFieldInjection";
+		validateConstraint(ruleName);
+		store.beginTransaction();
+
+		List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+		assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
+		Result<Constraint> result = constraintViolations.get(0);
+		assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
+		List<Map<String, Object>> violations = result.getRows();
+		assertThat("Unexpected number of violations", violations.size(), equalTo(1));
+		assertEquals("Unexpected bean name", violations.get(0).get("invalidBean"), BeanWithFieldInjection.class.getName());
+
+		store.commitTransaction();
+	}
+
 }

@@ -292,5 +292,16 @@
               DISTINCT a.fqn AS invalidBean
         ]]></cypher>
     </constraint>    
+
+    <constraint id="cdi:BeansMustNotUseFieldInjection">
+        <requiresConcept refId="cdi:InjectionPoint" />
+        <description>CDI beans shall not use field injection (constructor and setter injections are fine.).</description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)
+            RETURN
+              DISTINCT a.fqn AS invalidBean
+        ]]></cypher>
+    </constraint>
       
 </jqa:jqassistant-rules>
