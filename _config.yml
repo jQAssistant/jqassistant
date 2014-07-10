@@ -1,4 +1,4 @@
 name: jQAssistant
 markdown: redcarpet
-pygments: false
+pygments: true
 baseurl: /jqassistant
