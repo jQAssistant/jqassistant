@@ -260,7 +260,7 @@
             SET
               a:Cdi:EventProducer
             RETURN
-              count(distinct a.fqn) AS CdiEventProducers
+              count(distinct a.fqn) AS cdiEventProducers
         ]]></cypher>
     </concept>
 
@@ -276,8 +276,32 @@
             SET
               a:Cdi:EventConsumer
             RETURN
-              count(distinct a.fqn) AS CdiEventConsumers
+              count(distinct a.fqn) AS cdiEventConsumers
         ]]></cypher>
     </concept>
+        
+    <constraint id="cdi:BeansMustUseConstructorInjection">
+        <requiresConcept refId="cdi:InjectionPoint" />
+        <description>All CDI beans must use constructor injection.</description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Cdi:InjectionPoint)
+            WHERE
+              NOT member:Constructor
+            RETURN
+              DISTINCT a.fqn AS invalidBean
+        ]]></cypher>
+    </constraint>    
 
+    <constraint id="cdi:BeansMustNotUseFieldInjection">
+        <requiresConcept refId="cdi:InjectionPoint" />
+        <description>CDI beans shall not use field injection (constructor and setter injections are fine.).</description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)
+            RETURN
+              DISTINCT a.fqn AS invalidBean
+        ]]></cypher>
+    </constraint>
+      
 </jqa:jqassistant-rules>
