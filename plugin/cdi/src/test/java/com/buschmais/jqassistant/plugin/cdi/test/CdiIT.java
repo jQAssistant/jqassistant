@@ -193,24 +193,6 @@ public class CdiIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "cdi:Decorator".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void decorator() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
-        scanClasses(DecoratorBean.class);
-        applyConcept("cdi:Decorator");
-        store.beginTransaction();
-        assertThat(query("MATCH (e:Cdi:Decorator) RETURN e").getColumn("e"), hasItem(typeDescriptor(DecoratorBean.class)));
-        assertThat(query("MATCH (e:Cdi:Field:Delegate) RETURN e").getColumn("e"), hasItem(fieldDescriptor(DecoratorBean.class, "delegate")));
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "cdi:Qualifier".
      * 
      * @throws java.io.IOException

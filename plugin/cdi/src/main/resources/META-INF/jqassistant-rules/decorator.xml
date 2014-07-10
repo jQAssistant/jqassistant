@@ -1,0 +1,34 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="decorator:Delegate">
+        <description>Labels all fields annotated annotated by @javax.decorator.Delegate with "Decorator" and "Delegate".
+        </description>
+        <cypher><![CDATA[
+            match
+              (delegate:Field)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(delegateType:Type)
+            where
+              delegateType.fqn="javax.decorator.Delegate"
+            set
+              delegate:Decorator:Delegate
+            return
+              count(delegate) as Delegates
+        ]]></cypher>
+    </concept>
+
+    <concept id="decorator:Decorator">
+        <requiresConcept refId="decorator:Delegate"/>
+        <description>Labels all types annotated by @javax.decorator.Decorator with "Decorator".
+        </description>
+        <cypher><![CDATA[
+            match
+              (decorator:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(decoratorType:Type)
+            where
+              decoratorType.fqn="javax.decorator.Decorator"
+            set
+              decorator:Decorator
+            return
+              count(decorator) as Decorators
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
