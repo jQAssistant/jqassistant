@@ -28,6 +28,7 @@ import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DependentBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DisposesBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.RequestScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.SessionScopedBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.SingletonScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.specializes.SpecializesBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.stereotype.CustomStereotype;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -134,6 +135,24 @@ public class CdiIT extends AbstractJavaPluginIT {
         assertThat(column, hasItem(typeDescriptor(ApplicationScopedBean.class)));
         assertThat(column, hasItem(methodDescriptor(ApplicationScopedBean.class, "producerMethod")));
         assertThat(column, hasItem(fieldDescriptor(ApplicationScopedBean.class, "producerField")));
+        store.commitTransaction();
+    }
+    
+    /**
+     * Verifies the concept "cdi:SingletonScoped".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void singletonScoped() throws IOException, AnalysisException {
+        scanClasses(SingletonScopedBean.class);
+        applyConcept("cdi:SingletonScoped");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:SingletonScoped) RETURN e").getColumn("e");
+        assertThat("Expected SingletonScoped bean", column, hasItem(typeDescriptor(SingletonScopedBean.class)));
         store.commitTransaction();
     }
 
