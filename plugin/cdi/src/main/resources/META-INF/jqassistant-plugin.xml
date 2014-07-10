@@ -9,5 +9,6 @@
     </scanner>
     <rules>
         <resource>cdi.xml</resource>
+        <resource>interceptor.xml</resource>
     </rules>
 </v1:jqassistant-plugin>

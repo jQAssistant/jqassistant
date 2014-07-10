@@ -246,8 +246,6 @@
         ]]></cypher>
     </concept>
 
-    <!-- @InterceptorBinding, @Any, @Default, @New -->
-
     <concept id="cdi:EventProducer">
         <requiresConcept refId="cdi:InjectionPoint"/>
         <description>Labels all beans declaring "InjectionPoint" of type "javax.enterprise.event.Event" with "Cdi" and "EventProducer".
@@ -277,6 +275,22 @@
               a:Cdi:EventConsumer
             RETURN
               count(distinct a.fqn) AS CdiEventConsumers
+        ]]></cypher>
+    </concept>
+
+    <!-- @Any, @Default, @New -->
+    <concept id="cdi:Named">
+        <description>Labels all types or methods annotated by "javax.inject.Named" with "Cdi" and "Named".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(namedType:Type)
+            WHERE
+              namedType.fqn = "javax.inject.Named"
+            SET
+              e:Cdi:Named
+            RETURN
+              e AS Named
         ]]></cypher>
     </concept>
 

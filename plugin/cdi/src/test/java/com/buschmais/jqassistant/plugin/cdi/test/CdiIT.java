@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.Alternati
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQualifier;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.NamedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ApplicationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ConversationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DependentBean;
@@ -270,6 +271,25 @@ public class CdiIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         assertThat(query("MATCH (p:Parameter)-[:DISPOSES]->(disposedType:Type) RETURN disposedType").getColumn("disposedType"),
                 hasItem(typeDescriptor(String.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Named".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void named() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(NamedBean.class);
+        applyConcept("cdi:Named");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:Named) RETURN e").getColumn("e");
+        assertThat(column, hasItem(typeDescriptor(NamedBean.class)));
+        assertThat(column, hasItem(methodDescriptor(NamedBean.class, "getValue")));
         store.commitTransaction();
     }
 
