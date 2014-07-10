@@ -20,11 +20,11 @@ import com.buschmais.jqassistant.plugin.java.api.model.PackageMemberDescriptor;
 public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageDescriptor, T extends PackageMemberDescriptor> {
 
     public static final String EMPTY_NAME = "";
-    private final Store store;
+    protected final Store store;
     /**
      * The parent resovler.
      */
-    private final AbstractPackageMemberDescriptorResolver<?, P> parentResolver;
+    protected final AbstractPackageMemberDescriptorResolver<?, P> parentResolver;
 
     /**
      * Constructor.
