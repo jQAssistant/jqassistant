@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBe
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
- * Tests for the CDI concepts.
+ * Tests for the decorator concepts.
  */
 public class DecoratorIT extends AbstractJavaPluginIT {
 
