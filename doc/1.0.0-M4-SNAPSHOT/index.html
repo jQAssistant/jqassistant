@@ -618,12 +618,12 @@ span.line-numbers { border-right: 1px solid #E5E5E5; color: #999; display: inlin
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>jQAssistant is a tool supporting the process for developing Java applications. It is based on the graph database <a href="http://neo4j.org">Neo4j</a> and
-can be plugged into the Maven build process to break the build on detection of constraint violations and generate reports about user defined
-concepts and metrics.</p>
+<p>jQAssistant is a QA tool which allows the definition and validation of project specific rules on a structural level. It is built upon the
+graph database <a href="http://neo4j.org">Neo4j</a> and can easily be plugged into the build process to automate detection of constraint violations
+and generate reports about user defined concepts and metrics.</p>
 </div>
 <div class="paragraph">
-<p>Here are some use cases</p>
+<p>Example use cases:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -634,15 +634,15 @@ concepts and metrics.</p>
 <p>Validate dependencies between modules of your project</p>
 </li>
 <li>
-<p>separate API and implementation classes (e.g. a module must only have dependencies to API classes of other components)</p>
+<p>Separate API and implementation packages</p>
 </li>
 <li>
-<p>detect common problems, e.g cyclic dependencies, tests without assertions, etc.</p>
+<p>Detect common problems like cyclic dependencies or tests without assertions</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The rules are specified using Cypher - the Neo4j query language:</p>
+<p>The rules are expressed in Cypher - the easy-to-learn query language of Neo4j:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -6158,7 +6158,7 @@ rules will be visible in the repository "jQAssistant".</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-07-11 17:09:31 MESZ
+Last updated 2014-07-14 18:52:39 MESZ
 </div>
 </div>
 </body>
