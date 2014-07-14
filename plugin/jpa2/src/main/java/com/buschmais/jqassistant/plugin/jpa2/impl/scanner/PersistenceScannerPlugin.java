@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -32,7 +33,7 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractScannerPlugin<InputStream> {
+public class PersistenceScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
 
     private JAXBContext jaxbContext;
 
@@ -49,21 +50,21 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<InputStream>
     }
 
     @Override
-    public Class<? super InputStream> getType() {
-        return InputStream.class;
+    public Class<? super StreamFactory> getType() {
+        return StreamFactory.class;
     }
 
     @Override
-    public boolean accepts(InputStream item, String path, Scope scope) throws IOException {
+    public boolean accepts(StreamFactory item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(InputStream item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(StreamFactory item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
-        try {
+        try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            persistence = unmarshaller.unmarshal(new StreamSource(item), Persistence.class).getValue();
+            persistence = unmarshaller.unmarshal(new StreamSource(stream), Persistence.class).getValue();
         } catch (JAXBException e) {
             throw new IOException("Cannot read model descriptor.", e);
         }
