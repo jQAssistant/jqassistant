@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
 
 public class FileScannerPlugin extends AbstractScannerPlugin<File> {
 
@@ -31,8 +33,13 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(File file, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
-        return scanner.scan(new BufferedInputStream(new FileInputStream(file)), path, scope);
+        return scanner.scan(new StreamFactory() {
+            @Override
+            public InputStream createStream() throws IOException {
+                return new BufferedInputStream(new FileInputStream(file));
+            }
+        }, path, scope);
     }
 }
