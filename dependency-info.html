@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>jqassistant.doc - About</title>
+    <title>jqassistant.doc - Dependency Information</title>
     <style type="text/css" media="all">
       @import url("./css/maven-base.css");
       @import url("./css/maven-theme.css");
@@ -54,8 +54,8 @@
                           <a href="project-info.html" title="Project Information">Project Information</a>
                     <ul>
                       <li class="none">
-            <strong>About</strong>
-          </li>
+                          <a href="index.html" title="About">About</a>
+            </li>
                       <li class="none">
                           <a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
             </li>
@@ -63,8 +63,8 @@
                           <a href="distribution-management.html" title="Distribution Management">Distribution Management</a>
             </li>
                       <li class="none">
-                          <a href="dependency-info.html" title="Dependency Information">Dependency Information</a>
-            </li>
+            <strong>Dependency Information</strong>
+          </li>
                       <li class="none">
                           <a href="source-repository.html" title="Source Repository">Source Repository</a>
             </li>
@@ -108,8 +108,44 @@
     <div id="bodyColumn">
       <div id="contentBox">
         <div class="section">
-<h2>About jqassistant.doc<a name="About_jqassistant.doc"></a></h2><a name="About_jqassistant.doc"></a>
-<p>Framework for structural analysis of Java applications.</p></div>
+<h2>Dependency Information<a name="Dependency_Information"></a></h2><a name="Dependency_Information"></a>
+<div class="section">
+<h3>Apache Maven<a name="Apache_Maven"></a></h3><a name="Apache_Maven"></a>
+<div class="source">
+<pre>&lt;dependency&gt;
+  &lt;groupId&gt;com.buschmais.jqassistant.doc&lt;/groupId&gt;
+  &lt;artifactId&gt;jqassistant.doc&lt;/artifactId&gt;
+  &lt;version&gt;1.0.0-M4-SNAPSHOT&lt;/version&gt;
+  &lt;type&gt;pom&lt;/type&gt;
+&lt;/dependency&gt;</pre></div></div>
+<div class="section">
+<h3>Apache Buildr<a name="Apache_Buildr"></a></h3><a name="Apache_Buildr"></a>
+<div class="source">
+<pre>'com.buschmais.jqassistant.doc:jqassistant.doc:pom:1.0.0-M4-SNAPSHOT'</pre></div></div>
+<div class="section">
+<h3>Apache Ant<a name="Apache_Ant"></a></h3><a name="Apache_Ant"></a>
+<div class="source">
+<pre>&lt;dependency org=&quot;com.buschmais.jqassistant.doc&quot; name=&quot;jqassistant.doc&quot; rev=&quot;1.0.0-M4-SNAPSHOT&quot;&gt;
+  &lt;artifact name=&quot;jqassistant.doc&quot; type=&quot;pom&quot; /&gt;
+&lt;/dependency&gt;</pre></div></div>
+<div class="section">
+<h3>Groovy Grape<a name="Groovy_Grape"></a></h3><a name="Groovy_Grape"></a>
+<div class="source">
+<pre>@Grapes(
+@Grab(group='com.buschmais.jqassistant.doc', module='jqassistant.doc', version='1.0.0-M4-SNAPSHOT')
+)</pre></div></div>
+<div class="section">
+<h3>Grails<a name="Grails"></a></h3><a name="Grails"></a>
+<div class="source">
+<pre>compile 'com.buschmais.jqassistant.doc:jqassistant.doc:1.0.0-M4-SNAPSHOT'</pre></div></div>
+<div class="section">
+<h3>Leiningen<a name="Leiningen"></a></h3><a name="Leiningen"></a>
+<div class="source">
+<pre>[com.buschmais.jqassistant.doc/jqassistant.doc &quot;1.0.0-M4-SNAPSHOT&quot;]</pre></div></div>
+<div class="section">
+<h3>SBT<a name="SBT"></a></h3><a name="SBT"></a>
+<div class="source">
+<pre>libraryDependencies += &quot;com.buschmais.jqassistant.doc&quot; %% &quot;jqassistant.doc&quot; % &quot;1.0.0-M4-SNAPSHOT&quot;</pre></div></div></div>
       </div>
     </div>
     <div class="clear">
