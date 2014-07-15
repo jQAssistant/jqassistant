@@ -144,6 +144,21 @@
         ]]></cypher>
     </concept>
 
+    <concept id="cdi:SingletonScoped">
+        <description>Labels all beans annotated by @javax.inject.Singleton with "Cdi" and "SingletonScoped".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn = "javax.inject.Singleton"
+            SET
+              t:Cdi:SingletonScoped
+            RETURN
+              count(t) AS cdiSingletons
+        ]]></cypher>
+    </concept>
+
     <concept id="cdi:Stereotype">
         <description>Labels all annotation types annotated by @javax.enterprise.inject.Stereotype with "Cdi" and "Stereotype".
         </description>
@@ -254,7 +269,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)-[:OF_TYPE]->(injectType:Type)
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint),
+              (member)-[:OF_TYPE]->(injectType:Type)
             WHERE
               injectType.fqn = "javax.enterprise.event.Event"
             SET
@@ -270,7 +286,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
+              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(param:Parameter),
+              (param)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
             WHERE
               injectType.fqn = "javax.enterprise.event.Observes"
             SET
