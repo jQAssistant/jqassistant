@@ -269,7 +269,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)-[:OF_TYPE]->(injectType:Type)
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint),
+              (member)-[:OF_TYPE]->(injectType:Type)
             WHERE
               injectType.fqn = "javax.enterprise.event.Event"
             SET
@@ -285,8 +286,8 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(p:Parameter),
-              (p:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
+              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(param:Parameter),
+              (param)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
             WHERE
               injectType.fqn = "javax.enterprise.event.Observes"
             SET
