@@ -1,16 +1,17 @@
 == Overview
 
-jQAssistant is a tool supporting the process for developing Java applications. It is based on the graph database http://neo4j.org[Neo4j] and can be plugged into the Maven build process to break the build on detection of constraint violations and generate reports about user defined concepts and metrics.
+jQAssistant is a QA tool which allows the definition and validation of project specific rules on a structural level. It is built upon the
+graph database http://neo4j.org[Neo4j] and can easily be plugged into the build process to automate detection of constraint violations
+and generate reports about user defined concepts and metrics.
 
-Here are some example use cases:
+Example use cases:
 
 - Enforce naming conventions, e.g. EJBs, JPA entities, test classes, packages, maven modules etc.
 - Validate dependencies between modules of your project
-- separate API and implementation classes (e.g. a module must only have dependencies to API classes of other components)
-- detect common problems, e.g cyclic dependencies, tests without assertions, etc.
-- define and gather project specific metrics
+- Separate API and implementation packages
+- Detect common problems like cyclic dependencies or tests without assertions
 
-The rules are specified using Cypher - the Neo4j query language:
+The rules are expressed in Cypher - the easy-to-learn query language of Neo4j:
 
 [source]
 ----
