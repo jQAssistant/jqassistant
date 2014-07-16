@@ -1,14 +1,80 @@
 == Introduction
 
-This chapter provides an introduction on the core principles of jQAssistant.
+This chapter provides an introduction to the concepts of jQAssistant.
 
-=== Core Principle
+=== How it works
 
-1. Scan artifacts
-2. Analyze
-3. Report
+The basic idea behind jQAssistant is to integrate into the building process of a software system and automatically execute the following
+steps:
+
+1. Scan the generated artifacts and store structural information into a database
+2. Analyze the structures using rules which are represented by queries 
+3. Report violations  
+
+jQAssistant itself is a plugin based framework. It comes with a pre-defined set of plugins containing scanners, rules and
+reports but can be easily extended by custom rules or implementations.
+
+As the database an embedded instance of Neo4j Community Edition is used and transparently managed by jQAssistant, i.e. no setup or
+configuration of a dedicated server is required. Neo4j has been chosen as it...
+
+- is an mature open source graph database
+- allows easy modelling of structural elements of a software and their relations
+- comes with a very expressive and easy to learn query language (Cypher)
 
 === Rules
-==== Concepts
-==== Constraints
+
+Rules are expressed as Cypher queries and specified in XML-files:
+
+[source,xml]
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeConstraint refId="my-rules:MyConstraint"/>
+    </group>
+
+    <constraint id="my-rules:MyConcept">
+        <description>A human readable description of the concept.</description>
+        <cypher><![CDATA[
+            match
+              ...
+            where
+              ...
+            set
+              ...
+            create
+              ...
+            return
+              ...
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="my-rules:MyConstraint">
+        <requiresConcept refId="my-rules:MyConcept" />
+        <description>A human readable description of the constraint.</description>
+        <cypher><![CDATA[
+            match
+                ...
+            where
+                ...
+            return
+                ...
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
+----
+
+Each rule comes with a unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules.
+
 ==== Groups
+A group is a set of rules that shall be executed together. This allows separating analysis depth for different types of builds, i.e.
+a Continuous Integarion build (CI) can be configured to only execute rules with low costs (i.e. execution times) whereas a report
+build is allowed to run for a longer time with more expensive checks.
+
+==== Concepts
+The information produced by the scanner represents structures of the software project on a raw level. To ease the process of writing
+queries that check for violations a concept allows adding higher level information.
+
+==== Constraints
+
