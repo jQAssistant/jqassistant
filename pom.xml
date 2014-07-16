@@ -31,6 +31,14 @@
         <url>https://github.com/buschmais/jqassistant</url>
     </scm>
 
+    <distributionManagement>
+        <site>
+            <id>github-pages-site</id>
+            <name>Deployment through GitHub's site deployment plugin</name>
+            <url>site/${project.version}</url>
+        </site>
+    </distributionManagement>
+
     <developers>
         <developer>
             <id>dirk-mahler</id>
