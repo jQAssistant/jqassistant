@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor;
 
+import java.io.Serializable;
+
 import javax.interceptor.AroundConstruct;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.AroundTimeout;
@@ -8,7 +10,7 @@ import javax.interceptor.InvocationContext;
 
 @Interceptor
 @CustomBinding
-public class CustomInterceptor {
+public class CustomInterceptor implements Serializable {
 
     @AroundInvoke
     public Object aroundInvoke(InvocationContext invocationContext) throws Exception {

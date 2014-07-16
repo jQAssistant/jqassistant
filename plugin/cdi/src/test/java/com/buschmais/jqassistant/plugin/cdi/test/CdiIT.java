@@ -4,6 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -16,13 +17,18 @@ import org.junit.Test;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQualifier;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.NamedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ApplicationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.ConversationScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DependentBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.DisposesBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.RequestScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.SessionScopedBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.SingletonScopedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.specializes.SpecializesBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.stereotype.CustomStereotype;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -131,6 +137,24 @@ public class CdiIT extends AbstractJavaPluginIT {
         assertThat(column, hasItem(fieldDescriptor(ApplicationScopedBean.class, "producerField")));
         store.commitTransaction();
     }
+    
+    /**
+     * Verifies the concept "cdi:SingletonScoped".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void singletonScoped() throws IOException, AnalysisException {
+        scanClasses(SingletonScopedBean.class);
+        applyConcept("cdi:SingletonScoped");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:SingletonScoped) RETURN e").getColumn("e");
+        assertThat("Expected SingletonScoped bean", column, hasItem(typeDescriptor(SingletonScopedBean.class)));
+        store.commitTransaction();
+    }
 
     /**
      * Verifies the concept "cdi:Stereotype".
@@ -188,24 +212,6 @@ public class CdiIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the concept "cdi:Decorator".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void decorator() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
-        scanClasses(DecoratorBean.class);
-        applyConcept("cdi:Decorator");
-        store.beginTransaction();
-        assertThat(query("MATCH (e:Cdi:Decorator) RETURN e").getColumn("e"), hasItem(typeDescriptor(DecoratorBean.class)));
-        assertThat(query("MATCH (e:Cdi:Field:Delegate) RETURN e").getColumn("e"), hasItem(fieldDescriptor(DecoratorBean.class, "delegate")));
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "cdi:Qualifier".
      * 
      * @throws java.io.IOException
@@ -225,6 +231,70 @@ public class CdiIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the concept "cdi:Produces".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void produces() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(ApplicationScopedBean.class, ConversationScopedBean.class, DependentBean.class, RequestScopedBean.class, SessionScopedBean.class);
+        applyConcept("cdi:Produces");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (p)-[:PRODUCES]->({fqn:'java.lang.String'}) RETURN p").getColumn("p");
+        assertThat(column, hasItem(methodDescriptor(ApplicationScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(ApplicationScopedBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(ConversationScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(ConversationScopedBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(DependentBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(DependentBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(RequestScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(RequestScopedBean.class, "producerField")));
+        assertThat(column, hasItem(methodDescriptor(SessionScopedBean.class, "producerMethod")));
+        assertThat(column, hasItem(fieldDescriptor(SessionScopedBean.class, "producerField")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Disposes".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void disposes() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(DisposesBean.class);
+        applyConcept("cdi:Disposes");
+        store.beginTransaction();
+        assertThat(query("MATCH (p:Parameter)-[:DISPOSES]->(disposedType:Type) RETURN disposedType").getColumn("disposedType"),
+                hasItem(typeDescriptor(String.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Named".
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void named() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(NamedBean.class);
+        applyConcept("cdi:Named");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:Named) RETURN e").getColumn("e");
+        assertThat(column, hasItem(typeDescriptor(NamedBean.class)));
+        assertThat(column, hasItem(methodDescriptor(NamedBean.class, "getValue")));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies scanning of the beans descriptor.
      * 
      * @throws java.io.IOException
@@ -233,13 +303,19 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void beanDescriptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void beansDescriptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanDirectory(CLASSPATH, getClassesDirectory(CdiIT.class));
         store.beginTransaction();
         List<Object> column = query("MATCH (beans:Cdi:Beans:File) RETURN beans").getColumn("beans");
         assertThat(column.size(), equalTo(1));
         BeansDescriptor beansDescriptor = (BeansDescriptor) column.get(0);
         assertThat(beansDescriptor.getFileName(), equalTo("/META-INF/beans.xml"));
+        assertThat(beansDescriptor.getVersion(), equalTo("1.1"));
+        assertThat(beansDescriptor.getBeanDiscoveryMode(), equalTo("annotated"));
+        assertThat(beansDescriptor.getAlternatives(),
+                allOf(hasItem(typeDescriptor(AlternativeBean.class)), hasItem(typeDescriptor(AlternativeStereotype.class))));
+        assertThat(beansDescriptor.getDecorators(), hasItem(typeDescriptor(DecoratorBean.class)));
+        assertThat(beansDescriptor.getInterceptors(), hasItem(typeDescriptor(CustomInterceptor.class)));
         store.commitTransaction();
     }
 }

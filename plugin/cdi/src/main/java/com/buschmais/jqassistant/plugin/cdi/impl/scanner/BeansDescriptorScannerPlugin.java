@@ -24,12 +24,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 
-public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<InputStream> {
+public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
 
@@ -48,29 +49,29 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<InputStr
     }
 
     @Override
-    public Class<? super InputStream> getType() {
-        return InputStream.class;
+    public Class<? super StreamFactory> getType() {
+        return StreamFactory.class;
     }
 
     @Override
-    public boolean accepts(InputStream item, String path, Scope scope) throws IOException {
+    public boolean accepts(StreamFactory item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path);
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(InputStream item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(StreamFactory item, String path, Scope scope, Scanner scanner) throws IOException {
         BeansDescriptor beansDescriptor = getStore().create(BeansDescriptor.class);
         beansDescriptor.setFileName(path);
-        try {
+        try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            Beans beans = unmarshaller.unmarshal(new StreamSource(item), Beans.class).getValue();
+            Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();
             beansDescriptor.setVersion(beans.getVersion());
             beansDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());
             for (Object o : beans.getInterceptorsOrDecoratorsOrAlternatives()) {
                 if (o instanceof Interceptors) {
                     addTypes(((Interceptors) o).getClazz(), beansDescriptor.getInterceptors());
                 } else if (o instanceof Decorators) {
-                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getAlternatives());
+                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getDecorators());
                 } else if (o instanceof Alternatives) {
                     List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
                     for (JAXBElement<String> element : clazzOrStereotype) {

@@ -23,16 +23,54 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
-import com.buschmais.jqassistant.plugin.junit4.test.set.Assertions;
-import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
-import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTest;
-import com.buschmais.jqassistant.plugin.junit4.test.set.IgnoredTestWithMessage;
-import com.buschmais.jqassistant.plugin.junit4.test.set.TestClass;
+import com.buschmais.jqassistant.plugin.junit4.test.set.assertion.Assertions;
+import com.buschmais.jqassistant.plugin.junit4.test.set.junit4.IgnoredTest;
+import com.buschmais.jqassistant.plugin.junit4.test.set.junit4.IgnoredTestWithMessage;
+import com.buschmais.jqassistant.plugin.junit4.test.set.junit4.TestClass;
+import com.buschmais.jqassistant.plugin.junit4.test.set.report.Example;
 
 /**
  * Tests for Junit4 concepts.
  */
 public class Junit4IT extends AbstractJavaPluginIT {
+
+    /**
+     * Verifies the concept "junit4:TestMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:TestMethod");
+        store.beginTransaction();
+        assertThat(query("MATCH (m:Method:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:TestClass".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     */
+    @Test
+    public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:TestClass");
+        store.beginTransaction();
+        assertThat(query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
+        store.commitTransaction();
+    }
 
     /**
      * Verifies the concept "junit4:TestClassOrMethod".
@@ -207,6 +245,94 @@ public class Junit4IT extends AbstractJavaPluginIT {
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(1));
         assertThat((MethodDescriptor) rows.get(0).get("Method"), methodDescriptor(Assertions.class, "testWithoutAssertion"));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:BeforeMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void beforeMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:BeforeMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:Before:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "before")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:AfterMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void afterMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:AfterMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:After:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "after")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:BeforeClassMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void beforeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:BeforeClassMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:BeforeClass:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "beforeClass")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "junit4:AfterClassMethod".
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     * @throws NoSuchMethodException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void afterClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(TestClass.class);
+        applyConcept("junit4:AfterClassMethod");
+        store.beginTransaction();
+        List<Object> methods = query("match (m:AfterClass:Junit4:Method) return m").getColumn("m");
+        assertThat(methods, hasItem(methodDescriptor(TestClass.class, "afterClass")));
         store.commitTransaction();
     }
 

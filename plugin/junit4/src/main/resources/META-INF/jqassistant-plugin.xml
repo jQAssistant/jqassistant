@@ -9,6 +9,7 @@
         <class>com.buschmais.jqassistant.plugin.junit4.impl.scanner.TestReportScannerPlugin</class>
     </scanner>
     <rules>
+        <resource>junit3.xml</resource>
         <resource>junit4.xml</resource>
     </rules>
 </v1:jqassistant-plugin>

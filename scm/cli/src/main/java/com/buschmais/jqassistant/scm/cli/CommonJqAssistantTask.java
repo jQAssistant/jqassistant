@@ -9,8 +9,10 @@ import org.apache.commons.cli.Option;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -68,6 +70,14 @@ public abstract class CommonJqAssistantTask implements JqAssistantTask {
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
         try {
             return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
+        } catch (PluginRepositoryException e) {
+            throw new RuntimeException("Cannot create rule plugin repository.", e);
+        }
+    }
+
+    protected RulePluginRepository getRulePluginRepository() {
+        try {
+            return new RulePluginRepositoryImpl(pluginConfigurationReader);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }

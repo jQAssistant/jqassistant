@@ -17,18 +17,38 @@
     </concept>
 
     <concept id="cdi:Produces">
-        <description>Labels all fields or methods annotated by @javax.enterprise.inject.Produces with "Cdi" and "Produces".</description>
+        <description>Creates a relation PRODUCES between a field and its type or a method and its return type if the parameter is annotated by
+            @javax.enterprise.inject.Disposes.
+        </description>
         <cypher><![CDATA[
             match
               (:Type)-[:DECLARES]->(member),
+              (member)-[:OF_TYPE|RETURNS]->(type),
               (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(producesType:Type)
             where
               (member:Field or member:Method)
               and producesType.fqn="javax.enterprise.inject.Produces"
-            set
-              member:Cdi:Produces
+            create unique
+              (member)-[:PRODUCES]->(type)
             return
               count(member) as Producer
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Disposes">
+        <description>Creates a relation DISPOSES between a parameter and its type if the parameter is annotated by @javax.enterprise.inject.Disposes.
+        </description>
+        <cypher><![CDATA[
+            match
+              (:Type)-[:DECLARES]->(disposeMethod:Method)-[:HAS]->(parameter:Parameter),
+              (parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(disposesType:Type),
+              (parameter)-[:OF_TYPE]->(type)
+            where
+              disposesType.fqn="javax.enterprise.inject.Disposes"
+            create unique
+              (parameter)-[:DISPOSES]->(type)
+            return
+              count(disposeMethod) as DisposeMethods
         ]]></cypher>
     </concept>
 
@@ -121,6 +141,21 @@
               e:Cdi:ApplicationScoped
             return
               count(e) as ApplicationScopedElements
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:SingletonScoped">
+        <description>Labels all beans annotated by @javax.inject.Singleton with "Cdi" and "SingletonScoped".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn = "javax.inject.Singleton"
+            SET
+              t:Cdi:SingletonScoped
+            RETURN
+              count(t) AS cdiSingletons
         ]]></cypher>
     </concept>
 
@@ -226,39 +261,80 @@
         ]]></cypher>
     </concept>
 
-    <!-- @Disposes, @InterceptorBinding, @Any, @Default -->
-
+    <!-- @InterceptorBinding, @Any, @Default, @New -->
 
     <concept id="cdi:EventProducer">
-		<requiresConcept refId="cdi:InjectionPoint" />
+        <requiresConcept refId="cdi:InjectionPoint"/>
         <description>Labels all beans declaring "InjectionPoint" of type "javax.enterprise.event.Event" with "Cdi" and "EventProducer".
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)-[:OF_TYPE]->(injectType:Type)
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint),
+              (member)-[:OF_TYPE]->(injectType:Type)
             WHERE
               injectType.fqn = "javax.enterprise.event.Event"
             SET
               a:Cdi:EventProducer
             RETURN
-              count(distinct a.fqn) AS CdiEventProducers
+              count(distinct a.fqn) AS cdiEventProducers
         ]]></cypher>
     </concept>
-    
+
     <concept id="cdi:EventConsumer">
-		<requiresConcept refId="cdi:InjectionPoint" />
+        <requiresConcept refId="cdi:InjectionPoint"/>
         <description>Labels all beans declaring method that has parameter of type "javax.enterprise.event.Observes" with "Cdi" and "EventConsumer".
         </description>
         <cypher><![CDATA[
             MATCH
-              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(p:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
+              (a:Type)-[:DECLARES]->(member:Method)-[:HAS]->(param:Parameter),
+              (param)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
             WHERE
               injectType.fqn = "javax.enterprise.event.Observes"
             SET
               a:Cdi:EventConsumer
             RETURN
-              count(distinct a.fqn) AS CdiEventConsumers
+              count(distinct a.fqn) AS cdiEventConsumers
         ]]></cypher>
     </concept>
 
+    <!-- @Any, @Default, @New -->
+    <concept id="cdi:Named">
+        <description>Labels all types or methods annotated by "javax.inject.Named" with "Cdi" and "Named".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(namedType:Type)
+            WHERE
+              namedType.fqn = "javax.inject.Named"
+            SET
+              e:Cdi:Named
+            RETURN
+              e AS Named
+        ]]></cypher>
+    </concept>
+        
+    <constraint id="cdi:BeansMustUseConstructorInjection">
+        <requiresConcept refId="cdi:InjectionPoint" />
+        <description>All CDI beans must use constructor injection.</description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Cdi:InjectionPoint)
+            WHERE
+              NOT member:Constructor
+            RETURN
+              DISTINCT a.fqn AS invalidBean
+        ]]></cypher>
+    </constraint>    
+
+    <constraint id="cdi:BeansMustNotUseFieldInjection">
+        <requiresConcept refId="cdi:InjectionPoint" />
+        <description>CDI beans shall not use field injection (constructor and setter injections are fine.).</description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Type)-[:DECLARES]->(member:Field:Cdi:InjectionPoint)
+            RETURN
+              DISTINCT a.fqn AS invalidBean
+        ]]></cypher>
+    </constraint>
+      
 </jqa:jqassistant-rules>

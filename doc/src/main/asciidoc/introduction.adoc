@@ -1,0 +1,14 @@
+== Introduction
+
+This chapter provides an introduction on the core principles of jQAssistant.
+
+=== Core Principle
+
+1. Scan artifacts
+2. Analyze
+3. Report
+
+=== Rules
+==== Concepts
+==== Constraints
+==== Groups

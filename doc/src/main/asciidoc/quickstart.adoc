@@ -1,0 +1,114 @@
+== Quickstart
+
+=== Add the Maven plugin
+
+Add the following lines to the parent pom.xml file of your project:
+
+[source,xml]
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>scan</id>
+                    <goals>
+                        <goal>scan</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>analyze</id>
+                    <goals>
+                        <goal>analyze</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+<build>
+
+<reporting>
+    <plugins>
+        <plugin>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant-maven-plugin</artifactId>
+            <reportSets>
+                <reportSet>
+                    <reports>
+                        <report>report</report>
+                    </reports>
+                </reportSet>
+            </reportSets>
+        </plugin>
+    </plugins>
+</reporting>
+----
+
+=== Add a rule
+
+Within your parent module create a directory "jqassistant" and a rules file in it:
+
+[source,xml]
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeConstraint refId="my-rules:TestClassName" />
+    </group>
+
+    <constraint id="my-rules:TestClassName">
+        <requiresConcept refId="junit4:TestClass" />
+        <description>All JUnit test classes must have a name with suffix "Test".</description>
+        <cypher><![CDATA[
+            match
+                (t:Junit4:Test:Class)
+            where not
+                t.name =~ ".*Test"
+            return
+                t as InvalidTestClass
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>
+
+----
+
+=== Run the build
+
+Execute the following command from your parent module:
+
+[source]
+----
+mvn install
+----
+
+The build will fail with the message specified by your rule if it is violated. If everything is fine you can also create a report as part of your Maven site:
+
+[source]
+----
+mvn site
+----
+
+=== Explore your application
+
+jQAssistant comes with an integrated Neo4j server, you can run it using
+
+[source]
+----
+mvn jqassistant:server
+----
+
+Now point your browser to [http://localhost:7474](http://localhost:7474) and execute a query:
+
+[source]
+----
+match
+  (t:Type)-[:DECLARES]->(m:Method)
+return
+  t.fqn as Type, count(t) as DeclaredMethods
+order by
+  DeclaredMethods desc
+limit 20
+----

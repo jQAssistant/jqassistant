@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven.test;
+package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static org.mockito.Mockito.mock;

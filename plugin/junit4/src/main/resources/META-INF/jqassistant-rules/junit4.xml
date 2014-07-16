@@ -1,15 +1,42 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="junit4:TestClassOrMethod">
-        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with "Test" and "Junit4".
+    <concept id="junit4:TestMethod">
+        <description>Finds all test methods (i.e. annotated with "@org.junit.Test") and labels them with "Test" and "Junit4".
         </description>
         <cypher><![CDATA[
             match
-              (c:Type:Class)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+              (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
             where
               a.fqn="org.junit.Test"
             set
-              c:Test:Junit4, m:Test:Junit4
+              m:Test:Junit4
+            return
+              count(m) as Tests
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:TestClass">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <description>Labels all classes containing test methods with "Test" and "Junit4".</description>
+        <cypher><![CDATA[
+            match
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit4:Test)
+            set
+              c:Test:Junit4
+            return
+              c as TestClass, collect(m) as TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:TestClassOrMethod">
+        <requiresConcept refId="junit4:TestMethod"/>
+        <requiresConcept refId="junit4:TestClass"/>
+        <description>Finds test methods (i.e. annotated with "@org.junit.Test") and labels them and their containing classes with "Test" and "Junit4".
+        </description>
+        <deprecated>This concept has been replaced by "junit4:TestMethod" and "junit4:TestClass".</deprecated>
+        <cypher><![CDATA[
+            match
+              (c:Type:Class)-[:DECLARES]->(m:Method:Junit4:Test)
             return
               c as TestClass, collect(m) as TestMethods
         ]]></cypher>
@@ -28,6 +55,63 @@
               e as IgnoredElement
         ]]></cypher>
     </concept>
+
+    <concept id="junit4:BeforeMethod">
+        <description>Labels all methods annotated by "@org.junit.Before" with "Junit4" and "Before".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.Before"
+            set
+              m:Junit4:Before
+            return
+              count(m) as BeforeMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AfterMethod">
+        <description>Labels all methods annotated by "@org.junit.After" with "Junit4" and "After".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.After"
+            set
+              m:Junit4:After
+            return
+              count(m) as AfterMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:BeforeClassMethod">
+        <description>Labels all methods annotated by "@org.junit.BeforeClass" with "Junit4" and "BeforeClass".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.BeforeClass"
+            set
+              m:Junit4:BeforeClass
+            return
+              count(m) as BeforeClassMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit4:AfterClassMethod">
+        <description>Labels all methods annotated by "@org.junit.AfterClass" with "Junit4" and "AfterClass".</description>
+        <cypher><![CDATA[
+            match
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            where
+              a.fqn="org.junit.AfterClass"
+            set
+              m:Junit4:AfterClass
+            return
+              count(m) as AfterClassMethods
+        ]]></cypher>
+    </concept>
+
 
     <concept id="junit4:TestCaseImplementedByMethod">
         <description>Creates a relation IMPLEMENTED_BY between all test cases from test reports and their implementing methods.</description>
@@ -80,7 +164,7 @@
     </constraint>
 
     <constraint id="junit4:TestMethodWithoutAssertion">
-        <requiresConcept refId="junit4:TestClassOrMethod"/>
+        <requiresConcept refId="junit4:TestMethod"/>
         <requiresConcept refId="junit4:AssertMethod"/>
         <description>All test methods must perform assertions (within a call hierarchy of max. 3 steps).</description>
         <cypher><![CDATA[
