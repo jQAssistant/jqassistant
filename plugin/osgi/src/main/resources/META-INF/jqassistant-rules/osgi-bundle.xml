@@ -16,7 +16,7 @@
               bundle.bundleSymbolicName = nameEntry.value,
               bundle.bundleVersion = versionEntry.value
             RETURN
-              bundle as Bundle, bundle.BundleSymbolicName as BundleSymbolicName, bundle.BundleVersion as BundleVersion
+              bundle as Bundle, bundle.bundleSymbolicName as BundleSymbolicName, bundle.bundleVersion as BundleVersion
         ]]></cypher>
     </concept>
 
