@@ -1,0 +1,6 @@
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+    <description>Provides a scanner for maven modules that use the Apache Felix Bundle Plugin for Maven to create OSGi bundles.</description>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.felixbundleplugin.impl.scanner.FelixBundleScannerPlugin</class>
+    </scanner>
+</jqa-plugin:jqassistant-plugin>

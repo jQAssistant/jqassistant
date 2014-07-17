@@ -184,6 +184,7 @@
         <module>maven3</module>
         <module>osgi</module>
         <module>tycho</module>
+        <module>felixbundleplugin</module>
     </modules>
 
 </project>
