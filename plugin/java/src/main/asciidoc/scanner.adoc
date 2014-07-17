@@ -66,6 +66,9 @@ A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Ann
 | DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this type depends on according to its signature (e.g. due to generic type parameters)
 |====
 
+*NOTE* Inheritance between interfaces (i.e. "public interface A extends B { ... }") is represented using IMPLEMENTS relations, i.e. queries must
+ use (a:Type:Interface)-[:IMPLEMENTS]->(b:Type:Interface) for pattern matching.
+
 ===== :Type:Class
 Qualifies a Java type as class.
 

@@ -210,9 +210,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
         xmlStreamWriter.writeStartElement("column");
         xmlStreamWriter.writeAttribute("name", columnName);
         String stringValue = null;
-        if (value == null) {
-            stringValue = null;
-        } else if (value instanceof Descriptor) {
+        if (value instanceof Descriptor) {
             Descriptor descriptor = (Descriptor) value;
             LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
             if (elementValue != null) {
@@ -233,8 +231,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                     xmlStreamWriter.writeEndElement(); // sourceFile
                 }
             }
-        }
-        if (stringValue == null) {
+        } else if (value != null) {
             stringValue = value.toString();
         }
         xmlStreamWriter.writeStartElement("value");
