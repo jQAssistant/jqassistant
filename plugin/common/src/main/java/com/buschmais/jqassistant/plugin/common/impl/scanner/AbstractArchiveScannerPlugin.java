@@ -80,6 +80,10 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
                 beforeEntry(path, scope);
                 LOGGER.info("Scanning entry '{}'.", name);
                 Iterable<? extends FileDescriptor> descriptors = scanner.scan(streamFactory, name, scope);
+                
+                for (FileDescriptor descriptor : descriptors) {
+                    archiveDescriptor.getContents().add(descriptor);
+                }
                 return afterEntry(descriptors);
             }
         };
