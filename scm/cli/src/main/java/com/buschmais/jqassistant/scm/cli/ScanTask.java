@@ -28,10 +28,10 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ClassToNeo4JImporter extends CommonJqAssistantTask implements OptionsConsumer {
+public class ScanTask extends AbstractJQATask implements OptionsConsumer {
     private final List<String> directoryNames = new ArrayList<>();
 
-    public ClassToNeo4JImporter() {
+    public ScanTask() {
         super("scan");
     }
 
@@ -51,7 +51,7 @@ public class ClassToNeo4JImporter extends CommonJqAssistantTask implements Optio
         try {
             return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
         } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot create rule plugin repository.", e);
+            throw new RuntimeException("Cannot create scanner plugin repository.", e);
         }
     }
 

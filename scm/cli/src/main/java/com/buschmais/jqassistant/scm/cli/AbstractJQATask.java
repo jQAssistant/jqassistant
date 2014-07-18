@@ -20,12 +20,12 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
-public abstract class CommonJqAssistantTask implements JqAssistantTask {
+public abstract class AbstractJQATask implements JQAssistantTask {
     protected final String taskName;
     protected Map<String, Object> properties;
     protected PluginConfigurationReader pluginConfigurationReader;
 
-    protected CommonJqAssistantTask(final String taskName) {
+    protected AbstractJQATask(final String taskName) {
         this.taskName = taskName;
         this.pluginConfigurationReader = new PluginConfigurationReaderImpl();
     }

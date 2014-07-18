@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
-public class ResetDatabase extends CommonJqAssistantTask {
-    public ResetDatabase() {
+public class ResetTask extends AbstractJQATask {
+    public ResetTask() {
         super("reset");
     }
 

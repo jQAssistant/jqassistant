@@ -19,25 +19,24 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.slf4j.impl.StaticLoggerBinder;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
+ * @author Dirk Mahler
  */
 public class Main {
-    private static final Map<String, JqAssistantTask> functions = new HashMap<>();
+
+    private static final Map<String, JQAssistantTask> tasks = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
         initializeLogging();
 
-        putTasksIntoMap(asList(new ClassToNeo4JImporter(), new CmdlineServer(), new AnalyzeTask(), new ResetDatabase()));
+        putTasksIntoMap(asList(new ScanTask(), new ServerTask(), new AnalyzeTask(), new ResetTask()));
 
         interpretCommandLine(args);
     }
 
     private static void initializeLogging() {
-        StaticLoggerBinder.getSingleton().setLog(new SystemStreamLog());
     }
 
     private static Options gatherOptions() {
@@ -49,26 +48,22 @@ public class Main {
 
     @SuppressWarnings("static-access")
     private static void gatherStandardOptions(final Options options) {
-        options.addOption(OptionBuilder.withArgName("f").withDescription("Function to be called, one of " + gatherNamesOfFunctions()).withLongOpt("function")
-                .hasArg().isRequired().create("f"));
-
         options.addOption(OptionBuilder.withArgName("p").withDescription("Path to property file; default is jqassistant.properties in the class path")
                 .withLongOpt("properties").hasArg().create("p"));
-
         options.addOption(new Option("help", "print this message"));
     }
 
     private static void gatherTasksOptions(final Options options) {
-        for (OptionsProvider optionsProvider : functions.values()) {
+        for (OptionsProvider optionsProvider : tasks.values()) {
             for (Option option : optionsProvider.getOptions()) {
                 options.addOption(option);
             }
         }
     }
 
-    private static String gatherNamesOfFunctions() {
+    private static String gatherTaskNames() {
         final StringBuilder builder = new StringBuilder();
-        for (JqAssistantTask task : functions.values()) {
+        for (JQAssistantTask task : tasks.values()) {
             builder.append(task.getName()).append(" ");
         }
         return builder.toString().trim();
@@ -77,35 +72,36 @@ public class Main {
     private static void interpretCommandLine(final String[] arg) throws IOException {
         final CommandLineParser parser = new BasicParser();
         Options option = gatherOptions();
+        CommandLine commandLine = null;
         try {
-            CommandLine commandLine = parser.parse(option, arg);
-            if (commandLine.hasOption("f")) {
-                runRequestedTask(option, commandLine);
-            } else {
-                printUsage(option, "Missing function argument");
-                System.exit(1);
-            }
+            commandLine = parser.parse(option, arg);
         } catch (ParseException e) {
             printUsage(option, e.getMessage());
             System.exit(1);
         }
+        List<String> requestedTasks = commandLine.getArgList();
+        if (requestedTasks.isEmpty()) {
+            printUsage(option, "A task must be specified, i.e. one  of " + gatherTaskNames());
+        } else {
+            for (String requestedTask : requestedTasks) {
+                executeTask(requestedTask, option, commandLine);
+            }
+        }
     }
 
-    private static void runRequestedTask(final Options option, final CommandLine commandLine) throws IOException {
-        final String requestedFunction = commandLine.getOptionValue("f");
-        final JqAssistantTask jqAssistantTask = functions.get(requestedFunction);
-        if (jqAssistantTask instanceof OptionsConsumer) {
+    private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {
+        final JQAssistantTask task = tasks.get(taskName);
+        if (task instanceof OptionsConsumer) {
             try {
-                ((OptionsConsumer) jqAssistantTask).withOptions(commandLine);
+                ((OptionsConsumer) task).withOptions(commandLine);
             } catch (MissingConfigurationParameterException e) {
                 printUsage(option, e.getMessage());
                 System.exit(1);
             }
         }
-
         final Map<String, Object> properties = readProperties(commandLine);
-        jqAssistantTask.initialize(properties);
-        jqAssistantTask.run();
+        task.initialize(properties);
+        task.run();
     }
 
     private static Map<String, Object> readProperties(CommandLine commandLine) throws IOException {
@@ -120,15 +116,12 @@ public class Main {
         } else {
             propertiesStream = Main.class.getResourceAsStream("/jqassistant.properties");
         }
-
+        Map<String, Object> result = new HashMap<>();
         if (propertiesStream != null) {
             properties.load(propertiesStream);
-        } else {
-            throw new RuntimeException("no jqassistant.properties file found, please put one in the class path or give the p command line option");
-        }
-        Map<String, Object> result = new HashMap<>();
-        for (String name : properties.stringPropertyNames()) {
-            result.put(name, properties.getProperty(name));
+            for (String name : properties.stringPropertyNames()) {
+                result.put(name, properties.getProperty(name));
+            }
         }
         return result;
     }
@@ -137,12 +130,12 @@ public class Main {
         System.out.println(errorMessage);
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Main.class.getCanonicalName(), option);
-        System.out.println("Example: " + Main.class.getCanonicalName() + " -f scan -d cmdline/target/classes,maven/jqassistant-maven-plugin/target/classes");
+        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -d cmdline/target/classes,maven/jqassistant-maven-plugin/target/classes");
     }
 
-    private static void putTasksIntoMap(final List<CommonJqAssistantTask> tasks) {
-        for (CommonJqAssistantTask task : tasks) {
-            functions.put(task.taskName, task);
+    private static void putTasksIntoMap(final List<AbstractJQATask> tasks) {
+        for (AbstractJQATask task : tasks) {
+            Main.tasks.put(task.taskName, task);
         }
     }
 
