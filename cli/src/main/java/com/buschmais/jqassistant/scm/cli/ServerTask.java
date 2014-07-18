@@ -13,9 +13,9 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class CmdlineServer extends CommonJqAssistantTask {
+public class ServerTask extends AbstractJQATask {
 
-    public CmdlineServer() {
+    public ServerTask() {
         super("server");
     }
 
@@ -35,6 +35,6 @@ public class CmdlineServer extends CommonJqAssistantTask {
     }
 
     public static void main(String[] args) {
-        new CmdlineServer().run();
+        new ServerTask().run();
     }
 }

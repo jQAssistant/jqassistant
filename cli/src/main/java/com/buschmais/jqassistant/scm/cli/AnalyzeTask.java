@@ -17,7 +17,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
@@ -42,7 +41,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
-public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsumer {
+public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     public static final String RULES_DIRECTORY = "jqassistant-rules";
     public static final String REPORT_XML = "./jqassistant/jqassistant-report.xml";
 
