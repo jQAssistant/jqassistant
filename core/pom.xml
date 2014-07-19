@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.5</version>
+                <version>${org.slf4j_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
