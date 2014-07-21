@@ -1,5 +1,8 @@
 <v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides rules for OSGi bundles (e.g. Bundles, Activator).</description>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.osgi.impl.scanner.FelixBundleScannerPlugin</class>
+    </scanner>
     <rules>
         <resource>osgi-bundle.xml</resource>
     </rules>

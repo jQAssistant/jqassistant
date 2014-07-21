@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.felixbundleplugin.impl.scanner;
+package com.buschmais.jqassistant.plugin.osgi.impl.scanner;
 
 import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
