@@ -25,14 +25,29 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 public class ClassFileScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
+    
+    DescriptorResolverFactory resolverFactory;
+    
+    private ThreadLocal<VisitorHelper> visitorHelper = new ThreadLocal<VisitorHelper>() {
+        
+        @Override
+        protected VisitorHelper initialValue() {
+            return new VisitorHelper(getStore(), resolverFactory);
+        };
+    };
 
-    private ClassVisitor visitor;
+    private ThreadLocal<ClassVisitor> visitor = new ThreadLocal<ClassVisitor>() {
 
+        @Override
+        protected ClassVisitor initialValue() {
+            return new ClassVisitor(visitorHelper.get());
+        }
+        
+    };
+    
     @Override
     protected void initialize() {
-        DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(getStore());
-        VisitorHelper visitorHelper = new VisitorHelper(getStore(), resolverFactory);
-        visitor = new ClassVisitor(visitorHelper);
+        this.resolverFactory = new DescriptorResolverFactory(getStore());
     }
 
     @Override
@@ -55,8 +70,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<StreamFactory>
     @Override
     public Iterable<? extends FileDescriptor> scan(StreamFactory streamFactory, String path, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = streamFactory.createStream()) {
-            new ClassReader(stream).accept(visitor, 0);
-            ClassFileDescriptor classFileDescriptor = visitor.getTypeDescriptor();
+            new ClassReader(stream).accept(this.visitor.get(), 0);
+            ClassFileDescriptor classFileDescriptor = this.visitor.get().getTypeDescriptor();
             classFileDescriptor.setFileName(path);
             return asList(classFileDescriptor);
         }
