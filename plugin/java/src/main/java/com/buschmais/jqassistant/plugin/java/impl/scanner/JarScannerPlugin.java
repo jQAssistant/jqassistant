@@ -41,12 +41,4 @@ public class JarScannerPlugin extends AbstractArchiveScannerPlugin {
         return fileDescriptors;
     }
 
-    @Override
-    protected ArchiveDescriptor createArchiveDescriptor(File file, final String path) {
-        JarArchiveDescriptor jarArchiveDescriptor = getStore().create(
-                JarArchiveDescriptor.class);
-        jarArchiveDescriptor.setFileName(file.getName());
-        return jarArchiveDescriptor;
-    }
-
 }
