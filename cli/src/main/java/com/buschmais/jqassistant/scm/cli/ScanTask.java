@@ -106,7 +106,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
 
     @SuppressWarnings("static-access")
     @Override
-    protected void addFunctionSpecificOptions(final List<Option> options) {
+    protected void addTaskOptions(final List<Option> options) {
         options.add(OptionBuilder.withArgName("d").withLongOpt("dirs").withDescription("directories to be scanned, comma separated").withValueSeparator(',')
                 .hasArgs().create("d"));
     }

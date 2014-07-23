@@ -86,11 +86,11 @@ public abstract class AbstractJQATask implements JQATask {
     @Override
     public List<Option> getOptions() {
         final List<Option> options = new ArrayList<>();
-        addFunctionSpecificOptions(options);
+        addTaskOptions(options);
         return options;
     }
 
-    protected void addFunctionSpecificOptions(final List<Option> options) {
+    protected void addTaskOptions(final List<Option> options) {
     }
 
     protected abstract void doTheTask(final Store store);
