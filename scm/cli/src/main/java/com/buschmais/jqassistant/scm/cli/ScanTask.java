@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
 
@@ -57,17 +58,19 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
 
     private void scanDirectory(Store store, final String directoryName, final List<ScannerPlugin<?>> scannerPlugins) {
         final File directory = new File(directoryName);
+        String absolutePath = directory.getAbsolutePath();
         if (!directory.exists()) {
-            getLog().info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
+            getLog().info("Directory '" + absolutePath + "' does not exist, skipping scan.");
         } else {
             store.beginTransaction();
             try {
-                final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store);
+                final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store, absolutePath);
+                artifactDescriptor.setFileName(absolutePath);
                 final Scanner scanner = new ScannerImpl(scannerPlugins);
                 try {
                     consume(scanner.scan(new ClassesDirectory(directory, artifactDescriptor), CLASSPATH));
                 } catch (IOException e) {
-                    throw new RuntimeException("Cannot scan directory '" + directory.getAbsolutePath() + "'", e);
+                    throw new RuntimeException("Cannot scan directory '" + absolutePath + "'", e);
                 }
             } finally {
                 store.commitTransaction();
@@ -75,18 +78,16 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         }
     }
 
-    private ArtifactDirectoryDescriptor getOrCreateArtifactDescriptor(final Store store) {
-        final String id = "dummy:id";
-        ArtifactDirectoryDescriptor artifactDescriptor = store.find(ArtifactDirectoryDescriptor.class, id);
+    private ArtifactDirectoryDescriptor getOrCreateArtifactDescriptor(final Store store, String fileName) {
+        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, fileName);
         if (artifactDescriptor == null) {
-            artifactDescriptor = store.create(ArtifactDirectoryDescriptor.class, id);
-            artifactDescriptor.setGroup("dummy");
-            artifactDescriptor.setName("dummy");
-            artifactDescriptor.setVersion("dummy");
-            artifactDescriptor.setClassifier("dummy");
-            artifactDescriptor.setType("dummy");
+            ArtifactDirectoryDescriptor artifactDirectoryDescriptor = store.create(ArtifactDirectoryDescriptor.class, fileName);
+            return artifactDirectoryDescriptor;
+        } else if (!ArtifactDirectoryDescriptor.class.isAssignableFrom(artifactDescriptor.getClass())) {
+            return store.migrate(artifactDescriptor, ArtifactDirectoryDescriptor.class);
+        } else {
+            return (ArtifactDirectoryDescriptor) artifactDescriptor;
         }
-        return artifactDescriptor;
     }
 
     @Override

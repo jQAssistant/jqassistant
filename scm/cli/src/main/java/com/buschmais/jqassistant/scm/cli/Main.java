@@ -26,7 +26,7 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
-    private static final Map<String, JQAssistantTask> tasks = new HashMap<>();
+    private static final Map<String, JQATask> tasks = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
         initializeLogging();
@@ -63,7 +63,7 @@ public class Main {
 
     private static String gatherTaskNames() {
         final StringBuilder builder = new StringBuilder();
-        for (JQAssistantTask task : tasks.values()) {
+        for (JQATask task : tasks.values()) {
             builder.append(task.getName()).append(" ");
         }
         return builder.toString().trim();
@@ -90,7 +90,7 @@ public class Main {
     }
 
     private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {
-        final JQAssistantTask task = tasks.get(taskName);
+        final JQATask task = tasks.get(taskName);
         if (task instanceof OptionsConsumer) {
             try {
                 ((OptionsConsumer) task).withOptions(commandLine);
