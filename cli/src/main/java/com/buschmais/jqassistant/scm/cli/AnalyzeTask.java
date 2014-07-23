@@ -190,8 +190,6 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
      * Returns the {@link java.io.File} to write the XML report to.
      * 
      * @return The {@link java.io.File} to write the XML report to.
-     * @throws MojoExecutionException
-     *             If the file cannot be determined.
      */
     private File getXmlReportFile() {
         File selectedXmlReportFile = new File(REPORT_XML);

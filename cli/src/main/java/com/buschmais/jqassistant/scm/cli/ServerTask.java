@@ -28,7 +28,7 @@ public class ServerTask extends AbstractJQATask {
         try {
             System.in.read();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             server.stop();
         }
