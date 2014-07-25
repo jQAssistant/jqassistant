@@ -8,14 +8,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -40,7 +38,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * Abstract base implementation for analysis mojos.
  */
-public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.AbstractMojo {
+public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
     public static final String REPORT_XML = "jqassistant-report.xml";
 
@@ -90,13 +88,13 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      * Contains the full list of projects in the reactor.
      */
     @Parameter(property = "reactorProjects")
-    private List<MavenProject> reactorProjects;
+    protected List<MavenProject> reactorProjects;
 
     /**
      * The Maven project.
      */
     @Parameter(property = "project")
-    private MavenProject currentProject;
+    protected MavenProject currentProject;
 
     /**
      * The store repository.
@@ -116,36 +114,15 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
 
-    @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException {
-        Aggregator.execute(new Aggregator.AggregatedGoal() {
-            public void execute(MavenProject baseProject, Set<MavenProject> projects) throws MojoExecutionException, MojoFailureException {
-                List<Class<?>> descriptorTypes;
-                Store store = getStore(baseProject);
-                try {
-                    descriptorTypes = getScannerPluginRepository(store, getPluginProperties(baseProject)).getDescriptorTypes();
-                } catch (PluginRepositoryException e) {
-                    throw new MojoExecutionException("Cannot get descriptor mappers.", e);
-                }
-                try {
-                    store.start(descriptorTypes);
-                    AbstractAnalysisMojo.this.aggregate(baseProject, projects, store);
-                } finally {
-                    store.stop();
-                }
-            }
-        }, currentProject, reactorProjects);
-    }
-
     /**
      * Return the scanner plugin repository.
-     * 
+     *
      * @param store
      *            The store.
      * @param properties
      *            The properties.
      * @return The scanner plugin repository.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the repository cannot be created.
      */
     protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
@@ -158,9 +135,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the rule plugin repository.
-     * 
+     *
      * @return The rule plugin repository.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the repository cannot be created.
      */
     protected RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
@@ -173,9 +150,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the report plugin repository.
-     * 
+     *
      * @return The report plugin repository.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the repository cannot be created.
      */
     protected ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
@@ -188,10 +165,10 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
-     * 
+     *
      * @return A
      *         {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the rules cannot be read.
      */
     protected RuleSet readRules(MavenProject baseProject) throws MojoExecutionException {
@@ -224,9 +201,9 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Resolves the effective rules.
-     * 
+     *
      * @return The resolved rules set.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If resolving fails.
      */
     protected RuleSet resolveEffectiveRules(MavenProject baseProject) throws MojoExecutionException {
@@ -241,7 +218,7 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
 
     /**
      * Return the plugin properties.
-     * 
+     *
      * @return The plugin properties.
      */
     protected Map<String, Object> getPluginProperties(MavenProject project) {
@@ -250,50 +227,37 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
         return properties;
     }
 
+    protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
+        return getStore(baseProject, false);
+    }
+
     /**
      * Return the store instance to use for the given base project.
-     * 
+     *
      * @param baseProject
      *            The base project
      * @return The store instance.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the store cannot be created.
      */
-    protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
+    protected Store getStore(MavenProject baseProject, boolean reset) throws MojoExecutionException {
         File directory;
         if (this.storeDirectory != null) {
             directory = this.storeDirectory;
         } else {
             directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
         }
-        return storeRepository.getStore(directory, isResetStoreOnInitialization());
+        return storeRepository.getStore(directory, reset);
     }
 
     /**
-     * Determine if a goal needs to reset the store on initialization.
-     * 
-     * @return <code>true</code> If the store shall be reset initially.
-     */
-    protected abstract boolean isResetStoreOnInitialization();
-
-    /**
-     * Execute the aggregated analysis.
-     * 
-     * @throws MojoExecutionException
-     *             If execution fails.
-     * @throws MojoFailureException
-     *             If execution fails.
-     */
-    protected abstract void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException;
-
-    /**
      * Retrieves the list of available rules from the rules directory.
-     * 
+     *
      * @param rulesDirectory
      *            The rules directory.
      * @return The {@link java.util.List} of available rules
      *         {@link java.io.File}s.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the rules directory cannot be read.
      */
     private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
@@ -325,10 +289,10 @@ public abstract class AbstractAnalysisMojo extends org.apache.maven.plugin.Abstr
     /**
      * Validates the given rules set for unresolved concepts, constraints or
      * groups.
-     * 
+     *
      * @param ruleSet
      *            The rules set.
-     * @throws MojoExecutionException
+     * @throws org.apache.maven.plugin.MojoExecutionException
      *             If there are unresolved concepts, constraints or groups.
      */
     private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {

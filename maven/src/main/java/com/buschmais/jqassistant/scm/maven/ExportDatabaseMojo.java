@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  * Exports the database as a file containing cypher statements.
  */
 @Mojo(name = "export-database")
-public class ExportDatabaseMojo extends AbstractAnalysisMojo {
+public class ExportDatabaseMojo extends AbstractProjectMojo {
 
     private static final String EXPORT_FILE = "jqassistant.cypher";
 
@@ -49,11 +49,6 @@ public class ExportDatabaseMojo extends AbstractAnalysisMojo {
         } finally {
             store.commitTransaction();
         }
-    }
-
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
     }
 
 }

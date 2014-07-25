@@ -35,7 +35,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
  * Starts an embedded Neo4j server.
  */
 @Mojo(name = "server")
-public class ServerMojo extends AbstractAnalysisMojo {
+public class ServerMojo extends AbstractProjectMojo {
 
     @Override
     protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
@@ -51,10 +51,4 @@ public class ServerMojo extends AbstractAnalysisMojo {
             server.stop();
         }
     }
-
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
-    }
-
 }

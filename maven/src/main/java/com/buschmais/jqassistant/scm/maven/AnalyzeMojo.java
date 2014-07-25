@@ -35,7 +35,7 @@ import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
  * Runs analysis according to the defined rules.
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY)
-public class AnalyzeMojo extends AbstractAnalysisMojo {
+public class AnalyzeMojo extends AbstractProjectMojo {
 
     /**
      * Defines the supported report types.
@@ -144,8 +144,4 @@ public class AnalyzeMojo extends AbstractAnalysisMojo {
         return selectedXmlReportFile;
     }
 
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
-    }
 }

@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
  * Exports the effective rules to an XML file.
  */
 @Mojo(name = "export-rules")
-public class ExportRulesMojo extends AbstractAnalysisMojo {
+public class ExportRulesMojo extends AbstractProjectMojo {
 
     @Override
     protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
@@ -36,8 +36,4 @@ public class ExportRulesMojo extends AbstractAnalysisMojo {
         ruleSetWriter.write(ruleSet, writer);
     }
 
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
-    }
 }
