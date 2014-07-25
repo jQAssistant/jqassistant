@@ -32,7 +32,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
  * Lists all effective rules.
  */
 @Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE)
-public class EffectiveRulesMojo extends AbstractAnalysisMojo {
+public class EffectiveRulesMojo extends AbstractProjectMojo {
 
     @Override
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
@@ -40,11 +40,6 @@ public class EffectiveRulesMojo extends AbstractAnalysisMojo {
         RuleSet targetRuleSet = resolveEffectiveRules(baseProject);
         ReportHelper reportHelper = new ReportHelper(new MavenConsole(getLog()));
         reportHelper.printRuleSet(targetRuleSet);
-    }
-
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
     }
 
 }

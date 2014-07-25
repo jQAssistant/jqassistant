@@ -1,8 +1,14 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.report.api.ReportTransformer;
-import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
-import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
+import java.io.File;
+import java.io.StringWriter;
+import java.util.Locale;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -13,13 +19,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.File;
-import java.io.StringWriter;
-import java.util.Locale;
+import com.buschmais.jqassistant.core.report.api.ReportTransformer;
+import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
+import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
 /**
  * Generates a HTML reports based on analysis results.
@@ -54,7 +56,7 @@ public class ReportMojo extends AbstractMavenReport {
         File selectedXmlReportFile;
         try {
             baseProject = BaseProjectResolver.getBaseProject(project);
-            selectedXmlReportFile = BaseProjectResolver.getOutputFile(baseProject, xmlReportFile, AbstractAnalysisMojo.REPORT_XML);
+            selectedXmlReportFile = BaseProjectResolver.getOutputFile(baseProject, xmlReportFile, AbstractProjectMojo.REPORT_XML);
         } catch (MojoExecutionException e) {
             throw new MavenReportException("Cannot resolve XML report.", e);
         }

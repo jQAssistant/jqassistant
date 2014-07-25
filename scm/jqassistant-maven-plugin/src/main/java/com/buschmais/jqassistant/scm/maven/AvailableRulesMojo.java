@@ -32,7 +32,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
  * Lists all available rules.
  */
 @Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE)
-public class AvailableRulesMojo extends AbstractAnalysisMojo {
+public class AvailableRulesMojo extends AbstractProjectMojo {
 
     @Override
     public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
@@ -40,11 +40,6 @@ public class AvailableRulesMojo extends AbstractAnalysisMojo {
         RuleSet ruleSet = readRules(baseProject);
         ReportHelper reportHelper = new ReportHelper(new MavenConsole(getLog()));
         reportHelper.printRuleSet(ruleSet);
-    }
-
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
     }
 
 }

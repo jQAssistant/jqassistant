@@ -4,7 +4,6 @@ import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsum
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -24,29 +23,23 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
  * Scans the the output directory and test output directory.
  */
 @Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
-public class ScanMojo extends AbstractAnalysisMojo {
+public class ScanMojo extends AbstractModuleMojo {
 
     @Override
-    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        for (MavenProject project : projects) {
-            List<ScannerPlugin<?>> scannerPlugins;
-            ScannerPluginRepository scannerPluginRepository = getScannerPluginRepository(store, getPluginProperties(project));
-            try {
-                scannerPlugins = scannerPluginRepository.getScannerPlugins();
-            } catch (PluginRepositoryException e) {
-                throw new MojoExecutionException("Cannot determine scanner plugins.", e);
-            }
-            Scanner scanner = new ScannerImpl(scannerPlugins);
-            try {
-                consume(scanner.scan(project, project.getFile().getAbsolutePath(), MavenScope.PROJECT));
-            } catch (IOException e) {
-                throw new MojoExecutionException("Cannot scan project '" + project.getBasedir() + "'", e);
-            }
+    public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException {
+        List<ScannerPlugin<?>> scannerPlugins;
+        ScannerPluginRepository scannerPluginRepository = getScannerPluginRepository(store, getPluginProperties(mavenProject));
+        try {
+            scannerPlugins = scannerPluginRepository.getScannerPlugins();
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot determine scanner plugins.", e);
+        }
+        Scanner scanner = new ScannerImpl(scannerPlugins);
+        try {
+            consume(scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT));
+        } catch (IOException e) {
+            throw new MojoExecutionException("Cannot scan project '" + mavenProject.getBasedir() + "'", e);
         }
     }
 
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return true;
-    }
 }
