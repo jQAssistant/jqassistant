@@ -86,7 +86,7 @@
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceType">
                 <xs:sequence>
-                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="major"/>
+                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

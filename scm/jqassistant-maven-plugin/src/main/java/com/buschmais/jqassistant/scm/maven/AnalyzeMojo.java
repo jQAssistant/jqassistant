@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
@@ -50,6 +51,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Parameter(property = "jqassistant.failOnConstraintViolations", defaultValue = "true")
     protected boolean failOnConstraintViolations;
 
+    /**
+     * Severity level for constraint violation failure check. Default value is {@code major}
+     */
+    @Parameter(property = "jqassistant.severity", defaultValue = "info")
+    protected String severity;
+    
     @Parameter(property = "jqassistant.junitReportDirectory")
     private java.io.File junitReportDirectory;
 
@@ -106,7 +113,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         store.beginTransaction();
         try {
             reportHelper.verifyConceptResults(inMemoryReportWriter);
-            int violations = reportHelper.verifyConstraintViolations(inMemoryReportWriter);
+            int violations = reportHelper.verifyConstraintViolations(Severity.fromValue(severity), inMemoryReportWriter);
             if (failOnConstraintViolations && violations > 0) {
                 throw new MojoFailureException(violations + " constraints have been violated!");
             }
