@@ -72,7 +72,7 @@
         <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
-	<xs:simpleType name="severityEnum">
+	<xs:simpleType name="severityEnumType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="blocker" />
 			<xs:enumeration value="critical" />
@@ -99,7 +99,7 @@
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:group ref="jqassistant-rules:useQueryGroup"/>
-                	<xs:element name="severity" type="jqassistant-rules:severityEnum" minOccurs="0"/>
+                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="major"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
