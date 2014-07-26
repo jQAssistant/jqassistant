@@ -133,6 +133,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
         for (ConstraintType constraintType : constraintTypes.values()) {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
             constraint.setDescription(constraintType.getDescription());
+            constraint.setSeverity(constraintType.getSeverity());
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
                         queryDefinitionTypes));
