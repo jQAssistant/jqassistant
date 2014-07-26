@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnum;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
 
 /**
  * Defines a constraint to be validated.
@@ -10,14 +10,14 @@ public class Constraint extends AbstractRule {
 	/**
 	 * The severity of the constraint.
 	 */
-	private SeverityEnum severity;
+	private Severity severity;
 
 	/**
 	 * Returns the severity of the constraint.
 	 * 
 	 * @return severity value
 	 */
-	public SeverityEnum getSeverity() {
+	public Severity getSeverity() {
 		return severity;
 	}
 
@@ -27,8 +27,21 @@ public class Constraint extends AbstractRule {
 	 * @param severity
 	 *            severity value
 	 */
-	public void setSeverity(SeverityEnum severity) {
+	public void setSeverity(Severity severity) {
 		this.severity = severity;
 	}
+
+	/**
+	 * Returns the severity of the constraint.
+	 * 
+	 * @param severity
+	 *            severity value
+	 */
+	public void setSeverity(SeverityEnumType severity) {
+		if (severity != null) {
+			this.severity = Severity.fromValue(severity.value());
+		}
+	}
+	
 
 }
