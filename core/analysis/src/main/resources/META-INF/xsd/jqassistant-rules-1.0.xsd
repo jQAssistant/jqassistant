@@ -81,6 +81,16 @@
 			<xs:enumeration value="info" />
 		</xs:restriction>
 	</xs:simpleType>
+
+    <xs:complexType name="includedConstraintType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceType">
+                <xs:sequence>
+                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="major"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
 	
     <xs:complexType name="conceptType">
         <xs:complexContent>
@@ -110,7 +120,7 @@
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
                     <xs:element name="includeConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="includeConstraint" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="includeConstraint" type="jqassistant-rules:includedConstraintType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="includeGroup" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
