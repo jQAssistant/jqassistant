@@ -18,12 +18,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
 import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
 import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
 import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
@@ -77,5 +78,27 @@ public class XmlReportTest {
                 assertThat(source.getLine(), equalTo(1));
             }
         }
+    }
+
+    @Test
+    public void testReportWithConstraint() throws JAXBException, SAXException, AnalysisListenerException {
+        String xmlReport = XmlReportTestHelper.createXmlReportWithConstraints();
+        SchemaFactory xsdFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = xsdFactory.newSchema(new StreamSource(XmlReportTest.class.getResourceAsStream("/META-INF/xsd/jqassistant-report-1.0.xsd")));
+        JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+        StreamSource streamSource = new StreamSource(new StringReader(xmlReport));
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        unmarshaller.setSchema(schema);
+        JqassistantReport report = unmarshaller.unmarshal(streamSource, JqassistantReport.class).getValue();
+        assertThat(report, notNullValue());
+        assertThat(report.getGroup().size(), equalTo(1));
+        GroupType groupType = report.getGroup().get(0);
+        assertThat(groupType.getDate(), notNullValue());
+        assertThat(groupType.getId(), equalTo("default"));
+        assertThat(groupType.getConceptOrConstraint().size(), equalTo(1));
+        RuleType ruleType = groupType.getConceptOrConstraint().get(0);
+        assertThat(ruleType, instanceOf(ConstraintType.class));
+        assertThat(ruleType.getId(), equalTo("my:Constraint"));
+        assertThat(((ConstraintType)ruleType).getSeverity().getValue(), equalTo("critical"));
     }
 }

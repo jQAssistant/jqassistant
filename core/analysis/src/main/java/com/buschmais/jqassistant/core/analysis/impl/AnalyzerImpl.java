@@ -128,7 +128,7 @@ public class AnalyzerImpl implements Analyzer {
             for (Concept requiredConcept : constraint.getRequiresConcepts()) {
                 applyConcept(requiredConcept);
             }
-            console.info("Validating constraint '" + constraint.getId() + "'.");
+            console.info("Validating constraint '" + constraint.getId() + "' with severity: '"+ constraint.getSeverity() + "'.");
             try {
                 store.beginTransaction();
                 reportWriter.beginConstraint(constraint);
