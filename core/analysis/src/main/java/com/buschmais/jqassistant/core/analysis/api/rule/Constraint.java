@@ -15,14 +15,14 @@ public class Constraint extends AbstractRule {
 	/**
 	 * Returns the severity of the constraint.
 	 * 
-	 * @return severity value
+	 * @return {@link Severity}
 	 */
 	public Severity getSeverity() {
 		return severity;
 	}
 
 	/**
-	 * Returns the severity of the constraint.
+	 * Sets the severity of the constraint.
 	 * 
 	 * @param severity
 	 *            severity value
@@ -32,7 +32,7 @@ public class Constraint extends AbstractRule {
 	}
 
 	/**
-	 * Returns the severity of the constraint.
+	 * Sets the severity of the constraint.
 	 * 
 	 * @param severity
 	 *            severity value
