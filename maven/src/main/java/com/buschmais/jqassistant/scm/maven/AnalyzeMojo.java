@@ -52,11 +52,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     protected boolean failOnConstraintViolations;
 
     /**
-     * Severity level for constraint violation failure check. Default value is {@code info}
+     * Severity level for constraint violation failure check. Default value is
+     * {@code info}
      */
     @Parameter(property = "jqassistant.severity", defaultValue = "info")
     protected String severity;
-    
+
     @Parameter(property = "jqassistant.junitReportDirectory")
     private java.io.File junitReportDirectory;
 
