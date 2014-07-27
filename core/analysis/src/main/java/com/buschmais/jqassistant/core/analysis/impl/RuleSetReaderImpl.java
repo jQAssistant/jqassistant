@@ -172,11 +172,11 @@ public class RuleSetReaderImpl implements RuleSetReader {
                 if (constraintType == null) {
                     ruleSet.getMissingConstraints().add(includedConstraintType.getRefId());
                 } else {
-                	Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
-                	// override the default severity
-                	if(includedConstraintType.getSeverity() != null){
-                		constraint.setSeverity(includedConstraintType.getSeverity());
-                	}
+                    Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
+                    // override the default severity
+                    if (includedConstraintType.getSeverity() != null) {
+                        constraint.setSeverity(includedConstraintType.getSeverity());
+                    }
                     group.getConstraints().add(constraint);
                 }
             }
@@ -230,7 +230,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
         }
         return constraint;
     }
-    
+
     /**
      * Gets a {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}
      * from the cache or create a new instance if it does not exist yet.
