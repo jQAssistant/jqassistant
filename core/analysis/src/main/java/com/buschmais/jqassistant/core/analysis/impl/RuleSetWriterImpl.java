@@ -119,6 +119,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             for (Constraint includeConstraint : group.getConstraints()) {
             	IncludedConstraintType includedConstraintType = new IncludedConstraintType();
                 includedConstraintType.setRefId(includeConstraint.getId());
+                includedConstraintType.setSeverity(SeverityEnumType.fromValue(includeConstraint.getSeverity().getValue()));
                 groupType.getIncludeConstraint().add(includedConstraintType);
             }
             rules.getGroup().add(groupType);
@@ -145,6 +146,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
+            constraintType.setSeverity(SeverityEnumType.fromValue(constraint.getSeverity().getValue()));
             constraintType.setCypher(constraint.getQuery().getCypher());
             for (Concept requiresConcept : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
