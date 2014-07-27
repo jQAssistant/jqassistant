@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -187,6 +188,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                         xmlStreamWriter.writeEndElement(); // result
                     }
                     writeDuration(ruleBeginTime);
+                    writeSeverity(rule); // severity
                     xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
             });
@@ -252,6 +254,24 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
         xmlStreamWriter.writeStartElement("duration");
         xmlStreamWriter.writeCharacters(Long.toString(System.currentTimeMillis() - beginTime));
         xmlStreamWriter.writeEndElement(); // duration
+    }
+
+    /**
+     * Writes the severity of the rule if rule is of type {@link Constraint}.
+     * 
+     * @param rule
+     *            rule
+     * @throws XMLStreamException
+     *             If writing fails.
+     */
+    private void writeSeverity(Rule rule) throws XMLStreamException {
+        if (rule instanceof Constraint) {
+            Severity severity = ((Constraint) rule).getSeverity();
+            xmlStreamWriter.writeStartElement("severity");
+            xmlStreamWriter.writeAttribute("level", severity.getLevel().toString());
+            xmlStreamWriter.writeCharacters(severity.getValue());
+            xmlStreamWriter.writeEndElement();
+        }
     }
 
     /**

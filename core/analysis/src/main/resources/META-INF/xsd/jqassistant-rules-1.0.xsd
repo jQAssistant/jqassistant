@@ -72,6 +72,26 @@
         <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
+	<xs:simpleType name="severityEnumType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="blocker" />
+			<xs:enumeration value="critical" />
+			<xs:enumeration value="major" />
+			<xs:enumeration value="minor" />
+			<xs:enumeration value="info" />
+		</xs:restriction>
+	</xs:simpleType>
+
+    <xs:complexType name="includedConstraintType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:referenceType">
+                <xs:sequence>
+                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+	
     <xs:complexType name="conceptType">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
@@ -89,6 +109,7 @@
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:group ref="jqassistant-rules:useQueryGroup"/>
+                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="info"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -99,7 +120,7 @@
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
                     <xs:element name="includeConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="includeConstraint" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="includeConstraint" type="jqassistant-rules:includedConstraintType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="includeGroup" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>

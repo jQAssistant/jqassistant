@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
@@ -133,26 +134,43 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
+        return verifyConstraintViolations(Severity.INFO, inMemoryReportWriter);
+    }
+
+    /**
+     * Verifies the constraint violations returned by the
+     * {@link InMemoryReportWriter}. Returns the count of constraints having
+     * severity higher than the provided severity level.
+     * 
+     * @param severity
+     *            severity level to use for verification
+     * @param inMemoryReportWriter
+     *            The {@link InMemoryReportWriter}.
+     */
+    public int verifyConstraintViolations(Severity severity, InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
         List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
             if (!constraintViolation.isEmpty()) {
-                AbstractRule constraint = constraintViolation.getRule();
-                console.error(constraint.getId() + ": " + constraint.getDescription());
-                for (Map<String, Object> columns : constraintViolation.getRows()) {
-                    StringBuilder message = new StringBuilder();
-                    for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                        if (message.length() > 0) {
-                            message.append(", ");
+                Constraint constraint = constraintViolation.getRule();
+                // severity level check
+                if (constraint.getSeverity().getLevel() <= severity.getLevel()) {
+                    console.error(constraint.getId() + ": " + constraint.getDescription());
+                    for (Map<String, Object> columns : constraintViolation.getRows()) {
+                        StringBuilder message = new StringBuilder();
+                        for (Map.Entry<String, Object> entry : columns.entrySet()) {
+                            if (message.length() > 0) {
+                                message.append(", ");
+                            }
+                            message.append(entry.getKey());
+                            message.append('=');
+                            String stringValue = getStringValue(entry.getValue());
+                            message.append(stringValue);
                         }
-                        message.append(entry.getKey());
-                        message.append('=');
-                        String stringValue = getStringValue(entry.getValue());
-                        message.append(stringValue);
+                        console.error("  " + message.toString());
                     }
-                    console.error("  " + message.toString());
+                    violations++;
                 }
-                violations++;
             }
         }
         return violations;
@@ -232,4 +250,5 @@ public final class ReportHelper {
         }
         return elementValue != null ? expectedType.cast(elementValue) : null;
     }
+
 }

@@ -11,6 +11,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
@@ -115,10 +116,11 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(includeConcept.getId());
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
-            for (Constraint includeConcept : group.getConstraints()) {
-                ReferenceType constraintReferenceType = new ReferenceType();
-                constraintReferenceType.setRefId(includeConcept.getId());
-                groupType.getIncludeConstraint().add(constraintReferenceType);
+            for (Constraint includeConstraint : group.getConstraints()) {
+            	IncludedConstraintType includedConstraintType = new IncludedConstraintType();
+                includedConstraintType.setRefId(includeConstraint.getId());
+                includedConstraintType.setSeverity(SeverityEnumType.fromValue(includeConstraint.getSeverity().getValue()));
+                groupType.getIncludeConstraint().add(includedConstraintType);
             }
             rules.getGroup().add(groupType);
         }
@@ -144,6 +146,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
+            constraintType.setSeverity(SeverityEnumType.fromValue(constraint.getSeverity().getValue()));
             constraintType.setCypher(constraint.getQuery().getCypher());
             for (Concept requiresConcept : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();

@@ -133,6 +133,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
         for (ConstraintType constraintType : constraintTypes.values()) {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
             constraint.setDescription(constraintType.getDescription());
+            constraint.setSeverity(constraintType.getSeverity());
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
                         queryDefinitionTypes));
@@ -166,12 +167,17 @@ public class RuleSetReaderImpl implements RuleSetReader {
                     group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
                 }
             }
-            for (ReferenceType referenceType : groupType.getIncludeConstraint()) {
-                ConstraintType includedConstraintType = constraintTypes.get(referenceType.getRefId());
-                if (includedConstraintType == null) {
-                    ruleSet.getMissingConstraints().add(referenceType.getRefId());
+            for (IncludedConstraintType includedConstraintType : groupType.getIncludeConstraint()) {
+                ConstraintType constraintType = constraintTypes.get(includedConstraintType.getRefId());
+                if (constraintType == null) {
+                    ruleSet.getMissingConstraints().add(includedConstraintType.getRefId());
                 } else {
-                    group.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
+                    Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
+                    // override the default severity
+                    if (includedConstraintType.getSeverity() != null) {
+                        constraint.setSeverity(includedConstraintType.getSeverity());
+                    }
+                    group.getConstraints().add(constraint);
                 }
             }
             for (ReferenceType referenceType : groupType.getIncludeGroup()) {
