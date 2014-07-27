@@ -16,7 +16,7 @@
 
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.Set;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,7 +35,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class EffectiveRulesMojo extends AbstractProjectMojo {
 
     @Override
-    public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Effective rules for '" + baseProject.getName() + "'.");
         RuleSet targetRuleSet = resolveEffectiveRules(baseProject);
         ReportHelper reportHelper = new ReportHelper(new MavenConsole(getLog()));

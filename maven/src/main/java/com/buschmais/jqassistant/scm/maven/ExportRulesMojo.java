@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -22,7 +22,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class ExportRulesMojo extends AbstractProjectMojo {
 
     @Override
-    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Exporting rules for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
