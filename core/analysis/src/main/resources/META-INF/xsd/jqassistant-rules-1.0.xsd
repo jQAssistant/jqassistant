@@ -109,7 +109,7 @@
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:group ref="jqassistant-rules:useQueryGroup"/>
-                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="major"/>
+                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="info"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
