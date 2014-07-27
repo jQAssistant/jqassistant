@@ -1,3 +1,0 @@
-Methods per Type
-================
-com.buschmais.jqassistant.examples.plugins.project.Foo:1
