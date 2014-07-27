@@ -19,7 +19,7 @@ package com.buschmais.jqassistant.scm.maven;
 import static edu.emory.mathcs.backport.java.util.Collections.emptyMap;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -38,7 +38,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 public class ServerMojo extends AbstractProjectMojo {
 
     @Override
-    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         Server server = new DefaultServerImpl((EmbeddedGraphStore) store, getScannerPluginRepository(store, emptyMap()), getRulePluginRepository());
         server.start();
         getLog().info("Running server for module " + baseProject.getGroupId() + ":" + baseProject.getArtifactId() + ":" + baseProject.getVersion());

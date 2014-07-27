@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -60,7 +59,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     private Map<String, Object> reportProperties;
 
     @Override
-    public void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
         List<AnalysisListener> reportWriters = new LinkedList<>();

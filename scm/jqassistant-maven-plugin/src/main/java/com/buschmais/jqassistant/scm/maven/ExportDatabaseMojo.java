@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.Set;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,7 +35,7 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     protected File exportFile;
 
     @Override
-    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+    protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         EmbeddedGraphStore graphStore = (EmbeddedGraphStore) store;
         GraphDatabaseAPI databaseService = graphStore.getDatabaseService();
         File file = BaseProjectResolver.getOutputFile(baseProject, exportFile, EXPORT_FILE);
