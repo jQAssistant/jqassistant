@@ -118,7 +118,22 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
     }
 
+    /**
+     * Execute the mojo.
+     * 
+     * @throws MojoExecutionException
+     *             If a general execution problem occurs.
+     * @throws MojoFailureException
+     *             If a failure occurs.
+     */
     protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
+
+    /**
+     * Determine if the store shall be reset before execution of the mofo.
+     * 
+     * @return <code>true</code> if the store shall be reset.
+     */
+    protected abstract boolean isResetStoreBeforeExecution();
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -184,10 +199,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         return properties;
     }
 
-    protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
-        return getStore(baseProject, false);
-    }
-
     /**
      * Return the store instance to use for the given base project.
      *
@@ -197,13 +208,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the store cannot be created.
      */
-    protected Store getStore(MavenProject baseProject, boolean reset) throws MojoExecutionException {
+    protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
         File directory;
         if (this.storeDirectory != null) {
             directory = this.storeDirectory;
         } else {
             directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
         }
+        boolean reset = (isResetStoreBeforeExecution() && currentProject == currentProject.getExecutionProject());
         return storeProvider.getStore(directory, reset);
     }
 

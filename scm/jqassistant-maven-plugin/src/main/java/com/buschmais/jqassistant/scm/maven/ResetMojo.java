@@ -30,6 +30,11 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class ResetMojo extends AbstractModuleMojo {
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
     protected void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Resetting store.");
         store.reset();

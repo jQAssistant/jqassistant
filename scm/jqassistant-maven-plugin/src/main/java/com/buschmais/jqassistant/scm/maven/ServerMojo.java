@@ -38,6 +38,11 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 public class ServerMojo extends AbstractProjectMojo {
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
     protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         Server server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepositoryProvider.getScannerPluginRepository(store, emptyMap()),
                 pluginRepositoryProvider.getRulePluginRepository());

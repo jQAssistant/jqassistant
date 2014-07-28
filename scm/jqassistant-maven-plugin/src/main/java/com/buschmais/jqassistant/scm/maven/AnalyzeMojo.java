@@ -67,6 +67,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     private Map<String, Object> reportProperties;
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
     public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);

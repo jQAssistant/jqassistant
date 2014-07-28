@@ -35,6 +35,11 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     protected File exportFile;
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
     protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         EmbeddedGraphStore graphStore = (EmbeddedGraphStore) store;
         GraphDatabaseAPI databaseService = graphStore.getDatabaseService();

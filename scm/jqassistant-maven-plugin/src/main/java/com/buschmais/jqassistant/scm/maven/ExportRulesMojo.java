@@ -22,6 +22,11 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class ExportRulesMojo extends AbstractProjectMojo {
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
     protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Exporting rules for '" + baseProject.getName() + "'.");
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
