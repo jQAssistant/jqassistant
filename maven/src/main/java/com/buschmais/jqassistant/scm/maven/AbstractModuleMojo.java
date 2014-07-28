@@ -18,7 +18,7 @@ public abstract class AbstractModuleMojo extends AbstractMojo {
     public final void doExecute() throws MojoExecutionException, MojoFailureException {
         List<Class<?>> descriptorTypes;
         MavenProject baseProject = ProjectResolver.getRootModule(currentProject);
-        Store store = getStore(baseProject, currentProject == currentProject.getExecutionProject());
+        Store store = getStore(baseProject);
         try {
             descriptorTypes = pluginRepositoryProvider.getScannerPluginRepository(store, getPluginProperties(currentProject)).getDescriptorTypes();
         } catch (PluginRepositoryException e) {

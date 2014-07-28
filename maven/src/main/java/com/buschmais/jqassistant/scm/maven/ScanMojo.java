@@ -26,6 +26,11 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 public class ScanMojo extends AbstractModuleMojo {
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return true;
+    }
+
+    @Override
     public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException {
         List<ScannerPlugin<?>> scannerPlugins;
         ScannerPluginRepository scannerPluginRepository = pluginRepositoryProvider.getScannerPluginRepository(store, getPluginProperties(mavenProject));

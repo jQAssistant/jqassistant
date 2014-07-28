@@ -35,6 +35,11 @@ import com.buschmais.jqassistant.core.store.api.Store;
 public class AvailableRulesMojo extends AbstractProjectMojo {
 
     @Override
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
     public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + baseProject.getName() + "'.");
         RuleSet ruleSet = readRules(baseProject);

@@ -27,7 +27,6 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     @Override
     public final void doExecute() throws MojoExecutionException, MojoFailureException {
         Map<MavenProject, List<MavenProject>> projects = getProjects(reactorProjects);
-
         // Execute the goal if the current project is the last executed project
         // of a base project
         MavenProject rootModule = ProjectResolver.getRootModule(currentProject);
