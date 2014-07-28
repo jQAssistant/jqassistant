@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
-import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Query;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
