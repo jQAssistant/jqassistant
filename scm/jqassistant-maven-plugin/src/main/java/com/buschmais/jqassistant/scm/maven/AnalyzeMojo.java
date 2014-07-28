@@ -69,6 +69,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Override
     public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
+        // perform validation
+        validateParameters();
+
         final RuleSet ruleSet = resolveEffectiveRules(baseProject);
         List<AnalysisListener> reportWriters = new LinkedList<>();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
@@ -121,6 +124,18 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             throw new MojoExecutionException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
+        }
+    }
+
+    /**
+     * Check parameter values.
+     * 
+     * @throws MojoFailureException
+     *             if any parameter is wrong or missing.
+     */
+    private void validateParameters() throws MojoFailureException {
+        if (Severity.fromValue(severity) == null) {
+            throw new MojoFailureException("Invalid severity '" + severity + "'; use one of " + Arrays.toString(Severity.names()));
         }
     }
 
