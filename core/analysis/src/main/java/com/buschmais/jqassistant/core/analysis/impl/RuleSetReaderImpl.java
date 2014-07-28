@@ -6,7 +6,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
-
+import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,7 +133,9 @@ public class RuleSetReaderImpl implements RuleSetReader {
         for (ConstraintType constraintType : constraintTypes.values()) {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
             constraint.setDescription(constraintType.getDescription());
-            constraint.setSeverity(constraintType.getSeverity());
+            // Use default severity; if none configured
+            Severity severity = constraintType.getSeverity() == null ? DEFAULT_SEVERITY : Severity.fromValue(constraintType.getSeverity().value());
+            constraint.setSeverity(severity);
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
                         queryDefinitionTypes));
@@ -175,7 +177,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
                     Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
                     // override the default severity
                     if (includedConstraintType.getSeverity() != null) {
-                        constraint.setSeverity(includedConstraintType.getSeverity());
+                        constraint.setSeverity(Severity.fromValue(includedConstraintType.getSeverity().value()));
                     }
                     group.getConstraints().add(constraint);
                 }

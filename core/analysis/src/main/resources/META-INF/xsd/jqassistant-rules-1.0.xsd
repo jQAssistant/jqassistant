@@ -85,9 +85,7 @@
     <xs:complexType name="includedConstraintType">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceType">
-                <xs:sequence>
-                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0"/>
-                </xs:sequence>
+                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -109,8 +107,8 @@
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:group ref="jqassistant-rules:useQueryGroup"/>
-                	<xs:element name="severity" type="jqassistant-rules:severityEnumType" minOccurs="0" default="info"/>
                 </xs:sequence>
+                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
