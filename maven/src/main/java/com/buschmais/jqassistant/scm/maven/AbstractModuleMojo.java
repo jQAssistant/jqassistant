@@ -10,17 +10,17 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * Created by dimahler on 7/25/2014.
+ * Abstract base class for mojos which are executed per module.
  */
 public abstract class AbstractModuleMojo extends AbstractMojo {
 
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException {
+    public final void doExecute() throws MojoExecutionException, MojoFailureException {
         List<Class<?>> descriptorTypes;
-        MavenProject baseProject = BaseProjectResolver.getBaseProject(currentProject);
+        MavenProject baseProject = ProjectResolver.getRootModule(currentProject);
         Store store = getStore(baseProject, currentProject == currentProject.getExecutionProject());
         try {
-            descriptorTypes = getScannerPluginRepository(store, getPluginProperties(currentProject)).getDescriptorTypes();
+            descriptorTypes = pluginRepositoryProvider.getScannerPluginRepository(store, getPluginProperties(currentProject)).getDescriptorTypes();
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot get descriptor mappers.", e);
         }

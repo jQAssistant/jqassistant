@@ -7,35 +7,42 @@ import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * Abstract base implementation for analysis mojos.
+ * Abstract base class for mojos which are executed per project.
  */
 public abstract class AbstractProjectMojo extends AbstractMojo {
 
+    /**
+     * Contains the full list of projects in the reactor.
+     */
+    @Parameter(property = "reactorProjects")
+    protected List<MavenProject> reactorProjects;
+
     @Override
-    public final void execute() throws MojoExecutionException, MojoFailureException {
-        Map<MavenProject, List<MavenProject>> baseProjects = getBaseProjects(reactorProjects);
+    public final void doExecute() throws MojoExecutionException, MojoFailureException {
+        Map<MavenProject, List<MavenProject>> projects = getProjects(reactorProjects);
 
         // Execute the goal if the current project is the last executed project
         // of a base project
-        MavenProject baseProject = BaseProjectResolver.getBaseProject(currentProject);
-        List<MavenProject> currentProjects = baseProjects.get(baseProject);
+        MavenProject rootModule = ProjectResolver.getRootModule(currentProject);
+        List<MavenProject> currentProjects = projects.get(rootModule);
         if (currentProjects != null && currentProject.equals(currentProjects.get(currentProjects.size() - 1))) {
             List<Class<?>> descriptorTypes;
-            Store store = getStore(baseProject);
+            Store store = getStore(rootModule);
             try {
-                descriptorTypes = getScannerPluginRepository(store, getPluginProperties(baseProject)).getDescriptorTypes();
+                descriptorTypes = pluginRepositoryProvider.getScannerPluginRepository(store, getPluginProperties(rootModule)).getDescriptorTypes();
             } catch (PluginRepositoryException e) {
                 throw new MojoExecutionException("Cannot get descriptor mappers.", e);
             }
             try {
                 store.start(descriptorTypes);
-                this.aggregate(baseProject, currentProjects, store);
+                this.aggregate(rootModule, currentProjects, store);
             } finally {
                 store.stop();
             }
@@ -52,10 +59,10 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * @throws MojoExecutionException
      *             If aggregation fails.
      */
-    private Map<MavenProject, List<MavenProject>> getBaseProjects(List<MavenProject> reactorProjects) throws MojoExecutionException {
+    private Map<MavenProject, List<MavenProject>> getProjects(List<MavenProject> reactorProjects) throws MojoExecutionException {
         Map<MavenProject, List<MavenProject>> baseProjects = new HashMap<>();
         for (MavenProject reactorProject : reactorProjects) {
-            MavenProject baseProject = BaseProjectResolver.getBaseProject(reactorProject);
+            MavenProject baseProject = ProjectResolver.getRootModule(reactorProject);
             List<MavenProject> projects = baseProjects.get(baseProject);
             if (projects == null) {
                 projects = new ArrayList<>();

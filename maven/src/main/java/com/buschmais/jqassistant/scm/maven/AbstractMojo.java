@@ -14,6 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -24,16 +25,9 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.maven.provider.PluginConfigurationProvider;
+import com.buschmais.jqassistant.scm.maven.provider.StoreProvider;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -49,7 +43,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected File storeDirectory;
 
     /**
-     * The directory to scan for rules.
+     * The directory to scan for rule descriptors.
      */
     @Parameter(property = "jqassistant.rules.directory")
     protected File rulesDirectory;
@@ -85,10 +79,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected File xmlReportFile;
 
     /**
-     * Contains the full list of projects in the reactor.
+     * Skip the execution.
      */
-    @Parameter(property = "reactorProjects")
-    protected List<MavenProject> reactorProjects;
+    @Parameter(property = "jqassistant.skip", defaultValue = "false")
+    protected boolean skip;
 
     /**
      * The Maven project.
@@ -96,13 +90,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter(property = "project")
     protected MavenProject currentProject;
 
+    @Component
+    protected PluginConfigurationProvider pluginRepositoryProvider;
+
     /**
      * The store repository.
      */
     @Component
-    private StoreRepository storeRepository;
-
-    private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+    private StoreProvider storeProvider;
 
     /**
      * The rules reader instance.
@@ -114,54 +109,16 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private RuleSelector ruleSelector = new RuleSelectorImpl();
 
-    /**
-     * Return the scanner plugin repository.
-     *
-     * @param store
-     *            The store.
-     * @param properties
-     *            The properties.
-     * @return The scanner plugin repository.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *             If the repository cannot be created.
-     */
-    protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
-        try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot create rule plugin repository.", e);
+    @Override
+    public final void execute() throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            getLog().info("Skipping execution.");
+        } else {
+            doExecute();
         }
     }
 
-    /**
-     * Return the rule plugin repository.
-     *
-     * @return The rule plugin repository.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *             If the repository cannot be created.
-     */
-    protected RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
-        try {
-            return new RulePluginRepositoryImpl(pluginConfigurationReader);
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot create rule plugin repository.", e);
-        }
-    }
-
-    /**
-     * Return the report plugin repository.
-     *
-     * @return The report plugin repository.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *             If the repository cannot be created.
-     */
-    protected ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
-        try {
-            return new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot create rule plugin repository.", e);
-        }
-    }
+    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
@@ -176,7 +133,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (rulesDirectory != null) {
             selectedDirectory = rulesDirectory;
         } else {
-            selectedDirectory = new File(baseProject.getBasedir(), BaseProjectResolver.RULES_DIRECTORY);
+            selectedDirectory = new File(baseProject.getBasedir(), ProjectResolver.RULES_DIRECTORY);
         }
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
@@ -194,7 +151,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 throw new MojoExecutionException("Cannot open rule URL " + rulesUrl.toExternalForm());
             }
         }
-        List<Source> ruleSources = getRulePluginRepository().getRuleSources();
+        List<Source> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
@@ -247,7 +204,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         } else {
             directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
         }
-        return storeRepository.getStore(directory, reset);
+        return storeProvider.getStore(directory, reset);
     }
 
     /**

@@ -8,7 +8,7 @@ import org.apache.maven.project.MavenProject;
 /**
  * Resolver for base projects in a multi-module hierarchy.
  */
-public final class BaseProjectResolver {
+public final class ProjectResolver {
 
     /**
      * The name of the rules directory.
@@ -23,7 +23,7 @@ public final class BaseProjectResolver {
     /**
      * Private constructor.
      */
-    private BaseProjectResolver() {
+    private ProjectResolver() {
     }
 
     /**
@@ -41,7 +41,7 @@ public final class BaseProjectResolver {
      * @throws MojoExecutionException
      *             If the directory cannot be resolved.
      */
-    static MavenProject getBaseProject(MavenProject project) throws MojoExecutionException {
+    static MavenProject getRootModule(MavenProject project) throws MojoExecutionException {
         MavenProject currentProject = project;
         if (project != null) {
             do {

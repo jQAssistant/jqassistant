@@ -99,7 +99,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             }
         }
         Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
-        List<ReportPlugin> reportPlugins = getReportPluginRepository(properties).getReportPlugins();
+        List<ReportPlugin> reportPlugins = pluginRepositoryProvider.getReportPluginRepository(properties).getReportPlugins();
         reportWriters.addAll(reportPlugins);
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
         MavenConsole console = new MavenConsole(getLog());
@@ -146,7 +146,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
      *             If the file cannot be determined.
      */
     private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
-        File selectedXmlReportFile = BaseProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);
+        File selectedXmlReportFile = ProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
     }

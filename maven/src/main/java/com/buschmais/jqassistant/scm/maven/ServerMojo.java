@@ -39,7 +39,8 @@ public class ServerMojo extends AbstractProjectMojo {
 
     @Override
     protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, getScannerPluginRepository(store, emptyMap()), getRulePluginRepository());
+        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepositoryProvider.getScannerPluginRepository(store, emptyMap()),
+                pluginRepositoryProvider.getRulePluginRepository());
         server.start();
         getLog().info("Running server for module " + baseProject.getGroupId() + ":" + baseProject.getArtifactId() + ":" + baseProject.getVersion());
         getLog().info("Press <Enter> to finish.");

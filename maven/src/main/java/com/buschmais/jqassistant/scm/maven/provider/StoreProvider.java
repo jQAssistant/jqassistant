@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.maven;
+package com.buschmais.jqassistant.scm.maven.provider;
 
 import java.io.File;
 import java.util.Collections;
@@ -13,17 +13,17 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
- * Repository holding stores identified by their directory.
+ * Provider holding stores identified by their directory.
  */
-@Component(role = StoreRepository.class, instantiationStrategy = "singleton")
-public class StoreRepository {
+@Component(role = StoreProvider.class, instantiationStrategy = "singleton")
+public class StoreProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StoreRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StoreProvider.class);
 
     private Map<File, Store> stores = new HashMap<>();
 
-    public StoreRepository() {
-        LOGGER.info("Initializing store repository.");
+    public StoreProvider() {
+        LOGGER.info("Initializing store provider.");
     }
 
     public Store getStore(File directory, boolean reset) {

@@ -38,7 +38,7 @@ public class ExportDatabaseMojo extends AbstractProjectMojo {
     protected void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         EmbeddedGraphStore graphStore = (EmbeddedGraphStore) store;
         GraphDatabaseAPI databaseService = graphStore.getDatabaseService();
-        File file = BaseProjectResolver.getOutputFile(baseProject, exportFile, EXPORT_FILE);
+        File file = ProjectResolver.getOutputFile(baseProject, exportFile, EXPORT_FILE);
         getLog().info("Exporting database to '" + file.getAbsolutePath() + "'");
         store.beginTransaction();
         SubGraph graph = DatabaseSubGraph.from(databaseService);
