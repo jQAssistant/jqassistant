@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.scanner.api.iterable.AggregatingIterable;
 import com.buschmais.jqassistant.core.scanner.api.iterable.MappingIterable;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.type.ArchiveDescriptor;
 
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<File> {
 
@@ -78,6 +79,7 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
                 beforeEntry(path, scope);
                 LOGGER.info("Scanning entry '{}'.", name);
                 Iterable<? extends FileDescriptor> descriptors = scanner.scan(streamFactory, name, scope);
+                
                 return afterEntry(descriptors);
             }
         };
@@ -95,4 +97,5 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
     protected abstract String getExtension();
 
     protected abstract Scope createScope(Scope currentScope);
+    
 }
