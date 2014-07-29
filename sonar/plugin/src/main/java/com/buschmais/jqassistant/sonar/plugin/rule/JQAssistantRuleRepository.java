@@ -10,6 +10,7 @@ import javax.xml.transform.Source;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
+import org.sonar.api.rules.RulePriority;
 import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
@@ -91,7 +92,12 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     private Rule createRule(AbstractRule executable, RuleType ruleType) {
         Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
         rule.setDescription(executable.getDescription());
-        rule.setSeverity(ruleType.getPriority());
+        // set priority based on severity value
+        if (executable instanceof Constraint) {
+            rule.setSeverity(RulePriority.valueOf(((Constraint) executable).getSeverity().name()));
+        } else {
+            rule.setSeverity(ruleType.getPriority());
+        }
         StringBuilder requiresConcepts = new StringBuilder();
         for (Concept requiredConcept : executable.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {
