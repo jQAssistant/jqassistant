@@ -261,8 +261,6 @@
         ]]></cypher>
     </concept>
 
-    <!-- @InterceptorBinding, @Any, @Default, @New -->
-
     <concept id="cdi:EventProducer">
         <requiresConcept refId="cdi:InjectionPoint"/>
         <description>Labels all beans declaring "InjectionPoint" of type "javax.enterprise.event.Event" with "Cdi" and "EventProducer".
@@ -297,7 +295,6 @@
         ]]></cypher>
     </concept>
 
-    <!-- @Any, @Default, @New -->
     <concept id="cdi:Named">
         <description>Labels all types or methods annotated by "javax.inject.Named" with "Cdi" and "Named".
         </description>
@@ -312,7 +309,52 @@
               e AS Named
         ]]></cypher>
     </concept>
-        
+
+    <concept id="cdi:Default">
+        <description>Labels all elements annotated by "javax.enterprise.inject.Default" with "Cdi" and "Default".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(defaultType:Type)
+            WHERE
+              defaultType.fqn = "javax.enterprise.inject.Default"
+            SET
+              e:Cdi:Default
+            RETURN
+              e AS Default
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:Any">
+        <description>Labels all elements annotated by "javax.enterprise.inject.Any" with "Cdi" and "Any".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(anyType:Type)
+            WHERE
+              anyType.fqn = "javax.enterprise.inject.Any"
+            SET
+              e:Cdi:Any
+            RETURN
+              e AS Any
+        ]]></cypher>
+    </concept>
+
+    <concept id="cdi:New">
+        <description>Labels all elements annotated by "javax.enterprise.inject.New" with "Cdi" and "New".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(newType:Type)
+            WHERE
+              newType.fqn = "javax.enterprise.inject.New"
+            SET
+              e:Cdi:New
+            RETURN
+              e AS New
+        ]]></cypher>
+    </concept>
+
     <constraint id="cdi:BeansMustUseConstructorInjection">
         <requiresConcept refId="cdi:InjectionPoint" />
         <description>All CDI beans must use constructor injection.</description>

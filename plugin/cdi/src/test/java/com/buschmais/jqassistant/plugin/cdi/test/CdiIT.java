@@ -19,6 +19,8 @@ import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.DefaultBean;
+import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.NewBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQualifier;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.NamedBean;
@@ -291,6 +293,60 @@ public class CdiIT extends AbstractJavaPluginIT {
         List<Object> column = query("MATCH (e:Cdi:Named) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(NamedBean.class)));
         assertThat(column, hasItem(methodDescriptor(NamedBean.class, "getValue")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Any".
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void any() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(DecoratorBean.class);
+        applyConcept("cdi:Any");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:Any) RETURN e").getColumn("e");
+        assertThat(column, hasItem(fieldDescriptor(DecoratorBean.class, "delegate")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:New".
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void newQualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(NewBean.class);
+        applyConcept("cdi:New");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:New) RETURN e").getColumn("e");
+        assertThat(column, hasItem(fieldDescriptor(NewBean.class, "bean")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "cdi:Default".
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void defaultQualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+        scanClasses(DefaultBean.class);
+        applyConcept("cdi:Default");
+        store.beginTransaction();
+        List<Object> column = query("MATCH (e:Cdi:Default) RETURN e").getColumn("e");
+        assertThat(column, hasItem(fieldDescriptor(DefaultBean.class, "bean")));
         store.commitTransaction();
     }
 
