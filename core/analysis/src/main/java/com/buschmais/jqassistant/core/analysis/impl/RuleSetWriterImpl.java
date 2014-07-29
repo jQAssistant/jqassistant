@@ -4,6 +4,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -117,9 +118,9 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
             for (Constraint includeConstraint : group.getConstraints()) {
-            	IncludedConstraintType includedConstraintType = new IncludedConstraintType();
+                IncludedConstraintType includedConstraintType = new IncludedConstraintType();
                 includedConstraintType.setRefId(includeConstraint.getId());
-                includedConstraintType.setSeverity(SeverityEnumType.fromValue(includeConstraint.getSeverity().getValue()));
+                includedConstraintType.setSeverity(getSeverity(includeConstraint.getSeverity()));
                 groupType.getIncludeConstraint().add(includedConstraintType);
             }
             rules.getGroup().add(groupType);
@@ -146,7 +147,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
-            constraintType.setSeverity(SeverityEnumType.fromValue(constraint.getSeverity().getValue()));
+            constraintType.setSeverity(getSeverity(constraint.getSeverity()));
             constraintType.setCypher(constraint.getQuery().getCypher());
             for (Concept requiresConcept : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
@@ -155,5 +156,19 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             }
             rules.getConstraint().add(constraintType);
         }
+    }
+
+    /**
+     * Converts {@link Severity} to {@link SeverityEnumType}
+     * 
+     * @param severity
+     *            {@link Severity}
+     * @return {@link SeverityEnumType}
+     */
+    private SeverityEnumType getSeverity(Severity severity) {
+        if (severity == null) {
+            severity = DEFAULT_SEVERITY;
+        }
+        return SeverityEnumType.fromValue(severity.getValue());
     }
 }
