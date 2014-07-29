@@ -6,12 +6,12 @@
 
     <xs:element name="jqassistant-rules">
         <xs:complexType>
-            <xs:sequence>
-                <xs:element name="queryDefinition" type="jqassistant-rules:queryDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="queryDefinition" type="jqassistant-rules:queryDefinitionType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="concept" type="jqassistant-rules:conceptType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
-            </xs:sequence>
+            </xs:choice>
         </xs:complexType>
     </xs:element>
 
