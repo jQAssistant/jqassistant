@@ -25,6 +25,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.provider.PluginConfigurationProvider;
 import com.buschmais.jqassistant.scm.maven.provider.StoreProvider;
@@ -202,21 +203,20 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Return the store instance to use for the given base project.
      *
-     * @param baseProject
-     *            The base project
+     * @param rootModule
+     *            The root module
      * @return The store instance.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the store cannot be created.
      */
-    protected Store getStore(MavenProject baseProject) throws MojoExecutionException {
+    protected Store getStore(MavenProject rootModule) throws MojoExecutionException {
         File directory;
         if (this.storeDirectory != null) {
             directory = this.storeDirectory;
         } else {
-            directory = new File(baseProject.getBuild().getDirectory() + "/jqassistant/store");
+            directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
         }
-        boolean reset = (isResetStoreBeforeExecution() && currentProject == currentProject.getExecutionProject());
-        return storeProvider.getStore(directory, reset);
+        return storeProvider.getStore(directory);
     }
 
     /**
@@ -283,4 +283,68 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
     }
 
+    /**
+     * Execute an operation with the store.
+     *
+     * @param storeOperation
+     *            The store.
+     * @throws MojoExecutionException
+     *             On execution errors.
+     * @throws MojoFailureException
+     *             On execution failures.
+     */
+    protected void execute(StoreOperation storeOperation) throws MojoExecutionException, MojoFailureException {
+        MavenProject rootModule = ProjectResolver.getRootModule(currentProject);
+        execute(storeOperation, rootModule);
+    }
+
+    /**
+     * Execute an operation with the store.
+     * 
+     * @param storeOperation
+     *            The store.
+     * @param rootModule
+     *            The root module to use for store initialization.
+     * @throws MojoExecutionException
+     *             On execution errors.
+     * @throws MojoFailureException
+     *             On execution failures.
+     */
+    protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
+        Store store = getStore(rootModule);
+        List<Class<?>> descriptorTypes;
+        try {
+            descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot get descriptor mappers.", e);
+        }
+        store.start(descriptorTypes);
+        try {
+            if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
+                store.reset();
+            }
+            storeOperation.run(rootModule, store);
+        } finally {
+            store.stop();
+        }
+    }
+
+    /**
+     * Defines an operation to execute on an initialized store instance.
+     */
+    protected interface StoreOperation {
+        /**
+         * Execute the operation-
+         * 
+         * @param store
+         *            The store.
+         * @param rootModule
+         *            The root module.
+         * @throws MojoExecutionException
+         *             On execution errors.
+         * @throws MojoFailureException
+         *             On execution failures.
+         */
+        void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException;
+    }
 }

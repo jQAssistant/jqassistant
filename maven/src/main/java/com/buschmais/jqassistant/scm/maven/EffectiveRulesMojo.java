@@ -40,9 +40,9 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Effective rules for '" + baseProject.getName() + "'.");
-        RuleSet targetRuleSet = resolveEffectiveRules(baseProject);
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Effective rules for '" + rootModule.getName() + "'.");
+        RuleSet targetRuleSet = resolveEffectiveRules(rootModule);
         ReportHelper reportHelper = new ReportHelper(new MavenConsole(getLog()));
         reportHelper.printRuleSet(targetRuleSet);
     }

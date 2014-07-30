@@ -1,12 +1,9 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.List;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -16,20 +13,12 @@ public abstract class AbstractModuleMojo extends AbstractMojo {
 
     @Override
     public final void doExecute() throws MojoExecutionException, MojoFailureException {
-        List<Class<?>> descriptorTypes;
-        MavenProject baseProject = ProjectResolver.getRootModule(currentProject);
-        Store store = getStore(baseProject);
-        try {
-            descriptorTypes = pluginRepositoryProvider.getScannerPluginRepository(store, getPluginProperties(currentProject)).getDescriptorTypes();
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get descriptor mappers.", e);
-        }
-        try {
-            store.start(descriptorTypes);
-            execute(currentProject, store);
-        } finally {
-            store.stop();
-        }
+        execute(new StoreOperation() {
+            @Override
+            public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
+                execute(currentProject, store);
+            }
+        });
     }
 
     protected abstract void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException;
