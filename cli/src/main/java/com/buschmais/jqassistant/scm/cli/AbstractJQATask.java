@@ -7,10 +7,12 @@ import java.util.Map;
 
 import org.apache.commons.cli.Option;
 
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
@@ -54,16 +56,24 @@ public abstract class AbstractJQATask implements JQATask {
         final Store store = getStore();
 
         try {
-            descriptorTypes = getScannerPluginRepository(store, properties).getDescriptorTypes();
+            descriptorTypes = getModelPluginRepository().getDescriptorTypes();
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot get descriptor mappers.", e);
         }
 
         try {
             store.start(descriptorTypes);
-            doTheTask(store);
+            executeTask(store);
         } finally {
             store.stop();
+        }
+    }
+
+    protected ModelPluginRepository getModelPluginRepository() {
+        try {
+            return new ModelPluginRepositoryImpl(pluginConfigurationReader);
+        } catch (PluginRepositoryException e) {
+            throw new RuntimeException("Cannot create model plugin repository.", e);
         }
     }
 
@@ -93,5 +103,5 @@ public abstract class AbstractJQATask implements JQATask {
     protected void addTaskOptions(final List<Option> options) {
     }
 
-    protected abstract void doTheTask(final Store store);
+    protected abstract void executeTask(final Store store);
 }

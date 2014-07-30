@@ -59,7 +59,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     }
 
     @Override
-    protected void doTheTask(final Store store) {
+    protected void executeTask(final Store store) {
         getLog().info("Executing analysis.");
         final RuleSet ruleSet = resolveEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
