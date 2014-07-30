@@ -18,10 +18,21 @@ import org.sonar.api.rules.RuleParam;
 import org.sonar.api.utils.SonarException;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Query;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
-import com.buschmais.jqassistant.sonar.plugin.rule.*;
+import com.buschmais.jqassistant.sonar.plugin.rule.AbstractTemplateRule;
+import com.buschmais.jqassistant.sonar.plugin.rule.ConceptTemplateRule;
+import com.buschmais.jqassistant.sonar.plugin.rule.ConstraintTemplateRule;
+import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
+import com.buschmais.jqassistant.sonar.plugin.rule.RuleParameter;
+import com.buschmais.jqassistant.sonar.plugin.rule.RuleType;
 
 /**
  * A {@link ProfileExporter} implementation which provides rules as permalink
@@ -63,10 +74,18 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                 executable = createExecutableFromTemplate(activeRule, check);
                 requiresConcepts = check.getRequiresConcepts();
             }
+            // set severity for constraints
+            if (executable instanceof Constraint) {
+                Severity severity = Severity.valueOf(activeRule.getSeverity().name());
+                LOGGER.debug("Adding severity " + severity + " to " + executable.getId());
+                ((Constraint) executable).setSeverity(severity);
+            }
+
             executables.put(executable, requiresConcepts);
             if (executable instanceof Concept) {
                 concepts.put(executable.getId(), (Concept) executable);
             }
+
         }
         Group group = new Group();
         group.setId(profile.getName());
