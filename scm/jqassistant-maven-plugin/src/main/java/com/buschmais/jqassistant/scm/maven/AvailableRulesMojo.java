@@ -40,9 +40,9 @@ public class AvailableRulesMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Available rules for '" + baseProject.getName() + "'.");
-        RuleSet ruleSet = readRules(baseProject);
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Available rules for '" + rootModule.getName() + "'.");
+        RuleSet ruleSet = readRules(rootModule);
         ReportHelper reportHelper = new ReportHelper(new MavenConsole(getLog()));
         reportHelper.printRuleSet(ruleSet);
     }

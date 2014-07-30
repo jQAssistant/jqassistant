@@ -35,10 +35,12 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
@@ -131,6 +133,7 @@ public class AbstractPluginIT {
 
     private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
     private RulePluginRepository rulePluginRepository;
+    private ModelPluginRepository modelPluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
 
     @Before
@@ -161,6 +164,7 @@ public class AbstractPluginIT {
     @Before
     public void startStore() throws PluginRepositoryException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
+        modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, Collections.<String, Object> emptyMap());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
@@ -336,7 +340,7 @@ public class AbstractPluginIT {
 
     private List<Class<?>> getDescriptorTypes() {
         try {
-            return scannerPluginRepository.getDescriptorTypes();
+            return modelPluginRepository.getDescriptorTypes();
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get descriptor mappers.", e);
         }

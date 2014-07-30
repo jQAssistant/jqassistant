@@ -72,9 +72,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     }
 
     @Override
-    public void aggregate(MavenProject baseProject, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Executing analysis for '" + baseProject.getName() + "'.");
-        final RuleSet ruleSet = resolveEffectiveRules(baseProject);
+    public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
+        final RuleSet ruleSet = resolveEffectiveRules(rootModule);
         List<AnalysisListener> reportWriters = new LinkedList<>();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         reportWriters.add(inMemoryReportWriter);
@@ -86,7 +86,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             case JQA:
                 FileWriter xmlReportFileWriter;
                 try {
-                    xmlReportFileWriter = new FileWriter(getXmlReportFile(baseProject));
+                    xmlReportFileWriter = new FileWriter(getXmlReportFile(rootModule));
                 } catch (IOException e) {
                     throw new MojoExecutionException("Cannot create XML report file.", e);
                 }
@@ -99,7 +99,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                 reportWriters.add(xmlReportWriter);
                 break;
             case JUNIT:
-                reportWriters.add(getJunitReportWriter(baseProject));
+                reportWriters.add(getJunitReportWriter(rootModule));
                 break;
             }
         }

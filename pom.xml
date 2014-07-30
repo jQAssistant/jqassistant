@@ -149,7 +149,6 @@
                             </goals>
                             <configuration>
                                 <schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
-                                <extension>true</extension>
                                 <args>
                                     <arg>-Xdefault-value</arg>
                                 </args>
@@ -186,6 +185,7 @@
                         <groups>
                             <group>default</group>
                         </groups>
+                        <failOnConstraintViolations>false</failOnConstraintViolations>
                     </configuration>
                 </plugin>
                 <plugin>

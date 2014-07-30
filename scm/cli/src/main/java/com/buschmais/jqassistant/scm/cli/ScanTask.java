@@ -36,7 +36,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         super("scan");
     }
 
-    protected void doTheTask(final Store store) {
+    protected void executeTask(final Store store) {
         store.reset();
         try {
             for (String directoryName : directoryNames) {

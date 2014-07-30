@@ -10,15 +10,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 public interface ScannerPluginRepository {
 
     /**
-     * Return the instances of the configured descriptor mappers.
-     * 
-     * @return The instances of the configured descriptor mappers.
-     * @throws PluginRepositoryException
-     *             If the instances cannot be created.
-     */
-    List<Class<?>> getDescriptorTypes() throws PluginRepositoryException;
-
-    /**
      * Return the instances of the configured scanner plugins.
      * 
      * @return The instances of the configured scanner plugins.

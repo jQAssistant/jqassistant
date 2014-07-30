@@ -19,7 +19,7 @@ public class ServerTask extends AbstractJQATask {
         super("server");
     }
 
-    protected void doTheTask(final Store store) {
+    protected void executeTask(final Store store) {
         Server server = new DefaultServerImpl((EmbeddedGraphStore) store, getScannerPluginRepository(store, Collections.<String, Object> emptyMap()),
                 getRulePluginRepository());
         server.start();

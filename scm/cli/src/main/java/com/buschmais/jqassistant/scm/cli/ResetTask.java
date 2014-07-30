@@ -13,7 +13,7 @@ public class ResetTask extends AbstractJQATask {
     }
 
     @Override
-    protected void doTheTask(final Store store) {
+    protected void executeTask(final Store store) {
         getLog().info("Resetting store.");
         store.reset();
     }

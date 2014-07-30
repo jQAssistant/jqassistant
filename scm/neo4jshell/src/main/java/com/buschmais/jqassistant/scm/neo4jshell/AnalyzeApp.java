@@ -31,7 +31,7 @@ public class AnalyzeApp extends AbstractJQAssistantApp {
         RuleSet effectiveRuleSet = getEffectiveRuleSet(parser);
         InMemoryReportWriter reportWriter = new InMemoryReportWriter();
         Store store = getStore();
-        store.start(getScannerPluginRepository().getDescriptorTypes());
+        store.start(getModelPluginRepository().getDescriptorTypes());
         ShellConsole console = new ShellConsole(out);
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         analyzer.execute(effectiveRuleSet);

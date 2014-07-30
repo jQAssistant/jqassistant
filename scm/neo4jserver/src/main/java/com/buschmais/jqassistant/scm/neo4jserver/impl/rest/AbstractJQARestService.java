@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.transform.Source;
@@ -13,13 +12,13 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -52,11 +51,11 @@ public abstract class AbstractJQARestService {
         return store;
     }
 
-    protected ScannerPluginRepository getScannerPluginRepository() {
+    protected ModelPluginRepository getModelPluginRepository() {
         try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, getStore(), Collections.<String, Object> emptyMap());
+            return new ModelPluginRepositoryImpl(pluginConfigurationReader);
         } catch (PluginRepositoryException e) {
-            throw new IllegalStateException("Cannot get scanner plugin repository", e);
+            throw new IllegalStateException("Cannot get model plugin repository", e);
         }
     }
 
