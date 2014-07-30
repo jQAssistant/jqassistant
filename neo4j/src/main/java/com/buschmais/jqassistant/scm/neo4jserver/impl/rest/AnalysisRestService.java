@@ -42,7 +42,7 @@ public class AnalysisRestService extends AbstractJQARestService {
         InMemoryReportWriter report;
         Store store = getStore();
         try {
-            store.start(getScannerPluginRepository().getDescriptorTypes());
+            store.start(getModelPluginRepository().getDescriptorTypes());
             report = analyze(store, Arrays.asList(conceptId), Collections.<String> emptyList(), Collections.<String> emptyList());
 
             int conceptResultSize = report.getConceptResults().size();
