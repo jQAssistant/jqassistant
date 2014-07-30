@@ -171,4 +171,5 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             throw new MojoFailureException("Invalid severity '" + severity + "'; use one of " + Arrays.toString(Severity.names()));
         }
     }
+
 }
