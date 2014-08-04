@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
  * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
  * for java packages.
  */
-public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
+public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileResource> {
 
     private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
 
@@ -33,17 +33,17 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<Stream
     }
 
     @Override
-    public Class<? super StreamFactory> getType() {
-        return StreamFactory.class;
+    public Class<? super FileResource> getType() {
+        return FileResource.class;
     }
 
     @Override
-    public boolean accepts(StreamFactory item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && PATTERN.matcher(path).matches();
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(StreamFactory item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Matcher matcher = PATTERN.matcher(path);
         if (matcher.matches()) {
             String serviceInterface = matcher.group(2);
