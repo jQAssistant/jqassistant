@@ -24,13 +24,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 
-public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
+public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileResource> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
 
@@ -49,17 +49,17 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<StreamFa
     }
 
     @Override
-    public Class<? super StreamFactory> getType() {
-        return StreamFactory.class;
+    public Class<? super FileResource> getType() {
+        return FileResource.class;
     }
 
     @Override
-    public boolean accepts(StreamFactory item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path);
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(StreamFactory item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         BeansDescriptor beansDescriptor = getStore().create(BeansDescriptor.class);
         beansDescriptor.setFileName(path);
         try (InputStream stream = item.createStream()) {

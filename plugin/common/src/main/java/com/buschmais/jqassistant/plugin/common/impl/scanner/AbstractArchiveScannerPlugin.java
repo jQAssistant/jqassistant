@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.api.iterable.AggregatingIterable;
 import com.buschmais.jqassistant.core.scanner.api.iterable.MappingIterable;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<File> {
 
@@ -69,7 +69,7 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
             @Override
             protected Iterable<? extends FileDescriptor> map(final ZipEntry zipEntry) throws IOException {
                 String name = "/" + zipEntry.getName();
-                StreamFactory streamFactory = new StreamFactory() {
+                FileResource fileResource = new FileResource() {
                     @Override
                     public InputStream createStream() throws IOException {
                         return new BufferedInputStream(zipFile.getInputStream(zipEntry));
@@ -77,7 +77,7 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
                 };
                 beforeEntry(path, scope);
                 LOGGER.info("Scanning entry '{}'.", name);
-                Iterable<? extends FileDescriptor> descriptors = scanner.scan(streamFactory, name, scope);
+                Iterable<? extends FileDescriptor> descriptors = scanner.scan(fileResource, name, scope);
                 return afterEntry(descriptors);
             }
         };

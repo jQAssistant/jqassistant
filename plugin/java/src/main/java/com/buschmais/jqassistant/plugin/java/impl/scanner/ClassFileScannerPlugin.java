@@ -12,7 +12,7 @@ import org.objectweb.asm.ClassReader;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
@@ -22,7 +22,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
-public class ClassFileScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
@@ -36,14 +36,14 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<StreamFactory>
     }
 
     @Override
-    public Class<? super StreamFactory> getType() {
-        return StreamFactory.class;
+    public Class<? super FileResource> getType() {
+        return FileResource.class;
     }
 
     @Override
-    public boolean accepts(StreamFactory streamFactory, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource fileResource, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
-            try (InputStream stream = streamFactory.createStream()) {
+            try (InputStream stream = fileResource.createStream()) {
                 byte[] header = new byte[4];
                 stream.read(header);
                 return Arrays.equals(CAFEBABE, header);
@@ -53,8 +53,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<StreamFactory>
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(StreamFactory streamFactory, String path, Scope scope, Scanner scanner) throws IOException {
-        try (InputStream stream = streamFactory.createStream()) {
+    public Iterable<? extends FileDescriptor> scan(FileResource fileResource, String path, Scope scope, Scanner scanner) throws IOException {
+        try (InputStream stream = fileResource.createStream()) {
             new ClassReader(stream).accept(visitor, 0);
             ClassFileDescriptor classFileDescriptor = visitor.getTypeDescriptor();
             classFileDescriptor.setFileName(path);

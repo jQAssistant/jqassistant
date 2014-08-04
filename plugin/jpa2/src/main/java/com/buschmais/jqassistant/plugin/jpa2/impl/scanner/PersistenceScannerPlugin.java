@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -33,7 +33,7 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
+public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource> {
 
     private JAXBContext jaxbContext;
 
@@ -50,17 +50,17 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<StreamFactor
     }
 
     @Override
-    public Class<? super StreamFactory> getType() {
-        return StreamFactory.class;
+    public Class<? super FileResource> getType() {
+        return FileResource.class;
     }
 
     @Override
-    public boolean accepts(StreamFactory item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(StreamFactory item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

@@ -20,12 +20,12 @@ import javax.xml.stream.events.XMLEvent;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.StreamFactory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor;
 
-public class TestReportScannerPlugin extends AbstractScannerPlugin<StreamFactory> {
+public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
@@ -34,17 +34,17 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<StreamFactory
     }
 
     @Override
-    public Class<? super StreamFactory> getType() {
-        return StreamFactory.class;
+    public Class<? super FileResource> getType() {
+        return FileResource.class;
     }
 
     @Override
-    public boolean accepts(StreamFactory item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return TESTREPORTS.equals(scope) && path.matches(".*TEST-.*\\.xml");
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(StreamFactory item, String path, Scope scope, Scanner scanner) throws IOException {
+    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try (InputStream stream = item.createStream()) {
