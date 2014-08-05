@@ -11,9 +11,8 @@ import org.objectweb.asm.ClassReader;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
@@ -21,7 +20,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
-public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
@@ -35,14 +34,14 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource> 
     }
 
     @Override
-    public Class<? super FileResource> getType() {
-        return FileResource.class;
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public boolean accepts(FileResource fileResource, String path, Scope scope) throws IOException {
+    public boolean accepts(FileSystemResource fileSystemResource, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
-            try (InputStream stream = fileResource.createStream()) {
+            try (InputStream stream = fileSystemResource.createStream()) {
                 byte[] header = new byte[4];
                 stream.read(header);
                 return Arrays.equals(CAFEBABE, header);
@@ -52,12 +51,10 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource> 
     }
 
     @Override
-    public FileDescriptor scan(FileResource fileResource, String path, Scope scope, Scanner scanner) throws IOException {
-        try (InputStream stream = fileResource.createStream()) {
+    public FileDescriptor scan(FileSystemResource fileSystemResource, String path, Scope scope, Scanner scanner) throws IOException {
+        try (InputStream stream = fileSystemResource.createStream()) {
             new ClassReader(stream).accept(visitor, 0);
-            ClassFileDescriptor classFileDescriptor = visitor.getTypeDescriptor();
-            classFileDescriptor.setFileName(path);
-            return classFileDescriptor;
+            return visitor.getTypeDescriptor();
         }
     }
 
