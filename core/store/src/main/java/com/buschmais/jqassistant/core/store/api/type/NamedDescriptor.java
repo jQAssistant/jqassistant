@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.store.api.descriptor;
+package com.buschmais.jqassistant.core.store.api.type;
 
 import com.buschmais.xo.neo4j.api.annotation.Property;
 

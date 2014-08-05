@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.Descriptor;
 
 /**
  * Defines the interface for language elements to be returned by
@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
 public interface LanguageElement {
 
     String getLanguage();
+
     /**
      * The name of the language element.
      * 

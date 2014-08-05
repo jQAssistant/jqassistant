@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 
 /**
  * Defines the interface for a scanner plugin.
@@ -58,11 +58,11 @@ public interface ScannerPlugin<I> {
      * @param scanner
      *            The scanner instance to delegate items this plugin resolves
      *            from the given item.
-     * @return {@link com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor}
-     *         instances representing the scanned item.
+     * @return The {@link FileDescriptor} instance representing the scanned
+     *         item.
      * @throws IOException
      *             If a problem occurs.
      */
-    Iterable<? extends FileDescriptor> scan(I item, String path, Scope scope, Scanner scanner) throws IOException;
+    FileDescriptor scan(I item, String path, Scope scope, Scanner scanner) throws IOException;
 
 }

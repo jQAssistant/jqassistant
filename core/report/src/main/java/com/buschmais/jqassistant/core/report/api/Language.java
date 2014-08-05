@@ -6,7 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A meta-annotation to mark {@link com.buschmais.jqassistant.core.store.api.descriptor.Descriptor} as language elements.
+ * A meta-annotation to mark
+ * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor} as language
+ * elements.
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)

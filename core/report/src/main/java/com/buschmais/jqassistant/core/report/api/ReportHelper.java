@@ -8,14 +8,13 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.Descriptor;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 
 /**
@@ -39,7 +38,7 @@ public final class ReportHelper {
      * Return the
      * {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
      * associated with a
-     * {@link com.buschmais.jqassistant.core.store.api.descriptor.Descriptor}.
+     * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor}.
      * 
      * @param descriptor
      *            The descriptor.
