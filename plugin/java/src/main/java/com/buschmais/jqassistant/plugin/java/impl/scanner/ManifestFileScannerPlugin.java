@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +11,7 @@ import java.util.jar.Manifest;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor;
@@ -43,7 +42,7 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResourc
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
             Manifest manifest = new Manifest(stream);
             Store store = getStore();
@@ -59,7 +58,7 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResourc
                 manifestFileDescriptor.getManifestSections().add(sectionDescriptor);
             }
             manifestFileDescriptor.setFileName(path);
-            return asList(manifestFileDescriptor);
+            return manifestFileDescriptor;
         }
     }
 

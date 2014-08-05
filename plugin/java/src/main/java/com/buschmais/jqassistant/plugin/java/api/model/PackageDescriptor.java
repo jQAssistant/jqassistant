@@ -4,9 +4,9 @@ import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
