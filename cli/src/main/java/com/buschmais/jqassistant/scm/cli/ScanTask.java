@@ -64,8 +64,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
             store.beginTransaction();
             try {
                 final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store, absolutePath);
-                artifactDescriptor.setFileName(absolutePath);
-                final Scanner scanner = new ScannerImpl(scannerPlugins, scannerListener);
+                final Scanner scanner = new ScannerImpl(scannerPlugins);
                 try {
                     scanner.scan(new ClassesDirectory(directory, artifactDescriptor), CLASSPATH);
                 } catch (IOException e) {
