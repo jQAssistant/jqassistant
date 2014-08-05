@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
