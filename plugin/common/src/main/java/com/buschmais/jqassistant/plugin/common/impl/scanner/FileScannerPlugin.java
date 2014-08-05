@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 
 public class FileScannerPlugin extends AbstractScannerPlugin<File> {
 
@@ -35,10 +35,15 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
-        return scanner.scan(new FileResource() {
+        return scanner.scan(new FileSystemResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(new FileInputStream(file));
+            }
+
+            @Override
+            public boolean isDirectory() {
+                return file.isDirectory();
             }
         }, path, scope);
     }
