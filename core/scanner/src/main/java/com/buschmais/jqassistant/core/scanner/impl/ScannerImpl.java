@@ -61,7 +61,7 @@ public class ScannerImpl implements Scanner {
                         scannerListener.before(item, path, scope);
                     }
                     FileDescriptor fileDescriptor = selectedPlugin.scan(item, path, scope, this);
-                    if (path != null) {
+                    if (path != null && fileDescriptor != null) {
                         fileDescriptor.setFileName(path);
                     }
                     if (scannerListener != null) {
