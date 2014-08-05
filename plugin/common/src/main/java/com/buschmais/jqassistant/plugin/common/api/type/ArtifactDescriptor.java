@@ -5,17 +5,16 @@ import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.util.List;
-import java.util.Set;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.ContainingDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.NamedDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
-import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
  * Describes an artifact.
@@ -23,7 +22,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * @author Herklotz
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor {
+public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor, ContainingDescriptor {
 
     /**
      * @return the group
@@ -70,14 +69,6 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     public String getType();
 
     public void setType(String type);
-
-    /**
-     * Return the contained descriptors.
-     * 
-     * @return The contained descriptors.
-     */
-    @Relation("CONTAINS")
-    public Set<FileDescriptor> getContains();
 
     @ResultOf
     @Cypher("match (a),(f) where id(a)={this} and id(f)={file} create unique (a)-[:CONTAINS]->(f)")
