@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
@@ -20,24 +20,24 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
  * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
  * for property files.
  */
-public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResource> {
+public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     @Override
     protected void initialize() {
     }
 
     @Override
-    public Class<? super FileResource> getType() {
-        return FileResource.class;
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileSystemResource item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && path.endsWith(".properties");
     }
 
     @Override
-    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileSystemResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = getStore();
         PropertyFileDescriptor propertyFileDescriptor = store.create(PropertyFileDescriptor.class);
         Properties properties = new Properties();
@@ -51,7 +51,6 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
             propertyDescriptor.setValue(value);
             propertyFileDescriptor.getProperties().add(propertyDescriptor);
         }
-        propertyFileDescriptor.setFileName(path);
         return propertyFileDescriptor;
     }
 

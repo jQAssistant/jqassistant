@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.DirectoryDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractDirectoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
 
@@ -16,15 +17,13 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected Scope createScope(Scope currentScope) {
-        return JunitScope.TESTREPORTS;
+    protected FileContainerDescriptor getContainerDescriptor(TestReportDirectory container) {
+        return getStore().create(DirectoryDescriptor.class);
     }
 
     @Override
-    protected DirectoryDescriptor beforeDirectory(TestReportDirectory item, String path) {
-        DirectoryDescriptor directoryDescriptor = getStore().create(DirectoryDescriptor.class);
-        directoryDescriptor.setFileName(path);
-        return directoryDescriptor;
+    protected Scope createScope(Scope currentScope) {
+        return JunitScope.TESTREPORTS;
     }
 
     @Override

@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -32,7 +32,7 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource> {
+public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     private JAXBContext jaxbContext;
 
@@ -49,17 +49,17 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
     }
 
     @Override
-    public Class<? super FileResource> getType() {
-        return FileResource.class;
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileSystemResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
     }
 
     @Override
-    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileSystemResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -107,7 +107,6 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
             // Add model unit to model descriptor
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }
-        persistenceDescriptor.setFileName(path);
         return persistenceDescriptor;
     }
 }

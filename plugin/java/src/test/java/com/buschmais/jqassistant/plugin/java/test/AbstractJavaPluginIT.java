@@ -84,8 +84,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
-        for (Class<?> aClass : classes) {
-            FileDescriptor fileDescriptor = getScanner().scan(aClass, JavaScope.CLASSPATH);
+        for (Class<?> item : classes) {
+            FileDescriptor fileDescriptor = getScanner().scan(item, JavaScope.CLASSPATH);
             artifact.addContains(fileDescriptor);
         }
         store.commitTransaction();

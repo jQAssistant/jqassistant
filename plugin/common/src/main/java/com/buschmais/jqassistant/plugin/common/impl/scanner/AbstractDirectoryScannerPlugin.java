@@ -1,7 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,12 +13,9 @@ import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.DirectoryDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 
-public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractScannerPlugin<I> {
+public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContainerScannerPlugin<I, File> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDirectoryScannerPlugin.class);
 
@@ -24,8 +24,8 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractScannerP
     }
 
     @Override
-    public FileDescriptor scan(final I item, String path, final Scope scope, final Scanner scanner) throws IOException {
-        final File directory = getDirectory(item);
+    protected Iterable<? extends File> getEntries(I container) throws IOException {
+        final File directory = getDirectory(container);
         final List<File> files = new ArrayList<>();
         new DirectoryWalker<File>() {
 
@@ -45,28 +45,38 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractScannerP
             }
         }.scan(directory);
         LOGGER.info("Scanning directory '{}' [{} entries].", directory.getAbsolutePath(), files.size());
-        DirectoryDescriptor directoryDescriptor = beforeDirectory(item, path);
-        for (File file : files) {
-            String relativePath;
-            if (file.equals(directory)) {
-                relativePath = "/";
-            } else {
-                String filePath = file.getAbsolutePath();
-                String directoryPath = directory.getAbsolutePath();
-                relativePath = filePath.substring(directoryPath.length()).replace(File.separator, "/");
-            }
-            FileDescriptor fileDescriptor = scanner.scan(file, relativePath, createScope(scope));
-            if (fileDescriptor != null) {
-                directoryDescriptor.getContains().add(fileDescriptor);
-            }
+        return files;
+    }
+
+    @Override
+    protected String getRelativePath(I container, File entry) {
+        File directory = getDirectory(container);
+        String relativePath;
+        if (entry.equals(directory)) {
+            relativePath = "/";
+        } else {
+            String filePath = entry.getAbsolutePath();
+            String directoryPath = directory.getAbsolutePath();
+            relativePath = filePath.substring(directoryPath.length()).replace(File.separator, "/");
         }
-        return directoryDescriptor;
+        return relativePath;
+    }
+
+    @Override
+    protected FileSystemResource getFileResource(I container, final File entry) {
+        return new FileSystemResource() {
+            @Override
+            public InputStream createStream() throws IOException {
+                return new BufferedInputStream(new FileInputStream(entry));
+            }
+
+            @Override
+            public boolean isDirectory() {
+                return entry.isDirectory();
+            }
+        };
     }
 
     protected abstract File getDirectory(I item);
-
-    protected abstract Scope createScope(Scope currentScope);
-
-    protected abstract DirectoryDescriptor beforeDirectory(I item, String path);
 
 }

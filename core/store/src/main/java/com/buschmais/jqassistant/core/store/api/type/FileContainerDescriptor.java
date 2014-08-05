@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface ContainingDescriptor {
+public interface FileContainerDescriptor extends FileDescriptor {
 
     /**
      * Return the contained descriptors.

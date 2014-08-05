@@ -24,7 +24,7 @@ public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
     @Test
     public void reportFile() throws IOException {
         store.beginTransaction();
-        getScanner(null).scan(new TestReportDirectory(getClassesDirectory(TestReportDirectoryScannerIT.class)), JunitScope.TESTREPORTS);
+        getScanner().scan(new TestReportDirectory(getClassesDirectory(TestReportDirectoryScannerIT.class)), JunitScope.TESTREPORTS);
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         store.commitTransaction();

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 
 public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlScannerPlugin.class);
@@ -33,10 +33,15 @@ public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
     @Override
     public FileDescriptor scan(final URL item, final String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning url '{}'.", item.toString());
-        return scanner.scan(new FileResource() {
+        return scanner.scan(new FileSystemResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(item.openStream());
+            }
+
+            @Override
+            public boolean isDirectory() {
+                return false;
             }
         }, item.getPath(), scope);
     }

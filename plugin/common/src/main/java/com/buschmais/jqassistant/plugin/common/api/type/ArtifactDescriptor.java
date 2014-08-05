@@ -6,8 +6,8 @@ import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.type.ContainingDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.NamedDescriptor;
@@ -22,7 +22,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  * @author Herklotz
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor, ContainingDescriptor {
+public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor, FileContainerDescriptor {
 
     /**
      * @return the group

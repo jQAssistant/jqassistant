@@ -19,12 +19,12 @@ import javax.xml.stream.events.XMLEvent;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor;
 
-public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource> {
+public class TestReportScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
@@ -33,17 +33,17 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource>
     }
 
     @Override
-    public Class<? super FileResource> getType() {
-        return FileResource.class;
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileSystemResource item, String path, Scope scope) throws IOException {
         return TESTREPORTS.equals(scope) && path.matches(".*TEST-.*\\.xml");
     }
 
     @Override
-    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileSystemResource item, String path, Scope scope, Scanner scanner) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try (InputStream stream = item.createStream()) {
@@ -119,7 +119,6 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource>
                     }
                 }
             }
-            testSuiteDescriptor.setFileName(path);
             return testSuiteDescriptor;
         } catch (XMLStreamException e) {
             throw new IOException("Cannot read XML document.", e);

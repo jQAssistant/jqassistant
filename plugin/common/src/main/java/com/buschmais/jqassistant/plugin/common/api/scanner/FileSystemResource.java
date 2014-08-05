@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Represents a file resource which is created by a scanner.
+ * Represents a file system resource which is created by a scanner.
  */
-public interface FileResource {
+public interface FileSystemResource {
 
     InputStream createStream() throws IOException;
+
+    boolean isDirectory();
 }

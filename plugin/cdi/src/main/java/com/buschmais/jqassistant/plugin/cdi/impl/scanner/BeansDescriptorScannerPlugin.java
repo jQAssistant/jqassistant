@@ -22,13 +22,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 
-public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileResource> {
+public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
 
@@ -47,19 +47,18 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
     }
 
     @Override
-    public Class<? super FileResource> getType() {
-        return FileResource.class;
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileSystemResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path);
     }
 
     @Override
-    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileSystemResource item, String path, Scope scope, Scanner scanner) throws IOException {
         BeansDescriptor beansDescriptor = getStore().create(BeansDescriptor.class);
-        beansDescriptor.setFileName(path);
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();
