@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -39,9 +37,9 @@ public class ScanMojo extends AbstractModuleMojo {
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot determine scanner plugins.", e);
         }
-        Scanner scanner = new ScannerImpl(scannerPlugins);
+        Scanner scanner = new ScannerImpl(scannerPlugins, scannerListener);
         try {
-            consume(scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT));
+            scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot scan project '" + mavenProject.getBasedir() + "'", e);
         }

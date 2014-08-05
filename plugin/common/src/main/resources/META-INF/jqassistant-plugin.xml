@@ -7,7 +7,6 @@
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.IterableScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
@@ -18,21 +18,10 @@ public class JarScannerPlugin extends AbstractArchiveScannerPlugin {
     }
 
     @Override
-    protected void beforeArchive(String path, Scope scope) {
-    }
-
-    @Override
-    protected void beforeEntry(String path, Scope scope) {
-    }
-
-    @Override
-    protected Iterable<? extends FileDescriptor> afterEntry(Iterable<? extends FileDescriptor> fileDescriptors) {
-        return fileDescriptors;
-    }
-
-    @Override
-    protected Iterable<? extends FileDescriptor> afterArchive(Iterable<? extends FileDescriptor> fileDescriptors) {
-        return fileDescriptors;
+    protected ArchiveDescriptor beforeArchive(String path, Scope scope) {
+        ArchiveDescriptor archiveDescriptor = getStore().create(ArchiveDescriptor.class);
+        archiveDescriptor.setFileName(path);
+        return archiveDescriptor;
     }
 
 }

@@ -1,13 +1,10 @@
 package com.buschmais.jqassistant.plugin.java.test;
 
-import static java.util.Arrays.asList;
-
 import java.io.File;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -27,8 +24,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanDirectory(Scope scope, File directory) throws IOException {
         store.beginTransaction();
         ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
-        Iterable<? extends FileDescriptor> scan = getScanner().scan(new ClassesDirectory(directory, artifact), scope);
-        IterableConsumer.consume(scan);
+        getScanner().scan(new ClassesDirectory(directory, artifact), scope);
         store.commitTransaction();
     }
 
@@ -88,8 +84,9 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
         ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
-        for (FileDescriptor descriptor : getScanner().scan(asList(classes), JavaScope.CLASSPATH)) {
-            artifact.addContains(descriptor);
+        for (Class<?> aClass : classes) {
+            FileDescriptor fileDescriptor = getScanner().scan(aClass, JavaScope.CLASSPATH);
+            artifact.addContains(fileDescriptor);
         }
         store.commitTransaction();
     }
@@ -104,9 +101,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         ArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
         for (String resource : resources) {
             File file = new File(directory, resource);
-            for (FileDescriptor descriptor : getScanner().scan(file, resource, scope)) {
-                artifact.addContains(descriptor);
-            }
+            FileDescriptor fileDescriptor = getScanner().scan(file, resource, scope);
+            artifact.addContains(fileDescriptor);
         }
         store.commitTransaction();
     }

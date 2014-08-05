@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.junit4.test.scanner;
 
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -25,7 +24,7 @@ public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
     @Test
     public void reportFile() throws IOException {
         store.beginTransaction();
-        consume(getScanner().scan(new TestReportDirectory(getClassesDirectory(TestReportDirectoryScannerIT.class)), JunitScope.TESTREPORTS));
+        getScanner(null).scan(new TestReportDirectory(getClassesDirectory(TestReportDirectoryScannerIT.class)), JunitScope.TESTREPORTS);
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         store.commitTransaction();

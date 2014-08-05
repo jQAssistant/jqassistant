@@ -7,6 +7,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectory;
 public class TestReportDirectory extends AbstractDirectory {
 
     public TestReportDirectory(File directory) {
-        super(directory, null);
+        super(directory);
     }
 }

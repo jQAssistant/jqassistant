@@ -7,7 +7,18 @@ import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescrip
 
 public class ClassesDirectory extends AbstractDirectory {
 
-    public ClassesDirectory(File directory, ArtifactDirectoryDescriptor descriptor) {
-        super(directory, descriptor);
+    private ArtifactDirectoryDescriptor directoryDescriptor;
+
+    public ClassesDirectory(File directory) {
+        this(directory, null);
+    }
+
+    public ClassesDirectory(File directory, ArtifactDirectoryDescriptor directoryDescriptor) {
+        super(directory);
+        this.directoryDescriptor = directoryDescriptor;
+    }
+
+    public ArtifactDirectoryDescriptor getDirectoryDescriptor() {
+        return directoryDescriptor;
     }
 }

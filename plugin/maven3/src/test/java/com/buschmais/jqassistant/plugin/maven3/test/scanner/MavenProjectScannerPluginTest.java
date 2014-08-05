@@ -22,7 +22,7 @@ import org.mockito.Mockito;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
@@ -87,7 +87,9 @@ public class MavenProjectScannerPluginTest {
         List testFiles = new ArrayList<>();
         testFiles.add(mock(FileDescriptor.class));
 
-        when(scanner.scan(Mockito.any(ClassesDirectory.class), Mockito.any(String.class), Mockito.eq(CLASSPATH))).thenReturn(mainFiles, testFiles);
+        // when(scanner.scan(Mockito.any(ClassesDirectory.class),
+        // Mockito.any(String.class),
+        // Mockito.eq(CLASSPATH))).thenReturn(mainFiles, testFiles);
 
         scannerPlugin.scan(project, null, null, scanner);
 

@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static java.util.Collections.emptyList;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +22,9 @@ import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 
 /**
@@ -41,23 +38,21 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     }
 
     @Override
-    public Iterable<FileDescriptor> scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = getStore();
         store.beginTransaction();
         try {
-            final ArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDescriptor.class);
+            final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class);
             for (File file : getPdeFiles(project)) {
-                consume(scanner.scan(file, file.getPath(), CLASSPATH), new IterableConsumer.Consumer<FileDescriptor>() {
-                    @Override
-                    public void next(FileDescriptor fileDescriptor) {
-                        artifact.addContains(fileDescriptor);
-                    }
-                });
+                FileDescriptor fileDescriptor = scanner.scan(file, file.getPath(), CLASSPATH);
+                if (fileDescriptor != null) {
+                    artifact.addContains(fileDescriptor);
+                }
             }
+            return artifact;
         } finally {
             store.commitTransaction();
         }
-        return emptyList();
     }
 
     private List<File> getPdeFiles(MavenProject project) throws IOException {

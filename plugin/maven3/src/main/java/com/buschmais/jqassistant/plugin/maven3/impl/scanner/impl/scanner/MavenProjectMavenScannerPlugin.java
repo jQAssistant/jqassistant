@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner;
 
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.Consumer;
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope.TESTREPORTS;
-import static java.util.Collections.emptyList;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
@@ -43,7 +40,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
     }
 
     @Override
-    public Iterable<FileDescriptor> scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = getStore();
         store.beginTransaction();
         MavenProjectDirectoryDescriptor projectDescriptor;
@@ -61,7 +58,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
         addProjectDetails(project, projectDescriptor, mainArtifactDescriptor, testArtifactDescriptor);
         scanTestReports(scanner, project.getBuild().getDirectory() + "/surefire-reports");
         scanTestReports(scanner, project.getBuild().getDirectory() + "/failsafe-reports");
-        return emptyList();
+        return projectDescriptor;
     }
 
     /**
@@ -181,7 +178,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
             store.beginTransaction();
             try {
                 final ArtifactDirectoryDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, ArtifactDirectoryDescriptor.class);
-                consume(scanner.scan(new ClassesDirectory(directory, artifactDescriptor), directoryName, CLASSPATH));
+                scanner.scan(new ClassesDirectory(directory, artifactDescriptor), directoryName, CLASSPATH);
                 projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
                 return artifactDescriptor;
             } finally {
@@ -205,11 +202,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
         if (directory.exists()) {
             store.beginTransaction();
             try {
-                consume(scanner.scan(new TestReportDirectory(directory), TESTREPORTS), new Consumer<FileDescriptor>() {
-                    @Override
-                    public void next(FileDescriptor fileDescriptor) {
-                    }
-                });
+                scanner.scan(new TestReportDirectory(directory), TESTREPORTS);
             } finally {
                 store.commitTransaction();
             }

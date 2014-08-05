@@ -1,14 +1,13 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static java.util.Arrays.asList;
 
 import java.io.File;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.PackageDescriptorResolver;
@@ -36,11 +35,11 @@ public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
         String packageName = path.substring(1).replaceAll("/", ".");
         PackageDirectoryDescriptor packageDescriptor = packageDescriptorResolver.resolve(packageName, PackageDirectoryDescriptor.class);
         packageDescriptor.setFileName(path);
-        return asList(packageDescriptor);
+        return packageDescriptor;
     }
 
 }

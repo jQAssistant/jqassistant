@@ -14,9 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.scanner.api.iterable.AggregatingIterable;
-import com.buschmais.jqassistant.core.scanner.api.iterable.MappingIterable;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<File> {
@@ -38,8 +37,8 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(File file, final String path, final Scope currentScope, final Scanner scanner) throws IOException {
-        beforeArchive(path, currentScope);
+    public FileDescriptor scan(File file, final String path, final Scope currentScope, final Scanner scanner) throws IOException {
+        ArchiveDescriptor archiveDescriptor = beforeArchive(path, currentScope);
         final ZipFile zipFile = new ZipFile(file);
         final Enumeration<? extends ZipEntry> entries = zipFile.entries();
         Iterable<ZipEntry> zipEntries = new Iterable<ZipEntry>() {
@@ -64,33 +63,24 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
             }
         };
         final Scope scope = createScope(currentScope);
-        MappingIterable<ZipEntry, Iterable<? extends FileDescriptor>> fileDescriptors = new MappingIterable<ZipEntry, Iterable<? extends FileDescriptor>>(
-                zipEntries) {
-            @Override
-            protected Iterable<? extends FileDescriptor> map(final ZipEntry zipEntry) throws IOException {
-                String name = "/" + zipEntry.getName();
-                FileResource fileResource = new FileResource() {
-                    @Override
-                    public InputStream createStream() throws IOException {
-                        return new BufferedInputStream(zipFile.getInputStream(zipEntry));
-                    }
-                };
-                beforeEntry(path, scope);
-                LOGGER.info("Scanning entry '{}'.", name);
-                Iterable<? extends FileDescriptor> descriptors = scanner.scan(fileResource, name, scope);
-                return afterEntry(descriptors);
+        for (final ZipEntry zipEntry : zipEntries) {
+            String name = "/" + zipEntry.getName();
+            FileResource fileResource = new FileResource() {
+                @Override
+                public InputStream createStream() throws IOException {
+                    return new BufferedInputStream(zipFile.getInputStream(zipEntry));
+                }
+            };
+            LOGGER.info("Scanning entry '{}'.", name);
+            FileDescriptor descriptor = scanner.scan(fileResource, name, scope);
+            if (descriptor != null) {
+                archiveDescriptor.getContains().add(descriptor);
             }
-        };
-        return afterArchive(new AggregatingIterable<>(fileDescriptors));
+        }
+        return archiveDescriptor;
     }
 
-    protected abstract void beforeArchive(String path, Scope scope);
-
-    protected abstract void beforeEntry(String path, Scope scope);
-
-    protected abstract Iterable<? extends FileDescriptor> afterEntry(Iterable<? extends FileDescriptor> fileDescriptors);
-
-    protected abstract Iterable<? extends FileDescriptor> afterArchive(Iterable<? extends FileDescriptor> fileDescriptors);
+    protected abstract ArchiveDescriptor beforeArchive(String path, Scope scope);
 
     protected abstract String getExtension();
 

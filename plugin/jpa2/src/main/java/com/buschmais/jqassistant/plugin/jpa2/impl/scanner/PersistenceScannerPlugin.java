@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
 import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
 import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
-import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +14,7 @@ import javax.xml.transform.stream.StreamSource;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
@@ -60,7 +59,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -109,6 +108,6 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }
         persistenceDescriptor.setFileName(path);
-        return asList(persistenceDescriptor);
+        return persistenceDescriptor;
     }
 }

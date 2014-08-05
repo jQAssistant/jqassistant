@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractDirectoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
 
@@ -21,12 +21,10 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected void beforeDirectory(TestReportDirectory item, String path) {
-    }
-
-    @Override
-    protected Iterable<? extends FileDescriptor> afterDirectory(TestReportDirectory item, Iterable<? extends FileDescriptor> descriptors) {
-        return descriptors;
+    protected DirectoryDescriptor beforeDirectory(TestReportDirectory item, String path) {
+        DirectoryDescriptor directoryDescriptor = getStore().create(DirectoryDescriptor.class);
+        directoryDescriptor.setFileName(path);
+        return directoryDescriptor;
     }
 
     @Override

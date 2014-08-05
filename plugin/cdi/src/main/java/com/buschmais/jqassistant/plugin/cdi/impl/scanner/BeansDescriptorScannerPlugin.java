@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.cdi.impl.scanner;
 
-import static java.util.Arrays.asList;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -22,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
@@ -59,7 +57,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         BeansDescriptor beansDescriptor = getStore().create(BeansDescriptor.class);
         beansDescriptor.setFileName(path);
         try (InputStream stream = item.createStream()) {
@@ -83,7 +81,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
         } catch (JAXBException e) {
             LOGGER.warn("Cannot read CDI beans descriptor '{}'.", path, e);
         }
-        return asList(beansDescriptor);
+        return beansDescriptor;
     }
 
     private void addTypes(List<String> typeNames, List<TypeDescriptor> types) {

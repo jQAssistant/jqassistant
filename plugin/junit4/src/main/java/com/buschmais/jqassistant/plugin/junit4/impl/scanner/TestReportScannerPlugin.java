@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope.TESTREPORTS;
-import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +18,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
@@ -44,7 +43,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource>
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try (InputStream stream = item.createStream()) {
@@ -121,7 +120,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource>
                 }
             }
             testSuiteDescriptor.setFileName(path);
-            return asList(testSuiteDescriptor);
+            return testSuiteDescriptor;
         } catch (XMLStreamException e) {
             throw new IOException("Cannot read XML document.", e);
         }

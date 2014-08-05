@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +9,7 @@ import java.util.Properties;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.descriptor.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
@@ -38,7 +37,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
     }
 
     @Override
-    public Iterable<? extends FileDescriptor> scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = getStore();
         PropertyFileDescriptor propertyFileDescriptor = store.create(PropertyFileDescriptor.class);
         Properties properties = new Properties();
@@ -53,7 +52,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
             propertyFileDescriptor.getProperties().add(propertyDescriptor);
         }
         propertyFileDescriptor.setFileName(path);
-        return asList(propertyFileDescriptor);
+        return propertyFileDescriptor;
     }
 
 }

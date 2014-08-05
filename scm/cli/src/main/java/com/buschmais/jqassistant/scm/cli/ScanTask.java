@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import static com.buschmais.jqassistant.core.scanner.api.iterable.IterableConsumer.consume;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
@@ -66,9 +65,9 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
             try {
                 final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store, absolutePath);
                 artifactDescriptor.setFileName(absolutePath);
-                final Scanner scanner = new ScannerImpl(scannerPlugins);
+                final Scanner scanner = new ScannerImpl(scannerPlugins, scannerListener);
                 try {
-                    consume(scanner.scan(new ClassesDirectory(directory, artifactDescriptor), CLASSPATH));
+                    scanner.scan(new ClassesDirectory(directory, artifactDescriptor), CLASSPATH);
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot scan directory '" + absolutePath + "'", e);
                 }
