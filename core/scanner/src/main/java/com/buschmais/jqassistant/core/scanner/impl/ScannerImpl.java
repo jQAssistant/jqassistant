@@ -28,6 +28,16 @@ public class ScannerImpl implements Scanner {
      *
      * @param scannerPlugins
      *            The configured plugins.
+     */
+    public ScannerImpl(List<ScannerPlugin<?>> scannerPlugins) {
+        this(scannerPlugins, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scannerPlugins
+     *            The configured plugins.
      * @param scannerListener
      */
     public ScannerImpl(List<ScannerPlugin<?>> scannerPlugins, ScannerListener scannerListener) {
@@ -41,19 +51,27 @@ public class ScannerImpl implements Scanner {
     }
 
     @Override
-    public <I> FileDescriptor scan(final I item, final String relativePath, final Scope scope) throws IOException {
+    public <I> FileDescriptor scan(final I item, final String path, final Scope scope) throws IOException {
         for (ScannerPlugin<?> scannerPlugin : scannerPlugins) {
             Class<?> scannerPluginType = scannerPlugin.getType();
             if (scannerPluginType.isAssignableFrom(item.getClass())) {
                 ScannerPlugin<I> selectedPlugin = (ScannerPlugin<I>) scannerPlugin;
-                if (selectedPlugin.accepts(item, relativePath, scope)) {
-                    scannerListener.before(item, relativePath, scope);
-                    FileDescriptor fileDescriptor = selectedPlugin.scan(item, relativePath, scope, this);
-                    scannerListener.after(item, relativePath, scope, fileDescriptor);
+                if (selectedPlugin.accepts(item, path, scope)) {
+                    if (scannerListener != null) {
+                        scannerListener.before(item, path, scope);
+                    }
+                    FileDescriptor fileDescriptor = selectedPlugin.scan(item, path, scope, this);
+                    if (path != null) {
+                        fileDescriptor.setFileName(path);
+                    }
+                    if (scannerListener != null) {
+                        scannerListener.after(item, path, scope, fileDescriptor);
+                    }
+                    return fileDescriptor;
                 }
             }
         }
-        LOGGER.debug("No scanner plugin found for '{}'.", relativePath);
+        LOGGER.debug("No scanner plugin found for '{}'.", path);
         return null;
     }
 }
