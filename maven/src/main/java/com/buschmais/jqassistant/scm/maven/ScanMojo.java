@@ -37,7 +37,7 @@ public class ScanMojo extends AbstractModuleMojo {
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot determine scanner plugins.", e);
         }
-        Scanner scanner = new ScannerImpl(scannerPlugins, scannerListener);
+        Scanner scanner = new ScannerImpl(scannerPlugins);
         try {
             scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
         } catch (IOException e) {
