@@ -35,7 +35,7 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
-        return scanner.scan(new FileSystemResource() {
+        FileDescriptor fileDescriptor = scanner.scan(new FileSystemResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(new FileInputStream(file));
@@ -46,5 +46,7 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
                 return file.isDirectory();
             }
         }, path, scope);
+        fileDescriptor.setFileName(path);
+        return fileDescriptor;
     }
 }

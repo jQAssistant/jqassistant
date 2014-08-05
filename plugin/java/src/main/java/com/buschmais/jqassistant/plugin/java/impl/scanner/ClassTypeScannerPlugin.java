@@ -30,7 +30,7 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
     @Override
     public FileDescriptor scan(final Class<?> item, String path, Scope scope, Scanner scanner) throws IOException {
         final String resource = "/" + item.getName().replace('.', '/') + ".class";
-        return scanner.scan(new FileSystemResource() {
+        FileDescriptor fileDescriptor = scanner.scan(new FileSystemResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(item.getResourceAsStream(resource));
@@ -41,5 +41,7 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
                 return false;
             }
         }, resource, scope);
+        fileDescriptor.setFileName(resource);
+        return fileDescriptor;
     }
 }
