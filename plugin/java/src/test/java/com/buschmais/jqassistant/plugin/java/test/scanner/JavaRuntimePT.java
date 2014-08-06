@@ -55,7 +55,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
             @Override
             public <I> void after(I item, String relativePath, Scope scope, FileDescriptor fileDescriptor) {
                 count++;
-                if (count == 10) {
+                if (count == 50) {
                     store.commitTransaction();
                     store.beginTransaction();
                     count = 0;
