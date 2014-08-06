@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -147,7 +146,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);
         assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
-        Set<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
+        List<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
     }
@@ -199,7 +198,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);
         assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
-        Set<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
+        List<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
     }

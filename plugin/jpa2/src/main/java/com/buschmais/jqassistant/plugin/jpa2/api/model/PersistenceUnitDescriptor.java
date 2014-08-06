@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.jpa2.api.model;
 
+import java.util.List;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
@@ -47,7 +48,7 @@ public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, 
     void setValidationMode(String validationMode);
 
     @Relation("CONTAINS")
-    Set<TypeDescriptor> getContains();
+    List<TypeDescriptor> getContains();
 
     @Property("sharedCacheMode")
     String getSharedCacheMode();

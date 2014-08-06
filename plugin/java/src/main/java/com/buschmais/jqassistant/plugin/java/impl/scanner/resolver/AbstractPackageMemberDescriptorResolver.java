@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.resolver;
 
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageMemberDescriptor;
 
@@ -18,7 +17,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.PackageMemberDescriptor;
  * @param <T>
  *            The type of the descriptor to be resolved.
  */
-public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageDescriptor, T extends PackageMemberDescriptor & FileDescriptor> {
+public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageDescriptor, T extends PackageMemberDescriptor> {
 
     public static final String EMPTY_NAME = "";
     private final Store store;

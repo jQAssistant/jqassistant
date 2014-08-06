@@ -18,6 +18,6 @@ public interface FileContainerDescriptor extends FileDescriptor {
 
     @ResultOf
     @Cypher("match (c),(f) where id(c)={this} and id(f)={file} create unique (c)-[:CONTAINS]->(f)")
-    void addContains(@ResultOf.Parameter("file") FileDescriptor file);
+    void addContains(@ResultOf.Parameter("file") Descriptor file);
 
 }

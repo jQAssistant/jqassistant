@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.jpa2.api.model;
 
-import java.util.Set;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
@@ -18,6 +18,6 @@ public interface PersistenceDescriptor extends FileDescriptor, JpaDescriptor {
     public void setVersion(String version);
 
     @Property("contains")
-    public Set<PersistenceUnitDescriptor> getContains();
+    public List<PersistenceUnitDescriptor> getContains();
 
 }
