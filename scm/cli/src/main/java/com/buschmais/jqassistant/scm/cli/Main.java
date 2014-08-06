@@ -37,7 +37,12 @@ public class Main {
                 new ResetDatabase()
         ));
 
-        interpretCommandLine(args);
+        try {
+            interpretCommandLine(args);
+        } catch (JqaConstraintViolationException e) {
+            System.out.println(e.getMessage());
+            System.exit(2);
+        }
     }
 
     private static void initializeLogging() {

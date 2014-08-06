@@ -92,7 +92,10 @@ public class AnalyzeTask extends CommonJqAssistantTask implements OptionsConsume
         try {
             final ReportHelper reportHelper = new ReportHelper(getLog());
             reportHelper.verifyConceptResults(inMemoryReportWriter);
-            reportHelper.verifyConstraintViolations(inMemoryReportWriter);
+            final int violations = reportHelper.verifyConstraintViolations(inMemoryReportWriter);
+            if(violations > 0) {
+                throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
+            }
         } finally {
             store.commitTransaction();
         }
