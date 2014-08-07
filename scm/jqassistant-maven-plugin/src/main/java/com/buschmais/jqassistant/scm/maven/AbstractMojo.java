@@ -28,7 +28,7 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.provider.PluginConfigurationProvider;
-import com.buschmais.jqassistant.scm.maven.provider.StoreProvider;
+import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -98,7 +98,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The store repository.
      */
     @Component
-    private StoreProvider storeProvider;
+    private StoreFactory storeFactory;
 
     /**
      * The rules reader instance.
@@ -201,7 +201,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     /**
-     * Return the store instance to use for the given base project.
+     * Return the store instance to use for the given root project.
      *
      * @param rootModule
      *            The root module
@@ -210,13 +210,25 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             If the store cannot be created.
      */
     protected Store getStore(MavenProject rootModule) throws MojoExecutionException {
-        File directory;
-        if (this.storeDirectory != null) {
-            directory = this.storeDirectory;
-        } else {
-            directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
+        Store store = (Store) rootModule.getContextValue(Store.class.getName());
+        if (store == null) {
+            File directory;
+            if (this.storeDirectory != null) {
+                directory = this.storeDirectory;
+            } else {
+                directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
+            }
+            List<Class<?>> descriptorTypes;
+            try {
+                descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
+            } catch (PluginRepositoryException e) {
+                throw new MojoExecutionException("Cannot determine model types.", e);
+            }
+            store = storeFactory.createStore(directory, descriptorTypes);
+            rootModule.setContextValue(Store.class.getName(), store);
+            return store;
         }
-        return storeProvider.getStore(directory);
+        return store;
     }
 
     /**
@@ -312,21 +324,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
         Store store = getStore(rootModule);
-        List<Class<?>> descriptorTypes;
-        try {
-            descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
-        } catch (PluginRepositoryException e) {
-            throw new MojoExecutionException("Cannot get descriptor mappers.", e);
+        if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
+            store.reset();
         }
-        store.start(descriptorTypes);
-        try {
-            if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
-                store.reset();
-            }
-            storeOperation.run(rootModule, store);
-        } finally {
-            store.stop();
-        }
+        storeOperation.run(rootModule, store);
     }
 
     /**
