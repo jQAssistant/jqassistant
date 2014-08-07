@@ -10,30 +10,30 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.MethodDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 
 /**
  * Tests for the concept java:MethodOverloads.
  */
-public class MethodOverloadsIT extends AbstractPluginIT {
+public class MethodOverloadsIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:MethodOverloads".
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void methodOverloads() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void methodOverloads() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(InterfaceType.class);
         applyConcept("java:MethodOverloads");
         store.beginTransaction();
-        TestResult result = query("MATCH (method:METHOD)-[:OVERLOADS]->(otherMethod:METHOD) RETURN method, otherMethod ORDER BY method.SIGNATURE");
+        TestResult result = query("MATCH (method:Method)-[:OVERLOADS]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();
         assertThat(rows.size(), equalTo(2));
         Map<String, Object> row0 = rows.get(0);

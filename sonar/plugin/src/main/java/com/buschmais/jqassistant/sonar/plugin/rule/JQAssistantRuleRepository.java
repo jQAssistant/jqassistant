@@ -14,15 +14,17 @@ import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
-import com.buschmais.jqassistant.core.analysis.api.PluginReaderException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.pluginmanager.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.pluginmanager.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 
 /**
@@ -57,13 +59,14 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     @Override
     public List<Rule> createRules() {
         List<Rule> rules = new ArrayList<>();
-        RulePluginRepository pluginManager;
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        RulePluginRepository rulePluginRepository;
         try {
-            pluginManager = new RulePluginRepositoryImpl();
-        } catch (PluginReaderException e) {
+            rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
+        } catch (PluginRepositoryException e) {
             throw new SonarException("Cannot read rules.", e);
         }
-        List<Source> ruleSources = pluginManager.getRuleSources();
+        List<Source> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         RuleSet ruleSet = ruleSetReader.read(ruleSources);
         for (Concept concept : ruleSet.getConcepts().values()) {
@@ -85,12 +88,12 @@ public final class JQAssistantRuleRepository extends RuleRepository {
      *            The rule type.
      * @return The rule.
      */
-    private Rule createRule(AbstractExecutable executable, RuleType ruleType) {
+    private Rule createRule(AbstractRule executable, RuleType ruleType) {
         Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
         rule.setDescription(executable.getDescription());
         rule.setSeverity(ruleType.getPriority());
         StringBuilder requiresConcepts = new StringBuilder();
-        for (Concept requiredConcept : executable.getRequiredConcepts()) {
+        for (Concept requiredConcept : executable.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {
                 requiresConcepts.append(",");
             }

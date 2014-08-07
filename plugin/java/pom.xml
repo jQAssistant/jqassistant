@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>jqassistant.plugin</artifactId>
-        <version>1.0.0-M3-SNAPSHOT</version>
+        <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant.plugin.java</artifactId>
+
+    <properties>
+        <org.ow2.asm_version>5.0.3</org.ow2.asm_version>
+    </properties>
 
     <build>
         <plugins>
@@ -47,11 +50,24 @@
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -75,10 +91,6 @@
             <artifactId>jqassistant.core.store</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.xo</groupId>
-            <artifactId>xo.neo4j</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.scanner</artifactId>
         </dependency>
@@ -88,7 +100,11 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.pluginmanager</artifactId>
+            <artifactId>jqassistant.core.plugin</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.xo</groupId>
+            <artifactId>xo.neo4j</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -108,12 +124,12 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>5.0.2</version>
+            <version>${org.ow2.asm_version}</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-util</artifactId>
-            <version>5.0.2</version>
+            <version>${org.ow2.asm_version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -122,6 +138,10 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

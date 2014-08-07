@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>jqassistant.plugin</artifactId>
-        <version>1.0.0-M3-SNAPSHOT</version>
+        <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant.plugin.osgi</artifactId>
@@ -36,6 +35,7 @@
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -44,6 +44,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>
@@ -80,7 +87,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.pluginmanager</artifactId>
+            <artifactId>jqassistant.core.plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -90,6 +97,11 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.analysis</artifactId>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>

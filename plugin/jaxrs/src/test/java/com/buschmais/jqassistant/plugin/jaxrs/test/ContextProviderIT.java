@@ -10,8 +10,8 @@ import javax.ws.rs.ext.ContextResolver;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookResolver;
 
 /**
@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookResolver;
  * 
  * @author Aparna Chaudhary
  */
-public class ContextProviderIT extends AbstractPluginIT {
+public class ContextProviderIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept {@code jaxrs:ContextProvider} for
@@ -27,13 +27,13 @@ public class ContextProviderIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_ContextProvider_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_ContextProvider_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(BookResolver.class);
         applyConcept("jaxrs:ContextProvider");
         store.beginTransaction();

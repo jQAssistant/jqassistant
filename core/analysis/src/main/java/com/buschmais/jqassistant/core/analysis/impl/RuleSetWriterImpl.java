@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -11,11 +12,22 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+
+import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * Implementation of a {@link RuleSetWriter}.
@@ -95,8 +107,8 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void addRequiredConcepts(AbstractExecutable executable, Map<String, Concept> concepts) {
-        for (Concept concept : executable.getRequiredConcepts()) {
+    private void addRequiredConcepts(AbstractRule executable, Map<String, Concept> concepts) {
+        for (Concept concept : executable.getRequiresConcepts()) {
             addConcept(concept, concepts);
         }
     }
@@ -115,12 +127,13 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(includeConcept.getId());
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
-            for (Constraint includeConcept : group.getConstraints()) {
-                ReferenceType constraintReferenceType = new ReferenceType();
-                constraintReferenceType.setRefId(includeConcept.getId());
-                groupType.getIncludeConstraint().add(constraintReferenceType);
+            for (Constraint includeConstraint : group.getConstraints()) {
+            	IncludedConstraintType includedConstraintType = new IncludedConstraintType();
+                includedConstraintType.setRefId(includeConstraint.getId());
+                includedConstraintType.setSeverity(SeverityEnumType.fromValue(includeConstraint.getSeverity().getValue()));
+                groupType.getIncludeConstraint().add(includedConstraintType);
             }
-            rules.getGroup().add(groupType);
+            rules.getQueryDefinitionOrConceptOrConstraint().add(groupType);
         }
     }
 
@@ -130,12 +143,12 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
             conceptType.setCypher(concept.getQuery().getCypher());
-            for (Concept requiresConcept : concept.getRequiredConcepts()) {
+            for (Concept requiresConcept : concept.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
                 conceptReferenceType.setRefId(requiresConcept.getId());
                 conceptType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getConcept().add(conceptType);
+            rules.getQueryDefinitionOrConceptOrConstraint().add(conceptType);
         }
     }
 
@@ -144,13 +157,14 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
+            constraintType.setSeverity(SeverityEnumType.fromValue(constraint.getSeverity().getValue()));
             constraintType.setCypher(constraint.getQuery().getCypher());
-            for (Concept requiresConcept : constraint.getRequiredConcepts()) {
+            for (Concept requiresConcept : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
                 conceptReferenceType.setRefId(requiresConcept.getId());
                 constraintType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getConstraint().add(constraintType);
+            rules.getQueryDefinitionOrConceptOrConstraint().add(constraintType);
         }
     }
 }

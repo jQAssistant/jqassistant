@@ -11,38 +11,39 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.deprecated.DeprecatedType;
 
 /**
  * Tests for the concept java:Deprecated.
  */
 @SuppressWarnings("deprecation")
-public class DeprecatedIT extends AbstractPluginIT {
+public class DeprecatedIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "java:Deprecated".
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void deprecated() throws IOException, AnalyzerException, NoSuchMethodException, NoSuchFieldException {
+    public void deprecated() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
-        scanURLs(DeprecatedIT.class.getResource("/" + packageInfoName.replaceAll("\\.", "/") + ".class"));
+        scanResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");
         applyConcept("java:Deprecated");
         store.beginTransaction();
-        assertThat(query("MATCH (element:TYPE:CLASS:DEPRECATED) RETURN element").getColumn("element"), hasItem(typeDescriptor(DeprecatedType.class)));
-        assertThat(query("MATCH (element:TYPE:INTERFACE:DEPRECATED) RETURN element as element").getColumn("element"), hasItem(typeDescriptor(packageInfoName)));
-        assertThat(query("MATCH (element:FIELD:DEPRECATED) RETURN element").getColumn("element"), hasItem(fieldDescriptor(DeprecatedType.class, "value")));
-        assertThat(query("MATCH (element:METHOD:DEPRECATED) RETURN element").getColumn("element"), hasItem(methodDescriptor(DeprecatedType.class, "getValue")));
-        assertThat(query("MATCH (element:METHOD:DEPRECATED) RETURN element").getColumn("element"),
+        assertThat(query("MATCH (element:Type:Class:Deprecated) RETURN element").getColumn("element"), hasItem(typeDescriptor(DeprecatedType.class)));
+        assertThat(query("MATCH (element:Type:Interface:Deprecated) RETURN element as element").getColumn("element"), hasItem(typeDescriptor(packageInfoName)));
+        assertThat(query("MATCH (element:Field:Deprecated) RETURN element").getColumn("element"), hasItem(fieldDescriptor(DeprecatedType.class, "value")));
+        assertThat(query("MATCH (element:Method:Deprecated) RETURN element").getColumn("element"), hasItem(methodDescriptor(DeprecatedType.class, "getValue")));
+        assertThat(query("MATCH (element:Method:Deprecated) RETURN element").getColumn("element"),
                 hasItem(methodDescriptor(DeprecatedType.class, "setValue", int.class)));
-        assertThat(query("MATCH (element:PARAMETER:DEPRECATED) RETURN element.INDEX as index").getColumn("index"), hasItem(equalTo(0)));
+        assertThat(query("MATCH (element:Parameter:Deprecated) RETURN element.index as index").getColumn("index"), hasItem(equalTo(0)));
         store.commitTransaction();
     }
 }

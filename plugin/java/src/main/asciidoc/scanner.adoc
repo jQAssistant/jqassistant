@@ -1,0 +1,338 @@
+<<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>> <<ServiceLoaderFileScanner>>
+
+[[PackageScanner]]
+==== Package Scanner
+Imports Java packages.
+
+[[:Package]]
+===== :Package
+A Java package, i.e. a directory containing '.class' files or other directories.
+
+.Properties of :Package
+[options="header"]
+|====
+| Name       | Description
+| fqn        | Fully qualified name, e.g. 'java.lang'
+| name       | The local name, e.g. 'lang'
+|====
+
+.Relations of :Package
+[options="header"]
+|====
+| Name         | Target label(s) | Cardinality | Description
+| CONTAINS     | <<:Type>>       | 0..n        | References a type located in the package
+| CONTAINS     | <<:Package>>    | 0..n        | References a package located in the package
+|====
+
+[[ClassScanner]]
+==== Class Scanner
+Imports Java classes, i.e. all scanned files having a '.class' suffix. Nodes with following labels will be created:
+
+<<:Type>>
+<<:Field>>
+<<:Method>>
+<<:Parameter>>
+<<:Value>>
+
+Note: Some of these labels may be further qualified.
+
+[[:Type]]
+===== :Type
+A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Annotation'
+
+.Properties of :Type
+[options="header"]
+|====
+| Name       | Description
+| fqn        | Fully qualified name, e.g. 'java.lang.Object'
+| name       | The local name, e.g. 'Object'
+| visibility | optional, the visibility of the type, can be either 'public', 'protected', 'default' or 'private'
+| abstract   | optional, 'true' indicates that the type is abstract, e.g. 'public abstract class ...'
+| static     | optional, 'true' indicates that the type has the static modifier, e.g. 'private static class ...'
+| final      | optional, 'true' indicates that the type is final, e.g. 'public final class...'
+| synthetic  | optional, 'true' indicates that the type is synthetic, i.e. it has been generated
+|====
+
+.Relations of :Type
+[options="header"]
+|====
+| Name         | Target label(s)       | Cardinality | Description
+| DECLARES     | <<:Type>>             | 0..n        | Declares an inner type of the type
+| DECLARES     | <<:Method>>           | 0..n        | Declares a method of the type
+| DECLARES     | <<:Field>>            | 0..n        | Declares a field of the type
+| EXTENDS      | <<:Type>>             | 0..1        | References a type this type extends from
+| IMPLEMENTS   | <<:Type>>             | 0..1        | References an "Interface" type this type implements
+| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the type
+| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this type depends on according to its signature (e.g. due to generic type parameters)
+|====
+
+*NOTE* Inheritance between interfaces (i.e. "public interface A extends B { ... }") is represented using IMPLEMENTS relations, i.e. queries must
+ use (a:Type:Interface)-[:IMPLEMENTS]->(b:Type:Interface) for pattern matching.
+
+===== :Type:Class
+Qualifies a Java type as class.
+
+===== :Type:Interface
+Qualifies a Java type node as interface.
+
+===== :Type:Enum
+Qualifies a Java type as enumeration.
+
+===== :Type:Annotation
+Qualifies a Java type as annotation.
+
+[[:Field]]
+===== :Field
+A field declared in a Java type.
+
+.Properties of :Field
+[options="header"]
+|====
+| Name       | Description
+| name       | The field name, e.g. 'id'
+| signature  | The raw signature of the field, e.g. 'int id'
+| visibility | optional, The visibility of the field, can be either 'public', 'protected', 'default' or 'private'
+| static     | optional, 'true' indicates that the field has the static modifier, e.g. 'static int id;'
+| final      | optional, 'true' indicates that the field is final, e.g. 'final int id;'
+| transient  | optional, 'true' indicates that the field is transient, e.g. 'transient int id;'
+| volatile   | optional, 'true' indicates that the field is volatile, e.g.  'volatile int id;'
+| synthetic  | optional, 'true' indicates that the field is synthetic, i.e. it has been generated
+|====
+
+.Relations of :Field
+[options="header"]
+|====
+| Name         | Target label(s)       | Cardinality | Description
+| OF_TYPE      | <<:Type>>             | 1           | References the type of the field
+| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the field
+| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this field depends on according to its signature (e.g. generic type parameters)
+|====
+
+[[:Method]]
+===== :Method
+A method declared in a Java type.
+
+.Properties of :Method
+[options="header"]
+|====
+| Name       | Description
+| name       | The method name, e.g. 'getId'
+| signature  | The raw signature of the method, e.g. 'int getId()'
+| visibility | optional, The visibility of the method, can be either 'public', 'protected', 'default' or 'private'
+| static     | optional, 'true' indicates that the method has the static modifier, e.g. 'static int getId();'
+| final      | optional, 'true' indicates that the method is final, e.g. 'final int getId();'
+| native     | optional, 'true' indicates that the method is native, e.g. 'native int getId();'
+| synthetic  | optional, 'true' indicates that the method is synthetic, i.e. it has been generated
+|====
+
+.Relations of :Method
+[options="header"]
+|====
+| Name         | Target label(s)       | Cardinality | Description
+| HAS          | <<:Parameter>>        | 0..n        | References a parameter of the method
+| THROWS       | <<:Type>>             | 0..n        | References the exception type thrown by the method
+| RETURNS      | <<:Type>>             | 0..n        | References the return type of the method
+| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the method declaration
+| READS        | <<:Field>>            | 0..n        | References a field which is read by the method
+| WRITES       | <<:Field>>            | 0..n        | References a field which is written by the method
+| INVOKES      | <<:Method>>           | 0..n        | References a method which is invoked by the method
+| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this method depends on (e.g. generic type parameters, dependencies from the method body)
+|====
+
+===== :Method:Constructor
+Qualifies a method as constructor.
+
+[[:Parameter]]
+===== :Parameter
+A method parameter.
+
+.Properties of :Parameter
+[options="header"]
+|====
+| Name       | Description
+| index      | The index of the parameter according to the method signature (starting with 0)
+|====
+
+.Properties of :Parameter
+[options="header"]
+|====
+| Name         | Target label(s)       | Cardinality | Description
+| OF_TYPE      | <<:Type>>             | 1           | References the type of the parameter
+| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
+| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this parameter depends on according to its signature (e.g. generic type parameters)
+|====
+
+[[:Value]]
+===== :Value
+A value, can be qualified by either ':Primitive', ':Annotation', ':Class', ':Enum' or ':Array'.
+
+.Properties of :Value
+[options="header"]
+|====
+| Name | Description
+| name | The method name, e.g. 'value'
+|====
+
+[[:Value:Primitive]]
+===== :Value:Primitive
+A primitive value.
+
+.Properties of :Value:Primitive
+[options="header"]
+|====
+| Name  | Description
+| value | The value
+|====
+
+[[:Value:Annotation]]
+===== :Value:Annotation
+Represents a annotation on a Java element, e.g. '@Entity public class ...'
+
+.Relations of :Value:Annotation:
+[options="header"]
+|====
+| Name    | Target label(s) | Cardinality | Description
+| OF_TYPE | <<:Type>>       | 1           | References the type of the annotation
+| HAS     | <<:Value>>      | 0..n        | References an attribute of the annotation, e.g. '@Entity(name="MyEntity")'
+|====
+
+[[:Value:Class]]
+===== :Value:Class
+Represents a class instance, e.g. as specified by annotation attribute.
+
+.Relations of :Value:Class:
+[options="header"]
+|====
+| Name | Target label(s) | Cardinality | Description
+| IS   | <<:Type>>       | 1           | References the type
+|====
+
+[[:Value:Enum]]
+===== :Value:Enum
+Represents an enum value.
+
+.Relations of :Value:Enum:
+[options="header"]
+|====
+| Name | Target label(s) | Cardinality | Description
+| IS   | <<:Field>>      | 1           | References the field representing the enumeration value
+|====
+
+[[:Value:Array]]
+===== :Value:Array
+Represents an array value, i.e. a node referencing value nodes.
+
+.Relations of :Value:Array:
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| CONTAINS | <<:Value>>      | 0..n        | References a value contained in the array
+|====
+
+
+
+[[ManifestFileScanner]]
+==== Manifest File Scanner
+Imports manifest descriptors from META-INF/MANIFEST.MF files.
+
+[[:File:Manifest]]
+===== :File:Manifest
+A MANIFEST.MF file containing sections.
+
+.Properties of :File:Manifest
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :Manifest
+[options="header"]
+|====
+| Name     | Target label(s)      | Cardinality | Description
+| DECLARES | <<:ManifestSection>> | 0..n        | References a manifest section
+|====
+
+[[:ManifestSection]]
+===== :ManifestSection
+A manifest section.
+
+.Relations of :ManifestSection
+[options="header"]
+|====
+| Name | Target label(s)          | Cardinality | Description
+| HAS  | <<:Value:ManifestEntry>> | 0..n        | References a manifest entry in the section
+|====
+
+[[:Value:ManifestEntry]]
+===== :Value:ManifestEntry
+A manifest entry.
+
+.Properties of :Value:ManifestEntry
+[options="header"]
+|====
+| Name  | Description
+| name  | The name of the entry, e.g. 'Main-Class'
+| value | The value of the entry, e.g. 'com.buschmais.jqassistant.scm.cli.Main'
+|====
+
+
+
+[[PropertyFileScanner]]
+==== Property File Scanner
+Imports property files, i.e. all files having a suffix '.properties'.
+
+[[:File:Properties]]
+===== :File:Properties
+A property file containing key/value pairs.
+
+.Properties of :File:Properties
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:Properties
+[options="header"]
+|====
+| Name | Target label(s)     | Cardinality | Description
+| HAS  | <<:Value:Property>> | 0..n        | References a property value
+|====
+
+[[:Value:Property]]
+===== :Value:Property
+A key value/pair.
+
+.Properties of :Value:Property
+[options="header"]
+|====
+| Name  | Description
+| name  | The name of the property
+| value | The value of the property
+|====
+
+
+
+[[ServiceLoaderFileScanner]]
+==== Service Loader File Scanner
+Imports service loader descriptors from "META-INF/services" directories.
+
+[[:File:ServiceLoader]]
+===== :File:ServiceLoader
+A file containing the implementation class names for a service interface
+
+.Properties of :File:ServiceLoader
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:ServiceLoader
+[options="header"]
+|====
+| Name     | Target label(s)  | Cardinality | Description
+| OF_TYPE  | <<:Type>> | 1    | The type representing the service interface
+| CONTAINS | <<:Type>> | 0..n | References a type which implements the service interface
+|====

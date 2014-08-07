@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqassistant</artifactId>
-        <version>1.0.0-M3-SNAPSHOT</version>
+        <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
     <groupId>com.buschmais.jqassistant.scm</groupId>
     <artifactId>jqassistant.scm</artifactId>
@@ -64,13 +64,25 @@
                 <artifactId>jqassistant.scm.common</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant.scm.neo4jshell</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant.scm.neo4jserver</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <modules>
         <module>common</module>
-        <module>jqassistant-maven-plugin</module>
         <module>cli</module>
+        <module>jqassistant-maven-plugin</module>
+        <module>neo4jshell</module>
+        <module>neo4jserver</module>
     </modules>
 
 </project>

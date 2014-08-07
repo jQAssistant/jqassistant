@@ -1,23 +1,30 @@
 = jQAssistant
-Dirk Mahler <dirk.mahler@buschmais.com>
+jQAssistant Developer Team <info@jqassistant.org>
+
+Your Software. Your Structures. Your Rules.
 
 This document describes the concepts of jQAssistant and usage information.
 
 :numbered!:
 [abstract]
-== Introduction
+include::overview.adoc[]
 
-jQAssistant is a tool supporting the process for developing Java applications. It can be plugged into the Maven build process to break the build on detection of constraint violations and generate reports about user defined concepts and metrics.
+include::license.adoc[]
 
-Here are some examples illustrating the possibilities:
-- define technical layers (e.g. presentation, business logic, persistence) and/or business components (e.g. shopping cart, user management) and validate dependencies between them
-- enforce naming conventions, e.g. EJBs, JPA entities, test classes, package names etc.
-- separate APIs and implementation classes (e.g. a component must only have dependencies to API classes of other components)
-- detect common problems, e.g cyclic package dependencies, dead code
+include::quickstart.adoc[]
 
-== License
-jQAssistant is contributed under http://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0].
+include::introduction.adoc[]
+
+include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
+
+////
+include::{docRoot}/jqassistant.scm.cli/readme.adoc[]
+////
 
 include::examples.adoc[]
+
 include::plugins.adoc[]
+
+////
 include::devguide.adoc[]
+////

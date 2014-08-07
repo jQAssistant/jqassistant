@@ -1,0 +1,30 @@
+==== Custom Report Plugin
+
+A custom report plugin can be provided as an artifact which contains a Java class and a plugin descriptor. Therefore a project must be
+created which declares the required dependencies:
+
+[source,xml]
+.pom.xml
+----
+include::{docRoot}/jqassistant.examples.plugins.report/src/pom.xml[lines=12..23]
+----
+
+The artifact 'jqassistant.core.report' provides the report plugin API, 'jqassistant.plugin.java' provides interfaces representing Java types
+which might be used by the plugin implementation:
+
+[source,java]
+.com.buschmais.jqassistant.examples.plugins.report.CustomReportPlugin
+----
+include::{docRoot}/jqassistant.examples.plugins.report/src/src/main/java/com/buschmais/jqassistant/examples/plugins/report/CustomReportPlugin.java[lines=14..82]
+----
+
+The plugin implementation must be declared in the jQAssistant plugin descriptor:
+
+[source,xml]
+./META-INF/jqassistant-plugin.xml
+----
+include::{docRoot}/jqassistant.examples.plugins.report/src/src/main/resources/META-INF/jqassistant-plugin.xml[]
+----
+
+The plugin is automatically loaded by the analyzer if it can be found on the classpath, e.g. by adding it as dependency to the maven plugin.
+

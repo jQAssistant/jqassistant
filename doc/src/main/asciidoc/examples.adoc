@@ -1,7 +1,13 @@
 == Examples
+
 === Rules
-include::{pluginDoc}/jqassistant.examples.forbiddenmethod/readme.adoc[]
-include::{pluginDoc}/jqassistant.examples.namingrules/readme.adoc[]
-=== Integration with SonarQube
-include::{pluginDoc}/jqassistant.examples.sonar.ruleextension/readme.adoc[]
-include::{pluginDoc}/jqassistant.examples.sonar.project/readme.adoc[]
+include::{docRoot}/jqassistant.examples.rules.forbiddenmethod/readme.adoc[]
+include::{docRoot}/jqassistant.examples.rules.naming/readme.adoc[]
+
+=== Plugins
+include::{docRoot}/jqassistant.examples.plugins.report/readme.adoc[]
+include::{docRoot}/jqassistant.examples.plugins.project/readme.adoc[]
+
+=== SonarQube
+include::{docRoot}/jqassistant.examples.sonar.project/readme.adoc[]
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/readme.adoc[]

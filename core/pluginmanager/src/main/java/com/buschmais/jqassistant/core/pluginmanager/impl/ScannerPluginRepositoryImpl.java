@@ -73,8 +73,7 @@ public class ScannerPluginRepositoryImpl extends PluginRepositoryImpl implements
                     try {
                         T scannerPlugin = createInstance(pluginClass, scannerPluginName);
                         if (scannerPlugin != null) {
-                            scannerPlugin.initialize(store, properties);
-                            //scannerPlugin.initialize(store, new Properties(properties)); // properties is mutable, so every plugin should get its own copy
+                            scannerPlugin.initialize(store, new Properties(properties)); // properties is mutable, so every plugin should get its own copy
                             scannerPlugins.add(scannerPlugin);
                         }
                     } catch (Throwable e) {

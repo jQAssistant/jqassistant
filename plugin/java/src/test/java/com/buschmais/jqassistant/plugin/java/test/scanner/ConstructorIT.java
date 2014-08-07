@@ -9,14 +9,14 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.ImplicitDefaultConstructor;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.constructor.OverloadedConstructor;
 
 /**
  * Contains test which verify correct scanning of constructors.
  */
-public class ConstructorIT extends AbstractPluginIT {
+public class ConstructorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of {@link ImplicitDefaultConstructor}.
@@ -30,7 +30,7 @@ public class ConstructorIT extends AbstractPluginIT {
     public void implicitDefaultConstructor() throws IOException, NoSuchMethodException {
         scanClasses(ImplicitDefaultConstructor.class);
         store.beginTransaction();
-        assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
+        assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"), hasItem(constructorDescriptor(ImplicitDefaultConstructor.class)));
         store.commitTransaction();
     }
 
@@ -47,7 +47,7 @@ public class ConstructorIT extends AbstractPluginIT {
     public void overloadedConstructors() throws IOException, NoSuchMethodException {
         scanClasses(OverloadedConstructor.class);
         store.beginTransaction();
-        assertThat(query("MATCH (c:METHOD:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (c:Method:Constructor) RETURN c").getColumn("c"),
                 allOf(hasItem(constructorDescriptor(OverloadedConstructor.class)), hasItem(constructorDescriptor(OverloadedConstructor.class, String.class))));
         store.commitTransaction();
     }

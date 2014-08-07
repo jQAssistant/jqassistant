@@ -1,6 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -11,8 +17,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Query;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.QueryDefinitionType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader}
@@ -65,32 +86,27 @@ public class RuleSetReaderImpl implements RuleSetReader {
         Map<String, ConstraintType> constraintTypes = new HashMap<>();
         Map<String, GroupType> groupTypes = new HashMap<>();
         for (JqassistantRules rule : rules) {
-            cacheXmlTypes(rule.getQueryDefinition(), queryDefinitionTypes);
-            cacheXmlTypes(rule.getConcept(), conceptTypes);
-            cacheXmlTypes(rule.getConstraint(), constraintTypes);
-            cacheXmlTypes(rule.getGroup(), groupTypes);
+            List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getQueryDefinitionOrConceptOrConstraint();
+            for (ReferenceableType referenceableType : queryDefinitionOrConceptOrConstraint) {
+                String id = referenceableType.getId();
+                if (referenceableType instanceof QueryDefinitionType) {
+                    queryDefinitionTypes.put(id, (QueryDefinitionType) referenceableType);
+                } else if (referenceableType instanceof ConceptType) {
+                    conceptTypes.put(id, (ConceptType) referenceableType);
+                }
+                if (referenceableType instanceof ConstraintType) {
+                    constraintTypes.put(id, (ConstraintType) referenceableType);
+                }
+                if (referenceableType instanceof GroupType) {
+                    groupTypes.put(id, (GroupType) referenceableType);
+                }
+            }
         }
         RuleSet ruleSet = new RuleSet();
         readConcepts(queryDefinitionTypes, conceptTypes, ruleSet);
         readConstraints(queryDefinitionTypes, conceptTypes, constraintTypes, ruleSet);
         readGroups(conceptTypes, constraintTypes, groupTypes, ruleSet);
         return ruleSet;
-    }
-
-    /**
-     * Caches the given XML types in the provided {@link Map}.
-     * 
-     * @param list
-     *            The XML types.
-     * @param typeMap
-     *            The {@link Map}.
-     * @param <T>
-     *            The value types of the {@link Map}.
-     */
-    private <T extends ReferenceableType> void cacheXmlTypes(List<T> list, Map<String, T> typeMap) {
-        for (T t : list) {
-            typeMap.put(t.getId(), t);
-        }
     }
 
     /**
@@ -112,7 +128,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
             } else {
                 concept.setQuery(createQuery(conceptType.getCypher(), conceptType.getParameter()));
             }
-            concept.setRequiredConcepts(getRequiredConcepts(conceptType.getRequiresConcept(), conceptTypes, ruleSet));
+            concept.setRequiresConcepts(getRequiredConcepts(conceptType.getRequiresConcept(), conceptTypes, ruleSet));
         }
     }
 
@@ -133,13 +149,14 @@ public class RuleSetReaderImpl implements RuleSetReader {
         for (ConstraintType constraintType : constraintTypes.values()) {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
             constraint.setDescription(constraintType.getDescription());
+            constraint.setSeverity(constraintType.getSeverity());
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
                         queryDefinitionTypes));
             } else {
                 constraint.setQuery(createQuery(constraintType.getCypher(), constraintType.getParameter()));
             }
-            constraint.setRequiredConcepts(getRequiredConcepts(constraintType.getRequiresConcept(), conceptTypes, ruleSet));
+            constraint.setRequiresConcepts(getRequiredConcepts(constraintType.getRequiresConcept(), conceptTypes, ruleSet));
         }
     }
 
@@ -166,12 +183,17 @@ public class RuleSetReaderImpl implements RuleSetReader {
                     group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
                 }
             }
-            for (ReferenceType referenceType : groupType.getIncludeConstraint()) {
-                ConstraintType includedConstraintType = constraintTypes.get(referenceType.getRefId());
-                if (includedConstraintType == null) {
-                    ruleSet.getMissingConstraints().add(referenceType.getRefId());
+            for (IncludedConstraintType includedConstraintType : groupType.getIncludeConstraint()) {
+                ConstraintType constraintType = constraintTypes.get(includedConstraintType.getRefId());
+                if (constraintType == null) {
+                    ruleSet.getMissingConstraints().add(includedConstraintType.getRefId());
                 } else {
-                    group.getConstraints().add(getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints()));
+                    Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
+                    // override the default severity
+                    if (includedConstraintType.getSeverity() != null) {
+                        constraint.setSeverity(includedConstraintType.getSeverity());
+                    }
+                    group.getConstraints().add(constraint);
                 }
             }
             for (ReferenceType referenceType : groupType.getIncludeGroup()) {

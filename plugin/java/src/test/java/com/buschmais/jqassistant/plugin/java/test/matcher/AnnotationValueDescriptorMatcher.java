@@ -8,8 +8,8 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
  * A matcher for {@link AnnotationValueDescriptor}s.

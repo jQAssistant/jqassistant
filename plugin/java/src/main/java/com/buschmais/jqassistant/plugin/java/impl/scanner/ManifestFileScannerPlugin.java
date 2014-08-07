@@ -1,23 +1,29 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import javax.xml.transform.stream.StreamSource;
-
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestEntryDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.ManifestSectionDescriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor;
 
 /**
- * Implementation of the {@link AbstractFileScannerPlugin} for java MANIFEST.MF
- * files.
+ * Implementation of the
+ * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
+ * for java MANIFEST.MF files.
  */
-public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin {
+public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     public static final String SECTION_MAIN = "Main";
 
@@ -26,27 +32,33 @@ public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin {
     }
 
     @Override
-    public boolean matches(String file, boolean isDirectory) {
-        return !isDirectory && file.endsWith("META-INF/MANIFEST.MF");
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public ManifestFileDescriptor scanFile(StreamSource streamSource) throws IOException {
-        Manifest manifest = new Manifest(streamSource.getInputStream());
-        Store store = getStore();
-        ManifestFileDescriptor manifestFileDescriptor = store.create(ManifestFileDescriptor.class);
-        manifestFileDescriptor.setFileName(streamSource.getSystemId());
-        ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
-        mainSectionDescriptor.setName(SECTION_MAIN);
-        manifestFileDescriptor.setMainSection(mainSectionDescriptor);
-        readSection(manifest.getMainAttributes(), mainSectionDescriptor, store);
-        for (Map.Entry<String, Attributes> sectionEntry : manifest.getEntries().entrySet()) {
-            ManifestSectionDescriptor sectionDescriptor = store.create(ManifestSectionDescriptor.class);
-            sectionDescriptor.setName(sectionEntry.getKey());
-            readSection(sectionEntry.getValue(), sectionDescriptor, store);
-            manifestFileDescriptor.getManifestSections().add(sectionDescriptor);
+    public boolean accepts(FileSystemResource item, String path, Scope scope) throws IOException {
+        return CLASSPATH.equals(scope) && "/META-INF/MANIFEST.MF".equals(path);
+    }
+
+    @Override
+    public FileDescriptor scan(FileSystemResource item, String path, Scope scope, Scanner scanner) throws IOException {
+        try (InputStream stream = item.createStream()) {
+            Manifest manifest = new Manifest(stream);
+            Store store = getStore();
+            ManifestFileDescriptor manifestFileDescriptor = store.create(ManifestFileDescriptor.class);
+            ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
+            mainSectionDescriptor.setName(SECTION_MAIN);
+            manifestFileDescriptor.setMainSection(mainSectionDescriptor);
+            readSection(manifest.getMainAttributes(), mainSectionDescriptor, store);
+            for (Map.Entry<String, Attributes> sectionEntry : manifest.getEntries().entrySet()) {
+                ManifestSectionDescriptor sectionDescriptor = store.create(ManifestSectionDescriptor.class);
+                sectionDescriptor.setName(sectionEntry.getKey());
+                readSection(sectionEntry.getValue(), sectionDescriptor, store);
+                manifestFileDescriptor.getManifestSections().add(sectionDescriptor);
+            }
+            return manifestFileDescriptor;
         }
-        return manifestFileDescriptor;
     }
 
     private void readSection(Attributes attributes, ManifestSectionDescriptor sectionDescriptor, Store store) {
@@ -60,8 +72,4 @@ public class ManifestFileScannerPlugin extends AbstractFileScannerPlugin {
         }
     }
 
-    @Override
-    public ManifestFileDescriptor scanDirectory(String name) throws IOException {
-        return null;
-    }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd" version="1.1" bean-discovery-mode="annotated">
+<alternatives>
+        <class>com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean</class>
+        <stereotype>com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype</stereotype>
+    </alternatives>
+    <decorators>
+        <class>com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean</class>
+    </decorators>
+    <interceptors>
+        <class>com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor</class>
+    </interceptors>
+</beans>

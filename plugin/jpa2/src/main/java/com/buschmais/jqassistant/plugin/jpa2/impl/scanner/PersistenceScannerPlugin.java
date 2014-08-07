@@ -1,30 +1,38 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.resolver.DescriptorResolverFactory;
-import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.impl.store.descriptor.PersistenceUnitDescriptor;
-import com.sun.java.xml.ns.persistence.ObjectFactory;
-import com.sun.java.xml.ns.persistence.Persistence;
-import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
-import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
+import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
 
-import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
-import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
+import com.sun.java.xml.ns.persistence.ObjectFactory;
+import com.sun.java.xml.ns.persistence.Persistence;
+import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitTransactionType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
+public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
 
     private JAXBContext jaxbContext;
 
@@ -41,27 +49,35 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
     }
 
     @Override
-    public boolean matches(String file, boolean isDirectory) {
-        return "META-INF/persistence.xml".equals(file) || "WEB-INF/persistence.xml".equals(file);
+    public Class<? super FileSystemResource> getType() {
+        return FileSystemResource.class;
     }
 
     @Override
-    public PersistenceDescriptor scanFile(StreamSource streamSource) throws IOException {
+    public boolean accepts(FileSystemResource item, String path, Scope scope) throws IOException {
+        return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
+    }
+
+    @Override
+    public FileDescriptor scan(FileSystemResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
-        try {
+        try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            persistence = unmarshaller.unmarshal(streamSource, Persistence.class).getValue();
+            persistence = unmarshaller.unmarshal(new StreamSource(stream), Persistence.class).getValue();
         } catch (JAXBException e) {
             throw new IOException("Cannot read model descriptor.", e);
         }
         Store store = getStore();
         PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
-        persistenceDescriptor.setName(streamSource.getSystemId());
         persistenceDescriptor.setVersion(persistence.getVersion());
         // Create model units
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class);
             persistenceUnitDescriptor.setName(persistenceUnit.getName());
+            PersistenceUnitTransactionType transactionType = persistenceUnit.getTransactionType();
+            if (transactionType != null) {
+                persistenceUnitDescriptor.setTransactionType(transactionType.name());
+            }
             persistenceUnitDescriptor.setDescription(persistenceUnit.getDescription());
             persistenceUnitDescriptor.setJtaDataSource(persistenceUnit.getJtaDataSource());
             persistenceUnitDescriptor.setNonJtaDataSource(persistenceUnit.getNonJtaDataSource());
@@ -92,10 +108,5 @@ public class PersistenceScannerPlugin extends AbstractFileScannerPlugin {
             persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
         }
         return persistenceDescriptor;
-    }
-
-    @Override
-    public PersistenceDescriptor scanDirectory(String name) throws IOException {
-        return null;
     }
 }

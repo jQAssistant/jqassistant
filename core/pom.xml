@@ -1,18 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqassistant</artifactId>
-        <version>1.0.0-M3-SNAPSHOT</version>
+        <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
     <groupId>com.buschmais.jqassistant.core</groupId>
     <artifactId>jqassistant.core</artifactId>
     <packaging>pom</packaging>
-
-    <properties>
-        <org.neo4j_version>2.0.2</org.neo4j_version>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -22,43 +17,9 @@
                 <version>${com.buschmais.xo_version}</version>
             </dependency>
             <dependency>
-                <groupId>org.neo4j.app</groupId>
-                <artifactId>neo4j-server</artifactId>
-                <version>${org.neo4j_version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-access</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.servicemix.bundles</groupId>
-                        <artifactId>org.apache.servicemix.bundles.jline</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.neo4j.app</groupId>
-                <artifactId>neo4j-server</artifactId>
-                <classifier>static-web</classifier>
-                <version>${org.neo4j_version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-access</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.1</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -73,7 +34,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.5</version>
+                <version>${org.slf4j_version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
@@ -94,7 +55,7 @@
         <module>analysis</module>
         <module>scanner</module>
         <module>store</module>
-        <module>pluginmanager</module>
+        <module>plugin</module>
     </modules>
 
 </project>

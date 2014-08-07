@@ -12,14 +12,15 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PropertyFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
  * Contains tests regarding property files.
  */
-public class PropertyFileIT extends AbstractPluginIT {
+public class PropertyFileIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that property files are scanned.
@@ -29,9 +30,9 @@ public class PropertyFileIT extends AbstractPluginIT {
      */
     @Test
     public void propertyFile() throws IOException {
-        scanURLs(PropertyFileIT.class.getResource("/META-INF/test.properties"));
+        scanResource(JavaScope.CLASSPATH, "/META-INF/test.properties");
         store.beginTransaction();
-        List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:PROPERTIES:FILE) RETURN p").getColumn("p");
+        List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
         assertThat(propertyFileDescriptors.size(), equalTo(1));
         PropertyFileDescriptor propertyFileDescriptor = propertyFileDescriptors.get(0);
         Matcher<? super PropertyDescriptor> valueMatcher = valueDescriptor("foo", equalTo("bar"));

@@ -46,9 +46,21 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="SeverityType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="level" type="xs:int" use="required"/>
+			</xs:extension>
+		</xs:simpleContent>
+   </xs:complexType>
+       
     <xs:complexType name="ConstraintType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-report:RuleType"/>
+            <xs:extension base="jqassistant-report:RuleType">
+	            <xs:sequence>
+	            	<xs:element name="severity" type="jqassistant-report:SeverityType" minOccurs="0"/>
+	            </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
@@ -101,10 +113,8 @@
     </xs:complexType>
 
     <xs:complexType name="SourceType">
-        <xs:sequence>
-            <xs:element name="line" type="xs:int" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="line" type="xs:int" use="optional"/>
     </xs:complexType>
 
 </xs:schema>

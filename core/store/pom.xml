@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.buschmais.jqassistant.core</groupId>
 		<artifactId>jqassistant.core</artifactId>
-		<version>1.0.0-M3-SNAPSHOT</version>
+		<version>1.0.0-M4-SNAPSHOT</version>
 	</parent>
 	<artifactId>jqassistant.core.store</artifactId>
 
@@ -28,15 +27,6 @@
 		<dependency>
 			<groupId>com.buschmais.xo</groupId>
 			<artifactId>xo.neo4j</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.neo4j.app</groupId>
-			<artifactId>neo4j-server</artifactId>
-			<classifier>static-web</classifier>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>

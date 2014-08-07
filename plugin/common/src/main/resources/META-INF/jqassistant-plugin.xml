@@ -1,5 +1,13 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
-    <store>
-        <type>com.buschmais.jqassistant.plugin.common.impl.store.descriptor.ArtifactDescriptor</type>
-    </store>
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+    <description>Provides common elements to be re-used by other plugins.</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor</class>
+    </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.ZipArchiveScannerPlugin</class>
+    </scanner>
 </jqa-plugin:jqassistant-plugin>

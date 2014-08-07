@@ -13,19 +13,19 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericMembers;
 
-public class GenericsIT extends AbstractPluginIT {
+public class GenericsIT extends AbstractJavaPluginIT {
 
     @Test
     public void genericType() throws IOException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class);
         store.beginTransaction();
-        assertThat(query("MATCH (g:TYPE)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
-        assertThat(query("MATCH (g:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (g:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
+        assertThat(query("MATCH (g:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
         store.commitTransaction();
     }
 
@@ -33,11 +33,11 @@ public class GenericsIT extends AbstractPluginIT {
     public void boundGenericType() throws IOException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.BoundGenericType.class);
         store.beginTransaction();
-        assertThat(query("MATCH (b:TYPE)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
-        assertThat(query("MATCH (b:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (b:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
+        assertThat(query("MATCH (b:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.BoundGenericType.class)));
-        assertThat(query("MATCH (b:TYPE)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        assertThat(query("MATCH (b:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
         store.commitTransaction();
     }
 
@@ -45,12 +45,12 @@ public class GenericsIT extends AbstractPluginIT {
     public void nestedGenericType() throws IOException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericType.class);
         store.beginTransaction();
-        assertThat(query("MATCH (n:TYPE)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
-        assertThat(query("MATCH (n:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (n:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
+        assertThat(query("MATCH (n:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericType.class)));
-        assertThat(query("MATCH (n:TYPE)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"),
+        assertThat(query("MATCH (n:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"),
                 hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
         store.commitTransaction();
     }
 
@@ -58,11 +58,11 @@ public class GenericsIT extends AbstractPluginIT {
     public void nestedGenericMethod() throws IOException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericMethod.class);
         store.beginTransaction();
-        assertThat(query("MATCH (n:TYPE)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
-        assertThat(query("MATCH (n:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (n:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"), hasItem(typeDescriptor(Object.class)));
+        assertThat(query("MATCH (n:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.NestedGenericMethod.class)));
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
-        assertThat(query("MATCH (m:METHOD)-[:DEPENDS_ON]->(d) WHERE NOT m:CONSTRUCTOR RETURN d").getColumn("d"),
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        assertThat(query("MATCH (m:Method)-[:DEPENDS_ON]->(d) WHERE NOT m:Constructor RETURN d").getColumn("d"),
                 hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
         store.commitTransaction();
     }
@@ -71,12 +71,12 @@ public class GenericsIT extends AbstractPluginIT {
     public void extendsGenericClass() throws IOException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ExtendsGenericClass.class);
         store.beginTransaction();
-        assertThat(query("MATCH (e:TYPE)-[:EXTENDS]->(s) RETURN s").getColumn("s"),
+        assertThat(query("MATCH (e:Type)-[:EXTENDS]->(s) RETURN s").getColumn("s"),
                 hasItem(typeDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.GenericType.class)));
-        assertThat(query("MATCH (e:TYPE)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
-        assertThat(query("MATCH (e:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (e:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
+        assertThat(query("MATCH (e:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ExtendsGenericClass.class)));
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
         store.commitTransaction();
     }
 
@@ -84,11 +84,11 @@ public class GenericsIT extends AbstractPluginIT {
     public void implementsGenericInterface() throws IOException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ImplementsGenericInterface.class);
         store.beginTransaction();
-        assertThat(query("MATCH (igi:TYPE)-[:IMPLEMENTS]->(i) RETURN i").getColumn("i"), hasItem(typeDescriptor(Iterable.class)));
-        assertThat(query("MATCH (igi:TYPE)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
-        assertThat(query("MATCH (igi:TYPE)-[:DECLARES]->(c:CONSTRUCTOR) RETURN c").getColumn("c"),
+        assertThat(query("MATCH (igi:Type)-[:IMPLEMENTS]->(i) RETURN i").getColumn("i"), hasItem(typeDescriptor(Iterable.class)));
+        assertThat(query("MATCH (igi:Type)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(Number.class)));
+        assertThat(query("MATCH (igi:Type)-[:DECLARES]->(c:Constructor) RETURN c").getColumn("c"),
                 hasItem(constructorDescriptor(com.buschmais.jqassistant.plugin.java.test.set.scanner.generics.ImplementsGenericInterface.class)));
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
         store.commitTransaction();
     }
 
@@ -96,16 +96,16 @@ public class GenericsIT extends AbstractPluginIT {
     public void genericMembers() throws IOException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(GenericMembers.class);
         store.beginTransaction();
-        assertThat(query("MATCH (c:CONSTRUCTOR)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
-        TestResult result = query("MATCH (gm:TYPE)-[:DECLARES]->(f:FIELD), (f)-[:OF_TYPE]->(gt), (f)-[:DEPENDS_ON]->(tv) RETURN f, gt , tv");
+        assertThat(query("MATCH (c:Constructor)-[:DEPENDS_ON]->(d) RETURN d").getColumn("d"), hasItem(typeDescriptor(void.class)));
+        TestResult result = query("MATCH (gm:Type)-[:DECLARES]->(f:Field), (f)-[:OF_TYPE]->(gt), (f)-[:DEPENDS_ON]->(tv) RETURN f, gt , tv");
         assertThat(result.getColumn("f"), hasItem(fieldDescriptor(GenericMembers.class, "integerList")));
         assertThat(result.getColumn("gt"), hasItem(typeDescriptor(List.class)));
         assertThat(result.getColumn("tv"), hasItem(typeDescriptor(Integer.class)));
-        result = query("MATCH (gm:TYPE)-[:DECLARES]->(m:METHOD), (m)-[:RETURNS]->(rt), (m)-[:DEPENDS_ON]->(rtv) RETURN m, rt , rtv");
+        result = query("MATCH (gm:Type)-[:DECLARES]->(m:Method), (m)-[:RETURNS]->(rt), (m)-[:DEPENDS_ON]->(rtv) RETURN m, rt , rtv");
         assertThat(result.getColumn("m"), hasItem(methodDescriptor(GenericMembers.class, "get", List.class)));
         assertThat(result.getColumn("rt"), hasItem(typeDescriptor(Set.class)));
         assertThat(result.getColumn("rtv"), hasItem(typeDescriptor(Number.class)));
-        result = query("MATCH (gm:TYPE)-[:DECLARES]->(m:METHOD), (m)-[:HAS]->(p), (p)-[:OF_TYPE]->(pt) ,(p)-[:DEPENDS_ON]->(ptv) RETURN pt , ptv");
+        result = query("MATCH (gm:Type)-[:DECLARES]->(m:Method), (m)-[:HAS]->(p), (p)-[:OF_TYPE]->(pt) ,(p)-[:DEPENDS_ON]->(ptv) RETURN pt , ptv");
         assertThat(result.getColumn("pt"), hasItem(typeDescriptor(List.class)));
         assertThat(result.getColumn("ptv"), hasItem(typeDescriptor(Double.class)));
         store.commitTransaction();

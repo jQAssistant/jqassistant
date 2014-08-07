@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <jqa-report:jqassistant-report xmlns:jqa-report="http://www.buschmais.com/jqassistant/core/report/schema/v1.0">
-  <group id="MyQualityProfile" date="2014-04-29T18:11:46">
-    <concept id="example:TestConcept">
-      <description>A test concept.</description>
-      <duration>68</duration>
-    </concept>
-    <duration>116</duration>
-  </group>
+    <group id="MyQualityProfile" date="2014-04-29T18:11:46">
+        <concept id="example:TestConcept">
+            <description>A test concept.</description>
+            <duration>68</duration>
+        </concept>
+        <duration>116</duration>
+    </group>
 </jqa-report:jqassistant-report>

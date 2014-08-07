@@ -1,0 +1,43 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="controller:ControllerClass">
+        <description>Labels all classes implementing the Controller interface as "Controller".</description>
+        <cypher><![CDATA[
+            match
+                (controllerClass:Type:Class)-[:IMPLEMENTS*]->(controllerType:Type)
+            where
+                controllerType.fqn = "com.buschmais.jqassistant.examples.rules.naming.Controller"
+            set
+                controllerClass:Controller
+            return
+                controllerClass
+        ]]></cypher>
+    </concept>
+
+    <constraint id="controller:ClassNameMustHaveControllerSuffix">
+        <requiresConcept refId="controller:ControllerClass"/>
+        <description>All controller implementations must have a name suffix "Controller".</description>
+        <cypher><![CDATA[
+            match
+                (controllerClass:Class:Controller)
+            where
+                not controllerClass.name =~ ".*Controller"
+            return
+                controllerClass as ControllerClass
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="controller:ClassesMustBeLocatedInControllerPackage">
+        <requiresConcept refId="controller:ControllerClass"/>
+        <description>All controller implementations must be located in the package "model".</description>
+        <cypher><![CDATA[
+            match
+                (package:PACKAGE)-[:CONTAINS]->(controllerClass:Class:Controller)
+            where
+                not package.name = "controller"
+            return
+                controllerClass as ControllerClass, package as InvalidPackage
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>

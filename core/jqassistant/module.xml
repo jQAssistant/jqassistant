@@ -6,40 +6,40 @@
         <requiresConcept refId="module-report:Module"/>
         <requiresConcept refId="module-analysis:Module"/>
         <requiresConcept refId="module-pluginmanager:Module"/>
-        <description>Returns all modules, i.e. all packages labelled with MODULE.</description>
+        <description>Returns all modules, i.e. all packages labelled with "Module".</description>
         <cypher><![CDATA[
 			MATCH
-				(package:MODULE)
+				(package:Module)
 			RETURN
 				package
 			ORDER BY
-			    package.FQN
+			    package.fqn
         ]]></cypher>
     </concept>
 
     <concept id="module:API">
-        <description>Labels all .api packages as API.</description>
+        <description>Labels all .api packages as "Api".</description>
         <cypher><![CDATA[
 			MATCH
-				(apiPackage:PACKAGE)
+				(apiPackage:Package)
 			WHERE
-				apiPackage.FQN =~ ".*\\.api"
+				apiPackage.name = "api"
 			SET
-			    apiPackage:API
+			    apiPackage:Api
 			RETURN
 				apiPackage
         ]]></cypher>
     </concept>
 
     <concept id="module:Implementation">
-        <description>Labels all .impl packages as IMPLEMENTATION.</description>
+        <description>Labels all .impl packages as "Implementation".</description>
         <cypher><![CDATA[
 			MATCH
-				(implementationPackage:PACKAGE)
+				(implementationPackage:Package)
 			WHERE
-				implementationPackage.FQN =~ ".*\\.impl"
+				implementationPackage.name = "impl"
 			SET
-			    implementationPackage:IMPLEMENTATION
+			    implementationPackage:Implementation
 			RETURN
 				implementationPackage
         ]]></cypher>
@@ -50,11 +50,11 @@
         <description>Return the number of packages per module.</description>
         <cypher><![CDATA[
             MATCH
-                (module:PACKAGE:MODULE)-[:CONTAINS*0..]->(p:PACKAGE)
+                (module:Package:Module)-[:CONTAINS*0..]->(p:Package)
             RETURN
                 module, COUNT(p) as packages
             ORDER BY
-                packages DESC, module.FQN ASC
+                packages DESC, module.fqn ASC
         ]]></cypher>
     </concept>
 
@@ -63,12 +63,12 @@
         <description>Return the number of types (i.e. classes, interfaces, enumerations and annotations) per module.</description>
         <cypher><![CDATA[
             MATCH
-                (module:PACKAGE:MODULE)-[:CONTAINS*0..]->(p:PACKAGE),
-                (p)-[:CONTAINS]->(t:TYPE)
+                (module:Package:Module)-[:CONTAINS*0..]->(p:Package),
+                (p)-[:CONTAINS]->(t:Type)
             RETURN
                 module, COUNT(t) as types
             ORDER BY
-                types DESC, module.FQN ASC
+                types DESC, module.fqn ASC
         ]]></cypher>
     </concept>
 
@@ -78,11 +78,11 @@
         <description>API packages must not have dependencies to implementation packages.</description>
         <cypher><![CDATA[
             MATCH
-                (a:PACKAGE:API)-[:CONTAINS*0..]->(p1:PACKAGE),
-                (i:PACKAGE:IMPLEMENTATION)-[:CONTAINS*0..]->(p2:PACKAGE),
+                (a:Package:Api)-[:CONTAINS*0..]->(p1:Package),
+                (i:Package:Implementation)-[:CONTAINS*0..]->(p2:Package),
                 (p1)-[:DEPENDS_ON]->(p2)
             RETURN
-                p1 as api, COLLECT(p2.FQN) as implementation
+                p1 as api, COLLECT(p2.fqn) as implementation
             ORDER BY
                 p1.FQN
         ]]></cypher>
@@ -94,17 +94,17 @@
         <description>A module must only have dependencies to API packages of other modules.</description>
         <cypher><![CDATA[
             MATCH
-                r1=(module:PACKAGE:MODULE)-[:CONTAINS*0..]->(p1:PACKAGE),
-                r2=(otherModule:PACKAGE:MODULE)-[:CONTAINS*0..]->(p2:PACKAGE),
+                r1=(module:Package:Module)-[:CONTAINS*0..]->(p1:Package),
+                r2=(otherModule:Package:Module)-[:CONTAINS*0..]->(p2:Package),
                 (p1)-[:DEPENDS_ON]->(p2)
             WHERE
                 module<>otherModule
-                AND NONE (p IN NODES(r2) WHERE p:API)
+                AND NONE (p IN NODES(r2) WHERE p:Api)
             RETURN
               p1 as dependent,
-              COLLECT(p2.FQN) as dependencies
+              COLLECT(p2.fqn) as dependencies
             ORDER BY
-              p1.FQN
+              p1.fqn
         ]]></cypher>
     </constraint>
 

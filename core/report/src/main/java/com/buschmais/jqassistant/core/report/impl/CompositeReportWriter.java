@@ -1,123 +1,123 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListener;
-import com.buschmais.jqassistant.core.analysis.api.ExecutionListenerException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
- * A {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener}
+ * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
  * implementation which delegates all method calls to the
- * {@link com.buschmais.jqassistant.core.analysis.api.ExecutionListener}s
+ * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}s
  * provided by the {@link Iterable} constructor argument.
  */
-public class CompositeReportWriter implements ExecutionListener {
+public class CompositeReportWriter implements AnalysisListener<AnalysisListenerException> {
 
     private static interface DelegateOperation {
-        void run(ExecutionListener reportWriter) throws ExecutionListenerException;
+        void run(AnalysisListener reportWriter) throws AnalysisListenerException;
     }
 
-    private Iterable<ExecutionListener> reportWriters;
+    private Iterable<AnalysisListener> reportWriters;
 
-    public CompositeReportWriter(Iterable<ExecutionListener> reportWriters) {
+    public CompositeReportWriter(Iterable<AnalysisListener> reportWriters) {
         this.reportWriters = reportWriters;
     }
 
     @Override
-    public void begin() throws ExecutionListenerException {
+    public void begin() throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.begin();
             }
         });
     }
 
     @Override
-    public void end() throws ExecutionListenerException {
+    public void end() throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.end();
             }
         });
     }
 
     @Override
-    public void beginConcept(final Concept concept) throws ExecutionListenerException {
+    public void beginConcept(final Concept concept) throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.beginConcept(concept);
             }
         });
     }
 
     @Override
-    public void endConcept() throws ExecutionListenerException {
+    public void endConcept() throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.endConcept();
             }
         });
     }
 
     @Override
-    public void beginGroup(final Group group) throws ExecutionListenerException {
+    public void beginGroup(final Group group) throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.beginGroup(group);
             }
         });
     }
 
     @Override
-    public void endGroup() throws ExecutionListenerException {
+    public void endGroup() throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.endGroup();
             }
         });
     }
 
     @Override
-    public void beginConstraint(final Constraint constraint) throws ExecutionListenerException {
+    public void beginConstraint(final Constraint constraint) throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.beginConstraint(constraint);
             }
         });
     }
 
     @Override
-    public void endConstraint() throws ExecutionListenerException {
+    public void endConstraint() throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.endConstraint();
             }
         });
     }
 
     @Override
-    public void setResult(final Result<? extends AbstractExecutable> result) throws ExecutionListenerException {
+    public void setResult(final Result<? extends Rule> result) throws AnalysisListenerException {
         run(new DelegateOperation() {
             @Override
-            public void run(ExecutionListener reportWriter) throws ExecutionListenerException {
+            public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
                 reportWriter.setResult(result);
             }
         });
     }
 
-    private void run(DelegateOperation operation) throws ExecutionListenerException {
-        for (ExecutionListener reportWriter : reportWriters) {
+    private void run(DelegateOperation operation) throws AnalysisListenerException {
+        for (AnalysisListener reportWriter : reportWriters) {
             operation.run(reportWriter);
         }
     }

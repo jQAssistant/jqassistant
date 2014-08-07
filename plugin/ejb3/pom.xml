@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>jqassistant.plugin</artifactId>
-        <version>1.0.0-M3-SNAPSHOT</version>
+        <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant.plugin.ejb3</artifactId>
@@ -36,6 +36,7 @@
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -44,6 +45,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>javax.ejb</groupId>
                 <artifactId>javax.ejb-api</artifactId>
@@ -77,12 +85,16 @@
             <classifier>rules2asciidoc</classifier>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.scanner</artifactId>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.java</artifactId>
+            <artifactId>jqassistant.plugin.cdi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -90,7 +102,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.pluginmanager</artifactId>
+            <artifactId>jqassistant.core.plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>

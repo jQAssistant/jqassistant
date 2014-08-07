@@ -1,0 +1,3 @@
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+    <description>Aggregates plugins providing scanners and rules for Java EE 6 technologies (e.g. JPA2, EJB3).</description>
+</jqa-plugin:jqassistant-plugin>

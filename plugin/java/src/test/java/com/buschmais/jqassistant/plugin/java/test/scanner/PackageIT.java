@@ -13,14 +13,15 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
 /**
  * Contains tests regarding packages.
  */
-public class PackageIT extends AbstractPluginIT {
+public class PackageIT extends AbstractJavaPluginIT {
 
     private static final String EMPTY_PACKAGE = "com.buschmais.jqassistant.plugin.java.test.set.scanner.empty";
 
@@ -33,7 +34,7 @@ public class PackageIT extends AbstractPluginIT {
      */
     @Test
     public void artifactContainsPackages() throws IOException {
-        scanClassesDirectory(Pojo.class);
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Pojo.class));
         store.beginTransaction();
         // Assert that all packages of Pojo.class are contained in the artifact
         List<Matcher<? super Iterable<? super PackageDescriptor>>> packageMatchers = new ArrayList<>();
@@ -47,8 +48,9 @@ public class PackageIT extends AbstractPluginIT {
                 currentPackage = null;
             }
         } while (currentPackage != null);
-        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN = 'artifact' RETURN p").getColumn("p"), allOf(packageMatchers));
-        assertThat(query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->(:TYPE) RETURN p").getColumn("p"),
+        assertThat(query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE a.fqn = 'artifact' RETURN p").getColumn("p"), allOf(packageMatchers));
+        assertThat(
+                query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE a.fqn ='artifact' AND NOT (p)-[:CONTAINS]->(:Type) RETURN p").getColumn("p"),
                 hasItem(packageDescriptor(EMPTY_PACKAGE)));
         store.commitTransaction();
     }
@@ -62,9 +64,9 @@ public class PackageIT extends AbstractPluginIT {
      */
     @Test
     public void nonEmptyPackages() throws IOException {
-        scanClassesDirectory(Pojo.class);
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Pojo.class));
         store.beginTransaction();
-        TestResult query = query("MATCH (a:ARTIFACT)-[:CONTAINS]->(p:PACKAGE) WHERE a.FQN ='artifact' AND NOT p-[:CONTAINS]->() RETURN p");
+        TestResult query = query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE a.fqn ='artifact' AND NOT (p)-[:CONTAINS]->() RETURN p");
         assertThat(query.getRows().size(), equalTo(1));
         assertThat(query.getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
         store.commitTransaction();

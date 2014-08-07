@@ -10,11 +10,28 @@
 
     <xsl:template match="/">
 === <xsl:value-of select="$pluginName"/>
+<xsl:apply-templates select="//description"/>
+<xsl:value-of select="$newline"/>
+<xsl:value-of select="$newline"/>
+<xsl:for-each select="//resource">&lt;&lt;<xsl:value-of select="text()"/>&gt;&gt; </xsl:for-each>
+<xsl:apply-templates select="//scanner"/>
 <xsl:apply-templates select="//resource"/>
     </xsl:template>
 
+    <xsl:template match="description">
+        <xsl:value-of select="$newline"/>
+        <xsl:value-of select="text()"/>
+    </xsl:template>
+
+    <xsl:template match="scanner">
+        <xsl:value-of select="$newline"/>
+include::{docRoot}/<xsl:value-of select="$pluginName"/>/scanner.adoc[]
+    </xsl:template>
+
     <xsl:template match="resource">
-include::{pluginDoc}/<xsl:value-of select="$pluginName"/>/<xsl:value-of select="text()"/>.adoc[]
+[[<xsl:value-of select="text()"/>]]
+==== <xsl:value-of select="text()"/>
+include::{docRoot}/<xsl:value-of select="$pluginName"/>/<xsl:value-of select="text()"/>.adoc[]
 <xsl:value-of select="$newline"/>
     </xsl:template>
 </xsl:stylesheet>

@@ -11,14 +11,14 @@ import java.util.Map;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.innerclass.AnonymousInnerClass;
 
 /**
  * Contains test on relations between outer and inner classes.
  */
-public class AnonymousInnerClassIT extends AbstractPluginIT {
+public class AnonymousInnerClassIT extends AbstractJavaPluginIT {
 
     private static final String INNERCLASS_NAME = AnonymousInnerClass.class.getName() + "$1";
 
@@ -52,7 +52,7 @@ public class AnonymousInnerClassIT extends AbstractPluginIT {
      */
     private void assertOuterClassContainsInnerClass() {
         store.beginTransaction();
-        TestResult testResult = query("MATCH (outerClass:TYPE)-[:DECLARES]->(innerClass:TYPE) RETURN outerClass");
+        TestResult testResult = query("MATCH (outerClass:Type)-[:DECLARES]->(innerClass:Type) RETURN outerClass");
         assertThat(testResult.getRows().size(), equalTo(1));
         Map<String, Object> row = testResult.getRows().get(0);
         TypeDescriptor outerClass = (TypeDescriptor) row.get("outerClass");

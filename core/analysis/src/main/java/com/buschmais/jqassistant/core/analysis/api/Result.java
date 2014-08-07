@@ -3,29 +3,39 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
 /**
- * The result of a
- * {@link com.buschmais.jqassistant.core.analysis.api.rule.Query} using an
- * {@link AbstractExecutable}.
+ * The result of an executed {@link Rule}.
+ * 
+ * @param <T>
+ *            The rule type.
  */
-public class Result<T extends AbstractExecutable> {
+public class Result<T extends Rule> {
 
-    private T executable;
+    /**
+     * The executed rule.
+     */
+    private T rule;
 
+    /**
+     * The list of returned columns.
+     */
     private List<String> columnNames;
 
+    /**
+     * The returned rows.
+     */
     private List<Map<String, Object>> rows;
 
-    public Result(T executable, List<String> columnNames, List<Map<String, Object>> rows) {
-        this.executable = executable;
+    public Result(T rule, List<String> columnNames, List<Map<String, Object>> rows) {
+        this.rule = rule;
         this.columnNames = columnNames;
         this.rows = rows;
     }
 
-    public T getExecutable() {
-        return executable;
+    public T getRule() {
+        return rule;
     }
 
     public List<String> getColumnNames() {

@@ -1,31 +1,37 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.List;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Set;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Exports the effective rules to an XML file.
  */
 @Mojo(name = "export-rules")
-public class ExportRulesMojo extends AbstractAnalysisAggregatorMojo {
+public class ExportRulesMojo extends AbstractProjectMojo {
 
     @Override
-    protected void aggregate(MavenProject baseProject, Set<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
-        getLog().info("Exporting rules for '" + baseProject.getName() + "'.");
-        final RuleSet ruleSet = resolveEffectiveRules(baseProject);
+    protected boolean isResetStoreBeforeExecution() {
+        return false;
+    }
+
+    @Override
+    protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
+        getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
+        final RuleSet ruleSet = resolveEffectiveRules(rootModule);
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
-        String exportedRules = baseProject.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
+        String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
         try {
             writer = new FileWriter(exportedRules);
@@ -35,8 +41,4 @@ public class ExportRulesMojo extends AbstractAnalysisAggregatorMojo {
         ruleSetWriter.write(ruleSet, writer);
     }
 
-    @Override
-    protected boolean isResetStoreOnInitialization() {
-        return false;
-    }
 }

@@ -67,7 +67,7 @@ public class SensorTest {
         ActiveRule activeRule = mock(ActiveRule.class);
         when(activeRule.getRule()).thenReturn(rule);
         when(rulesProfile.getActiveRulesByRepository(JQAssistant.KEY)).thenReturn(Arrays.asList(activeRule));
-        when(componentContainer.getComponentsByType(LanguageResourceResolver.class)).thenReturn(Collections.<LanguageResourceResolver>emptyList());
+        when(componentContainer.getComponentsByType(LanguageResourceResolver.class)).thenReturn(Collections.<LanguageResourceResolver> emptyList());
         sensor = new JQAssistantSensor(rulesProfile, resourcePerspectives, componentContainer, settings, moduleFileSystem);
         String reportFile = SensorTest.class.getResource("/jqassistant-report-concept-issue.xml").getFile();
         when(settings.getString(JQAssistant.SETTINGS_KEY_REPORT_PATH)).thenReturn(reportFile);
@@ -81,7 +81,7 @@ public class SensorTest {
         when(issueBuilder.line(anyInt())).thenReturn(issueBuilder);
         Issue issue = mock(Issue.class);
         when(issueBuilder.build()).thenReturn(issue);
-        when(resourcePerspectives.as(Issuable.class, (Resource) project)).thenReturn(issuable);
+        when(resourcePerspectives.as(Issuable.class, (Resource<?>) project)).thenReturn(issuable);
 
         sensor.analyse(project, sensorContext);
 

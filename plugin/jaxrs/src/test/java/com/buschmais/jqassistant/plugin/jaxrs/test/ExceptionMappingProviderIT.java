@@ -11,8 +11,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.BookResolver;
 import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.NotFoundExceptionMapper;
 
@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.jaxrs.test.set.beans.NotFoundExceptionMa
  * 
  * @author Aparna Chaudhary
  */
-public class ExceptionMappingProviderIT extends AbstractPluginIT {
+public class ExceptionMappingProviderIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept {@code jaxrs:ExceptionMappingProvider} for
@@ -29,13 +29,13 @@ public class ExceptionMappingProviderIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_ExceptionMappingProvider_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_ExceptionMappingProvider_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(NotFoundExceptionMapper.class, BookResolver.class);
         applyConcept("jaxrs:ExceptionMappingProvider");
         store.beginTransaction();

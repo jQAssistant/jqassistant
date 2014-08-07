@@ -7,32 +7,37 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
  * Test to verify JAX-RS Resource method designator concepts.
  * 
  * @author Aparna Chaudhary
  */
-public class RequestMethodDesignatorIT extends AbstractPluginIT {
+public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept {@code jaxrs:RequestMethodDesignator}.
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void test_RequestMethodDesignator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void test_RequestMethodDesignator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(GET.class, PUT.class, POST.class, DELETE.class, HEAD.class, OPTIONS.class);
         applyConcept("jaxrs:RequestMethodDesignator");
         store.beginTransaction();
@@ -63,13 +68,13 @@ public class RequestMethodDesignatorIT extends AbstractPluginIT {
      * 
      * @throws java.io.IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
     @Test
-    public void testInvalid_RequestMethodDesignator_Concept() throws IOException, AnalyzerException, NoSuchMethodException {
+    public void testInvalid_RequestMethodDesignator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Test.class);
         applyConcept("jaxrs:RequestMethodDesignator");
         store.beginTransaction();

@@ -14,6 +14,7 @@
             <includes>
                 <include>*</include>
             </includes>
+            <filtered>true</filtered>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/generated-sources/asciidoc</directory>
@@ -21,6 +22,16 @@
             <includes>
                 <include>*</include>
             </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>src</outputDirectory>
+            <includes>
+                <include>**</include>
+            </includes>
+            <excludes>
+                <exclude>target/**</exclude>
+            </excludes>
+            <filtered>true</filtered>
         </fileSet>
     </fileSets>
 </assembly>

@@ -9,12 +9,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestCaseDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.impl.store.descriptor.TestSuiteDescriptor;
-import com.buschmais.jqassistant.plugin.junit4.test.set.Example;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
+import com.buschmais.jqassistant.plugin.junit4.test.set.report.Example;
 
-public class TestReportScannerIT extends AbstractPluginIT {
+public class TestReportScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies that test reports files are scanned.
@@ -24,9 +25,9 @@ public class TestReportScannerIT extends AbstractPluginIT {
      */
     @Test
     public void reportFile() throws IOException {
-        scanURLs(TestReportScannerIT.class.getResource("/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
+        scanResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         store.beginTransaction();
-        List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TESTSUITE:FILE) RETURN suite").getColumn("suite");
+        List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         TestSuiteDescriptor testSuiteDescriptor = testSuiteDescriptors.get(0);
         assertThat(testSuiteDescriptor.getFileName(), endsWith("TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
@@ -44,7 +45,7 @@ public class TestReportScannerIT extends AbstractPluginIT {
     }
 
     private void verifyTestCase(String expectedName, TestCaseDescriptor.Result expectedResult, Float expectedTime) {
-        List<TestCaseDescriptor> testCaseDescriptors = query("MATCH (case:TESTCASE) WHERE case.NAME='" + expectedName + "' RETURN case").getColumn("case");
+        List<TestCaseDescriptor> testCaseDescriptors = query("MATCH (case:TestCase) WHERE case.name='" + expectedName + "' RETURN case").getColumn("case");
         assertThat(testCaseDescriptors.size(), equalTo(1));
         TestCaseDescriptor testCaseDescriptor = testCaseDescriptors.get(0);
         assertThat(testCaseDescriptor.getName(), equalTo(expectedName));

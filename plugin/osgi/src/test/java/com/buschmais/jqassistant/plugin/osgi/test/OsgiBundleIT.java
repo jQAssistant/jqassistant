@@ -11,9 +11,7 @@ import static org.hamcrest.collection.IsMapContaining.hasValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -21,12 +19,13 @@ import javax.validation.constraints.NotNull;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.PackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.store.descriptor.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.osgi.test.api.data.Request;
 import com.buschmais.jqassistant.plugin.osgi.test.api.data.Response;
 import com.buschmais.jqassistant.plugin.osgi.test.api.service.Service;
@@ -38,24 +37,24 @@ import com.buschmais.jqassistant.plugin.osgi.test.impl.b.UnusedPublicClass;
 /**
  * Contains tests regarding manifest files.
  */
-public class OsgiBundleIT extends AbstractPluginIT {
+public class OsgiBundleIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "osgi-bundle:Bundle".
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void bundle() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
+    public void bundle() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         applyConcept("osgi-bundle:Bundle");
         store.beginTransaction();
         assertThat(
                 query(
-                        "MATCH (bundle:OSGI:BUNDLE) WHERE bundle.BUNDLESYMBOLICNAME='com.buschmais.jqassistant.plugin.osgi.test' and bundle.BUNDLEVERSION='0.1.0' RETURN bundle")
+                        "MATCH (bundle:Osgi:Bundle) WHERE bundle.bundleSymbolicName='com.buschmais.jqassistant.plugin.osgi.test' and bundle.bundleVersion='0.1.0' RETURN bundle")
                         .getColumn("bundle").size(), equalTo(1));
         store.commitTransaction();
     }
@@ -65,16 +64,16 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void exportedPackages() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
-        scanClassesDirectory(Service.class);
+    public void exportedPackages() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:ExportPackage");
         store.beginTransaction();
-        List<PackageDescriptor> packages = query("MATCH (b:OSGI:BUNDLE)-[:EXPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
+        List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:EXPORTS]->(p:Package) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(2));
         assertThat(packages, hasItems(packageDescriptor(Request.class.getPackage()), packageDescriptor(Service.class.getPackage())));
         store.commitTransaction();
@@ -85,16 +84,16 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void importedPackages() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
-        scanClassesDirectory(Service.class);
+    public void importedPackages() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:ImportPackage");
         store.beginTransaction();
-        List<PackageDescriptor> packages = query("MATCH (b:OSGI:BUNDLE)-[:IMPORTS]->(p:PACKAGE) RETURN p").getColumn("p");
+        List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Package) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(1));
         assertThat(packages, hasItems(packageDescriptor(NotNull.class.getPackage())));
         store.commitTransaction();
@@ -105,16 +104,16 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void activator() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
-        scanClassesDirectory(Service.class);
+    public void activator() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:Activator");
         store.beginTransaction();
-        List<TypeDescriptor> activators = query("MATCH (a:CLASS)-[:ACTIVATES]->(b:OSGI:BUNDLE) RETURN a").getColumn("a");
+        List<TypeDescriptor> activators = query("MATCH (a:Class)-[:ACTIVATES]->(b:Osgi:Bundle) RETURN a").getColumn("a");
         assertThat(activators.size(), equalTo(1));
         assertThat(activators, hasItems(typeDescriptor(Activator.class)));
         store.commitTransaction();
@@ -125,17 +124,17 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void internalType() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
-        scanClassesDirectory(Service.class);
+    public void internalType() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
         removeTestClass();
         applyConcept("osgi-bundle:InternalType");
         store.beginTransaction();
-        List<TypeDescriptor> internalTypes = query("MATCH (t:TYPE:INTERNAL) RETURN t").getColumn("t");
+        List<TypeDescriptor> internalTypes = query("MATCH (t:Type:Internal) RETURN t").getColumn("t");
         assertThat(
                 internalTypes,
                 hasItems(typeDescriptor(Activator.class), typeDescriptor(UsedPublicClass.class), typeDescriptor(UnusedPublicClass.class),
@@ -148,13 +147,13 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void unusedInternalType() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
-        scanClassesDirectory(Service.class);
+    public void unusedInternalType() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
         removeTestClass();
         validateConstraint("osgi-bundle:UnusedInternalType");
         store.beginTransaction();
@@ -175,13 +174,13 @@ public class OsgiBundleIT extends AbstractPluginIT {
      * 
      * @throws IOException
      *             If the test fails.
-     * @throws AnalyzerException
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void internalTypeMustNotBePublic() throws IOException, AnalyzerException {
-        scanURLs(getManifestUrl());
-        scanClassesDirectory(Service.class);
+    public void internalTypeMustNotBePublic() throws IOException, AnalysisException {
+        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
         removeTestClass();
         validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
         store.beginTransaction();
@@ -195,16 +194,5 @@ public class OsgiBundleIT extends AbstractPluginIT {
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
         store.commitTransaction();
-    }
-
-    /**
-     * Retrieves the URL of the test MANIFEST.MF file.
-     * 
-     * @return The URL.
-     * @throws IOException
-     *             If a problem occurs.
-     */
-    private URL getManifestUrl() throws IOException {
-        return new File(OsgiBundleIT.class.getResource("/").getFile(), "/META-INF/MANIFEST.MF").toURI().toURL();
     }
 }

@@ -1,64 +1,44 @@
-==== Extending The jQAssistant SonarQube Plugin With Rules
-
-Demonstrates how project specific rules can be deployed as extensions to the jQAssistant SonarQube plugin
-
-The project itself is a sonar plugin. Therefore the file pom.xml specifies the sonar-packaging-maven-plugin:
+==== Custom Rule Extension
+A custom rule extension makes user defined jQAssistant rules available for SonarQube. It is a Maven project which declares packaging 'sonar-plugin':
 
 [source,xml]
+.pom.xml
 ----
 <project ...>
-  ...
-  <packaging>sonar-plugin</packaging>
+...
 
-  <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.sonar</groupId>
-                <artifactId>sonar-packaging-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <basePlugin>jQAssistant</basePlugin>
-                    <pluginClass>com.buschmais.jqassistant.examples.sonar.ruleextension.MyJQAssistantExtension</pluginClass>
-                </configuration>
-            </plugin>
-  ...
-        </plugins>
-   </build>
-  ...
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/pom.xml[lines=10..56]]
+
+...
 </project>
 ----
 
-* 'basePlugin' must be set to jQAssistant to indicate which plugin shall be extended.
-* The implementation of 'pluginClass' (i.e. 'MyJQAssistantExtension') returns an empty list of extensions. It must be specified as this is required by SonarQube.
+Notes on the sonar plugin configuration:
+
+- 'basePlugin' must be set to 'jQAssistant' to indicate which plugin shall be extended.
+- The implementation of 'pluginClass' (i.e. 'MyJQAssistantExtension') returns an empty list of extensions. It must be specified as this is required by SonarQube.
+
+[source,java]
+.MyJQAssistantExtension.java
+----
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/src/main/java/com/buschmais/jqassistant/examples/sonar/ruleextension/MyJQAssistantExtension.java[]
+----
 
 The rules itself are packaged according to the following structure:
 
-/META-INF/jqassistant-plugin.xml
 [source,xml]
+./META-INF/jqassistant-plugin.xml
 ----
-<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/analysis/plugin/schema/v1.0">
-    <rules>
-        <resources>
-            <resource>rules.xml</resource>
-        </resources>
-    </rules>
-</v1:jqassistant-plugin>
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/src/main/resources/META-INF/jqassistant-plugin.xml[]
 ----
 
-* rules.xml specifies the path to a jQAssistant rule file relative to META-INF/jqassistant-rules
+* example.xml specifies the path to a jQAssistant rule file relative to /META-INF/jqassistant-rules
 
-/META-INF/jqassistant-rules/rules.xml
 [source,xml]
+./META-INF/jqassistant-rules/example.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
-
-    <constraint id="example:AllClassesMustBeNamedFoo">
-        <description>All classes must be named 'Foo'.</description>
-        <cypher><![CDATA[
-...
-        ]]></cypher>
-    </constraint>
-
-
-</jqa:jqassistant-rules>
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/src/main/resources/META-INF/jqassistant-rules/example.xml[]
 ----
+
+The created JAR archive and the jQAssistant must be copied to the folder 'extensions/plugins' of the SonarQube installation. The defined
+rules will be visible in the repository "jQAssistant".
