@@ -44,7 +44,8 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         try {
             final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class);
             for (File file : getPdeFiles(project)) {
-                FileDescriptor fileDescriptor = scanner.scan(file, file.getPath(), CLASSPATH);
+                String filePath = getDirectoryPath(project.getBasedir(), file);
+                FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
                 if (fileDescriptor != null) {
                     artifact.addContains(fileDescriptor);
                 }

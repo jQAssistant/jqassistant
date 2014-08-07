@@ -52,6 +52,7 @@ public class ScannerImpl implements Scanner {
 
     @Override
     public <I> FileDescriptor scan(final I item, final String path, final Scope scope) throws IOException {
+        FileDescriptor fileDescriptor = null;
         for (ScannerPlugin<?> scannerPlugin : scannerPlugins) {
             Class<?> scannerPluginType = scannerPlugin.getType();
             if (scannerPluginType.isAssignableFrom(item.getClass())) {
@@ -60,15 +61,13 @@ public class ScannerImpl implements Scanner {
                     if (scannerListener != null) {
                         scannerListener.before(item, path, scope);
                     }
-                    FileDescriptor fileDescriptor = selectedPlugin.scan(item, path, scope, this);
+                    fileDescriptor = selectedPlugin.scan(item, path, scope, this);
                     if (scannerListener != null) {
                         scannerListener.after(item, path, scope, fileDescriptor);
                     }
-                    return fileDescriptor;
                 }
             }
         }
-        LOGGER.debug("No scanner plugin found for '{}'.", path);
-        return null;
+        return fileDescriptor;
     }
 }

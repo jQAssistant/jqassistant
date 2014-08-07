@@ -1,26 +1,21 @@
 package com.buschmais.jqassistant.plugin.maven3.api.scanner;
 
-import java.util.Map;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 
 /**
  * Abstract base class for maven project scanner plugins.
  */
-public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin<MavenProject> {
+public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject> {
 
     /**
      * The artifact type for test jars.
      */
     public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
-
-    private Store store;
 
     @Override
     public Class getType() {
@@ -28,12 +23,7 @@ public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin
     }
 
     @Override
-    public void initialize(Store store, Map<String, Object> properties) {
-        this.store = store;
-    }
-
-    protected Store getStore() {
-        return store;
+    protected void initialize() {
     }
 
     protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType) {
@@ -41,7 +31,7 @@ public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), null, null, artifact.getVersion());
         MavenProjectDescriptor projectDescriptor = getStore().find(MavenProjectDescriptor.class, id);
         if (projectDescriptor == null) {
-            projectDescriptor = store.create(expectedType, id);
+            projectDescriptor = getStore().create(expectedType, id);
             projectDescriptor.setName(project.getName());
             projectDescriptor.setGroupId(artifact.getGroupId());
             projectDescriptor.setArtifactId(artifact.getArtifactId());
@@ -60,10 +50,10 @@ public abstract class AbstractMavenProjectScannerPlugin implements ScannerPlugin
     protected <T extends ArtifactDescriptor> T resolveArtifact(Artifact artifact, boolean testJar, Class<T> expectedType) {
         String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
-        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
+        ArtifactDescriptor artifactDescriptor = getStore().find(ArtifactDescriptor.class, id);
         if (artifactDescriptor == null) {
-            artifactDescriptor = store.create(expectedType, id);
-            artifactDescriptor.setGroup(artifact.getGroupId());
+            artifactDescriptor = getStore().create(expectedType, id);
+           artifactDescriptor.setGroup(artifact.getGroupId());
             artifactDescriptor.setName(artifact.getArtifactId());
             artifactDescriptor.setVersion(artifact.getVersion());
             artifactDescriptor.setClassifier(artifact.getClassifier());

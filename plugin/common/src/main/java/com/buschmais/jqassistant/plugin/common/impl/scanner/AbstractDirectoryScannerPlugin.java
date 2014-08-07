@@ -51,15 +51,7 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
     @Override
     protected String getRelativePath(I container, File entry) {
         File directory = getDirectory(container);
-        String relativePath;
-        if (entry.equals(directory)) {
-            relativePath = "/";
-        } else {
-            String filePath = entry.getAbsolutePath();
-            String directoryPath = directory.getAbsolutePath();
-            relativePath = filePath.substring(directoryPath.length()).replace(File.separator, "/");
-        }
-        return relativePath;
+        return getDirectoryPath(directory, entry);
     }
 
     @Override
