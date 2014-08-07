@@ -5,11 +5,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.io.DirectoryWalker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,23 +30,20 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
     protected Iterable<? extends File> getEntries(I container) throws IOException {
         final File directory = getDirectory(container);
         final List<File> files = new ArrayList<>();
-        new DirectoryWalker<File>() {
+        SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                files.add(dir.toFile());
+                return FileVisitResult.CONTINUE;
+            }
 
             @Override
-            protected boolean handleDirectory(File subdirectory, int depth, Collection<File> results) throws IOException {
-                results.add(subdirectory);
-                return true;
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                files.add(file.toFile());
+                return FileVisitResult.CONTINUE;
             }
-
-            @Override
-            protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                results.add(file);
-            }
-
-            public void scan(File directory) throws IOException {
-                super.walk(directory, files);
-            }
-        }.scan(directory);
+        };
+        Files.walkFileTree(directory.toPath(), visitor);
         LOGGER.info("Scanning directory '{}' [{} entries].", directory.getAbsolutePath(), files.size());
         return files;
     }
