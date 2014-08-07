@@ -63,7 +63,13 @@ public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipF
 
     @Override
     protected String getRelativePath(ZipFile container, ZipEntry entry) {
-        return "/" + entry.getName();
+        String name = entry.getName();
+        if (entry.isDirectory()) {
+            // strip trailing slash from directory entries
+            return "/" + name.substring(0, name.length() - 1);
+        } else {
+            return "/" + name;
+        }
     }
 
     @Override
