@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
+import java.io.File;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -32,5 +33,17 @@ public abstract class AbstractScannerPlugin<I> implements ScannerPlugin<I> {
 
     protected Map<String, Object> getProperties() {
         return properties;
+    }
+
+    protected String getDirectoryPath(File directory, File entry) {
+        String relativePath;
+        if (entry.equals(directory)) {
+            relativePath = "/";
+        } else {
+            String filePath = entry.getAbsolutePath();
+            String directoryPath = directory.getAbsolutePath();
+            relativePath = filePath.substring(directoryPath.length()).replace(File.separator, "/");
+        }
+        return relativePath;
     }
 }
