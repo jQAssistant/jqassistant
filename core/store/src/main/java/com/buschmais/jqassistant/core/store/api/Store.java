@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.core.store.api;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
-import com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor;
+import static com.buschmais.xo.api.Query.Result;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 import java.util.Collection;
 import java.util.Map;
 
-import static com.buschmais.xo.api.Query.Result;
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
 
 /**
  * Defines the store for {@link Descriptor}s.
@@ -20,8 +20,9 @@ public interface Store {
      * This method must be called before any other method of this interface can
      * be used.
      * </p>
-     *
-     * @param types The types to use.
+     * 
+     * @param types
+     *            The types to use.
      */
     void start(Collection<Class<?>> types);
 
@@ -63,38 +64,60 @@ public interface Store {
 
     /**
      * Creates a {@link Descriptor} of the given type.
-     *
-     * @param type The type.
+     * 
+     * @param type
+     *            The type.
      * @return The {@link Descriptor}.
      */
     <T extends Descriptor> T create(Class<T> type);
 
     /**
-     * Migrates the descriptor instance to the given sub-type.
-     *
-     * @param descriptor   The descriptor.
-     * @param concreteType The concrete type.
-     * @param <T>          The descriptor type.
-     * @param <C>          The concrete type.
+     * Creates a relation between to {@link Descriptor}s.
+     * 
+     * @param source
+     *            The source descriptor.
+     * @param relationType
+     *            The relationt type to create.
+     * @param target
+     *            The target descriptor.
+     * @return The {@link Descriptor}.
      */
-    <T extends Descriptor, C extends T> C migrate(T descriptor, Class<C> concreteType);
+    <S extends Descriptor, R extends Descriptor, T extends Descriptor> R create(S source, Class<R> relationType, T target);
 
     /**
      * Creates a {@link Descriptor} of the given type with a full qualified name
-     *
-     * @param type              The type.
-     * @param fullQualifiedName The full qualified name of the descriptor.
+     * 
+     * @param type
+     *            The type.
+     * @param fullQualifiedName
+     *            The full qualified name of the descriptor.
      * @return The
-     *         {@link com.buschmais.jqassistant.core.store.api.descriptor.FullQualifiedNameDescriptor}
+     *         {@link com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor}
      *         .
      */
     <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);
 
     /**
+     * Migrates the descriptor instance to the given sub-type.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param concreteType
+     *            The concrete type.
+     * @param <T>
+     *            The descriptor type.
+     * @param <C>
+     *            The concrete type.
+     */
+    <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types);
+
+    /**
      * Finds a {@link Descriptor}.
-     *
-     * @param type              The type.
-     * @param fullQualifiedName The full qualified name.
+     * 
+     * @param type
+     *            The type.
+     * @param fullQualifiedName
+     *            The full qualified name.
      * @return The {@link Descriptor}.
      */
     <T extends Descriptor> T find(Class<T> type, String fullQualifiedName);
@@ -104,9 +127,11 @@ public interface Store {
      * <p>
      * This method executes a CYPHER query.
      * </p>
-     *
-     * @param query      The CYPHER query.
-     * @param parameters The {@link java.util.Map} of parameters for the given query.
+     * 
+     * @param query
+     *            The CYPHER query.
+     * @param parameters
+     *            The {@link java.util.Map} of parameters for the given query.
      * @return The {@link Result}.
      */
     Result<CompositeRowObject> executeQuery(String query, Map<String, Object> parameters);
@@ -116,9 +141,11 @@ public interface Store {
      * <p>
      * This method executes a CYPHER query.
      * </p>
-     *
-     * @param query      The typed CYPHER query.
-     * @param parameters The {@link java.util.Map} of parameters for the given query.
+     * 
+     * @param query
+     *            The typed CYPHER query.
+     * @param parameters
+     *            The {@link java.util.Map} of parameters for the given query.
      * @return The {@link Result}.
      */
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);

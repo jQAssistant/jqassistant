@@ -1,15 +1,17 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import com.buschmais.jqassistant.core.store.api.descriptor.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 
 /**
  * Defines a provider which allows looking up source code information from
- * {@link com.buschmais.jqassistant.core.store.api.descriptor.Descriptor}s.
+ * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor}s.
  */
 public interface SourceProvider<D extends Descriptor> {
 
     /**
      * Return the name representing the language element.
+     * 
      * @return The name.
      */
     String getName(D descriptor);
@@ -22,16 +24,16 @@ public interface SourceProvider<D extends Descriptor> {
      *            The descriptor.
      * @return The name of the resource.
      */
-    String getSource(D descriptor);
+    FileDescriptor getSourceFile(D descriptor);
 
     /**
-     * Return the line numbers where the descriptor is represented in the source
+     * Return the line number where the descriptor is represented in the source
      * code.
      * 
      * @param descriptor
      *            The descriptor.
      * @return The line numbers.
      */
-    int[] getLineNumbers(D descriptor);
+    Integer getLineNumber(D descriptor);
 
 }

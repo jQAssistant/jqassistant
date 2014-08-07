@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>jqassistant.core</artifactId>
+        <groupId>com.buschmais.jqassistant.core</groupId>
+        <version>1.0.0-M4-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jqassistant.core.plugin</artifactId>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jvnet.jaxb2.maven2</groupId>
+                <artifactId>maven-jaxb2-plugin</artifactId>
+                <configuration>
+					<schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
+					<bindingDirectory>src/main/resources/META-INF/bindings</bindingDirectory>
+				</configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.scanner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.report</artifactId>
+        </dependency>
+    </dependencies>
+</project>

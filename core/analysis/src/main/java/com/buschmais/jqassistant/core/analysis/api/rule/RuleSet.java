@@ -6,8 +6,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * Defines a rules containing all resolved {@link Concept}s, {@link Constraint}s
- * and {@link Group}s.
+ * Defines a set of rules containing all resolved {@link Concept} s,
+ * {@link Constraint}s and {@link Group}s.
  */
 public class RuleSet {
 

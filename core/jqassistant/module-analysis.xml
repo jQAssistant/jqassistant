@@ -1,16 +1,16 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="module-analysis:Module">
-        <description>Labels the module core.analysis as MODULE and ANALYSIS.</description>
+        <description>Labels the module core.analysis as "Module" and "Analysis".</description>
         <cypher><![CDATA[
 			MATCH
-				(package:PACKAGE)
+				(package:Package)
 			WHERE
-				package.FQN =~ ".*\\.core\\.analysis"
+				package.fqn =~ ".*\\.core\\.analysis"
 			SET
-			    package:MODULE:ANALYSIS
+			    package:Module:Analysis
 			RETURN
-				package
+				package as Module
         ]]></cypher>
     </concept>
 

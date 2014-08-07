@@ -1,15 +1,17 @@
 package com.buschmais.jqassistant.core.report.impl;
 
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
+
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 
-import javax.xml.transform.*;
-import javax.xml.transform.stream.StreamSource;
-
-/**
- * Created with IntelliJ IDEA. User: Dirk Mahler Date: 28.07.13 Time: 18:27 To
- * change this template use File | Settings | File Templates.
- */
 public class HtmlReportTransformer implements ReportTransformer {
 
     @Override
