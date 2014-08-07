@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,10 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
@@ -37,6 +33,8 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
+
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -97,6 +95,9 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
             if(violations > 0) {
                 throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
             }
+            reportHelper.verifyConstraintViolations(inMemoryReportWriter);
+        } catch (AnalysisListenerException e) {
+            throw new RuntimeException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
         }
