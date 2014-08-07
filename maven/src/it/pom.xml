@@ -39,9 +39,9 @@
 						<phase>verify</phase>
 					</execution>
 				</executions>
-			</plugin>
-		</plugins>
-	</build>
+            </plugin>
+        </plugins>
+    </build>
 
 	<reporting>
 		<plugins>
