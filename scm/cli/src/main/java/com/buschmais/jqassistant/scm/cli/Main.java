@@ -33,7 +33,12 @@ public class Main {
 
         putTasksIntoMap(asList(new ScanTask(), new ServerTask(), new AnalyzeTask(), new ResetTask()));
 
-        interpretCommandLine(args);
+        try {
+            interpretCommandLine(args);
+        } catch (JqaConstraintViolationException e) {
+            System.out.println(e.getMessage());
+            System.exit(2);
+        }
     }
 
     private static void initializeLogging() {
