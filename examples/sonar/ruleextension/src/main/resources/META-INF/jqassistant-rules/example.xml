@@ -14,7 +14,7 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="example:FieldsMustBeReadOnly">
+    <constraint id="example:FieldsMustBeReadOnly" severity="minor">
         <description>All declared fields must be read-only (i.e. not be written).</description>
         <cypher><![CDATA[
 			match

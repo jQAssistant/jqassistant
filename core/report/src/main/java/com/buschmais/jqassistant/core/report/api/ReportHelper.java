@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.report.api;
 
+import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -133,7 +135,7 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
-        return verifyConstraintViolations(Severity.INFO, inMemoryReportWriter);
+        return verifyConstraintViolations(DEFAULT_SEVERITY, inMemoryReportWriter);
     }
 
     /**

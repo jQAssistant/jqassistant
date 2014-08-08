@@ -74,6 +74,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
+
+        // perform validations
+        validateParameters();
+
         final RuleSet ruleSet = resolveEffectiveRules(rootModule);
         List<AnalysisListener> reportWriters = new LinkedList<>();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
@@ -154,6 +158,18 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         File selectedXmlReportFile = ProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);
         selectedXmlReportFile.getParentFile().mkdirs();
         return selectedXmlReportFile;
+    }
+
+    /**
+     * Check parameter values.
+     * 
+     * @throws MojoFailureException
+     *             if any parameter is wrong or missing.
+     */
+    private void validateParameters() throws MojoFailureException {
+        if (Severity.fromValue(severity) == null) {
+            throw new MojoFailureException("Invalid severity '" + severity + "'; use one of " + Arrays.toString(Severity.names()));
+        }
     }
 
 }

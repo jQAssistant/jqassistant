@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Query;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
@@ -149,7 +152,9 @@ public class RuleSetReaderImpl implements RuleSetReader {
         for (ConstraintType constraintType : constraintTypes.values()) {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
             constraint.setDescription(constraintType.getDescription());
-            constraint.setSeverity(constraintType.getSeverity());
+            // Use default severity; if none configured
+            Severity severity = constraintType.getSeverity() == null ? DEFAULT_SEVERITY : Severity.fromValue(constraintType.getSeverity().value());
+            constraint.setSeverity(severity);
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
                         queryDefinitionTypes));
@@ -191,7 +196,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
                     Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
                     // override the default severity
                     if (includedConstraintType.getSeverity() != null) {
-                        constraint.setSeverity(includedConstraintType.getSeverity());
+                        constraint.setSeverity(Severity.fromValue(includedConstraintType.getSeverity().value()));
                     }
                     group.getConstraints().add(constraint);
                 }
