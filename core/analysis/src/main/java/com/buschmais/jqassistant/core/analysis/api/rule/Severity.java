@@ -84,4 +84,18 @@ public enum Severity {
         return null;
     }
 
+    /**
+     * Returns string representation of severity values.
+     * 
+     * @return {@link Severity}
+     */
+    public static String[] names() {
+        int i = 0;
+        String[] names = new String[Severity.values().length];
+        for (Severity severity : Severity.values()) {
+            names[i++] = severity.value;
+        }
+        return names;
+    }
+
 }
