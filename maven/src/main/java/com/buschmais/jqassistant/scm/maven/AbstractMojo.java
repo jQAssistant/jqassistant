@@ -86,6 +86,17 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected boolean skip;
 
     /**
+     * Controls the life cycle of the data store.
+     * <p>
+     * REACTOR is the default value which provides caching of the initialized
+     * store. There are configurations where this will cause problems, in such
+     * cases MODULE shall be used.
+     * </p>
+     */
+    @Parameter(property = "jqassistant.store.lifecycle")
+    protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
+
+    /**
      * The Maven project.
      */
     @Parameter(property = "project")
@@ -201,37 +212,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     /**
-     * Return the store instance to use for the given root project.
-     *
-     * @param rootModule
-     *            The root module
-     * @return The store instance.
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *             If the store cannot be created.
-     */
-    protected Store getStore(MavenProject rootModule) throws MojoExecutionException {
-        Store store = (Store) rootModule.getContextValue(Store.class.getName());
-        if (store == null) {
-            File directory;
-            if (this.storeDirectory != null) {
-                directory = this.storeDirectory;
-            } else {
-                directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
-            }
-            List<Class<?>> descriptorTypes;
-            try {
-                descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
-            } catch (PluginRepositoryException e) {
-                throw new MojoExecutionException("Cannot determine model types.", e);
-            }
-            store = storeFactory.createStore(directory, descriptorTypes);
-            rootModule.setContextValue(Store.class.getName(), store);
-            return store;
-        }
-        return store;
-    }
-
-    /**
      * Retrieves the list of available rules from the rules directory.
      *
      * @param rulesDirectory
@@ -323,11 +303,62 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On execution failures.
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
-        Store store = getStore(rootModule);
+        Store store = null;
+        switch (storeLifecycle) {
+        case MODULE:
+            break;
+        case REACTOR:
+            Object existingStore = rootModule.getContextValue(Store.class.getName());
+            if (existingStore != null) {
+                if (!Store.class.isAssignableFrom(existingStore.getClass())) {
+                    throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle " + StoreLifecycle.MODULE);
+                }
+                store = (Store) existingStore;
+            }
+            break;
+        }
+        if (store == null) {
+            File directory = getStoreDirectory(rootModule);
+            List<Class<?>> descriptorTypes;
+            try {
+                descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
+            } catch (PluginRepositoryException e) {
+                throw new MojoExecutionException("Cannot determine model types.", e);
+            }
+            store = storeFactory.createStore(directory, descriptorTypes);
+        }
         if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
             store.reset();
         }
-        storeOperation.run(rootModule, store);
+        try {
+            storeOperation.run(rootModule, store);
+        } finally {
+            switch (storeLifecycle) {
+            case MODULE:
+                storeFactory.closeStore(store);
+                break;
+            case REACTOR:
+                rootModule.setContextValue(Store.class.getName(), store);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Determines the directory to use for the store.
+     * 
+     * @param rootModule
+     *            The root module.
+     * @return The directory.
+     */
+    private File getStoreDirectory(MavenProject rootModule) {
+        File directory;
+        if (this.storeDirectory != null) {
+            directory = this.storeDirectory;
+        } else {
+            directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
+  }
+        return directory;
     }
 
     /**
