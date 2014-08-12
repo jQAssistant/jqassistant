@@ -7,28 +7,29 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>@project.groupId@</groupId>
-				<artifactId>@project.artifactId@</artifactId>
-				<version>@project.version@</version>
-				<executions>
-					<execution>
-						<id>scan</id>
-						<goals>
-							<goal>scan</goal>
-						</goals>
-						<phase>test</phase>
-					</execution>
-					<execution>
-						<id>analyze</id>
-						<goals>
-							<goal>analyze</goal>
-						</goals>
-						<phase>verify</phase>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <id>scan</id>
+                        <goals>
+                            <goal>scan</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>analyze</id>
+                        <goals>
+                            <goal>analyze</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <storeLifecycle>MODULE</storeLifecycle>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 
 	<reporting>
