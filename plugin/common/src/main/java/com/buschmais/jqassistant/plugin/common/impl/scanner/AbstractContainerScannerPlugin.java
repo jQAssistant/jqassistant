@@ -54,6 +54,9 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
 
     /**
      * Return an iterable which delivers the entries of the container.
+     * <p>
+     * The entries must not contain the relative root element, i.e. "/".
+     * </p>
      * 
      * @param container
      *            The container.
@@ -66,7 +69,13 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
     /**
      * Return the relative path of an element within the container.
      * <p>
-     * It should start with "/".
+     * The following conditions must be considered:
+     * <ul>
+     * <li>The separator to use is "/".</li>
+     * <li>The path must start with "/".</li>
+     * <li>The path must not end with "/".</li>
+     * </ul>
+     *
      * </p>
      * 
      * @param container

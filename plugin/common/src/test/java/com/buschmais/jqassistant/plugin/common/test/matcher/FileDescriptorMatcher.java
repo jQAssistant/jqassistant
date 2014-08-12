@@ -25,7 +25,7 @@ public class FileDescriptorMatcher extends TypeSafeMatcher<FileDescriptor> {
 
     @Override
     public void describeTo(Description description) {
-        description.appendText("File descriptor with name ").appendDescriptionOf(fileNameMatcher);
+        description.appendText("file descriptor with name '").appendDescriptionOf(fileNameMatcher).appendText("'");
     }
 
     public static Matcher<? super FileDescriptor> fileDescriptorMatcher(String fileName) {

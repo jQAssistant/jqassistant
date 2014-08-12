@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.common.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -29,6 +30,7 @@ public class FileScannerIT extends AbstractPluginIT {
         CustomDirectoryDescriptor customDirectoryDescriptor = (CustomDirectoryDescriptor) descriptor;
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
         assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
+        assertThat(customDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
         store.commitTransaction();
     }
 }

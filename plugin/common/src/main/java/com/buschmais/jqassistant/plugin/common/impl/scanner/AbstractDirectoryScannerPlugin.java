@@ -29,11 +29,14 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
     @Override
     protected Iterable<? extends File> getEntries(I container) throws IOException {
         final File directory = getDirectory(container);
+        final Path directoryPath = directory.toPath();
         final List<File> files = new ArrayList<>();
         SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                files.add(dir.toFile());
+                if (!directoryPath.equals(dir)) {
+                    files.add(dir.toFile());
+                }
                 return FileVisitResult.CONTINUE;
             }
 
@@ -43,7 +46,7 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
                 return FileVisitResult.CONTINUE;
             }
         };
-        Files.walkFileTree(directory.toPath(), visitor);
+        Files.walkFileTree(directoryPath, visitor);
         LOGGER.info("Scanning directory '{}' [{} entries].", directory.getAbsolutePath(), files.size());
         return files;
     }
