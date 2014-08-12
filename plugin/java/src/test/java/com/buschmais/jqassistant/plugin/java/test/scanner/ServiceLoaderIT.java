@@ -35,7 +35,7 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
         ServiceLoader<Service> services = ServiceLoader.load(Service.class);
         assertThat(services, hasItem(any(ServiceImpl.class)));
         scanClasses(Service.class, ServiceImpl.class);
-        scanResource(JavaScope.CLASSPATH, "/META-INF/services/" + Service.class.getName());
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/services/" + Service.class.getName());
         store.beginTransaction();
         List<ServiceLoaderDescriptor> serviceLoaderDescriptors = query("MATCH (sd:ServiceLoader:File) RETURN sd").getColumn("sd");
         assertThat(serviceLoaderDescriptors.size(), equalTo(1));

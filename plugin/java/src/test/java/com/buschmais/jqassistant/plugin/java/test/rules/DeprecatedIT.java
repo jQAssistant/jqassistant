@@ -34,7 +34,7 @@ public class DeprecatedIT extends AbstractJavaPluginIT {
     public void deprecated() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
-        scanResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");
+        scanClassPathResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");
         applyConcept("java:Deprecated");
         store.beginTransaction();
         assertThat(query("MATCH (element:Type:Class:Deprecated) RETURN element").getColumn("element"), hasItem(typeDescriptor(DeprecatedType.class)));

@@ -30,7 +30,7 @@ public class PropertyFileIT extends AbstractJavaPluginIT {
      */
     @Test
     public void propertyFile() throws IOException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/test.properties");
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/test.properties");
         store.beginTransaction();
         List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
         assertThat(propertyFileDescriptors.size(), equalTo(1));
