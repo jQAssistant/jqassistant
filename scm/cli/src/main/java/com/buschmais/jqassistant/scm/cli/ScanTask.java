@@ -23,7 +23,7 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -66,7 +66,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
                 final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store, absolutePath);
                 final Scanner scanner = new ScannerImpl(scannerPlugins);
                 try {
-                    scanner.scan(new ClassesDirectory(directory, artifactDescriptor), CLASSPATH);
+                    scanner.scan(new ClassPathDirectory(directory, artifactDescriptor), CLASSPATH);
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot scan directory '" + absolutePath + "'", e);
                 }

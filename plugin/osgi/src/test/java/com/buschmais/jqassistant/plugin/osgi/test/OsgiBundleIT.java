@@ -49,7 +49,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void bundle() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         applyConcept("osgi-bundle:Bundle");
         store.beginTransaction();
         assertThat(
@@ -69,8 +69,8 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void exportedPackages() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathDirectory(getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:ExportPackage");
         store.beginTransaction();
         List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:EXPORTS]->(p:Package) RETURN p").getColumn("p");
@@ -89,8 +89,8 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void importedPackages() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathDirectory(getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:ImportPackage");
         store.beginTransaction();
         List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Package) RETURN p").getColumn("p");
@@ -109,8 +109,8 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void activator() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathDirectory(getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:Activator");
         store.beginTransaction();
         List<TypeDescriptor> activators = query("MATCH (a:Class)-[:ACTIVATES]->(b:Osgi:Bundle) RETURN a").getColumn("a");
@@ -129,8 +129,8 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void internalType() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         applyConcept("osgi-bundle:InternalType");
         store.beginTransaction();
@@ -152,8 +152,8 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void unusedInternalType() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         validateConstraint("osgi-bundle:UnusedInternalType");
         store.beginTransaction();
@@ -179,8 +179,8 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void internalTypeMustNotBePublic() throws IOException, AnalysisException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Service.class));
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
         store.beginTransaction();

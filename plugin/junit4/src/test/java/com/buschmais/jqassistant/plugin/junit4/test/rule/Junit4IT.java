@@ -159,7 +159,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void testCaseImplementedByMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Example.class);
-        scanResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
+        scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         applyConcept("junit4:TestCaseImplementedByMethod");
         store.beginTransaction();
         verifyTestCaseImplementedByMethod("success");
