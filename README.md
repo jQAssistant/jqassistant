@@ -12,3 +12,7 @@ Questions, suggestions and/or feedback are highly welcome at the [jQAssistant di
 ## Continuous Build
 
 [![Build Status](https://travis-ci.org/buschmais/jqassistant.svg?branch=master)](https://travis-ci.org/buschmais/jqassistant)
+
+## License
+
+Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
