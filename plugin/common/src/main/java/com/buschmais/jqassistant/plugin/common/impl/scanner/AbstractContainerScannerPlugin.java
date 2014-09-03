@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry;
 
 /**
  * Abstract base implementation for scanner plugins that handle containers of
@@ -29,11 +29,11 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container);
         containerDescriptor.setFileName(path);
         for (E e : getEntries(container)) {
-            FileSystemResource fileSystemResource = getFileResource(container, e);
+            Entry entry = getEntry(container, e);
             String relativePath = getRelativePath(container, e);
             Scope entryScope = createScope(scope);
             LOGGER.info("Scanning '{}'.", relativePath);
-            FileDescriptor descriptor = scanner.scan(fileSystemResource, relativePath, entryScope);
+            FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
             if (descriptor == null) {
                 descriptor = getStore().create(FileDescriptor.class);
             }
@@ -97,14 +97,18 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
     protected abstract Scope createScope(Scope currentScope);
 
     /**
-     * Return a {@link FileSystemResource} representing an entry.
+     * Return a
+     * {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry}
+     * representing an entry.
      * 
      * @param container
      *            The container.
      * @param entry
      *            The entry.
-     * @return The {@link FileSystemResource}.
+     * @return The
+     *         {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File}
+     *         .
      */
-    protected abstract FileSystemResource getFileResource(I container, E entry);
+    protected abstract Entry getEntry(I container, E entry);
 
 }

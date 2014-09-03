@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,9 +15,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Directory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
 
-public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContainerScannerPlugin<I, File> {
+public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContainerScannerPlugin<I, java.io.File> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDirectoryScannerPlugin.class);
 
@@ -27,10 +28,10 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
     }
 
     @Override
-    protected Iterable<? extends File> getEntries(I container) throws IOException {
-        final File directory = getDirectory(container);
+    protected Iterable<? extends java.io.File> getEntries(I container) throws IOException {
+        final java.io.File directory = getDirectory(container);
         final Path directoryPath = directory.toPath();
-        final List<File> files = new ArrayList<>();
+        final List<java.io.File> files = new ArrayList<>();
         SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -52,26 +53,26 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
     }
 
     @Override
-    protected String getRelativePath(I container, File entry) {
-        File directory = getDirectory(container);
+    protected String getRelativePath(I container, java.io.File entry) {
+        java.io.File directory = getDirectory(container);
         return getDirectoryPath(directory, entry);
     }
 
     @Override
-    protected FileSystemResource getFileResource(I container, final File entry) {
-        return new FileSystemResource() {
-            @Override
-            public InputStream createStream() throws IOException {
-                return new BufferedInputStream(new FileInputStream(entry));
-            }
-
-            @Override
-            public boolean isDirectory() {
-                return entry.isDirectory();
-            }
-        };
+    protected Entry getEntry(I container, final java.io.File entry) {
+        if (entry.isDirectory()) {
+            return new Directory() {
+            };
+        } else {
+            return new File() {
+                @Override
+                public InputStream createStream() throws IOException {
+                    return new BufferedInputStream(new FileInputStream(entry));
+                }
+            };
+        }
     }
 
-    protected abstract File getDirectory(I item);
+    protected abstract java.io.File getDirectory(I item);
 
 }
