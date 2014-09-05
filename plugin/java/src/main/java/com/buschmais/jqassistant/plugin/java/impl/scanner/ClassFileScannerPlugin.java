@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassReader;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
-public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileSystemResource> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<File> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
@@ -34,14 +34,14 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileSystemReso
     }
 
     @Override
-    public Class<? super FileSystemResource> getType() {
-        return FileSystemResource.class;
+    public Class<? super File> getType() {
+        return File.class;
     }
 
     @Override
-    public boolean accepts(FileSystemResource fileSystemResource, String path, Scope scope) throws IOException {
+    public boolean accepts(File file, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
-            try (InputStream stream = fileSystemResource.createStream()) {
+            try (InputStream stream = file.createStream()) {
                 byte[] header = new byte[4];
                 stream.read(header);
                 return Arrays.equals(CAFEBABE, header);
@@ -51,8 +51,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileSystemReso
     }
 
     @Override
-    public FileDescriptor scan(FileSystemResource fileSystemResource, String path, Scope scope, Scanner scanner) throws IOException {
-        try (InputStream stream = fileSystemResource.createStream()) {
+    public FileDescriptor scan(File file, String path, Scope scope, Scanner scanner) throws IOException {
+        try (InputStream stream = file.createStream()) {
             new ClassReader(stream).accept(visitor, 0);
             return visitor.getTypeDescriptor();
         }

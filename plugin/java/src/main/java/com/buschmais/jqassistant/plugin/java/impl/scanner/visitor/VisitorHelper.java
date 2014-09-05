@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
@@ -26,8 +23,6 @@ public class VisitorHelper {
      * The name of constructor methods.
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorHelper.class);
 
     private DescriptorResolverFactory resolverFactory;
     private Store store;

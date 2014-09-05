@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 import com.buschmais.jqassistant.plugin.junit4.impl.scanner.TestReportDirectory;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
@@ -178,7 +178,7 @@ public class MavenProjectMavenScannerPlugin extends AbstractMavenProjectScannerP
             store.beginTransaction();
             try {
                 final ArtifactDirectoryDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, ArtifactDirectoryDescriptor.class);
-                scanner.scan(new ClassesDirectory(directory, artifactDescriptor), directoryName, CLASSPATH);
+                scanner.scan(new ClassPathDirectory(directory, artifactDescriptor), directoryName, CLASSPATH);
                 projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
                 return artifactDescriptor;
             } finally {

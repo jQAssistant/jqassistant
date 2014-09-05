@@ -11,7 +11,9 @@ import java.util.zip.ZipFile;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileSystemResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Directory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
 
 public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry> {
 
@@ -78,18 +80,18 @@ public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipF
     }
 
     @Override
-    protected FileSystemResource getFileResource(final ZipFile container, final ZipEntry entry) {
-        return new FileSystemResource() {
-            @Override
-            public InputStream createStream() throws IOException {
-                return new BufferedInputStream(container.getInputStream(entry));
-            }
-
-            @Override
-            public boolean isDirectory() {
-                return entry.isDirectory();
-            }
-        };
+    protected Entry getEntry(final ZipFile container, final ZipEntry entry) {
+        if (entry.isDirectory()) {
+            return new Directory() {
+            };
+        } else {
+            return new File() {
+                @Override
+                public InputStream createStream() throws IOException {
+                    return new BufferedInputStream(container.getInputStream(entry));
+                }
+            };
+        }
     }
 
 }

@@ -179,9 +179,9 @@ mvn jqassistant:available-rules
 Scans the directories of compiled classes and test classes and stores the gathered information in database.
 
 ===== Configuration
-* storeDirectory (-Djqassistant.store.directory)
-** specifies the location of the database
-** default: '{rootModule}/target/jqassistant/store'
+* <<skip>>
+* <<storeDirectory>>
+* <<storeLifecycle>>
 
 [[reset]]
 ==== jqassistant:reset
@@ -189,9 +189,9 @@ Scans the directories of compiled classes and test classes and stores the gather
 Resets the database by deleting all nodes and relationships.
 
 ===== Configuration
-* storeDirectory (-Djqassistant.store.directory)
-** specifies the location of the database
-** default: '{rootModule}/target/jqassistant/store'
+* <<skip>>
+* <<storeDirectory>>
+* <<storeLifecycle>>
 
 [[server]]
 ==== jqassistant:server
@@ -199,9 +199,9 @@ Resets the database by deleting all nodes and relationships.
 Starts the integrated Neo4j web server (http://localhost:7474).
 
 ===== Configuration
-* storeDirectory (-Djqassistant.store.directory)
-** specifies the location of the database
-** default: '{rootModule}/target/jqassistant/store'
+* <<skip>>
+* <<storeDirectory>>
+* <<storeLifecycle>>
 
 [[analyze]]
 ==== jqassistant:analyze
@@ -209,19 +209,13 @@ Starts the integrated Neo4j web server (http://localhost:7474).
 Executes an analysis.
 
 ===== Configuration
-* storeDirectory (-Djqassistant.store.directory)
-** specifies the location of the database
-** default: '{rootModule}/target/jqassistant/store'
-* concepts (-Djqassistant.concepts)
-** specifies the ids of the concepts to be applied
-* constraints (-Djqassistant.constraints)
-** specifies the ids of the constraints to be validated
-* groups (-Djqassistant.groups)
-** specifies the ids of the groups to be executed
-** default: 'default'
-* xmlReportFile (-Djqassistant.report.xml)
-** specifes the target file for writing the XML report
-** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
+* <<skip>>
+* <<storeDirectory>>
+* <<storeLifecycle>>
+* <<concepts>>
+* <<constraints>>
+* <<groups>>
+* <<xmlReportFile>>
 * failOnConstraintViolations (-Djqassistant.failOnConstraintViolations)
 ** determines the jQAssistant shall break the build if constraint violations are detected
 ** default: 'true'
@@ -232,18 +226,18 @@ Executes an analysis.
 List the rules which would be executed for an analysis and the given concepts, constraints or groups.
 
 ===== Configuration
-* concepts (-Djqassistant.concepts)
-** specifies the ids of the concepts to be applied
-* constraints (-Djqassistant.constraints)
-** specifies the ids of the constraints to be validated
-* groups (-Djqassistant.groups)
-** specifies the ids of the groups to be executed
-** default: 'default'
+* <<skip>>
+* <<concepts>>
+* <<constraints>>
+* <<groups>>
 
 [[available-rules]]
 ==== jqassistant:available-rules
 ===== Description
 List all available rules.
+
+===== Configuration
+* <<skip>>
 
 [[report]]
 ==== jqassistant:report
@@ -251,10 +245,49 @@ List all available rules.
 Transforms an XML report into HTML.
 
 ===== Configuration
-* xmlReportFile (-Djqassistant.report.xml)
-** specifes the file containing the XML report from an analysis
-** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
+* <<xmlReportFile>>
 * htmlReportFile (-Djqassistant.report.html)
 ** specifes the target file for writing the HTML report
 ** default: '{rootModule}/target/site/jqassistant.html'
 
+=== Common Configuration Properties
+==== Execution
+
+[[skip]]
+* skip
+** skip execution of the plugin
+** default: false
+
+==== Store
+
+[[storeDirectory]]
+* storeDirectory (-Djqassistant.store.directory)
+** specifies the location of the database
+** default: '{rootModule}/target/jqassistant/store'
+
+[[storeLifecycle]]
+* storeLifecycle (-Djqassistant.store.lifecycle)
+** specifies the lifecycle of the data store
+*** REACTOR: cache the store for the execution time of the reactor for fast operations
+*** MODULE: open and close the store for each module
+** default: REACTOR
+
+==== Analysis And Report
+
+[[concepts]]
+* concepts (-Djqassistant.concepts)
+** specifies the ids of the concepts to be applied
+
+[[constraints]]
+* constraints (-Djqassistant.constraints)
+** specifies the ids of the constraints to be validated
+
+[[groups]]
+* groups (-Djqassistant.groups)
+** specifies the ids of the groups to be executed
+** default: 'default'
+
+[[xmlReportFile]]
+* xmlReportFile (-Djqassistant.report.xml)
+** specifes the target file for writing the XML report
+** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'

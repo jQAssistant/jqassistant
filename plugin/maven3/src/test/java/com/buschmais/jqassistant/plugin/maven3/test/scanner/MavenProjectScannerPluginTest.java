@@ -26,7 +26,7 @@ import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin;
@@ -93,8 +93,8 @@ public class MavenProjectScannerPluginTest {
 
         scannerPlugin.scan(project, null, null, scanner);
 
-        verify(scanner).scan(Mockito.any(ClassesDirectory.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH));
-        verify(scanner).scan(Mockito.any(ClassesDirectory.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH));
+        verify(scanner).scan(Mockito.any(ClassPathDirectory.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH));
+        verify(scanner).scan(Mockito.any(ClassPathDirectory.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH));
         verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
         verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");

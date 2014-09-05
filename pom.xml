@@ -186,6 +186,7 @@
                             <group>default</group>
                         </groups>
                         <failOnConstraintViolations>false</failOnConstraintViolations>
+                        <storeLifecycle>MODULE</storeLifecycle>
                     </configuration>
                 </plugin>
                 <plugin>
