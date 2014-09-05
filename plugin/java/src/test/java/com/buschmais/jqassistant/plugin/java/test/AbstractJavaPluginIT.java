@@ -8,25 +8,10 @@ import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassesDirectory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
-
-    /**
-     * Scans the a directory.
-     * 
-     * @param directory
-     *            The directory.
-     * @throws java.io.IOException
-     *             If scanning fails.
-     */
-    protected void scanDirectory(Scope scope, File directory) throws IOException {
-        store.beginTransaction();
-        ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
-        getScanner().scan(new ClassesDirectory(directory, artifact), scope);
-        store.commitTransaction();
-    }
 
     /**
      * Scans the given classes.
@@ -91,11 +76,11 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
-    protected void scanResource(Scope scope, String resource) throws IOException {
-        scanResources(scope, ARTIFACT_ID, resource);
+    protected void scanClassPathResource(Scope scope, String resource) throws IOException {
+        scanClassPathResources(scope, ARTIFACT_ID, resource);
     }
 
-    protected void scanResources(Scope scope, String artifactId, String... resources) throws IOException {
+    protected void scanClassPathResources(Scope scope, String artifactId, String... resources) throws IOException {
         File directory = getClassesDirectory(this.getClass());
         store.beginTransaction();
         ArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
@@ -107,4 +92,18 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Scans the a directory.
+     *
+     * @param directory
+     *            The directory.
+     * @throws java.io.IOException
+     *             If scanning fails.
+     */
+    protected void scanClassPathDirectory(File directory) throws IOException {
+        store.beginTransaction();
+        ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
+        getScanner().scan(new ClassPathDirectory(directory, artifact), JavaScope.CLASSPATH);
+        store.commitTransaction();
+    }
 }

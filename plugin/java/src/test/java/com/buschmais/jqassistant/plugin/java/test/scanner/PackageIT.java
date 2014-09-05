@@ -14,7 +14,6 @@ import org.hamcrest.Matcher;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.pojo.Pojo;
 
@@ -34,7 +33,7 @@ public class PackageIT extends AbstractJavaPluginIT {
      */
     @Test
     public void artifactContainsPackages() throws IOException {
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Pojo.class));
+        scanClassPathDirectory(getClassesDirectory(Pojo.class));
         store.beginTransaction();
         // Assert that all packages of Pojo.class are contained in the artifact
         List<Matcher<? super Iterable<? super PackageDescriptor>>> packageMatchers = new ArrayList<>();
@@ -64,7 +63,7 @@ public class PackageIT extends AbstractJavaPluginIT {
      */
     @Test
     public void nonEmptyPackages() throws IOException {
-        scanDirectory(JavaScope.CLASSPATH, getClassesDirectory(Pojo.class));
+        scanClassPathDirectory(getClassesDirectory(Pojo.class));
         store.beginTransaction();
         TestResult query = query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE a.fqn ='artifact' AND NOT (p)-[:CONTAINS]->() RETURN p");
         assertThat(query.getRows().size(), equalTo(1));

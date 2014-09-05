@@ -27,7 +27,7 @@ public class ManifestFileIT extends AbstractJavaPluginIT {
      */
     @Test
     public void manifestFile() throws IOException {
-        scanResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         store.beginTransaction();
         List<ManifestFileDescriptor> manifestFileDescriptors = query("MATCH (mf:Manifest:File) RETURN mf").getColumn("mf");
         assertThat(manifestFileDescriptors.size(), equalTo(1));
