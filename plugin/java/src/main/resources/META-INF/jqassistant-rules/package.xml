@@ -4,14 +4,14 @@
         <description>Verifies that all package names within an artifact start with the group name.</description>
         <cypher><![CDATA[
             MATCH
-                (artifact:ARTIFACT)-[:CONTAINS]->(t:Type),
-                (package:PACKAGE)-[:CONTAINS]->(t)
+                (artifact:Artifact)-[:CONTAINS]->(t:Type),
+                (package:Package)-[:CONTAINS]->(t)
             WHERE NOT
-                package.FQN =~ (artifact.GROUP + ".*")
+                package.FQN =~ (artifact.group + ".*")
             RETURN DISTINCT
                 artifact, package
             ORDER BY
-                artifact.FQN, package.FQN
+                artifact.fqn, package.fqn
         ]]></cypher>
     </constraint>
 
@@ -19,14 +19,14 @@
         <description>Verifies that all package names within an artifact contain the artifact name.</description>
         <cypher><![CDATA[
             MATCH
-                (artifact:ARTIFACT)-[:CONTAINS]->(t:Type),
-                (package:PACKAGE)-[:CONTAINS]->(t)
+                (artifact:Artifact)-[:CONTAINS]->(t:Type),
+                (package:Package)-[:CONTAINS]->(t)
             WHERE NOT
-                package.FQN =~ (".*" + artifact.NAME + ".*")
+                package.FQN =~ (".*" + artifact.name + ".*")
             RETURN DISTINCT
                 artifact, package
             ORDER BY
-                artifact.FQN, package.FQN
+                artifact.fqn, package.fqn
         ]]></cypher>
     </constraint>
 
