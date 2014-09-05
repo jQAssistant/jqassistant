@@ -50,8 +50,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.4.0</com.buschmais.xo_version>
-        <org.neo4j_version>2.0.4</org.neo4j_version>
-        <org_asciidoctor.version>0.1.4</org_asciidoctor.version>
+        <org.neo4j_version>2.1.4</org.neo4j_version>
+        <org_asciidoctor.version>1.5.0</org_asciidoctor.version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
         <github.global.server>github</github.global.server>
     </properties>

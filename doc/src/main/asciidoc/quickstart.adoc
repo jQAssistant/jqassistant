@@ -100,7 +100,7 @@ jQAssistant comes with an integrated Neo4j server, you can run it using
 mvn jqassistant:server
 ----
 
-Now point your browser to [http://localhost:7474](http://localhost:7474) and execute a query:
+Now point your browser to http://localhost:7474[http://localhost:7474] and execute a query:
 
 [source]
 ----

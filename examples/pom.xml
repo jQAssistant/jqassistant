@@ -49,6 +49,9 @@
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <storeLifeCycle>MODULE</storeLifeCycle>
+                </configuration>
             </plugin>
         </plugins>
     </build>

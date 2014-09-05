@@ -53,16 +53,28 @@
     </concept>
 
     <concept id="cdi:Qualifier">
-        <description>Labels all annotation types annotated by @javax.inject.Qualifier with "Cdi" and "Qualifier".</description>
+        <description>Labels all annotation types annotated by @javax.inject.Qualifier with "Cdi" and "Qualifier" and adds the labels "Cdi"
+            and "Nonbinding" to
+            all non-binding annotation values (i.e. which are annotated by @javax.enterprise.util.Nonbinding).
+        </description>
         <cypher><![CDATA[
             match
               (qualifier:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(qualifierType:Type)
             where
-              qualifier.fqn="javax.inject.Qualifier"
+              qualifierType.fqn = "javax.inject.Qualifier"
             set
               qualifier:Cdi:Qualifier
+            with
+              qualifier
+            match
+              (qualifier)-[:DECLARES]->(attribute:Method),
+              (attribute)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(nonbindingType:Type)
+            where
+              nonbindingType.fqn = "javax.enterprise.util.Nonbinding"
+            set
+              attribute:Cdi:Nonbinding
             return
-              count(qualifier) as Qualifiers
+              count(distinct qualifier) as Qualifiers
         ]]></cypher>
     </concept>
 
@@ -233,31 +245,6 @@
               decorator:Cdi:Decorator
             return
               count(decorator) as Decorators
-        ]]></cypher>
-    </concept>
-
-    <concept id="cdi:Qualifier">
-        <description>Labels all annotation types annotated by @javax.inject.Qualifier with "Cdi" and "Qualifier" and adds the labels "Cdi" and "Nonbinding" to
-            all non-binding annotation values (i.e. which are annotated by @javax.enterprise.util.Nonbinding).
-        </description>
-        <cypher><![CDATA[
-            match
-              (qualifier:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(qualifierType:Type)
-            where
-              qualifierType.fqn = "javax.inject.Qualifier"
-            set
-              qualifier:Cdi:Qualifier
-            with
-              qualifier
-            match
-              (qualifier)-[:DECLARES]->(attribute:Method),
-              (attribute)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(nonbindingType:Type)
-            where
-              nonbindingType.fqn = "javax.enterprise.util.Nonbinding"
-            set
-              attribute:Cdi:Nonbinding
-            return
-              count(distinct qualifier) as Qualifiers
         ]]></cypher>
     </concept>
 
