@@ -59,7 +59,7 @@ Within your parent module create a directory "jqassistant" and a rules file in i
     </group>
 
     <constraint id="my-rules:TestClassName">
-        <requiresConcept refId="junit4:TestClass" />
+        <requiresConcept refId="junit4:TestClassOrMethod" />
         <description>All JUnit test classes must have a name with suffix "Test".</description>
         <cypher><![CDATA[
             match
