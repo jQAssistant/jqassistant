@@ -30,6 +30,12 @@ import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 public class ReportMojo extends AbstractMavenReport {
 
     /**
+     * The directory to scan for rule descriptors.
+     */
+    @Parameter(property = "jqassistant.rules.directory", defaultValue = ProjectResolver.DEFAULT_RULES_DIRECTORY)
+    protected String rulesDirectory;
+
+    /**
      * Directory where reports will go.
      */
     @Parameter(property = "project.reporting.outputDirectory")
@@ -52,15 +58,15 @@ public class ReportMojo extends AbstractMavenReport {
 
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
-        MavenProject baseProject;
+        MavenProject rootModule;
         File selectedXmlReportFile;
         try {
-            baseProject = ProjectResolver.getRootModule(project);
-            selectedXmlReportFile = ProjectResolver.getOutputFile(baseProject, xmlReportFile, AbstractProjectMojo.REPORT_XML);
+            rootModule = ProjectResolver.getRootModule(project, rulesDirectory);
+            selectedXmlReportFile = ProjectResolver.getOutputFile(rootModule, xmlReportFile, AbstractProjectMojo.REPORT_XML);
         } catch (MojoExecutionException e) {
             throw new MavenReportException("Cannot resolve XML report.", e);
         }
-        if (project.equals(baseProject)) {
+        if (project.equals(rootModule)) {
             if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
                 throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
             }

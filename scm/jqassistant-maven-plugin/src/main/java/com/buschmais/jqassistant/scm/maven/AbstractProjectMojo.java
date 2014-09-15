@@ -28,7 +28,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         Map<MavenProject, List<MavenProject>> projects = getProjects(reactorProjects);
         // Execute the goal if the current project is the last executed project
         // of a base project
-        final MavenProject rootModule = ProjectResolver.getRootModule(currentProject);
+        final MavenProject rootModule = ProjectResolver.getRootModule(currentProject, rulesDirectory);
         final List<MavenProject> currentProjects = projects.get(rootModule);
         if (currentProjects != null && currentProject.equals(currentProjects.get(currentProjects.size() - 1))) {
             execute(new StoreOperation() {
@@ -51,17 +51,17 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      *             If aggregation fails.
      */
     private Map<MavenProject, List<MavenProject>> getProjects(List<MavenProject> reactorProjects) throws MojoExecutionException {
-        Map<MavenProject, List<MavenProject>> baseProjects = new HashMap<>();
+        Map<MavenProject, List<MavenProject>> rootModules = new HashMap<>();
         for (MavenProject reactorProject : reactorProjects) {
-            MavenProject baseProject = ProjectResolver.getRootModule(reactorProject);
-            List<MavenProject> projects = baseProjects.get(baseProject);
-            if (projects == null) {
-                projects = new ArrayList<>();
-                baseProjects.put(baseProject, projects);
+            MavenProject rootModule = ProjectResolver.getRootModule(reactorProject, rulesDirectory);
+            List<MavenProject> modules = rootModules.get(rootModule);
+            if (modules == null) {
+                modules = new ArrayList<>();
+                rootModules.put(rootModule, modules);
             }
-            projects.add(reactorProject);
+            modules.add(reactorProject);
         }
-        return baseProjects;
+        return rootModules;
     }
 
     /**
