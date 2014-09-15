@@ -6,14 +6,6 @@
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-
-            </plugins>
-        </pluginManagement>
-    </build>
-
     <modules>
         <module>module1</module>
         <module>module2</module>
