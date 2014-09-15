@@ -19,7 +19,7 @@
                         <configuration>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <settingsFile>src/it/settings.xml</settingsFile>
-                            <mergeUserSettings>true</mergeUserSettings>
+                            <mergeUserSettings>false</mergeUserSettings>
                             <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>true</streamLogs>
