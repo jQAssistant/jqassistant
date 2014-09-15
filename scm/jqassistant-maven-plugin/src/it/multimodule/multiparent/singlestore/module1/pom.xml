@@ -34,8 +34,8 @@
 
 	<reporting>
 		<plugins>
-			<plugin>
-				<groupId>@project.groupId@</groupId>
+            <plugin>
+            <groupId>@project.groupId@</groupId>
 				<artifactId>@project.artifactId@</artifactId>
 				<version>@project.version@</version>
 				<reportSets>
