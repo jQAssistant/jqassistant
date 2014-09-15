@@ -44,10 +44,18 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected File storeDirectory;
 
     /**
-     * The directory to scan for rule descriptors.
+     * Specifies the name of the directory containing rule files. It is also
+     * used to identify the root module.
      */
     @Parameter(property = "jqassistant.rules.directory", defaultValue = ProjectResolver.DEFAULT_RULES_DIRECTORY)
     protected String rulesDirectory;
+
+    /**
+     * Specifies a list of directory names relative to the root module
+     * containing additional rule files.
+     */
+    @Parameter(property = "jqassistant.rules.directories")
+    protected List<String> rulesDirectories;
 
     /**
      * The url to retrieve rules.
@@ -152,22 +160,21 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @return A
      *         {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}.
-     * @throws org.apache.maven.plugin.MojoExecutionException
+     * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
     protected RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
-        File directory = ProjectResolver.getRulesDirectory(rootModule, rulesDirectory);
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
-        if (directory != null) {
-            List<File> ruleFiles = readRulesDirectory(directory);
-            for (File ruleFile : ruleFiles) {
-                getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-                sources.add(new StreamSource(ruleFile));
+        addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, rulesDirectory));
+        if (rulesDirectories != null) {
+            for (String directory : rulesDirectories) {
+                addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
             }
         }
         if (rulesUrl != null) {
             try {
+                getLog().debug("Adding rules from URL " + rulesUrl.toString());
                 sources.add(new StreamSource(rulesUrl.openStream(), rulesUrl.toExternalForm()));
             } catch (IOException e) {
                 throw new MojoExecutionException("Cannot open rule URL " + rulesUrl.toExternalForm());
@@ -182,7 +189,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Resolves the effective rules.
      *
      * @return The resolved rules set.
-     * @throws org.apache.maven.plugin.MojoExecutionException
+     * @throws MojoExecutionException
      *             If resolving fails.
      */
     protected RuleSet resolveEffectiveRules(MavenProject baseProject) throws MojoExecutionException {
@@ -207,27 +214,45 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     }
 
     /**
+     * Add rules from the given directory to the list of sources.
+     *
+     * @param sources
+     *            The sources.
+     * @param directory
+     *            The directory.
+     * @throws MojoExecutionException
+     *             On error.
+     */
+    private void addRuleFiles(List<Source> sources, File directory) throws MojoExecutionException {
+        List<File> ruleFiles = readRulesDirectory(directory);
+        for (File ruleFile : ruleFiles) {
+            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
+            sources.add(new StreamSource(ruleFile));
+        }
+    }
+
+    /**
      * Retrieves the list of available rules from the rules directory.
      *
      * @param rulesDirectory
      *            The rules directory.
      * @return The {@link java.util.List} of available rules
      *         {@link java.io.File}s.
-     * @throws org.apache.maven.plugin.MojoExecutionException
+     * @throws MojoExecutionException
      *             If the rules directory cannot be read.
      */
     private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
-            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
+            throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
-        getLog().info("Reading rules from rulesDirectory " + rulesDirectory.getAbsolutePath());
-        final List<File> ruleFiles = new ArrayList<File>();
+        getLog().info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
+        final List<File> ruleFiles = new ArrayList<>();
         try {
             new DirectoryWalker<File>() {
 
                 @Override
                 protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (!file.isDirectory() && file.getName().endsWith(".xml")) {
+                    if (file.getName().endsWith(".xml")) {
                         results.add(file);
                     }
                 }
@@ -248,7 +273,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @param ruleSet
      *            The rules set.
-     * @throws org.apache.maven.plugin.MojoExecutionException
+     * @throws MojoExecutionException
      *             If there are unresolved concepts, constraints or groups.
      */
     private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {

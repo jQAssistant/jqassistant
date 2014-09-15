@@ -4,6 +4,7 @@ jQAssistant provides a plugin for http://maven.apache.org[Apache Maven] which ca
 process or manual execution from a command line.
 
 === Setup
+[[ProjectScope]]
 ==== Project Scope
 
 Software projects often consist of several modules which are assembled to executable or deployable artifacts. In a Maven project these modules
@@ -215,6 +216,8 @@ Executes an analysis.
 * <<concepts>>
 * <<constraints>>
 * <<groups>>
+* <<rulesDirectory>>
+* <<rulesDirectories>>
 * <<xmlReportFile>>
 * failOnConstraintViolations (-Djqassistant.failOnConstraintViolations)
 ** determines the jQAssistant shall break the build if constraint violations are detected
@@ -230,6 +233,8 @@ List the rules which would be executed for an analysis and the given concepts, c
 * <<concepts>>
 * <<constraints>>
 * <<groups>>
+* <<rulesDirectory>>
+* <<rulesDirectories>>
 
 [[available-rules]]
 ==== jqassistant:available-rules
@@ -238,6 +243,8 @@ List all available rules.
 
 ===== Configuration
 * <<skip>>
+* <<rulesDirectory>>
+* <<rulesDirectories>>
 
 [[report]]
 ==== jqassistant:report
@@ -291,3 +298,13 @@ Transforms an XML report into HTML.
 * xmlReportFile (-Djqassistant.report.xml)
 ** specifes the target file for writing the XML report
 ** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
+
+[[rulesDirectory]]
+* rulesDirectory (-Djqassistant.rules.directory)
+** specifies the name of the directory which contains rules
+** this directory is also used to identify the root module of a project, see <<ProjectScope>>
+** default: 'jqassistant'
+
+[[rulesDirectories]]
+* rulesDirectories (-Djqassistant.rules.directories)
+** specifies a list of directory names relative to the root module containing additional rules
