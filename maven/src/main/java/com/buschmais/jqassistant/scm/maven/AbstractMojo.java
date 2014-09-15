@@ -46,8 +46,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The directory to scan for rule descriptors.
      */
-    @Parameter(property = "jqassistant.rules.directory")
-    protected File rulesDirectory;
+    @Parameter(property = "jqassistant.rules.directory", defaultValue = ProjectResolver.DEFAULT_RULES_DIRECTORY)
+    protected String rulesDirectory;
 
     /**
      * The url to retrieve rules.
@@ -155,17 +155,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the rules cannot be read.
      */
-    protected RuleSet readRules(MavenProject baseProject) throws MojoExecutionException {
-        File selectedDirectory;
-        if (rulesDirectory != null) {
-            selectedDirectory = rulesDirectory;
-        } else {
-            selectedDirectory = new File(baseProject.getBasedir(), ProjectResolver.RULES_DIRECTORY);
-        }
+    protected RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
+        File directory = ProjectResolver.getRulesDirectory(rootModule, rulesDirectory);
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
-        if (selectedDirectory != null) {
-            List<File> ruleFiles = readRulesDirectory(selectedDirectory);
+        if (directory != null) {
+            List<File> ruleFiles = readRulesDirectory(directory);
             for (File ruleFile : ruleFiles) {
                 getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
                 sources.add(new StreamSource(ruleFile));
@@ -286,7 +281,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On execution failures.
      */
     protected void execute(StoreOperation storeOperation) throws MojoExecutionException, MojoFailureException {
-        MavenProject rootModule = ProjectResolver.getRootModule(currentProject);
+        MavenProject rootModule = ProjectResolver.getRootModule(currentProject, rulesDirectory);
         execute(storeOperation, rootModule);
     }
 
@@ -357,7 +352,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             directory = this.storeDirectory;
         } else {
             directory = new File(rootModule.getBuild().getDirectory() + "/jqassistant/store");
-  }
+        }
         return directory;
     }
 

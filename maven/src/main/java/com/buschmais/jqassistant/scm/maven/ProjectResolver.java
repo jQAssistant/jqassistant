@@ -13,7 +13,7 @@ public final class ProjectResolver {
     /**
      * The name of the rules directory.
      */
-    public static final String RULES_DIRECTORY = "jqassistant";
+    public static final String DEFAULT_RULES_DIRECTORY = "jqassistant";
 
     /**
      * The name of the rules directory.
@@ -27,36 +27,40 @@ public final class ProjectResolver {
     }
 
     /**
-     * Return the {@link MavenProject} which is the base project for scanning
-     * and analysis.
+     * Return the {@link MavenProject} which is the base module for scanning and
+     * analysis.
      * <p>
-     * The base project is by searching with the project tree starting from the
-     * current project over its parents until a project is found containing a
+     * The base module is by searching with the module tree starting from the
+     * current module over its parents until a module is found containing a
      * directory "jqassistant" or no parent can be determined.
      * </p>
      * 
-     * @param project
-     *            The current project.
+     * @param module
+     *            The current module.
      * @return The {@link MavenProject} containing a rules directory.
      * @throws MojoExecutionException
      *             If the directory cannot be resolved.
      */
-    static MavenProject getRootModule(MavenProject project) throws MojoExecutionException {
-        MavenProject currentProject = project;
-        if (project != null) {
+    static MavenProject getRootModule(MavenProject module, String rulesDirectory) throws MojoExecutionException {
+        MavenProject currentModule = module;
+        if (module != null) {
             do {
-                File directory = new File(currentProject.getBasedir(), RULES_DIRECTORY);
+                File directory = getRulesDirectory(currentModule, rulesDirectory);
                 if (directory.exists() && directory.isDirectory()) {
-                    return currentProject;
+                    return currentModule;
                 }
-                MavenProject parent = currentProject.getParent();
+                MavenProject parent = currentModule.getParent();
                 if (parent == null || parent.getBasedir() == null) {
-                    return currentProject;
+                    return currentModule;
                 }
-                currentProject = parent;
-            } while (currentProject != null);
+                currentModule = parent;
+            } while (currentModule != null);
         }
         throw new MojoExecutionException("Cannot resolve base directory.");
+    }
+
+    static File getRulesDirectory(MavenProject currentProject, String rulesDirectory) {
+        return new File(currentProject.getBasedir().getAbsolutePath() + File.separator + rulesDirectory);
     }
 
     /**
