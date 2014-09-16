@@ -38,7 +38,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
                 descriptor = getStore().create(FileDescriptor.class);
             }
             descriptor.setFileName(relativePath);
-            containerDescriptor.addContains(descriptor);
+            containerDescriptor.getContains().add(descriptor);
         }
         return containerDescriptor;
     }
