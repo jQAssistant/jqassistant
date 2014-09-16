@@ -46,12 +46,12 @@ public class RuleSetReaderImpl implements RuleSetReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RuleSetReaderImpl.class);
 
-    private JAXBContext jaxbContext;
+    private static final JAXBContext jaxbContext;
 
     /**
-     * Constructor.
+     * Static constructor.
      */
-    public RuleSetReaderImpl() {
+    static {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {

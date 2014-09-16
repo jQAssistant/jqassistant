@@ -27,14 +27,11 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginConfigurationReaderImpl.class);
 
-    private JAXBContext jaxbContext;
+    private static final JAXBContext jaxbContext;
 
     private List<JqassistantPlugin> plugins = null;
 
-    /**
-     * Constructor.
-     */
-    public PluginConfigurationReaderImpl() {
+    static {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {

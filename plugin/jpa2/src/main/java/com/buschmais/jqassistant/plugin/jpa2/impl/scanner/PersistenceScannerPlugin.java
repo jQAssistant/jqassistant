@@ -34,17 +34,20 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
  */
 public class PersistenceScannerPlugin extends AbstractScannerPlugin<File> {
 
-    private JAXBContext jaxbContext;
+    private static final JAXBContext jaxbContext;
 
     private DescriptorResolverFactory descriptorResolverFactory;
 
-    @Override
-    protected void initialize() {
+    static {
         try {
             jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
             throw new IllegalStateException("Cannot create JAXB context.", e);
         }
+    }
+
+    @Override
+    protected void initialize() {
         descriptorResolverFactory = new DescriptorResolverFactory(getStore());
     }
 
