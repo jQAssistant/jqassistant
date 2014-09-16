@@ -17,6 +17,8 @@ public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
+    private static final int MAX_BUFFER_SIZE = 1024 * 1024; // One MB
+
     @Override
     protected void initialize() {
     }
@@ -35,9 +37,20 @@ public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
     public FileDescriptor scan(final java.io.File file, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
         FileDescriptor fileDescriptor = scanner.scan(new File() {
+
+            private InputStream stream = null;
+
             @Override
             public InputStream createStream() throws IOException {
-                return new BufferedInputStream(new FileInputStream(file));
+                if (stream == null) {
+                    long length = file.length();
+                    long bufferSize = length <= MAX_BUFFER_SIZE ? length : MAX_BUFFER_SIZE;
+                    stream = new BufferedInputStream(new FileInputStream(file), (int) bufferSize);
+                    stream.mark(MAX_BUFFER_SIZE);
+                } else {
+                    stream.reset();
+                }
+                return stream;
             }
 
         }, path, scope);
