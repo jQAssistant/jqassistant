@@ -38,19 +38,11 @@ public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
         LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
         FileDescriptor fileDescriptor = scanner.scan(new File() {
 
-            private InputStream stream = null;
-
             @Override
             public InputStream createStream() throws IOException {
-                if (stream == null) {
-                    long length = file.length();
-                    long bufferSize = length <= MAX_BUFFER_SIZE ? length : MAX_BUFFER_SIZE;
-                    stream = new BufferedInputStream(new FileInputStream(file), (int) bufferSize);
-                    stream.mark(MAX_BUFFER_SIZE);
-                } else {
-                    stream.reset();
-                }
-                return stream;
+                long length = file.length();
+                long bufferSize = length <= MAX_BUFFER_SIZE ? length : MAX_BUFFER_SIZE;
+                return new BufferedInputStream(new FileInputStream(file), (int) bufferSize);
             }
 
         }, path, scope);
