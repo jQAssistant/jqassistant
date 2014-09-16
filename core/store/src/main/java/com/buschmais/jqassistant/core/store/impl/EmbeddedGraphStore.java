@@ -1,5 +1,10 @@
 package com.buschmais.jqassistant.core.store.impl;
 
+import java.io.File;
+import java.util.Collection;
+
+import org.neo4j.kernel.GraphDatabaseAPI;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
@@ -8,10 +13,6 @@ import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
 import com.buschmais.xo.neo4j.api.Neo4jXOProvider;
 import com.buschmais.xo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
-import org.neo4j.kernel.GraphDatabaseAPI;
-
-import java.io.File;
-import java.util.Collection;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -26,7 +27,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     /**
      * Constructor.
      *
-     * @param databaseDirectory The directory of the database.
+     * @param databaseDirectory
+     *            The directory of the database.
      */
     public EmbeddedGraphStore(String databaseDirectory) {
         this.databaseDirectory = databaseDirectory;
@@ -40,7 +42,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
-        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).create();
+        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).property("neo4j.cache_type", "none")
+                .create();
         return XO.createXOManagerFactory(xoUnit);
     }
 
