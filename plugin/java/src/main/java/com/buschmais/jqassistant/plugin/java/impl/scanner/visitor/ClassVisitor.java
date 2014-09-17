@@ -94,7 +94,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             });
         }
         if (value instanceof org.objectweb.asm.Type) {
-            visitorHelper.addDependency(fieldDescriptor, SignatureHelper.getType((org.objectweb.asm.Type) value));
+            visitorHelper.addDependency(typeDescriptor, fieldDescriptor, SignatureHelper.getType((org.objectweb.asm.Type) value));
         }
         return new FieldVisitor(fieldDescriptor, visitorHelper);
     }
@@ -127,7 +127,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             TypeDescriptor exception = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(exceptions[i]));
             methodDescriptor.getDeclaredThrowables().add(exception);
         }
-        return new MethodVisitor(methodDescriptor, visitorHelper);
+        return new MethodVisitor(typeDescriptor, methodDescriptor, visitorHelper);
     }
 
     private void setModifiers(final int access, AccessModifierDescriptor descriptor) {
