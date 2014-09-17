@@ -186,15 +186,19 @@ public class VisitorHelper {
     /**
      * Adds a dependency to the given type name to a dependent descriptor.
      * 
+     * @param containingTypeDescriptor
+     *            The type containing the dependency.
      * @param dependentDescriptor
      *            The dependent descriptor.
-     * @param typeName
+     * @param dependencyTypeName
      *            The type name of the dependency.
      */
-    void addDependency(DependentDescriptor dependentDescriptor, String typeName) {
-        if (typeName != null) {
-            TypeDescriptor dependency = getTypeDescriptor(typeName);
-            dependentDescriptor.addDependency(dependency);
+    void addDependency(TypeDescriptor containingTypeDescriptor, DependentDescriptor dependentDescriptor, String dependencyTypeName) {
+        if (dependencyTypeName != null) {
+            TypeDescriptor dependency = getTypeDescriptor(dependencyTypeName);
+            if (!containingTypeDescriptor.equals(dependency)) {
+                dependentDescriptor.addDependency(dependency);
+            }
         }
     }
 }

@@ -16,12 +16,14 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
+    private TypeDescriptor typeDescriptor;
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
     private int line;
 
-    protected MethodVisitor(MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
+    protected MethodVisitor(TypeDescriptor typeDescriptor, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);
+        this.typeDescriptor = typeDescriptor;
         this.methodDescriptor = methodDescriptor;
         this.visitorHelper = visitorHelper;
     }
@@ -35,7 +37,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitTypeInsn(final int opcode, final String type) {
-        visitorHelper.addDependency(methodDescriptor, SignatureHelper.getObjectType(type));
+        visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getObjectType(type));
     }
 
     @Override
@@ -62,7 +64,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
         InvokesDescriptor invokesDescriptor = this.methodDescriptor.addInvokes(invokedMethodDescriptor);
         addLineNumber(invokesDescriptor);
-        visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));
+        visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));
     }
 
     /**
@@ -78,13 +80,13 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitLdcInsn(final Object cst) {
         if (cst instanceof Type) {
-            visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType((Type) cst));
+            visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType((Type) cst));
         }
     }
 
     @Override
     public void visitMultiANewArrayInsn(final String desc, final int dims) {
-        visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType(desc));
+        visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType(desc));
     }
 
     @Override
@@ -102,7 +104,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
         if (type != null) {
-            visitorHelper.addDependency(methodDescriptor, SignatureHelper.getType(type));
+            visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType(type));
         }
     }
 
