@@ -12,6 +12,7 @@
 
     <group id="default">
         <includeConcept refId="example:MethodsPerType"/>
+        <includeConstraint refId="common:TopLevelPackage"/>
     </group>
 
 </jqa:jqassistant-rules>

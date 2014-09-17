@@ -1,6 +1,5 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
-    <description>Provides scanner for Java elements (e.g. packages, classes, manifest and property files) and rules for common language
-        concepts (e.g.
+    <description>Provides scanner for Java elements (e.g. packages, classes, manifest and property files) and rules for common language concepts (e.g.
         Deprecation), dependencies and metrics.
     </description>
     <model>
