@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -88,7 +87,7 @@ public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipF
             return new File() {
                 @Override
                 public InputStream createStream() throws IOException {
-                    return new BufferedInputStream(container.getInputStream(entry));
+                    return container.getInputStream(entry);
                 }
             };
         }
