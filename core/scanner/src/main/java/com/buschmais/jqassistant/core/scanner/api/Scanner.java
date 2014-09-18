@@ -40,4 +40,11 @@ public interface Scanner {
      *             If scanning fails.
      */
     public <I> FileDescriptor scan(I item, String path, Scope scope) throws IOException;
+
+    /**
+     * Return an instance of the scanner context.
+     * 
+     * @return The scanner context.
+     */
+    ScannerContext getContext();
 }

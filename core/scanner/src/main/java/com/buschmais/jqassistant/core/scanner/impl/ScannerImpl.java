@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -16,6 +17,8 @@ import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
  * Implementation of the {@link Scanner}.
  */
 public class ScannerImpl implements Scanner {
+
+    private final ScannerContext scannerContext = new ScannerContextImpl();
 
     private final List<ScannerPlugin<?>> scannerPlugins;
 
@@ -67,6 +70,11 @@ public class ScannerImpl implements Scanner {
             }
         }
         return fileDescriptor;
+    }
+
+    @Override
+    public ScannerContext getContext() {
+        return scannerContext;
     }
 
     /**
