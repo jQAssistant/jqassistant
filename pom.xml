@@ -52,7 +52,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
         <org.neo4j_version>2.1.4</org.neo4j_version>
-        <org_asciidoctor.version>1.5.0</org_asciidoctor.version>
+        <org.asciidoctor_version>1.5.0</org.asciidoctor_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
         <github.global.server>github</github.global.server>
     </properties>
@@ -305,7 +305,7 @@
                         <dependency>
                             <groupId>org.asciidoctor</groupId>
                             <artifactId>asciidoctor-maven-plugin</artifactId>
-                            <version>${org_asciidoctor.version}</version>
+                            <version>${org.asciidoctor_version}</version>
                         </dependency>
                     </dependencies>
                     <configuration>
