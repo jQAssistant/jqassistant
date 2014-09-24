@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
@@ -31,8 +32,8 @@ public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipF
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(ZipFile zipFile) {
-        return getStore().create(ArchiveDescriptor.class);
+    protected FileContainerDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(ArchiveDescriptor.class);
     }
 
     @Override

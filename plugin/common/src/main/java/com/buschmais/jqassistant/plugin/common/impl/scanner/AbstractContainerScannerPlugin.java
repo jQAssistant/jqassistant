@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
@@ -26,7 +27,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
 
     @Override
     public final FileDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
-        FileContainerDescriptor containerDescriptor = getContainerDescriptor(container);
+        FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, scanner.getContext());
         containerDescriptor.setFileName(path);
         for (E e : getEntries(container)) {
             Entry entry = getEntry(container, e);
@@ -35,7 +36,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
             LOGGER.info("Scanning '{}'.", relativePath);
             FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
             if (descriptor == null) {
-                descriptor = getStore().create(FileDescriptor.class);
+                descriptor = scanner.getContext().getStore().create(FileDescriptor.class);
             }
             descriptor.setFileName(relativePath);
             containerDescriptor.getContains().add(descriptor);
@@ -50,7 +51,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
      *            The container.
      * @return The descriptor.
      */
-    protected abstract FileContainerDescriptor getContainerDescriptor(I container);
+    protected abstract FileContainerDescriptor getContainerDescriptor(I container, ScannerContext scannerContext);
 
     /**
      * Return an iterable which delivers the entries of the container.
