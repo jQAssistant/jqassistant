@@ -20,22 +20,19 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
-        return item.isFile() && item.getName().endsWith(getExtension());
+    public boolean accepts(File file, String path, Scope scope) throws IOException {
+        return file.isFile() && file.getName().endsWith(getExtension());
     }
 
     @Override
-    public FileDescriptor scan(File file, final String path, final Scope currentScope, final Scanner scanner) throws IOException {
+    public FileDescriptor scan(File file, String path, Scope currentScope, Scanner scanner) throws IOException {
         ZipFile zipFile = new ZipFile(file);
         Scope zipScope = createScope(currentScope);
-        FileDescriptor fileDescriptor = scanner.scan(zipFile, path, zipScope);
-        return afterArchive(fileDescriptor);
+        return scanner.scan(zipFile, path, zipScope);
     }
 
     protected abstract String getExtension();
 
     protected abstract Scope createScope(Scope currentScope);
-
-    protected abstract FileDescriptor afterArchive(FileDescriptor fileDescriptor);
 
 }
