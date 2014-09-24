@@ -77,9 +77,9 @@ public abstract class AbstractJQATask implements JQATask {
         }
     }
 
-    protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
+    protected ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) {
         try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
+            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create rule plugin repository.", e);
         }

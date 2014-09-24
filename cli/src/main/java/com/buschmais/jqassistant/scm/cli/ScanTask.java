@@ -40,16 +40,16 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         try {
             for (String directoryName : directoryNames) {
                 properties = new HashMap<>();
-                scanDirectory(store, directoryName, getScannerPluginRepository(store, properties).getScannerPlugins());
+                scanDirectory(store, directoryName, getScannerPluginRepository(properties).getScannerPlugins());
             }
         } catch (PluginRepositoryException e) {
             throw new RuntimeException(e);
         }
     }
 
-    protected ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) {
+    protected ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) {
         try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
+            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot create scanner plugin repository.", e);
         }
@@ -64,7 +64,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
             store.beginTransaction();
             try {
                 final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store, absolutePath);
-                final Scanner scanner = new ScannerImpl(scannerPlugins);
+                final Scanner scanner = new ScannerImpl(store, scannerPlugins);
                 try {
                     scanner.scan(new ClassPathDirectory(directory, artifactDescriptor), CLASSPATH);
                 } catch (IOException e) {
