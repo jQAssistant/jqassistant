@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
@@ -46,7 +47,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<File> {
 
     @Override
     protected void initialize() {
-        descriptorResolverFactory = new DescriptorResolverFactory(getStore());
+        descriptorResolverFactory = new DescriptorResolverFactory();
     }
 
     @Override
@@ -61,7 +62,8 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<File> {
 
     @Override
     public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
-        BeansDescriptor beansDescriptor = getStore().create(BeansDescriptor.class);
+        ScannerContext context = scanner.getContext();
+        BeansDescriptor beansDescriptor = context.getStore().create(BeansDescriptor.class);
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();
@@ -69,13 +71,13 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<File> {
             beansDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());
             for (Object o : beans.getInterceptorsOrDecoratorsOrAlternatives()) {
                 if (o instanceof Interceptors) {
-                    addTypes(((Interceptors) o).getClazz(), beansDescriptor.getInterceptors());
+                    addTypes(((Interceptors) o).getClazz(), beansDescriptor.getInterceptors(), context);
                 } else if (o instanceof Decorators) {
-                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getDecorators());
+                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getDecorators(), context);
                 } else if (o instanceof Alternatives) {
                     List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
                     for (JAXBElement<String> element : clazzOrStereotype) {
-                        TypeDescriptor alternative = descriptorResolverFactory.getTypeDescriptorResolver().resolve(element.getValue());
+                        TypeDescriptor alternative = descriptorResolverFactory.getTypeDescriptorResolver().resolve(element.getValue(), context);
                         beansDescriptor.getAlternatives().add(alternative);
                     }
                 }
@@ -86,9 +88,9 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<File> {
         return beansDescriptor;
     }
 
-    private void addTypes(List<String> typeNames, List<TypeDescriptor> types) {
+    private void addTypes(List<String> typeNames, List<TypeDescriptor> types, ScannerContext scannerContext) {
         for (String typeName : typeNames) {
-            TypeDescriptor type = descriptorResolverFactory.getTypeDescriptorResolver().resolve(typeName);
+            TypeDescriptor type = descriptorResolverFactory.getTypeDescriptorResolver().resolve(typeName, scannerContext);
             types.add(type);
         }
     }

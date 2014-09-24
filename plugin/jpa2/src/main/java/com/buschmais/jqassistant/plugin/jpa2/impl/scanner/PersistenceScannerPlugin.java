@@ -48,7 +48,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<File> {
 
     @Override
     protected void initialize() {
-        descriptorResolverFactory = new DescriptorResolverFactory(getStore());
+        descriptorResolverFactory = new DescriptorResolverFactory();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<File> {
         } catch (JAXBException e) {
             throw new IOException("Cannot read model descriptor.", e);
         }
-        Store store = getStore();
+        Store store = scanner.getContext().getStore();
         PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
         persistenceDescriptor.setVersion(persistence.getVersion());
         // Create model units
@@ -94,7 +94,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<File> {
                 persistenceUnitDescriptor.setSharedCacheMode(sharedCacheMode.name());
             }
             for (String clazz : persistenceUnit.getClazz()) {
-                TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz);
+                TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz, scanner.getContext());
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
             // Create persistence unit properties

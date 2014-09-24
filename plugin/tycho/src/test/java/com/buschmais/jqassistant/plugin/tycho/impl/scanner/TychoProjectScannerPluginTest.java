@@ -27,6 +27,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.mockito.Mockito;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 
@@ -36,6 +37,7 @@ public class TychoProjectScannerPluginTest {
     private final static Class<?> clazz = TychoProjectScannerPluginTest.class;
 
     private final Scanner scanner;
+    private final ScannerContext scannerContext;
     private final MavenProject project;
     private final Store store;
     private final Matcher<? super Collection<? extends File>> matcher;
@@ -54,9 +56,13 @@ public class TychoProjectScannerPluginTest {
 
     public TychoProjectScannerPluginTest(List<String> includes, List<String> excludes, Matcher<? super Collection<? extends File>> matcher) throws IOException {
         this.scanner = mock(Scanner.class);
+        this.scannerContext = mock(ScannerContext.class);
         this.store = mock(Store.class);
         this.project = mock(MavenProject.class);
         this.matcher = matcher;
+
+        when(scanner.getContext()).thenReturn(scannerContext);
+        when(scannerContext.getStore()).thenReturn(store);
 
         EclipsePluginProject pdeProject = mock(EclipsePluginProject.class);
         BuildProperties properties = mock(BuildProperties.class);
@@ -79,7 +85,7 @@ public class TychoProjectScannerPluginTest {
     @Test
     public void testGetAdditionalFiles() throws Exception {
         TychoProjectScannerPlugin plugin = new TychoProjectScannerPlugin();
-        plugin.initialize(store, Collections.<String, Object> emptyMap());
+        plugin.initialize(Collections.<String, Object> emptyMap());
         plugin.scan(project, null, null, scanner);
         // FIXME: add assertions
     }

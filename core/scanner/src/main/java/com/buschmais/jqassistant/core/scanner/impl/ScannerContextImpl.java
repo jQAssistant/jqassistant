@@ -6,13 +6,20 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Implementation of the scanner context.
  */
 public class ScannerContextImpl implements ScannerContext {
 
-    private Map<Class<?>, Deque<?>> valuesPerKey = new HashMap<>();
+    private final Store store;
+
+    private final Map<Class<?>, Deque<?>> valuesPerKey = new HashMap<>();
+
+    public ScannerContextImpl(Store store) {
+        this.store = store;
+    }
 
     @Override
     public <T> void push(Class<T> key, T value) {
@@ -45,5 +52,10 @@ public class ScannerContextImpl implements ScannerContext {
             valuesPerKey.put(key, values);
         }
         return values;
+    }
+
+    @Override
+    public Store getStore() {
+        return store;
     }
 }

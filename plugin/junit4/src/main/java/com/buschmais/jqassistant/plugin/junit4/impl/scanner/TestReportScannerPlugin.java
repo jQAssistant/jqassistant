@@ -59,7 +59,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<File> {
                     Iterator<Attribute> attributes = element.getAttributes();
                     switch (elementName) {
                     case "testsuite":
-                        testSuiteDescriptor = getStore().create(TestSuiteDescriptor.class);
+                        testSuiteDescriptor = scanner.getContext().getStore().create(TestSuiteDescriptor.class);
                         while (attributes.hasNext()) {
                             Attribute attribute = attributes.next();
                             String attributeName = attribute.getName().getLocalPart();
@@ -87,7 +87,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<File> {
                         }
                         break;
                     case "testcase":
-                        testCaseDescriptor = getStore().create(TestCaseDescriptor.class);
+                        testCaseDescriptor = scanner.getContext().getStore().create(TestCaseDescriptor.class);
                         testCaseDescriptor.setResult(TestCaseDescriptor.Result.SUCCESS);
                         testSuiteDescriptor.getTestCases().add(testCaseDescriptor);
                         while (attributes.hasNext()) {

@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.resolver;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageMemberDescriptor;
@@ -20,7 +21,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.PackageMemberDescriptor;
 public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageDescriptor, T extends PackageMemberDescriptor> {
 
     public static final String EMPTY_NAME = "";
-    private final Store store;
     /**
      * The parent resovler.
      */
@@ -29,25 +29,18 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
     /**
      * Constructor.
      * 
-     * @param store
-     *            The store.
      * @param parentResolver
      *            The parent resolver instance.
      */
-    protected AbstractPackageMemberDescriptorResolver(Store store, AbstractPackageMemberDescriptorResolver<?, P> parentResolver) {
-        this.store = store;
+    protected AbstractPackageMemberDescriptorResolver(AbstractPackageMemberDescriptorResolver<?, P> parentResolver) {
         this.parentResolver = parentResolver;
     }
 
     /**
      * Constructor.
-     * 
-     * @param store
-     *            The store.
      */
     @SuppressWarnings("unchecked")
-    protected AbstractPackageMemberDescriptorResolver(Store store) {
-        this.store = store;
+    protected AbstractPackageMemberDescriptorResolver() {
         this.parentResolver = (AbstractPackageMemberDescriptorResolver<?, P>) this;
     }
 
@@ -56,10 +49,12 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
      * 
      * @param fullQualifiedName
      *            The full qualified name.
+     * @param scannerContext
+     *            the scanner context.
      * @return The descriptor.
      */
-    public T resolve(String fullQualifiedName) {
-        return resolve(fullQualifiedName, getBaseType());
+    public T resolve(String fullQualifiedName, ScannerContext scannerContext) {
+        return resolve(fullQualifiedName, getBaseType(), scannerContext);
     }
 
     /**
@@ -69,9 +64,12 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
      *            The full qualified name.
      * @param concreteType
      *            The concrete type to use if an instance is created.
+     * @param scannerContext
+     *            the scanner context.
      * @return The descriptor.
      */
-    public <R extends T> R resolve(String fullQualifiedName, Class<R> concreteType) {
+    public <R extends T> R resolve(String fullQualifiedName, Class<R> concreteType, ScannerContext scannerContext) {
+        Store store = scannerContext.getStore();
         T descriptor = store.find(getBaseType(), fullQualifiedName);
         if (descriptor != null) {
             if (getBaseType().equals(concreteType)) {
@@ -92,7 +90,7 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
                     name = fullQualifiedName;
                     parentName = EMPTY_NAME;
                 }
-                parent = parentResolver.resolve(parentName);
+                parent = parentResolver.resolve(parentName, scannerContext);
             } else {
                 name = EMPTY_NAME;
             }

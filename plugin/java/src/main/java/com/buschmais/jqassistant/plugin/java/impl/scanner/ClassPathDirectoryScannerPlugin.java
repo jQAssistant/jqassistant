@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner;
 import java.io.File;
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
@@ -28,10 +29,10 @@ public class ClassPathDirectoryScannerPlugin extends AbstractDirectoryScannerPlu
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(ClassPathDirectory classPathDirectory) {
+    protected FileContainerDescriptor getContainerDescriptor(ClassPathDirectory classPathDirectory, ScannerContext scannerContext) {
         ArtifactDirectoryDescriptor directoryDescriptor = classPathDirectory.getDirectoryDescriptor();
         if (directoryDescriptor == null) {
-            directoryDescriptor = getStore().create(ArtifactDirectoryDescriptor.class);
+            directoryDescriptor = scannerContext.getStore().create(ArtifactDirectoryDescriptor.class);
         }
         return directoryDescriptor;
     }

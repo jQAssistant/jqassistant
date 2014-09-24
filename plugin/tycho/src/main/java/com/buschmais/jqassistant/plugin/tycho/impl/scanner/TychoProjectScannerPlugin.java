@@ -39,10 +39,10 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     @Override
     public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
-        Store store = getStore();
+        Store store = scanner.getContext().getStore();
         store.beginTransaction();
         try {
-            final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class);
+            final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class, scanner.getContext());
             for (File file : getPdeFiles(project)) {
                 String filePath = getDirectoryPath(project.getBasedir(), file);
                 FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);

@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 
 /**
@@ -18,7 +19,7 @@ import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
  */
 public class ScannerImpl implements Scanner {
 
-    private final ScannerContext scannerContext = new ScannerContextImpl();
+    private final ScannerContext scannerContext;
 
     private final List<ScannerPlugin<?>> scannerPlugins;
 
@@ -32,18 +33,21 @@ public class ScannerImpl implements Scanner {
      * @param scannerPlugins
      *            The configured plugins.
      */
-    public ScannerImpl(List<ScannerPlugin<?>> scannerPlugins) {
-        this(scannerPlugins, null);
+    public ScannerImpl(Store store, List<ScannerPlugin<?>> scannerPlugins) {
+        this(store, scannerPlugins, null);
     }
 
     /**
      * Constructor.
-     *
+     * 
+     * @param store
+     *            The store.
      * @param scannerPlugins
      *            The configured plugins.
      * @param scannerListener
      */
-    public ScannerImpl(List<ScannerPlugin<?>> scannerPlugins, ScannerListener scannerListener) {
+    public ScannerImpl(Store store, List<ScannerPlugin<?>> scannerPlugins, ScannerListener scannerListener) {
+        this.scannerContext = new ScannerContextImpl(store);
         this.scannerPlugins = scannerPlugins;
         this.scannerListener = scannerListener;
     }

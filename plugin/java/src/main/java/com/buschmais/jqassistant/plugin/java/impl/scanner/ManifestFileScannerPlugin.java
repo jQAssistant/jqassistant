@@ -45,7 +45,7 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<File> {
     public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
             Manifest manifest = new Manifest(stream);
-            Store store = getStore();
+            Store store = scanner.getContext().getStore();
             ManifestFileDescriptor manifestFileDescriptor = store.create(ManifestFileDescriptor.class);
             ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
             mainSectionDescriptor.setName(SECTION_MAIN);

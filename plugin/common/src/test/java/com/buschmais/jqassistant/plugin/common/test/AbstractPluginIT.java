@@ -168,7 +168,7 @@ public class AbstractPluginIT {
     public void startStore() throws PluginRepositoryException {
         store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
-        scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, Collections.<String, Object> emptyMap());
+        scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, Collections.<String, Object> emptyMap());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         boolean resetStore = true;
@@ -213,7 +213,7 @@ public class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner(ScannerListener listener) {
-        return new ScannerImpl(getScannerPlugins(), listener);
+        return new ScannerImpl(store, getScannerPlugins(), listener);
     }
 
     /**

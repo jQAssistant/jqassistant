@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.scanner.api;
 import java.io.IOException;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 
 /**
@@ -17,12 +16,10 @@ public interface ScannerPlugin<I> {
     /**
      * Initialize the plugin.
      * 
-     * @param store
-     *            The {@link Store} instance to use.
      * @param properties
      *            The plugin properties.
      */
-    void initialize(Store store, Map<String, Object> properties);
+    void initialize(Map<String, Object> properties);
 
     /**
      * Return the item type accepted by the plugin.

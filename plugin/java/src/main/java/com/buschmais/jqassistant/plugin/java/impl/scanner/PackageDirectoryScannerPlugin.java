@@ -21,7 +21,7 @@ public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<Directo
 
     @Override
     protected void initialize() {
-        packageDescriptorResolver = new PackageDescriptorResolver(getStore());
+        packageDescriptorResolver = new PackageDescriptorResolver();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<Directo
     @Override
     public FileDescriptor scan(Directory item, String path, Scope scope, Scanner scanner) throws IOException {
         String packageName = path.substring(1).replaceAll("/", ".");
-        PackageDirectoryDescriptor packageDescriptor = packageDescriptorResolver.resolve(packageName, PackageDirectoryDescriptor.class);
+        PackageDirectoryDescriptor packageDescriptor = packageDescriptorResolver.resolve(packageName, PackageDirectoryDescriptor.class, scanner.getContext());
         return packageDescriptor;
     }
 

@@ -16,7 +16,6 @@ import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
 
 @Component(role = PluginConfigurationProvider.class, instantiationStrategy = "singleton")
 public class PluginConfigurationProvider {
@@ -41,17 +40,15 @@ public class PluginConfigurationProvider {
     /**
      * Return the scanner plugin repository.
      *
-     * @param store
-     *            The store.
      * @param properties
      *            The properties.
      * @return The scanner plugin repository.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the repository cannot be created.
      */
-    public ScannerPluginRepository getScannerPluginRepository(Store store, Map<String, Object> properties) throws MojoExecutionException {
+    public ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
         try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, store, properties);
+            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }

@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.junit4.impl.scanner;
 import java.io.File;
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.DirectoryDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
@@ -17,8 +18,8 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(TestReportDirectory container) {
-        return getStore().create(DirectoryDescriptor.class);
+    protected FileContainerDescriptor getContainerDescriptor(TestReportDirectory container, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(DirectoryDescriptor.class);
     }
 
     @Override

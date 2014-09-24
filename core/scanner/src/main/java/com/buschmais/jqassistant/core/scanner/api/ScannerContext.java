@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
+import com.buschmais.jqassistant.core.store.api.Store;
+
 /**
  * Defines the context for the scanning process.
  *
@@ -7,6 +9,8 @@ package com.buschmais.jqassistant.core.scanner.api;
  * plugins.
  */
 public interface ScannerContext {
+
+    Store getStore();
 
     <T> void push(Class<T> key, T value);
 

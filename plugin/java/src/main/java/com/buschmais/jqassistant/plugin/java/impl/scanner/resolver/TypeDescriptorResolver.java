@@ -1,13 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.resolver;
 
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 public class TypeDescriptorResolver extends AbstractPackageMemberDescriptorResolver<PackageDescriptor, TypeDescriptor> {
 
-    public TypeDescriptorResolver(Store store, PackageDescriptorResolver parentResolver) {
-        super(store, parentResolver);
+    public TypeDescriptorResolver(PackageDescriptorResolver parentResolver) {
+        super(parentResolver);
     }
 
     @Override
