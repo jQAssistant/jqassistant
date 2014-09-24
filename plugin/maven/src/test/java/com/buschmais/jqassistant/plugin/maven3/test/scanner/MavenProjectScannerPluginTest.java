@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
@@ -29,13 +30,13 @@ import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectMavenScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectScannerPlugin;
 
 public class MavenProjectScannerPluginTest {
 
     @Test
     public void projectScannerPlugin() throws IOException {
-        MavenProjectMavenScannerPlugin scannerPlugin = new MavenProjectMavenScannerPlugin();
+        MavenProjectScannerPlugin scannerPlugin = new MavenProjectScannerPlugin();
 
         // Mock parent project
         MavenProject parentProject = mock(MavenProject.class);
@@ -80,16 +81,16 @@ public class MavenProjectScannerPluginTest {
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
         when(store.create(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(parentProjectDescriptor);
 
-        scannerPlugin.initialize(store, properties);
+        scannerPlugin.initialize(properties);
         Scanner scanner = mock(Scanner.class);
         List mainFiles = new ArrayList<>();
         mainFiles.add(mock(FileDescriptor.class));
         List testFiles = new ArrayList<>();
         testFiles.add(mock(FileDescriptor.class));
 
-        // when(scanner.scan(Mockito.any(ClassesDirectory.class),
-        // Mockito.any(String.class),
-        // Mockito.eq(CLASSPATH))).thenReturn(mainFiles, testFiles);
+        ScannerContext scannerContext = mock(ScannerContext.class);
+        when(scannerContext.getStore()).thenReturn(store);
+        when(scanner.getContext()).thenReturn(scannerContext);
 
         scannerPlugin.scan(project, null, null, scanner);
 

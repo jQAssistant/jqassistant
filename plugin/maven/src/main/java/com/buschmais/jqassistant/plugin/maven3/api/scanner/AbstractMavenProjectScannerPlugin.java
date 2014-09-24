@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.plugin.maven3.api.scanner;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
@@ -26,40 +28,42 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
     protected void initialize() {
     }
 
-    protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType) {
+    protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
+        Store store = scannerContext.getStore();
         Artifact artifact = project.getArtifact();
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), null, null, artifact.getVersion());
-        MavenProjectDescriptor projectDescriptor = getStore().find(MavenProjectDescriptor.class, id);
+        MavenProjectDescriptor projectDescriptor = store.find(MavenProjectDescriptor.class, id);
         if (projectDescriptor == null) {
-            projectDescriptor = getStore().create(expectedType, id);
+            projectDescriptor = store.create(expectedType, id);
             projectDescriptor.setName(project.getName());
             projectDescriptor.setGroupId(artifact.getGroupId());
             projectDescriptor.setArtifactId(artifact.getArtifactId());
             projectDescriptor.setVersion(artifact.getVersion());
         } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
-            projectDescriptor = getStore().migrate(projectDescriptor, expectedType);
+            projectDescriptor = store.migrate(projectDescriptor, expectedType);
         }
         return expectedType.cast(projectDescriptor);
     }
 
-    protected ArtifactDescriptor resolveArtifact(Artifact artifact) {
+    protected ArtifactDescriptor resolveArtifact(Artifact artifact, ScannerContext scannerContext) {
         boolean testJar = ARTIFACTTYPE_TEST_JAR.equals(artifact.getType());
-        return resolveArtifact(artifact, testJar, ArtifactDescriptor.class);
+        return resolveArtifact(artifact, testJar, ArtifactDescriptor.class, scannerContext);
     }
 
-    protected <T extends ArtifactDescriptor> T resolveArtifact(Artifact artifact, boolean testJar, Class<T> expectedType) {
+    protected <T extends ArtifactDescriptor> T resolveArtifact(Artifact artifact, boolean testJar, Class<T> expectedType, ScannerContext scannerContext) {
+        Store store = scannerContext.getStore();
         String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
         String id = createId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
-        ArtifactDescriptor artifactDescriptor = getStore().find(ArtifactDescriptor.class, id);
+        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
         if (artifactDescriptor == null) {
-            artifactDescriptor = getStore().create(expectedType, id);
-           artifactDescriptor.setGroup(artifact.getGroupId());
+            artifactDescriptor = store.create(expectedType, id);
+            artifactDescriptor.setGroup(artifact.getGroupId());
             artifactDescriptor.setName(artifact.getArtifactId());
             artifactDescriptor.setVersion(artifact.getVersion());
             artifactDescriptor.setClassifier(artifact.getClassifier());
             artifactDescriptor.setType(type);
         } else if (!expectedType.isAssignableFrom(artifactDescriptor.getClass())) {
-            artifactDescriptor = getStore().migrate(artifactDescriptor, expectedType);
+            artifactDescriptor = store.migrate(artifactDescriptor, expectedType);
         }
         return expectedType.cast(artifactDescriptor);
     }
