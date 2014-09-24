@@ -24,13 +24,10 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<File> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
-    private ClassVisitor visitor;
+    private DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory();
 
     @Override
     protected void initialize() {
-        DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory(getStore());
-        VisitorHelper visitorHelper = new VisitorHelper(getStore(), resolverFactory);
-        visitor = new ClassVisitor(visitorHelper);
     }
 
     @Override
@@ -53,6 +50,8 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<File> {
 
     @Override
     public FileDescriptor scan(File file, String path, Scope scope, Scanner scanner) throws IOException {
+        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext(), resolverFactory);
+        ClassVisitor visitor = new ClassVisitor(visitorHelper);
         try (InputStream stream = file.createStream()) {
             new ClassReader(stream).accept(visitor, 0);
             return visitor.getTypeDescriptor();

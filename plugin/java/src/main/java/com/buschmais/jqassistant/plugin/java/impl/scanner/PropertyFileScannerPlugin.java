@@ -38,7 +38,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<File> {
 
     @Override
     public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
-        Store store = getStore();
+        Store store = scanner.getContext().getStore();
         PropertyFileDescriptor propertyFileDescriptor = store.create(PropertyFileDescriptor.class);
         Properties properties = new Properties();
         try (InputStream stream = item.createStream()) {

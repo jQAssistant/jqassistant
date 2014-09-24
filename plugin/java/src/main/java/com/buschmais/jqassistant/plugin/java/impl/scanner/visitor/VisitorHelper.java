@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
@@ -25,7 +25,7 @@ public class VisitorHelper {
     private static final String CONSTRUCTOR_METHOD = "void <init>";
 
     private DescriptorResolverFactory resolverFactory;
-    private Store store;
+    private ScannerContext scannerContext;
 
     private Cache<String, TypeDescriptor> typeCache;
     private Cache<String, MethodDescriptor> methodCache;
@@ -34,16 +34,16 @@ public class VisitorHelper {
     /**
      * Constructor.
      * 
-     * @param store
-     *            The store.
+     * @param scannerContext
+     *            The scanner context
      * @param resolverFactory
      *            The resolver factory used for looking up descriptors.
      */
-    public VisitorHelper(Store store, DescriptorResolverFactory resolverFactory) {
+    public VisitorHelper(ScannerContext scannerContext, DescriptorResolverFactory resolverFactory) {
         this.typeCache = CacheBuilder.newBuilder().softValues().build();
         this.methodCache = CacheBuilder.newBuilder().softValues().build();
         this.fieldCache = CacheBuilder.newBuilder().softValues().build();
-        this.store = store;
+        this.scannerContext = scannerContext;
         this.resolverFactory = resolverFactory;
     }
 
@@ -72,7 +72,7 @@ public class VisitorHelper {
             typeDescriptor = null;
         }
         if (typeDescriptor == null) {
-            typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type);
+            typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type, scannerContext);
             typeCache.put(fullQualifiedName, typeDescriptor);
         }
         return type.cast(typeDescriptor);
@@ -93,7 +93,7 @@ public class VisitorHelper {
         if (methodDescriptor == null) {
             methodDescriptor = type.getOrCreateMethod(signature);
             if (signature.startsWith(CONSTRUCTOR_METHOD) && !ConstructorDescriptor.class.isAssignableFrom(methodDescriptor.getClass())) {
-                methodDescriptor = store.migrate(methodDescriptor, ConstructorDescriptor.class);
+                methodDescriptor = scannerContext.getStore().migrate(methodDescriptor, ConstructorDescriptor.class);
             }
             methodCache.put(memberKey, methodDescriptor);
         }
@@ -142,7 +142,7 @@ public class VisitorHelper {
      * @return The value descriptor.
      */
     <T extends ValueDescriptor<?>> T getValueDescriptor(Class<T> valueDescriptorType) {
-        return store.create(valueDescriptorType);
+        return scannerContext.getStore().create(valueDescriptorType);
     }
 
     /**
@@ -158,7 +158,7 @@ public class VisitorHelper {
     AnnotationValueDescriptor addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
             TypeDescriptor type = getTypeDescriptor(typeName);
-            AnnotationValueDescriptor annotationDescriptor = store.create(AnnotationValueDescriptor.class);
+            AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
             annotationDescriptor.setType(type);
             annotatedDescriptor.addAnnotatedBy(annotationDescriptor);
             return annotationDescriptor;
@@ -177,7 +177,7 @@ public class VisitorHelper {
      * @return The parameter descriptor.
      */
     ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
-        ParameterDescriptor parameterDescriptor = store.create(ParameterDescriptor.class);
+        ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
         parameterDescriptor.setIndex(index);
         methodDescriptor.addParameter(parameterDescriptor);
         return parameterDescriptor;

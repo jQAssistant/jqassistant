@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
@@ -47,24 +48,24 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<File> 
             throw new IOException("Cannot match path name: " + path);
         }
         String serviceInterface = matcher.group(2);
-        ServiceLoaderDescriptor serviceLoaderDescriptor = getStore().create(ServiceLoaderDescriptor.class);
-        TypeDescriptor interfaceTypeDescriptor = getTypeDescriptor(serviceInterface);
+        ServiceLoaderDescriptor serviceLoaderDescriptor = scanner.getContext().getStore().create(ServiceLoaderDescriptor.class);
+        TypeDescriptor interfaceTypeDescriptor = getTypeDescriptor(serviceInterface, scanner.getContext());
         serviceLoaderDescriptor.setType(interfaceTypeDescriptor);
         try (InputStream stream = item.createStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String serviceImplementation;
             while ((serviceImplementation = reader.readLine()) != null) {
-                TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation);
+                TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation, scanner.getContext());
                 serviceLoaderDescriptor.getContains().add(implementationTypeDescriptor);
             }
         }
         return serviceLoaderDescriptor;
     }
 
-    private TypeDescriptor getTypeDescriptor(String fqn) {
-        TypeDescriptor typeDescriptor = getStore().find(TypeDescriptor.class, fqn);
+    private TypeDescriptor getTypeDescriptor(String fqn, ScannerContext scannerContext) {
+        TypeDescriptor typeDescriptor = scannerContext.getStore().find(TypeDescriptor.class, fqn);
         if (typeDescriptor == null) {
-            typeDescriptor = getStore().create(TypeDescriptor.class, fqn);
+            typeDescriptor = scannerContext.getStore().create(TypeDescriptor.class, fqn);
         }
         return typeDescriptor;
     }
