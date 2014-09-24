@@ -11,7 +11,6 @@ import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.plugin.schema.v1.ScannerType;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Scanner plugin repository implementation.
@@ -23,10 +22,9 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
     /**
      * Constructor.
      */
-    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader, Store store, Map<String, Object> properties)
-            throws PluginRepositoryException {
+    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) throws PluginRepositoryException {
         List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
-        this.scannerPlugins = getScannerPlugins(plugins, store, properties);
+        this.scannerPlugins = getScannerPlugins(plugins, properties);
     }
 
     @Override
@@ -34,7 +32,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
         return scannerPlugins;
     }
 
-    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Store store, Map<String, Object> properties)
+    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Map<String, Object> properties)
             throws PluginRepositoryException {
         List<T> scannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
@@ -45,7 +43,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
                     if (scannerPlugin != null) {
                         // properties is mutable, so every plugin should get its
                         // own copy
-                        scannerPlugin.initialize(store, new HashMap<>(properties));
+                        scannerPlugin.initialize(new HashMap<>(properties));
                         scannerPlugins.add(scannerPlugin);
                     }
                 }
