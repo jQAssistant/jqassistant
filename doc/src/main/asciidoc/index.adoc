@@ -1,7 +1,9 @@
-= jQAssistant
-jQAssistant Developer Team <info@jqassistant.org>
+= Manual
+jQAssistant Team <info@jqassistant.org>
 
-Your Software. Your Structures. Your Rules.
+image::jQA_logo.png[]
+
+The powerful Quality Assurance Tool for your Java application.
 
 This document describes the concepts of jQAssistant and usage information.
 

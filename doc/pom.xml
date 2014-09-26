@@ -49,7 +49,7 @@
                                 <toc>auto</toc>
                                 <toclevels>3</toclevels>
                                 <tabsize>4</tabsize>
-                                <stylesheet>src/main/asciidoc/jqassistant.css</stylesheet>
+                                <stylesheet>jqassistant.css</stylesheet>
                                 <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
                                 <projectVersion>${project.version}</projectVersion>
                             </attributes>
