@@ -1,4 +1,4 @@
-![jQAssistant](https://github.com/buschmais/jqassistant/wiki/images/logo_jqa-small.png "jQAssistant")
+[![jQAssistant](https://github.com/buschmais/jqassistant/wiki/images/logo_jqa-small.png "jQAssistant")](http://jqassistant.org)
 
 
 You can read the latest news, releases and articles around jQAssistant on the [official web site](http://jqassistant.org).
