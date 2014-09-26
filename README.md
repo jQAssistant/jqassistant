@@ -4,6 +4,8 @@
 
 Watch the [blog](http://jqassistant.org/blog/) for news and examples.
 
+Follow the project on [Twitter](https://twitter.com/jqassistant).
+
 Refer to the [documentation](https://buschmais.github.io/jqassistant/doc/1.0.0-M3) for detailled usage information.
 
 You may watch and raise issues (enhancements, bugs, ...) [here](https://github.com/buschmais/jqassistant/issues).
