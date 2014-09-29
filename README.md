@@ -1,13 +1,17 @@
-![jQAssistant](https://github.com/buschmais/jqassistant/wiki/images/logo_jqa-small.png "jQAssistant")
+[![jQAssistant](https://github.com/buschmais/jqassistant/blob/master/doc/src/main/asciidoc/images/jQA_logo.png "jQAssistant")](http://jqassistant.org)
+ 
 
+[http://jqassistant.org](http://jqassistant.org) provides all the information you need for getting started with jQAssistant.
 
-You can read the latest news, releases and articles around jQAssistant on the [official web site](http://jqassistant.org).
+Watch the [blog](http://jqassistant.org/blog/) for news and examples.
 
-Refer to the [documentation](https://buschmais.github.io/jqassistant/doc/1.0.0-M3) for usage information.
+Follow the project on [Twitter](https://twitter.com/jqassistant).
+
+Refer to the [documentation](https://buschmais.github.io/jqassistant/doc/1.0.0-M3) for detailled usage information.
 
 You may watch and raise issues (enhancements, bugs, ...) [here](https://github.com/buschmais/jqassistant/issues).
 
-Questions, suggestions and/or feedback are highly welcome at the [jQAssistant discussion group] (https://groups.google.com/forum/#!forum/jqassistant).
+Questions, suggestions and/or feedback are welcome at the [jQAssistant forum](https://groups.google.com/forum/#!forum/jqassistant).
 
 ## Continuous Build
 
