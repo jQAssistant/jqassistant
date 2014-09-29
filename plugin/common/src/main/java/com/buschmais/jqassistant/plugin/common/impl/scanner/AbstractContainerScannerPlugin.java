@@ -27,29 +27,36 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
 
     @Override
     public final FileDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
-        FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, scanner.getContext());
-        containerDescriptor.setFileName(path);
-        for (E e : getEntries(container)) {
-            Entry entry = getEntry(container, e);
-            String relativePath = getRelativePath(container, e);
-            Scope entryScope = createScope(scope);
-            LOGGER.info("Scanning '{}'.", relativePath);
-            FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
-            if (descriptor == null) {
-                descriptor = scanner.getContext().getStore().create(FileDescriptor.class);
+        ScannerContext context = scanner.getContext();
+        FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
+        context.push(FileContainerDescriptor.class, containerDescriptor);
+        try {
+            for (E e : getEntries(container)) {
+                Entry entry = getEntry(container, e);
+                String relativePath = getRelativePath(container, e);
+                Scope entryScope = createScope(scope);
+                LOGGER.info("Scanning '{}'.", relativePath);
+                FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
+                if (descriptor == null) {
+                    descriptor = context.getStore().create(FileDescriptor.class);
+                }
+                descriptor.setFileName(relativePath);
+                if (containerDescriptor != null) {
+                    containerDescriptor.getContains().add(descriptor);
+                }
             }
-            descriptor.setFileName(relativePath);
-            containerDescriptor.getContains().add(descriptor);
+        } finally {
+            context.pop(FileContainerDescriptor.class);
         }
         return containerDescriptor;
     }
 
     /**
-     * Return the descriptor representing the container.
+     * Return the descriptor representing the artifact.
      * 
      * @param container
      *            The container.
-     * @return The descriptor.
+     * @return The artifact descriptor.
      */
     protected abstract FileContainerDescriptor getContainerDescriptor(I container, ScannerContext scannerContext);
 

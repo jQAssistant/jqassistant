@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.store.api.type;
 
+import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
+
 import java.util.List;
 
 import com.buschmais.xo.api.annotation.ResultOf;
@@ -18,6 +20,6 @@ public interface FileContainerDescriptor extends FileDescriptor {
 
     @ResultOf
     @Cypher("match (c),(f) where id(c)={this} and id(f)={file} create unique (c)-[:CONTAINS]->(f)")
-    void addContains(@ResultOf.Parameter("file") Descriptor file);
+    void addContains(@Parameter("file") Descriptor file);
 
 }
