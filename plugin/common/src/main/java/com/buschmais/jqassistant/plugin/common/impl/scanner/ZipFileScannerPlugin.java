@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Directory;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
 
-public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry> {
+public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry> {
 
     @Override
     protected void initialize() {
@@ -33,7 +33,7 @@ public class ZipArchiveScannerPlugin extends AbstractContainerScannerPlugin<ZipF
 
     @Override
     protected FileContainerDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
-        return scannerContext.getStore().create(ArchiveDescriptor.class);
+        return scannerContext.peek(ArchiveDescriptor.class);
     }
 
     @Override
