@@ -104,9 +104,10 @@
 				<tr>
 					<th style="width:30px;">#</th>
 					<th>Constraint Name</th>
-					<th style="width:150px;">Duration (in ms)</th>
-					<th style="width:150px;">Severity</th>
-				</tr>
+                    <th>Count</th>
+                    <th style="width:150px;">Severity</th>
+                    <th style="width:150px;">Duration (in ms)</th>
+                </tr>
 				<xsl:apply-templates select="//constraint">
 					<xsl:sort select="count(result)" order="descending"
 						data-type="number" />
@@ -126,7 +127,8 @@
 				<tr>
 					<th>#</th>
 					<th>Concept Name</th>
-					<th style="width:150px;">Duration (in ms)</th>
+                    <th>Count</th>
+                    <th style="width:150px;">Duration (in ms)</th>
 				</tr>
 				<xsl:apply-templates select="//concept">
 					<xsl:sort select="count(result)" order="descending"
@@ -180,15 +182,18 @@
 					<xsl:value-of select="@id" />
 				</span>
 			</td>
-			<td class="right">
-				<xsl:value-of select="duration/text()" />
-			</td>
-			<xsl:if test="name()='constraint'">
+            <td class="right">
+                <xsl:value-of select="count(result/rows/row)"/>
+            </td>
+            <xsl:if test="name()='constraint'">
 				<td class="right">
 					<xsl:value-of select="severity/text()" />
 				</td>
 			</xsl:if>
-		</tr>
+            <td class="right">
+                <xsl:value-of select="duration/text()"/>
+            </td>
+        </tr>
 		<xsl:if test="result">
 			<tr id="{$resultId}" style="display:table-row;" name="resultRow">
 				<xsl:if test="name()='constraint'">

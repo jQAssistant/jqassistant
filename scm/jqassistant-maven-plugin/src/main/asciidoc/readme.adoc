@@ -15,9 +15,9 @@ parent relation until either a module is found where a directory "jqassistant/" 
 defines the location of
 
 - the set of rules to apply (from the directory "jqassistant/")
-- the database, default "${project.build.directory}/jqassistant/store"
-- the generated native report, default: "${project.build.directory}/jqassistant/jqassistant-report.xml") 
-- and the generated HTML report, default "${project.build.directory}/site/jqassistant.html")
+- the database, default "{project.build.directory}/jqassistant/store"
+- the generated native report, default: "{project.build.directory}/jqassistant/jqassistant-report.xml")
+- and the generated HTML report, default "{project.build.directory}/site/jqassistant.html")
 
 The following examples demonstrate different scenarios, the root modules as detected by jQAssistant are marked using asterisks.
 
