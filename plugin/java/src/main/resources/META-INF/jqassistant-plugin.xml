@@ -27,6 +27,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ClassPathDirectoryScannerPlugin</class>
