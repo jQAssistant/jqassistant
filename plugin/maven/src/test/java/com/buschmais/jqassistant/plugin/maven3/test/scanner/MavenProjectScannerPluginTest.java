@@ -5,7 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,9 +49,6 @@ public class MavenProjectScannerPluginTest {
         Artifact artifact = new DefaultArtifact("group", "artifact", VersionRange.createFromVersion("1.0.0"), null, "jar", "main", null);
         when(project.getArtifact()).thenReturn(artifact);
         when(project.getPackaging()).thenReturn("jar");
-        File basedir = mock(File.class);
-        when(basedir.getAbsolutePath()).thenReturn("basedir");
-        when(project.getBasedir()).thenReturn(basedir);
         when(project.getParent()).thenReturn(parentProject);
 
         Build build = new Build();
@@ -102,7 +98,6 @@ public class MavenProjectScannerPluginTest {
         verify(projectDescriptor).setArtifactId("artifact");
         verify(projectDescriptor).setVersion("1.0.0");
         verify(projectDescriptor).setPackaging("jar");
-        verify(projectDescriptor).setFileName("basedir");
         verify(store).create(ArtifactDirectoryDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(store).create(ArtifactDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0");
         verify(store).create(testArtifact, DependsOnDescriptor.class, mainArtifact);
