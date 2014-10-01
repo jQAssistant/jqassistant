@@ -36,7 +36,6 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
                 return new BufferedInputStream(item.getResourceAsStream(resource));
             }
         }, resource, scope);
-        fileDescriptor.setFileName(resource);
         return fileDescriptor;
     }
 }
