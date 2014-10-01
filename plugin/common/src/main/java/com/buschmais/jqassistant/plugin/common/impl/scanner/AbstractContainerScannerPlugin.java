@@ -37,10 +37,6 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
                 Scope entryScope = createScope(scope);
                 LOGGER.info("Scanning '{}'.", relativePath);
                 FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
-                if (descriptor == null) {
-                    descriptor = context.getStore().create(FileDescriptor.class);
-                }
-                descriptor.setFileName(relativePath);
                 if (containerDescriptor != null) {
                     containerDescriptor.getContains().add(descriptor);
                 }
