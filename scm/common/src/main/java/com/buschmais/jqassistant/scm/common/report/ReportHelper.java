@@ -1,23 +1,19 @@
-package com.buschmais.jqassistant.core.report.api;
+package com.buschmais.jqassistant.scm.common.report;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.report.api.LanguageElement;
+import com.buschmais.jqassistant.core.report.api.LanguageHelper;
+import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
-import com.buschmais.xo.spi.reflection.AnnotatedType;
 
 /**
  * Provides utility functionality for creating reports.
@@ -34,30 +30,6 @@ public final class ReportHelper {
      */
     public ReportHelper(Console console) {
         this.console = console;
-    }
-
-    /**
-     * Return the
-     * {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
-     * associated with a
-     * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor}.
-     * 
-     * @param descriptor
-     *            The descriptor.
-     * @return The resolved
-     *         {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
-     * 
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
-     */
-    public static LanguageElement getLanguageElement(Descriptor descriptor) throws AnalysisListenerException {
-        for (Class<?> descriptorType : descriptor.getClass().getInterfaces()) {
-            AnnotatedType annotatedType = new AnnotatedType(descriptorType);
-            Annotation languageAnnotation = annotatedType.getByMetaAnnotation(Language.class);
-            if (languageAnnotation != null) {
-                return getAnnotationValue(languageAnnotation, "value", LanguageElement.class);
-            }
-        }
-        return null;
     }
 
     public static final String LOG_LINE_PREFIX = "  \"";
@@ -189,7 +161,7 @@ public final class ReportHelper {
         if (value != null) {
             if (value instanceof Descriptor) {
                 Descriptor descriptor = (Descriptor) value;
-                LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
+                LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
                 if (elementValue != null) {
                     SourceProvider sourceProvider = elementValue.getSourceProvider();
                     return sourceProvider.getName(descriptor);
@@ -219,37 +191,4 @@ public final class ReportHelper {
         }
         return null;
     }
-
-    /**
-     * Return a value from an annotation.
-     * 
-     * @param annotation
-     *            The annotation.
-     * @param value
-     *            The value.
-     * @param expectedType
-     *            The expected type.
-     * @param <T>
-     *            The expected type.
-     * @return The value.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
-     *             If the value cannot be determined from the annotation.
-     */
-    private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws AnalysisListenerException {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        Method valueMethod;
-        try {
-            valueMethod = annotationType.getDeclaredMethod(value);
-        } catch (NoSuchMethodException e) {
-            throw new AnalysisListenerException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
-        }
-        Object elementValue;
-        try {
-            elementValue = valueMethod.invoke(annotation);
-        } catch (ReflectiveOperationException e) {
-            throw new AnalysisListenerException("Cannot invoke method value() for " + annotationType);
-        }
-        return elementValue != null ? expectedType.cast(elementValue) : null;
-    }
-
 }
