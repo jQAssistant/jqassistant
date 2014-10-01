@@ -22,7 +22,6 @@ import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
@@ -39,21 +38,15 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     @Override
     public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
-        Store store = scanner.getContext().getStore();
-        store.beginTransaction();
-        try {
-            final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class, scanner.getContext());
-            for (File file : getPdeFiles(project)) {
-                String filePath = getDirectoryPath(project.getBasedir(), file);
-                FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
-                if (fileDescriptor != null) {
-                    artifact.addContains(fileDescriptor);
-                }
+        final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class, scanner.getContext());
+        for (File file : getPdeFiles(project)) {
+            String filePath = getDirectoryPath(project.getBasedir(), file);
+            FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
+            if (fileDescriptor != null) {
+                artifact.addContains(fileDescriptor);
             }
-            return artifact;
-        } finally {
-            store.commitTransaction();
         }
+        return artifact;
     }
 
     private List<File> getPdeFiles(MavenProject project) throws IOException {

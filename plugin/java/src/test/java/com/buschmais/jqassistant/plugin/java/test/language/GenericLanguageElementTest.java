@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
 
-public class JavaLanguageElementTest {
+public class GenericLanguageElementTest {
 
     // ReadField WriteField Constructor
 

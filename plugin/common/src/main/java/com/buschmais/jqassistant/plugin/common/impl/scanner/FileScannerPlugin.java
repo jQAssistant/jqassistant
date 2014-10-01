@@ -46,9 +46,6 @@ public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
             }
 
         }, path, scope);
-        if (fileDescriptor != null) {
-            fileDescriptor.setFileName(path);
-        }
         return fileDescriptor;
     }
 }

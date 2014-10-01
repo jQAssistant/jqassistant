@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -200,17 +198,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         } catch (RuleSetResolverException e) {
             throw new MojoExecutionException("Cannot resolve rules.", e);
         }
-    }
-
-    /**
-     * Return the plugin properties.
-     *
-     * @return The plugin properties.
-     */
-    protected Map<String, Object> getPluginProperties(MavenProject project) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(MavenProject.class.getName(), project);
-        return properties;
     }
 
     /**

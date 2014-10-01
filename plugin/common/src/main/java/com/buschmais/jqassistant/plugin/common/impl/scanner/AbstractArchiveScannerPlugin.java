@@ -29,14 +29,15 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
     @Override
     public FileDescriptor scan(File file, String path, Scope currentScope, Scanner scanner) throws IOException {
         Scope zipScope = createScope(currentScope);
-        ArchiveDescriptor artifact = createArchive(file, path, scanner.getContext());
+        ArchiveDescriptor archive = createArchive(file, path, scanner.getContext());
         ZipFile zipFile = new ZipFile(file);
-        scanner.getContext().push(ArchiveDescriptor.class, artifact);
+        scanner.getContext().push(ArchiveDescriptor.class, archive);
         try {
-            return scanner.scan(zipFile, path, zipScope);
+            scanner.scan(zipFile, path, zipScope);
         } finally {
             scanner.getContext().pop(ArchiveDescriptor.class);
         }
+        return archive;
     }
 
     protected abstract String getExtension();
