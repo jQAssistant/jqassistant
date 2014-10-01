@@ -14,13 +14,9 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
@@ -214,7 +210,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
         String stringValue = null;
         if (value instanceof Descriptor) {
             Descriptor descriptor = (Descriptor) value;
-            LanguageElement elementValue = ReportHelper.getLanguageElement(descriptor);
+            LanguageElement elementValue = LanguageHelper.getLanguageElement(descriptor);
             if (elementValue != null) {
                 xmlStreamWriter.writeStartElement("element");
                 xmlStreamWriter.writeAttribute("language", elementValue.getLanguage());
