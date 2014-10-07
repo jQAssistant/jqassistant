@@ -1,15 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -89,11 +81,12 @@ public class VisitorHelper {
      */
     MethodDescriptor getMethodDescriptor(TypeDescriptor type, String signature) {
         String memberKey = getMemberKey(type, signature);
-        MethodDescriptor methodDescriptor = MethodDescriptor.class.cast(methodCache.getIfPresent(memberKey));
+        MethodDescriptor methodDescriptor = methodCache.getIfPresent(memberKey);
         if (methodDescriptor == null) {
-            methodDescriptor = type.getOrCreateMethod(signature);
-            if (signature.startsWith(CONSTRUCTOR_METHOD) && !ConstructorDescriptor.class.isAssignableFrom(methodDescriptor.getClass())) {
-                methodDescriptor = scannerContext.getStore().migrate(methodDescriptor, ConstructorDescriptor.class);
+            if (signature.startsWith(CONSTRUCTOR_METHOD)) {
+                methodDescriptor = type.getOrCreateConstructor(signature);
+            } else {
+                methodDescriptor = type.getOrCreateMethod(signature);
             }
             methodCache.put(memberKey, methodDescriptor);
         }
