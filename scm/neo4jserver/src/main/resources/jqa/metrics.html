@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>JQA Visualization</title>
+
+    <!-- jQuery script -->
+    <script src="lib/jquery-2.1.1.js"></script>
+
+    <!-- D3 visualisation framework -->
+    <script src="lib/d3-3.4.11.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="lib/bootstrap-3.2.0.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="css/theme.css" rel="stylesheet">
+
+    <!-- JavaScript includes -->
+    <script src="js/util.js"></script>
+    <script src="js/metrics.js"></script>
+    <script src="js/metrics_d3.js"></script>
+
+    <script>
+        $(document).ready(function (event) {
+            // call the loadMetricGroups() function if the DOM is ready.
+            loadMetricGroups();
+        });
+    </script>
+
+</head>
+
+<body>
+
+<div id="navigation"></div>
+<script>
+    $("#navigation").load("inc/navigation.html", function () {
+        // set the metrics link to be active
+        $("#metrics").addClass("active");
+    });
+</script>
+
+<div class="container">
+    <div>
+        <div class="panel panel-default jqa-container-correction">
+            <div class="alert alert-danger jqa-alert"></div>
+            <div class="panel-heading">
+                <h3 class="panel-title">Metric Selection</h3>
+            </div>
+            <div class="panel-body">
+                <div class="list-group" style="margin:0;">
+                    <div class="list-group-item">
+                        <div class="row">
+                            <div class="col-md-3 bold-text"><label for="metricGroupIdSelect">Selected metric
+                                group:</label></div>
+                            <div class="col-xs-7">
+                                <select id="metricGroupIdSelect" class="form-control"
+                                        onchange="selectMetric(this.value, null);"></select>
+                            </div>
+                            <div class="col-xs-2 metricGroup-details-button" style="display: none;">
+                                <button onclick="toggleMetricDetails(this);" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                    <span>Details</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item metricGroup-details" style="display: none">
+                        <div class="row">
+                            <div class="col-md-3 bold-text">Description:</div>
+                            <div class="col-md-9" id="metricGroupDescription"></div>
+                        </div>
+                    </div>
+                    <div class="list-group-item metric-details" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-3 bold-text">Current metric:</div>
+                            <div class="col-md-9" id="metricId"></div>
+                        </div>
+                    </div>
+                    <div class="list-group-item metric-details" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-3 bold-text">Current query:</div>
+                            <div class="col-md-9">
+                                <pre id="metricQuery"></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default" style="margin-top:5px; display: none;" id="showMetricsPanel">
+        <div class="panel-heading" style="clear:both;">
+            <h3 class="panel-title" id="metricDescription"></h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-11" id="metricBreadcrumb"></div>
+                <div class="col-md-1" id="metricUp">
+                    <a href="" class="btn btn-default btn-xs" title="Click to go one level up.">
+                        <span class="glyphicon glyphicon-arrow-up"></span>&nbsp;Up
+                    </a>
+                </div>
+            </div>
+            <div style="position: relative; left: 0; top: 0; width: 100%; height: 700px; margin-top:10px;"
+                 id="treemapContainer">
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip-d3" id="tooltip" style="display: none;">
+        <!-- <i class='glyphicon glyphicon-info-sign' style='float:right;'></i> -->
+        <div style="white-space:nowrap;"><b id="header0"></b>: <span id="value0"></span></div>
+        <div style="white-space:nowrap;"><b id="header1"></b>: <span id="value1"></span></div>
+        <div style="white-space:nowrap;" id="row2"><b id="header2"></b>: <span id="value2"></span></div>
+    </div>
+</div>
+</body>
+</html>
