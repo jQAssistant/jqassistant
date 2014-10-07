@@ -45,14 +45,14 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     Set<ReadsDescriptor> getReads();
 
     @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[r:READS]->(f) return r")
-    ReadsDescriptor addReads(@Parameter("target") FieldDescriptor target);
+    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[r:READS{lineNumber:{lineNumber}}]->(f) return r")
+    void addReads(@Parameter("target") FieldDescriptor target, @Parameter("lineNumber") int lineNumber);
 
     Set<WritesDescriptor> getWrites();
 
     @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[w:WRITES]->(f) return w")
-    WritesDescriptor addWrites(@Parameter("target") FieldDescriptor target);
+    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[w:WRITES{lineNumber:{lineNumber}}]->(f) return w")
+    void addWrites(@Parameter("target") FieldDescriptor target, @Parameter("lineNumber") int lineNumber);
 
     @Outgoing
     Set<InvokesDescriptor> getInvokes();
@@ -61,8 +61,8 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     Set<InvokesDescriptor> getInvokedBy();
 
     @ResultOf
-    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create (m1)-[i:INVOKES]->(m2) return i")
-    InvokesDescriptor addInvokes(@Parameter("target") MethodDescriptor target);
+    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create (m1)-[i:INVOKES{lineNumber:{lineNumber}}]->(m2) return i")
+    void addInvokes(@Parameter("target") MethodDescriptor target, @Parameter("lineNumber") int lineNumber);
 
     @ResultOf
     @Cypher("match (m:Method)-[:HAS]->(p:Parameter) where id(m)={this} and p.index={index} return p as parameter")
