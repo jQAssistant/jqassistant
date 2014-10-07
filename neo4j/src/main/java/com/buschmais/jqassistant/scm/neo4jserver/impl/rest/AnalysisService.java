@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
@@ -26,8 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @Path("/analysis")
-public class AnalysisService
-        extends AbstractJQARestService {
+public class AnalysisService extends AbstractJQARestService {
 
     /** The JSON object key for {@value} . */
     private static final String JSON_OBJECT_KEY_CONCEPTS = "concepts";
@@ -41,12 +41,6 @@ public class AnalysisService
     private static final String JSON_OBJECT_KEY_CONSTRAINTS = "constraints";
     /** The JSON object key for {@value} . */
     private static final String JSON_OBJECT_KEY_GROUPS = "groups";
-    /** The JSON object key for {@value} . */
-    private static final String JSON_OBJECT_KEY_MISSING_CONCEPTS = "missingConcepts";
-    /** The JSON object key for {@value} . */
-    private static final String JSON_OBJECT_KEY_MISSING_CONSTRAINTS = "missingConstraints";
-    /** The JSON object key for {@value} . */
-    private static final String JSON_OBJECT_KEY_MISSING_GROUPS = "missingGroups";
 
     public AnalysisService(@Context Store store) throws PluginRepositoryException {
         super(store);
@@ -66,26 +60,46 @@ public class AnalysisService
 
     @POST
     @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Path("/concept")
     public Response runConcept(String conceptId) {
+
         InMemoryReportWriter report;
-        Store store = getStore();
+
         try {
-            store.start(getModelPluginRepository().getDescriptorTypes());
-            report = analyze(store, Arrays.asList(conceptId), Collections.<String> emptyList(), Collections.<String> emptyList());
+            report = analyze(Arrays.asList(conceptId), Collections.<String> emptyList(), Collections.<String> emptyList());
 
-            int conceptResultSize = report.getConceptResults().size();
+            Result<Concept> conceptResult = report.getConceptResults().get(conceptId);
 
-            if (conceptResultSize == 0) { // nothing modified
+            if (conceptResult == null) {
+                // the concept was not executed, it already has been executed
                 return Response.status(Response.Status.NOT_MODIFIED).build();
             } else {
-                return Response.status(Response.Status.OK).entity((Integer.toString(conceptResultSize))).build();
+                int effectedRows = conceptResult.getRows().size();
+                return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
             }
+
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
-        } finally {
-            store.stop();
+        }
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/constraint")
+    public Response runConstraint(String constraintId) {
+
+        InMemoryReportWriter report;
+
+        try {
+            report = analyze(Collections.<String> emptyList(), Arrays.asList(constraintId), Collections.<String> emptyList());
+
+            int effectedRows = report.getConstraintViolations().get(constraintId).getRows().size();
+            return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
         }
     }
 
@@ -110,20 +124,6 @@ public class AnalysisService
             concepts.put(conceptObject);
         }
 
-        /*
-        JSONObject conceptObject = new JSONObject();
-        conceptObject.put(JSON_OBJECT_KEY_ID, "concept-id-00");
-        conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, "some meaningful description");
-        conceptObject.put(JSON_OBJECT_KEY_CYPHER, "match (a) return a;");
-        concepts.put(conceptObject);
-
-        JSONObject conceptObject1 = new JSONObject();
-        conceptObject1.put(JSON_OBJECT_KEY_ID, "concept-id-01");
-        conceptObject1.put(JSON_OBJECT_KEY_DESCRIPTION, "some meaningful description");
-        conceptObject1.put(JSON_OBJECT_KEY_CYPHER, "match (b) return c;");
-        concepts.put(conceptObject1);
-        */
-
         JSONArray constraints = new JSONArray();
         response.put(JSON_OBJECT_KEY_CONSTRAINTS, constraints);
         for (Map.Entry<String, Constraint> constraint : ruleSet.getConstraints().entrySet()) {
@@ -134,14 +134,6 @@ public class AnalysisService
             constraints.put(constraintObject);
         }
 
-        /*
-        JSONObject constraintObject = new JSONObject();
-        constraintObject.put(JSON_OBJECT_KEY_ID, "constraint-id-00");
-        constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, "some meaningful description");
-        constraintObject.put(JSON_OBJECT_KEY_CYPHER, "match a with a return a;");
-        constraints.put(constraintObject);
-        */
-
         JSONArray groups = new JSONArray();
         response.put(JSON_OBJECT_KEY_GROUPS, groups);
         for (Map.Entry<String, Group> group : ruleSet.getGroups().entrySet()) {
@@ -149,36 +141,6 @@ public class AnalysisService
             groupObject.put(JSON_OBJECT_KEY_ID, group.getValue().getId());
             groupObject.put(JSON_OBJECT_KEY_DESCRIPTION, group.getValue().getDescription());
             groups.put(groupObject);
-        }
-
-        /*
-        JSONObject groupObject = new JSONObject();
-        groupObject.put(JSON_OBJECT_KEY_ID, "group-id-00");
-        groupObject.put(JSON_OBJECT_KEY_DESCRIPTION, "some meaningful description");
-        groups.put(groupObject);
-        */
-
-        JSONArray missingConcepts = new JSONArray();
-        response.put(JSON_OBJECT_KEY_MISSING_CONCEPTS, missingConcepts);
-        for (String missingConcept : ruleSet.getMissingConcepts()) {
-            missingConcepts.put(missingConcept);
-        }
-
-        /*
-        missingConcepts.put("missing-concept-id-00");
-        missingConcepts.put("missing-concept-id-01");
-        */
-
-        JSONArray missingConstraints = new JSONArray();
-        response.put(JSON_OBJECT_KEY_MISSING_CONSTRAINTS, missingConstraints);
-        for (String missingConstraint : ruleSet.getMissingConstraints()) {
-            missingConstraints.put(missingConstraint);
-        }
-
-        JSONArray missingGroups = new JSONArray();
-        response.put(JSON_OBJECT_KEY_MISSING_GROUPS, missingConstraints);
-        for (String missingGroup : ruleSet.getMissingGroups()) {
-            missingGroups.put(missingGroup);
         }
 
         return response;

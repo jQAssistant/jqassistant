@@ -69,7 +69,7 @@ public class MetricsService extends AbstractJQARestService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public JSONArray getAllDDMetrics() {
+    public JSONArray getMetrics() {
 
         JSONArray metrics = new JSONArray();
         try {
