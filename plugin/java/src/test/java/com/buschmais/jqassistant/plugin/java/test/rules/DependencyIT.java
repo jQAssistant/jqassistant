@@ -9,17 +9,6 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -39,6 +28,18 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodie
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Tests for the dependency concepts and result.
@@ -243,7 +244,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(B.class);
         validateConstraint("dependency:PackageCycles");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:PackageCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
@@ -263,7 +264,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(B.class);
         validateConstraint("dependency:TypeCycles");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:TypeCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
@@ -283,7 +284,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses("b", B.class);
         validateConstraint("dependency:ArtifactCycles");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
