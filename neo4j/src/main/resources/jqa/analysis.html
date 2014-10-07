@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>JQA Visualization</title>
+
+    <!-- jQuery script -->
+    <script src="lib/jquery-2.1.1.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="lib/bootstrap-3.2.0.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="css/theme.css" rel="stylesheet">
+
+    <!-- JavaScript includes -->
+    <script src="js/util.js"></script>
+    <script src="js/analysis.js"></script>
+
+    <script>
+        $(document).ready(function (event) {
+            // call the loadMetricGroups() function if the DOM is ready.
+            loadRuleSets();
+        });
+    </script>
+
+</head>
+
+<body>
+
+<div id="navigation"></div>
+<script>
+    $("#navigation").load("inc/navigation.html", function () {
+        // set the analysis link to be active
+        $("#analysis").addClass("active");
+    });
+</script>
+
+<div class="container">
+    <div class="panel panel-default jqa-container-correction">
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="toggleDetails(this, 'concepts')"><span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+            <span>Concepts</span>
+            <span id="conceptsSize" class="badge">0</span>
+        </div>
+        <div id="concepts" class="panel-body" style="display: none;"></div>
+    </div>
+
+    <div class="panel panel-default jqa-container-correction">
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="toggleDetails(this, 'constraints')"><span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+            <span>Constraints</span>
+            <span id="constraintsSize" class="badge">0</span>
+        </div>
+        <div id="constraints" class="panel-body" style="display: none;"></div>
+    </div>
+
+    <div class="panel panel-default jqa-container-correction">
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="toggleDetails(this, 'groups')"><span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+            <span>Groups</span>
+            <span id="groupsSize" class="badge">0</span>
+        </div>
+        <div id="groups" class="panel-body" style="display: none;"></div>
+    </div>
+
+    <div class="panel panel-default jqa-container-correction">
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="toggleDetails(this, 'missingConcepts')"><span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+            <span>Missing concepts</span>
+            <span id="missingConceptsSize" class="badge">0</span>
+        </div>
+        <div id="missingConcepts" class="panel-body" style="display: none;"></div>
+    </div>
+
+    <div class="panel panel-default jqa-container-correction">
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="toggleDetails(this, 'missingConstraints')"><span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+            <span>Missing constraints</span>
+            <span id="missingConstraintsSize" class="badge">0</span>
+        </div>
+        <div id="missingConstraints" class="panel-body" style="display: none;"></div>
+    </div>
+
+    <div class="panel panel-default jqa-container-correction">
+        <div class="panel-heading">
+            <button type="button"
+                    class="btn btn-default"
+                    onclick="toggleDetails(this, 'missingGroups')"><span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+            <span>Missing groups</span>
+            <span id="missingGroupsSize" class="badge">0</span>
+        </div>
+        <div id="missingGroups" class="panel-body" style="display: none;"></div>
+    </div>
+</div>
+</body>
+</html>
