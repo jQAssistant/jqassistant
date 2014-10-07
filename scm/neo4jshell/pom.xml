@@ -21,7 +21,11 @@
             <artifactId>jqassistant.core.plugin</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.neo4j</groupId>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant.scm.common</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>org.neo4j</groupId>
             <artifactId>neo4j-shell</artifactId>
             <version>${org.neo4j_version}</version>
         </dependency>

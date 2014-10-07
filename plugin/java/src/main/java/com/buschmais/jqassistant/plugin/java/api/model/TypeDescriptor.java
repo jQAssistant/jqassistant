@@ -100,4 +100,8 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
     @ResultOf
     @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(m:Method {signature:{signature}}) return m as method")
     MethodDescriptor getOrCreateMethod(@Parameter("signature") String signature);
+
+    @ResultOf
+    @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(m:Method:Constructor {signature:{signature}}) return m as method")
+    MethodDescriptor getOrCreateConstructor(@Parameter("signature") String signature);
 }
