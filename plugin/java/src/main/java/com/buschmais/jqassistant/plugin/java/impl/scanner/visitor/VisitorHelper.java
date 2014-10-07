@@ -1,7 +1,14 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -107,7 +114,7 @@ public class VisitorHelper {
         FieldDescriptor fieldDescriptor = fieldCache.getIfPresent(memberKey);
         if (fieldDescriptor == null) {
             fieldDescriptor = type.getOrCreateField(signature);
-            fieldCache.put(signature, fieldDescriptor);
+            fieldCache.put(memberKey, fieldDescriptor);
         }
         return fieldDescriptor;
     }
