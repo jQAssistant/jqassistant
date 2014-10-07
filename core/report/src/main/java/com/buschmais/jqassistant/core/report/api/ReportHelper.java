@@ -2,11 +2,6 @@ package com.buschmais.jqassistant.core.report.api;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -19,16 +14,22 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Provides utility functionality for creating reports.
  */
 public final class ReportHelper {
 
+    public static final String LOG_LINE_PREFIX = "  \"";
     private Console console;
 
     /**
      * Constructor.
-     * 
+     *
      * @param console
      *            The console to use for printing messages.
      */
@@ -41,12 +42,12 @@ public final class ReportHelper {
      * {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
      * associated with a
      * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor}.
-     * 
+     *
      * @param descriptor
      *            The descriptor.
      * @return The resolved
      *         {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
-     * 
+     *
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
      */
     public static LanguageElement getLanguageElement(Descriptor descriptor) throws AnalysisListenerException {
@@ -60,13 +61,43 @@ public final class ReportHelper {
         return null;
     }
 
-    public static final String LOG_LINE_PREFIX = "  \"";
+    /**
+     * Return a value from an annotation.
+     *
+     * @param annotation
+     *            The annotation.
+     * @param value
+     *            The value.
+     * @param expectedType
+     *            The expected type.
+     * @param <T>
+     *            The expected type.
+     * @return The value.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
+     *             If the value cannot be determined from the annotation.
+     */
+    private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws AnalysisListenerException {
+        Class<? extends Annotation> annotationType = annotation.annotationType();
+        Method valueMethod;
+        try {
+            valueMethod = annotationType.getDeclaredMethod(value);
+        } catch (NoSuchMethodException e) {
+            throw new AnalysisListenerException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
+        }
+        Object elementValue;
+        try {
+            elementValue = valueMethod.invoke(annotation);
+        } catch (ReflectiveOperationException e) {
+            throw new AnalysisListenerException("Cannot invoke method value() for " + annotationType);
+        }
+        return elementValue != null ? expectedType.cast(elementValue) : null;
+    }
 
     /**
      * Logs the given
      * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet} on level
      * info.
-     * 
+     *
      * @param ruleSet
      *            The
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
@@ -112,14 +143,14 @@ public final class ReportHelper {
      * A warning is logged for each concept which did not return a result (i.e.
      * has not been applied).
      * </p>
-     * 
+     *
      * @param inMemoryReportWriter
      *            The
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
      *            .
      */
     public void verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
-        List<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults();
+        Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
         for (Result<Concept> conceptResult : conceptResults) {
             if (conceptResult.getRows().isEmpty()) {
                 console.warn("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
@@ -130,7 +161,7 @@ public final class ReportHelper {
     /**
      * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}.
-     * 
+     *
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
@@ -142,14 +173,14 @@ public final class ReportHelper {
      * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}. Returns the count of constraints having
      * severity higher than the provided severity level.
-     * 
+     *
      * @param severity
      *            severity level to use for verification
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(Severity severity, InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
-        List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations().values();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
             if (!constraintViolation.isEmpty()) {
@@ -179,7 +210,7 @@ public final class ReportHelper {
 
     /**
      * Converts a value to its string representation.
-     * 
+     *
      * @param value
      *            The value.
      * @return The string representation
@@ -218,38 +249,6 @@ public final class ReportHelper {
             return value.toString();
         }
         return null;
-    }
-
-    /**
-     * Return a value from an annotation.
-     * 
-     * @param annotation
-     *            The annotation.
-     * @param value
-     *            The value.
-     * @param expectedType
-     *            The expected type.
-     * @param <T>
-     *            The expected type.
-     * @return The value.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
-     *             If the value cannot be determined from the annotation.
-     */
-    private static <T> T getAnnotationValue(Annotation annotation, String value, Class<T> expectedType) throws AnalysisListenerException {
-        Class<? extends Annotation> annotationType = annotation.annotationType();
-        Method valueMethod;
-        try {
-            valueMethod = annotationType.getDeclaredMethod(value);
-        } catch (NoSuchMethodException e) {
-            throw new AnalysisListenerException("Cannot resolve required method '" + value + "()' for '" + annotationType + "'.");
-        }
-        Object elementValue;
-        try {
-            elementValue = valueMethod.invoke(annotation);
-        } catch (ReflectiveOperationException e) {
-            throw new AnalysisListenerException("Cannot invoke method value() for " + annotationType);
-        }
-        return elementValue != null ? expectedType.cast(elementValue) : null;
     }
 
 }
