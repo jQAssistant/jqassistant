@@ -1,9 +1,5 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
-import java.util.List;
-
-import javax.xml.transform.Source;
-
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
@@ -23,6 +19,10 @@ import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.common.console.Slf4jConsole;
+
+import java.util.List;
+
+import javax.xml.transform.Source;
 
 public abstract class AbstractJQARestService {
 
@@ -65,7 +65,7 @@ public abstract class AbstractJQARestService {
         return ruleSelector.getEffectiveRuleSet(availableRules, conceptNames, constraintNames, groupNames);
     }
 
-    public InMemoryReportWriter analyze(Store store, List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws Exception {
+    public InMemoryReportWriter analyze(List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws Exception {
         RuleSet effectiveRuleSet = getEffectiveRuleSet(conceptNames, constraintNames, groupNames);
         InMemoryReportWriter reportWriter = new InMemoryReportWriter();
         Slf4jConsole console = new Slf4jConsole();

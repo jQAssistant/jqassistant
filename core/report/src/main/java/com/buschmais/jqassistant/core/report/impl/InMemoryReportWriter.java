@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -11,6 +8,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
  * implementation collection the concept results and constraint violations
@@ -18,9 +18,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
  */
 public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerException> {
 
-    private List<Result<Concept>> conceptResults = new ArrayList<Result<Concept>>();
+    private Map<String, Result<Concept>> conceptResults = new TreeMap<>();
 
-    private List<Result<Constraint>> constraintViolations = new ArrayList<Result<Constraint>>();
+    private Map<String, Result<Constraint>> constraintViolations = new TreeMap<>();
 
     private Result<? extends Rule> currentResult;
 
@@ -63,18 +63,18 @@ public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerEx
         this.currentResult = result;
     }
 
-    public List<Result<Concept>> getConceptResults() {
+    public Map<String, Result<Concept>> getConceptResults() {
         return this.conceptResults;
     }
 
-    public List<Result<Constraint>> getConstraintViolations() {
+    public Map<String, Result<Constraint>> getConstraintViolations() {
         return this.constraintViolations;
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Rule> void addResult(List<Result<T>> results) {
+    private <T extends Rule> void addResult(Map<String, Result<T>> results) {
         if (currentResult != null) {
-            results.add((Result<T>) currentResult);
+            results.put(currentResult.getRule().getId(), (Result<T>) currentResult);
             this.currentResult = null;
         }
     }

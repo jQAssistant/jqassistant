@@ -8,6 +8,8 @@ JqaConstants.REST_BASE_URL = 'http://localhost:7474/jqa/rest';
 JqaConstants.REST_METRIC_GROUPS_URL = JqaConstants.REST_BASE_URL + '/metrics';
 JqaConstants.REST_RUN_METRIC_URL = JqaConstants.REST_METRIC_GROUPS_URL + '/run';
 JqaConstants.REST_ANALYSIS_RULES_URL = JqaConstants.REST_BASE_URL + '/analysis/rules';
+JqaConstants.REST_ANALYSIS_CONCEPT_URL = JqaConstants.REST_BASE_URL + '/analysis/concept';
+JqaConstants.REST_ANALYSIS_CONSTRAINT_URL = JqaConstants.REST_BASE_URL + '/analysis/constraint';
 
 /**
  *  A function to get the url parameter value.

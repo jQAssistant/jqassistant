@@ -5,16 +5,16 @@ import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+
+import org.junit.Test;
+
+import java.util.List;
+import java.util.Map;
 
 public class Maven3IT extends AbstractPluginIT {
 
@@ -30,7 +30,8 @@ public class Maven3IT extends AbstractPluginIT {
         store.commitTransaction();
         validateConstraint("maven3:HierarchicalParentModuleRelation");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("maven3:HierarchicalParentModuleRelation")));
