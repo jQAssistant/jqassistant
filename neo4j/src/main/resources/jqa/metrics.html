@@ -33,6 +33,11 @@
         $(document).ready(function (event) {
             // call the loadMetricGroups() function if the DOM is ready.
             loadMetricGroups();
+
+            // add a resize handler if the window size has changed
+            $(window).resize(function () {
+                jqad3.reRenderChart();
+            });
         });
     </script>
 
@@ -46,11 +51,12 @@
         // set the metrics link to be active
         $("#metrics").addClass("active");
     });
+
 </script>
 
 <div class="container">
     <div>
-        <div class="panel panel-default jqa-container-correction">
+        <div class="panel panel-default">
             <div class="alert alert-danger jqa-alert"></div>
             <div class="panel-heading">
                 <h3 class="panel-title">Metric Selection</h3>
