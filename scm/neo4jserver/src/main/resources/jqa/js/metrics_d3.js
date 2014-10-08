@@ -85,10 +85,12 @@ var jqad3 = {
             .style("height", function (d) {
                 return Math.max(0, d.dy - 1) + "px";
             })
-            .html(function (d) {
+            .style("color", function (d) {
                 var backgroundColor = colors(d.size);
-                var textColor = getContrastYIQ(backgroundColor);
-                return "<div style='color:" + textColor + ";'>" + d.name + "</div>";
+                return getContrastYIQ(backgroundColor);
+            })
+            .html(function(d){
+                return d.name;
             });
 
         // set event handler to all nodes

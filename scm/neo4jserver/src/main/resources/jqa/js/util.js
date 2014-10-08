@@ -97,3 +97,84 @@ function getContrastYIQ(backgroundColor){
     var yiq = ((r*299)+(g*587)+(b*114))/1000;
     return (yiq >= 128) ? 'black' : 'white';
 }
+
+/**
+ * Show an alert.
+ * @param message the message to show.
+ */
+function showAlert(message) {
+
+    var theAlert = $("#alert");
+    if (!theAlert) {
+        console.log("Unable to show the alert, there is no <div/> for it. The message is: " + message);
+        return;
+    }
+
+    /*
+     <div class="alert alert-danger alert-dismissible" role="alert" id="alert">
+     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+     <strong>Error!</strong><span id="alertText"></span>
+     </div>
+     */
+    theAlert.append($("<div></div>")
+        .addClass("alert alert-danger alert-dismissible")
+        .attr("role", "alert")
+        .append($("<button></button>")
+            .attr("type", "button")
+            .attr("data-dismiss", "alert")
+            .addClass("close")
+            .append($("<span></span>")
+                .attr("aria-hidden", "true")
+                .html("&times;"))
+            .append($("<span></span>")
+                .addClass("sr-only")
+                .text("Close")))
+        .append($("<strong></strong>")
+            .text("Error: "))
+        .append($("<span></span>")
+            .text(message))
+    );
+}
+
+/**
+ * Remove the alert message.
+ */
+function removeAlert() {
+
+    $("#alert").empty();
+}
+
+/**
+ * Shows the spinner to indicate some progress.
+ */
+function showSpinner() {
+
+    console.log("showSpinner()");
+
+    /*
+     <div class="panel panel-default"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> <span>Loading ...</span></div>
+    */
+    var spinnerDiv = $("<div></div>")
+        .attr("id", "spinner")
+        .addClass("panel panel-default")
+        .append($("<span></span>")
+            .addClass("glyphicon glyphicon-refresh glyphicon-refresh-animate"))
+        .append($("<span></span>")
+            .text(" Loading ..."))
+        .css("position", "fixed")
+        .css("bottom", "0")
+        .css("right", "0")
+        .css("margin", "0");
+
+    $("body").append(spinnerDiv);
+}
+
+/**
+ * Remove the spinner.
+ */
+function removeSpinner() {
+
+    console.log("removeSpinner()");
+
+    $("#spinner").remove();
+}

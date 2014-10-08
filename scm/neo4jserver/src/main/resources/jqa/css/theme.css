@@ -1,57 +1,32 @@
-.jqa-container-correction {
-    margin-top: 20px;
-}
-.jqa-alert {
-	display: none;
-}
-.bold-text {
-	font-weight: bold;
+.treemap-d3 {
+    height: 700px;
+    position: relative;
 }
 
-body {
-    padding-top: 50px;
-}
-
-.starter-template {
-    padding: 40px 15px;
+.tooltip-d3 {
+    position: absolute;
+    font-size: 10px;
 }
 
 .node-d3 {
-	border: solid 1px white;
-	font: 12px sans-serif;
-	color:#000000;
-	line-height: 12px;
-	overflow: hidden;
-	position: absolute;
-	text-indent: 2px;
-}
-.node-d3 div{
-	margin:2px;
+    font-size: 10px;
+    color:#000000;
+    line-height: 10px;
+    overflow: hidden;
+    text-indent: 2px;
 }
 
-.clickable{
-	cursor: pointer;
-	cursor: -webkit-zoom-in;
-	cursor: -moz-zoom-in;
+.glyphicon-refresh-animate {
+    -animation: spin 1s infinite linear;
+    -webkit-animation: spin2 1s infinite linear;
 }
 
-.tooltip-d3{
-	position: absolute;
-	left: 0;
-	top: 0;
-	box-shadow: 4px 4px rgba(0, 0, 0, 0.5);
-	text-align: left;
-	font-family: Arial;
-	background-color: #ffffff;
-	padding:5px;
-	border-radius: 5px;
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
 }
 
-i.glyphicon-th {
-    margin-right: 3px;
-}
-
-i.glyphicon-chevron-right {
-    margin-left: 3px;
-    margin-right: 3px;
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
 }

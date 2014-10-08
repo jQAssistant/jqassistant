@@ -91,14 +91,16 @@ function loadMetricGroups() {
 
     console.log("Loading metrics from " + url);
 
+    removeAlert();
+    showSpinner();
+
     $.getJSON(url)
         .done(function (json) { /* the success function */
             console.log("Successfully loaded metrics.");
 
             if (!json) {
                 // there was an error in the call (or at server side)
-                // TODO beautify this
-                alert("No result received from the server. Please check the logs.");
+                showAlert("No result received from the server. Please check the logs.");
             }
 
             updateMetricGroups(json);
@@ -115,10 +117,10 @@ function loadMetricGroups() {
             }
             console.log(errorMessage);
 
-            // TODO beautify this
-            alert(errorMessage);
+            showAlert(errorMessage);
         })
         .always(function () { /* always executed after the AJAX call */
+            removeSpinner();
             console.log("Finished loading metrics.");
         });
 }
@@ -224,8 +226,8 @@ function updateBreadcrumb(metric) {
     }
     breadcrumb.reverse();
 
-    var breadcrumbDiv = $("#metricBreadcrumb");
-    breadcrumbDiv.empty();
+    var breadcrumbOl = $("#metricBreadcrumb");
+    breadcrumbOl.empty();
 
     var breadcrumbLength = breadcrumb.length;
     $.each(breadcrumb, function (index, value) {
@@ -241,36 +243,36 @@ function updateBreadcrumb(metric) {
             }
         });
 
-        // only enable clicks for "previous" values
-        var enableClick = (index + 1) < breadcrumbLength;
+        // add the active class to the last item in the breadcrumb
+        var activeClass = ((index + 1) >= breadcrumbLength) ? " active" : "";
 
-        // create a new <a /> element
-        var a = $("<a></a>", {
-            "href": "",
-            "title": value["description"],
-            "click": function (event) {
-                event.preventDefault();
-                if (enableClick) {
-                    runMetric(parameterMap);
-                }
-            }
+        // create a new li element
+        var li = $("<li></li>", {
+            "class": activeClass
         });
 
-        // set the class of the icon based upon the index
-        var iClass;
-        if (index == 0) {
-            iClass = "glyphicon glyphicon-th";
-        } else {
-            iClass = "glyphicon glyphicon-chevron-right";
-        }
-        // append a new <i /> to the <a /> with the class
-        a.append($("<i></i>", {
-            "class": iClass
-        }));
-        // append the text (the id) to the <a />
-        a.append(value["id"]);
+        if (activeClass === "") {
+            // create a new <a/> element
+            var a = $("<a></a>", {
+                "href": "#",
+                "title": value["description"],
+                "click": function (event) {
+                    event.preventDefault();
+                    runMetric(parameterMap);
+                }
+            });
 
-        breadcrumbDiv.append(a);
+            // set the text (the id) to the <a/>
+            a.text(value["id"]);
+            // append the <a/> to the <li/>
+            li.append(a);
+
+        } else {
+            // just set the value of the ID to the <li/>
+            li.text(value["id"]);
+        }
+
+        breadcrumbOl.append(li);
     });
 }
 
@@ -376,6 +378,8 @@ function runMetric(parameterMap) {
 
     console.log("runMetric(" + parameterMap[JqaConstants.GROUP_ID] + ", " + parameterMap[JqaConstants.METRICS_ID] + ")");
 
+    $("#treemapContainer").empty();
+
     var metric = MetricGroups.getMetricByGroupIdAndMetricId(parameterMap[JqaConstants.GROUP_ID], parameterMap[JqaConstants.METRICS_ID]);
     if (!metric) {
         console.log("No metric found for '" + parameterMap[JqaConstants.METRICS_ID] + "'. The metric can't be run. Don't do anything.");
@@ -384,27 +388,27 @@ function runMetric(parameterMap) {
 
     var url = JqaConstants.REST_RUN_METRIC_URL;
 
+    removeAlert();
+    showSpinner();
+
     $.getJSON(url, parameterMap)
         .done(function (json) { /* the success function */
             console.log("Successfully ran metric.");
 
             if (!json) {
                 // there was an error in the call
-                // TODO beautify this
-                alert("No result received from the server. Please check the logs.");
+                showAlert("No result received from the server. Please check the logs.");
                 return;
             }
 
             if (json["error"]) {
-                // TODO beautify this
-                alert(json["error"]);
+                showAlert(json["error"]);
                 return;
             }
 
             if (!json["result"]) {
                 // there was an error in the call
-                // TODO beautify this
-                alert("No result received from the server. Please check the logs.");
+                showAlert("No result received from the server. Please check the logs.");
                 return;
             }
 
@@ -423,10 +427,10 @@ function runMetric(parameterMap) {
             var errorMessage = "Error running metric: " + jqxhr.status + " " + jqxhr.statusText;
             console.log(errorMessage);
 
-            // TODO beautify this
-            alert(errorMessage);
+            showAlert(errorMessage);
         })
         .always(function () { /* always executed after the AJAX call */
+            removeSpinner();
             console.log("Finished running metric.");
         });
 }
