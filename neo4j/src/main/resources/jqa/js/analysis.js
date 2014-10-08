@@ -7,6 +7,9 @@ function loadRuleSets() {
 
     console.log("loadRuleSets()");
 
+    removeAlert();
+    showSpinner();
+
     var url = JqaConstants.REST_ANALYSIS_RULES_URL;
 
     console.log("Loading rule sets from " + url);
@@ -17,8 +20,7 @@ function loadRuleSets() {
 
             if (!json) {
                 // there was an error in the call (or at server side)
-                // TODO beautify this
-                alert("No result received from the server. Please check the logs.");
+                showAlert("No result received from the server. Please check the logs.");
             }
 
             updateUiComponents(json);
@@ -33,10 +35,10 @@ function loadRuleSets() {
             }
             console.log(errorMessage);
 
-            // TODO beautify this
-            alert(errorMessage);
+            showAlert(errorMessage);
         })
         .always(function () { /* always executed after the AJAX call */
+            removeSpinner();
             console.log("Finished loading rule sets.");
         });
 }
@@ -82,7 +84,6 @@ function updateUiComponents(ruleSets) {
 
         $("#concepts").append(listGroupConcepts);
     } else {
-        $("#conceptsSize").hide();
         $("#concepts").append($("<div></div>").text("There are no concepts."));
     }
 
@@ -118,7 +119,6 @@ function updateUiComponents(ruleSets) {
 
         $("#constraints").append(listGroupConstraints);
     } else {
-        $("#constraintsSize").hide();
         $("#constraints").append($("<div></div>").text("There are no constraints."));
     }
 
@@ -139,7 +139,6 @@ function updateUiComponents(ruleSets) {
 
         $("#groups").append(listGroupGroups);
     } else {
-        $("#groupsSize").hide();
         $("#groups").append($("<div></div>").text("There are no groups."));
     }
 }
@@ -184,6 +183,8 @@ function runConcept(conceptId, responseDiv) {
 
     responseDiv.text("");
     responseDiv.attr("class", "list-group-item"); // reset the CSS of the DIV
+
+    showSpinner();
 
     $.ajax(JqaConstants.REST_ANALYSIS_CONCEPT_URL,
         {
@@ -232,6 +233,7 @@ function runConcept(conceptId, responseDiv) {
             responseDiv.text(errorMessage);
         })
         .always(function () { /* always executed after the AJAX call */
+            removeSpinner();
             console.log("Finished running concept.");
         });
 }
@@ -246,6 +248,8 @@ function runConstraint(constraintId, responseDiv) {
 
     responseDiv.text("");
     responseDiv.attr("class", "list-group-item"); // reset the CSS of the DIV
+
+    showSpinner();
 
     $.ajax(JqaConstants.REST_ANALYSIS_CONSTRAINT_URL,
         {
@@ -291,6 +295,7 @@ function runConstraint(constraintId, responseDiv) {
             responseDiv.show();
         })
         .always(function () { /* always executed after the AJAX call */
+            removeSpinner();
             console.log("Finished running constraint.");
         });
 }
