@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.junit.Test;
@@ -25,7 +24,7 @@ public class ZipScannerIT extends AbstractPluginIT {
         File archive = File.createTempFile("test", ".zip");
         createZipArchive(archive);
         store.beginTransaction();
-        FileDescriptor descriptor = getScanner().scan(new ZipFile(archive), null);
+        FileDescriptor descriptor = getScanner().scan(archive, null);
         assertThat(descriptor, instanceOf(ArchiveDescriptor.class));
         ArchiveDescriptor archiveDescriptor = (ArchiveDescriptor) descriptor;
         assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test.txt")));
@@ -35,18 +34,11 @@ public class ZipScannerIT extends AbstractPluginIT {
 
     private void createZipArchive(File archive) throws IOException {
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(archive));
-
-        // ZipEntry directoryEntry = new ZipEntry("/");
-        // directoryEntry.setTime(System.currentTimeMillis());
-        // zipOutputStream.putNextEntry(directoryEntry);
-        // zipOutputStream.closeEntry();
-
         ZipEntry fileEntry = new ZipEntry("test.txt");
         fileEntry.setTime(System.currentTimeMillis());
         zipOutputStream.putNextEntry(fileEntry);
         zipOutputStream.write("Hello World!".getBytes());
         zipOutputStream.closeEntry();
-
         zipOutputStream.close();
     }
 }

@@ -7,8 +7,6 @@ import org.objectweb.asm.signature.SignatureReader;
 
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.LineNumberDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -48,11 +46,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         switch (opcode) {
         case Opcodes.GETFIELD:
         case Opcodes.GETSTATIC:
-            addLineNumber(this.methodDescriptor.addReads(fieldDescriptor));
+            this.methodDescriptor.addReads(fieldDescriptor, line);
             break;
         case Opcodes.PUTFIELD:
         case Opcodes.PUTSTATIC:
-            addLineNumber(this.methodDescriptor.addWrites(fieldDescriptor));
+            this.methodDescriptor.addWrites(fieldDescriptor, line);
             break;
         }
     }
@@ -62,19 +60,8 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         TypeDescriptor typeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(owner));
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(typeDescriptor, methodSignature);
-        InvokesDescriptor invokesDescriptor = this.methodDescriptor.addInvokes(invokedMethodDescriptor);
-        addLineNumber(invokesDescriptor);
+        this.methodDescriptor.addInvokes(invokedMethodDescriptor, line);
         visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));
-    }
-
-    /**
-     * Adds the current line number to the given descriptor.
-     * 
-     * @param lineNumberDescriptor
-     *            The descriptor.
-     */
-    private void addLineNumber(LineNumberDescriptor lineNumberDescriptor) {
-        lineNumberDescriptor.setLineNumber(line);
     }
 
     @Override

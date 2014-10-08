@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,20 +9,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
@@ -28,13 +26,11 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
+import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -92,7 +88,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
             final ReportHelper reportHelper = new ReportHelper(getLog());
             reportHelper.verifyConceptResults(inMemoryReportWriter);
             final int violations = reportHelper.verifyConstraintViolations(inMemoryReportWriter);
-            if(violations > 0) {
+            if (violations > 0) {
                 throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
             }
             reportHelper.verifyConstraintViolations(inMemoryReportWriter);

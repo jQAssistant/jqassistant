@@ -73,6 +73,12 @@ public class ScannerImpl implements Scanner {
                 }
             }
         }
+        if (fileDescriptor == null) {
+            fileDescriptor = scannerContext.getStore().create(FileDescriptor.class);
+        }
+        if (path != null) {
+            fileDescriptor.setFileName(path);
+        }
         return fileDescriptor;
     }
 

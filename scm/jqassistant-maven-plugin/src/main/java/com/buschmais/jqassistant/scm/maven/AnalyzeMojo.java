@@ -3,11 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -23,12 +19,12 @@ import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
 
 /**
