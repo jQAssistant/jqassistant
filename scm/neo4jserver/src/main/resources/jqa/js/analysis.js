@@ -188,9 +188,9 @@ function runConcept(conceptId, responseDiv) {
     $.ajax(JqaConstants.REST_ANALYSIS_CONCEPT_URL,
         {
             'data': conceptId,
-            'type' : 'POST',
+            'type': 'POST',
             'headers': {
-                'Accepts' : 'text/plain',
+                'Accepts': 'text/plain',
                 'Content-Type': 'text/plain'
             }
         }).done(function (data, textStatus, jqXHR) { /* the success function */
@@ -250,9 +250,9 @@ function runConstraint(constraintId, responseDiv) {
     $.ajax(JqaConstants.REST_ANALYSIS_CONSTRAINT_URL,
         {
             'data': constraintId,
-            'type' : 'POST',
+            'type': 'POST',
             'headers': {
-                'Accepts' : 'text/plain',
+                'Accepts': 'text/plain',
                 'Content-Type': 'text/plain'
             }
         }).done(function (data, textStatus, jqXHR) { /* the success function */
