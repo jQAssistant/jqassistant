@@ -2,19 +2,22 @@ package com.buschmais.jqassistant.scm.common.report;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
-import java.util.List;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
-import com.buschmais.xo.spi.reflection.AnnotatedType;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Provides utility functionality for creating reports.
@@ -26,7 +29,7 @@ public final class ReportHelper {
 
     /**
      * Constructor.
-     * 
+     *
      * @param console
      *            The console to use for printing messages.
      */
@@ -35,36 +38,10 @@ public final class ReportHelper {
     }
 
     /**
-     * Return the
-     * {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
-     * associated with a
-     * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor}.
-     * 
-     * @param descriptor
-     *            The descriptor.
-     * @return The resolved
-     *         {@link com.buschmais.jqassistant.core.report.api.LanguageElement}
-     * 
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
-     */
-    public static LanguageElement getLanguageElement(Descriptor descriptor) throws AnalysisListenerException {
-        for (Class<?> descriptorType : descriptor.getClass().getInterfaces()) {
-            AnnotatedType annotatedType = new AnnotatedType(descriptorType);
-            Annotation languageAnnotation = annotatedType.getByMetaAnnotation(Language.class);
-            if (languageAnnotation != null) {
-                return getAnnotationValue(languageAnnotation, "value", LanguageElement.class);
-            }
-        }
-        return null;
-    }
-
-    public static final String LOG_LINE_PREFIX = "  \"";
-
-    /**
      * Logs the given
      * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet} on level
      * info.
-     * 
+     *
      * @param ruleSet
      *            The
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
@@ -110,7 +87,7 @@ public final class ReportHelper {
      * A warning is logged for each concept which did not return a result (i.e.
      * has not been applied).
      * </p>
-     * 
+     *
      * @param inMemoryReportWriter
      *            The
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
@@ -217,5 +194,4 @@ public final class ReportHelper {
         }
         return null;
     }
-
 }
