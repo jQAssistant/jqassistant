@@ -129,7 +129,7 @@ public class VisitorHelper {
      * @return The key.
      */
     private String getMemberKey(TypeDescriptor type, String signature) {
-        return type.getFullQualifiedName() + "#" + signature;
+        return type.getId() + "#" + signature;
     }
 
     /**

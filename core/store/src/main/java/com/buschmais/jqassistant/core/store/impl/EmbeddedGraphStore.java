@@ -42,7 +42,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
-        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).property("neo4j.cache_type", "none")
+        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).property("neo4j.cache_type", "weak")
                 .create();
         return XO.createXOManagerFactory(xoUnit);
     }
