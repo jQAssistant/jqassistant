@@ -6,12 +6,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -19,6 +13,12 @@ import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.BeanWithConstr
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.BeanWithFieldInjection;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.BeanWithSetterInjection;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tests for CDI injection constraints.
@@ -42,7 +42,8 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
 		validateConstraint(ruleName);
 		store.beginTransaction();
 
-		List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+		List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
 		assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
 		Result<Constraint> result = constraintViolations.get(0);
 		assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
@@ -69,7 +70,8 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
 		validateConstraint(ruleName);
 		store.beginTransaction();
 
-		List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+		List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
 		assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
 		Result<Constraint> result = constraintViolations.get(0);
 		assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
@@ -96,7 +98,8 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
 		validateConstraint(ruleName);
 		store.beginTransaction();
 
-		List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+		List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
 		assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
 		Result<Constraint> result = constraintViolations.get(0);
 		assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
@@ -121,7 +124,8 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
 		validateConstraint(ruleName);
 		store.beginTransaction();
 
-		List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+		List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
 		assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
 		Result<Constraint> result = constraintViolations.get(0);
 		assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));

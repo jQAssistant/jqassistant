@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>JQA Visualization</title>
+
+    <!-- jQuery script -->
+    <script src="lib/jquery-2.1.1.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="lib/bootstrap-3.2.0.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link href="css/theme.css" rel="stylesheet">
+
+    <!-- JavaScript includes -->
+    <script src="js/util.js"></script>
+
+</head>
+
+<body>
+
+<div id="navigation"></div>
+<script>
+    $("#navigation").load("inc/navigation.html", function () {
+        // set the index link to be active
+        $("#home").addClass("active");
+    });
+</script>
+
+<div class="container">
+    <div class="jumbotron">
+        <img class="img-thumbnail" src="img/logo_lang.png" />
+    </div>
+    <div>Version: %version%</div>
+    <div>Find the GitHub-Repository <a href="https://github.com/buschmais/jqassistant" target="_blank">here</a>.</div>
+</div>
+</body>
+</html>

@@ -2,29 +2,34 @@ package com.buschmais.jqassistant.scm.common.report;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
-import java.util.List;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.type.Descriptor;
 
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Provides utility functionality for creating reports.
  */
 public final class ReportHelper {
 
+    public static final String LOG_LINE_PREFIX = "  \"";
     private Console console;
 
     /**
      * Constructor.
-     * 
+     *
      * @param console
      *            The console to use for printing messages.
      */
@@ -32,13 +37,11 @@ public final class ReportHelper {
         this.console = console;
     }
 
-    public static final String LOG_LINE_PREFIX = "  \"";
-
     /**
      * Logs the given
      * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet} on level
      * info.
-     * 
+     *
      * @param ruleSet
      *            The
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
@@ -84,14 +87,14 @@ public final class ReportHelper {
      * A warning is logged for each concept which did not return a result (i.e.
      * has not been applied).
      * </p>
-     * 
+     *
      * @param inMemoryReportWriter
      *            The
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
      *            .
      */
     public void verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
-        List<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults();
+        Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
         for (Result<Concept> conceptResult : conceptResults) {
             if (conceptResult.getRows().isEmpty()) {
                 console.warn("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
@@ -102,7 +105,7 @@ public final class ReportHelper {
     /**
      * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}.
-     * 
+     *
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
@@ -114,14 +117,14 @@ public final class ReportHelper {
      * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}. Returns the count of constraints having
      * severity higher than the provided severity level.
-     * 
+     *
      * @param severity
      *            severity level to use for verification
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(Severity severity, InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
-        List<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations().values();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
             if (!constraintViolation.isEmpty()) {
@@ -151,7 +154,7 @@ public final class ReportHelper {
 
     /**
      * Converts a value to its string representation.
-     * 
+     *
      * @param value
      *            The value.
      * @return The string representation

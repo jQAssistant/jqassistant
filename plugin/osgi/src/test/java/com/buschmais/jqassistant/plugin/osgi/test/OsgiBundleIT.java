@@ -11,14 +11,6 @@ import static org.hamcrest.collection.IsMapContaining.hasValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -33,6 +25,15 @@ import com.buschmais.jqassistant.plugin.osgi.test.impl.Activator;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.ServiceImpl;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.a.UsedPublicClass;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.b.UnusedPublicClass;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Contains tests regarding manifest files.
@@ -158,7 +159,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         validateConstraint("osgi-bundle:UnusedInternalType");
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:UnusedInternalType");
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class)))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
@@ -185,7 +186,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:InternalTypeMustNotBePublic");
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));

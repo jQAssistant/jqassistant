@@ -10,14 +10,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -28,6 +20,14 @@ import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor
 import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
 import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEmbeddable;
 import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Tests for the JPA concepts.
@@ -216,7 +216,8 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
@@ -239,7 +240,8 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
@@ -262,7 +264,8 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        List<Result<Constraint>> constraintViolations =
+                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> constraintResult = constraintViolations.get(0);
         assertThat(constraintResult.isEmpty(), equalTo(true));
