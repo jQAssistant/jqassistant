@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -217,7 +218,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations =
-                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
+                new ArrayList<>(reportWriter.getConstraintViolations().values());
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
@@ -241,7 +242,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations =
-                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
+                new ArrayList<>(reportWriter.getConstraintViolations().values());
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
@@ -265,7 +266,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations =
-                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
+                new ArrayList<>(reportWriter.getConstraintViolations().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> constraintResult = constraintViolations.get(0);
         assertThat(constraintResult.isEmpty(), equalTo(true));

@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -128,7 +129,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         validateConstraint("junit4:IgnoreWithoutMessage");
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations =
-                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
+                new ArrayList<>(reportWriter.getConstraintViolations().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:IgnoreWithoutMessage")));
@@ -213,7 +214,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         validateConstraint("junit4:AssertionMustProvideMessage");
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations =
-                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
+                new ArrayList<>(reportWriter.getConstraintViolations().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
@@ -241,7 +242,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         validateConstraint("junit4:TestMethodWithoutAssertion");
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations =
-                (List<Result<Constraint>>) reportWriter.getConstraintViolations().values();
+                new ArrayList<>(reportWriter.getConstraintViolations().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:TestMethodWithoutAssertion")));
