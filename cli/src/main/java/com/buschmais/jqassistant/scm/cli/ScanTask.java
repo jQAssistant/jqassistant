@@ -21,9 +21,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -63,28 +60,15 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         } else {
             store.beginTransaction();
             try {
-                final ArtifactDirectoryDescriptor artifactDescriptor = getOrCreateArtifactDescriptor(store, absolutePath);
                 final Scanner scanner = new ScannerImpl(store, scannerPlugins);
                 try {
-                    scanner.scan(new ClassPathDirectory(directory, artifactDescriptor), CLASSPATH);
+                    scanner.scan(directory, CLASSPATH);
                 } catch (IOException e) {
                     throw new RuntimeException("Cannot scan directory '" + absolutePath + "'", e);
                 }
             } finally {
                 store.commitTransaction();
             }
-        }
-    }
-
-    private ArtifactDirectoryDescriptor getOrCreateArtifactDescriptor(final Store store, String fileName) {
-        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, fileName);
-        if (artifactDescriptor == null) {
-            ArtifactDirectoryDescriptor artifactDirectoryDescriptor = store.create(ArtifactDirectoryDescriptor.class, fileName);
-            return artifactDirectoryDescriptor;
-        } else if (!ArtifactDirectoryDescriptor.class.isAssignableFrom(artifactDescriptor.getClass())) {
-            return store.migrate(artifactDescriptor, ArtifactDirectoryDescriptor.class);
-        } else {
-            return (ArtifactDirectoryDescriptor) artifactDescriptor;
         }
     }
 
