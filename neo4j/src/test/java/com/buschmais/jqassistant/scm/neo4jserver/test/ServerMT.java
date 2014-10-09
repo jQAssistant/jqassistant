@@ -1,5 +1,12 @@
 package com.buschmais.jqassistant.scm.neo4jserver.test;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+
+import org.junit.Test;
+import org.neo4j.kernel.GraphDatabaseAPI;
+
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -14,17 +21,10 @@ import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
 import com.buschmais.jqassistant.scm.neo4jserver.impl.AbstractServer;
 import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.MetricsService;
 
-import org.junit.Test;
-import org.neo4j.kernel.GraphDatabaseAPI;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-
 /**
  * "http://localhost:7474/jqa/rest/scan?url=http://search.maven.org/remotecontent?filepath=org/eclipse/birt/runtime/org.eclipse.birt.runtime/4.2.0/org.eclipse.birt.runtime-4.2.0.jar"
  */
-public class ServerIT extends AbstractDatabaseIT {
+public class ServerMT extends AbstractDatabaseIT {
 
     @Test
     public void server() throws IOException, PluginRepositoryException {
@@ -56,5 +56,10 @@ public class ServerIT extends AbstractDatabaseIT {
         System.in.read();
         server.stop();
         store.stop();
+    }
+
+    @Override
+    protected String getStoreDir() {
+        return "D:\\dev\\jqassistant_core\\core\\target\\jqassistant\\store";
     }
 }
