@@ -12,7 +12,7 @@
           WHERE NOT
             (a)-[:CONTAINS]->(:Manifest)-[:DECLARES]->(:ManifestSection)-[:HAS]->(:ManifestEntry{name:'Bundle-SymbolicName'})
           RETURN
-            a
+            a as Bundle
         ]]></cypher>
     </constraint>
 
