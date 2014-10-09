@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,11 +16,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Directory;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualDirectory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 
-public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContainerScannerPlugin<I, java.io.File> {
+public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerScannerPlugin<File, File> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDirectoryScannerPlugin.class);
 
@@ -28,10 +30,24 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
     }
 
     @Override
-    protected Iterable<? extends java.io.File> getEntries(I container) throws IOException {
-        final java.io.File directory = getDirectory(container);
-        final Path directoryPath = directory.toPath();
-        final List<java.io.File> files = new ArrayList<>();
+    public Class<? super File> getType() {
+        return File.class;
+    }
+
+    @Override
+    public boolean accepts(File item, String path, Scope scope) throws IOException {
+        return item.isDirectory() && getScope().equals(scope);
+    }
+
+    @Override
+    protected Scope createScope(Scope currentScope) {
+        return currentScope;
+    }
+
+    @Override
+    protected Iterable<? extends File> getEntries(File container) throws IOException {
+        final Path directoryPath = container.toPath();
+        final List<File> files = new ArrayList<>();
         SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -48,31 +64,38 @@ public abstract class AbstractDirectoryScannerPlugin<I> extends AbstractContaine
             }
         };
         Files.walkFileTree(directoryPath, visitor);
-        LOGGER.info("Scanning directory '{}' [{} entries].", directory.getAbsolutePath(), files.size());
+        LOGGER.info("Scanning directory '{}' [{} entries].", container.getAbsolutePath(), files.size());
         return files;
     }
 
     @Override
-    protected String getRelativePath(I container, java.io.File entry) {
-        java.io.File directory = getDirectory(container);
-        return getDirectoryPath(directory, entry);
+    protected String getRelativePath(File container, File entry) {
+        return getDirectoryPath(container, entry);
     }
 
     @Override
-    protected Entry getEntry(I container, final java.io.File entry) {
+    protected VirtualEntry getEntry(File container, final File entry) {
         if (entry.isDirectory()) {
-            return new Directory() {
+            return new AbstractVirtualDirectory() {
             };
         } else {
-            return new File() {
+            return new VirtualFile() {
                 @Override
                 public InputStream createStream() throws IOException {
                     return new BufferedInputStream(new FileInputStream(entry));
+                }
+
+                @Override
+                public File getFile() {
+                    return entry;
+                }
+
+                @Override
+                public void close() {
                 }
             };
         }
     }
 
-    protected abstract java.io.File getDirectory(I item);
-
+    protected abstract Scope getScope();
 }

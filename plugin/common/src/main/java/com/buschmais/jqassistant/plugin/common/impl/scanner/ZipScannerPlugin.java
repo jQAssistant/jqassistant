@@ -1,10 +1,9 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.File;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 
 public class ZipScannerPlugin extends AbstractArchiveScannerPlugin {
 
@@ -19,7 +18,7 @@ public class ZipScannerPlugin extends AbstractArchiveScannerPlugin {
     }
 
     @Override
-    protected ArchiveDescriptor createArchive(File file, String path, ScannerContext scannerContext) {
+    protected ArchiveDescriptor createArchive(VirtualFile file, String path, ScannerContext scannerContext) {
         return scannerContext.getStore().create(ArchiveDescriptor.class);
     }
 }

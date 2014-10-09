@@ -20,12 +20,7 @@ public class FileScannerIT extends AbstractPluginIT {
     public void fileResources() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        FileDescriptor descriptor = getScanner().scan(new CustomDirectory(classesDirectory) {
-            @Override
-            public File getDirectory() {
-                return super.getDirectory();
-            }
-        }, null);
+        FileDescriptor descriptor = getScanner().scan(classesDirectory, CustomScope.CUSTOM);
         assertThat(descriptor, instanceOf(CustomDirectoryDescriptor.class));
         CustomDirectoryDescriptor customDirectoryDescriptor = (CustomDirectoryDescriptor) descriptor;
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";

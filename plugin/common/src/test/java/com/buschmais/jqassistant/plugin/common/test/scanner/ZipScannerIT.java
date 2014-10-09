@@ -24,7 +24,7 @@ public class ZipScannerIT extends AbstractPluginIT {
         File archive = File.createTempFile("test", ".zip");
         createZipArchive(archive);
         store.beginTransaction();
-        FileDescriptor descriptor = getScanner().scan(archive, null);
+        FileDescriptor descriptor = getScanner().scan(archive, archive.getAbsolutePath(), null);
         assertThat(descriptor, instanceOf(ArchiveDescriptor.class));
         ArchiveDescriptor archiveDescriptor = (ArchiveDescriptor) descriptor;
         assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test.txt")));

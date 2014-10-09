@@ -6,8 +6,9 @@ import java.io.InputStream;
 /**
  * Represents a file entry.
  */
-public interface File extends Entry {
+public interface VirtualFile extends VirtualEntry {
 
     InputStream createStream() throws IOException;
 
+    java.io.File getFile();
 }
