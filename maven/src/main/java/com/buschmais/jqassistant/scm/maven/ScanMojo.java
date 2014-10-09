@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +62,6 @@ public class ScanMojo extends AbstractModuleMojo {
         store.beginTransaction();
         try {
             scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Cannot scan project '" + mavenProject.getBasedir() + "'", e);
         } finally {
             store.commitTransaction();
         }
