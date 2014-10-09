@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.xo.api.CompositeObject;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -129,7 +130,7 @@ public class VisitorHelper {
      * @return The key.
      */
     private String getMemberKey(TypeDescriptor type, String signature) {
-        return type.getId() + "#" + signature;
+        return CompositeObject.class.cast(type).getId() + "#" + signature;
     }
 
     /**

@@ -1,45 +1,29 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractDirectoryScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
-public class ClassPathDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<ClassPathDirectory> {
+public class ClassPathDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
 
     @Override
-    public Class<? super ClassPathDirectory> getType() {
-        return ClassPathDirectory.class;
-    }
-
-    @Override
-    public boolean accepts(ClassPathDirectory item, String path, Scope scope) throws IOException {
-        return true;
-    }
-
-    @Override
-    protected File getDirectory(ClassPathDirectory item) {
-        return item.getDirectory();
-    }
-
-    @Override
-    protected FileContainerDescriptor getContainerDescriptor(ClassPathDirectory classPathDirectory, ScannerContext scannerContext) {
-        ArtifactDirectoryDescriptor directoryDescriptor = classPathDirectory.getDirectoryDescriptor();
-        if (directoryDescriptor == null) {
-            directoryDescriptor = scannerContext.getStore().create(ArtifactDirectoryDescriptor.class);
-        }
-        return directoryDescriptor;
-    }
-
-    @Override
-    protected Scope createScope(Scope currentScope) {
+    protected Scope getScope() {
         return JavaScope.CLASSPATH;
+    }
+
+    @Override
+    protected FileContainerDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
+        ArtifactDescriptor artifactDescriptor = scannerContext.peek(ArtifactDescriptor.class);
+        if (artifactDescriptor == null) {
+            artifactDescriptor = scannerContext.getStore().create(ArtifactDirectoryDescriptor.class);
+        }
+        return artifactDescriptor;
     }
 
 }
