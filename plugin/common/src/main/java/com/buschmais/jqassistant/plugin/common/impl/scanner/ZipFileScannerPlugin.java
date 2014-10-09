@@ -11,9 +11,9 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
 import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Directory;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Entry;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualDirectory;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry;
 
 public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry> {
 
@@ -80,12 +80,12 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected Entry getEntry(final ZipFile container, final ZipEntry entry) {
+    protected VirtualEntry getEntry(final ZipFile container, final ZipEntry entry) {
         if (entry.isDirectory()) {
-            return new Directory() {
+            return new AbstractVirtualDirectory() {
             };
         } else {
-            return new File() {
+            return new AbstractVirtualFile() {
                 @Override
                 public InputStream createStream() throws IOException {
                     return container.getInputStream(entry);

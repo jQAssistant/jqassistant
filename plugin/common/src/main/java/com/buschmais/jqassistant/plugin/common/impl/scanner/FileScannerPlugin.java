@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 
-public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
+public class FileScannerPlugin extends AbstractScannerPlugin<File> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
@@ -24,19 +25,19 @@ public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
     }
 
     @Override
-    public Class<? super java.io.File> getType() {
-        return java.io.File.class;
+    public Class<? super File> getType() {
+        return File.class;
     }
 
     @Override
-    public boolean accepts(java.io.File item, String path, Scope scope) throws IOException {
+    public boolean accepts(File item, String path, Scope scope) throws IOException {
         return !item.isDirectory();
     }
 
     @Override
-    public FileDescriptor scan(final java.io.File file, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
-        FileDescriptor fileDescriptor = scanner.scan(new File() {
+        FileDescriptor fileDescriptor = scanner.scan(new VirtualFile() {
 
             @Override
             public InputStream createStream() throws IOException {
@@ -45,6 +46,14 @@ public class FileScannerPlugin extends AbstractScannerPlugin<java.io.File> {
                 return new BufferedInputStream(new FileInputStream(file), (int) bufferSize);
             }
 
+            @Override
+            public File getFile() {
+                return file;
+            }
+
+            @Override
+            public void close() {
+            }
         }, path, scope);
         return fileDescriptor;
     }

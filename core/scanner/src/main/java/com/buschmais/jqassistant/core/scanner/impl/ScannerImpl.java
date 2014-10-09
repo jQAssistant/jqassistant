@@ -1,10 +1,14 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
+import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -13,6 +17,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.xo.spi.reflection.DependencyResolver;
 
 /**
  * Implementation of the {@link Scanner}.
@@ -97,14 +102,27 @@ public class ScannerImpl implements Scanner {
     private List<ScannerPlugin<?>> getScannerPluginsForType(Class<?> type) {
         List<ScannerPlugin<?>> plugins = scannerPluginsPerType.get(type);
         if (plugins == null) {
-            plugins = new ArrayList<>();
+            final Map<Class<?>, ScannerPlugin<?>> pluginsForType = new HashMap<>();
             for (ScannerPlugin<?> scannerPlugin : scannerPlugins) {
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
-                    plugins.add(scannerPlugin);
+                    pluginsForType.put(scannerPlugin.getClass(), scannerPlugin);
                 }
-                scannerPluginsPerType.put(type, plugins);
             }
+            plugins = DependencyResolver.newInstance(pluginsForType.values(), new DependencyProvider<ScannerPlugin<?>>() {
+                @Override
+                public Set<ScannerPlugin<?>> getDependencies(ScannerPlugin<?> dependent) {
+                    Set<ScannerPlugin<?>> dependencies = new HashSet<>();
+                    Requires annotation = dependent.getType().getAnnotation(Requires.class);
+                    if (annotation != null) {
+                        for (Class<? extends ScannerPlugin<?>> pluginType : annotation.value()) {
+                            dependencies.add(pluginsForType.get(pluginType));
+                        }
+                    }
+                    return dependencies;
+                }
+            }).resolve();
+            scannerPluginsPerType.put(type, plugins);
         }
         return plugins;
     }

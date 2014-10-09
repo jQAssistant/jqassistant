@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassReader;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 /**
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
-public class ClassFileScannerPlugin extends AbstractScannerPlugin<File> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
@@ -31,12 +31,12 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public Class<? super File> getType() {
-        return File.class;
+    public Class<? super VirtualFile> getType() {
+        return VirtualFile.class;
     }
 
     @Override
-    public boolean accepts(File file, String path, Scope scope) throws IOException {
+    public boolean accepts(VirtualFile file, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
             // return true;
             try (InputStream stream = file.createStream()) {
@@ -49,7 +49,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public FileDescriptor scan(File file, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(VirtualFile file, String path, Scope scope, Scanner scanner) throws IOException {
         VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext(), resolverFactory);
         ClassVisitor visitor = new ClassVisitor(visitorHelper);
         try (InputStream stream = file.createStream()) {

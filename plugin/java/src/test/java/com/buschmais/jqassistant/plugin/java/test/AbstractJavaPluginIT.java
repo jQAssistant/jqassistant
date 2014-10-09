@@ -3,12 +3,12 @@ package com.buschmais.jqassistant.plugin.java.test;
 import java.io.File;
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
@@ -103,7 +103,10 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClassPathDirectory(File directory) throws IOException {
         store.beginTransaction();
         ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
-        getScanner().scan(new ClassPathDirectory(directory, artifact), JavaScope.CLASSPATH);
+        Scanner scanner = getScanner();
+        scanner.getContext().push(ArtifactDescriptor.class, artifact);
+        scanner.scan(directory, JavaScope.CLASSPATH);
+        scanner.getContext().pop(ArtifactDescriptor.class);
         store.commitTransaction();
     }
 }

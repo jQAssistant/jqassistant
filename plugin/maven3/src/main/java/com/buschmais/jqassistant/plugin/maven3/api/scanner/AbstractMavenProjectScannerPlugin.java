@@ -6,6 +6,7 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 
@@ -30,15 +31,14 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
 
     protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
-        Artifact artifact = project.getArtifact();
-        String id = createId(artifact.getGroupId(), artifact.getArtifactId(), null, null, artifact.getVersion());
+        String id = project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion();
         MavenProjectDescriptor projectDescriptor = store.find(MavenProjectDescriptor.class, id);
         if (projectDescriptor == null) {
             projectDescriptor = store.create(expectedType, id);
             projectDescriptor.setName(project.getName());
-            projectDescriptor.setGroupId(artifact.getGroupId());
-            projectDescriptor.setArtifactId(artifact.getArtifactId());
-            projectDescriptor.setVersion(artifact.getVersion());
+            projectDescriptor.setGroupId(project.getGroupId());
+            projectDescriptor.setArtifactId(project.getArtifactId());
+            projectDescriptor.setVersion(project.getVersion());
         } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
             projectDescriptor = store.migrate(projectDescriptor, expectedType);
         }
@@ -47,57 +47,48 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
 
     protected ArtifactDescriptor resolveArtifact(Artifact artifact, ScannerContext scannerContext) {
         boolean testJar = ARTIFACTTYPE_TEST_JAR.equals(artifact.getType());
-        return resolveArtifact(artifact, testJar, ArtifactDescriptor.class, scannerContext);
+        return resolveArtifact(artifact, testJar, scannerContext);
     }
 
-    protected <T extends ArtifactDescriptor> T resolveArtifact(Artifact artifact, boolean testJar, Class<T> expectedType, ScannerContext scannerContext) {
+    protected ArtifactDescriptor resolveArtifact(Artifact artifact, boolean testJar, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
-        String type = testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
-        String id = createId(artifact.getGroupId(), artifact.getArtifactId(), type, artifact.getClassifier(), artifact.getVersion());
+        String id = createId(artifact, testJar);
         ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
         if (artifactDescriptor == null) {
-            artifactDescriptor = store.create(expectedType, id);
+            artifactDescriptor = store.create(ArtifactDirectoryDescriptor.class, id);
+            artifactDescriptor.setFullQualifiedName(id);
             artifactDescriptor.setGroup(artifact.getGroupId());
             artifactDescriptor.setName(artifact.getArtifactId());
             artifactDescriptor.setVersion(artifact.getVersion());
             artifactDescriptor.setClassifier(artifact.getClassifier());
-            artifactDescriptor.setType(type);
-        } else if (!expectedType.isAssignableFrom(artifactDescriptor.getClass())) {
-            artifactDescriptor = store.migrate(artifactDescriptor, expectedType);
+            artifactDescriptor.setType(testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType());
         }
-        return expectedType.cast(artifactDescriptor);
+        return artifactDescriptor;
     }
 
     /**
      * Creates the id of an artifact descriptor by the given items.
      * 
-     * @param group
-     *            The group.
-     * @param name
-     *            The name.
-     * @param type
-     *            The type.
-     * @param classifier
-     *            The classifier (optional).
-     * @param version
-     *            The version.
+     * @param artifact
+     *            The maven artifact.
+     * @param testJar
+     *            If a test-jar type shall be used.
      * @return The id.
      */
-    private String createId(String group, String name, String type, String classifier, String version) {
+    private String createId(Artifact artifact, boolean testJar) {
         StringBuffer id = new StringBuffer();
-        id.append(group);
+        id.append(artifact.getGroupId());
         id.append(':');
-        id.append(name);
-        if (type != null) {
-            id.append(':');
-            id.append(type);
-        }
+        id.append(artifact.getArtifactId());
+        id.append(':');
+        id.append(testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType());
+        String classifier = artifact.getClassifier();
         if (classifier != null) {
             id.append(':');
             id.append(classifier);
         }
         id.append(':');
-        id.append(version);
+        id.append(artifact.getVersion());
         return id.toString();
     }
 }

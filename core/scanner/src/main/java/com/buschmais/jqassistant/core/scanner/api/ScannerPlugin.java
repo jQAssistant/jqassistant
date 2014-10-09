@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
@@ -12,6 +16,20 @@ import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
  *            The item type accepted by the plugin.
  */
 public interface ScannerPlugin<I> {
+
+    /**
+     * Defines an annotation for specifying dependencies between scanner
+     * plugins.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface Requires {
+
+        /**
+         * @return The scanner plugins which must be executed first.
+         */
+        Class<? extends ScannerPlugin<?>>[] value();
+    }
 
     /**
      * Initialize the plugin.

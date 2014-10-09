@@ -23,13 +23,13 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 
-public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<File> {
+public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
 
@@ -51,17 +51,17 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public Class<? super File> getType() {
-        return File.class;
+    public Class<? super VirtualFile> getType() {
+        return VirtualFile.class;
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path);
     }
 
     @Override
-    public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         BeansDescriptor beansDescriptor = context.getStore().create(BeansDescriptor.class);
         try (InputStream stream = item.createStream()) {

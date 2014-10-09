@@ -56,21 +56,6 @@ public final class XmlReportTestHelper {
             public String getValue() {
                 return "descriptorValue";
             }
-
-            @Override
-            public <I> I getId() {
-                return null;
-            }
-
-            @Override
-            public <T> T as(Class<T> type) {
-                return type.cast(this);
-            }
-
-            @Override
-            public <D> D getDelegate() {
-                return null;
-            }
         });
         rows.add(row);
         Result<Concept> result = new Result<>(concept, Arrays.asList(C1, C2), rows);
@@ -80,8 +65,7 @@ public final class XmlReportTestHelper {
         xmlReportWriter.end();
         return writer.toString();
     }
-    
-    
+
     /**
      * Creates a test report with {@link Constraint}.
      * 

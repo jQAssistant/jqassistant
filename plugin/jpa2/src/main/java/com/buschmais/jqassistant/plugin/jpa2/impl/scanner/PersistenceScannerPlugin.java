@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -32,7 +32,7 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractScannerPlugin<File> {
+public class PersistenceScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     private static final JAXBContext jaxbContext;
 
@@ -52,17 +52,17 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public Class<? super File> getType() {
-        return File.class;
+    public Class<? super VirtualFile> getType() {
+        return VirtualFile.class;
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
     }
 
     @Override
-    public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();

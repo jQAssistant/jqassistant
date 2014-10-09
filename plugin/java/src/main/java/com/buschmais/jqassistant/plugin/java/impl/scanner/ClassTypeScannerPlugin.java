@@ -9,7 +9,7 @@ import java.io.InputStream;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 
 public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
@@ -30,7 +30,7 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
     @Override
     public FileDescriptor scan(final Class<?> item, String path, Scope scope, Scanner scanner) throws IOException {
         final String resource = "/" + item.getName().replace('.', '/') + ".class";
-        FileDescriptor fileDescriptor = scanner.scan(new File() {
+        FileDescriptor fileDescriptor = scanner.scan(new AbstractVirtualFile() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(item.getResourceAsStream(resource));

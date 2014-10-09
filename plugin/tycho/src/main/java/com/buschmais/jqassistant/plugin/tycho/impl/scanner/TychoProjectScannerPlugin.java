@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
+import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
 import java.io.File;
@@ -23,12 +24,14 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectScannerPlugin;
 
 /**
  * Implementation of a {@link ScannerPlugin} for tycho projects
  */
+@Requires(MavenProjectScannerPlugin.class)
 public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
     @Override
@@ -38,13 +41,18 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     @Override
     public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
-        final ArtifactDirectoryDescriptor artifact = resolveArtifact(project.getArtifact(), false, ArtifactDirectoryDescriptor.class, scanner.getContext());
-        for (File file : getPdeFiles(project)) {
-            String filePath = getDirectoryPath(project.getBasedir(), file);
-            FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
-            if (fileDescriptor != null) {
-                artifact.addContains(fileDescriptor);
+        final ArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), false, scanner.getContext());
+        scanner.getContext().push(ArtifactDescriptor.class, artifact);
+        try {
+            for (File file : getPdeFiles(project)) {
+                String filePath = getDirectoryPath(project.getBasedir(), file);
+                FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
+                if (fileDescriptor != null) {
+                    artifact.addContains(fileDescriptor);
+                }
             }
+        } finally {
+            scanner.getContext().pop(ArtifactDescriptor.class);
         }
         return artifact;
     }

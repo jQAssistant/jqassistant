@@ -1,10 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import java.io.File;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -22,7 +21,7 @@ public class JarScannerPlugin extends AbstractArchiveScannerPlugin {
     }
 
     @Override
-    protected ArchiveDescriptor createArchive(File file, String path, ScannerContext scannerContext) {
+    protected ArchiveDescriptor createArchive(VirtualFile file, String path, ScannerContext scannerContext) {
         return scannerContext.getStore().create(JarArchiveDescriptor.class);
     }
 }

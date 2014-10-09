@@ -19,12 +19,12 @@ import javax.xml.stream.events.XMLEvent;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.File;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit4.api.model.TestSuiteDescriptor;
 
-public class TestReportScannerPlugin extends AbstractScannerPlugin<File> {
+public class TestReportScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
@@ -33,17 +33,17 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<File> {
     }
 
     @Override
-    public Class<? super File> getType() {
-        return File.class;
+    public Class<? super VirtualFile> getType() {
+        return VirtualFile.class;
     }
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return TESTREPORTS.equals(scope) && path.matches(".*TEST-.*\\.xml");
     }
 
     @Override
-    public FileDescriptor scan(File item, String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try (InputStream stream = item.createStream()) {
