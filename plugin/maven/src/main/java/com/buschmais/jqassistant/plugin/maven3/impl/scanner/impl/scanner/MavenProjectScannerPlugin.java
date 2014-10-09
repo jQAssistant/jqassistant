@@ -19,10 +19,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.type.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ClassPathDirectory;
-import com.buschmais.jqassistant.plugin.junit4.impl.scanner.TestReportDirectory;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
@@ -42,8 +39,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     @Override
     public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        MavenProjectDirectoryDescriptor projectDescriptor;
-        projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
+        MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         projectDescriptor.setPackaging(project.getPackaging());
         Artifact artifact = project.getArtifact();
         ArtifactDescriptor mainArtifactDescriptor = scanClassesDirectory(projectDescriptor, artifact, false, project.getBuild().getOutputDirectory(), scanner);
@@ -164,8 +160,13 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         if (!directory.exists()) {
             LOGGER.info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
         } else {
-            final ArtifactDirectoryDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, ArtifactDirectoryDescriptor.class, scanner.getContext());
-            scanner.scan(new ClassPathDirectory(directory, artifactDescriptor), directoryName, CLASSPATH);
+            ArtifactDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, scanner.getContext());
+            scanner.getContext().push(ArtifactDescriptor.class, artifactDescriptor);
+            try {
+                scanner.scan(directory, directoryName, CLASSPATH);
+            } finally {
+                scanner.getContext().pop(ArtifactDescriptor.class);
+            }
             projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
             return artifactDescriptor;
         }
@@ -183,7 +184,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     private void scanTestReports(Scanner scanner, String directoryName) throws IOException {
         final File directory = new File(directoryName);
         if (directory.exists()) {
-            scanner.scan(new TestReportDirectory(directory), TESTREPORTS);
+            scanner.scan(directory, TESTREPORTS);
         }
     }
 }
