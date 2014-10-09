@@ -4,7 +4,6 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,11 +60,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
             store.beginTransaction();
             try {
                 final Scanner scanner = new ScannerImpl(store, scannerPlugins);
-                try {
-                    scanner.scan(directory, CLASSPATH);
-                } catch (IOException e) {
-                    throw new RuntimeException("Cannot scan directory '" + absolutePath + "'", e);
-                }
+                scanner.scan(directory, CLASSPATH);
             } finally {
                 store.commitTransaction();
             }
