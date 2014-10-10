@@ -1,0 +1,85 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <metricGroup id="ArtifactDependencies">
+        <description>Artifact dependencies</description>
+        <metric id="TypesAndDependenciesPerArtifact">
+            <description>Types per artifact and dependencies per artifact.</description>
+            <!--
+            <requiresConcept refId="dependency:Type"/>
+            <requiresConcept refId="dependency:Artifact"/>
+            -->
+            <cypher><![CDATA[
+                    MATCH
+                        (a:Artifact)-[:CONTAINS]->(t:Type)
+                    WITH
+                        a, count(t) as TypesPerArtifact
+                    MATCH
+                        (a)-[:DEPENDS_ON]->(d:Artifact)
+                    RETURN
+                        a.fqn as ArtifactName, TypesPerArtifact, count(d) as Dependencies
+                ]]></cypher>
+        </metric>
+        <metric id="TypesAndDependenciesPerPackageByArtifact">
+            <description>Types per package and dependencies per package by artifact.</description>
+            <requiresConcept refId="dependency:Package"/>
+            <cypher><![CDATA[
+                    MATCH
+                        (a:Artifact)-[:CONTAINS]->(p:Package), (a)-[:CONTAINS]->(t:Type), (p)-[:CONTAINS]->(t)
+                    WHERE
+                        a.fqn={ArtifactName} with p, count(t) as TypesPerPackage
+                    MATCH
+                        (p)-[:DEPENDS_ON]->(d:Package)
+                    RETURN
+                        p.fqn as PackageName, TypesPerPackage, count(d) as Dependencies
+                ]]></cypher>
+            <parameter name="ArtifactName" type="string"/>
+        </metric>
+        <metric id="ElementsAndDependenciesPerTypeByPackageAndArtifact">
+            <description>Elements per type and dependencies per type by package and artifact.</description>
+            <cypher><![CDATA[
+                    MATCH
+                        (a:Artifact)-[:CONTAINS]->(p:Package), (a)-[:CONTAINS]->(t:Type), (p)-[:CONTAINS]->(t)
+                    WHERE
+                        a.fqn={ArtifactName} and p.fqn={PackageName}
+                    WITH
+                        t
+                    MATCH
+                        (t)-[:DECLARES]->(e)
+                    WHERE
+                        e:Field or e:Method
+                    WITH
+                        t, count(e) as ElementsPerType
+                    MATCH
+                        (t)-[:DEPENDS_ON]->(d:Type)
+                    RETURN
+                        t.fqn as TypeName, ElementsPerType, count(d) as Dependencies
+                ]]></cypher>
+            <parameter name="ArtifactName" type="string"/>
+            <parameter name="PackageName" type="string"/>
+        </metric>
+    </metricGroup>
+    <metricGroup id="TypesAndTestClassesPerArtifact">
+        <description>Types and test classes per artifact</description>
+        <metric id="TypesAndTestClassesPerArtifact">
+            <description>Types and test classes per artifact</description>
+            <requiresConcept refId="junit4:TestClass"/>
+            <cypher><![CDATA[
+                    MATCH
+                        (artifact:Artifact), (testArtifact:Artifact)
+                    WHERE
+                        artifact.group=testArtifact.group and artifact.type="jar" and artifact.name=testArtifact.name and testArtifact.type="test-jar"
+                    WITH
+                        artifact, testArtifact
+                    MATCH
+                        (artifact)-[:CONTAINS]->(t:Type)
+                    WITH
+                        artifact, testArtifact, count(t) as Types
+                    MATCH
+                        (testArtifact)-[:CONTAINS]-(test:Type:Test)
+                    RETURN
+                        artifact.name as ArtifactName, Types, count(test) as Tests
+                ]]></cypher>
+        </metric>
+    </metricGroup>
+
+</jqa:jqassistant-rules>
