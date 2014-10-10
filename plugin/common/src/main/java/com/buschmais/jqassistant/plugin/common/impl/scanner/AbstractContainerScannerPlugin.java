@@ -29,13 +29,15 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
     public final FileDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
+        LOGGER.info("Entering {}", path);
         context.push(FileContainerDescriptor.class, containerDescriptor);
         try {
-            for (E e : getEntries(container)) {
+            Iterable<? extends E> entries = getEntries(container);
+            for (E e : entries) {
                 try (VirtualEntry entry = getEntry(container, e)) {
                     String relativePath = getRelativePath(container, e);
                     Scope entryScope = createScope(scope);
-                    LOGGER.info("Scanning entry '{}'.", relativePath);
+                    LOGGER.info("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
                     if (containerDescriptor != null) {
                         containerDescriptor.getContains().add(descriptor);
@@ -44,6 +46,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
             }
         } finally {
             context.pop(FileContainerDescriptor.class);
+            LOGGER.info("Leaving {}", path);
         }
         return containerDescriptor;
     }

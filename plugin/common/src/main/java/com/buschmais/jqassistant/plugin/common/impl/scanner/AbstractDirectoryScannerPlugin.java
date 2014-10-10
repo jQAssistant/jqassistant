@@ -64,7 +64,6 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
             }
         };
         Files.walkFileTree(directoryPath, visitor);
-        LOGGER.info("Scanning directory '{}' [{} entries].", container.getAbsolutePath(), files.size());
         return files;
     }
 
