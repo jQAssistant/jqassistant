@@ -22,7 +22,7 @@ public interface Scanner {
      * @throws IOException
      *             If scanning fails.
      */
-    public <I> FileDescriptor scan(I item, Scope scope) throws IOException;
+    public <I> FileDescriptor scan(I item, Scope scope);
 
     /**
      * Scan the given item, e.g. a file, inputstream, directory, etc.
@@ -39,7 +39,7 @@ public interface Scanner {
      * @throws IOException
      *             If scanning fails.
      */
-    public <I> FileDescriptor scan(I item, String path, Scope scope) throws IOException;
+    public <I> FileDescriptor scan(I item, String path, Scope scope);
 
     /**
      * Return an instance of the scanner context.
