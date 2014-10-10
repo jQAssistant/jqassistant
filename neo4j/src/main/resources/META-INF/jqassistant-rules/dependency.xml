@@ -1,0 +1,203 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="dependency:Annotation">
+        <description>Creates a DEPENDS_ON relationship between an annotated element and the types of the annotation and its values.</description>
+        <cypher><![CDATA[
+            match
+                (e)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(at:Type)
+            where
+                e:Type
+                or e:Method
+                or e:Parameter
+                or e:Field
+            create unique
+                (e)-[:DEPENDS_ON]->(at)
+            with
+                e, a
+            match
+                (a)-[:HAS|IS|CONTAINS|OF_TYPE*0..]->(vt:Type)
+            create unique
+                (e)-[:DEPENDS_ON]->(vt)
+            return
+                count(distinct e) as Elements
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:MethodParameter">
+        <requiresConcept refId="dependency:Annotation"/>
+        <description>Creates a DEPENDS_ON relationship between a method and the types of its parameters.</description>
+        <cypher><![CDATA[
+            match
+                (m:Method)-[:HAS]->(p:Parameter)-[:OF_TYPE|DEPENDS_ON]->(t:Type)
+            create unique
+                (m)-[:DEPENDS_ON]->(t)
+            return
+                count(distinct p) as Parameters
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:MethodInvocation">
+        <requiresConcept refId="dependency:MethodParameter"/>
+        <description>Creates a DEPENDS_ON relationship between a method and the dependencies of the method signature it invokes.</description>
+        <cypher><![CDATA[
+            match
+                (m:Method)-[:INVOKES]->(target:Method),
+                (dt:Type)-[:DECLARES]->(target)
+            create unique
+                (m)-[:DEPENDS_ON]->(dt)
+            with
+                m, target
+            match
+                (target)-[:HAS]->(:PARAMETER)-[:DEPENDS_ON]->(pt)
+            create unique
+                (m)-[:DEPENDS_ON]->(pt)
+            with
+                m, target
+            match
+                (target)-[:RETURNS]->(rt)
+            create unique
+                (m)-[:DEPENDS_ON]->(rt)
+            return
+                count(distinct m) as MethodInvocations
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:FieldAccess">
+        <description>Creates a DEPENDS_ON relationship between a method and all fields types it reads and writes.</description>
+        <cypher><![CDATA[
+            match
+                (m:Method)-[:READS|WRITES]->(target:Field),
+                (dt:Type)-[:DECLARES]->(target)
+            create unique
+                (m)-[:DEPENDS_ON]->(dt)
+            with
+                m, target
+            match
+                  (target)-[:OF_TYPE|DEPENDS_ON]->(ft)
+            create unique
+                (m)-[:DEPENDS_ON]->(ft)
+            return
+                count(distinct m) as FieldAccesses
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:TypeBody">
+        <requiresConcept refId="dependency:Annotation"/>
+        <requiresConcept refId="dependency:MethodParameter"/>
+        <requiresConcept refId="dependency:MethodInvocation"/>
+        <requiresConcept refId="dependency:FieldAccess"/>
+        <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
+        <cypher><![CDATA[
+            match
+                (t1:Type)-[:DECLARES*0..1]->(fieldOrMethod)-[:OF_TYPE|RETURNS|DEPENDS_ON|THROWS]->(t2:Type)
+            where
+                t1<>t2
+                and (fieldOrMethod:Field OR fieldOrMethod:Method)
+            create unique
+                (t1)-[:DEPENDS_ON]->(t2)
+            return
+                count(distinct t1) as Types
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:Type">
+        <requiresConcept refId="dependency:TypeBody"/>
+        <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.</description>
+        <cypher><![CDATA[
+            match
+                (t1:Type)-[:EXTENDS|IMPLEMENTS]->(t2:Type)
+            where
+                t1<>t2
+            create unique
+                (t1)-[:DEPENDS_ON]->(t2)
+            return
+                count(distinct t1) as Types
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:Package">
+        <requiresConcept refId="dependency:Type"/>
+        <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.</description>
+        <cypher><![CDATA[
+            match
+                (p1:Package)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(p2:Package)
+            where
+                p1<>p2
+            create unique
+                (p1)-[:DEPENDS_ON]->(p2)
+            return
+                count(distinct p1) as Packages
+        ]]></cypher>
+    </concept>
+
+    <concept id="dependency:Artifact">
+        <requiresConcept refId="dependency:Type"/>
+        <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.</description>
+        <cypher><![CDATA[
+            match
+                (a1:Artifact)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(a2:Artifact)
+            where
+                a1<>a2
+            create unique
+                (a1)-[:DEPENDS_ON]->(a2)
+            return
+                a1 as Artifact, collect(distinct a2.name) as Dependencies
+        ]]></cypher>
+    </concept>
+
+    <constraint id="dependency:PackageCycles">
+        <requiresConcept refId="dependency:Package"/>
+        <description>There must be no cyclic package dependencies.</description>
+        <cypher><![CDATA[
+            match
+                (p1:Package)-[:DEPENDS_ON]->(p2:Package),
+                path=shortestPath((p2)-[:DEPENDS_ON*]->(p1))
+            where
+                p1<>p2
+            return
+                p1 as Package, extract(p in nodes(path) | p.fqn) as Cycle
+            order by
+                Package.fqn
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="dependency:TypeCycles">
+        <requiresConcept refId="dependency:Package"/>
+        <description>There must be no cyclic type dependencies.</description>
+        <cypher><![CDATA[
+            match
+                (p1:Package)-[:DEPENDS_ON*0..1]->(p2:Package),
+                shortestPath((p2)-[:DEPENDS_ON*]->(p1))
+            with
+                p1, p2
+            match
+                (p1)-[:CONTAINS]->(t1:Type),
+                (p2)-[:CONTAINS]->(t2:Type),
+                (t1)-[:DEPENDS_ON]->(t2),
+                path=shortestPath((t2)-[:DEPENDS_ON*]->(t1))
+            where
+                not (
+                  t1 = t2 or (t1)-[:DECLARES]-(t2)
+                )
+            return
+                length(path) as Length, extract(p in nodes (path) | p.fqn) as Cycle
+        ]]></cypher>
+    </constraint>
+
+    <constraint id="dependency:ArtifactCycles">
+        <requiresConcept refId="dependency:Artifact"/>
+        <description>There must be no cyclic artifact dependencies.</description>
+        <cypher><![CDATA[
+            match
+                (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact),
+                path=shortestPath((a2)-[:DEPENDS_ON*]->(a1))
+            where
+                a1<>a2
+            return
+                a1 as Artifact, extract(a in nodes(path) | a.fqn) AS Cycle
+            order by
+                Artifact.FQN
+        ]]></cypher>
+    </constraint>
+
+</jqa:jqassistant-rules>

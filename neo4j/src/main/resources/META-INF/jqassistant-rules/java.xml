@@ -1,0 +1,172 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="java:InnerType">
+        <description>Sets a label "Inner" on inner types.</description>
+        <cypher><![CDATA[
+            match
+              (:Type)-[:DECLARES]->(innerType:Type)
+            set
+              innerType:Inner
+            return
+              count(innerType) as InnerTypes
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:AnonymousInnerType">
+        <requiresConcept refId="java:InnerType"/>
+        <description>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</description>
+        <cypher><![CDATA[
+            match
+              (innerType:Inner:Type)
+            where
+              innerType.name =~ ".*\\$[0-9]*"
+            set
+              innerType:Anonymous
+            return
+              count(innerType) as AnonymousInnerTypes
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:TypeAssignableFrom">
+        <description>Creates a relationship ASSIGNABLE_FROM between two "Type" labeled nodes if one type is assignable from the other (i.e. a super class or
+            interface).
+        </description>
+        <cypher><![CDATA[
+            match
+              (type:Type)
+            create unique
+              (type)-[:ASSIGNABLE_FROM]->(type)
+            with
+              type
+            match
+              (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Type)
+            create unique
+              (superType)-[:ASSIGNABLE_FROM]->(type)
+            return count(type) as AssignableTypes
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:MethodOverrides">
+        <requiresConcept refId="java:TypeAssignableFrom"/>
+        <description>Creates a relationship OVERRIDES between two "Method" labeled nodes if one method overrides another one from a super type (i.e. the methods
+            have the same signature).
+        </description>
+        <cypher><![CDATA[
+            match
+              (type:Type)-[:DECLARES]->(method:Method),
+              (superType:Type)-[:DECLARES]->(otherMethod:Method),
+              (superType)-[:ASSIGNABLE_FROM]->(type)
+            where
+              method.name = otherMethod.name
+              AND method.signature = otherMethod.signature
+              AND method.visibility <> 'private'
+            create unique
+              (method)-[:OVERRIDES]->(otherMethod)
+            return count(method) as OverriddenMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:InvokesOverriddenMethod">
+        <requiresConcept refId="java:MethodOverrides"/>
+        <requiresConcept refId="java:TypeAssignableFrom"/>
+        <description>Propagates INVOKES relationships to methods which implement or override the invoked method.</description>
+        <cypher><![CDATA[
+            match
+              (method:Method)-[:INVOKES]->(invokedMethod:Method),
+              (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
+            create unique
+              (method)-[r:INVOKES]->(overridingMethod)
+            return count(r) AS OverridingInvocations
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:MethodOverloads">
+        <description>Creates a relationship OVERLOADS between two "Method" labeled nodes if one method overloads another one from the same type (i.e. the
+            methods
+            have the same name but not the same signature).
+        </description>
+        <cypher><![CDATA[
+            match
+              (type:Type)-[:DECLARES]->(method:Method),
+              (type)-[:DECLARES]->(otherMethod:Method)
+            where
+              method <> otherMethod
+              AND method.name = otherMethod.name
+              AND method.signature <> otherMethod.signature
+            create unique
+                (method)-[:OVERLOADS]->(otherMethod)
+            return count(method) AS OverloadedMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Deprecated">
+        <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with "Deprecated".</description>
+        <cypher><![CDATA[
+            match
+              (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Type)
+            where
+              dt.fqn='java.lang.Deprecated'
+            SET
+              e:Deprecated
+            return
+              count(e) AS DeprecatedElements
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Exception">
+        <description>Labels types deriving from java.lang.Exception as "Exception".</description>
+        <cypher><![CDATA[
+            match
+              (exception)-[:EXTENDS*]->(t:Type)
+            where
+              t.fqn = 'java.lang.Exception'
+            SET
+              exception:Exception
+            return
+              count(exception) AS Exceptions
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:RuntimeException">
+        <description>Labels types deriving from java.lang.RuntimeException as "RuntimeException".</description>
+        <cypher><![CDATA[
+            match
+              (runtimeException)-[:EXTENDS*]->(t:Type)
+            where
+              t.fqn = 'java.lang.RuntimeException'
+            SET
+              runtimeException:RuntimeException
+            return
+              count(runtimeException) AS RuntimeExceptions
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Error">
+        <description>Labels types deriving from java.lang.Error as "Error".</description>
+        <cypher><![CDATA[
+            match
+              (throwable)-[:EXTENDS*]->(t:Type)
+            where
+              t.fqn = 'java.lang.Error'
+            SET
+              throwable:Error
+            return
+              count(throwable) AS Errors
+        ]]></cypher>
+    </concept>
+
+    <concept id="java:Throwable">
+        <description>Labels types deriving from java.lang.Throwable as "Throwable".</description>
+        <cypher><![CDATA[
+            match
+              (throwable)-[:EXTENDS*]->(t:Type)
+            where
+              t.fqn = 'java.lang.Throwable'
+            SET
+              throwable:Throwable
+            return
+              count(throwable) AS Throwables
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>

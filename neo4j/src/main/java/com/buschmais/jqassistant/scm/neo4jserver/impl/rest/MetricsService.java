@@ -11,6 +11,8 @@ import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -32,6 +34,9 @@ import javax.ws.rs.core.UriInfo;
 
 @Path("/metrics")
 public class MetricsService extends AbstractJQARestService {
+
+    /** The logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetricsService.class);
 
     /** The parameter key for the metric group. */
     private static final String PARAMETER_GROUP_METRIC_ID = "groupMetricId";
@@ -110,6 +115,7 @@ public class MetricsService extends AbstractJQARestService {
                 try {
                     analyze(conceptIds, Collections.<String> emptyList(), Collections.<String> emptyList());
                 } catch (Exception e) {
+                    LOGGER.error("Executing concepts (" + conceptIds + ") for metric (" + groupId + "/" + metricId + ") failed.", e);
                     return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
                 }
             }
