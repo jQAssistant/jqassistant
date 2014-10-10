@@ -23,12 +23,17 @@
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant.examples</groupId>
-                        <artifactId>jqassistant.examples.plugins.report</artifactId>
+                        <artifactId>jqassistant.examples.plugins.scanner</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>com.buschmais.jqassistant.examples</groupId>
                         <artifactId>jqassistant.examples.plugins.rule</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant.examples</groupId>
+                        <artifactId>jqassistant.examples.plugins.report</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>

@@ -11,8 +11,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>report</module>
+        <module>scanner</module>
         <module>rule</module>
+        <module>report</module>
         <module>project</module>
     </modules>
 </project>
