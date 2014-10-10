@@ -37,28 +37,32 @@ public class CSVFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     @Override
     public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
-        CSV csv = CSV.separator(';').create();
-        // Create the node for a CSV file.
-        final Store store = scanner.getContext().getStore();
-        final CSVFileDescriptor fileDescriptor = store.create(CSVFileDescriptor.class);
-        // Open the input stream for the file.
-        InputStream stream = item.createStream();
-        // Parse the stream using OpenCSV.
-        csv.read(stream, new CSVReadProc() {
-            public void procRow(int rowIndex, String... values) {
-                // Create the node for a row
-                CSVRowDescriptor rowDescriptor = store.create(CSVRowDescriptor.class);
-                fileDescriptor.getRows().add(rowDescriptor);
-                rowDescriptor.setLineNumber(rowIndex);
-                for (int i = 0; i < values.length; i++) {
-                    // Create the node for a column
-                    CSVColumnDescriptor columnDescriptor = store.create(CSVColumnDescriptor.class);
-                    rowDescriptor.getColumns().add(columnDescriptor);
-                    columnDescriptor.setIndex(i);
-                    columnDescriptor.setValue(values[i]);
+        // Open the input stream for reading the file.
+        try (InputStream stream = item.createStream()) {
+            // Create the node for a CSV file.
+            final Store store = scanner.getContext().getStore();
+            final CSVFileDescriptor fileDescriptor = store.create(CSVFileDescriptor.class);
+            // Parse the stream using OpenCSV.
+            CSV csv = CSV.create();
+            csv.read(stream, new CSVReadProc() {
+
+                @Override
+                public void procRow(int rowIndex, String... values) {
+                    // Create the node for a row
+                    CSVRowDescriptor rowDescriptor = store.create(CSVRowDescriptor.class);
+                    fileDescriptor.getRows().add(rowDescriptor);
+                    rowDescriptor.setLineNumber(rowIndex);
+                    for (int i = 0; i < values.length; i++) {
+                        // Create the node for a column
+                        CSVColumnDescriptor columnDescriptor = store.create(CSVColumnDescriptor.class);
+                        rowDescriptor.getColumns().add(columnDescriptor);
+                        columnDescriptor.setIndex(i);
+                        columnDescriptor.setValue(values[i]);
+                    }
                 }
-            }
-        });
-        return fileDescriptor;
+
+            });
+            return fileDescriptor;
+        }
     }
 }
