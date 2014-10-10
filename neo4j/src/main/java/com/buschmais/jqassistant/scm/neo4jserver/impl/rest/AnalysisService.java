@@ -58,6 +58,12 @@ public class AnalysisService extends AbstractJQARestService {
         }
     }
 
+    @GET
+    public String getSomething() {
+
+        return "something";
+    }
+
     @POST
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
