@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
@@ -23,6 +26,8 @@ import com.buschmais.xo.spi.reflection.DependencyResolver;
  * Implementation of the {@link Scanner}.
  */
 public class ScannerImpl implements Scanner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScannerImpl.class);
 
     private final ScannerContext scannerContext;
 
@@ -58,24 +63,28 @@ public class ScannerImpl implements Scanner {
     }
 
     @Override
-    public <I> FileDescriptor scan(I item, Scope scope) throws IOException {
+    public <I> FileDescriptor scan(I item, Scope scope) {
         return scan(item, null, scope);
     }
 
     @Override
-    public <I> FileDescriptor scan(final I item, final String path, final Scope scope) throws IOException {
+    public <I> FileDescriptor scan(final I item, final String path, final Scope scope) {
         FileDescriptor fileDescriptor = null;
         Class<?> itemClass = item.getClass();
         for (ScannerPlugin<?> scannerPlugin : getScannerPluginsForType(itemClass)) {
             ScannerPlugin<I> selectedPlugin = (ScannerPlugin<I>) scannerPlugin;
-            if (selectedPlugin.accepts(item, path, scope)) {
-                if (scannerListener != null) {
-                    scannerListener.before(item, path, scope);
+            try {
+                if (selectedPlugin.accepts(item, path, scope)) {
+                    if (scannerListener != null) {
+                        scannerListener.before(item, path, scope);
+                    }
+                    fileDescriptor = selectedPlugin.scan(item, path, scope, this);
+                    if (scannerListener != null) {
+                        scannerListener.after(item, path, scope, fileDescriptor);
+                    }
                 }
-                fileDescriptor = selectedPlugin.scan(item, path, scope, this);
-                if (scannerListener != null) {
-                    scannerListener.after(item, path, scope, fileDescriptor);
-                }
+            } catch (IOException e) {
+                LOGGER.error("Cannot scan item " + path, e);
             }
         }
         if (fileDescriptor == null) {
