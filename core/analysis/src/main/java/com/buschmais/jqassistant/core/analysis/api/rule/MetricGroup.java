@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Defines a group of {@link Metric}s.
@@ -12,7 +12,7 @@ public class MetricGroup {
     /**
      * The list of metrics.
      */
-    private final Map<String, Metric> metrics = new TreeMap<>();
+    private final Map<String, Metric> metrics = new LinkedHashMap<>();
     /**
      * The id of the rule.
      */
