@@ -1,17 +1,17 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
+import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,28 +33,31 @@ import javax.ws.rs.core.UriInfo;
 @Path("/metrics")
 public class MetricsService extends AbstractJQARestService {
 
-    private static final String DRILLDOWNMETRICS_FILE = "/jqa/drilldown-metrix.json";
-
     /** The parameter key for the metric group. */
     private static final String PARAMETER_GROUP_METRIC_ID = "groupMetricId";
-
     /** The parameter key for the metric. */
     private static final String PARAMETER_METRIC_ID = "metricId";
 
     /** The JSON object key for the results array. */
     private static final String JSON_OBJECT_KEY_RESULT = "result";
-
     /** The JSON object key for the error message. */
     private static final String JSON_OBJECT_KEY_ERRORS = "error";
-
     /** The JSON object key for columns. */
     private static final String JSON_OBJECT_KEY_COLUMNS = "columns";
-
     /** The JSON object key for rows. */
     private static final String JSON_OBJECT_KEY_ROW = "row";
-
     /** The JSON object key for data. */
     private static final String JSON_OBJECT_KEY_DATA = "data";
+    /** The JSON object key for {@value} . */
+    private static final String JSON_OBJECT_KEY_ID = "id";
+    /** The JSON object key for {@value} . */
+    private static final String JSON_OBJECT_KEY_DESCRIPTION = "description";
+    /** The JSON object key for {@value} . */
+    private static final String JSON_OBJECT_KEY_CYPHER = "cypher";
+    /** The JSON object key for {@value} . */
+    private static final String JSON_OBJECT_KEY_PARAMETERS = "parameters";
+    /** The JSON object key for {@value} . */
+    private static final String JSON_OBJECT_KEY_METRICS = "metrics";
 
     /**
      * Constructs a new service.
@@ -69,12 +72,13 @@ public class MetricsService extends AbstractJQARestService {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/")
     public JSONArray getMetrics() {
 
         JSONArray metrics = new JSONArray();
         try {
-            for (MetricGroup metricGroup : readMetricGroups()) {
-                metrics.put(metricGroup.asJsonObject());
+            for (MetricGroup metricGroup : readMetricGroups().values()) {
+                metrics.put(metricGroupAsJsonObject(metricGroup));
             }
         } catch (JSONException e) {
             throw new WebApplicationException(e);
@@ -95,14 +99,33 @@ public class MetricsService extends AbstractJQARestService {
 
         if (metric != null) {
 
+            // get the required concepts
+            List<String> conceptIds = new ArrayList<>();
+            for (Concept concept : metric.getRequiresConcepts()) {
+                conceptIds.add(concept.getId());
+            }
+
+            // run the concepts - if there are some
+            if (!conceptIds.isEmpty()) {
+                try {
+                    analyze(conceptIds, Collections.<String> emptyList(), Collections.<String> emptyList());
+                } catch (Exception e) {
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
+                }
+            }
+
+            // create the parameter map for running the metric query
             Map<String, Object> queryParameters = new HashMap<>();
-            for (String queryParameter : metric.getParameters()) {
+            for (String queryParameter : metric.getQuery().getParameters().keySet()) {
                 queryParameters.put(queryParameter, uriParameters.getFirst(queryParameter));
             }
 
             Store store = getStore();
-            Result<CompositeRowObject> queryResult = store.executeQuery(metric.getQuery(), queryParameters);
 
+            // run the metric query
+            Result<CompositeRowObject> queryResult = store.executeQuery(metric.getQuery().getCypher(), queryParameters);
+
+            // return the result
             try {
                 JSONObject jResponse = createJsonResponse(queryResult);
                 return Response.status(Response.Status.OK).entity(jResponse.toString()).build();
@@ -112,12 +135,9 @@ public class MetricsService extends AbstractJQARestService {
         } else {
 
             try {
-                String message = MessageFormat.format("Unable to find metric for group id '{0}' and metric id '{1}'.",
-                                                     groupId,
-                                                     metricId);
+                String message = MessageFormat.format("Unable to find metric for group id '{0}' and metric id '{1}'.", groupId, metricId);
                 return Response.status(Response.Status.OK).entity(createJsonError(message).toString()).build();
-            }
-            catch (JSONException e) {
+            } catch (JSONException e) {
                 throw new WebApplicationException(e);
             }
         }
@@ -134,17 +154,9 @@ public class MetricsService extends AbstractJQARestService {
      */
     private Metric findMetric(String metricGroupId, String metricId) {
 
-        for (MetricGroup metricGroup : readMetricGroups()) {
-
-            if (!metricGroup.getId().equals(metricGroupId)) {
-                continue;
-            }
-
-            for (Metric metric : metricGroup.getMetrics()) {
-                if (metric.getId().equals(metricId)) {
-                    return metric;
-                }
-            }
+        MetricGroup metricGroup = readMetricGroups().get(metricGroupId);
+        if (metricGroup != null) {
+            return metricGroup.getMetrics().get(metricId);
         }
 
         return null;
@@ -170,7 +182,9 @@ public class MetricsService extends AbstractJQARestService {
 
     /**
      * Creates the JSON response object from the query result.
-     * @param queryResult the result of the query
+     * 
+     * @param queryResult
+     *            the result of the query
      * @return the JSON response object
      * @throws JSONException
      */
@@ -215,20 +229,49 @@ public class MetricsService extends AbstractJQARestService {
     }
 
     /**
+     * Convert a given metric group object into a JSON object.
+     * 
+     * @param metricGroup
+     *            the metric group object to convert
+     * @return a JSON object
+     * @throws JSONException
+     */
+    private JSONObject metricGroupAsJsonObject(MetricGroup metricGroup) throws JSONException {
+
+        JSONObject object = new JSONObject();
+        object.put(JSON_OBJECT_KEY_ID, metricGroup.getId());
+        object.put(JSON_OBJECT_KEY_DESCRIPTION, metricGroup.getDescription());
+
+        JSONArray metricsArray = new JSONArray();
+        for (Metric metric : metricGroup.getMetrics().values()) {
+
+            JSONObject metricObject = new JSONObject();
+            metricObject.put(JSON_OBJECT_KEY_ID, metric.getId());
+            metricObject.put(JSON_OBJECT_KEY_DESCRIPTION, metric.getDescription());
+            metricObject.put(JSON_OBJECT_KEY_CYPHER, metric.getQuery().getCypher());
+
+            JSONArray parameterArray = new JSONArray();
+            for (String parameterKey : metric.getQuery().getParameters().keySet()) {
+                parameterArray.put(parameterKey);
+            }
+
+            metricObject.put(JSON_OBJECT_KEY_PARAMETERS, parameterArray);
+
+            metricsArray.put(metricObject);
+        }
+        object.put(JSON_OBJECT_KEY_METRICS, metricsArray);
+
+        return object;
+    }
+
+    /**
      * Reads the available metric groups.
      * 
-     * @return a possibly empty list of {@link MetricGroup}, never {@code null}
+     * @return the map of metric groups
      */
-    private List<MetricGroup> readMetricGroups() {
+    private Map<String, MetricGroup> readMetricGroups() {
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            return mapper.readValue(this.getClass().getResourceAsStream(DRILLDOWNMETRICS_FILE), new TypeReference<ArrayList<MetricGroup>>() {
-            });
-
-        } catch (IOException e) {
-            return Collections.emptyList();
-        }
+        return getAvailableRules().getMetricGroups();
     }
+
 }

@@ -2,19 +2,6 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
-import java.io.Writer;
-import java.util.Collection;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -31,6 +18,19 @@ import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Implementation of a {@link RuleSetWriter}.
@@ -136,7 +136,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 includedConstraintType.setSeverity(getSeverity(includeConstraint.getSeverity()));
                 groupType.getIncludeConstraint().add(includedConstraintType);
             }
-            rules.getQueryDefinitionOrConceptOrConstraint().add(groupType);
+            rules.getQueryTemplateOrConceptOrConstraint().add(groupType);
         }
     }
 
@@ -151,7 +151,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(requiresConcept.getId());
                 conceptType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getQueryDefinitionOrConceptOrConstraint().add(conceptType);
+            rules.getQueryTemplateOrConceptOrConstraint().add(conceptType);
         }
     }
 
@@ -167,7 +167,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(requiresConcept.getId());
                 constraintType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getQueryDefinitionOrConceptOrConstraint().add(constraintType);
+            rules.getQueryTemplateOrConceptOrConstraint().add(constraintType);
         }
     }
 

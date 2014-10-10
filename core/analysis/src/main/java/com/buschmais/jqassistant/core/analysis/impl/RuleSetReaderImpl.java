@@ -2,8 +2,34 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
+import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
+import com.buschmais.jqassistant.core.analysis.api.rule.Query;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.QueryTemplateType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,29 +40,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Query;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.QueryDefinitionType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader}
@@ -66,8 +69,9 @@ public class RuleSetReaderImpl implements RuleSetReader {
             try {
                 Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
                 unmarshaller.setSchema(XmlHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
-                if (LOGGER.isInfoEnabled())
+                if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Reading rules descriptor '{}'.", source.getSystemId());
+                }
                 rules.add(unmarshaller.unmarshal(source, JqassistantRules.class).getValue());
             } catch (JAXBException e) {
                 throw new IllegalArgumentException("Cannot read rules from '" + source.getSystemId() + "'.", e);
@@ -78,22 +82,24 @@ public class RuleSetReaderImpl implements RuleSetReader {
 
     /**
      * Converts a list of {@link JqassistantRules} to a {@link RuleSet}.
-     * 
+     *
      * @param rules
      *            The {@link JqassistantRules}.
+     *
      * @return The corresponding {@link RuleSet}.
      */
     private RuleSet convert(List<JqassistantRules> rules) {
-        Map<String, QueryDefinitionType> queryDefinitionTypes = new HashMap<>();
+        Map<String, QueryTemplateType> queryTemplateTypes = new HashMap<>();
         Map<String, ConceptType> conceptTypes = new HashMap<>();
         Map<String, ConstraintType> constraintTypes = new HashMap<>();
         Map<String, GroupType> groupTypes = new HashMap<>();
+        Map<String, MetricGroupType> metricGroupTypes = new HashMap<>();
         for (JqassistantRules rule : rules) {
-            List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getQueryDefinitionOrConceptOrConstraint();
+            List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getQueryTemplateOrConceptOrConstraint();
             for (ReferenceableType referenceableType : queryDefinitionOrConceptOrConstraint) {
                 String id = referenceableType.getId();
-                if (referenceableType instanceof QueryDefinitionType) {
-                    queryDefinitionTypes.put(id, (QueryDefinitionType) referenceableType);
+                if (referenceableType instanceof QueryTemplateType) {
+                    queryTemplateTypes.put(id, (QueryTemplateType) referenceableType);
                 } else if (referenceableType instanceof ConceptType) {
                     conceptTypes.put(id, (ConceptType) referenceableType);
                 }
@@ -103,31 +109,76 @@ public class RuleSetReaderImpl implements RuleSetReader {
                 if (referenceableType instanceof GroupType) {
                     groupTypes.put(id, (GroupType) referenceableType);
                 }
+                if (referenceableType instanceof MetricGroupType) {
+                    metricGroupTypes.put(id, (MetricGroupType) referenceableType);
+                }
             }
         }
         RuleSet ruleSet = new RuleSet();
-        readConcepts(queryDefinitionTypes, conceptTypes, ruleSet);
-        readConstraints(queryDefinitionTypes, conceptTypes, constraintTypes, ruleSet);
+        readConcepts(queryTemplateTypes, conceptTypes, ruleSet);
+        readConstraints(queryTemplateTypes, conceptTypes, constraintTypes, ruleSet);
         readGroups(conceptTypes, constraintTypes, groupTypes, ruleSet);
+        readMetricGroups(metricGroupTypes, ruleSet);
         return ruleSet;
     }
 
     /**
+     * Reads {@link MetricGroupType}s and converts them to {@link MetricGroup}s.
+     * @param ruleSet The {@link RuleSet}.
+     */
+    private void readMetricGroups(Map<String, MetricGroupType> metricGroupTypes, RuleSet ruleSet) {
+
+        for (MetricGroupType metricGroupType : metricGroupTypes.values()) {
+
+            MetricGroup metricGroup = new MetricGroup();
+            metricGroup.setId(metricGroupType.getId());
+            metricGroup.setDescription(metricGroupType.getDescription());
+
+            for (MetricType metricType : metricGroupType.getMetric()) {
+
+                Metric metric = new Metric();
+                metric.setId(metricType.getId());
+                metric.setDescription(metricType.getDescription());
+
+                Query query = new Query();
+                query.setCypher(metricType.getCypher());
+                for (ParameterDefinitionType parameterDefinitionType : metricType.getParameter()) {
+                    // put null here, the value will be added if the query is executed
+                    query.getParameters().put(parameterDefinitionType.getName(), null);
+                }
+                metric.setQuery(query);
+
+                for (ReferenceType referenceType : metricType.getRequiresConcept()) {
+                    Concept concept = ruleSet.getConcepts().get(referenceType.getRefId());
+                    if (concept == null) {
+                        throw new IllegalArgumentException("Cannot resolve required concept for metric " + metric.getId() + " and concept " + referenceType.getRefId());
+                    }
+                    metric.getRequiresConcepts().add(concept);
+                }
+
+                metricGroup.addMetric(metric);
+            }
+
+            ruleSet.getMetricGroups().put(metricGroup.getId(), metricGroup);
+        }
+    }
+
+    /**
      * Reads {@link ConceptType}s and converts them to {@link Concept}s.
-     * 
-     * @param queryDefinitionTypes
-     *            The {@link QueryDefinitionType}s.
+     *
+     * @param queryTemplateTypes
+     *            The {@link QueryTemplateType}s.
      * @param conceptTypes
      *            The {@link ConceptType}s.
      * @param ruleSet
      *            The {@link RuleSet}.
      */
-    private void readConcepts(Map<String, QueryDefinitionType> queryDefinitionTypes, Map<String, ConceptType> conceptTypes, RuleSet ruleSet) {
+    private void readConcepts(Map<String, QueryTemplateType> queryTemplateTypes, Map<String, ConceptType> conceptTypes, RuleSet ruleSet) {
         for (ConceptType conceptType : conceptTypes.values()) {
             Concept concept = getOrCreateConcept(conceptType.getId(), ruleSet.getConcepts());
             concept.setDescription(conceptType.getDescription());
             if (conceptType.getUseQueryDefinition() != null) {
-                concept.setQuery(createQueryFromDefinition(conceptType.getUseQueryDefinition().getRefId(), conceptType.getParameter(), queryDefinitionTypes));
+                concept.setQuery(createQueryFromDefinition(conceptType.getUseQueryDefinition().getRefId(), conceptType.getParameter(), queryTemplateTypes));
             } else {
                 concept.setQuery(createQuery(conceptType.getCypher(), conceptType.getParameter()));
             }
@@ -137,9 +188,9 @@ public class RuleSetReaderImpl implements RuleSetReader {
 
     /**
      * Reads {@link ConstraintType}s and converts them to {@link Constraint}s.
-     * 
-     * @param queryDefinitionTypes
-     *            The {@link QueryDefinitionType}s.
+     *
+     * @param queryTemplateTypes
+     *            The {@link QueryTemplateType}s.
      * @param conceptTypes
      *            The {@link ConceptType}s.
      * @param constraintTypes
@@ -147,7 +198,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
      * @param ruleSet
      *            The {@link RuleSet}.
      */
-    private void readConstraints(Map<String, QueryDefinitionType> queryDefinitionTypes, Map<String, ConceptType> conceptTypes,
+    private void readConstraints(Map<String, QueryTemplateType> queryTemplateTypes, Map<String, ConceptType> conceptTypes,
             Map<String, ConstraintType> constraintTypes, RuleSet ruleSet) {
         for (ConstraintType constraintType : constraintTypes.values()) {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
@@ -157,7 +208,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
             constraint.setSeverity(severity);
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
-                        queryDefinitionTypes));
+                        queryTemplateTypes));
             } else {
                 constraint.setQuery(createQuery(constraintType.getCypher(), constraintType.getParameter()));
             }
@@ -168,7 +219,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
     /**
      * Reads {@link GroupType}s and converts them to
      * {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}s.
-     * 
+     *
      * @param constraintTypes
      *            The {@link ConstraintType}s.
      * @param groupTypes
@@ -215,11 +266,12 @@ public class RuleSetReaderImpl implements RuleSetReader {
     /**
      * Gets a {@link Concept} from the cache or create a new instance if it does
      * not exist yet.
-     * 
+     *
      * @param id
      *            The id.
      * @param concepts
      *            The {@link Concept}s.
+     *
      * @return The {@link Concept}.
      */
     private Concept getOrCreateConcept(String id, Map<String, Concept> concepts) {
@@ -235,11 +287,12 @@ public class RuleSetReaderImpl implements RuleSetReader {
     /**
      * Gets a {@link Constraint} from the cache or create a new instance if it
      * does not exist yet.
-     * 
+     *
      * @param id
      *            The id.
      * @param constraints
      *            The {@link Constraint}s.
+     *
      * @return The {@link Constraint}.
      */
     private Constraint getOrCreateConstraint(String id, Map<String, Constraint> constraints) {
@@ -255,13 +308,14 @@ public class RuleSetReaderImpl implements RuleSetReader {
     /**
      * Gets a {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}
      * from the cache or create a new instance if it does not exist yet.
-     * 
+     *
      * @param id
      *            The id.
      * @param groups
      *            The
      *            {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}
      *            s.
+     *
      * @return The
      *         {@link com.buschmais.jqassistant.core.analysis.api.rule.Group}.
      */
@@ -277,13 +331,14 @@ public class RuleSetReaderImpl implements RuleSetReader {
 
     /**
      * Resolves the required {@link Concept}s for a given {@link ReferenceType}.
-     * 
+     *
      * @param referenceTypes
      *            The {@link ReferenceType}s.
      * @param conceptTypes
      *            The {@link ConceptType}s.
      * @param ruleSet
      *            The {@link RuleSet}.
+     *
      * @return The required {@link Concept}s.
      */
     private Set<Concept> getRequiredConcepts(List<ReferenceType> referenceTypes, Map<String, ConceptType> conceptTypes, RuleSet ruleSet) {
@@ -300,54 +355,15 @@ public class RuleSetReaderImpl implements RuleSetReader {
 
     /**
      * Creates a {@link Query}.
-     * 
+     *
      * @param cypher
      *            The CYPHER expression.
      * @param parameterTypes
      *            The {@link ParameterType}s.
+     *
      * @return The {@link Query}.
      */
     private Query createQuery(String cypher, List<ParameterType> parameterTypes) {
-        Map<String, Object> defaultValues = Collections.emptyMap();
-        return createQuery(cypher, parameterTypes, defaultValues);
-    }
-
-    /**
-     * Creates a {@link Query} from a {@link QueryDefinitionType} identified by
-     * its id.
-     * 
-     * @param id
-     *            The id of the {@link QueryDefinitionType}.
-     * @param parameterTypes
-     *            The {@link ParameterType}s.
-     * @param queryDefinitionTypes
-     *            The {@link QueryDefinitionType}s.
-     * @return The {@link Query}.
-     */
-    private Query createQueryFromDefinition(String id, List<ParameterType> parameterTypes, Map<String, QueryDefinitionType> queryDefinitionTypes) {
-        QueryDefinitionType queryDefinitionType = queryDefinitionTypes.get(id);
-        if (queryDefinitionType == null) {
-            throw new IllegalArgumentException("Cannot resolve used query definition: " + id);
-        }
-        Map<String, Object> defaultValues = new HashMap<String, Object>();
-        for (ParameterDefinitionType parameterDefinitionType : queryDefinitionType.getParameterDefinition()) {
-            defaultValues.put(parameterDefinitionType.getName(), getValue(parameterDefinitionType.getType(), parameterDefinitionType.getDefault()));
-        }
-        return createQuery(queryDefinitionType.getCypher(), parameterTypes, defaultValues);
-    }
-
-    /**
-     * Creates a {@link Query}.
-     * 
-     * @param cypher
-     *            The CYPHER expression.
-     * @param parameterTypes
-     *            The {@link ParameterType}s.
-     * @param defaultValues
-     *            The default values to use.
-     * @return The {@link Query}.
-     */
-    private Query createQuery(String cypher, List<ParameterType> parameterTypes, Map<String, Object> defaultValues) {
         Query query = new Query();
         query.setCypher(cypher);
         for (ParameterType parameterType : parameterTypes) {
@@ -357,12 +373,34 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     /**
+     * Creates a {@link Query} from a {@link QueryTemplateType} identified by
+     * its id.
+     *
+     * @param id
+     *            The id of the {@link QueryTemplateType}.
+     * @param parameterTypes
+     *            The {@link ParameterType}s.
+     * @param QueryTemplateTypes
+     *            The {@link QueryTemplateType}s.
+     *
+     * @return The {@link Query}.
+     */
+    private Query createQueryFromDefinition(String id, List<ParameterType> parameterTypes, Map<String, QueryTemplateType> QueryTemplateTypes) {
+        QueryTemplateType QueryTemplateType = QueryTemplateTypes.get(id);
+        if (QueryTemplateType == null) {
+            throw new IllegalArgumentException("Cannot resolve used query definition: " + id);
+        }
+        return createQuery(QueryTemplateType.getCypher(), parameterTypes);
+    }
+
+    /**
      * Get a parameter value by its string representation and types.
-     * 
+     *
      * @param type
      *            The {@link ParameterType}.
      * @param stringValue
      *            The string representation.
+     *
      * @return The parameter value.
      */
     private Object getValue(ParameterTypes type, String stringValue) {

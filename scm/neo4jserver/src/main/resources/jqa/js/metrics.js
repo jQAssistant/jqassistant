@@ -134,8 +134,8 @@ function updateMetricGroups(metricsGroups) {
 
     console.log("updateMetricGroups(...)");
 
-    if (!metricsGroups || metricsGroups.length == 0) {
-        console.log("Error - metrics loaded are empty: " + metricsGroups);
+    if (metricsGroups.length == 0) {
+        showAlert("Metric groups loaded from server are empty.");
         return;
     }
 
@@ -199,7 +199,7 @@ function updateUiComponents(group, metric) {
     $(".metricGroup-details-button").show();
 
     $("#metricId").text(metric["id"]);
-    $("#metricQuery").text(metric["query"]);
+    $("#metricQuery").text(metric["cypher"]);
     $("#metricDescription").text(metric["description"]);
 
     $("#showMetricsPanel").show();
