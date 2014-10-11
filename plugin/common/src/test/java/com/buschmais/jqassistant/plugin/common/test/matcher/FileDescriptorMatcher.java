@@ -5,7 +5,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
  * A matcher for {@link FileDescriptor}s.

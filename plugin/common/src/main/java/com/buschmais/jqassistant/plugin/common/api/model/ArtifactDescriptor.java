@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.api.type;
+package com.buschmais.jqassistant.plugin.common.api.model;
 
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
@@ -6,11 +6,7 @@ import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.*;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;

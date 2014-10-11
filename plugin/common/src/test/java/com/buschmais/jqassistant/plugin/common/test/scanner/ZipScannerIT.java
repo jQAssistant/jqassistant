@@ -13,8 +13,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 public class ZipScannerIT extends AbstractPluginIT {
