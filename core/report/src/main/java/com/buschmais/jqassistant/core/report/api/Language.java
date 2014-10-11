@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * A meta-annotation to mark
- * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor} as language
+ * {@link com.buschmais.jqassistant.core.store.api.model.Descriptor} as language
  * elements.
  */
 @Target(ElementType.ANNOTATION_TYPE)

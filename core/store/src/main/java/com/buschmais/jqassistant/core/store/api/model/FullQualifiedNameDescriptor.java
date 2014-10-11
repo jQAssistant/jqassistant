@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.store.api.type;
+package com.buschmais.jqassistant.core.store.api.model;
 
 import com.buschmais.xo.neo4j.api.annotation.Indexed;
 import com.buschmais.xo.neo4j.api.annotation.Property;

@@ -11,11 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.transform.Source;
 
@@ -35,11 +31,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -51,10 +43,10 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 
 /**
@@ -343,13 +335,13 @@ public class AbstractPluginIT {
 
     /**
      * Get or create an
-     * {@link com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor}
+     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor}
      * .
      * 
      * @param artifactId
      *            The artifact id.
      * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor}
+     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor}
      *         .
      */
     protected ArtifactDirectoryDescriptor getArtifactDescriptor(String artifactId) {

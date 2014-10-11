@@ -6,8 +6,8 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import java.util.Collection;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
-import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 
 /**
  * Defines the store for {@link Descriptor}s.
@@ -92,7 +92,7 @@ public interface Store {
      * @param fullQualifiedName
      *            The full qualified name of the descriptor.
      * @return The
-     *         {@link com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor}
+     *         {@link com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor}
      *         .
      */
     <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);

@@ -6,8 +6,8 @@ import java.util.zip.ZipFile;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.ArchiveDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<VirtualFile> {

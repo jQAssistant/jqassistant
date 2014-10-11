@@ -5,12 +5,7 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
@@ -23,8 +18,8 @@ import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectScannerPlugin;
 

@@ -8,11 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -29,7 +25,7 @@ import org.mockito.Mockito;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
 
 @RunWith(Parameterized.class)
 public class TychoProjectScannerPluginTest {

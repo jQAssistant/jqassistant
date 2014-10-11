@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.FileContainerDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry;
 
 /**

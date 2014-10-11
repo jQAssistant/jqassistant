@@ -10,19 +10,15 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jcp.xmlns.xml.ns.javaee.Alternatives;
-import org.jcp.xmlns.xml.ns.javaee.Beans;
-import org.jcp.xmlns.xml.ns.javaee.Decorators;
-import org.jcp.xmlns.xml.ns.javaee.Interceptors;
-import org.jcp.xmlns.xml.ns.javaee.ObjectFactory;
+import org.jcp.xmlns.xml.ns.javaee.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.cdi.api.model.BeansDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;

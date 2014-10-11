@@ -5,9 +5,9 @@ import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.type.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 

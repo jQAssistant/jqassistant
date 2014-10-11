@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.store.api.type;
+package com.buschmais.jqassistant.core.store.api.model;
 
 import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 

@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.examples.plugins.scanner.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**

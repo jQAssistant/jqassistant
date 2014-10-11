@@ -4,22 +4,15 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
 
 /**

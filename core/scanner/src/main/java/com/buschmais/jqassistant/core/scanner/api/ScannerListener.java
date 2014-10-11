@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
  * Defines a listener interface for the scanner.

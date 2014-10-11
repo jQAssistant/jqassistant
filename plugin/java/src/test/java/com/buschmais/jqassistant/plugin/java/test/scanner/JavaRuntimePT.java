@@ -1,13 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.FixMethodOrder;
@@ -16,9 +11,14 @@ import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class JavaRuntimePT extends AbstractJavaPluginIT {

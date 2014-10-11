@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.report;
 
 import static com.buschmais.jqassistant.core.report.TestLanguage.TestLanguageElement.TestElement;
 
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * A test descriptor.

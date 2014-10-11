@@ -6,7 +6,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.impl.store.descriptor.ConceptDescriptor;
+import com.buschmais.jqassistant.core.analysis.impl.store.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOException;
 
@@ -128,7 +128,7 @@ public class AnalyzerImpl implements Analyzer {
             for (Concept requiredConcept : constraint.getRequiresConcepts()) {
                 applyConcept(requiredConcept);
             }
-            console.info("Validating constraint '" + constraint.getId() + "' with severity: '"+ constraint.getSeverity() + "'.");
+            console.info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity() + "'.");
             try {
                 store.beginTransaction();
                 reportWriter.beginConstraint(constraint);

@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
-import com.buschmais.jqassistant.core.store.api.type.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.type.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 
 /**
  * Defines a common base descriptor for all members of a

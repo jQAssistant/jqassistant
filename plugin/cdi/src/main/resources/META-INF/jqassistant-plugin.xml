@@ -1,8 +1,8 @@
 <v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides rules for CDI.</description>
     <model>
-        <class>com.buschmais.jqassistant.plugin.cdi.api.type.CdiDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.cdi.api.type.BeansDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.cdi.api.model.CdiDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.cdi.api.model.BeansDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.cdi.impl.scanner.BeansDescriptorScannerPlugin</class>

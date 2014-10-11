@@ -9,7 +9,7 @@ import au.com.bytecode.opencsv.CSVReadProc;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVColumnDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVRowDescriptor;

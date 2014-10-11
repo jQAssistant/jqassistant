@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.scanner.api;
 
 import java.io.IOException;
 
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
  * Defines the scanner interface.
