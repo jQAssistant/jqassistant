@@ -86,7 +86,10 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
         store.beginTransaction();
         try {
             final ReportHelper reportHelper = new ReportHelper(getLog());
-            reportHelper.verifyConceptResults(inMemoryReportWriter);
+            final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
+            if (conceptViolations > 0) {
+                throw new JqaConstraintViolationException(conceptViolations + " concept(s) returned empty results!");
+            }
             final int violations = reportHelper.verifyConstraintViolations(inMemoryReportWriter);
             if (violations > 0) {
                 throw new JqaConstraintViolationException(violations + " constraint(s) violated!");

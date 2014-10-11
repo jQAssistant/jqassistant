@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.common.report;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
 
 import java.util.Collection;
 import java.util.Map;
@@ -80,8 +80,8 @@ public final class ReportHelper {
      * Verifies the concept results returned by the
      * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
      * <p>
-     * A warning is logged for each concept which did not return a result (i.e.
-     * has not been applied).
+     * An error message is logged for each concept which did not return a result
+     * (i.e. has not been applied).
      * </p>
      *
      * @param inMemoryReportWriter
@@ -89,13 +89,16 @@ public final class ReportHelper {
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
      *            .
      */
-    public void verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
+        int violations = 0;
         for (Result<Concept> conceptResult : conceptResults) {
             if (conceptResult.getRows().isEmpty()) {
-                console.warn("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
+                console.error("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
+                violations++;
             }
         }
+        return violations;
     }
 
     /**
@@ -106,7 +109,7 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) throws AnalysisListenerException {
-        return verifyConstraintViolations(DEFAULT_SEVERITY, inMemoryReportWriter);
+        return verifyConstraintViolations(DEFAULT_CONSTRAINT_SEVERITY, inMemoryReportWriter);
     }
 
     /**

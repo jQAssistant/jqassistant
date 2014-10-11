@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
+import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONCEPT_SEVERITY;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
@@ -12,7 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedRefereceType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
@@ -126,15 +127,16 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 groupType.getIncludeGroup().add(groupReferenceType);
             }
             for (Concept includeConcept : group.getConcepts()) {
-                ReferenceType conceptReferenceType = new ReferenceType();
+                IncludedRefereceType conceptReferenceType = new IncludedRefereceType();
                 conceptReferenceType.setRefId(includeConcept.getId());
+                conceptReferenceType.setSeverity(getSeverity(includeConcept.getSeverity(), DEFAULT_CONCEPT_SEVERITY));
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
             for (Constraint includeConstraint : group.getConstraints()) {
-                IncludedConstraintType includedConstraintType = new IncludedConstraintType();
-                includedConstraintType.setRefId(includeConstraint.getId());
-                includedConstraintType.setSeverity(getSeverity(includeConstraint.getSeverity()));
-                groupType.getIncludeConstraint().add(includedConstraintType);
+                IncludedRefereceType constraintReferenceType = new IncludedRefereceType();
+                constraintReferenceType.setRefId(includeConstraint.getId());
+                constraintReferenceType.setSeverity(getSeverity(includeConstraint.getSeverity(), DEFAULT_CONSTRAINT_SEVERITY));
+                groupType.getIncludeConstraint().add(constraintReferenceType);
             }
             rules.getQueryTemplateOrConceptOrConstraint().add(groupType);
         }
@@ -145,6 +147,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
+            conceptType.setSeverity(getSeverity(concept.getSeverity(), DEFAULT_CONCEPT_SEVERITY));
             conceptType.setCypher(concept.getQuery().getCypher());
             for (Concept requiresConcept : concept.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
@@ -160,7 +163,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
-            constraintType.setSeverity(getSeverity(constraint.getSeverity()));
+            constraintType.setSeverity(getSeverity(constraint.getSeverity(), DEFAULT_CONSTRAINT_SEVERITY));
             constraintType.setCypher(constraint.getQuery().getCypher());
             for (Concept requiresConcept : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
@@ -176,11 +179,13 @@ public class RuleSetWriterImpl implements RuleSetWriter {
      * 
      * @param severity
      *            {@link Severity}
+     * @param defaultSeverity
+     *            default severity level
      * @return {@link SeverityEnumType}
      */
-    private SeverityEnumType getSeverity(Severity severity) {
+    private SeverityEnumType getSeverity(Severity severity, Severity defaultSeverity) {
         if (severity == null) {
-            severity = DEFAULT_SEVERITY;
+            severity = defaultSeverity;
         }
         return SeverityEnumType.fromValue(severity.getValue());
     }

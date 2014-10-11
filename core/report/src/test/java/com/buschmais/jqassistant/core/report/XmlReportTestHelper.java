@@ -45,7 +45,7 @@ public final class XmlReportTestHelper {
         Concept concept = new Concept();
         concept.setId("my:concept");
         concept.setDescription("My concept description");
-
+        concept.setSeverity(Severity.MAJOR);
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConcept(concept);
         List<Map<String, Object>> rows = new ArrayList<>();
