@@ -4,7 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageE
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**

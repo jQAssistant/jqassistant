@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
-import com.buschmais.jqassistant.core.store.api.type.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
  * Defines the language elements for "Java".
@@ -178,7 +178,7 @@ public @interface Java {
 
         /**
          * Returns the file name of the given descriptor if it extends
-         * {@link com.buschmais.jqassistant.core.store.api.type.FileDescriptor}
+         * {@link com.buschmais.jqassistant.core.store.api.model.FileDescriptor}
          * .
          * 
          * @param descriptor

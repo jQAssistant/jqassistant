@@ -4,7 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageE
 
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.store.api.type.NamedDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
