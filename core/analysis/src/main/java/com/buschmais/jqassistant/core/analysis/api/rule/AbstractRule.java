@@ -9,6 +9,12 @@ import java.util.Set;
  */
 public abstract class AbstractRule implements Rule {
 
+    /** Default severity level for concept. */
+    public static Severity DEFAULT_CONCEPT_SEVERITY = Severity.MINOR;
+
+    /** Default severity level for constraints. */
+    public static Severity DEFAULT_CONSTRAINT_SEVERITY = Severity.INFO;
+
     /**
      * The id of the rule.
      */
@@ -28,6 +34,11 @@ public abstract class AbstractRule implements Rule {
      * The concepts which must be applied before this rule can be executed.
      */
     private Set<Concept> requiresConcepts = new HashSet<>();
+
+    /**
+     * The severity of the constraint.
+     */
+    private Severity severity;
 
     public String getId() {
         return id;
@@ -61,6 +72,25 @@ public abstract class AbstractRule implements Rule {
         this.query = query;
     }
 
+    /**
+     * Returns the severity.
+     * 
+     * @return {@link Severity}
+     */
+    public Severity getSeverity() {
+        return severity;
+    }
+
+    /**
+     * Sets the severity.
+     * 
+     * @param severity
+     *            severity value
+     */
+    public void setSeverity(Severity severity) {
+        this.severity = severity;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -80,7 +110,8 @@ public abstract class AbstractRule implements Rule {
 
     @Override
     public String toString() {
-        return "AbstractRule {" + "id='" + id + '\'' + ", description='" + description + '\'' + ", query=" + query + ", requiresConcepts=" + requiresConcepts
-                + '}';
+        return "AbstractRule [id=" + id + ", description=" + description + ", query=" + query + ", requiresConcepts=" + requiresConcepts + ", severity="
+                + severity + "]";
     }
+
 }

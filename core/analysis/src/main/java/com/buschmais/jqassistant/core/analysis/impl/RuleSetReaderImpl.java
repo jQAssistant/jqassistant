@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.Constraint.DEFAULT_SEVERITY;
+import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONCEPT_SEVERITY;
+import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -14,7 +15,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedRefereceType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
@@ -177,6 +178,9 @@ public class RuleSetReaderImpl implements RuleSetReader {
         for (ConceptType conceptType : conceptTypes.values()) {
             Concept concept = getOrCreateConcept(conceptType.getId(), ruleSet.getConcepts());
             concept.setDescription(conceptType.getDescription());
+            // Use default severity; if none configured
+            Severity severity = conceptType.getSeverity() == null ? DEFAULT_CONCEPT_SEVERITY : Severity.fromValue(conceptType.getSeverity().value());
+            concept.setSeverity(severity);
             if (conceptType.getUseQueryDefinition() != null) {
                 concept.setQuery(createQueryFromDefinition(conceptType.getUseQueryDefinition().getRefId(), conceptType.getParameter(), queryTemplateTypes));
             } else {
@@ -204,7 +208,7 @@ public class RuleSetReaderImpl implements RuleSetReader {
             Constraint constraint = getOrCreateConstraint(constraintType.getId(), ruleSet.getConstraints());
             constraint.setDescription(constraintType.getDescription());
             // Use default severity; if none configured
-            Severity severity = constraintType.getSeverity() == null ? DEFAULT_SEVERITY : Severity.fromValue(constraintType.getSeverity().value());
+            Severity severity = constraintType.getSeverity() == null ? DEFAULT_CONSTRAINT_SEVERITY : Severity.fromValue(constraintType.getSeverity().value());
             constraint.setSeverity(severity);
             if (constraintType.getUseQueryDefinition() != null) {
                 constraint.setQuery(createQueryFromDefinition(constraintType.getUseQueryDefinition().getRefId(), constraintType.getParameter(),
@@ -231,30 +235,34 @@ public class RuleSetReaderImpl implements RuleSetReader {
             RuleSet ruleSet) {
         for (GroupType groupType : groupTypes.values()) {
             Group group = getOrCreateGroup(groupType.getId(), ruleSet.getGroups());
-            for (ReferenceType referenceType : groupType.getIncludeConcept()) {
+            for (IncludedRefereceType referenceType : groupType.getIncludeConcept()) {
                 ConceptType includedConceptType = conceptTypes.get(referenceType.getRefId());
                 if (includedConceptType == null) {
                     ruleSet.getMissingConcepts().add(referenceType.getRefId());
                 } else {
-                    group.getConcepts().add(getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts()));
-                }
-            }
-            for (IncludedConstraintType includedConstraintType : groupType.getIncludeConstraint()) {
-                ConstraintType constraintType = constraintTypes.get(includedConstraintType.getRefId());
-                if (constraintType == null) {
-                    ruleSet.getMissingConstraints().add(includedConstraintType.getRefId());
-                } else {
-                    Constraint constraint = getOrCreateConstraint(includedConstraintType.getRefId(), ruleSet.getConstraints());
+                    Concept concept = getOrCreateConcept(referenceType.getRefId(), ruleSet.getConcepts());
                     // override the default severity
-                    if (includedConstraintType.getSeverity() != null) {
-                        constraint.setSeverity(Severity.fromValue(includedConstraintType.getSeverity().value()));
+                    if (referenceType.getSeverity() != null) {
+                        concept.setSeverity(Severity.fromValue(referenceType.getSeverity().value()));
+                    }
+                    group.getConcepts().add(concept);                }
+            }
+            for (IncludedRefereceType referenceType : groupType.getIncludeConstraint()) {
+                ConstraintType constraintType = constraintTypes.get(referenceType.getRefId());
+                if (constraintType == null) {
+                    ruleSet.getMissingConstraints().add(referenceType.getRefId());
+                } else {
+                    Constraint constraint = getOrCreateConstraint(referenceType.getRefId(), ruleSet.getConstraints());
+                    // override the default severity
+                    if (referenceType.getSeverity() != null) {
+                        constraint.setSeverity(Severity.fromValue(referenceType.getSeverity().value()));
                     }
                     group.getConstraints().add(constraint);
                 }
             }
             for (ReferenceType referenceType : groupType.getIncludeGroup()) {
-                GroupType includedConstraintType = groupTypes.get(referenceType.getRefId());
-                if (includedConstraintType == null) {
+                GroupType includedGroupType = groupTypes.get(referenceType.getRefId());
+                if (includedGroupType == null) {
                     ruleSet.getMissingGroups().add(referenceType.getRefId());
                 } else {
                     group.getGroups().add(getOrCreateGroup(referenceType.getRefId(), ruleSet.getGroups()));
