@@ -74,12 +74,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                 executable = createExecutableFromTemplate(activeRule, check);
                 requiresConcepts = check.getRequiresConcepts();
             }
-            // set severity for constraints
-            if (executable instanceof Constraint) {
-                Severity severity = Severity.valueOf(activeRule.getSeverity().name());
-                LOGGER.debug("Adding severity " + severity + " to " + executable.getId());
-                ((Constraint) executable).setSeverity(severity);
-            }
+            // set severity
+            Severity severity = Severity.valueOf(activeRule.getSeverity().name());
+            LOGGER.debug("Adding severity " + severity + " to " + executable.getId());
+            executable.setSeverity(severity);
 
             executables.put(executable, requiresConcepts);
             if (executable instanceof Concept) {

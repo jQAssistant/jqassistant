@@ -36,6 +36,7 @@
                         minOccurs="0" maxOccurs="1"/>
             <xs:element name="duration" type="xs:int" minOccurs="1"
                         maxOccurs="1"/>
+           	<xs:element name="severity" type="jqassistant-report:SeverityType" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
@@ -56,11 +57,7 @@
        
     <xs:complexType name="ConstraintType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-report:RuleType">
-	            <xs:sequence>
-	            	<xs:element name="severity" type="jqassistant-report:SeverityType" minOccurs="0"/>
-	            </xs:sequence>
-            </xs:extension>
+            <xs:extension base="jqassistant-report:RuleType"/>
         </xs:complexContent>
     </xs:complexType>
 

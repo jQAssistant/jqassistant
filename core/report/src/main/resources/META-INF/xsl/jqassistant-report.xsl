@@ -128,12 +128,13 @@
                     <th>#</th>
                     <th>Concept Name</th>
                     <th>Count</th>
+                    <th style="width:150px;">Severity</th>
                     <th style="width:150px;">Duration (in ms)</th>
                 </tr>
                 <xsl:apply-templates select="//concept">
                     <xsl:sort select="count(result)" order="descending"
                               data-type="number"/>
-                    <xsl:sort select="@id" order="ascending"/>
+                    <xsl:sort select="severity/@level" order="ascending"/>
                 </xsl:apply-templates>
             </table>
         </div>
@@ -185,11 +186,9 @@
             <td class="right">
                 <xsl:value-of select="count(result/rows/row)"/>
             </td>
-            <xsl:if test="name()='constraint'">
-                <td class="right">
-                    <xsl:value-of select="severity/text()"/>
-                </td>
-            </xsl:if>
+            <td class="right">
+                <xsl:value-of select="severity/text()"/>
+            </td>
             <td class="right">
                 <xsl:value-of select="duration/text()"/>
             </td>
@@ -203,12 +202,12 @@
                             <xsl:otherwise>constraint_success</xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
-                    <td colspan="4">
+                    <td colspan="5">
                         <xsl:apply-templates select="result"/>
                     </td>
                 </xsl:if>
                 <xsl:if test="name()!='constraint'">
-                    <td colspan="3">
+                    <td colspan="5">
                         <xsl:apply-templates select="result"/>
                     </td>
                 </xsl:if>

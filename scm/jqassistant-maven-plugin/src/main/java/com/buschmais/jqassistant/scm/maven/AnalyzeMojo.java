@@ -43,7 +43,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
      */
-    @Parameter(property = "jqassistant.failOnConstraintViolations", defaultValue = "true")
+    @Parameter(property = "jqassistant.failOnConstraintViolations", defaultValue = "false")
     protected boolean failOnConstraintViolations;
 
     /**
@@ -117,10 +117,14 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportHelper reportHelper = new ReportHelper(console);
         store.beginTransaction();
         try {
-            reportHelper.verifyConceptResults(inMemoryReportWriter);
-            int violations = reportHelper.verifyConstraintViolations(Severity.fromValue(severity), inMemoryReportWriter);
-            if (failOnConstraintViolations && violations > 0) {
-                throw new MojoFailureException(violations + " constraints have been violated!");
+            int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
+            if(failOnConstraintViolations && conceptViolations > 0){
+                throw new MojoFailureException(conceptViolations + " concept(s) returned empty results!");
+            }
+            
+            int constraintViolations = reportHelper.verifyConstraintViolations(Severity.fromValue(severity), inMemoryReportWriter);
+            if (failOnConstraintViolations && constraintViolations > 0) {
+                throw new MojoFailureException(constraintViolations + " constraint(s) have been violated!");
             }
         } catch (AnalysisListenerException e) {
             throw new MojoExecutionException("Cannot print report.", e);

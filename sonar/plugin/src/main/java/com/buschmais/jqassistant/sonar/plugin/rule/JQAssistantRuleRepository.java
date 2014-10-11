@@ -93,11 +93,7 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
         rule.setDescription(executable.getDescription());
         // set priority based on severity value
-        if (executable instanceof Constraint) {
-            rule.setSeverity(RulePriority.valueOf(((Constraint) executable).getSeverity().name()));
-        } else {
-            rule.setSeverity(ruleType.getPriority());
-        }
+        rule.setSeverity(RulePriority.valueOf(executable.getSeverity().name()));
         StringBuilder requiresConcepts = new StringBuilder();
         for (Concept requiredConcept : executable.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {

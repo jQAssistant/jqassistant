@@ -253,7 +253,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     }
 
     /**
-     * Writes the severity of the rule if rule is of type {@link Constraint}.
+     * Writes the severity of the rule.
      * 
      * @param rule
      *            rule
@@ -261,13 +261,11 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
      *             If writing fails.
      */
     private void writeSeverity(Rule rule) throws XMLStreamException {
-        if (rule instanceof Constraint) {
-            Severity severity = ((Constraint) rule).getSeverity();
+            Severity severity = ((AbstractRule) rule).getSeverity();
             xmlStreamWriter.writeStartElement("severity");
             xmlStreamWriter.writeAttribute("level", severity.getLevel().toString());
             xmlStreamWriter.writeCharacters(severity.getValue());
             xmlStreamWriter.writeEndElement();
-        }
     }
 
     /**
