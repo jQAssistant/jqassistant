@@ -18,10 +18,11 @@ Next the following settings must be applied to the jQAssistant Maven plugin in t
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=15..43]
+include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=15..44]
 ----
 
 * Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI. Note that special characters must be replaced by XML entities.
 * The specified 'group' must be the name of the quality profile used to analyze the project.
-* The build shall not be broken if a violation is detected, therefore 'failOnConstraintViolations' is set to 'false'.
+* The build shall break if a violation is detected, therefore 'failOnConstraintViolations' is set to 'true'.
+* The build shall break only if violation is detected with severity equal to or higher than _critical_, therefore severity is set to _critical_
 
