@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Defines the interface for language elements to be returned by

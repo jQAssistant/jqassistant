@@ -4,7 +4,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.store.api.type.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.AnnotatedType;
 
 /**
@@ -14,7 +14,7 @@ public final class LanguageHelper {
 
     /**
      * Return the {@link LanguageElement} associated with a
-     * {@link com.buschmais.jqassistant.core.store.api.type.Descriptor}.
+     * {@link com.buschmais.jqassistant.core.store.api.model.Descriptor}.
      *
      * @param descriptor
      *            The descriptor.
