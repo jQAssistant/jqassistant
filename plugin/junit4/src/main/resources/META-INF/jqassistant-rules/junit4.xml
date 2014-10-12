@@ -191,4 +191,28 @@
         ]]></cypher>
     </constraint>
 
+    <metricGroup id="junit4:TypesAndTestClassesPerArtifact">
+        <description>Types and test classes per artifact</description>
+        <metric id="junit4:TypesAndTestClassesPerArtifact">
+            <description>Types and test classes per artifact</description>
+            <requiresConcept refId="junit4:TestClass"/>
+            <cypher><![CDATA[
+                    MATCH
+                        (artifact:Artifact), (testArtifact:Artifact)
+                    WHERE
+                        artifact.group=testArtifact.group and artifact.type="jar" and artifact.name=testArtifact.name and testArtifact.type="test-jar"
+                    WITH
+                        artifact, testArtifact
+                    MATCH
+                        (artifact)-[:CONTAINS]->(t:Type)
+                    WITH
+                        artifact, testArtifact, count(t) as Types
+                    MATCH
+                        (testArtifact)-[:CONTAINS]-(test:Type:Test)
+                    RETURN
+                        artifact.name as ArtifactName, Types, count(test) as Tests
+                ]]></cypher>
+        </metric>
+    </metricGroup>
+
 </jqa:jqassistant-rules>
