@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Defines a set of rules containing all resolved {@link Concept} s,
@@ -51,5 +48,15 @@ public class RuleSet {
     @Override
     public String toString() {
         return "RuleSet{" + "groups=" + groups + ", constraints=" + constraints + ", concepts=" + concepts + '}';
+    }
+
+    public RuleSet() {
+    }
+
+    public RuleSet(Map<String, Concept> concepts, Map<String, Constraint> constraints, Map<String, Group> groups, Map<String, MetricGroup> metricGroups) {
+        this.concepts = concepts;
+        this.constraints = constraints;
+        this.groups = groups;
+        this.metricGroups = metricGroups;
     }
 }
