@@ -23,7 +23,11 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
-import com.sun.java.xml.ns.persistence.*;
+import com.sun.java.xml.ns.persistence.ObjectFactory;
+import com.sun.java.xml.ns.persistence.Persistence;
+import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitTransactionType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 
 /**
  * A scanner for JPA model units.
@@ -32,7 +36,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<VirtualFile>
 
     private static final JAXBContext jaxbContext;
 
-    private DescriptorResolverFactory descriptorResolverFactory;
+    private DescriptorResolverFactory descriptorResolverFactory = new DescriptorResolverFactory();
 
     static {
         try {
@@ -40,16 +44,6 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<VirtualFile>
         } catch (JAXBException e) {
             throw new IllegalStateException("Cannot create JAXB context.", e);
         }
-    }
-
-    @Override
-    protected void initialize() {
-        descriptorResolverFactory = new DescriptorResolverFactory();
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
     }
 
     @Override

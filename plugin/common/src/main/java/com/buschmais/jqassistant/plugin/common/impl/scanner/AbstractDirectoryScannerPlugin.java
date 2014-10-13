@@ -13,9 +13,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualDirectory;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry;
@@ -23,14 +20,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFil
 
 public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerScannerPlugin<File, File> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDirectoryScannerPlugin.class);
-
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super File> getType() {
+    public Class<? extends File> getType() {
         return File.class;
     }
 

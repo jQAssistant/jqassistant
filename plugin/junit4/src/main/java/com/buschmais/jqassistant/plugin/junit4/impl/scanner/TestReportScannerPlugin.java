@@ -29,15 +29,6 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<VirtualFile> 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
-    }
-
-    @Override
     public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return TESTREPORTS.equals(scope) && path.matches(".*TEST-.*\\.xml");
     }

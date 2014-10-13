@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.File;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -18,10 +20,25 @@ public abstract class AbstractScannerPlugin<I> implements ScannerPlugin<I> {
         initialize();
     }
 
+    @Override
+    public Class<? extends I> getType() {
+        Class<? extends AbstractScannerPlugin> thisClass = this.getClass();
+        if (!thisClass.getSuperclass().equals(AbstractScannerPlugin.class)) {
+            throw new IllegalStateException("Cannot determine type argument of " + thisClass.getName());
+        }
+        Type genericSuperclass = thisClass.getGenericSuperclass();
+        Type typeParameter = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+        if (typeParameter instanceof ParameterizedType) {
+            return (Class<? extends I>) ((ParameterizedType) typeParameter).getRawType();
+        }
+        return (Class<? extends I>) typeParameter;
+    }
+
     /**
      * Initialize the plugin.
      */
-    protected abstract void initialize();
+    protected final void initialize() {
+    }
 
     protected Map<String, Object> getProperties() {
         return properties;

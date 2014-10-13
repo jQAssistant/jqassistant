@@ -28,15 +28,6 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<VirtualFile
     public static final String SECTION_MAIN = "Main";
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
-    }
-
-    @Override
     public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && "/META-INF/MANIFEST.MF".equals(path);
     }

@@ -17,15 +17,6 @@ public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlScannerPlugin.class);
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super URL> getType() {
-        return URL.class;
-    }
-
-    @Override
     public boolean accepts(URL item, String path, Scope scope) throws IOException {
         return true;
     }

@@ -18,11 +18,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEnt
 public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry> {
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super ZipFile> getType() {
+    public Class<? extends ZipFile> getType() {
         return ZipFile.class;
     }
 

@@ -44,7 +44,7 @@ public interface ScannerPlugin<I> {
      * 
      * @return The item type.
      */
-    Class<? super I> getType();
+    Class<? extends I> getType();
 
     /**
      * Determine if the item is accepted by the plugin.

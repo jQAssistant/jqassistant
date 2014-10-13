@@ -23,15 +23,6 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 public class PropertyFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
-    }
-
-    @Override
     public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && path.endsWith(".properties");
     }

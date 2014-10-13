@@ -94,12 +94,10 @@ public abstract class AbstractGraphStore implements Store {
 
     @Override
     public void reset() {
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Resetting store.");
-        runQueryUntilResultIsZero("MATCH (n)-[r]-() WITH n, collect(r) as rels LIMIT 10000 FOREACH (r in rels | DELETE r) DELETE n RETURN COUNT(*) as deleted");
-        runQueryUntilResultIsZero("MATCH (n) WITH n LIMIT 50000 DELETE n RETURN COUNT(*) as deleted");
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Reset finished.");
+        LOGGER.info("Resetting store.");
+        runQueryUntilResultIsZero("MATCH (n)-[r]-() WITH n, collect(r) as rels LIMIT 5000 FOREACH (r in rels | DELETE r) DELETE n RETURN COUNT(*) as deleted");
+        runQueryUntilResultIsZero("MATCH (n) WITH n LIMIT 5000 DELETE n RETURN COUNT(*) as deleted");
+        LOGGER.info("Reset finished.");
     }
 
     private void runQueryUntilResultIsZero(String deleteNodesAndRels) {

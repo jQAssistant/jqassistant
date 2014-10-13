@@ -10,7 +10,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jcp.xmlns.xml.ns.javaee.*;
+import org.jcp.xmlns.xml.ns.javaee.Alternatives;
+import org.jcp.xmlns.xml.ns.javaee.Beans;
+import org.jcp.xmlns.xml.ns.javaee.Decorators;
+import org.jcp.xmlns.xml.ns.javaee.Interceptors;
+import org.jcp.xmlns.xml.ns.javaee.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +35,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<VirtualF
 
     private static final JAXBContext jaxbContext;
 
-    private DescriptorResolverFactory descriptorResolverFactory;
+    private DescriptorResolverFactory descriptorResolverFactory = new DescriptorResolverFactory();
 
     static {
         try {
@@ -39,16 +43,6 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<VirtualF
         } catch (JAXBException e) {
             throw new IllegalStateException("Cannot create JAXB context.", e);
         }
-    }
-
-    @Override
-    protected void initialize() {
-        descriptorResolverFactory = new DescriptorResolverFactory();
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
     }
 
     @Override

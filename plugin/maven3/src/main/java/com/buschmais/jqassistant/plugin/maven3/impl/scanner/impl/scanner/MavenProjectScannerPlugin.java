@@ -32,6 +32,11 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
     @Override
+    public Class<? extends MavenProject> getType() {
+        return MavenProject.class;
+    }
+
+    @Override
     public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
         return true;
     }
