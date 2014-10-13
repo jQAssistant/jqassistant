@@ -13,8 +13,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
-import javax.xml.transform.Source;
-
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,12 +26,7 @@ import org.junit.runner.Description;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -134,8 +130,8 @@ public class AbstractPluginIT {
     @Before
     public void readRules() throws PluginRepositoryException {
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        List<Source> sources = rulePluginRepository.getRuleSources();
-        RuleSetReader ruleSetReader = new RuleSetReaderImpl();
+        List<RuleSource> sources = rulePluginRepository.getRuleSources();
+        RuleSetReader ruleSetReader = new CompoundRuleSetReader();
         ruleSet = ruleSetReader.read(sources);
         Assert.assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
         Assert.assertTrue("There must be no unresolved result.", ruleSet.getMissingConstraints().isEmpty());
