@@ -15,7 +15,7 @@ public interface FullQualifiedNameDescriptor extends Descriptor {
      * @return The full qualified name.
      */
     @Property("fqn")
-    @Indexed(create = true)
+    @Indexed
     public String getFullQualifiedName();
 
     /**
