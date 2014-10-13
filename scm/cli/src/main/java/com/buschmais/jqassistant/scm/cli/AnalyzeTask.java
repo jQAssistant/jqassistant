@@ -13,6 +13,8 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
+import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
@@ -22,7 +24,6 @@ import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -41,7 +42,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     private String baseDir = ".";
     private final RuleSelector ruleSelector = new RuleSelectorImpl();
-    private final RuleSetReader ruleSetReader = new RuleSetReaderImpl();
+    private final RuleSetReader ruleSetReader = new XmlRuleSetReader();
 
     // todo where to get concepts, constraints, and groups?
     private List<String> concepts = new ArrayList<>();
@@ -117,15 +118,10 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     protected RuleSet readRules() {
         File selectedDirectory;
         selectedDirectory = createSelectedDirectoryFile();
-        List<Source> sources = new ArrayList<>();
+        List<RuleSource> sources = new ArrayList<>();
         // read rules from rules directory
-        List<File> ruleFiles = readRulesDirectory(selectedDirectory);
-        for (File ruleFile : ruleFiles) {
-            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new StreamSource(ruleFile));
-        }
-        List<Source> ruleSources = getRulePluginRepository().getRuleSources();
-        sources.addAll(ruleSources);
+        sources.addAll(readRulesDirectory(selectedDirectory));
+        sources.addAll(getRulePluginRepository().getRuleSources());
         return ruleSetReader.read(sources);
     }
 
@@ -141,7 +137,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
         return new File(baseDir, RULES_DIRECTORY);
     }
 
-    private List<File> readRulesDirectory(File rulesDirectory) {
+    private List<RuleSource> readRulesDirectory(File rulesDirectory) {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
         }
@@ -152,7 +148,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
                 @Override
                 protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (!file.isDirectory() && file.getName().endsWith(".xml")) {
+                    if (!file.isDirectory() && RuleSource.Type.XML.matches(file)) {
                         results.add(file);
                     }
                 }
@@ -161,7 +157,13 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
                     super.walk(directory, ruleFiles);
                 }
             }.scan(rulesDirectory);
-            return ruleFiles;
+
+            final List<RuleSource> ruleSources = new ArrayList<>(ruleFiles.size());
+            for (File file : ruleFiles) {
+                getLog().debug("Adding rules from file " + file.getAbsolutePath());
+                ruleSources.add(new RuleSource(file.toURL(), RuleSource.Type.XML));
+            }
+            return ruleSources;
         } catch (IOException e) {
             throw new RuntimeException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
         }

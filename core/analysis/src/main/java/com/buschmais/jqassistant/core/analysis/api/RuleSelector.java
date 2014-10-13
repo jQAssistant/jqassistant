@@ -17,13 +17,13 @@ public interface RuleSelector {
      * 
      * @param ruleSet
      * @param conceptNames
-     * @param constraintNaimes
+     * @param constraintNames
      * @param groupNames
      * @return The effective rules set.
      * @throws RuleSetResolverException
      *             If resolving fails.
      */
-    public RuleSet getEffectiveRuleSet(RuleSet ruleSet, List<String> conceptNames, List<String> constraintNaimes, List<String> groupNames)
+    public RuleSet getEffectiveRuleSet(RuleSet ruleSet, List<String> conceptNames, List<String> constraintNames, List<String> groupNames)
             throws RuleSetResolverException;
 
 }

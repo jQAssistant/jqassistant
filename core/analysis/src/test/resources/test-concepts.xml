@@ -1,0 +1,35 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="java:Throwable">
+        <description>Labels types deriving from java.lang.Throwable as "Throwable".</description>
+        <cypher><![CDATA[
+            match
+              (throwable)-[:EXTENDS*]->(t:Type)
+            where
+              t.fqn = 'java.lang.Throwable'
+            SET
+              throwable:Throwable
+            return
+              count(throwable) AS Throwables
+        ]]></cypher>
+    </concept>
+    <constraint id="example:ConstructorOfDateMustNotBeUsed">
+        <description>Constructors of java.util.Date must not be used.</description>
+        <cypher><![CDATA[
+            match
+                (dateType:Type)-[:DECLARES]->(forbiddenMethod:Method),
+                (type:Type)-[:DECLARES]->(method:Method)-[:INVOKES]->(forbiddenMethod)
+            where
+                dateType.fqn = 'java.util.Date'
+                and forbiddenMethod:Constructor
+            return
+                method as Method
+        ]]></cypher>
+    </constraint>
+
+    <group id="default">
+        <includeConcept refId="java:Throwable"/>
+        <includeConstraint refId="example:ConstructorOfDateMustNotBeUsed"/>
+    </group>
+
+</jqa:jqassistant-rules>

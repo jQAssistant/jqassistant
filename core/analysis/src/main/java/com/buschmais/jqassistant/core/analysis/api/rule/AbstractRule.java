@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Defines an abstract rule which is has an unique identifier and references a
@@ -39,6 +38,14 @@ public abstract class AbstractRule implements Rule {
      * The severity of the constraint.
      */
     private Severity severity;
+
+    public static <T extends Rule> Map<String,T> toMap(Collection<T> rules) {
+        Map<String, T> result = new LinkedHashMap<>();
+        for (T rule : rules) {
+            result.put(rule.getId(),rule);
+        }
+        return result;
+    }
 
     public String getId() {
         return id;

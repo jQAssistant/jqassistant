@@ -5,8 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.transform.Source;
-
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
@@ -16,11 +15,7 @@ import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
@@ -59,7 +54,6 @@ public final class JQAssistantRuleRepository extends RuleRepository {
 
     @Override
     public List<Rule> createRules() {
-        List<Rule> rules = new ArrayList<>();
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
         RulePluginRepository rulePluginRepository;
         try {
@@ -67,9 +61,10 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         } catch (PluginRepositoryException e) {
             throw new SonarException("Cannot read rules.", e);
         }
-        List<Source> ruleSources = rulePluginRepository.getRuleSources();
-        RuleSetReader ruleSetReader = new RuleSetReaderImpl();
+        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
+        RuleSetReader ruleSetReader = new XmlRuleSetReader();
         RuleSet ruleSet = ruleSetReader.read(ruleSources);
+        List<Rule> rules = new ArrayList<>();
         for (Concept concept : ruleSet.getConcepts().values()) {
             rules.add(createRule(concept, RuleType.Concept));
         }

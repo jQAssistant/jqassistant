@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
+
 import java.util.List;
 
 import javax.xml.transform.Source;
@@ -14,6 +16,6 @@ public interface RulePluginRepository {
      * 
      * @return The list of sources providing rules.
      */
-    List<Source> getRuleSources();
+    List<RuleSource> getRuleSources();
 
 }

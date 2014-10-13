@@ -10,6 +10,7 @@ import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +27,7 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RulePluginRepositoryImpl.class);
 
-    private List<Source> sources;
+    private List<RuleSource> sources;
 
     /**
      * Constructor.
@@ -36,36 +37,27 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
     }
 
     @Override
-    public List<Source> getRuleSources() {
+    public List<RuleSource> getRuleSources() {
         return sources;
     }
 
-    private List<Source> getRuleSources(List<JqassistantPlugin> plugins) {
-        List<Source> sources = new ArrayList<>();
+    private List<RuleSource> getRuleSources(List<JqassistantPlugin> plugins) {
+        List<RuleSource> sources = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
                 String directory = rulesType.getDirectory();
                 for (String resource : rulesType.getResource()) {
-                    StringBuffer fullResource = new StringBuffer();
+                    StringBuilder fullResource = new StringBuilder();
                     if (directory != null) {
                         fullResource.append(directory);
                     }
                     fullResource.append(resource);
                     URL url = RulePluginRepositoryImpl.class.getResource(fullResource.toString());
-                    String systemId = null;
                     if (url != null) {
-                        try {
-                            systemId = url.toURI().toString();
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("Adding rulesType from " + url.toString());
-                            }
-                            InputStream ruleStream = url.openStream();
-                            sources.add(new StreamSource(ruleStream, systemId));
-                        } catch (IOException e) {
-                            throw new IllegalStateException("Cannot open rules URL: " + url.toString(), e);
-                        } catch (URISyntaxException e) {
-                            throw new IllegalStateException("Cannot create URI from url: " + url.toString());
+                        sources.add(new RuleSource(url));
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Adding rulesType from " + url.toString());
                         }
                     } else {
                         LOGGER.warn("Cannot read rules from resource '{}'", fullResource);
