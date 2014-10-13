@@ -129,12 +129,26 @@ function updateUiComponents(ruleSets) {
     if (groupsSize > 0) {
         $("#groupsSize").text(groupsSize);
 
-        var listGroupGroups = $("<div></div>").addClass("list-group");
+        var listGroupGroups = $("<div></div>");
         $.each(ruleSets["groups"], function (index, value) {
-            var listGroupItem = $("<div></div>").addClass("list-group-item");
-            listGroupItem.append($("<h4></h4>").addClass("list-group-item-heading").text(value["id"]));
-            listGroupItem.append($("<div></div>").addClass("list-group-item-heading").text(value["description"]));
+            var listGroupItem = $("<div></div>").addClass("list-group");
+
+            var listGroupHeading = $("<div></div>").addClass("list-group-item active");
+            var button = $("<button></button>").addClass("btn btn-default")
+                .append($("<span></span>").addClass("glyphicon glyphicon-play"));
+            var span = $("<span></span>").text(" " + value["id"]);
+            listGroupHeading.append(button);
+            listGroupHeading.append(span);
+            listGroupItem.append(listGroupHeading);
+            listGroupItem.append($("<div></div>").addClass("list-group-item").text(value["description"]));
+
+            var responseDiv = $("<div></div>").addClass("list-group-item");
+            listGroupItem.append(responseDiv);
             listGroupGroups.append(listGroupItem);
+
+            button.click(function () {
+                runGroup(value["id"], responseDiv)
+            });
         });
 
         $("#groups").append(listGroupGroups);
@@ -237,6 +251,7 @@ function runConcept(conceptId, responseDiv) {
             console.log("Finished running concept.");
         });
 }
+
 /**
  * Run the constraint with the given ID.
  * @param constraintId the ID of the constraint
@@ -297,5 +312,68 @@ function runConstraint(constraintId, responseDiv) {
         .always(function () { /* always executed after the AJAX call */
             removeSpinner();
             console.log("Finished running constraint.");
+        });
+}
+
+/**
+ * Run the group with the given ID.
+ * @param groupId the ID of the constraint
+ * @param responseDiv the DIV where the response should be rendered into
+ */
+function runGroup(groupId, responseDiv) {
+
+    console.log("runGroup(" + groupId + ")");
+
+    responseDiv.text("");
+    responseDiv.attr("class", "list-group-item"); // reset the CSS of the DIV
+
+    showSpinner();
+
+    $.ajax(JqaConstants.REST_ANALYSIS_GROUP_URL,
+        {
+            'data': groupId,
+            'type': 'POST',
+            'headers': {
+                'Accepts': 'text/plain',
+                'Content-Type': 'text/plain'
+            }
+        }).done(function (data, textStatus, jqXHR) { /* the success function */
+
+            console.log("Successfully ran group.");
+
+            var message;
+            var listClass;
+            if (!data) {
+                message = "No result received from the server. Please check the logs.";
+                listClass = "list-group-item-warning";
+            } else {
+                message = "Affected rows after executing the group: " + data;
+                listClass = "list-group-item-success";
+            }
+
+            responseDiv.addClass(listClass);
+            responseDiv.text(message);
+
+            responseDiv.show();
+
+        })
+        .fail(function (jqxhr, textStatus, error) { /* the failed function */
+
+            var errorMessage;
+            if (jqxhr.status == 0) {
+                errorMessage = "Error running group: Is the service down?";
+            } else {
+                errorMessage = "Error running group: " + jqxhr.status + " " + jqxhr.statusText;
+            }
+            console.log(errorMessage);
+
+            responseDiv.addClass("list-group-item-danger");
+            responseDiv.text(errorMessage);
+
+            responseDiv.show();
+        })
+        .always(function () { /* always executed after the AJAX call */
+            removeSpinner();
+            console.log("Finished running group.");
         });
 }
