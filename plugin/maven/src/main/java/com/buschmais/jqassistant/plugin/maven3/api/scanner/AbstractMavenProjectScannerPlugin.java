@@ -20,15 +20,6 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
      */
     public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
 
-    @Override
-    public Class getType() {
-        return MavenProject.class;
-    }
-
-    @Override
-    protected void initialize() {
-    }
-
     protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
         String id = project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion();
