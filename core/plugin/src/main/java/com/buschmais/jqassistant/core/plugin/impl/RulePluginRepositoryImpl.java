@@ -26,22 +26,54 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RulePluginRepositoryImpl.class);
 
-    private List<Source> sources;
+    private List<URL> ruleUrls;
 
     /**
      * Constructor.
      */
     public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
-        this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
+        this.ruleUrls = getRuleUrls(pluginConfigurationReader.getPlugins());
     }
 
     @Override
     public List<Source> getRuleSources() {
-        return sources;
+        return getRuleSources(ruleUrls);
     }
 
-    private List<Source> getRuleSources(List<JqassistantPlugin> plugins) {
-        List<Source> sources = new ArrayList<>();
+    /**
+     * Get the sources for the given URLs.
+     * 
+     * @param urls
+     *            the URLs for which to get the sources
+     * @return the list of sources
+     */
+    private List<Source> getRuleSources(List<URL> urls) {
+        List<Source> someSources = new ArrayList<>();
+        for (URL url : urls) {
+            String systemId;
+            try {
+                systemId = url.toURI().toString();
+                InputStream ruleStream = url.openStream();
+                someSources.add(new StreamSource(ruleStream, systemId));
+            } catch (IOException e) {
+                throw new IllegalStateException("Cannot open rules URL: " + url.toString(), e);
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException("Cannot create URI from url: " + url.toString());
+            }
+        }
+        return someSources;
+    }
+
+    /**
+     * Get the URLs of the rules for the given plugins.
+     * 
+     * @param plugins
+     *            the plugins for which to get the URLs
+     * @return the list of URLs
+     */
+    private List<URL> getRuleUrls(List<JqassistantPlugin> plugins) {
+
+        List<URL> urls = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
@@ -53,26 +85,16 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
                     }
                     fullResource.append(resource);
                     URL url = RulePluginRepositoryImpl.class.getResource(fullResource.toString());
-                    String systemId = null;
                     if (url != null) {
-                        try {
-                            systemId = url.toURI().toString();
-                            if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("Adding rulesType from " + url.toString());
-                            }
-                            InputStream ruleStream = url.openStream();
-                            sources.add(new StreamSource(ruleStream, systemId));
-                        } catch (IOException e) {
-                            throw new IllegalStateException("Cannot open rules URL: " + url.toString(), e);
-                        } catch (URISyntaxException e) {
-                            throw new IllegalStateException("Cannot create URI from url: " + url.toString());
-                        }
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Adding rulesType from " + url.toString());
+                        }urls.add(url);
                     } else {
                         LOGGER.warn("Cannot read rules from resource '{}'", fullResource);
                     }
                 }
             }
         }
-        return sources;
+        return urls;
     }
 }
