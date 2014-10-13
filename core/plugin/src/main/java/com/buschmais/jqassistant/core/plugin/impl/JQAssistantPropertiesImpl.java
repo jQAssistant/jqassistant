@@ -25,7 +25,7 @@ public class JQAssistantPropertiesImpl implements JQAssistantProperties {
 
         properties = new Properties();
         try {
-            properties.load(JQAssistantPropertiesImpl.class.getResourceAsStream("/jqassistant.properties"));
+            properties.load(JQAssistantPropertiesImpl.class.getResourceAsStream("/META-INF/jqassistant.properties"));
         } catch (IOException e) {
             LoggerFactory.getLogger(JQAssistantPropertiesImpl.class).error("Unable to read jqassistent.properties.", e);
         }
