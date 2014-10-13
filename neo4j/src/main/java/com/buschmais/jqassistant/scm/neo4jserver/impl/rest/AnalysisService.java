@@ -1,18 +1,5 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.store.api.Store;
-
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
@@ -22,9 +9,23 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.codehaus.jettison.json.JSONArray;
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
+
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.store.api.Store;
 
 @Path("/analysis")
 public class AnalysisService extends AbstractJQARestService {
@@ -54,7 +55,7 @@ public class AnalysisService extends AbstractJQARestService {
             JSONObject jsonResponse = createJsonResponse(getAvailableRules());
             return Response.status(Response.Status.OK).entity(jsonResponse.toString()).build();
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
+            throw new WebApplicationException(e);
         }
     }
 
@@ -86,7 +87,7 @@ public class AnalysisService extends AbstractJQARestService {
             }
 
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
+            throw new WebApplicationException(e);
         }
     }
 
@@ -105,7 +106,34 @@ public class AnalysisService extends AbstractJQARestService {
             return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
 
         } catch (Exception e) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((e.getMessage())).build();
+            throw new WebApplicationException(e);
+        }
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/group")
+    public Response runGroup(String groupId) {
+
+        InMemoryReportWriter report;
+
+        try {
+            report = analyze(Collections.<String> emptyList(), Collections.<String> emptyList(), Arrays.asList(groupId));
+
+            int effectedRows = 0;
+
+            for (Result<Concept> conceptResult : report.getConceptResults().values()) {
+                effectedRows += conceptResult.getRows().size();
+            }
+
+            for (Result<Constraint> constraintResult : report.getConstraintViolations().values()) {
+                effectedRows += constraintResult.getRows().size();
+            }
+            return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
+
+        } catch (Exception e) {
+            throw new WebApplicationException(e);
         }
     }
 
