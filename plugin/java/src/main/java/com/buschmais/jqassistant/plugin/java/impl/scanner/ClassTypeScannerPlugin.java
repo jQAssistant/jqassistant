@@ -13,14 +13,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVi
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 
 public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>> {
-    @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super Class<?>> getType() {
-        return Class.class;
-    }
 
     @Override
     public boolean accepts(Class<?> item, String path, Scope scope) throws IOException {

@@ -27,15 +27,6 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
     private DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory();
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
-    }
-
-    @Override
     public boolean accepts(VirtualFile file, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
             // return true;

@@ -17,17 +17,7 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.PackageDescri
  */
 public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<VirtualDirectory> {
 
-    private PackageDescriptorResolver packageDescriptorResolver;
-
-    @Override
-    protected void initialize() {
-        packageDescriptorResolver = new PackageDescriptorResolver();
-    }
-
-    @Override
-    public Class<? super VirtualDirectory> getType() {
-        return VirtualDirectory.class;
-    }
+    private PackageDescriptorResolver packageDescriptorResolver = new PackageDescriptorResolver();
 
     @Override
     public boolean accepts(VirtualDirectory item, String path, Scope scope) throws IOException {

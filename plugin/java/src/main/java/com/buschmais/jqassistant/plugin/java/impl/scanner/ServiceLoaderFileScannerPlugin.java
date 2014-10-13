@@ -28,15 +28,6 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<Virtua
     private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super VirtualFile> getType() {
-        return VirtualFile.class;
-    }
-
-    @Override
     public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && PATTERN.matcher(path).matches();
     }
