@@ -4,14 +4,14 @@
         <description>Labels all fields annotated annotated by @javax.decorator.Delegate with "Decorator" and "Delegate".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (delegate:Field)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(delegateType:Type)
-            where
+            WHERE
               delegateType.fqn="javax.decorator.Delegate"
-            set
+            SET
               delegate:Decorator:Delegate
-            return
-              count(delegate) as Delegates
+            RETURN
+              delegate AS Delegate
         ]]></cypher>
     </concept>
 
@@ -20,14 +20,14 @@
         <description>Labels all types annotated by @javax.decorator.Decorator with "Decorator".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (decorator:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(decoratorType:Type)
-            where
+            WHERE
               decoratorType.fqn="javax.decorator.Decorator"
-            set
+            SET
               decorator:Decorator
-            return
-              count(decorator) as Decorators
+            RETURN
+              decorator AS Decorator
         ]]></cypher>
     </concept>
 

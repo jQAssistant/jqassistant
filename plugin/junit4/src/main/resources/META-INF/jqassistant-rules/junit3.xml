@@ -3,14 +3,14 @@
     <concept id="junit3:TestClass">
         <description>Labels all non-abstract classes extending from junit.framework.TestCase "Test" and "Junit3".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (c:Type:Class)-[:EXTENDS*]->(testCaseType:Type)
-            where
+            WHERE
               testCaseType.fqn = "junit.framework.TestCase"
-            set
+            SET
               c:Test:Junit3
-            return
-              c as TestClass
+            RETURN
+              c AS TestClass
         ]]></cypher>
     </concept>
 
@@ -19,14 +19,14 @@
         <description>Labels all test methods declared by a test class with "Test" and "Junit3".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (c:Class:Test:Junit3)-[:DECLARES]->(m:Method)
-            where
+            WHERE
               m.signature =~ "void test.*\\(.*\\)"
-            set
+            SET
               m:Test:Junit3
-            return
-              count(m) as Tests
+            RETURN
+              m AS Test, c AS TestClass
         ]]></cypher>
     </concept>
 
@@ -35,14 +35,14 @@
         <requiresConcept refId="junit3:TestClass"/>
         <description>Labels all setUp methods declared by a test class with "SetUp" and "Junit3".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (c:Class:Test:Junit3)-[:DECLARES]->(m:Method)
-            where
+            WHERE
               m.signature = "void setUp()"
-            set
+            SET
               m:SetUp:Junit3
-            return
-              count(m) as SetUpMethods
+            RETURN
+              m AS SetUpMethod, c AS TestClass
         ]]></cypher>
     </concept>
 
@@ -50,14 +50,14 @@
         <requiresConcept refId="junit3:TestClass"/>
         <description>Labels all tearDown methods declared by a test class with "TearDown" and "Junit3".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (c:Class:Test:Junit3)-[:DECLARES]->(m:Method)
-            where
+            WHERE
               m.signature = "void tearDown()"
-            set
+            SET
               m:TearDown:Junit3
-            return
-              count(m) as TearDownMethods
+            RETURN
+              m AS TearDownMethod, c AS TestClass
         ]]></cypher>
     </concept>
 

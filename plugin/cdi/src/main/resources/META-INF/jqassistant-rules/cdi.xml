@@ -3,16 +3,16 @@
     <concept id="cdi:InjectionPoint">
         <description>Labels all fields or methods annotated by @javax.inject.Inject with "Cdi" and "InjectionPoint".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (:Type)-[:DECLARES]->(member),
               (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(injectType:Type)
-            where
+            WHERE
               (member:Field or member:Method)
               and injectType.fqn="javax.inject.Inject"
-            set
+            SET
               member:Cdi:InjectionPoint
-            return
-              count(member) as InjectionPoints
+            RETURN
+              member AS InjectionPoint
         ]]></cypher>
     </concept>
 
@@ -21,17 +21,17 @@
             @javax.enterprise.inject.Disposes.
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (:Type)-[:DECLARES]->(member),
               (member)-[:OF_TYPE|RETURNS]->(type),
               (member)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(producesType:Type)
-            where
+            WHERE
               (member:Field or member:Method)
               and producesType.fqn="javax.enterprise.inject.Produces"
-            create unique
+            CREATE UNIQUE
               (member)-[:PRODUCES]->(type)
-            return
-              count(member) as Producer
+            RETURN
+              member AS Producer
         ]]></cypher>
     </concept>
 
@@ -39,16 +39,16 @@
         <description>Creates a relation DISPOSES between a parameter and its type if the parameter is annotated by @javax.enterprise.inject.Disposes.
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (:Type)-[:DECLARES]->(disposeMethod:Method)-[:HAS]->(parameter:Parameter),
               (parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(disposesType:Type),
               (parameter)-[:OF_TYPE]->(type)
-            where
+            WHERE
               disposesType.fqn="javax.enterprise.inject.Disposes"
-            create unique
+            CREATE UNIQUE
               (parameter)-[:DISPOSES]->(type)
-            return
-              count(disposeMethod) as DisposeMethods
+            RETURN
+              disposeMethod AS DisposeMethod
         ]]></cypher>
     </concept>
 
@@ -58,68 +58,68 @@
             all non-binding annotation values (i.e. which are annotated by @javax.enterprise.util.Nonbinding).
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (qualifier:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(qualifierType:Type)
-            where
+            WHERE
               qualifierType.fqn = "javax.inject.Qualifier"
-            set
+            SET
               qualifier:Cdi:Qualifier
-            with
+            WITH
               qualifier
-            match
+            MATCH
               (qualifier)-[:DECLARES]->(attribute:Method),
               (attribute)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(nonbindingType:Type)
-            where
+            WHERE
               nonbindingType.fqn = "javax.enterprise.util.Nonbinding"
-            set
+            SET
               attribute:Cdi:Nonbinding
-            return
-              count(distinct qualifier) as Qualifiers
+            RETURN
+              distinct qualifier AS Qualifier
         ]]></cypher>
     </concept>
 
     <concept id="cdi:Dependent">
         <description>Labels all beans, fields or methods annotated by @javax.enterprise.context.Dependent with "Cdi" and "Dependent".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
-            where
+            WHERE
               (e:Type or e:Method or e:Field)
               and scopeType.fqn="javax.enterprise.context.Dependent"
-            set
+            SET
               e:Cdi:Dependent
-            return
-              count(e) as DependentElements
+            RETURN
+              e AS DependentElement
         ]]></cypher>
     </concept>
 
     <concept id="cdi:RequestScoped">
         <description>Labels all beans, fields or methods annotated by @javax.enterprise.context.RequestScoped with "Cdi" and "RequestScoped".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
-            where
+            WHERE
               (e:Type or e:Method or e:Field)
               and scopeType.fqn="javax.enterprise.context.RequestScoped"
-            set
+            SET
               e:Cdi:RequestScoped
-            return
-              count(e) as RequestScopedElements
+            RETURN
+              e AS RequestScopedElement
         ]]></cypher>
     </concept>
 
     <concept id="cdi:SessionScoped">
         <description>Labels all beans, fields or methods annotated by @javax.enterprise.context.SessionScoped with "Cdi" and "SessionScoped".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
-            where
+            WHERE
               (e:Type or e:Method or e:Field)
               and scopeType.fqn="javax.enterprise.context.SessionScoped"
-            set
+            SET
               e:Cdi:SessionScoped
-            return
-              count(e) as SessionScopedElements
+            RETURN
+              e AS SessionScopedElement
         ]]></cypher>
     </concept>
 
@@ -128,15 +128,15 @@
         <description>Labels all beans, fields or methods annotated by @javax.enterprise.context.ConversationScoped with "Cdi" and "ConversationScoped".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
-            where
+            WHERE
               (e:Type or e:Method or e:Field)
               and scopeType.fqn="javax.enterprise.context.ConversationScoped"
-            set
+            SET
               e:Cdi:ConversationScoped
-            return
-              count(e) as ConversationScopedElements
+            RETURN
+              e AS ConversationScopedElement
         ]]></cypher>
     </concept>
 
@@ -144,15 +144,15 @@
         <description>Labels all beans, fields or methods annotated by @javax.enterprise.context.ApplicationScoped with "Cdi" and "ApplicationScoped".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(scopeType:Type)
-            where
+            WHERE
               (e:Type or e:Method or e:Field)
               and scopeType.fqn="javax.enterprise.context.ApplicationScoped"
-            set
+            SET
               e:Cdi:ApplicationScoped
-            return
-              count(e) as ApplicationScopedElements
+            RETURN
+              e AS ApplicationScopedElement
         ]]></cypher>
     </concept>
 
@@ -167,7 +167,7 @@
             SET
               t:Cdi:SingletonScoped
             RETURN
-              count(t) AS cdiSingletons
+              t AS cdiSingleton
         ]]></cypher>
     </concept>
 
@@ -175,14 +175,14 @@
         <description>Labels all annotation types annotated by @javax.enterprise.inject.Stereotype with "Cdi" and "Stereotype".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (stereotype:Type:Annotation)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(stereotypeType:Type)
-            where
+            WHERE
               stereotypeType.fqn="javax.enterprise.inject.Stereotype"
-            set
+            SET
               stereotype:Cdi:Stereotype
-            return
-              count(stereotype) as Stereotypes
+            RETURN
+              stereotype AS Stereotype
         ]]></cypher>
     </concept>
 
@@ -190,14 +190,14 @@
         <description>Labels all types annotated by @javax.enterprise.inject.Alternative with "Cdi" and "Alternative".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (alternative:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(alternativeType:Type)
-            where
+            WHERE
               alternativeType.fqn="javax.enterprise.inject.Alternative"
-            set
+            SET
               alternative:Cdi:Alternative
-            return
-              count(alternative) as Alternatives
+            RETURN
+              alternative AS Alternative
         ]]></cypher>
     </concept>
 
@@ -205,15 +205,15 @@
         <description>Labels all types and methods annotated by @javax.enterprise.inject.Specializes with "Cdi" and "Specializes".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (specializes)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(specializesType:Type)
-            where
+            WHERE
               (specializes:Type or specializes:Method)
               and specializesType.fqn="javax.enterprise.inject.Specializes"
-            set
+            SET
               specializes:Cdi:Specializes
-            return
-              count(specializes) as Specializations
+            RETURN
+              specializes AS Specialization
         ]]></cypher>
     </concept>
 
@@ -221,14 +221,14 @@
         <description>Labels all fields annotated annotated by @javax.decorator.Delegate with "Cdi" and "Delegate".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (delegate:Field)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(delegateType:Type)
-            where
+            WHERE
               delegateType.fqn="javax.decorator.Delegate"
-            set
+            SET
               delegate:Cdi:Delegate
-            return
-              count(delegate) as Delegates
+            RETURN
+              delegate AS Delegate
         ]]></cypher>
     </concept>
 
@@ -237,14 +237,14 @@
         <description>Labels all types annotated by @javax.decorator.Decorator with "Cdi" and "Decorator".
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (decorator:Type)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(decoratorType:Type)
-            where
+            WHERE
               decoratorType.fqn="javax.decorator.Decorator"
-            set
+            SET
               decorator:Cdi:Decorator
-            return
-              count(decorator) as Decorators
+            RETURN
+              decorator AS Decorator
         ]]></cypher>
     </concept>
 
@@ -261,7 +261,7 @@
             SET
               a:Cdi:EventProducer
             RETURN
-              count(distinct a.fqn) AS cdiEventProducers
+              DISTINCT a.fqn AS cdiEventProducers
         ]]></cypher>
     </concept>
 
@@ -278,7 +278,7 @@
             SET
               a:Cdi:EventConsumer
             RETURN
-              count(distinct a.fqn) AS cdiEventConsumers
+              DISTINCT a.fqn AS cdiEventConsumer
         ]]></cypher>
     </concept>
 

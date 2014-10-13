@@ -10,7 +10,7 @@
             SET
               functionalInterface:FunctionalInterface
             RETURN
-              count(functionalInterface) AS FunctionalInterfaces
+              functionalInterface AS FunctionalInterface
         ]]></cypher>
     </concept>
 
@@ -24,7 +24,7 @@
             SET
               defaultMethod:Default
             RETURN
-              count(defaultMethod) AS DefaultMethods
+              defaultMethod AS DefaultMethod, type AS Interface
         ]]></cypher>
     </concept>
 
