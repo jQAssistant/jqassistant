@@ -10,6 +10,7 @@ JqaConstants.REST_RUN_METRIC_URL = JqaConstants.REST_METRIC_GROUPS_URL + '/run';
 JqaConstants.REST_ANALYSIS_RULES_URL = JqaConstants.REST_BASE_URL + '/analysis/rules';
 JqaConstants.REST_ANALYSIS_CONCEPT_URL = JqaConstants.REST_BASE_URL + '/analysis/concept';
 JqaConstants.REST_ANALYSIS_CONSTRAINT_URL = JqaConstants.REST_BASE_URL + '/analysis/constraint';
+JqaConstants.REST_ANALYSIS_GROUP_URL = JqaConstants.REST_BASE_URL + '/analysis/group';
 JqaConstants.REST_VERSION_URL = JqaConstants.REST_BASE_URL + '/version';
 
 /**
