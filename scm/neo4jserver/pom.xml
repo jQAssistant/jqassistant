@@ -8,6 +8,10 @@
     </parent>
     <artifactId>jqassistant.scm.neo4jserver</artifactId>
 
+    <properties>
+        <org.seleniumhq_version>2.43.1</org.seleniumhq_version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -70,6 +74,12 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${org.seleniumhq_version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
