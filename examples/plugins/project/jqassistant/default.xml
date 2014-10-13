@@ -3,10 +3,10 @@
     <concept id="example:MethodsPerType">
         <description>Returns the number of scanned types.</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (t:File:Type)-[:DECLARES]->(m:Method)
-            return
-              t as Type, count(m) as MethodCount
+            RETURN
+              t AS Type, COUNT(m) AS MethodCount
         ]]></cypher>
     </concept>
 

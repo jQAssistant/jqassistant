@@ -3,12 +3,12 @@
     <constraint id="common:TopLevelPackage">
         <description>All types defined in a project must use "com.buschmais" as top level package.</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (:Artifact)-[:CONTAINS]->(type:Type)
-            where
-              not type.fqn =~ "com\\.buschmais\\..*"
-            return
-              type as TypeInWrongPackage
+            WHERE
+              NOT type.fqn =~ "com\\.buschmais\\..*"
+            RETURN
+              type AS TypeInWrongPackage
         ]]></cypher>
     </constraint>
 

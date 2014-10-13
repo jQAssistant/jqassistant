@@ -15,11 +15,11 @@ The rules are expressed in Cypher - the easy-to-learn query language of Neo4j:
 
 [source]
 ----
-match
+MATCH
   (t:Test:Method)
-where not
+WHERE NOT
   (t)-[:INVOKES]->(:Assert:Method)
-return
-  t as TestWithoutAssertion
+RETURN
+  t AS TestWithoutAssertion
 ----
 

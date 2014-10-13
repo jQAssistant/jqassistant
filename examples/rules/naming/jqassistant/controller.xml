@@ -3,13 +3,13 @@
     <concept id="controller:ControllerClass">
         <description>Labels all classes implementing the Controller interface as "Controller".</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (controllerClass:Type:Class)-[:IMPLEMENTS*]->(controllerType:Type)
-            where
+            WHERE
                 controllerType.fqn = "com.buschmais.jqassistant.examples.rules.naming.Controller"
-            set
+            SET
                 controllerClass:Controller
-            return
+            RETURN
                 controllerClass
         ]]></cypher>
     </concept>
@@ -18,12 +18,12 @@
         <requiresConcept refId="controller:ControllerClass"/>
         <description>All controller implementations must have a name suffix "Controller".</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (controllerClass:Class:Controller)
-            where
-                not controllerClass.name =~ ".*Controller"
-            return
-                controllerClass as ControllerClass
+            WHERE
+                NOT controllerClass.name =~ ".*Controller"
+            RETURN
+                controllerClass AS ControllerClass
         ]]></cypher>
     </constraint>
 
@@ -31,12 +31,12 @@
         <requiresConcept refId="controller:ControllerClass"/>
         <description>All controller implementations must be located in the package "model".</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (package:PACKAGE)-[:CONTAINS]->(controllerClass:Class:Controller)
-            where
-                not package.name = "controller"
-            return
-                controllerClass as ControllerClass, package as InvalidPackage
+            WHERE
+                NOT package.name = "controller"
+            RETURN
+                controllerClass AS ControllerClass, package AS InvalidPackage
         ]]></cypher>
     </constraint>
 
