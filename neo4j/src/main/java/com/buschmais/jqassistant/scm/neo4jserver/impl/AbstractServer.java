@@ -56,7 +56,7 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
 
         if (LOGGER.isInfoEnabled()) {
             for (String extensionName : extensionNames) {
-                LOGGER.info("Register extension: " + extensionName);
+                LOGGER.info("Registering extension: " + extensionName);
             }
         }
 

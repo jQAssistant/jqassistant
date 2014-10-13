@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.scm.neo4jserver.ui;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -16,9 +15,8 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 /**
  * Test the index UI component.
  */
-public class IndexHtmlTest extends AbstractHtmlTest{
+public class IndexHtmlTest extends AbstractHtmlTest {
 
-    @Ignore("The store directory is wrong.") // see AbstractHtmlTest.getStoreDir()
     @Test
     public void testGetIndexHtml() {
 
