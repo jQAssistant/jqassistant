@@ -1,13 +1,8 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.AnalysisService;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.MetricsService;
-import com.sun.jersey.api.core.HttpContext;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServer;
@@ -16,9 +11,15 @@ import org.neo4j.server.modules.ServerModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.AnalysisService;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.MetricsService;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.VersionService;
+import com.sun.jersey.api.core.HttpContext;
 
 /**
  * Abstract base class for the customized Neo4j server.
@@ -45,6 +46,7 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
     protected Iterable<ServerModule> createServerModules() {
 
         List<String> extensionNames = new ArrayList<>();
+        extensionNames.add(VersionService.class.getName());
         extensionNames.add(AnalysisService.class.getName());
         extensionNames.add(MetricsService.class.getName());
 
