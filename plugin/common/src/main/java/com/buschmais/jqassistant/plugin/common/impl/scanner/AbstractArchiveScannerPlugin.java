@@ -13,11 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFil
 public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
 
     @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<VirtualFile> getType() {
+    public Class<? extends VirtualFile> getType() {
         return VirtualFile.class;
     }
 

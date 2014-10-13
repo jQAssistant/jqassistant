@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,15 +19,6 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
     private static final int MAX_BUFFER_SIZE = 1024 * 1024; // One MB
-
-    @Override
-    protected void initialize() {
-    }
-
-    @Override
-    public Class<? super File> getType() {
-        return File.class;
-    }
 
     @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
