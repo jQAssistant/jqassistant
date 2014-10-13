@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 @Label("Concept")
 public interface ConceptDescriptor extends Descriptor {
 
-    @Indexed(create = true)
+    @Indexed
     String getId();
 
     void setId(String id);

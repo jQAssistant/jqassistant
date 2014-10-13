@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 @Label("File")
 public interface FileDescriptor extends Descriptor {
 
-    @Indexed(create = true)
+    @Indexed
     @Property("fileName")
     String getFileName();
 
