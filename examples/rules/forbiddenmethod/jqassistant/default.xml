@@ -3,14 +3,14 @@
     <constraint id="example:ConstructorOfDateMustNotBeUsed">
         <description>Constructors of java.util.Date must not be used.</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (dateType:Type)-[:DECLARES]->(forbiddenMethod:Method),
                 (type:Type)-[:DECLARES]->(method:Method)-[:INVOKES]->(forbiddenMethod)
-            where
+            WHERE
                 dateType.fqn = 'java.util.Date'
-                and forbiddenMethod:Constructor
-            return
-                method as Method
+                AND forbiddenMethod:Constructor
+            RETURN
+                method AS Method
         ]]></cypher>
     </constraint>
 

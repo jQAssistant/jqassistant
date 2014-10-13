@@ -7,12 +7,12 @@
 		<cypher><![CDATA[
             MATCH 
               (c:Type:Class)-[:IMPLEMENTS]->(a:Type)
-			WHERE 
+            WHERE 
               a.fqn IN ["javax.ws.rs.ext.MessageBodyReader", "javax.ws.rs.ext.MessageBodyWriter"]
             SET 
               c:JaxRS:EntityProvider
             RETURN 
-              DISTINCT c as EntityProvider
+              DISTINCT c AS EntityProvider
         ]]></cypher>
 	</concept>
 
@@ -22,12 +22,12 @@
 		<cypher><![CDATA[
             MATCH 
               (c:Type:Class)-[:IMPLEMENTS]->(a:Type)
-			WHERE 
+            WHERE 
               a.fqn = "javax.ws.rs.ext.ContextResolver"
             SET 
               c:JaxRS:ContextProvider
             RETURN 
-              DISTINCT c as ContextProvider
+              DISTINCT c AS ContextProvider
         ]]></cypher>
 	</concept>
 
@@ -37,12 +37,12 @@
 		<cypher><![CDATA[
             MATCH 
               (c:Type:Class)-[:IMPLEMENTS]->(a:Type)
-			WHERE 
+            WHERE 
               a.fqn = "javax.ws.rs.ext.ExceptionMapper"
             SET 
               c:JaxRS:ExceptionMappingProvider
             RETURN 
-              DISTINCT c as ExceptionMappingProvider
+              DISTINCT c AS ExceptionMappingProvider
         ]]></cypher>
 	</concept>
 	

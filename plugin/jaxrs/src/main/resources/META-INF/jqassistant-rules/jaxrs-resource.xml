@@ -11,7 +11,7 @@
             SET
               a:JaxRS:RequestMethodDesignator
             RETURN
-              a as RequestMethodDesignator
+              a AS RequestMethodDesignator
         ]]></cypher>
 	</concept>
 
@@ -23,14 +23,14 @@
 		<cypher><![CDATA[
             MATCH
               (t:Type)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
-			WHERE
+            WHERE
               (a:JaxRS:RequestMethodDesignator OR a.fqn="javax.ws.rs.Path")
-			AND
+            AND
               (t:Class OR t:Interface)
             SET
               t:JaxRS:Resource
             RETURN
-              DISTINCT t as RestResource
+              DISTINCT t AS RestResource
         ]]></cypher>
 	</concept>
 
@@ -42,18 +42,18 @@
 		<cypher><![CDATA[
             MATCH
               (t:Type)-[:DECLARES]->(m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
-			WHERE
+            WHERE
               a.fqn = "javax.ws.rs.Path"
-			AND
+            AND
               (t:Class OR t:Interface)
-			AND
+            AND
               NOT (m)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:JaxRS:RequestMethodDesignator)
-			AND
+            AND
               (m)-[:HAS]->(:Parameter)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(:Type)
             SET
               m:JaxRS:SubResourceLocator
             RETURN
-              DISTINCT m as RestSubResourceLocator
+              DISTINCT m AS RestSubResourceLocator
         ]]></cypher>
 	</concept>
 
@@ -68,7 +68,7 @@
             SET
               m:JaxRS:ResourceMethod
             RETURN
-              m as ResourceMethod
+              m AS ResourceMethod
         ]]></cypher>
 	</concept>
 
@@ -83,7 +83,7 @@
             SET
               m:GetResourceMethod
             RETURN
-              m as GetMethod
+              m AS GetMethod
         ]]></cypher>
 	</concept>
 
@@ -98,7 +98,7 @@
             SET
               m:PutResourceMethod
             RETURN
-              m as PutMethod
+              m AS PutMethod
         ]]></cypher>
 	</concept>
 
@@ -113,7 +113,7 @@
             SET
               m:PostResourceMethod
             RETURN
-              m as PostMethod
+              m AS PostMethod
         ]]></cypher>
 	</concept>
 
@@ -128,7 +128,7 @@
             SET
               m:DeleteResourceMethod
             RETURN
-              m as DeleteMethod
+              m AS DeleteMethod
         ]]></cypher>
 	</concept>
 
@@ -143,7 +143,7 @@
             SET
               m:HeadResourceMethod
             RETURN
-              m as HeadMethod
+              m AS HeadMethod
         ]]></cypher>
 	</concept>
 
@@ -158,7 +158,7 @@
             SET
               m:OptionsResourceMethod
             RETURN
-              m as OptionsMethod
+              m AS OptionsMethod
         ]]></cypher>
 	</concept>
 	

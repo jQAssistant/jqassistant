@@ -3,14 +3,14 @@
     <concept id="model:ModelClass">
         <description>Labels all classes annotated with @Model as "Model".</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (modelClass:Type:Class)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(modelAnnotationType:Type)
-            where
+            WHERE
                 modelAnnotationType.fqn = "com.buschmais.jqassistant.examples.rules.naming.Model"
-            set
+            SET
                 modelClass:Model
-            return
-                modelClass as ModelClass
+            RETURN
+                modelClass AS ModelClass
         ]]></cypher>
     </concept>
 
@@ -18,12 +18,12 @@
         <requiresConcept refId="model:ModelClass"/>
         <description>All model classes must have a name suffix "Model".</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (modelClass:Class:Model)
-            where
-                not modelClass.name =~ ".*Model"
-            return
-                modelClass as ModelClass
+            WHERE
+                NOT modelClass.name =~ ".*Model"
+            RETURN
+                modelClass AS ModelClass
         ]]></cypher>
     </constraint>
 
@@ -31,12 +31,12 @@
         <requiresConcept refId="model:ModelClass"/>
         <description>All model classes must be located in the package "model".</description>
         <cypher><![CDATA[
-            match
+            MATCH
                 (package:PACKAGE)-[:CONTAINS]->(modelClass:Class:Model)
-            where
-                not package.name = "model"
-            return
-                modelClass as ModelClass, package as InvalidPackage
+            WHERE
+                NOT package.name = "model"
+            RETURN
+                modelClass AS ModelClass, package AS InvalidPackage
         ]]></cypher>
     </constraint>
 

@@ -79,7 +79,7 @@
             CREATE UNIQUE
               (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value, query:queryAttribute.value})
             RETURN
-              entity as Entity, n.name as Name, n.query as Query
+              entity AS Entity, n.name AS Name, n.query AS Query
         ]]></cypher>
     </concept>
 
@@ -95,7 +95,7 @@
                 OR pu.validationMode='NONE'
               )
             RETURN
-              pu as PersistenceUnit
+              pu AS PersistenceUnit
         ]]></cypher>
     </constraint>
 

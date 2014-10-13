@@ -3,12 +3,12 @@
     <concept id="java:InnerType">
         <description>Sets a label "Inner" on inner types.</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (:Type)-[:DECLARES]->(innerType:Type)
-            set
+            SET
               innerType:Inner
-            return
-              count(innerType) as InnerTypes
+            RETURN
+              innerType AS InnerType
         ]]></cypher>
     </concept>
 
@@ -16,14 +16,14 @@
         <requiresConcept refId="java:InnerType"/>
         <description>Sets a label "Anonymous" on anonymous inner types, i.e. types without a name.</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (innerType:Inner:Type)
-            where
+            WHERE
               innerType.name =~ ".*\\$[0-9]*"
-            set
+            SET
               innerType:Anonymous
-            return
-              count(innerType) as AnonymousInnerTypes
+            RETURN
+              innerType AS AnonymousInnerType
         ]]></cypher>
     </concept>
 
@@ -32,17 +32,17 @@
             interface).
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (type:Type)
-            create unique
+            CREATE UNIQUE
               (type)-[:ASSIGNABLE_FROM]->(type)
-            with
+            WITH
               type
-            match
+            MATCH
               (type)-[:IMPLEMENTS|EXTENDS*]->(superType:Type)
-            create unique
+            CREATE UNIQUE
               (superType)-[:ASSIGNABLE_FROM]->(type)
-            return count(type) as AssignableTypes
+            RETURN type AS AssignableType, superType AS AssignableFrom
         ]]></cypher>
     </concept>
 
@@ -52,17 +52,17 @@
             have the same signature).
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (type:Type)-[:DECLARES]->(method:Method),
               (superType:Type)-[:DECLARES]->(otherMethod:Method),
               (superType)-[:ASSIGNABLE_FROM]->(type)
-            where
+            WHERE
               method.name = otherMethod.name
               AND method.signature = otherMethod.signature
               AND method.visibility <> 'private'
-            create unique
+            CREATE UNIQUE
               (method)-[:OVERRIDES]->(otherMethod)
-            return count(method) as OverriddenMethods
+            RETURN method AS OverriddenMethod, type AS DeclaringType, superType AS SuperType
         ]]></cypher>
     </concept>
 
@@ -71,12 +71,12 @@
         <requiresConcept refId="java:TypeAssignableFrom"/>
         <description>Propagates INVOKES relationships to methods which implement or override the invoked method.</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (method:Method)-[:INVOKES]->(invokedMethod:Method),
               (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
-            create unique
+            CREATE UNIQUE
               (method)-[r:INVOKES]->(overridingMethod)
-            return count(r) AS OverridingInvocations
+            RETURN r AS OverridingInvocation
         ]]></cypher>
     </concept>
 
@@ -86,86 +86,86 @@
             have the same name but not the same signature).
         </description>
         <cypher><![CDATA[
-            match
+            MATCH
               (type:Type)-[:DECLARES]->(method:Method),
               (type)-[:DECLARES]->(otherMethod:Method)
-            where
+            WHERE
               method <> otherMethod
               AND method.name = otherMethod.name
               AND method.signature <> otherMethod.signature
-            create unique
+            CREATE UNIQUE
                 (method)-[:OVERLOADS]->(otherMethod)
-            return count(method) AS OverloadedMethods
+            RETURN method AS OverloadedMethod, type AS DeclaringType
         ]]></cypher>
     </concept>
 
     <concept id="java:Deprecated">
         <description>Labels all nodes representing deprecated elements (types, fields, methods, packages or parameters) with "Deprecated".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (e)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(dt:Type)
-            where
+            WHERE
               dt.fqn='java.lang.Deprecated'
             SET
               e:Deprecated
-            return
-              count(e) AS DeprecatedElements
+            RETURN
+              e AS DeprecatedElement
         ]]></cypher>
     </concept>
 
     <concept id="java:Exception">
         <description>Labels types deriving from java.lang.Exception as "Exception".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (exception)-[:EXTENDS*]->(t:Type)
-            where
+            WHERE
               t.fqn = 'java.lang.Exception'
             SET
               exception:Exception
-            return
-              count(exception) AS Exceptions
+            RETURN
+              exception AS Exception
         ]]></cypher>
     </concept>
 
     <concept id="java:RuntimeException">
         <description>Labels types deriving from java.lang.RuntimeException as "RuntimeException".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (runtimeException)-[:EXTENDS*]->(t:Type)
-            where
+            WHERE
               t.fqn = 'java.lang.RuntimeException'
             SET
               runtimeException:RuntimeException
-            return
-              count(runtimeException) AS RuntimeExceptions
+            RETURN
+              runtimeException AS RuntimeException
         ]]></cypher>
     </concept>
 
     <concept id="java:Error">
         <description>Labels types deriving from java.lang.Error as "Error".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (throwable)-[:EXTENDS*]->(t:Type)
-            where
+            WHERE
               t.fqn = 'java.lang.Error'
             SET
               throwable:Error
-            return
-              count(throwable) AS Errors
+            RETURN
+              throwable AS Error
         ]]></cypher>
     </concept>
 
     <concept id="java:Throwable">
         <description>Labels types deriving from java.lang.Throwable as "Throwable".</description>
         <cypher><![CDATA[
-            match
+            MATCH
               (throwable)-[:EXTENDS*]->(t:Type)
-            where
+            WHERE
               t.fqn = 'java.lang.Throwable'
             SET
               throwable:Throwable
-            return
-              count(throwable) AS Throwables
+            RETURN
+              throwable AS Throwable
         ]]></cypher>
     </concept>
 
