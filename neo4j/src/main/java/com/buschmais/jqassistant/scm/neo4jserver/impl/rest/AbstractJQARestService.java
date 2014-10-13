@@ -5,9 +5,10 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -39,11 +40,11 @@ public abstract class AbstractJQARestService {
         this.store = store;
         pluginConfigurationReader = new PluginConfigurationReaderImpl();
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        ruleSetReader = new RuleSetReaderImpl();
+        ruleSetReader = new XmlRuleSetReader();
     }
 
     protected RuleSet getAvailableRules() {
-        List<Source> ruleSources = rulePluginRepository.getRuleSources();
+        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         return ruleSetReader.read(ruleSources);
     }
 
