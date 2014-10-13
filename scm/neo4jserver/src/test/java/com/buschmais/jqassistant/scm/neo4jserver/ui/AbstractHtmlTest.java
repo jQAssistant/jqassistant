@@ -31,16 +31,12 @@ public class AbstractHtmlTest extends AbstractDatabaseIT {
 
     @Before
     public void startServer() throws PluginRepositoryException {
-
         store = createStore();
-
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
         final ModelPluginRepository modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         final ScannerPluginRepository scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, new HashMap<String, Object>());
         final RulePluginRepository rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-
         store.start(modelPluginRepository.getDescriptorTypes());
-
         GraphDatabaseAPI databaseAPI = store.getDatabaseService();
         server = new AbstractServer(databaseAPI, store) {
             @Override
@@ -64,15 +60,12 @@ public class AbstractHtmlTest extends AbstractDatabaseIT {
 
     @After
     public void stopServer() {
-
         server.stop();
         store.stop();
     }
 
     @Override
     protected String getStoreDir() {
-
-        // TODO how to get the store directory?
-        return "D:\\dev\\jqassistant_core\\core\\target\\jqassistant\\store";
+        return "target/jqassistant";
     }
 }
