@@ -4,7 +4,10 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,21 +28,40 @@ import com.buschmais.jqassistant.core.store.api.Store;
  * @author jn4, Kontext E GmbH, 23.01.14
  */
 public class ScanTask extends AbstractJQATask implements OptionsConsumer {
-    private final List<String> directoryNames = new ArrayList<>();
+
+    public static final String CMDLINE_OPTION_FILES = "f";
+    public static final String CMDLINE_OPTION_URLS = "u";
+    private final List<String> fileNames = new ArrayList<>();
+    private final List<String> urls = new ArrayList<>();
 
     public ScanTask() {
         super("scan");
     }
 
     protected void executeTask(final Store store) {
-        store.reset();
+        List<ScannerPlugin<?>> scannerPlugins;
         try {
-            for (String directoryName : directoryNames) {
-                properties = new HashMap<>();
-                scanDirectory(store, directoryName, getScannerPluginRepository(properties).getScannerPlugins());
-            }
+            scannerPlugins = getScannerPluginRepository(properties).getScannerPlugins();
         } catch (PluginRepositoryException e) {
             throw new RuntimeException(e);
+        }
+        store.reset();
+        properties = new HashMap<>();
+        for (String fileName : fileNames) {
+            final File file = new File(fileName);
+            String absolutePath = file.getAbsolutePath();
+            if (!file.exists()) {
+                getLog().info(absolutePath + "' does not exist, skipping scan.");
+            } else {
+                scan(store, file, file.getAbsolutePath(), scannerPlugins);
+            }
+        }
+        for (String url : urls) {
+            try {
+                scan(store, new URL(url), url, scannerPlugins);
+            } catch (MalformedURLException e) {
+                throw new IllegalArgumentException("Cannot parse URL " + url, e);
+            }
         }
     }
 
@@ -51,44 +73,40 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         }
     }
 
-    private void scanDirectory(Store store, final String directoryName, final List<ScannerPlugin<?>> scannerPlugins) {
-        final File directory = new File(directoryName);
-        String absolutePath = directory.getAbsolutePath();
-        if (!directory.exists()) {
-            getLog().info("Directory '" + absolutePath + "' does not exist, skipping scan.");
-        } else {
-            store.beginTransaction();
-            try {
-                final Scanner scanner = new ScannerImpl(store, scannerPlugins);
-                scanner.scan(directory, CLASSPATH);
-            } finally {
-                store.commitTransaction();
-            }
+    private <T> void scan(Store store, T element, String path, List<ScannerPlugin<?>> scannerPlugins) {
+        store.beginTransaction();
+        try {
+            Scanner scanner = new ScannerImpl(store, scannerPlugins);
+            scanner.scan(element, path, CLASSPATH);
+        } finally {
+            store.commitTransaction();
         }
     }
 
     @Override
     public void withOptions(final CommandLine options) {
-        if (options.hasOption("d")) {
-            for (String dir : options.getOptionValues("d")) {
-                if (dir.trim().length() > 0)
-                    directoryNames.add(dir);
-            }
+        getElementNamesFromOption(options, CMDLINE_OPTION_FILES, fileNames);
+        getElementNamesFromOption(options, CMDLINE_OPTION_URLS, urls);
+        if (fileNames.isEmpty() && urls.isEmpty()) {
+            throw new MissingConfigurationParameterException("No files, directories or urls given.");
         }
+    }
 
-        if (directoryNames.isEmpty()) {
-            throw new MissingConfigurationParameterException("No directories to be scanned given, use 'dirs' argument to specify some");
+    private void getElementNamesFromOption(CommandLine options, String option, Collection<String> names) {
+        if (options.hasOption(option)) {
+            for (String elementName : options.getOptionValues(option)) {
+                if (elementName.trim().length() > 0)
+                    names.add(elementName);
+            }
         }
     }
 
     @SuppressWarnings("static-access")
     @Override
     protected void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName("d").withLongOpt("directories").withDescription("directories to be scanned, comma separated")
-                .withValueSeparator(',')                .hasArgs().create("d"));
-        options.add(OptionBuilder.withArgName("f").withLongOpt("files").withDescription("files to be scanned, comma separated").withValueSeparator(',')
-                .hasArgs().create("f"));
-        options.add(OptionBuilder.withArgName("u").withLongOpt("urls").withDescription("urls to be scanned, comma separated").withValueSeparator(',').hasArgs()
-                .create("u"));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files").withDescription("files or directories to be scanned, comma separated")
+                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_FILES));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls").withDescription("urls to be scanned, comma separated")
+                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_URLS));
     }
 }

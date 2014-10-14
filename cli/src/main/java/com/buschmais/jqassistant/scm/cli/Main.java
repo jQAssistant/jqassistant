@@ -11,7 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -90,7 +97,7 @@ public class Main {
     private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {
         final JQATask task = tasks.get(taskName);
         try {
-            task.withGlobalOptions(commandLine);
+            task.withStandardOptions(commandLine);
             task.withOptions(commandLine);
         } catch (MissingConfigurationParameterException e) {
             printUsage(option, e.getMessage());
@@ -127,7 +134,7 @@ public class Main {
         System.out.println(errorMessage);
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Main.class.getCanonicalName(), option);
-        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -d cmdline/target/classes,maven/jqassistant-maven-plugin/target/classes");
+        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -d target/classes,target/test-classes");
     }
 
     private static void putTasksIntoMap(final List<AbstractJQATask> tasks) {
