@@ -209,6 +209,6 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     protected void addTaskOptions(final List<Option> options) {
-        options.add(new Option("c", "conf", true, "basedir for jQAssistant rules, containing the dir jqassistant-rules and a jqassistant-plugin.xml"));
+        options.add(new Option("r", "ruleDirectory", true, "basedir for jQAssistant rules, containing the dir jqassistant-rules and a jqassistant-plugin.xml"));
     }
 }

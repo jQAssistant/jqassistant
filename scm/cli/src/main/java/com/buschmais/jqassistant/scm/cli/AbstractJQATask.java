@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -23,9 +21,11 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  * @author jn4, Kontext E GmbH, 24.01.14
  */
 public abstract class AbstractJQATask implements JQATask {
+
     protected final String taskName;
     protected Map<String, Object> properties;
     protected PluginConfigurationReader pluginConfigurationReader;
+    protected String storeDirectory = "./tmp/jQAssistant/store";
 
     protected AbstractJQATask(final String taskName) {
         this.taskName = taskName;
@@ -43,8 +43,7 @@ public abstract class AbstractJQATask implements JQATask {
     }
 
     protected Store getStore() {
-        File directory = new File("./tmp/store"); // TODO take directory from
-                                                  // properties
+        File directory = new File(storeDirectory);
         Log.getLog().info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         directory.getParentFile().mkdirs();
         return new EmbeddedGraphStore(directory.getAbsolutePath());
@@ -66,6 +65,16 @@ public abstract class AbstractJQATask implements JQATask {
             executeTask(store);
         } finally {
             store.stop();
+        }
+    }
+
+    @Override
+    public void withGlobalOptions(CommandLine options) {
+        if (options.hasOption("s")) {
+            storeDirectory = options.getOptionValue("s");
+        }
+        if (storeDirectory.isEmpty()) {
+            throw new MissingConfigurationParameterException("Invalid store directory.");
         }
     }
 
@@ -96,6 +105,8 @@ public abstract class AbstractJQATask implements JQATask {
     @Override
     public List<Option> getOptions() {
         final List<Option> options = new ArrayList<>();
+        options.add(OptionBuilder.withArgName("s").withLongOpt("storeDirectory").withDescription("The location of the Neo4j database").withValueSeparator(',')
+                .hasArgs().create("d"));
         addTaskOptions(options);
         return options;
     }

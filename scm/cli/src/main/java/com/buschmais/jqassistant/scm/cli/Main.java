@@ -11,14 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -96,13 +89,12 @@ public class Main {
 
     private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {
         final JQATask task = tasks.get(taskName);
-        if (task instanceof OptionsConsumer) {
-            try {
-                ((OptionsConsumer) task).withOptions(commandLine);
-            } catch (MissingConfigurationParameterException e) {
-                printUsage(option, e.getMessage());
-                System.exit(1);
-            }
+        try {
+            task.withGlobalOptions(commandLine);
+            task.withOptions(commandLine);
+        } catch (MissingConfigurationParameterException e) {
+            printUsage(option, e.getMessage());
+            System.exit(1);
         }
         final Map<String, Object> properties = readProperties(commandLine);
         task.initialize(properties);
