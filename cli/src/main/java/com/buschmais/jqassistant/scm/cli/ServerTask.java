@@ -5,6 +5,8 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.apache.commons.cli.CommandLine;
+
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
@@ -36,5 +38,9 @@ public class ServerTask extends AbstractJQATask {
 
     public static void main(String[] args) {
         new ServerTask().run();
+    }
+
+    @Override
+    public void withOptions(CommandLine options) {
     }
 }
