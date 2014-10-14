@@ -106,6 +106,8 @@ function getContrastYIQ(backgroundColor){
  */
 function showAlert(message) {
 
+    console.log("showAlert(\"" + message + "\")");
+
     var theAlert = $("#alert");
     if (!theAlert) {
         console.log("Unable to show the alert, there is no <div/> for it. The message is: " + message);
