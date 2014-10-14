@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.WrappingNeoServer;
 import org.neo4j.server.database.InjectableProvider;
 import org.neo4j.server.modules.ServerModule;
@@ -37,8 +36,8 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
 
     protected final Store store;
 
-    public AbstractServer(GraphDatabaseAPI db, EmbeddedGraphStore graphStore) {
-        super(db);
+    public AbstractServer(EmbeddedGraphStore graphStore) {
+        super(graphStore.getDatabaseService());
         this.store = graphStore;
     }
 

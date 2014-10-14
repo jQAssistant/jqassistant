@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.neo4jserver.ui;
 
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.openqa.selenium.By;
@@ -10,15 +12,17 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.buschmais.jqassistant.core.plugin.impl.JQAssistantPropertiesImpl;
+import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 /**
  * Test the index UI component.
  */
-public class IndexHtmlTest extends AbstractHtmlTest {
+public class IndexHtmlTest extends AbstractServerTest {
 
     @Test
-    public void testGetIndexHtml() {
+    public void testGetIndexHtml() throws IOException {
+        scanClassPathDirectory(getClassesDirectory(AbstractServerTest.class));
 
         HtmlUnitDriver webDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
         webDriver.setJavascriptEnabled(true);

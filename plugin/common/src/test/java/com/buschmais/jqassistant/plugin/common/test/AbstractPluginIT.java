@@ -11,7 +11,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 
@@ -31,7 +35,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
-import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -366,5 +374,13 @@ public class AbstractPluginIT {
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
+    }
+
+    protected ScannerPluginRepository getScannerPluginRepository() {
+        return scannerPluginRepository;
+    }
+
+    protected RulePluginRepository getRulePluginRepository() {
+        return rulePluginRepository;
     }
 }
