@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
@@ -43,25 +40,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
         Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
         store.beginTransaction();
-        ScannerListener listener = new ScannerListener() {
-
-            int count = 0;
-
-            @Override
-            public <I> void before(I item, String relativePath, Scope scope) {
-            }
-
-            @Override
-            public <I> void after(I item, String relativePath, Scope scope, FileDescriptor fileDescriptor) {
-                count++;
-                if (count == 200) {
-                    store.commitTransaction();
-                    store.beginTransaction();
-                    count = 0;
-                }
-            }
-        };
-        getScanner(listener).scan(runtimeJar, runtimeJar.getAbsolutePath(), JavaScope.CLASSPATH);
+        getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), JavaScope.CLASSPATH);
         store.commitTransaction();
     }
 
