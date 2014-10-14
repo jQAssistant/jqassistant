@@ -30,7 +30,7 @@ public class IndexHtmlTest extends AbstractHtmlTest {
     }
 
     @Test
-    public void testGetIndexHtml() throws IOException {
+    public void testGetVersion() throws IOException {
 
         //scanClassPathDirectory(getClassesDirectory(AbstractServerTest.class));
 
