@@ -3,41 +3,38 @@ package com.buschmais.jqassistant.scm.neo4jserver.ui;
 import java.io.IOException;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.PageFactory;
 
 import com.buschmais.jqassistant.core.plugin.impl.JQAssistantPropertiesImpl;
-import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.buschmais.jqassistant.scm.neo4jserver.ui.pageobjects.IndexPage;
 
 /**
  * Test the index UI component.
  */
-public class IndexHtmlTest extends AbstractServerTest {
+public class IndexHtmlTest extends AbstractHtmlTest {
+
+    /** The index page. */
+    private IndexPage indexPage;
+
+    @Override
+    protected String getWebPage() {
+        return "index.html";
+    }
+
+    @Before
+    public void setup() {
+
+        indexPage = PageFactory.initElements(driver, IndexPage.class);
+    }
 
     @Test
     public void testGetIndexHtml() throws IOException {
-        scanClassPathDirectory(getClassesDirectory(AbstractServerTest.class));
 
-        HtmlUnitDriver webDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
-        webDriver.setJavascriptEnabled(true);
-
-        webDriver.get("http://localhost:7474/jqa/index.html");
+        //scanClassPathDirectory(getClassesDirectory(AbstractServerTest.class));
 
         final String version = JQAssistantPropertiesImpl.getInstance().getVersion();
-        (new WebDriverWait(webDriver, 30)).until(new ExpectedCondition<Boolean>() {
-            public Boolean apply(WebDriver d) {
-                return d.findElement(By.id("version")).getText().equals(version);
-            }
-        });
-
-        WebElement indexSpan = webDriver.findElement(By.id("version"));
-
-        Assert.assertEquals(indexSpan.getText(), version);
+        Assert.assertEquals(version, indexPage.getVersion());
     }
 }
