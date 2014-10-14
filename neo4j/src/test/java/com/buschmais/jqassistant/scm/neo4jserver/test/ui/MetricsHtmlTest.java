@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.neo4jserver.ui;
+package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
 
 import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
-import com.buschmais.jqassistant.scm.neo4jserver.ui.pageobjects.MetricsPage;
+import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.MetricsPage;
 
 /**
  * Test the metrics html page.

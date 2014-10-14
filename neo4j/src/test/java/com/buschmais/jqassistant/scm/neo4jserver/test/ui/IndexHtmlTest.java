@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.neo4jserver.ui;
+package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
 import java.io.IOException;
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
 
 import com.buschmais.jqassistant.core.plugin.impl.JQAssistantPropertiesImpl;
-import com.buschmais.jqassistant.scm.neo4jserver.ui.pageobjects.IndexPage;
+import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.IndexPage;
 
 /**
  * Test the index UI component.
