@@ -27,7 +27,7 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
 
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
-        LOGGER.info("Scanning file '{}'.", file.getAbsolutePath());
+        LOGGER.info("Scanning '{}'.", file.getAbsolutePath());
         FileDescriptor fileDescriptor = scanner.scan(new VirtualFile() {
 
             @Override

@@ -9,9 +9,11 @@ import org.apache.commons.cli.CommandLine;
  */
 public interface JQATask extends Runnable, OptionsProvider, OptionsConsumer {
 
+    public static final String DEFAULT_STORE_DIRECTORY = "tmp/jQAssistant/store";
+
     void initialize(Map<String, Object> properties);
 
     String getName();
 
-    void withGlobalOptions(CommandLine commandLine);
+    void withStandardOptions(CommandLine commandLine);
 }

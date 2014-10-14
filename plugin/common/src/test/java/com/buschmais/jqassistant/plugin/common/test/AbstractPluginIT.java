@@ -46,12 +46,9 @@ import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
@@ -190,30 +187,11 @@ public class AbstractPluginIT {
 
     /**
      * Return an initialized scanner instance.
-     * 
+     *
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(new ScannerListener() {
-            @Override
-            public <I> void before(I item, String relativePath, Scope scope) {
-            }
-
-            @Override
-            public <I> void after(I item, String relativePath, Scope scope, FileDescriptor fileDescriptor) {
-            }
-        });
-    }
-
-    /**
-     * Return an initialized scanner instance.
-     * 
-     * @param listener
-     *            A listener.
-     * @return The artifact scanner instance.
-     */
-    protected Scanner getScanner(ScannerListener listener) {
-        return new ScannerImpl(store, getScannerPlugins(), listener);
+        return new ScannerImpl(store, getScannerPlugins());
     }
 
     /**

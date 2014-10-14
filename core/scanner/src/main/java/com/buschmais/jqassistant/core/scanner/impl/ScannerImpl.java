@@ -4,13 +4,20 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
@@ -32,27 +39,16 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Constructor.
-     *
-     * @param scannerPlugins
-     *            The configured plugins.
-     */
-    public ScannerImpl(Store store, List<ScannerPlugin<?>> scannerPlugins) {
-        this(store, scannerPlugins, null);
-    }
-
-    /**
-     * Constructor.
      * 
      * @param store
      *            The store.
      * @param scannerPlugins
      *            The configured plugins.
-     * @param scannerListener
      */
-    public ScannerImpl(Store store, List<ScannerPlugin<?>> scannerPlugins, ScannerListener scannerListener) {
+    public ScannerImpl(Store store, List<ScannerPlugin<?>> scannerPlugins) {
         this.scannerContext = new ScannerContextImpl(store);
         this.scannerPlugins = scannerPlugins;
-        this.scannerListener = scannerListener;
+        this.scannerListener = new DefaultScannerListener(store);
     }
 
     @Override
@@ -68,13 +64,9 @@ public class ScannerImpl implements Scanner {
             ScannerPlugin<I> selectedPlugin = (ScannerPlugin<I>) scannerPlugin;
             try {
                 if (selectedPlugin.accepts(item, path, scope)) {
-                    if (scannerListener != null) {
-                        scannerListener.before(item, path, scope);
-                    }
+                    scannerListener.before(item, path, scope);
                     fileDescriptor = selectedPlugin.scan(item, path, scope, this);
-                    if (scannerListener != null) {
-                        scannerListener.after(item, path, scope, fileDescriptor);
-                    }
+                    scannerListener.after(item, path, scope, fileDescriptor);
                 }
             } catch (IOException e) {
                 LOGGER.error("Cannot scan item " + path, e);

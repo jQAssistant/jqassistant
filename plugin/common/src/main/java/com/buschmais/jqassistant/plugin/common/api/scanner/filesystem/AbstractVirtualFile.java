@@ -21,7 +21,7 @@ public abstract class AbstractVirtualFile implements VirtualFile {
         } catch (IOException e) {
             throw new IllegalStateException("Cannot read stream", e);
         }
-        return null;
+        return file;
     }
 
     @Override

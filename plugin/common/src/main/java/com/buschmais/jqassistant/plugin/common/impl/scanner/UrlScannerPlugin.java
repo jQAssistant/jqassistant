@@ -22,7 +22,7 @@ public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
     }
 
     @Override
-    public FileDescriptor scan(final URL item, final String path, Scope scope, Scanner scanner) throws IOException {
+    public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning url '{}'.", item.toString());
         try (AbstractVirtualFile file = new AbstractVirtualFile() {
             @Override
@@ -30,7 +30,7 @@ public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
                 return new BufferedInputStream(item.openStream());
             }
         }) {
-            return scanner.scan(file, item.getPath(), scope);
+            return scanner.scan(file, path, scope);
         }
     }
 }
