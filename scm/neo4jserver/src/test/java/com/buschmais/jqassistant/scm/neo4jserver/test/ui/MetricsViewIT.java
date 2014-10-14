@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.MetricsPage
 /**
  * Test the metrics html page.
  */
-public class MetricsHtmlTest extends AbstractHtmlTest {
+public class MetricsViewIT extends AbstractUITest {
 
     /** This metric group is currently delivered by default. */
     private static final String METRIC_GROUP_ID_artifactDependencies = "metric:ArtifactDependencies";

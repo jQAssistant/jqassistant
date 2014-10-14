@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.IndexPage;
 /**
  * Test the index UI component.
  */
-public class IndexHtmlTest extends AbstractHtmlTest {
+public class IndexViewIT extends AbstractUITest {
 
     /** The index page. */
     private IndexPage indexPage;

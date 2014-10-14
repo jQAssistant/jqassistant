@@ -10,7 +10,7 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 /**
  * Abstract class for all HTML unit tests.
  */
-public abstract class AbstractHtmlTest extends AbstractServerTest {
+public abstract class AbstractUITest extends AbstractServerTest {
 
     /** The base url for all HTMl tests. */
     protected static final String BASE_URL = "http://localhost:7474/jqa/";
