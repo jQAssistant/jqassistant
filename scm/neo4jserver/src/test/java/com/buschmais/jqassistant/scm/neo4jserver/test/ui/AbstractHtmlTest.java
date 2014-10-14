@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.neo4jserver.ui;
+package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;

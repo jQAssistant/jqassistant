@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.neo4jserver.ui.pageobjects;
+package com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects;
 
 import java.util.concurrent.TimeUnit;
 
