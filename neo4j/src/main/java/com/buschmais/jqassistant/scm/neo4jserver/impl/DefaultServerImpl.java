@@ -29,7 +29,7 @@ public class DefaultServerImpl extends AbstractServer {
      *            The rule plugin repository.
      */
     public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository) {
-        super(graphStore.getDatabaseService(), graphStore);
+        super(graphStore);
         this.scannerPluginRepository = scannerPluginRepository;
         this.rulePluginRepository = rulePluginRepository;
     }
