@@ -9,11 +9,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
 
-import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.AbstractServer;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.MetricsPage;
 
 /**
@@ -68,12 +69,11 @@ public class MetricsViewIT extends AbstractUITest {
      *
      * @throws IOException
      */
-    @Ignore("Will fail as the database is empty.")
     @Test
     public void testMetricGroupSelection() throws IOException {
-
-        // let's scan something, we need some data
-        scanClassPathDirectory(getClassesDirectory(AbstractServerTest.class));
+        scanClasses("core", Store.class);
+        scanClasses("server", DefaultServerImpl.class, AbstractServer.class);
+        scanClasses("server-test", MetricsViewIT.class);
 
         // this will run the first metric of the group
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);
