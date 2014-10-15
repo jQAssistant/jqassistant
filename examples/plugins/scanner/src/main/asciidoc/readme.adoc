@@ -4,7 +4,7 @@ A custom scanner plugin allows extending the functionality of jQAssistant to rea
 files) and create the corresponding information in the database. The following example demonstrates this for CSV files.
 
 The plugin is an artifact which contains the scanner implementation, model classes and a plugin descriptor. The
-project needs to declares the following dependencies:
+project needs to declare the following dependencies:
 
 [source,xml]
 .pom.xml

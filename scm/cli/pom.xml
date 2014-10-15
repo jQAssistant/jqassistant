@@ -8,7 +8,17 @@
     </parent>
     <artifactId>jqassistant.scm.cli</artifactId>
 
+    <properties>
+        <test.jqassistant.home>${project.build.directory}/distribution/${project.artifactId}-${project.version}</test.jqassistant.home>
+    </properties>
+
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -51,6 +61,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>unpack-test-distribution</id>
                         <goals>
                             <goal>unpack</goal>
                         </goals>
@@ -64,12 +75,21 @@
                                     <classifier>distribution</classifier>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/distribution</outputDirectory>
+                                    <outputDirectory>${test.jqassistant.home}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <JQASSISTANT_HOME>${test.jqassistant.home}</JQASSISTANT_HOME>
+                    </environmentVariables>
+                </configuration>
             </plugin>
         </plugins>
     </build>
