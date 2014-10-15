@@ -32,8 +32,6 @@ public class IndexViewIT extends AbstractUITest {
     @Test
     public void testGetVersion() throws IOException {
 
-        //scanClassPathDirectory(getClassesDirectory(AbstractServerTest.class));
-
         final String version = JQAssistantPropertiesImpl.getInstance().getVersion();
         Assert.assertEquals(version, indexPage.getVersion());
     }
