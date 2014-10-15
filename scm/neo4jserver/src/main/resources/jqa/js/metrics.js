@@ -193,6 +193,8 @@ function runMetricFromUrlParameters() {
  */
 function updateUiComponents(group, metric) {
 
+    console.log("updateUiComponents(" + group["id"] + ", " + metric["id"] + ")");
+
     $("#metricGroupDescription").text(group["description"]);
     $(".metricGroup-details").show();
 
@@ -207,6 +209,23 @@ function updateUiComponents(group, metric) {
     updateBreadcrumb(metric);
 
     updateUpButton(metric);
+}
+
+/**
+ * Empty all UI components that will be filled by updateUiComponents(group, metric).
+ */
+function emptyUiComponents() {
+
+    console.log("emptyUiComponents()");
+
+    $(".metricGroup-details-button").hide();
+    $(".metricGroup-details").hide();
+    $("#showMetricsPanel").hide();
+
+    $("#metricGroupDescription").empty();
+    $("#metricId").empty();
+    $("#metricQuery").empty();
+    $("#metricDescription").empty();
 }
 
 /**
@@ -244,7 +263,7 @@ function updateBreadcrumb(metric) {
         });
 
         // add the active class to the last item in the breadcrumb
-        var activeClass = ((index + 1) >= breadcrumbLength) ? " active" : "";
+        var activeClass = ((index + 1) >= breadcrumbLength) ? "active" : "";
 
         // create a new li element
         var li = $("<li></li>", {
@@ -378,6 +397,7 @@ function runMetric(parameterMap) {
 
     console.log("runMetric(" + parameterMap[JqaConstants.GROUP_ID] + ", " + parameterMap[JqaConstants.METRICS_ID] + ")");
 
+    emptyUiComponents();
     $("#treemapContainer").empty();
 
     var metric = MetricGroups.getMetricByGroupIdAndMetricId(parameterMap[JqaConstants.GROUP_ID], parameterMap[JqaConstants.METRICS_ID]);
