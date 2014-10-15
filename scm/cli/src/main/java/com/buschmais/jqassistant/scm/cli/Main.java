@@ -1,11 +1,17 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import static java.util.Arrays.asList;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +25,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -26,13 +37,103 @@ import org.apache.commons.cli.ParseException;
  */
 public class Main {
 
-    private static final Map<String, JQATask> tasks = new HashMap<>();
+    public static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
 
+    public static final String DIRECTORY_PLUGINS = "plugins";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    private static final File homeDirectory = getHomeDirectory();
+
+    private static final PluginConfigurationReader PLUGIN_CONFIGURATION_READER = new PluginConfigurationReaderImpl(createPluginClassLoader());
+
+    /**
+     * Define all known tasks.
+     */
+    private enum Task {
+
+        SCAN(new ScanTask(PLUGIN_CONFIGURATION_READER)), SERVER(new ScanTask(PLUGIN_CONFIGURATION_READER)), ANALYZE(new ScanTask(PLUGIN_CONFIGURATION_READER)), RESET(
+                new ScanTask(PLUGIN_CONFIGURATION_READER));
+
+        private JQATask task;
+
+        /**
+         * Constructor.
+         * 
+         * @param task
+         */
+        private Task(JQATask task) {
+            this.task = task;
+        }
+
+        public JQATask getTask() {
+            return task;
+        }
+    }
+
+    /**
+     * Determine the JQASSISTANT_HOME directory.
+     *
+     * @return The directory or <code>null</code>.
+     */
+    private static File getHomeDirectory() {
+        String dirName = System.getenv(ENV_JQASSISTANT_HOME);
+        if (dirName != null) {
+            File dir = new File(dirName);
+            if (dir.exists()) {
+                LOGGER.info("Using JQASSISTANT_HOME '{}'.", dir.getAbsolutePath());
+                return dir;
+            } else {
+                LOGGER.warn("JQASSISTANT_HOME '{}' points to a non-existing directory.", dir.getAbsolutePath());
+                return null;
+            }
+        }
+        LOGGER.warn("JQASSISTANT_HOME is not set.");
+        return null;
+    }
+
+    /**
+     * Create the class loader to be used for detecting and loading plugins.
+     *
+     * @return The plugin class loader.
+     */
+    private static ClassLoader createPluginClassLoader() {
+        ClassLoader parentClassLoader = JQATask.class.getClassLoader();
+        if (homeDirectory != null) {
+            File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
+            if (pluginDirectory.exists()) {
+                final Path pluginDirectoryPath = pluginDirectory.toPath();
+                final List<URL> files = new ArrayList<>();
+                SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if (file.toFile().getName().endsWith(".jar")) {
+                            files.add(file.toFile().toURI().toURL());
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                };
+                try {
+                    Files.walkFileTree(pluginDirectoryPath, visitor);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Cannot read plugin directory.", e);
+                }
+                return new URLClassLoader(files.toArray(new URL[0]), parentClassLoader);
+            }
+        }
+        return parentClassLoader;
+    }
+
+    /**
+     * The main method.
+     * 
+     * @param args
+     *            The command line arguments.
+     * @throws IOException
+     *             If an error occurs.
+     */
     public static void main(String[] args) throws IOException {
-        initializeLogging();
-
-        putTasksIntoMap(asList(new ScanTask(), new ServerTask(), new AnalyzeTask(), new ResetTask()));
-
         try {
             interpretCommandLine(args);
         } catch (JqaConstraintViolationException e) {
@@ -41,9 +142,12 @@ public class Main {
         }
     }
 
-    private static void initializeLogging() {
-    }
-
+    /**
+     * Gather all options which are supported by the task (i.e. including
+     * standard and specific options).
+     * 
+     * @return The options.
+     */
     private static Options gatherOptions() {
         final Options options = new Options();
         gatherTasksOptions(options);
@@ -51,6 +155,12 @@ public class Main {
         return options;
     }
 
+    /**
+     * Gathers the standard options shared by all tasks.
+     * 
+     * @param options
+     *            The standard options.
+     */
     @SuppressWarnings("static-access")
     private static void gatherStandardOptions(final Options options) {
         options.addOption(OptionBuilder.withArgName("p").withDescription("Path to property file; default is jqassistant.properties in the class path")
@@ -58,22 +168,41 @@ public class Main {
         options.addOption(new Option("help", "print this message"));
     }
 
+    /**
+     * Gathers the task specific options for all tasks.
+     * 
+     * @param options
+     *            The task specific options.
+     */
     private static void gatherTasksOptions(final Options options) {
-        for (OptionsProvider optionsProvider : tasks.values()) {
-            for (Option option : optionsProvider.getOptions()) {
+        for (Task task : Task.values()) {
+            for (Option option : task.getTask().getOptions()) {
                 options.addOption(option);
             }
         }
     }
 
+    /**
+     * Returns a string containing the names of all supported tasks.
+     * 
+     * @return The names of all supported tasks.
+     */
     private static String gatherTaskNames() {
         final StringBuilder builder = new StringBuilder();
-        for (JQATask task : tasks.values()) {
-            builder.append(task.getName()).append(" ");
+        for (Task task : Task.values()) {
+            builder.append(task.name().toLowerCase()).append(" ");
         }
         return builder.toString().trim();
     }
 
+    /**
+     * Parse the command line and execute the requested task.
+     * 
+     * @param arg
+     *            The command line.
+     * @throws IOException
+     *             If an error occurs.
+     */
     private static void interpretCommandLine(final String[] arg) throws IOException {
         final CommandLineParser parser = new BasicParser();
         Options option = gatherOptions();
@@ -94,8 +223,16 @@ public class Main {
         }
     }
 
+    /**
+     * Executes a task.
+     * 
+     * @param taskName
+     * @param option
+     * @param commandLine
+     * @throws IOException
+     */
     private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {
-        final JQATask task = tasks.get(taskName);
+        final JQATask task = Task.valueOf(taskName.toUpperCase()).getTask();
         try {
             task.withStandardOptions(commandLine);
             task.withOptions(commandLine);
@@ -135,12 +272,6 @@ public class Main {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Main.class.getCanonicalName(), option);
         System.out.println("Example: " + Main.class.getCanonicalName() + " scan -d target/classes,target/test-classes");
-    }
-
-    private static void putTasksIntoMap(final List<AbstractJQATask> tasks) {
-        for (AbstractJQATask task : tasks) {
-            Main.tasks.put(task.taskName, task);
-        }
     }
 
 }

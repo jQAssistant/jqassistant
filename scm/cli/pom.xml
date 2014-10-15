@@ -9,7 +9,8 @@
     <artifactId>jqassistant.scm.cli</artifactId>
 
     <properties>
-        <test.jqassistant.home>${project.build.directory}/distribution/${project.artifactId}-${project.version}</test.jqassistant.home>
+        <test.distribution>${project.build.directory}/distribution/</test.distribution>
+        <test.jqassistant.home>${test.distribution}/${project.artifactId}-${project.version}</test.jqassistant.home>
     </properties>
 
     <build>
@@ -75,7 +76,7 @@
                                     <classifier>distribution</classifier>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
-                                    <outputDirectory>${test.jqassistant.home}</outputDirectory>
+                                    <outputDirectory>${test.distribution}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
@@ -119,13 +120,11 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.common</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
             <version>${project.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>

@@ -7,7 +7,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
@@ -31,13 +31,24 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
 
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URLS = "u";
-    private final List<String> fileNames = new ArrayList<>();
-    private final List<String> urls = new ArrayList<>();
+    public static final String CMDLINE_OPTION_RESET = "reset";
+    private List<String> fileNames = new ArrayList<>();
+    private List<String> urls = new ArrayList<>();
+    private boolean reset = false;
 
-    public ScanTask() {
-        super("scan");
+    /**
+     * Constructor.
+     * 
+     * @param pluginConfigurationReader
+     *            The
+     *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
+     *            .
+     */
+    public ScanTask(PluginConfigurationReader pluginConfigurationReader) {
+        super(pluginConfigurationReader);
     }
 
+    @Override
     protected void executeTask(final Store store) {
         List<ScannerPlugin<?>> scannerPlugins;
         try {
@@ -45,7 +56,9 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         } catch (PluginRepositoryException e) {
             throw new RuntimeException(e);
         }
-        store.reset();
+        if (reset) {
+            store.reset();
+        }
         properties = new HashMap<>();
         for (String fileName : fileNames) {
             final File file = new File(fileName);
@@ -85,20 +98,23 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     public void withOptions(final CommandLine options) {
-        getElementNamesFromOption(options, CMDLINE_OPTION_FILES, fileNames);
-        getElementNamesFromOption(options, CMDLINE_OPTION_URLS, urls);
+        fileNames = getElementNamesFromOption(options, CMDLINE_OPTION_FILES);
+        urls = getElementNamesFromOption(options, CMDLINE_OPTION_URLS);
         if (fileNames.isEmpty() && urls.isEmpty()) {
             throw new MissingConfigurationParameterException("No files, directories or urls given.");
         }
+        reset = options.hasOption(CMDLINE_OPTION_RESET);
     }
 
-    private void getElementNamesFromOption(CommandLine options, String option, Collection<String> names) {
+    private List<String> getElementNamesFromOption(CommandLine options, String option) {
+        List<String> names = new ArrayList<>();
         if (options.hasOption(option)) {
             for (String elementName : options.getOptionValues(option)) {
                 if (elementName.trim().length() > 0)
                     names.add(elementName);
             }
         }
+        return names;
     }
 
     @SuppressWarnings("static-access")
@@ -108,5 +124,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
                 .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_FILES));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls").withDescription("urls to be scanned, comma separated")
                 .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_URLS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("reset store before scanning (default=false").withValueSeparator(',')
+                .create(CMDLINE_OPTION_RESET));
     }
 }

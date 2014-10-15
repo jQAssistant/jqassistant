@@ -7,6 +7,7 @@ import java.util.Collections;
 
 import org.apache.commons.cli.CommandLine;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
@@ -17,8 +18,8 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
  */
 public class ServerTask extends AbstractJQATask {
 
-    public ServerTask() {
-        super("server");
+    public ServerTask(PluginConfigurationReader pluginConfigurationReader) {
+        super(pluginConfigurationReader);
     }
 
     protected void executeTask(final Store store) {
@@ -34,10 +35,6 @@ public class ServerTask extends AbstractJQATask {
         } finally {
             server.stop();
         }
-    }
-
-    public static void main(String[] args) {
-        new ServerTask().run();
     }
 
     @Override
