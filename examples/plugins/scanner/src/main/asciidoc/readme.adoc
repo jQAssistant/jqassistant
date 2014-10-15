@@ -26,9 +26,9 @@ First a label "CSV" is defined which is going to be used for all nodes created b
 include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVDescriptor.java[lines=9..11]
 ----
 
-A CSV file is represented by _CSVFileDescriptor_ which inherits from _CSVDescriptor_ and _FileDescriptor_ which is
-defined by the scanner API. Thus a node of this type will carry the labels "CSV" and "File". Furthermore a list of
-"HAS_ROW" relations is defined by the property "rows".
+A CSV file is represented by _CSVFileDescriptor_ which inherits from _CSVDescriptor_ and _FileDescriptor_ (part of the
+scanner API). Thus a node of this type will carry the labels "CSV" and "File". Furthermore a list of "HAS_ROW" relations
+is defined by the property "rows".
 
 [source,java]
 .com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor
@@ -80,3 +80,4 @@ include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/resources/M
 
 The plugin is automatically loaded by the scanner if it can be found on the classpath, e.g. by adding it as dependency to
 the maven plugin.
+
