@@ -1,6 +1,14 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +49,33 @@ public abstract class AbstractJQATask implements JQATask {
         this.taskName = taskName;
         this.homeDirectory = System.getenv(ENV_JQASSISTANT_HOME);
         this.pluginConfigurationReader = new PluginConfigurationReaderImpl();
+    }
+
+    /**
+     * Create the class loader to be used for detecting and loading plugins.
+     * 
+     * @return The plugin class loader.
+     */
+    private ClassLoader createPluginClassLoader() throws IOException {
+        ClassLoader parentClassLoader = JQATask.class.getClassLoader();
+        if (this.homeDirectory != null) {
+            String pluginDirectory = homeDirectory + "/plugins";
+            final Path pluginDirectoryPath = new File(pluginDirectory).toPath();
+            final List<URL> files = new ArrayList<>();
+            SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (file.endsWith(".jar")) {
+                        files.add(file.toFile().toURI().toURL());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+            };
+            Files.walkFileTree(pluginDirectoryPath, visitor);
+            return new URLClassLoader(files.toArray(new URL[0]), parentClassLoader);
+        }
+        return parentClassLoader;
     }
 
     @Override

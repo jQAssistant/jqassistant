@@ -99,11 +99,13 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.common</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
