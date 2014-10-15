@@ -21,5 +21,13 @@
             <outputDirectory>lib</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>plugins</outputDirectory>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <includes>
+                <include>com.buschmais.jqassistant.plugin:*</include>
+            </includes>
+            <scope>provided</scope>
+        </dependencySet>
     </dependencySets>
 </assembly>

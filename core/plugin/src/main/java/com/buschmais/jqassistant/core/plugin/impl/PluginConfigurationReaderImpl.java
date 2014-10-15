@@ -29,6 +29,8 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
 
     private static final JAXBContext jaxbContext;
 
+    private final ClassLoader pluginClassLoader;
+
     private List<JqassistantPlugin> plugins = null;
 
     static {
@@ -37,6 +39,23 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot create JAXB context.", e);
         }
+    }
+
+    /**
+     * Default constructor.
+     */
+    public PluginConfigurationReaderImpl() {
+        this(PluginConfigurationReader.class.getClassLoader());
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param pluginClassLoader
+     *            The class loader to use for detecting plugins.
+     */
+    public PluginConfigurationReaderImpl(ClassLoader pluginClassLoader) {
+        this.pluginClassLoader = pluginClassLoader;
     }
 
     /**
@@ -72,7 +91,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
         if (this.plugins == null) {
             final Enumeration<URL> resources;
             try {
-                resources = PluginConfigurationReaderImpl.class.getClassLoader().getResources(PLUGIN_RESOURCE);
+                resources = pluginClassLoader.getResources(PLUGIN_RESOURCE);
             } catch (IOException e) {
                 throw new IllegalStateException("Cannot get plugin resources.", e);
             }
