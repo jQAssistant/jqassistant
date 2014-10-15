@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -18,8 +17,6 @@ import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
@@ -53,7 +50,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
     protected void executeTask(final Store store) {
         List<ScannerPlugin<?>> scannerPlugins;
         try {
-            scannerPlugins = getScannerPluginRepository(properties).getScannerPlugins();
+            scannerPlugins = scannerPluginRepository.getScannerPlugins();
         } catch (PluginRepositoryException e) {
             throw new RuntimeException(e);
         }
@@ -76,14 +73,6 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
             } catch (MalformedURLException e) {
                 throw new IllegalArgumentException("Cannot parse URL " + url, e);
             }
-        }
-    }
-
-    protected ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) {
-        try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
-        } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot create scanner plugin repository.", e);
         }
     }
 

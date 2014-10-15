@@ -5,12 +5,7 @@ import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
@@ -22,23 +17,13 @@ import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
@@ -141,7 +126,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     // copied from AbstractAnalysisMojo
     protected RuleSet readRules() {
-        File selectedDirectory = createSelectedDirectoryFile();
+        File selectedDirectory = new File(ruleDirectory);
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
         List<File> ruleFiles = readRulesDirectory(selectedDirectory);
@@ -149,26 +134,14 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new StreamSource(ruleFile));
         }
-        List<Source> ruleSources = getRulePluginRepository().getRuleSources();
+        List<Source> ruleSources = rulePluginRepository.getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
 
-    protected RulePluginRepository getRulePluginRepository() {
-        try {
-            return new RulePluginRepositoryImpl(pluginConfigurationReader);
-        } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot create rule plugin repository.", e);
-        }
-    }
-
-    private File createSelectedDirectoryFile() {
-        return new File(ruleDirectory);
-    }
-
     private List<File> readRulesDirectory(File rulesDirectory) {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
-            throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
+            throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
         LOG.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
         final List<File> ruleFiles = new ArrayList<>();

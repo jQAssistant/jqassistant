@@ -11,23 +11,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.cli.*;
 
+import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 
@@ -41,11 +29,11 @@ public class Main {
 
     public static final String DIRECTORY_PLUGINS = "plugins";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
-
-    private static final File homeDirectory = getHomeDirectory();
+    private static final File HOME_DIRECTORY = getHomeDirectory();
 
     private static final PluginConfigurationReader PLUGIN_CONFIGURATION_READER = new PluginConfigurationReaderImpl(createPluginClassLoader());
+
+    private static final Console LOG = Log.getLog();
 
     /**
      * Define all known tasks.
@@ -95,14 +83,14 @@ public class Main {
         if (dirName != null) {
             File dir = new File(dirName);
             if (dir.exists()) {
-                LOGGER.info("Using JQASSISTANT_HOME '{}'.", dir.getAbsolutePath());
+                LOG.info("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
                 return dir;
             } else {
-                LOGGER.warn("JQASSISTANT_HOME '{}' points to a non-existing directory.", dir.getAbsolutePath());
+                LOG.warn("JQASSISTANT_HOME '" + dir.getAbsolutePath() + "' points to a non-existing directory.");
                 return null;
             }
         }
-        LOGGER.warn("JQASSISTANT_HOME is not set.");
+        LOG.warn("JQASSISTANT_HOME is not set.");
         return null;
     }
 
@@ -113,8 +101,8 @@ public class Main {
      */
     private static ClassLoader createPluginClassLoader() {
         ClassLoader parentClassLoader = JQATask.class.getClassLoader();
-        if (homeDirectory != null) {
-            File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
+        if (HOME_DIRECTORY != null) {
+            File pluginDirectory = new File(HOME_DIRECTORY, DIRECTORY_PLUGINS);
             if (pluginDirectory.exists()) {
                 final Path pluginDirectoryPath = pluginDirectory.toPath();
                 final List<URL> files = new ArrayList<>();

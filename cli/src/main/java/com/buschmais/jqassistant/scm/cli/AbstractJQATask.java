@@ -10,12 +10,9 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -32,9 +29,13 @@ public abstract class AbstractJQATask implements JQATask {
     private static final Console LOG = Log.getLog();
 
     protected Map<String, Object> properties;
-    protected PluginConfigurationReader pluginConfigurationReader;
+    // protected PluginConfigurationReader pluginConfigurationReader;
     protected String storeDirectory;
     protected ReportHelper reportHelper;
+    protected ModelPluginRepository modelPluginRepository;
+    protected ScannerPluginRepository scannerPluginRepository;
+    protected RulePluginRepository rulePluginRepository;
+    protected ReportPluginRepository reportPluginRepository;
 
     /**
      * Constructor.
@@ -44,7 +45,14 @@ public abstract class AbstractJQATask implements JQATask {
      *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
      */
     protected AbstractJQATask(PluginConfigurationReader pluginConfigurationReader) {
-        this.pluginConfigurationReader = pluginConfigurationReader;
+        try {
+            modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
+            scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
+            rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
+            reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
+        } catch (PluginRepositoryException e) {
+            throw new RuntimeException("Cannpt create plugin repositories.", e);
+        }
         this.reportHelper = new ReportHelper(Log.getLog());
     }
 
@@ -59,7 +67,7 @@ public abstract class AbstractJQATask implements JQATask {
         final Store store = getStore();
 
         try {
-            descriptorTypes = getModelPluginRepository().getDescriptorTypes();
+            descriptorTypes = modelPluginRepository.getDescriptorTypes();
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot get model.", e);
         }
@@ -118,30 +126,6 @@ public abstract class AbstractJQATask implements JQATask {
         LOG.info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         directory.getParentFile().mkdirs();
         return new EmbeddedGraphStore(directory.getAbsolutePath());
-    }
-
-    protected ModelPluginRepository getModelPluginRepository() {
-        try {
-            return new ModelPluginRepositoryImpl(pluginConfigurationReader);
-        } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot create model plugin repository.", e);
-        }
-    }
-
-    protected ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) {
-        try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
-        } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot create rule plugin repository.", e);
-        }
-    }
-
-    protected RulePluginRepository getRulePluginRepository() {
-        try {
-            return new RulePluginRepositoryImpl(pluginConfigurationReader);
-        } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot create rule plugin repository.", e);
-        }
     }
 
     protected abstract void executeTask(final Store store);
