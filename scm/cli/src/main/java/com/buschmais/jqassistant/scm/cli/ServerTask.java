@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.scm.cli;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import org.apache.commons.cli.CommandLine;
 
@@ -22,9 +21,9 @@ public class ServerTask extends AbstractJQATask {
         super(pluginConfigurationReader);
     }
 
+    @Override
     protected void executeTask(final Store store) {
-        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, getScannerPluginRepository(Collections.<String, Object> emptyMap()),
-                getRulePluginRepository());
+        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, scannerPluginRepository, rulePluginRepository);
         server.start();
         getLog().info("Running server");
         getLog().info("Press <Enter> to finish.");
