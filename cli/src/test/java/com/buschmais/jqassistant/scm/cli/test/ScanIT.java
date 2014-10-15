@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.scm.cli.ScanTask;
 /**
  * Verifies command line scanning.
  */
-public class ScanIT {
+public class ScanIT extends AbstractCLIIT {
 
     @Test
     public void files() throws IOException {

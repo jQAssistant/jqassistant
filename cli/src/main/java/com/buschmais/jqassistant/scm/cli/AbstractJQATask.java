@@ -16,8 +16,14 @@ import java.util.Map;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -30,11 +36,16 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  */
 public abstract class AbstractJQATask implements JQATask {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJQATask.class);
+
     public static final String CMDLINE_OPTION_S = "s";
+
     public static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
 
+    public static final String DIRECTORY_PLUGINS = "plugins";
+
     protected final String taskName;
-    protected final String homeDirectory;
+    protected final File homeDirectory;
     protected Map<String, Object> properties;
     protected PluginConfigurationReader pluginConfigurationReader;
     protected String storeDirectory = DEFAULT_STORE_DIRECTORY;
@@ -47,8 +58,25 @@ public abstract class AbstractJQATask implements JQATask {
      */
     protected AbstractJQATask(final String taskName) {
         this.taskName = taskName;
-        this.homeDirectory = System.getenv(ENV_JQASSISTANT_HOME);
-        this.pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        homeDirectory = getHomeDirectory();
+        ClassLoader pluginClassLoader = createPluginClassLoader();
+        this.pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
+    }
+
+    private File getHomeDirectory() {
+        String dirName = System.getenv(ENV_JQASSISTANT_HOME);
+        if (dirName != null) {
+            File dir = new File(dirName);
+            if (dir.exists()) {
+                LOGGER.info("Using JQASSISTANT_HOME '{}'.", dir.getAbsolutePath());
+                return dir;
+            } else {
+                LOGGER.warn("JQASSISTANT_HOME '{}' points to a non-existing directory.", dir.getAbsolutePath());
+                return null;
+            }
+        }
+        LOGGER.warn("JQASSISTANT_HOME is not set.");
+        return null;
     }
 
     /**
@@ -56,24 +84,30 @@ public abstract class AbstractJQATask implements JQATask {
      * 
      * @return The plugin class loader.
      */
-    private ClassLoader createPluginClassLoader() throws IOException {
+    private ClassLoader createPluginClassLoader() {
         ClassLoader parentClassLoader = JQATask.class.getClassLoader();
         if (this.homeDirectory != null) {
-            String pluginDirectory = homeDirectory + "/plugins";
-            final Path pluginDirectoryPath = new File(pluginDirectory).toPath();
-            final List<URL> files = new ArrayList<>();
-            SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+            File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
+            if (pluginDirectory.exists()) {
+                final Path pluginDirectoryPath = pluginDirectory.toPath();
+                final List<URL> files = new ArrayList<>();
+                SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    if (file.endsWith(".jar")) {
-                        files.add(file.toFile().toURI().toURL());
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if (file.toFile().getName().endsWith(".jar")) {
+                            files.add(file.toFile().toURI().toURL());
+                        }
+                        return FileVisitResult.CONTINUE;
                     }
-                    return FileVisitResult.CONTINUE;
+                };
+                try {
+                    Files.walkFileTree(pluginDirectoryPath, visitor);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Cannot read plugin directory.", e);
                 }
-            };
-            Files.walkFileTree(pluginDirectoryPath, visitor);
-            return new URLClassLoader(files.toArray(new URL[0]), parentClassLoader);
+                return new URLClassLoader(files.toArray(new URL[0]), parentClassLoader);
+            }
         }
         return parentClassLoader;
     }
