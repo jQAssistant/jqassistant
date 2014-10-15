@@ -7,7 +7,24 @@
 	</parent>
 	<artifactId>jqassistant.core.scanner</artifactId>
 
-	<dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
 		<dependency>
 			<groupId>com.buschmais.jqassistant.core</groupId>
 			<artifactId>jqassistant.core.store</artifactId>
