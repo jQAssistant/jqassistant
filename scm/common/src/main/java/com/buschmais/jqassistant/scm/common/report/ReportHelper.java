@@ -8,7 +8,11 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -74,6 +78,30 @@ public final class ReportHelper {
                 console.warn(LOG_LINE_PREFIX + missingGroup);
             }
         }
+    }
+
+    /**
+     * Validates the given rules set for unresolved concepts, constraints or
+     * groups.
+     *
+     * @param ruleSet
+     *            The rules set.
+     */
+    public String validateRuleSet(RuleSet ruleSet) {
+        StringBuffer message = new StringBuffer();
+        if (!ruleSet.getMissingConcepts().isEmpty()) {
+            message.append("\n  Concepts: ");
+            message.append(ruleSet.getMissingConcepts());
+        }
+        if (!ruleSet.getMissingConstraints().isEmpty()) {
+            message.append("\n  Constraints: ");
+            message.append(ruleSet.getMissingConstraints());
+        }
+        if (!ruleSet.getMissingGroups().isEmpty()) {
+            message.append("\n  Groups: ");
+            message.append(ruleSet.getMissingGroups());
+        }
+        return message.length() == 0 ? null : message.toString();
     }
 
     /**

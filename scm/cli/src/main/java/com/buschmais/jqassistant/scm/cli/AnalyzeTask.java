@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,17 +17,21 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
@@ -43,19 +49,27 @@ import com.buschmais.jqassistant.scm.common.report.ReportHelper;
  * @author jn4, Kontext E GmbH, 24.01.14
  */
 public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
-    public static final String RULES_DIRECTORY = "jqassistant-rules";
-    public static final String REPORT_XML = "./jqassistant/jqassistant-report.xml";
+
+    public static final String XML_REPORT_FILE = "jqassistant-report.xml";
 
     public static final String CMDLINE_OPTION_RULEDIR = "r";
+    public static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
+    public static final String CMDLINE_OPTION_GROUPS = "groups";
+    public static final String CMDLINE_OPTION_CONSTRAINTS = "constraints";
+    public static final String CMDLINE_OPTION_CONCEPTS = "concepts";
+    public static final String CMDLINE_OPTION_SEVERITY = "severity";
 
-    private String baseDir = ".";
+    private static final Console LOG = Log.getLog();
+
     private final RuleSelector ruleSelector = new RuleSelectorImpl();
     private final RuleSetReader ruleSetReader = new RuleSetReaderImpl();
 
-    // todo where to get concepts, constraints, and groups?
-    private List<String> concepts = new ArrayList<>();
-    private List<String> constraints = new ArrayList<>();
-    private List<String> groups = new ArrayList<>();
+    private String ruleDirectory;
+    private String reportDirectory;
+    private List<String> concepts;
+    private List<String> constraints;
+    private List<String> groups;
+    private Severity severity;
 
     public AnalyzeTask(PluginConfigurationReader pluginConfigurationReader) {
         super(pluginConfigurationReader);
@@ -63,7 +77,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     protected void executeTask(final Store store) {
-        getLog().info("Executing analysis.");
+        LOG.info("Executing analysis.");
         final RuleSet ruleSet = resolveEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
@@ -99,7 +113,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
             if (conceptViolations > 0) {
                 throw new JqaConstraintViolationException(conceptViolations + " concept(s) returned empty results!");
             }
-            final int violations = reportHelper.verifyConstraintViolations(inMemoryReportWriter);
+            final int violations = reportHelper.verifyConstraintViolations(severity, inMemoryReportWriter);
             if (violations > 0) {
                 throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
             }
@@ -114,7 +128,10 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     // copied from AbstractAnalysisMojo
     protected RuleSet resolveEffectiveRules() {
         RuleSet ruleSet = readRules();
-        validateRuleSet(ruleSet);
+        String message = reportHelper.validateRuleSet(ruleSet);
+        if (StringUtils.isNotBlank(message)) {
+            throw new RuntimeException("Rules are not valid: " + message);
+        }
         try {
             return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
         } catch (RuleSetResolverException e) {
@@ -124,13 +141,12 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     // copied from AbstractAnalysisMojo
     protected RuleSet readRules() {
-        File selectedDirectory;
-        selectedDirectory = createSelectedDirectoryFile();
+        File selectedDirectory = createSelectedDirectoryFile();
         List<Source> sources = new ArrayList<>();
         // read rules from rules directory
         List<File> ruleFiles = readRulesDirectory(selectedDirectory);
         for (File ruleFile : ruleFiles) {
-            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
+            LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new StreamSource(ruleFile));
         }
         List<Source> ruleSources = getRulePluginRepository().getRuleSources();
@@ -147,14 +163,14 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     }
 
     private File createSelectedDirectoryFile() {
-        return new File(baseDir, RULES_DIRECTORY);
+        return new File(ruleDirectory);
     }
 
     private List<File> readRulesDirectory(File rulesDirectory) {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a rulesDirectory.");
         }
-        getLog().info("Reading rules from rulesDirectory " + rulesDirectory.getAbsolutePath());
+        LOG.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
         final List<File> ruleFiles = new ArrayList<>();
         try {
             new DirectoryWalker<File>() {
@@ -172,52 +188,45 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
             }.scan(rulesDirectory);
             return ruleFiles;
         } catch (IOException e) {
-            throw new RuntimeException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
-        }
-    }
-
-    // copied from AbstractAnalysisMojo
-    private void validateRuleSet(RuleSet ruleSet) {
-        StringBuilder message = new StringBuilder();
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            message.append("\n  Concepts: ");
-            message.append(ruleSet.getMissingConcepts());
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            message.append("\n  Constraints: ");
-            message.append(ruleSet.getMissingConstraints());
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            message.append("\n  Groups: ");
-            message.append(ruleSet.getMissingGroups());
-        }
-        if (message.length() > 0) {
-            throw new RuntimeException("The following rules are referenced but are not available;" + message);
+            throw new RuntimeException("Cannot read rules directory: " + rulesDirectory.getAbsolutePath(), e);
         }
     }
 
     /**
      * Returns the {@link java.io.File} to write the XML report to.
-     * 
+     *
      * @return The {@link java.io.File} to write the XML report to.
      */
     private File getXmlReportFile() {
-        File selectedXmlReportFile = new File(REPORT_XML);
-        selectedXmlReportFile.getParentFile().mkdirs();
-        return selectedXmlReportFile;
+        File reportFile = new File(reportDirectory, XML_REPORT_FILE);
+        reportFile.getParentFile().mkdirs();
+        return reportFile;
     }
 
     @Override
     public void withOptions(final CommandLine options) {
-        if (options.hasOption(CMDLINE_OPTION_RULEDIR)) {
-            baseDir = options.getOptionValue(CMDLINE_OPTION_RULEDIR);
-        } else {
-            System.out.println("No jQAssistant rules directory given, using default " + createSelectedDirectoryFile().getAbsolutePath());
-        }
+        ruleDirectory = getOptionValue(options, CMDLINE_OPTION_RULEDIR, DEFAULT_RULE_DIRECTORY);
+        reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
+        groups = getOptionValues(options, CMDLINE_OPTION_GROUPS, Arrays.asList("default"));
+        constraints = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
+        concepts = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
+        severity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_SEVERITY, Severity.CRITICAL.name()).toUpperCase());
     }
 
     @Override
     protected void addTaskOptions(final List<Option> options) {
-        options.add(new Option(CMDLINE_OPTION_RULEDIR, "ruleDirectory", true, "The directory containing rules."));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RULEDIR).withLongOpt("ruleDirectory").withDescription("The directory containing rules.").hasArgs()
+                .create(CMDLINE_OPTION_RULEDIR));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
+                .create(CMDLINE_OPTION_REPORTDIR));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_GROUPS).withDescription("The groups to execute (default='default').").withValueSeparator(',')
+                .hasArgs().create(CMDLINE_OPTION_GROUPS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONSTRAINTS).withDescription("The constraints to verify.").withValueSeparator(',').hasArgs()
+                .create(CMDLINE_OPTION_CONSTRAINTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONCEPTS).withDescription("The concepts to apply.").withValueSeparator(',').hasArgs()
+                .create(CMDLINE_OPTION_CONCEPTS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SEVERITY).withDescription("The severity threshold to report a failure.").hasArgs()
+                .create(CMDLINE_OPTION_SEVERITY));
+
     }
 }
