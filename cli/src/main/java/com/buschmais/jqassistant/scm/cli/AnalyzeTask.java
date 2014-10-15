@@ -18,11 +18,18 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -50,8 +57,8 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     private List<String> constraints = new ArrayList<>();
     private List<String> groups = new ArrayList<>();
 
-    public AnalyzeTask() {
-        super("analyze");
+    public AnalyzeTask(PluginConfigurationReader pluginConfigurationReader) {
+        super(pluginConfigurationReader);
     }
 
     @Override

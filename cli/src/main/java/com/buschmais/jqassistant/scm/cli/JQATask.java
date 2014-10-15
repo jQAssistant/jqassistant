@@ -13,7 +13,5 @@ public interface JQATask extends Runnable, OptionsProvider, OptionsConsumer {
 
     void initialize(Map<String, Object> properties);
 
-    String getName();
-
     void withStandardOptions(CommandLine commandLine);
 }
