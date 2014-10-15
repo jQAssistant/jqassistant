@@ -9,11 +9,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -27,8 +23,10 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 public abstract class AbstractJQATask implements JQATask {
 
     public static final String CMDLINE_OPTION_S = "s";
+    public static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
 
     protected final String taskName;
+    protected final String homeDirectory;
     protected Map<String, Object> properties;
     protected PluginConfigurationReader pluginConfigurationReader;
     protected String storeDirectory = DEFAULT_STORE_DIRECTORY;
@@ -41,6 +39,7 @@ public abstract class AbstractJQATask implements JQATask {
      */
     protected AbstractJQATask(final String taskName) {
         this.taskName = taskName;
+        this.homeDirectory = System.getenv(ENV_JQASSISTANT_HOME);
         this.pluginConfigurationReader = new PluginConfigurationReaderImpl();
     }
 

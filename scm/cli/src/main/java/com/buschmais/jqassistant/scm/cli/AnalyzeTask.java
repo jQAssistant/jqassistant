@@ -39,6 +39,8 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     public static final String RULES_DIRECTORY = "jqassistant-rules";
     public static final String REPORT_XML = "./jqassistant/jqassistant-report.xml";
 
+    public static final String CMDLINE_OPTION_RULEDIR = "r";
+
     private String baseDir = ".";
     private final RuleSelector ruleSelector = new RuleSelectorImpl();
     private final RuleSetReader ruleSetReader = new RuleSetReaderImpl();
@@ -200,8 +202,8 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     public void withOptions(final CommandLine options) {
-        if (options.hasOption("c")) {
-            baseDir = options.getOptionValue("c");
+        if (options.hasOption(CMDLINE_OPTION_RULEDIR)) {
+            baseDir = options.getOptionValue(CMDLINE_OPTION_RULEDIR);
         } else {
             System.out.println("No jQAssistant rules directory given, using default " + createSelectedDirectoryFile().getAbsolutePath());
         }
@@ -209,6 +211,6 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     protected void addTaskOptions(final List<Option> options) {
-        options.add(new Option("r", "ruleDirectory", true, "basedir for jQAssistant rules, containing the dir jqassistant-rules and a jqassistant-plugin.xml"));
+        options.add(new Option(CMDLINE_OPTION_RULEDIR, "ruleDirectory", true, "The directory containing rules."));
     }
 }
