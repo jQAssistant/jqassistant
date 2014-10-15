@@ -1,8 +1,29 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 
+/**
+ * Abstract base implementation of a plugin repository.
+ */
 public abstract class AbstractPluginRepository {
+
+    /*
+     * The class loader to use for loading classes and resources.
+     */
+    private final ClassLoader classLoader;
+
+    /**
+     * Constructor.
+     * 
+     * @param pluginConfigurationReader
+     *            The
+     *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
+     *            .
+     */
+    protected AbstractPluginRepository(PluginConfigurationReader pluginConfigurationReader) {
+        this.classLoader = pluginConfigurationReader.getClassLoader();
+    }
 
     /**
      * Create and return an instance of the given type name.
@@ -17,7 +38,7 @@ public abstract class AbstractPluginRepository {
      */
     protected <T> Class<T> getType(String typeName) throws PluginRepositoryException {
         try {
-            return (Class<T>) Class.forName(typeName);
+            return (Class<T>) classLoader.loadClass(typeName);
         } catch (ClassNotFoundException e) {
             throw new PluginRepositoryException("Cannot find class " + typeName, e);
         }

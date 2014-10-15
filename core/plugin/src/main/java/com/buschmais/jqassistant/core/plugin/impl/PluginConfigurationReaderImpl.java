@@ -58,6 +58,11 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
         this.pluginClassLoader = pluginClassLoader;
     }
 
+    @Override
+    public ClassLoader getClassLoader() {
+        return pluginClassLoader;
+    }
+
     /**
      * Read the catalogs from an {@link URL}.
      * 
@@ -87,6 +92,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * 
      * @return The plugins which can be resolved from the current classpath.
      */
+    @Override
     public List<JqassistantPlugin> getPlugins() {
         if (this.plugins == null) {
             final Enumeration<URL> resources;

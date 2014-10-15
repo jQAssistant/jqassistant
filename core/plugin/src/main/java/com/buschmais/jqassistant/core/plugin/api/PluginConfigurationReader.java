@@ -12,6 +12,18 @@ public interface PluginConfigurationReader {
     String PLUGIN_RESOURCE = "META-INF/jqassistant-plugin.xml";
     String PLUGIN_SCHEMA_RESOURCE = "/META-INF/xsd/jqassistant-plugin-1.0.xsd";
 
+    /**
+     * Return the class loader used to resolve plugins.
+     * 
+     * @return The class loader.
+     */
+    ClassLoader getClassLoader();
+
+    /**
+     * Return the list of detected plugins.
+     * 
+     * @return The plugins.
+     */
     List<JqassistantPlugin> getPlugins();
 
 }

@@ -20,6 +20,7 @@ public class ModelPluginRepositoryImpl extends AbstractPluginRepository implemen
      * Constructor.
      */
     public ModelPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+        super(pluginConfigurationReader);
         List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.descriptorTypes = getDescriptorTypes(plugins);
     }

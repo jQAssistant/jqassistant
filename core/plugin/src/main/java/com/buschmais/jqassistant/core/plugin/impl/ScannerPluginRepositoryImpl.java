@@ -23,6 +23,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
      * Constructor.
      */
     public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) throws PluginRepositoryException {
+        super(pluginConfigurationReader);
         List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
         this.scannerPlugins = getScannerPlugins(plugins, properties);
     }
