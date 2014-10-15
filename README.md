@@ -20,3 +20,7 @@ Questions, suggestions and/or feedback are welcome at the [jQAssistant forum](ht
 ## License
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+
+## Gitter
+
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/buschmais/jqassistant?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
