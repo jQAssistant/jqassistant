@@ -67,7 +67,7 @@
                                     onchange="selectMetric(this.value, null);"></select>
                         </div>
                         <div class="col-md-2 metricGroup-details-button pull-right" style="display: none;">
-                            <button onclick="toggleMetricDetails(this);" class="btn btn-default">
+                            <button id="metricGroup-details-button" onclick="toggleMetricDetails(this);" class="btn btn-default">
                                 <span class="glyphicon glyphicon-chevron-down"></span>
                                 <span> Details</span>
                             </button>
@@ -100,11 +100,7 @@
     <div class="panel panel-default" style="display: none;" id="showMetricsPanel">
         <div class="panel-heading" id="metricDescription"></div>
         <div class="panel-body">
-            <ol class="breadcrumb" id="metricBreadcrumb">
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Library</a></li>
-                <li class="active">Data</li>
-            </ol>
+            <ol class="breadcrumb" id="metricBreadcrumb"></ol>
             <div class="treemap-d3" id="treemapContainer"></div>
         </div>
     </div>

@@ -2,10 +2,9 @@ package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
 
 /**
  * Abstract class for all HTML unit tests.
@@ -30,10 +29,7 @@ public abstract class AbstractUITest extends AbstractServerTest {
     @Before
     public void initializeWebDriver(){
 
-        HtmlUnitDriver webDriver = new HtmlUnitDriver(BrowserVersion.FIREFOX_24);
-        webDriver.setJavascriptEnabled(true);
-        webDriver.get(BASE_URL + getWebPage());
-
-        driver = webDriver;
+        driver = new FirefoxDriver();
+        driver.get(BASE_URL + getWebPage());
     }
 }

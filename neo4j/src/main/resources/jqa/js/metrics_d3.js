@@ -11,7 +11,7 @@ var jqad3 = {
      */
     renderChart: function (result) {
 
-        console.log("renderChart");
+        console.log("renderChart()");
 
         this.currentResult = result;
 
