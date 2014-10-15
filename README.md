@@ -14,10 +14,13 @@ You may watch and raise issues (enhancements, bugs, ...) [here](https://github.c
 Questions, suggestions and/or feedback are welcome at the [jQAssistant forum](https://groups.google.com/forum/#!forum/jqassistant).
 
 ## Continuous Build
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/buschmais/jqassistant?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/buschmais/jqassistant.svg?branch=master)](https://travis-ci.org/buschmais/jqassistant)
 
 ## License
 
 Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+
+## Gitter
+
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/buschmais/jqassistant?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
