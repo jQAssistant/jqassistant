@@ -5,13 +5,22 @@ import java.util.Map;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.component.annotations.Component;
 
-import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
 
 @Component(role = PluginConfigurationProvider.class, instantiationStrategy = "singleton")
 public class PluginConfigurationProvider {
 
-    private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(pluginClassLoader);
+    private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
 
     /**
      * Return the model plugin repository.
