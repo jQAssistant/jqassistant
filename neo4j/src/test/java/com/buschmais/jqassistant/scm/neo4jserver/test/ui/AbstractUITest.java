@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
+import org.junit.Assume;
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -29,7 +30,13 @@ public abstract class AbstractUITest extends AbstractServerTest {
     @Before
     public void initializeWebDriver(){
 
-        driver = new FirefoxDriver();
+        try {
+            driver = new FirefoxDriver();
+        }
+        catch (Exception e) {
+            Assume.assumeNoException("Unable to load FirefoxDriver", e);
+        }
+
         driver.get(BASE_URL + getWebPage());
     }
 }
