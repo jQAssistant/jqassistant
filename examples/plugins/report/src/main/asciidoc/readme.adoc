@@ -1,7 +1,8 @@
 ==== Custom Report Plugin
 
-A custom report plugin can be provided as an artifact which contains a Java class and a plugin descriptor. Therefore a project must be
-created which declares the required dependencies:
+A custom report plugin may be implemented to create custom representations of analysis results. Such a plugin must be
+provided as an artifact which contains a Java class and a plugin descriptor. Therefore a project is required which
+declares the required dependencies:
 
 [source,xml]
 .pom.xml

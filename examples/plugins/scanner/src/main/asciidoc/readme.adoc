@@ -1,0 +1,82 @@
+==== Custom Scanner Plugin
+
+A custom scanner plugin allows extending the functionality of jQAssistant to read arbitrary structures (e.g. from
+files) and create the corresponding information in the database. The following example demonstrates this for CSV files.
+
+The plugin is an artifact which contains the scanner implementation, model classes and a plugin descriptor. The
+project needs to declares the following dependencies:
+
+[source,xml]
+.pom.xml
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/pom.xml[lines=12..28]
+----
+
+The artifact 'jqassistant.core.scanner' provides the scanner plugin API, 'jqassistant.plugin.common' contains common
+functionality shared by plugins, the library https://code.google.com/p/opencsv['opencsv'] is used to read CSV files.
+
+The model to be stored in the database is defined using the approach provided by http://extended-objects.org[eXtended Objects].
+It is based on annotated interfaces declaring methods representing properties and relations.
+
+First a label "CSV" is defined which is going to be used for all nodes created by the scanner:
+
+[source,java]
+.com.buschmais.jqassistant.examples.plugins.scanner.model.CSVDescriptor
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVDescriptor.java[lines=9..11]
+----
+
+A CSV file is represented by _CSVFileDescriptor_ which inherits from _CSVDescriptor_ and _FileDescriptor_ which is
+defined by the scanner API. Thus a node of this type will carry the labels "CSV" and "File". Furthermore a list of
+"HAS_ROW" relations is defined by the property "rows".
+
+[source,java]
+.com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVFileDescriptor.java[lines=15..20]
+----
+
+A single row is a node defined by the type _CSVRowDescriptor_ which inherits the label "CSV" from _CSVDescriptor_ and provides
+its own label "Row", a property "lineNumber" and a list of "HAS_COLUMN" relations.
+
+[source,java]
+.com.buschmais.jqassistant.examples.plugins.scanner.model.CSVRowDescriptor
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVRowDescriptor.java[lines=11..20]
+----
+
+_CSVColumnDescriptor_ finally defines a column of a row following the principles explained above:
+
+[source,java]
+.com.buschmais.jqassistant.examples.plugins.scanner.model.CSVColumnDescriptor
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVColumnDescriptor.java[lines=8..19]
+----
+
+The implementation of the plugin itself inherits from _AbstractScannerPlugin_ and declares the type of items it handles. In
+the example _VirtualFile_ is used which represents a file contained in a directory or archive. This allows plugins to be
+independent of the source where files or directories are picked up by the scanner.
+
+The method _accepts_ is called by the scanner to determine if the plugin can handle the given item. The example matches
+the value of the parameter path against the file extension ".csv". The scope parameter may be used to further restrict
+executions of the plugin, e.g. by checking equality against JavaScope.CLASSPATH.
+
+The _scan_ method actually reads the CSV file and stores the gathered data in the database using the interface _Store_
+provided by the scanner context.
+
+[source,java]
+.com.buschmais.jqassistant.examples.plugins.scanner.CSVFileScannerPlugin
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/CSVFileScannerPlugin.java[lines=22..59]
+----
+
+Finally the model and the plugin implementation must be declared in the jQAssistant plugin descriptor:
+
+[source,xml]
+./META-INF/jqassistant-plugin.xml
+----
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/resources/META-INF/jqassistant-plugin.xml[]
+----
+
+The plugin is automatically loaded by the scanner if it can be found on the classpath, e.g. by adding it as dependency to
+the maven plugin.
