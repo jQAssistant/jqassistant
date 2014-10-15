@@ -52,8 +52,22 @@ public class Main {
      */
     private enum Task {
 
-        SCAN(new ScanTask(PLUGIN_CONFIGURATION_READER)), SERVER(new ScanTask(PLUGIN_CONFIGURATION_READER)), ANALYZE(new ScanTask(PLUGIN_CONFIGURATION_READER)), RESET(
-                new ScanTask(PLUGIN_CONFIGURATION_READER));
+        /**
+         * Scan.
+         */
+        SCAN(new ScanTask(PLUGIN_CONFIGURATION_READER)),
+        /**
+         * Server.
+         */
+        SERVER(new ServerTask(PLUGIN_CONFIGURATION_READER)),
+        /**
+         * Analyze.
+         */
+        ANALYZE(new AnalyzeTask(PLUGIN_CONFIGURATION_READER)),
+        /**
+         * Reset.
+         */
+        RESET(new ResetTask(PLUGIN_CONFIGURATION_READER));
 
         private JQATask task;
 
@@ -227,8 +241,11 @@ public class Main {
      * Executes a task.
      * 
      * @param taskName
+     *            The task name.
      * @param option
+     *            The option.
      * @param commandLine
+     *            The command line.
      * @throws IOException
      */
     private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {

@@ -7,6 +7,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,33 +99,22 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     public void withOptions(final CommandLine options) {
-        fileNames = getElementNamesFromOption(options, CMDLINE_OPTION_FILES);
-        urls = getElementNamesFromOption(options, CMDLINE_OPTION_URLS);
+        fileNames = getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList());
+        urls = getOptionValues(options, CMDLINE_OPTION_URLS, Collections.<String> emptyList());
         if (fileNames.isEmpty() && urls.isEmpty()) {
             throw new MissingConfigurationParameterException("No files, directories or urls given.");
         }
         reset = options.hasOption(CMDLINE_OPTION_RESET);
     }
 
-    private List<String> getElementNamesFromOption(CommandLine options, String option) {
-        List<String> names = new ArrayList<>();
-        if (options.hasOption(option)) {
-            for (String elementName : options.getOptionValues(option)) {
-                if (elementName.trim().length() > 0)
-                    names.add(elementName);
-            }
-        }
-        return names;
-    }
-
     @SuppressWarnings("static-access")
     @Override
     protected void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files").withDescription("files or directories to be scanned, comma separated")
-                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_FILES));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls").withDescription("urls to be scanned, comma separated")
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files")
+                .withDescription("The files or directories to be scanned, comma separated.").withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_FILES));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls").withDescription("The URLs to be scanned, comma separated.")
                 .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_URLS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("reset store before scanning (default=false").withValueSeparator(',')
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).")
                 .create(CMDLINE_OPTION_RESET));
     }
 }
