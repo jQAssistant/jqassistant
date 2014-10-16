@@ -35,10 +35,7 @@ import com.buschmais.jqassistant.scm.common.report.ReportHelper;
  */
 public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
 
-    public static final String XML_REPORT_FILE = "jqassistant-report.xml";
-
     public static final String CMDLINE_OPTION_RULEDIR = "r";
-    public static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
     public static final String CMDLINE_OPTION_GROUPS = "groups";
     public static final String CMDLINE_OPTION_CONSTRAINTS = "constraints";
     public static final String CMDLINE_OPTION_CONCEPTS = "concepts";
