@@ -4,10 +4,32 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 
 /**
- * Created with IntelliJ IDEA. User: Dirk Mahler Date: 28.07.13 Time: 18:26 To
- * change this template use File | Settings | File Templates.
+ * Defines functionality to transform an XML report to HTML representation.
  */
 public interface ReportTransformer {
 
-    void transform(Source source, Result target) throws ReportTransformerException;
+    /**
+     * Transforms the source to an HTML fragment which may be embedded into
+     * other documents.
+     * 
+     * @param source
+     *            The source.
+     * @param target
+     *            The target.
+     * @throws ReportTransformerException
+     *             If transformation fails.
+     */
+    void toEmbedded(Source source, Result target) throws ReportTransformerException;
+
+    /**
+     * Transforms the source to a standalone HTML document.
+     *
+     * @param source
+     *            The source.
+     * @param target
+     *            The target.
+     * @throws ReportTransformerException
+     *             If transformation fails.
+     */
+    void toStandalone(Source source, Result target) throws ReportTransformerException;
 }
