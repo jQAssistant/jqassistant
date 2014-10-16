@@ -2,18 +2,8 @@ package com.buschmais.jqassistant.scm.cli.test;
 
 import static org.junit.Assume.assumeTrue;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.SystemUtils;
@@ -96,12 +86,21 @@ public abstract class AbstractCLIIT {
     }
 
     /**
-     * Return the default stpre directory of the test.
+     * Return the default store directory of the test.
      *
      * @return The default store directory.
      */
     protected File getDefaultStoreDirectory() {
         return new File(getWorkingDirectory(), JQATask.DEFAULT_STORE_DIRECTORY);
+    }
+
+    /**
+     * Return the default report directory of the test.
+     *
+     * @return The default report directory.
+     */
+    protected File getDefaultReportDirectory() {
+        return new File(getWorkingDirectory(), JQATask.DEFAULT_REPORT_DIRECTORY);
     }
 
     /**

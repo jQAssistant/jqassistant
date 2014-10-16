@@ -28,8 +28,6 @@ public abstract class AbstractJQATask implements JQATask {
     protected static final String CMDLINE_OPTION_S = "s";
     protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
 
-    protected static final String XML_REPORT_FILE = "jqassistant-report.xml";
-
     private static final Console LOG = Log.getLog();
 
     protected Map<String, Object> properties = new HashMap<>();
@@ -68,7 +66,6 @@ public abstract class AbstractJQATask implements JQATask {
     public void run() {
         List<Class<?>> descriptorTypes;
         final Store store = getStore();
-
         try {
             descriptorTypes = modelPluginRepository.getDescriptorTypes();
         } catch (PluginRepositoryException e) {
