@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.scm.cli;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,8 +32,7 @@ public abstract class AbstractJQATask implements JQATask {
 
     private static final Console LOG = Log.getLog();
 
-    protected Map<String, Object> properties;
-    // protected PluginConfigurationReader pluginConfigurationReader;
+    protected Map<String, Object> properties = new HashMap<>();
     protected String storeDirectory;
     protected ReportHelper reportHelper;
     protected ModelPluginRepository modelPluginRepository;

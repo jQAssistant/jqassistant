@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.scm.cli.test;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Executors;
 
 import org.junit.Before;
 
@@ -39,7 +40,6 @@ public abstract class AbstractCLIIT {
         List<String> command = new ArrayList<>();
         command.add("cmd.exe");
         command.add("/C");
-        command.add("start");
         command.add(jqaHhome + "\\bin\\jqassistant.cmd");
 
         ProcessBuilder builder = new ProcessBuilder(command);
@@ -47,19 +47,40 @@ public abstract class AbstractCLIIT {
         environment.put("JQASSISTANT_HOME", jqaHhome);
 
         File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
+        // builder.redirectOutput(new File(workingDirectory, "console.log"));
+        // builder.redirectError(new File(workingDirectory, "error.log"));
         workingDirectory.mkdirs();
         builder.directory(workingDirectory);
 
         final Process process = builder.start();
-        InputStream is = process.getInputStream();
-        InputStreamReader isr = new InputStreamReader(is);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line);
-        }
+
+        Executors.newCachedThreadPool().submit(new ConsoleReader(process.getInputStream(), System.out));
+        Executors.newCachedThreadPool().submit(new ConsoleReader(process.getErrorStream(), System.err));
         int i = process.waitFor();
         System.out.println("Program terminated: " + i);
     }
 
+    private static class ConsoleReader implements Runnable {
+        private final InputStream stream;
+        private final PrintStream printStream;
+
+        private ConsoleReader(InputStream stream, PrintStream printStream) {
+            this.stream = stream;
+            this.printStream = printStream;
+        }
+
+        @Override
+        public void run() {
+            InputStreamReader isr = new InputStreamReader(stream);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    printStream.println(line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
