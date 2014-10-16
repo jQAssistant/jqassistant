@@ -24,7 +24,10 @@ import com.buschmais.jqassistant.scm.common.report.ReportHelper;
  */
 public abstract class AbstractJQATask implements JQATask {
 
-    public static final String CMDLINE_OPTION_S = "s";
+    protected static final String CMDLINE_OPTION_S = "s";
+    protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
+
+    protected static final String XML_REPORT_FILE = "jqassistant-report.xml";
 
     private static final Console LOG = Log.getLog();
 

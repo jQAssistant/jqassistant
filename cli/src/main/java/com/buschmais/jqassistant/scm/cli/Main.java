@@ -55,7 +55,12 @@ public class Main {
         /**
          * Reset.
          */
-        RESET(new ResetTask(PLUGIN_CONFIGURATION_READER));
+        RESET(new ResetTask(PLUGIN_CONFIGURATION_READER)),
+
+        /**
+         * Report.
+         */
+        REPORT(new ReportTask(PLUGIN_CONFIGURATION_READER));
 
         private JQATask task;
 
