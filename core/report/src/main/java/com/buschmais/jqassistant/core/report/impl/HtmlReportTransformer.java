@@ -1,12 +1,8 @@
 package com.buschmais.jqassistant.core.report.impl;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
+import java.io.InputStream;
+
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
@@ -15,8 +11,31 @@ import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 public class HtmlReportTransformer implements ReportTransformer {
 
     @Override
-    public void transform(Source source, Result target) throws ReportTransformerException {
-        Source xsl = new StreamSource(HtmlReportTransformer.class.getResourceAsStream("/META-INF/xsl/jqassistant-report-embedded.xsl"));
+    public void toEmbedded(Source source, Result target) throws ReportTransformerException {
+        transform(source, target, HtmlReportTransformer.class.getResourceAsStream("/META-INF/xsl/jqassistant-report-embedded.xsl"));
+    }
+
+    @Override
+    public void toStandalone(Source source, Result target) throws ReportTransformerException {
+        transform(source, target, HtmlReportTransformer.class.getResourceAsStream("/META-INF/xsl/jqassistant-report-standalone.xsl"));
+    }
+
+    /**
+     *
+     /** Transforms the source to an HTML fragment which may be embedded into
+     * other documents.
+     *
+     * @param source
+     *            The source.
+     * @param target
+     *            The target.
+     * @param template
+     *            The input stream for the template.
+     * @throws ReportTransformerException
+     *             If transformation fails.
+     */
+    private void transform(Source source, Result target, InputStream template) throws ReportTransformerException {
+        Source xsl = new StreamSource(template);
         TransformerFactory transformerFactory;
         Transformer transformer;
         try {
