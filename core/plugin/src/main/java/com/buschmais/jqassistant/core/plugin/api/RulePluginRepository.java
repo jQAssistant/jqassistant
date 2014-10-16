@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.core.plugin.api;
 
 import java.util.List;
 
-import javax.xml.transform.Source;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 
 /**
  * Defines the interface for the scanner plugin repository.
@@ -14,6 +14,6 @@ public interface RulePluginRepository {
      * 
      * @return The list of sources providing rules.
      */
-    List<Source> getRuleSources();
+    List<RuleSource> getRuleSources();
 
 }

@@ -17,7 +17,7 @@
     </xs:element>
 
     <xs:complexType name="ModelType">
-    <xs:sequence>
+        <xs:sequence>
             <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
@@ -32,7 +32,6 @@
         <xs:sequence>
             <xs:element name="resource" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="directory" type="xs:string" use="optional" default="/META-INF/jqassistant-rules/"/>
     </xs:complexType>
 
     <xs:complexType name="ReportType">
