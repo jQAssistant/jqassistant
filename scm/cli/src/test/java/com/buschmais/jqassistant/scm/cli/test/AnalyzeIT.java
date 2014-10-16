@@ -5,6 +5,7 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,8 +14,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.cli.JQATask;
-import com.buschmais.jqassistant.scm.cli.Main;
 
 /**
  * Verifies command line analysis.
@@ -26,41 +25,41 @@ public class AnalyzeIT extends AbstractCLIIT {
     public static final String CUSTOM_TEST_CONCEPT = "default:CustomTestConcept";
 
     @Test
-    public void defaultGroup() throws IOException {
+    public void defaultGroup() throws IOException, InterruptedException {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "analyze", "-r", rulesDirectory };
-        Main.main(args);
-        verifyConcepts(JQATask.DEFAULT_STORE_DIRECTORY, "default:TestConcept");
+        execute(args);
+        verifyConcepts(getDefaultStoreDirectory(), "default:TestConcept");
     }
 
     @Test
-    public void customGroup() throws IOException {
+    public void customGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", "customGroup" };
-        Main.main(args);
-        verifyConcepts(JQATask.DEFAULT_STORE_DIRECTORY, TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
+        execute(args);
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
     @Test
-    public void constraint() throws IOException {
+    public void constraint() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", "default:TestConstraint" };
-        Main.main(args);
-        verifyConcepts(JQATask.DEFAULT_STORE_DIRECTORY, TEST_CONCEPT);
+        execute(args);
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
     @Test
-    public void concept() throws IOException {
+    public void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
-        Main.main(args);
-        verifyConcepts(JQATask.DEFAULT_STORE_DIRECTORY, TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
+        execute(args);
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
     @Test
-    public void storeDirectory() throws IOException {
+    public void storeDirectory() throws IOException, InterruptedException {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDirectory };
-        Main.main(args);
-        verifyConcepts(customStoreDirectory, "default:TestConcept");
+        execute(args);
+        verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), "default:TestConcept");
     }
 
     /**
@@ -71,8 +70,8 @@ public class AnalyzeIT extends AbstractCLIIT {
      * @param concepts
      *            The concepts
      */
-    private void verifyConcepts(String directory, String... concepts) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory);
+    private void verifyConcepts(File directory, String... concepts) {
+        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());
         for (String concept : concepts) {
             assertThat("Expecting a result for " + concept, isConceptPresent(store, concept), equalTo(true));

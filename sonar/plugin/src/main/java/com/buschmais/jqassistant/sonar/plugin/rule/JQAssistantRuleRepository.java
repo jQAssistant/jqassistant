@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.transform.Source;
-
 import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleParam;
@@ -20,6 +18,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -67,7 +66,7 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         } catch (PluginRepositoryException e) {
             throw new SonarException("Cannot read rules.", e);
         }
-        List<Source> ruleSources = rulePluginRepository.getRuleSources();
+        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new RuleSetReaderImpl();
         RuleSet ruleSet = ruleSetReader.read(ruleSources);
         for (Concept concept : ruleSet.getConcepts().values()) {

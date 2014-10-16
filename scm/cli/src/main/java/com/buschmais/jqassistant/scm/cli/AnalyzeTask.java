@@ -3,12 +3,16 @@ package com.buschmais.jqassistant.scm.cli;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -17,8 +21,16 @@ import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.Console;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
@@ -124,14 +136,24 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
     // copied from AbstractAnalysisMojo
     protected RuleSet readRules() {
         File selectedDirectory = new File(ruleDirectory);
-        List<Source> sources = new ArrayList<>();
+        List<RuleSource> sources = new ArrayList<>();
         // read rules from rules directory
         List<File> ruleFiles = readRulesDirectory(selectedDirectory);
-        for (File ruleFile : ruleFiles) {
+        for (final File ruleFile : ruleFiles) {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new StreamSource(ruleFile));
+            sources.add(new RuleSource() {
+                @Override
+                public String getName() {
+                    return ruleFile.getName();
+                }
+
+                @Override
+                public InputStream openStream() throws IOException {
+                    return new FileInputStream(ruleFile);
+                }
+            });
         }
-        List<Source> ruleSources = rulePluginRepository.getRuleSources();
+        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }

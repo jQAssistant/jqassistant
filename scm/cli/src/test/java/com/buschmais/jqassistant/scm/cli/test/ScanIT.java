@@ -5,6 +5,7 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
@@ -14,8 +15,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.cli.JQATask;
-import com.buschmais.jqassistant.scm.cli.Main;
 import com.buschmais.jqassistant.scm.cli.ScanTask;
 
 /**
@@ -24,53 +23,48 @@ import com.buschmais.jqassistant.scm.cli.ScanTask;
 public class ScanIT extends AbstractCLIIT {
 
     @Test
-    public void execs() throws IOException, InterruptedException {
-        execute();
-    }
-
-    @Test
-    public void files() throws IOException {
+    public void files() throws IOException, InterruptedException {
         URL file = getResource(ScanTask.class);
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", file.getFile() + "," + directory.getFile() };
-        Main.main(args);
-        verifyTypesScanned(JQATask.DEFAULT_STORE_DIRECTORY, ScanTask.class, ScanIT.class);
+        execute(args);
+        verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class, ScanIT.class);
     }
 
     @Test
-    public void urls() throws IOException {
+    public void urls() throws IOException, InterruptedException {
         URL directory1 = getResource(ScanTask.class);
         URL directory2 = getResource(ScanIT.class);
         String[] args = new String[] { "scan", "-u", directory1 + "," + directory2 };
-        Main.main(args);
-        verifyTypesScanned(JQATask.DEFAULT_STORE_DIRECTORY, ScanTask.class, ScanIT.class);
+        execute(args);
+        verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class, ScanIT.class);
     }
 
     @Test
-    public void storeDirectory() throws IOException {
+    public void storeDirectory() throws IOException, InterruptedException {
         URL file = getResource(ScanTask.class);
         String customStoreDirectory = "tmp/customStore";
         String[] args = new String[] { "scan", "-f", file.getFile(), "-s", customStoreDirectory };
-        Main.main(args);
-        verifyTypesScanned(customStoreDirectory, ScanTask.class);
+        execute(args);
+        verifyTypesScanned(new File(getWorkingDirectory(), customStoreDirectory), ScanTask.class);
     }
 
     @Test
-    public void reset() throws IOException {
+    public void reset() throws IOException, InterruptedException {
         // Scan a file
         URL file1 = getResource(ScanIT.class);
         String[] args1 = new String[] { "scan", "-f", file1.getFile() };
-        Main.main(args1);
-        verifyTypesScanned(JQATask.DEFAULT_STORE_DIRECTORY, ScanIT.class);
+        execute(args1);
+        verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
         // Scan a second file using reset
         URL file2 = getResource(ScanTask.class);
         String[] args2 = new String[] { "scan", "-f", file2.getFile(), "-reset" };
-        Main.main(args2);
-        verifyTypesScanned(JQATask.DEFAULT_STORE_DIRECTORY, ScanTask.class);
-        verifyTypesNotScanned(JQATask.DEFAULT_STORE_DIRECTORY, ScanIT.class);
+        execute(args2);
+        verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class);
+        verifyTypesNotScanned(getWorkingDirectory(), ScanIT.class);
         // Scan the first file againg without reset
-        Main.main(args1);
-        verifyTypesScanned(JQATask.DEFAULT_STORE_DIRECTORY, ScanIT.class);
+        execute(args1);
+        verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
     }
 
     /**
@@ -92,8 +86,8 @@ public class ScanIT extends AbstractCLIIT {
      * @param types
      *            The types.
      */
-    private void verifyTypesScanned(String directory, Class<?>... types) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory);
+    private void verifyTypesScanned(File directory, Class<?>... types) {
+        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());
         for (Class<?> type : types) {
             assertThat("Expecting a result for " + type.getName(), isTypeScanned(store, type), equalTo(true));
@@ -109,8 +103,8 @@ public class ScanIT extends AbstractCLIIT {
      * @param types
      *            The types.
      */
-    private void verifyTypesNotScanned(String directory, Class<?>... types) {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(directory);
+    private void verifyTypesNotScanned(File directory, Class<?>... types) {
+        EmbeddedGraphStore store = new EmbeddedGraphStore(directory.getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());
         for (Class<?> type : types) {
             assertThat("Expecting no result for " + type.getName(), isTypeScanned(store, type), equalTo(false));

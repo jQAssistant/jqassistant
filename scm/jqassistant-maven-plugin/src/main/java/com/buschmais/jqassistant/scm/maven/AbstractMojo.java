@@ -1,14 +1,13 @@
 package com.buschmais.jqassistant.scm.maven;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -21,6 +20,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -162,7 +162,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             If the rules cannot be read.
      */
     protected RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
-        List<Source> sources = new ArrayList<>();
+        List<RuleSource> sources = new ArrayList<>();
         // read rules from rules directory
         addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, rulesDirectory));
         if (rulesDirectories != null) {
@@ -171,14 +171,20 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             }
         }
         if (rulesUrl != null) {
-            try {
-                getLog().debug("Adding rules from URL " + rulesUrl.toString());
-                sources.add(new StreamSource(rulesUrl.openStream(), rulesUrl.toExternalForm()));
-            } catch (IOException e) {
-                throw new MojoExecutionException("Cannot open rule URL " + rulesUrl.toExternalForm());
-            }
+            getLog().debug("Adding rules from URL " + rulesUrl.toString());
+            sources.add(new RuleSource() {
+                @Override
+                public String getName() {
+                    return rulesUrl.toExternalForm();
+                }
+
+                @Override
+                public InputStream openStream() throws IOException {
+                    return rulesUrl.openStream();
+                }
+            });
         }
-        List<Source> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
+        List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }
@@ -210,11 +216,21 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             On error.
      */
-    private void addRuleFiles(List<Source> sources, File directory) throws MojoExecutionException {
+    private void addRuleFiles(List<RuleSource> sources, File directory) throws MojoExecutionException {
         List<File> ruleFiles = readRulesDirectory(directory);
-        for (File ruleFile : ruleFiles) {
+        for (final File ruleFile : ruleFiles) {
             getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new StreamSource(ruleFile));
+            sources.add(new RuleSource() {
+                @Override
+                public String getName() {
+                    return ruleFile.getName();
+                }
+
+                @Override
+                public InputStream openStream() throws IOException {
+                    return new FileInputStream(ruleFile);
+                }
+            });
         }
     }
 

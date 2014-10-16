@@ -20,10 +20,12 @@
         <dependencySet>
             <outputDirectory>lib</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
         </dependencySet>
         <dependencySet>
             <outputDirectory>plugins</outputDirectory>
             <useTransitiveDependencies>true</useTransitiveDependencies>
+            <useTransitiveFiltering>true</useTransitiveFiltering>
             <includes>
                 <include>com.buschmais.jqassistant.plugin:*</include>
             </includes>

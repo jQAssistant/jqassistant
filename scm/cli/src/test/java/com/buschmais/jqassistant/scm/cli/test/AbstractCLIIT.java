@@ -1,9 +1,22 @@
 package com.buschmais.jqassistant.scm.cli.test;
 
-import java.io.*;
-import java.util.*;
+import static org.junit.Assume.assumeTrue;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Before;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -16,6 +29,9 @@ public abstract class AbstractCLIIT {
 
     private Properties properties = new Properties();
 
+    /**
+     * Constructor.
+     */
     protected AbstractCLIIT() {
         try {
             properties.load(AbstractCLIIT.class.getResourceAsStream("/cli-test.properties"));
@@ -35,35 +51,74 @@ public abstract class AbstractCLIIT {
         store.stop();
     }
 
-    protected void execute(String... args) throws IOException, InterruptedException {
+    /**
+     * Execute the shell script.
+     * 
+     * @param args
+     *            The arguments.
+     * @throws IOException
+     *             If an error occurs.
+     * @throws InterruptedException
+     *             If an error occurs.
+     */
+    protected int execute(String... args) throws IOException, InterruptedException {
+        assumeTrue("Test can only be executed on windows machines.", SystemUtils.IS_OS_WINDOWS);
         String jqaHhome = new File(properties.getProperty("jqassistant.home")).getAbsolutePath();
         List<String> command = new ArrayList<>();
         command.add("cmd.exe");
         command.add("/C");
         command.add(jqaHhome + "\\bin\\jqassistant.cmd");
+        command.addAll(Arrays.asList(args));
 
         ProcessBuilder builder = new ProcessBuilder(command);
         Map<String, String> environment = builder.environment();
         environment.put("JQASSISTANT_HOME", jqaHhome);
 
-        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
-        // builder.redirectOutput(new File(workingDirectory, "console.log"));
-        // builder.redirectError(new File(workingDirectory, "error.log"));
-        workingDirectory.mkdirs();
+        File workingDirectory = getWorkingDirectory();
         builder.directory(workingDirectory);
 
         final Process process = builder.start();
 
         Executors.newCachedThreadPool().submit(new ConsoleReader(process.getInputStream(), System.out));
         Executors.newCachedThreadPool().submit(new ConsoleReader(process.getErrorStream(), System.err));
-        int i = process.waitFor();
-        System.out.println("Program terminated: " + i);
+        return process.waitFor();
     }
 
+    /**
+     * Return the working directory of the test.
+     * 
+     * @return The working directory.
+     */
+    protected File getWorkingDirectory() {
+        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
+        workingDirectory.mkdirs();
+        return workingDirectory;
+    }
+
+    /**
+     * Return the default stpre directory of the test.
+     *
+     * @return The default store directory.
+     */
+    protected File getDefaultStoreDirectory() {
+        return new File(getWorkingDirectory(), JQATask.DEFAULT_STORE_DIRECTORY);
+    }
+
+    /**
+     * Redirects process output to the given print stream.
+     */
     private static class ConsoleReader implements Runnable {
         private final InputStream stream;
         private final PrintStream printStream;
 
+        /**
+         * Constructor.
+         * 
+         * @param stream
+         *            The stream to redirect.
+         * @param printStream
+         *            The target stream.
+         */
         private ConsoleReader(InputStream stream, PrintStream printStream) {
             this.stream = stream;
             this.printStream = printStream;

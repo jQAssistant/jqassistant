@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.transform.Source;
-
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.shell.AppCommandParser;
 import org.neo4j.shell.AppShellServer;
@@ -18,6 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
@@ -62,7 +61,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
     protected abstract String getCommand();
 
     protected RuleSet getAvailableRules() {
-        List<Source> ruleSources = rulePluginRepository.getRuleSources();
+        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         return ruleSetReader.read(ruleSources);
     }
 

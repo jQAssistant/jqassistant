@@ -1,4 +1,7 @@
 @echo off
 set BIN_DIR=%~dp0%
-set LIB_DIR=%BIN_DIR%\..\lib
+@if "%JQASSISTANT_HOME%" == ""  (
+  set JQASSISTANT_HOME=%BIN_DIR%\..
+)
+set LIB_DIR=%JQASSISTANT_HOME%\lib
 java -jar %LIB_DIR%\${project.artifactId}-${project.version}.${project.packaging} %*
