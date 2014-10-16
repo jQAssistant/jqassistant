@@ -189,7 +189,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     private void scanTestReports(Scanner scanner, String directoryName) throws IOException {
         final File directory = new File(directoryName);
         if (directory.exists()) {
-            scanner.scan(directory, TESTREPORTS);
+            scanner.scan(directory, directoryName, TESTREPORTS);
         }
     }
 }
