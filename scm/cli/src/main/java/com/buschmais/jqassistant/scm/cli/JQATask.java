@@ -13,6 +13,8 @@ public interface JQATask extends Runnable, OptionsProvider, OptionsConsumer {
     public static final String DEFAULT_RULE_DIRECTORY = "jqassistant/rules";
     public static final String DEFAULT_REPORT_DIRECTORY = "jqassistant/report";
 
+    public static final String REPORT_FILE_XML = "jqassistant-report.xml";
+
     void initialize(Map<String, Object> properties);
 
     void withStandardOptions(CommandLine commandLine);

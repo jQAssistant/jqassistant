@@ -77,7 +77,7 @@ public class ReportMojo extends AbstractMavenReport {
             getLog().info("Transforming " + selectedXmlReportFile.getAbsolutePath() + ".");
             ReportTransformer transformer = new HtmlReportTransformer();
             try {
-                transformer.transform(xmlSource, htmlTarget);
+                transformer.toEmbedded(xmlSource, htmlTarget);
             } catch (ReportTransformerException e) {
                 throw new MavenReportException("Cannot transform report.", e);
             }

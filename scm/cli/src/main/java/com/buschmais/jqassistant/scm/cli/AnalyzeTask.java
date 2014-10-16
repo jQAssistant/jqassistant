@@ -2,17 +2,8 @@ package com.buschmais.jqassistant.scm.cli;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -21,14 +12,8 @@ import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -190,7 +175,7 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
      * @return The {@link java.io.File} to write the XML report to.
      */
     private File getXmlReportFile() {
-        File reportFile = new File(reportDirectory, XML_REPORT_FILE);
+        File reportFile = new File(reportDirectory, REPORT_FILE_XML);
         reportFile.getParentFile().mkdirs();
         return reportFile;
     }
