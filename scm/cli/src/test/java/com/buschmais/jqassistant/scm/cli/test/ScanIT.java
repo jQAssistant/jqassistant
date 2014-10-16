@@ -24,6 +24,11 @@ import com.buschmais.jqassistant.scm.cli.ScanTask;
 public class ScanIT extends AbstractCLIIT {
 
     @Test
+    public void execs() throws IOException, InterruptedException {
+        execute();
+    }
+
+    @Test
     public void files() throws IOException {
         URL file = getResource(ScanTask.class);
         URL directory = ScanIT.class.getResource("/");
