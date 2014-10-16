@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.scm.cli.test;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Properties;
+import java.io.*;
+import java.util.*;
 
 import org.junit.Before;
 
@@ -33,6 +32,34 @@ public abstract class AbstractCLIIT {
         store.start(Collections.<Class<?>> emptyList());
         store.reset();
         store.stop();
+    }
+
+    protected void execute(String... args) throws IOException, InterruptedException {
+        String jqaHhome = new File(properties.getProperty("jqassistant.home")).getAbsolutePath();
+        List<String> command = new ArrayList<>();
+        command.add("cmd.exe");
+        command.add("/C");
+        command.add("start");
+        command.add(jqaHhome + "\\bin\\jqassistant.cmd");
+
+        ProcessBuilder builder = new ProcessBuilder(command);
+        Map<String, String> environment = builder.environment();
+        environment.put("JQASSISTANT_HOME", jqaHhome);
+
+        File workingDirectory = new File("target" + "/" + this.getClass().getSimpleName());
+        workingDirectory.mkdirs();
+        builder.directory(workingDirectory);
+
+        final Process process = builder.start();
+        InputStream is = process.getInputStream();
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+        int i = process.waitFor();
+        System.out.println("Program terminated: " + i);
     }
 
 }

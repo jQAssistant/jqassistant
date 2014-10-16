@@ -29,11 +29,12 @@ public class Main {
 
     public static final String DIRECTORY_PLUGINS = "plugins";
 
+    private static final Console LOG = Log.getLog();
+
     private static final File HOME_DIRECTORY = getHomeDirectory();
 
     private static final PluginConfigurationReader PLUGIN_CONFIGURATION_READER = new PluginConfigurationReaderImpl(createPluginClassLoader());
 
-    private static final Console LOG = Log.getLog();
 
     /**
      * Define all known tasks.
@@ -56,7 +57,6 @@ public class Main {
          * Reset.
          */
         RESET(new ResetTask(PLUGIN_CONFIGURATION_READER)),
-
         /**
          * Report.
          */
