@@ -128,12 +128,12 @@ public class AnalyzeTask extends AbstractJQATask implements OptionsConsumer {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new RuleSource() {
                 @Override
-                public String getName() {
+                public String getId() {
                     return ruleFile.getName();
                 }
 
                 @Override
-                public InputStream openStream() throws IOException {
+                public InputStream getInputStream() throws IOException {
                     return new FileInputStream(ruleFile);
                 }
             });

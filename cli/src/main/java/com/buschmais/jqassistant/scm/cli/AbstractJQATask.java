@@ -33,6 +33,7 @@ public abstract class AbstractJQATask implements JQATask {
     protected Map<String, Object> properties = new HashMap<>();
     protected String storeDirectory;
     protected ReportHelper reportHelper;
+    protected ClassLoader classLoader;
     protected ModelPluginRepository modelPluginRepository;
     protected ScannerPluginRepository scannerPluginRepository;
     protected RulePluginRepository rulePluginRepository;
@@ -47,6 +48,7 @@ public abstract class AbstractJQATask implements JQATask {
      */
     protected AbstractJQATask(PluginConfigurationReader pluginConfigurationReader) {
         try {
+            classLoader = pluginConfigurationReader.getClassLoader();
             modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
             scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
             rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
@@ -71,11 +73,14 @@ public abstract class AbstractJQATask implements JQATask {
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot get model.", e);
         }
+        ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
         try {
             store.start(descriptorTypes);
             executeTask(store);
         } finally {
             store.stop();
+            Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
 
