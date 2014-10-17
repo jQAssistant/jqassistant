@@ -174,12 +174,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             getLog().debug("Adding rules from URL " + rulesUrl.toString());
             sources.add(new RuleSource() {
                 @Override
-                public String getName() {
+                public String getId() {
                     return rulesUrl.toExternalForm();
                 }
 
                 @Override
-                public InputStream openStream() throws IOException {
+                public InputStream getInputStream() throws IOException {
                     return rulesUrl.openStream();
                 }
             });
@@ -222,12 +222,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new RuleSource() {
                 @Override
-                public String getName() {
+                public String getId() {
                     return ruleFile.getName();
                 }
 
                 @Override
-                public InputStream openStream() throws IOException {
+                public InputStream getInputStream() throws IOException {
                     return new FileInputStream(ruleFile);
                 }
             });
