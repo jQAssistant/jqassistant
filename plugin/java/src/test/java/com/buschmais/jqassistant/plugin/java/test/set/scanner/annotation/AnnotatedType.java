@@ -26,8 +26,8 @@ public class AnnotatedType {
          * @param parameter
          *            The paramter.
          */
-        public GenericInnerAnnotatedType(@Annotation("parameter") T parameter) {
-        }
+        // public GenericInnerAnnotatedType(@Annotation("parameter") T
+        // parameter) {}
     }
 
 }
