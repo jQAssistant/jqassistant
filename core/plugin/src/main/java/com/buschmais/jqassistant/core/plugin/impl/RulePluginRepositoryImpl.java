@@ -54,12 +54,12 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
                     final String resourceName = RULE_RESOURCE_PATH + resource;
                     sources.add(new RuleSource() {
                         @Override
-                        public String getName() {
+                        public String getId() {
                             return classLoader.getResource(resourceName).toExternalForm();
                         }
 
                         @Override
-                        public InputStream openStream() {
+                        public InputStream getInputStream() {
                             return classLoader.getResourceAsStream(resourceName);
                         }
                     });
