@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.AnnotationValueDescriptorMatcher.annotationValueDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.ValueDescriptorMatcher.valueDescriptor;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
@@ -172,8 +172,13 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    @Ignore("Scanning the constructor of generic type fails if a parameter annotation is present.")
+    // @Ignore("Scanning the constructor of generic type fails if a parameter annotation is present.")
     public void innerClass() throws IOException, NoSuchFieldException, NoSuchMethodException {
-        scanClasses(AnnotatedType.GenericInnerAnnotatedType.class);
+        scanClasses(AnnotatedType.GenericInnerAnnotatedType.class, Annotation.class);
+        store.beginTransaction();
+        TestResult testResult = query("MATCH (c:Constructor)-[:HAS]->(:Parameter)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(Type:Annotation) RETURN c");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        assertThat(testResult.getColumn("c"), hasItem(constructorDescriptor(AnnotatedType.GenericInnerAnnotatedType.class, AnnotatedType.class, Object.class)));
+        store.commitTransaction();
     }
 }

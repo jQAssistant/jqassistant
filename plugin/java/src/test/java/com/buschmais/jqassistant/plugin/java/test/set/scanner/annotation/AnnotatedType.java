@@ -21,10 +21,10 @@ public class AnnotatedType {
          * Defines a generic constructor with an annotated parameter.
          * 
          * @param parameter
-         *            The paramter.
+         *            The parameter.
          */
-        // public GenericInnerAnnotatedType(@Annotation("parameter") T
-        // parameter) {}
+        public GenericInnerAnnotatedType(@Annotation("parameter") T parameter) {
+        }
     }
 
 }

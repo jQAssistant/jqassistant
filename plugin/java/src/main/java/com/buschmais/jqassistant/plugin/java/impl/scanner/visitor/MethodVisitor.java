@@ -5,11 +5,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
@@ -17,6 +13,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private TypeDescriptor typeDescriptor;
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
+    private int syntheticParameters = 0;
     private int line;
 
     protected MethodVisitor(TypeDescriptor typeDescriptor, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
@@ -28,7 +25,13 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
-        ParameterDescriptor parameterDescriptor = methodDescriptor.findParameter(parameter);
+        String annotationType = SignatureHelper.getType(desc);
+        if ("java.lang.Synthetic".equals(annotationType)) {
+            // Ignore synthetic parameters add the start of the signature.
+            syntheticParameters++;
+            return null;
+        }
+        ParameterDescriptor parameterDescriptor = methodDescriptor.findParameter(parameter - syntheticParameters);
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(parameterDescriptor, SignatureHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }
