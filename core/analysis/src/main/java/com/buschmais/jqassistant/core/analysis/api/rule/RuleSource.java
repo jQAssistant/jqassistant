@@ -13,13 +13,13 @@ public interface RuleSource {
      * 
      * @return The name.
      */
-    String getName();
+    String getId();
 
     /**
      * Open a stream to read the rule.
      * 
      * @return The stream.
      */
-    InputStream openStream() throws IOException;
+    InputStream getInputStream() throws IOException;
 
 }

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -65,6 +66,12 @@ public class ScanIT extends AbstractCLIIT {
         // Scan the first file againg without reset
         execute(args1);
         verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
+    }
+
+    @Test
+    @Ignore
+    public void pluginClassloader() {
+
     }
 
     /**
