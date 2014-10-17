@@ -164,23 +164,6 @@ public class VisitorHelper {
     }
 
     /**
-     * Create and return the parameter descriptor for the given methodDescriptor
-     * and parameter index.
-     * 
-     * @param methodDescriptor
-     *            The declaring methodDescriptor.
-     * @param index
-     *            The parameter index.
-     * @return The parameter descriptor.
-     */
-    ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
-        ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
-        parameterDescriptor.setIndex(index);
-        methodDescriptor.addParameter(parameterDescriptor);
-        return parameterDescriptor;
-    }
-
-    /**
      * Adds a dependency to the given type name to a dependent descriptor.
      * 
      * @param containingTypeDescriptor

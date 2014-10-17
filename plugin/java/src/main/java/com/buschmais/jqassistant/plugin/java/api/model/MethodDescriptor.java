@@ -25,10 +25,6 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     @Relation("HAS")
     Set<ParameterDescriptor> getParameters();
 
-    @ResultOf
-    @Cypher("match (m),(p) where id(m)={this} and id(p)={parameter} create unique (m)-[:HAS]->(p)")
-    void addParameter(@Parameter("parameter") ParameterDescriptor target);
-
     @Relation("RETURNS")
     TypeDescriptor getReturns();
 
@@ -67,6 +63,10 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     @ResultOf
     @Cypher("match (m:Method)-[:HAS]->(p:Parameter) where id(m)={this} and p.index={index} return p as parameter")
     ParameterDescriptor findParameter(@Parameter("index") int index);
+
+    @ResultOf
+    @Cypher("match (m:Method) where id(m)={this} create unique (m)-[:HAS]->(p:Parameter{index:{index}}) return p")
+    ParameterDescriptor createParameter(@Parameter("index") int index);
 
     @Property("native")
     Boolean isNative();
