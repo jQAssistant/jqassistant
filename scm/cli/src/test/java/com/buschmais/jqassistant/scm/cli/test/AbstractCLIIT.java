@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.cli.test;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.io.*;
 import java.util.*;
@@ -52,12 +52,16 @@ public abstract class AbstractCLIIT {
      *             If an error occurs.
      */
     protected int execute(String... args) throws IOException, InterruptedException {
-        assumeTrue("Test can only be executed on windows machines.", SystemUtils.IS_OS_WINDOWS);
+        assumeFalse("Test cannot be executed on this operating system.", SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX);
         String jqaHhome = new File(properties.getProperty("jqassistant.home")).getAbsolutePath();
         List<String> command = new ArrayList<>();
-        command.add("cmd.exe");
-        command.add("/C");
-        command.add(jqaHhome + "\\bin\\jqassistant.cmd");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command.add("cmd.exe");
+            command.add("/C");
+            command.add(jqaHhome + "\\bin\\jqassistant.cmd");
+        } else if (SystemUtils.IS_OS_LINUX) {
+            command.add(jqaHhome + "/bin/jqassistant.sh");
+        }
         command.addAll(Arrays.asList(args));
 
         ProcessBuilder builder = new ProcessBuilder(command);
