@@ -6,18 +6,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 
-import com.buschmais.jqassistant.plugin.java.api.model.AccessModifierDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.EnumTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InterfaceTypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.VisibilityModifier;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
@@ -116,7 +105,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             methodDescriptor.setReturns(visitorHelper.getTypeDescriptor(returnType));
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
-                ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
+                ParameterDescriptor parameterDescriptor = methodDescriptor.createParameter(i);
                 String parameterType = SignatureHelper.getType(types[i]);
                 parameterDescriptor.setType(visitorHelper.getTypeDescriptor(parameterType));
             }
