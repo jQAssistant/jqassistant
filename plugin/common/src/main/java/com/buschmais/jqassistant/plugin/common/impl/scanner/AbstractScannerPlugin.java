@@ -37,7 +37,7 @@ public abstract class AbstractScannerPlugin<I> implements ScannerPlugin<I> {
     /**
      * Initialize the plugin.
      */
-    protected final void initialize() {
+    protected void initialize() {
     }
 
     protected Map<String, Object> getProperties() {
