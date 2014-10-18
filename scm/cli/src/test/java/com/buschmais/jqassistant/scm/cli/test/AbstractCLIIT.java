@@ -35,7 +35,7 @@ public abstract class AbstractCLIIT {
      */
     @Before
     public void before() {
-        EmbeddedGraphStore store = new EmbeddedGraphStore(JQATask.DEFAULT_STORE_DIRECTORY);
+        EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());
         store.reset();
         store.stop();

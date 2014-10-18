@@ -28,28 +28,28 @@ public class AnalyzeIT extends AbstractCLIIT {
     public void defaultGroup() throws IOException, InterruptedException {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String[] args = new String[] { "analyze", "-r", rulesDirectory };
-        execute(args);
+        assertThat(execute(args), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), "default:TestConcept");
     }
 
     @Test
     public void customGroup() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", "customGroup" };
-        execute(args);
+        assertThat(execute(args), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
     @Test
     public void constraint() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", "default:TestConstraint" };
-        execute(args);
+        assertThat(execute(args), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
     @Test
     public void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
-        execute(args);
+        assertThat(execute(args), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
@@ -58,7 +58,7 @@ public class AnalyzeIT extends AbstractCLIIT {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDirectory };
-        execute(args);
+        assertThat(execute(args), equalTo(0));
         verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), "default:TestConcept");
     }
 
