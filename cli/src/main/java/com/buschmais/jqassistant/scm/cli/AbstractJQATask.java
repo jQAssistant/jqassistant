@@ -1,6 +1,14 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +20,7 @@ import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
@@ -26,9 +31,15 @@ import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 public abstract class AbstractJQATask implements JQATask {
 
     protected static final String CMDLINE_OPTION_S = "s";
+
     protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
 
+    private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
+    private static final String DIRECTORY_PLUGINS = "plugins";
     private static final Console LOG = Log.getLog();
+    private static final File HOME_DIRECTORY = getHomeDirectory();
+
+    private static final PluginConfigurationReader PLUGIN_CONFIGURATION_READER = new PluginConfigurationReaderImpl(createPluginClassLoader());
 
     protected Map<String, Object> properties = new HashMap<>();
     protected String storeDirectory;
@@ -40,19 +51,69 @@ public abstract class AbstractJQATask implements JQATask {
     protected ReportPluginRepository reportPluginRepository;
 
     /**
-     * Constructor.
+     * Determine the JQASSISTANT_HOME directory.
      *
-     * @param pluginConfigurationReader
-     *            The
-     *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
+     * @return The directory or <code>null</code>.
      */
-    protected AbstractJQATask(PluginConfigurationReader pluginConfigurationReader) {
+    private static File getHomeDirectory() {
+        String dirName = System.getenv(ENV_JQASSISTANT_HOME);
+        if (dirName != null) {
+            File dir = new File(dirName);
+            if (dir.exists()) {
+                LOG.info("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
+                return dir;
+            } else {
+                LOG.warn("JQASSISTANT_HOME '" + dir.getAbsolutePath() + "' points to a non-existing directory.");
+                return null;
+            }
+        }
+        LOG.warn("JQASSISTANT_HOME is not set.");
+        return null;
+    }
+
+    /**
+     * Create the class loader to be used for detecting and loading plugins.
+     *
+     * @return The plugin class loader.
+     */
+    private static ClassLoader createPluginClassLoader() {
+        ClassLoader parentClassLoader = JQATask.class.getClassLoader();
+        if (HOME_DIRECTORY != null) {
+            File pluginDirectory = new File(HOME_DIRECTORY, DIRECTORY_PLUGINS);
+            if (pluginDirectory.exists()) {
+                final Path pluginDirectoryPath = pluginDirectory.toPath();
+                final List<URL> files = new ArrayList<>();
+                SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
+
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        if (file.toFile().getName().endsWith(".jar")) {
+                            files.add(file.toFile().toURI().toURL());
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                };
+                try {
+                    Files.walkFileTree(pluginDirectoryPath, visitor);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Cannot read plugin directory.", e);
+                }
+                return new URLClassLoader(files.toArray(new URL[0]), parentClassLoader);
+            }
+        }
+        return parentClassLoader;
+    }
+
+    /**
+     * Constructor.
+     */
+    protected AbstractJQATask() {
         try {
-            classLoader = pluginConfigurationReader.getClassLoader();
-            modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
-            scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
-            rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-            reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
+            classLoader = PLUGIN_CONFIGURATION_READER.getClassLoader();
+            modelPluginRepository = new ModelPluginRepositoryImpl(PLUGIN_CONFIGURATION_READER);
+            scannerPluginRepository = new ScannerPluginRepositoryImpl(PLUGIN_CONFIGURATION_READER, properties);
+            rulePluginRepository = new RulePluginRepositoryImpl(PLUGIN_CONFIGURATION_READER);
+            reportPluginRepository = new ReportPluginRepositoryImpl(PLUGIN_CONFIGURATION_READER, properties);
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannpt create plugin repositories.", e);
         }
