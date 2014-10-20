@@ -48,7 +48,7 @@
             WITH
                 m, target
             MATCH
-                (target)-[:HAS]->(:PARAMETER)-[:DEPENDS_ON]->(pt)
+                (target)-[:HAS]->(:Parameter)-[:DEPENDS_ON]->(pt)
             CREATE UNIQUE
                 (m)-[:DEPENDS_ON]->(pt)
             WITH
