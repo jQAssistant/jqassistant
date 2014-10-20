@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.scanner.impl;
 import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * The default listener implementation for the scanner.
@@ -34,7 +34,7 @@ public class DefaultScannerListener implements ScannerListener {
     }
 
     @Override
-    public <I> void after(I item, String relativePath, Scope scope, FileDescriptor fileDescriptor) {
+    public <I, D extends Descriptor> void after(I item, String relativePath, Scope scope, D descriptor) {
         count++;
         if (count == THRESHOLD) {
             store.commitTransaction();

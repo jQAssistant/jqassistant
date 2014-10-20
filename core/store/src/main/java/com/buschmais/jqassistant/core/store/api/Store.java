@@ -137,6 +137,18 @@ public interface Store {
     Result<CompositeRowObject> executeQuery(String query, Map<String, Object> parameters);
 
     /**
+     * Executes a CYPHER query.
+     * <p>
+     * This method executes a CYPHER query.
+     * </p>
+     *
+     * @param query
+     *            The CYPHER query.
+     * @return The {@link Result}.
+     */
+    Result<CompositeRowObject> executeQuery(String query);
+
+    /**
      * Executes a typed CYPHER query.
      * <p>
      * This method executes a CYPHER query.
