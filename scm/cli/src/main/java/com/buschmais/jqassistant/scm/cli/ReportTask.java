@@ -11,7 +11,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.cli.CommandLine;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
@@ -22,10 +21,6 @@ public class ReportTask extends AbstractJQATask {
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
     private String reportDirectory;
-
-    public ReportTask(PluginConfigurationReader pluginConfigurationReader) {
-        super(pluginConfigurationReader);
-    }
 
     @Override
     protected void executeTask(final Store store) {

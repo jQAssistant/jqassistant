@@ -15,7 +15,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -33,18 +32,6 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
     private List<String> fileNames = new ArrayList<>();
     private List<String> urls = new ArrayList<>();
     private boolean reset = false;
-
-    /**
-     * Constructor.
-     * 
-     * @param pluginConfigurationReader
-     *            The
-     *            {@link com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader}
-     *            .
-     */
-    public ScanTask(PluginConfigurationReader pluginConfigurationReader) {
-        super(pluginConfigurationReader);
-    }
 
     @Override
     protected void executeTask(final Store store) {
