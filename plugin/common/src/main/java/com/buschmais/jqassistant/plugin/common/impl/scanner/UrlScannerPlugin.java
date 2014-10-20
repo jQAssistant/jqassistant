@@ -10,10 +10,15 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 
-public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
+/**
+ * Scanner plugin which handles URLs as input.
+ */
+public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UrlScannerPlugin.class);
 
     @Override
@@ -24,13 +29,15 @@ public class UrlScannerPlugin extends AbstractScannerPlugin<URL> {
     @Override
     public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning url '{}'.", item.toString());
-        try (AbstractVirtualFile file = new AbstractVirtualFile() {
+        Descriptor descriptor;
+        try (AbstractFileResource file = new AbstractFileResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(item.openStream());
             }
         }) {
-            return scanner.scan(file, path, scope);
+            descriptor = scanner.scan(file, path, scope);
         }
+        return toFileDescriptor(descriptor, path, scanner.getContext());
     }
 }

@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Represents a file entry.
+ * Represents a file resource.
  */
-public interface VirtualFile extends VirtualEntry {
+public interface FileResource extends Resource {
 
     InputStream createStream() throws IOException;
 
-    java.io.File getFile();
+    java.io.File getFile() throws IOException;
 }

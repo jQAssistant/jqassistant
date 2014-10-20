@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,9 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractVirtualDirectory;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerScannerPlugin<File, File> {
 
@@ -64,12 +60,12 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
     }
 
     @Override
-    protected VirtualEntry getEntry(File container, final File entry) {
+    protected Resource getEntry(File container, final File entry) {
         if (entry.isDirectory()) {
-            return new AbstractVirtualDirectory() {
+            return new AbstractDirectoryResource() {
             };
         } else {
-            return new VirtualFile() {
+            return new FileResource() {
                 @Override
                 public InputStream createStream() throws IOException {
                     return new BufferedInputStream(new FileInputStream(entry));

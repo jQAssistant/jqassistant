@@ -6,11 +6,12 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Abstract base implementation of a {@link ScannerPlugin}.
  */
-public abstract class AbstractScannerPlugin<I> implements ScannerPlugin<I> {
+public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements ScannerPlugin<I, D> {
 
     private Map<String, Object> properties;
 
@@ -22,12 +23,16 @@ public abstract class AbstractScannerPlugin<I> implements ScannerPlugin<I> {
 
     @Override
     public Class<? extends I> getType() {
+        return getType(AbstractScannerPlugin.class, 0);
+    }
+
+    protected Class<? extends I> getType(Class<?> expectedSuperClass, int genericTypeParameterIndex) {
         Class<? extends AbstractScannerPlugin> thisClass = this.getClass();
-        if (!thisClass.getSuperclass().equals(AbstractScannerPlugin.class)) {
+        if (!thisClass.getSuperclass().equals(expectedSuperClass)) {
             throw new IllegalStateException("Cannot determine type argument of " + thisClass.getName());
         }
         Type genericSuperclass = thisClass.getGenericSuperclass();
-        Type typeParameter = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
+        Type typeParameter = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[genericTypeParameterIndex];
         if (typeParameter instanceof ParameterizedType) {
             return (Class<? extends I>) ((ParameterizedType) typeParameter).getRawType();
         }
