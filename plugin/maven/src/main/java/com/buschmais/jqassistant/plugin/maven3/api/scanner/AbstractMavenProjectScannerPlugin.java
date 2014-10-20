@@ -9,16 +9,22 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 
 /**
  * Abstract base class for maven project scanner plugins.
  */
-public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject> {
+public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
 
     /**
      * The artifact type for test jars.
      */
     public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
+
+    @Override
+    public Class<? extends MavenProject> getType() {
+        return MavenProject.class;
+    }
 
     protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
