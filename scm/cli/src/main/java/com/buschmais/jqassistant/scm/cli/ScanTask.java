@@ -48,7 +48,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
 
     @Override
     protected void executeTask(final Store store) {
-        List<ScannerPlugin<?>> scannerPlugins;
+        List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
             scannerPlugins = scannerPluginRepository.getScannerPlugins();
         } catch (PluginRepositoryException e) {
@@ -76,7 +76,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
         }
     }
 
-    private <T> void scan(Store store, T element, String path, List<ScannerPlugin<?>> scannerPlugins) {
+    private <T> void scan(Store store, T element, String path, List<ScannerPlugin<?, ?>> scannerPlugins) {
         store.beginTransaction();
         try {
             Scanner scanner = new ScannerImpl(store, scannerPlugins);

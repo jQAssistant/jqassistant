@@ -9,8 +9,7 @@ import java.util.Properties;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
@@ -20,15 +19,15 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
  * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
  * for property files.
  */
-public class PropertyFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
+public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResource, PropertyFileDescriptor> {
 
     @Override
-    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && path.endsWith(".properties");
     }
 
     @Override
-    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
+    public PropertyFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = scanner.getContext().getStore();
         PropertyFileDescriptor propertyFileDescriptor = store.create(PropertyFileDescriptor.class);
         Properties properties = new Properties();

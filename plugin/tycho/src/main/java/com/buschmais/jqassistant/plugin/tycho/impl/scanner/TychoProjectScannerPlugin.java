@@ -5,12 +5,7 @@ import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSP
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
@@ -25,6 +20,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectScannerPlugin;
 
@@ -35,17 +31,12 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenPr
 public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
     @Override
-    public Class<? extends MavenProject> getType() {
-        return MavenProject.class;
-    }
-
-    @Override
     public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
         return true;
     }
 
     @Override
-    public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         final ArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), false, scanner.getContext());
         scanner.getContext().push(ArtifactDescriptor.class, artifact);
         try {
@@ -59,7 +50,7 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         } finally {
             scanner.getContext().pop(ArtifactDescriptor.class);
         }
-        return artifact;
+        return resolveProject(project, MavenProjectDirectoryDescriptor.class, scanner.getContext());
     }
 
     private List<File> getPdeFiles(MavenProject project) throws IOException {

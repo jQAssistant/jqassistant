@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +8,12 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
-public class FileScannerPlugin extends AbstractScannerPlugin<File> {
+/**
+ * Scanner plugin for instances of {@link File}.
+ */
+public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
@@ -28,7 +27,8 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning '{}'.", file.getAbsolutePath());
-        FileDescriptor fileDescriptor = scanner.scan(new VirtualFile() {
+        FileDescriptor fileDescriptor;
+        try (FileResource fileResource = new FileResource() {
 
             @Override
             public InputStream createStream() throws IOException {
@@ -45,7 +45,9 @@ public class FileScannerPlugin extends AbstractScannerPlugin<File> {
             @Override
             public void close() {
             }
-        }, path, scope);
-        return fileDescriptor;
+        };) {
+            fileDescriptor = scanner.scan(fileResource, path, scope);
+        }
+        return toFileDescriptor(fileDescriptor, path, scanner.getContext());
     }
 }

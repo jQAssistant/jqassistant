@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
@@ -32,17 +31,12 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
     @Override
-    public Class<? extends MavenProject> getType() {
-        return MavenProject.class;
-    }
-
-    @Override
     public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
         return true;
     }
 
     @Override
-    public FileDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         projectDescriptor.setPackaging(project.getPackaging());

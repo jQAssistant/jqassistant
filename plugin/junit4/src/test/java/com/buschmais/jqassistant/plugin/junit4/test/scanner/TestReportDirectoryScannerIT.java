@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.junit4.test.scanner;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -23,7 +24,8 @@ public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
     @Test
     public void reportFile() throws IOException {
         store.beginTransaction();
-        getScanner().scan(getClassesDirectory(TestReportDirectoryScannerIT.class), JunitScope.TESTREPORTS);
+        File classesDirectory = getClassesDirectory(TestReportDirectoryScannerIT.class);
+        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), JunitScope.TESTREPORTS);
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         store.commitTransaction();

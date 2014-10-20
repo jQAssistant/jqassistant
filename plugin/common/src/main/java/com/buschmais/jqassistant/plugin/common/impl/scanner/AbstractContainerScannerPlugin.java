@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 /**
  * Abstract base implementation for scanner plugins that handle containers of
@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEnt
  * @param <E>
  *            The element type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScannerPlugin<I> {
+public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResourceScannerPlugin<I, FileDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
@@ -34,11 +34,12 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
-                try (VirtualEntry entry = getEntry(container, e)) {
+                try (Resource entry = getEntry(container, e)) {
                     String relativePath = getRelativePath(container, e);
                     Scope entryScope = createScope(scope);
                     LOGGER.info("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
+                    descriptor = toFileDescriptor(descriptor, relativePath, context);
                     if (containerDescriptor != null) {
                         containerDescriptor.getContains().add(descriptor);
                     }
@@ -106,7 +107,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
 
     /**
      * Return a
-     * {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualEntry}
+     * {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource}
      * representing an entry.
      * 
      * @param container
@@ -114,9 +115,9 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractScann
      * @param entry
      *            The entry.
      * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile}
+     *         {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource}
      *         .
      */
-    protected abstract VirtualEntry getEntry(I container, E entry);
+    protected abstract Resource getEntry(I container, E entry);
 
 }

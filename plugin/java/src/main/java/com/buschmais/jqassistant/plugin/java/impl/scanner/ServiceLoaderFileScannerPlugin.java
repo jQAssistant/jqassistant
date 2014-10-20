@@ -12,8 +12,7 @@ import java.util.regex.Pattern;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -23,17 +22,17 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
  * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
  * for java packages.
  */
-public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
+public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileResource, ServiceLoaderDescriptor> {
 
     private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
 
     @Override
-    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && PATTERN.matcher(path).matches();
     }
 
     @Override
-    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
+    public ServiceLoaderDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Matcher matcher = PATTERN.matcher(path);
         if (!matcher.matches()) {
             throw new IOException("Cannot match path name: " + path);

@@ -93,6 +93,11 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public Result<CompositeRowObject> executeQuery(String query) {
+        return xoManager.createQuery(query).execute();
+    }
+
+    @Override
     public void reset() {
         LOGGER.info("Resetting store.");
         runQueryUntilResultIsZero("MATCH (n)-[r]-() WITH n, collect(r) as rels LIMIT 5000 FOREACH (r in rels | DELETE r) DELETE n RETURN COUNT(*) as deleted");

@@ -9,25 +9,24 @@ import au.com.bytecode.opencsv.CSVReadProc;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVColumnDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVRowDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 
 /**
  * A CSV file scanner plugin.
  */
-public class CSVFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
+public class CSVFileScannerPlugin extends AbstractScannerPlugin<FileResource, CSVFileDescriptor> {
 
     @Override
-    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(".csv");
     }
 
     @Override
-    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
+    public CSVFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         // Open the input stream for reading the file.
         try (InputStream stream = item.createStream()) {
             // Create the node for a CSV file.

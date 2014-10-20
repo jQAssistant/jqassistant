@@ -11,8 +11,7 @@ import java.util.jar.Manifest;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestFileDescriptor;
@@ -23,17 +22,17 @@ import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor
  * {@link com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin}
  * for java MANIFEST.MF files.
  */
-public class ManifestFileScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
+public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResource, ManifestFileDescriptor> {
 
     public static final String SECTION_MAIN = "Main";
 
     @Override
-    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope) && "/META-INF/MANIFEST.MF".equals(path);
     }
 
     @Override
-    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
+    public ManifestFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
             Manifest manifest = new Manifest(stream);
             Store store = scanner.getContext().getStore();

@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,7 +110,7 @@ public class MetricsViewIT extends AbstractUITest {
                                    "(a:Artifact)-[:CONTAINS]->(t:Type), " +
                                    "(p:Package)-[:CONTAINS*]->(t) " +
                                    "create (a)-[c:CONTAINS]->(p) " +
-                                   "return count(c)", null);
+ "return count(c)");
 
         // for test step explanation see testMetricGroupSelection()
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);

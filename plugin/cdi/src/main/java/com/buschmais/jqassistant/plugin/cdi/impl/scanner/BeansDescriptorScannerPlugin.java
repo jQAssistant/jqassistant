@@ -10,26 +10,21 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jcp.xmlns.xml.ns.javaee.Alternatives;
-import org.jcp.xmlns.xml.ns.javaee.Beans;
-import org.jcp.xmlns.xml.ns.javaee.Decorators;
-import org.jcp.xmlns.xml.ns.javaee.Interceptors;
-import org.jcp.xmlns.xml.ns.javaee.ObjectFactory;
+import org.jcp.xmlns.xml.ns.javaee.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.api.model.BeansDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.VirtualFile;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 
-public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<VirtualFile> {
+public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileResource, BeansDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
 
@@ -46,12 +41,12 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<VirtualF
     }
 
     @Override
-    public boolean accepts(VirtualFile item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path);
     }
 
     @Override
-    public FileDescriptor scan(VirtualFile item, String path, Scope scope, Scanner scanner) throws IOException {
+    public BeansDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         BeansDescriptor beansDescriptor = context.getStore().create(BeansDescriptor.class);
         try (InputStream stream = item.createStream()) {

@@ -26,6 +26,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 
 @RunWith(Parameterized.class)
 public class TychoProjectScannerPluginTest {
@@ -68,14 +69,24 @@ public class TychoProjectScannerPluginTest {
         when(project.getContextValue(TychoConstants.CTX_ECLIPSE_PLUGIN_PROJECT)).thenReturn(pdeProject);
         when(pdeProject.getBuildProperties()).thenReturn(properties);
         when(project.getBasedir()).thenReturn(new File(getClass().getResource(".").getFile()));
+
+        when(project.getGroupId()).thenReturn("group");
+        when(project.getArtifactId()).thenReturn("artifact");
+        when(project.getVersion()).thenReturn("1.0.0");
+
         Artifact artifact = mock(Artifact.class);
-        when(artifact.getType()).thenReturn("jar");
         when(artifact.getGroupId()).thenReturn("group");
         when(artifact.getArtifactId()).thenReturn("artifact");
+        when(artifact.getType()).thenReturn("jar");
+        when(artifact.getVersion()).thenReturn("1.0.0");
         when(project.getArtifact()).thenReturn(artifact);
 
         ArtifactDirectoryDescriptor artifactDescriptor = mock(ArtifactDirectoryDescriptor.class);
         when(store.create(Mockito.any(Class.class), Mockito.anyString())).thenReturn(artifactDescriptor);
+
+        MavenProjectDirectoryDescriptor projectDirectoryDescriptor = mock(MavenProjectDirectoryDescriptor.class);
+        when(store.create(Mockito.any(Class.class), Mockito.eq("group:artifact:1.0.0"))).thenReturn(projectDirectoryDescriptor);
+
     }
 
     @Test

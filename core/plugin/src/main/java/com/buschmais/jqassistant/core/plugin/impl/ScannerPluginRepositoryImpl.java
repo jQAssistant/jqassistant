@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
  */
 public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implements ScannerPluginRepository {
 
-    private final List<ScannerPlugin<?>> scannerPlugins;
+    private final List<ScannerPlugin<?, ?>> scannerPlugins;
 
     /**
      * Constructor.
@@ -29,7 +29,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
     }
 
     @Override
-    public List<ScannerPlugin<?>> getScannerPlugins() throws PluginRepositoryException {
+    public List<ScannerPlugin<?, ?>> getScannerPlugins() throws PluginRepositoryException {
         return scannerPlugins;
     }
 

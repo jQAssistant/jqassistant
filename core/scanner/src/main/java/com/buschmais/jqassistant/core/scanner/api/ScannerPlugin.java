@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
  * @param <I>
  *            The item type accepted by the plugin.
  */
-public interface ScannerPlugin<I> {
+public interface ScannerPlugin<I, D> {
 
     /**
      * Defines an annotation for specifying dependencies between scanner
@@ -28,7 +28,7 @@ public interface ScannerPlugin<I> {
         /**
          * @return The scanner plugins which must be executed first.
          */
-        Class<? extends ScannerPlugin<?>>[] value();
+        Class<? extends ScannerPlugin<?, ?>>[] value();
     }
 
     /**
@@ -78,6 +78,6 @@ public interface ScannerPlugin<I> {
      * @throws IOException
      *             If a problem occurs.
      */
-    FileDescriptor scan(I item, String path, Scope scope, Scanner scanner) throws IOException;
+    D scan(I item, String path, Scope scope, Scanner scanner) throws IOException;
 
 }
