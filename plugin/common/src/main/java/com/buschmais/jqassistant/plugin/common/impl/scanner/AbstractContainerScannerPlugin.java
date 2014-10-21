@@ -29,6 +29,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
     public final FileDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
+        containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
         context.push(FileContainerDescriptor.class, containerDescriptor);
         try {
