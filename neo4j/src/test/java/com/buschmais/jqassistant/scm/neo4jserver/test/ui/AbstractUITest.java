@@ -42,6 +42,8 @@ public abstract class AbstractUITest extends AbstractServerTest {
 
     @After
     public void shutdownWebDriver() {
-        driver.close();
+        if (driver != null) {
+            driver.close();
+        }
     }
 }
