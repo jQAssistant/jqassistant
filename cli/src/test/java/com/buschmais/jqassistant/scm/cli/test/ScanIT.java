@@ -27,7 +27,7 @@ public class ScanIT extends AbstractCLIIT {
         URL file = getResource(ScanTask.class);
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", file.getFile() + "," + directory.getFile() };
-        assertThat(execute(args), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class, ScanIT.class);
     }
 
@@ -36,7 +36,7 @@ public class ScanIT extends AbstractCLIIT {
         URL directory1 = getResource(ScanTask.class);
         URL directory2 = getResource(ScanIT.class);
         String[] args = new String[] { "scan", "-u", directory1 + "," + directory2 };
-        assertThat(execute(args), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class, ScanIT.class);
     }
 
@@ -45,7 +45,7 @@ public class ScanIT extends AbstractCLIIT {
         URL file = getResource(ScanTask.class);
         String customStoreDirectory = "tmp/customStore";
         String[] args = new String[] { "scan", "-f", file.getFile(), "-s", customStoreDirectory };
-        assertThat(execute(args), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyTypesScanned(new File(getWorkingDirectory(), customStoreDirectory), ScanTask.class);
     }
 
@@ -54,16 +54,16 @@ public class ScanIT extends AbstractCLIIT {
         // Scan a file
         URL file1 = getResource(ScanIT.class);
         String[] args1 = new String[] { "scan", "-f", file1.getFile() };
-        assertThat(execute(args1), equalTo(0));
+        assertThat(execute(args1).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
         // Scan a second file using reset
         URL file2 = getResource(ScanTask.class);
         String[] args2 = new String[] { "scan", "-f", file2.getFile(), "-reset" };
-        assertThat(execute(args2), equalTo(0));
+        assertThat(execute(args2).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class);
         verifyTypesNotScanned(getWorkingDirectory(), ScanIT.class);
         // Scan the first file againg without reset
-        assertThat(execute(args1), equalTo(0));
+        assertThat(execute(args1).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
     }
 
@@ -71,7 +71,7 @@ public class ScanIT extends AbstractCLIIT {
     public void pluginClassloader() throws IOException, InterruptedException {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
         String[] args = new String[] { "scan", "-f", testClassDirectory.getAbsolutePath() };
-        assertThat(execute(args), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(0));
         EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());
         Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);

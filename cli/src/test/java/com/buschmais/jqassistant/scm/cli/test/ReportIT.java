@@ -20,10 +20,10 @@ public class ReportIT extends AbstractCLIIT {
     public void report() throws IOException, InterruptedException {
         String rulesDirectory = ReportIT.class.getResource("/rules").getFile();
         String[] args1 = new String[] { "analyze", "-r", rulesDirectory };
-        assertThat(execute(args1), equalTo(0));
+        assertThat(execute(args1).getExitCode(), equalTo(0));
         assertThat(new File(getDefaultReportDirectory(), JQATask.REPORT_FILE_XML).exists(), equalTo(true));
         String[] args2 = new String[] { "report" };
-        assertThat(execute(args2), equalTo(0));
+        assertThat(execute(args2).getExitCode(), equalTo(0));
         assertThat(new File(getDefaultReportDirectory(), ReportTask.REPORT_FILE_HTML).exists(), equalTo(true));
     }
 

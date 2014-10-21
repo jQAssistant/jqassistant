@@ -20,36 +20,31 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  */
 public class AnalyzeIT extends AbstractCLIIT {
 
-    public static final String RULES_DIRECTORY = AnalyzeIT.class.getResource("/rules").getFile();
-    public static final String TEST_CONCEPT = "default:TestConcept";
-    public static final String CUSTOM_TEST_CONCEPT = "default:CustomTestConcept";
-
     @Test
     public void defaultGroup() throws IOException, InterruptedException {
-        String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
-        String[] args = new String[] { "analyze", "-r", rulesDirectory };
-        assertThat(execute(args), equalTo(0));
-        verifyConcepts(getDefaultStoreDirectory(), "default:TestConcept");
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY };
+        assertThat(execute(args).getExitCode(), equalTo(0));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
     @Test
     public void customGroup() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", "customGroup" };
-        assertThat(execute(args), equalTo(0));
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-groups", CUSTOM_GROUP };
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
     @Test
     public void constraint() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", "default:TestConstraint" };
-        assertThat(execute(args), equalTo(0));
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT };
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 
     @Test
     public void concept() throws IOException, InterruptedException {
         String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-concepts", TEST_CONCEPT + "," + CUSTOM_TEST_CONCEPT };
-        assertThat(execute(args), equalTo(0));
+        assertThat(execute(args).getExitCode(), equalTo(0));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT, CUSTOM_TEST_CONCEPT);
     }
 
@@ -58,8 +53,8 @@ public class AnalyzeIT extends AbstractCLIIT {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";
         String[] args = new String[] { "analyze", "-r", rulesDirectory, "-s", customStoreDirectory };
-        assertThat(execute(args), equalTo(0));
-        verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), "default:TestConcept");
+        assertThat(execute(args).getExitCode(), equalTo(0));
+        verifyConcepts(new File(getWorkingDirectory(), customStoreDirectory), TEST_CONCEPT);
     }
 
     /**

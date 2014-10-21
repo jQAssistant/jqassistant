@@ -17,7 +17,54 @@ import com.buschmais.jqassistant.scm.cli.JQATask;
  */
 public abstract class AbstractCLIIT {
 
+    public static final String RULES_DIRECTORY = AnalyzeIT.class.getResource("/rules").getFile();
+
+    public static final String TEST_CONCEPT = "default:TestConcept";
+    public static final String TEST_CONSTRAINT = "default:TestConstraint";
+    public static final String CUSTOM_TEST_CONCEPT = "default:CustomTestConcept";
+
+    public static final String CUSTOM_GROUP = "customGroup";
+
     private Properties properties = new Properties();
+
+    /**
+     * Represents the result of a CLI execution containing exit code and console
+     * output.
+     */
+    protected static class ExecutionResult {
+
+        private int exitCode;
+        private List<String> standardConsole;
+        private List<String> errorConsole;
+
+        /**
+         * Constructor.
+         * 
+         * @param exitCode
+         *            The exit code.
+         * @param standardConsole
+         *            The standard console output.
+         * @param errorConsole
+         *            The error console output.
+         */
+        public ExecutionResult(int exitCode, List<String> standardConsole, List<String> errorConsole) {
+            this.exitCode = exitCode;
+            this.standardConsole = standardConsole;
+            this.errorConsole = errorConsole;
+        }
+
+        public int getExitCode() {
+            return exitCode;
+        }
+
+        public List<String> getStandardConsole() {
+            return standardConsole;
+        }
+
+        public List<String> getErrorConsole() {
+            return errorConsole;
+        }
+    }
 
     /**
      * Constructor.
@@ -51,7 +98,7 @@ public abstract class AbstractCLIIT {
      * @throws InterruptedException
      *             If an error occurs.
      */
-    protected int execute(String... args) throws IOException, InterruptedException {
+    protected ExecutionResult execute(String... args) throws IOException, InterruptedException {
         assumeTrue("Test cannot be executed on this operating system.", SystemUtils.IS_OS_WINDOWS || SystemUtils.IS_OS_LINUX);
         String jqaHhome = new File(properties.getProperty("jqassistant.home")).getAbsolutePath();
         List<String> command = new ArrayList<>();
@@ -73,9 +120,12 @@ public abstract class AbstractCLIIT {
 
         final Process process = builder.start();
 
-        Executors.newCachedThreadPool().submit(new ConsoleReader(process.getInputStream(), System.out));
-        Executors.newCachedThreadPool().submit(new ConsoleReader(process.getErrorStream(), System.err));
-        return process.waitFor();
+        ConsoleReader standardConsole = new ConsoleReader(process.getInputStream(), System.out);
+        ConsoleReader errorConsole = new ConsoleReader(process.getErrorStream(), System.err);
+        Executors.newCachedThreadPool().submit(standardConsole);
+        Executors.newCachedThreadPool().submit(errorConsole);
+        int exitCode = process.waitFor();
+        return new ExecutionResult(exitCode, standardConsole.getOutput(), errorConsole.getOutput());
     }
 
     /**
@@ -113,6 +163,7 @@ public abstract class AbstractCLIIT {
     private static class ConsoleReader implements Runnable {
         private final InputStream stream;
         private final PrintStream printStream;
+        private final List<String> output;
 
         /**
          * Constructor.
@@ -125,6 +176,7 @@ public abstract class AbstractCLIIT {
         private ConsoleReader(InputStream stream, PrintStream printStream) {
             this.stream = stream;
             this.printStream = printStream;
+            this.output = new ArrayList<>();
         }
 
         @Override
@@ -134,11 +186,16 @@ public abstract class AbstractCLIIT {
             String line;
             try {
                 while ((line = br.readLine()) != null) {
+                    output.add(line);
                     printStream.println(line);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        public List<String> getOutput() {
+            return output;
         }
     }
 }
