@@ -1,0 +1,81 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>jqassistant</artifactId>
+        <version>1.0.0-M4-SNAPSHOT</version>
+    </parent>
+    <groupId>com.buschmais.jqassistant.distribution</groupId>
+    <artifactId>jqassistant.distribution</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <distribution.directory>${project.build.directory}/distribution</distribution.directory>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-dependencies</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <outputDirectory>${distribution.directory}</outputDirectory>
+                            <includeTypes>zip</includeTypes>
+                            <includeClassifiers>distribution</includeClassifiers>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-distribution</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptor>src/main/assembly/bin.xml</descriptor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant.scm.cli</artifactId>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.plugin</artifactId>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.doc</groupId>
+            <artifactId>jqassistant.doc</artifactId>
+            <type>zip</type>
+            <classifier>distribution</classifier>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -10,7 +10,7 @@
 
     <properties>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
-        <test.jqassistant.home>${test.distribution}/${project.artifactId}-${project.version}</test.jqassistant.home>
+        <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
     </properties>
 
     <build>
@@ -48,12 +48,6 @@
                     <execution>
                         <id>attach-distribution</id>
                         <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptor>src/main/assembly/distribution.xml</descriptor>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

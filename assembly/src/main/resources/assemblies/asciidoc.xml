@@ -26,11 +26,11 @@
         <fileSet>
             <outputDirectory>src</outputDirectory>
             <includes>
-                <include>**</include>
+                <include>src/main/java/**</include>
+                <include>src/main/resources/**</include>
+                <include>jqassistant/**</include>
+                <include>pom.xml</include>
             </includes>
-            <excludes>
-                <exclude>target/**</exclude>
-            </excludes>
             <filtered>true</filtered>
         </fileSet>
     </fileSets>

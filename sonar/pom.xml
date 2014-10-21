@@ -13,8 +13,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sonar.buildVersion>3.7.4</sonar.buildVersion>
-		<jdk.min.version>1.5</jdk.min.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<build>
@@ -25,15 +23,6 @@
 					<artifactId>sonar-packaging-maven-plugin</artifactId>
 					<version>1.9</version>
 					<extensions>true</extensions>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>2.5.1</version>
-					<configuration>
-						<source>${jdk.min.version}</source>
-						<target>${jdk.min.version}</target>
-					</configuration>
 				</plugin>
 				<plugin>
 					<!-- UTF-8 bundles are not supported by Java, so they must be converted 
@@ -96,16 +85,6 @@
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.plugin</artifactId>
                 <version>${project.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.buschmais.jqassistant.core</groupId>
-                        <artifactId>jqassistant.core.store</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.buschmais.jqassistant.core</groupId>
-                        <artifactId>jqassistant.core.scanner</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
@@ -113,7 +92,12 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-				<groupId>org.codehaus.sonar</groupId>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.all</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+            <groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-plugin-api</artifactId>
 				<version>${sonar.buildVersion}</version>
 				<scope>provided</scope>
@@ -143,17 +127,10 @@
 				<version>1.4</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.maven</groupId>
-				<artifactId>maven-project</artifactId>
-				<version>2.2.1</version>
-				<scope>test</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<modules>
 		<module>plugin</module>
-		<module>extension</module>
 	</modules>
 </project>

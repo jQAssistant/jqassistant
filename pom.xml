@@ -229,6 +229,15 @@
                                 </descriptorRefs>
                             </configuration>
                         </execution>
+                        <execution>
+                            <id>attach-distribution</id>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptor>src/main/assembly/distribution.xml</descriptor>
+                            </configuration>
+                        </execution>
                     </executions>
                 </plugin>
                 <plugin>
@@ -352,6 +361,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -477,6 +487,7 @@
         <module>scm</module>
         <module>sonar</module>
         <module>examples</module>
+        <module>distribution</module>
     </modules>
 
 </project>

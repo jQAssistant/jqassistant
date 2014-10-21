@@ -6,5 +6,5 @@ specific properties:
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.plugins.project/src/pom.xml[lines=14..30]
+include::{docRoot}/jqassistant.examples.plugins.project/src/pom.xml[lines=12..42]
 ----

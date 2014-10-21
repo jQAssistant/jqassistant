@@ -18,7 +18,7 @@ Next the following settings must be applied to the jQAssistant Maven plugin in t
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=15..44]
+include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=14..43]
 ----
 
 * Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI. Note that special characters must be replaced by XML entities.

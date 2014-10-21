@@ -7,7 +7,7 @@ A custom rule extension makes user defined jQAssistant rules available for Sonar
 <project ...>
 ...
 
-include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/pom.xml[lines=10..56]]
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/pom.xml[lines=11..60]]
 
 ...
 </project>
