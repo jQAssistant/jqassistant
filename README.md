@@ -19,7 +19,7 @@ Questions, suggestions and/or feedback are welcome at the [jQAssistant forum](ht
 
 ## License
 
-Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the GNU General Public License, v3: http://www.gnu.org/licenses/gpl-3.0.html
 
 ## Gitter
 
