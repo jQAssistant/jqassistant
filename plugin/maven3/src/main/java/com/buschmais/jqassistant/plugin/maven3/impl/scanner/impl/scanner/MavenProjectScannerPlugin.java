@@ -17,11 +17,14 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 /**
  * A project scanner plugin for maven projects.
@@ -45,8 +48,15 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         ArtifactDescriptor testArtifactDescriptor = scanClassesDirectory(projectDescriptor, artifact, true, project.getBuild().getTestOutputDirectory(),
                 scanner);
         addProjectDetails(project, projectDescriptor, mainArtifactDescriptor, testArtifactDescriptor, context);
-        scanTestReports(scanner, project.getBuild().getDirectory() + "/surefire-reports");
-        scanTestReports(scanner, project.getBuild().getDirectory() + "/failsafe-reports");
+        scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
+        scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
+        List<ScanInclude> scanDirectories = (List<ScanInclude>) getProperties().get(ScanInclude.class.getName());
+        if (scanDirectories != null) {
+            for (ScanInclude scanInclude : scanDirectories) {
+                scanPath(projectDescriptor, scanInclude.getPath(), JavaScope.CLASSPATH, scanner);
+            }
+
+        }
         return projectDescriptor;
     }
 
@@ -155,35 +165,43 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      */
     private ArtifactDescriptor scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, Artifact artifact, boolean testJar,
             final String directoryName, Scanner scanner) throws IOException {
-        final File directory = new File(directoryName);
-        if (!directory.exists()) {
-            LOGGER.info("Directory '" + directory.getAbsolutePath() + "' does not exist, skipping scan.");
-        } else {
-            ArtifactDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, scanner.getContext());
-            scanner.getContext().push(ArtifactDescriptor.class, artifactDescriptor);
-            try {
-                scanner.scan(directory, directoryName, CLASSPATH);
-            } finally {
-                scanner.getContext().pop(ArtifactDescriptor.class);
-            }
-            projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
-            return artifactDescriptor;
+        ArtifactDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, scanner.getContext());
+        projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
+        scanner.getContext().push(ArtifactDescriptor.class, artifactDescriptor);
+        try {
+            scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
+        } finally {
+            scanner.getContext().pop(ArtifactDescriptor.class);
         }
-        return null;
+        return artifactDescriptor;
     }
 
     /**
-     * Scans a directory for test reports.
+     * Scan a given path.
      * 
-     * @param directoryName
-     *            The directory name.
-     * @throws java.io.IOException
-     *             If scanning fails.
+     * @param projectDescriptor
+     *            The maven project descriptor.
+     * @param path
+     *            The path.
+     * @param scope
+     *            The scope.
+     * @param scanner
+     *            The scanner.
      */
-    private void scanTestReports(Scanner scanner, String directoryName) throws IOException {
-        final File directory = new File(directoryName);
-        if (directory.exists()) {
-            scanner.scan(directory, directoryName, TESTREPORTS);
+    private void scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
+        File item = new File(path);
+        if (item.exists()) {
+            scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
+            try {
+                Descriptor descriptor = scanner.scan(item, path, scope);
+                if (descriptor != null) {
+                    projectDescriptor.addContains(descriptor);
+                }
+            } finally {
+                scanner.getContext().pop(MavenProjectDirectoryDescriptor.class);
+            }
+        } else {
+            LOGGER.info(path + "' does not exist, skipping scan.");
         }
     }
 }

@@ -18,7 +18,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanDirectory;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 /**
  * Scans the the output directory and test output directory.
@@ -30,8 +30,8 @@ public class ScanMojo extends AbstractModuleMojo {
      * Specifies a list of directory names relative to the root module
      * containing additional rule files.
      */
-    @Parameter(property = "jqassistant.scan.directories")
-    protected List<ScanDirectory> scanDirectories;
+    @Parameter(property = "jqassistant.scan.includes")
+    protected List<ScanInclude> scanIncludes;
 
     @Override
     protected boolean isResetStoreBeforeExecution() {
@@ -45,7 +45,7 @@ public class ScanMojo extends AbstractModuleMojo {
      */
     protected Map<String, Object> getPluginProperties() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(ScanDirectory.class.getName(), scanDirectories);
+        properties.put(ScanInclude.class.getName(), scanIncludes);
         return properties;
     }
 
