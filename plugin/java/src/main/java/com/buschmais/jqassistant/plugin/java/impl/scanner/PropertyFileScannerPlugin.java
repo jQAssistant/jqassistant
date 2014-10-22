@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -23,7 +21,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return CLASSPATH.equals(scope) && path.endsWith(".properties");
+        return path.toLowerCase().endsWith(".properties");
     }
 
     @Override
