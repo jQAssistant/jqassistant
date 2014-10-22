@@ -25,39 +25,64 @@
         </script>
         <style type="text/css" onLoad="hideAll()">
             body {
-            font-family: Helvetica,​arial,​freesans,​clean,​sans-serif;
+            font-family:'Open Sans', sans-serif;
+            line-height:1.5;
+            color:#3d3a37;
+            }
+
+            a {
+            color:#74bc00;
+            }
+
+            h6 {
+            color:#747270;
+            font-weight:normal;
             }
 
             table {
             width:90%;
-            border-collapse: collapse;
+            border-collapse:collapse;
+            background-color:#e3e3e2;
+            }
+
+            table th {
+            background-color:#acaba9;
+            color:#fff;
             }
 
             table tr td, th {
-            border-style: solid;
-            border-width: 1px;
+            border-style:solid;
+            border-width:1px;
+            border-color:#fff;
+            padding:5px;
             }
 
             table tr th {
-            text-align: left;
+            text-align:left;
+            }
+
+            #footer {
+            color:#747270;
             }
 
             .right {
-            text-align: right;
+            text-align:right;
             }
 
             .nameWithResult {
             cursor:pointer;
             text-decoration:underline;
-            color: blue;
+            color:#3d3a37;
             }
 
             .result {
             margin:0 5px 20px 5px;
+            color:#3d3a37;
             }
 
             .constraint_success {
-            background-color:#97e568;
+            background-color:#74bc00;
+            color:#fff;
             }
 
             .constraint_success * .ruleName:after {
@@ -65,7 +90,8 @@
             }
 
             .constraint_error {
-            background-color:#ff8b8b;
+            background-color:#fc9600;
+            color:#fff;
             }
 
             .constraint_error * .ruleName:after {
@@ -73,7 +99,8 @@
             }
 
             .concept_warn {
-            background-color:#fffb65;
+            background-color:#ff5917;
+            color:#fff;
             }
 
             .concept_warn * .ruleName:after{
@@ -85,9 +112,9 @@
             <h3>Groups</h3>
             <table>
                 <tr>
-                    <th style="width:30px;">#</th>
-                    <th>Group Name</th>
-                    <th style="width:150px;">Date</th>
+                    <th style="width:5%;">#</th>
+                    <th style="width:80%;">Group Name</th>
+                    <th style="width:15%;">Date</th>
                 </tr>
                 <xsl:apply-templates select="//group"/>
             </table>
@@ -102,11 +129,11 @@
             </h6>
             <table>
                 <tr>
-                    <th style="width:30px;">#</th>
-                    <th>Constraint Name</th>
-                    <th>Count</th>
-                    <th style="width:150px;">Severity</th>
-                    <th style="width:150px;">Duration (in ms)</th>
+                    <th style="width:5%;">#</th>
+                    <th style="width:50%;">Constraint Name</th>
+                    <th style="width:15%;">Count</th>
+                    <th style="width:15%;">Severity</th>
+                    <th style="width:15%;">Duration (in ms)</th>
                 </tr>
                 <xsl:apply-templates select="//constraint">
                     <xsl:sort select="count(result)" order="descending"
@@ -125,11 +152,11 @@
             </h6>
             <table>
                 <tr>
-                    <th>#</th>
-                    <th>Concept Name</th>
-                    <th>Count</th>
-                    <th style="width:150px;">Severity</th>
-                    <th style="width:150px;">Duration (in ms)</th>
+                    <th style="width:5%;">#</th>
+                    <th style="width:50%;">Concept Name</th>
+                    <th style="width:15%;">Count</th>
+                    <th style="width:15%;">Severity</th>
+                    <th style="width:15%;">Duration (in ms)</th>
                 </tr>
                 <xsl:apply-templates select="//concept">
                     <xsl:sort select="count(result)" order="descending"

@@ -14,7 +14,12 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -222,7 +227,8 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                 Integer lineNumber = sourceProvider.getLineNumber(descriptor);
                 if (sourceFile != null) {
                     xmlStreamWriter.writeStartElement("source");
-                    xmlStreamWriter.writeAttribute("name", sourceFile.getFileName());
+                    String fileName = sourceFile.getFileName();
+                    xmlStreamWriter.writeAttribute("name", fileName);
                     if (lineNumber != null) {
                         xmlStreamWriter.writeAttribute("line", lineNumber.toString());
                     }
@@ -261,11 +267,11 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
      *             If writing fails.
      */
     private void writeSeverity(Rule rule) throws XMLStreamException {
-            Severity severity = ((AbstractRule) rule).getSeverity();
-            xmlStreamWriter.writeStartElement("severity");
-            xmlStreamWriter.writeAttribute("level", severity.getLevel().toString());
-            xmlStreamWriter.writeCharacters(severity.getValue());
-            xmlStreamWriter.writeEndElement();
+        Severity severity = ((AbstractRule) rule).getSeverity();
+        xmlStreamWriter.writeStartElement("severity");
+        xmlStreamWriter.writeAttribute("level", severity.getLevel().toString());
+        xmlStreamWriter.writeCharacters(severity.getValue());
+        xmlStreamWriter.writeEndElement();
     }
 
     /**
