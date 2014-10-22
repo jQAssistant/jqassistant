@@ -4,13 +4,20 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
@@ -52,9 +59,16 @@ public class ScannerImpl implements Scanner {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
             try {
                 if (selectedPlugin.accepts(item, path, scope)) {
+                    if (descriptor != null) {
+                        scannerContext.push((Class<Descriptor>) descriptor.getClass(), descriptor);
+                    }
                     scannerListener.before(item, path, scope);
-                    descriptor = selectedPlugin.scan(item, path, scope, this);
+                    D newDescriptor = selectedPlugin.scan(item, path, scope, this);
                     scannerListener.after(item, path, scope, descriptor);
+                    if (descriptor != null) {
+                        scannerContext.pop(descriptor.getClass());
+                    }
+                    descriptor = newDescriptor;
                 }
             } catch (IOException e) {
                 LOGGER.error("Cannot scan item " + path, e);
