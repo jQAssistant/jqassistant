@@ -1,5 +1,11 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
-    <description>Plugin defining a custom report.</description>
+    <description>Custom plugins.</description>
+    <model>
+        <class>com.buschmais.jqassistant.scm.maven.integration.plugin.CustomDescriptor</class>
+    </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.scm.maven.integration.plugin.CustomScannerPlugin</class>
+    </scanner>
     <report>
         <class>com.buschmais.jqassistant.scm.maven.integration.plugin.CustomReportPlugin</class>
     </report>

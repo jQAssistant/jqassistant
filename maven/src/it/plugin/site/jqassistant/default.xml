@@ -1,8 +1,21 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <group id="default">
+        <includeConcept refId="customplugin:testValue"/>
         <includeConstraint refId="dependency:TypeCycles"/>
         <includeConstraint refId="dependency:ArtifactCycles"/>
     </group>
+
+    <concept id="customplugin:testValue">
+        <description>Return all Custom labeled nodes with a value "testValue".</description>
+        <cypher><![CDATA[
+            match
+              (c:Custom)
+            where
+              c.value="testValue"
+            return
+              c.value
+        ]]></cypher>
+    </concept>
 
 </jqa:jqassistant-rules>

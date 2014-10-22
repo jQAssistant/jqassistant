@@ -15,6 +15,9 @@
                 <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
                 <configuration>
+                    <scanProperties>
+                        <custom.scan.value>testValue</custom.scan.value>
+                    </scanProperties>
                     <reportProperties>
                         <customReport.fileName>${project.build.directory}/customReport.txt</customReport.fileName>
                     </reportProperties>
