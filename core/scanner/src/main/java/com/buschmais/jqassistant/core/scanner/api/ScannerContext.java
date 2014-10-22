@@ -10,11 +10,45 @@ import com.buschmais.jqassistant.core.store.api.Store;
  */
 public interface ScannerContext {
 
+    /**
+     * Return the store.
+     * 
+     * @return The store.
+     */
     Store getStore();
 
+    /**
+     * Push a value to the context.
+     * 
+     * @param key
+     *            The type of the value.
+     * @param value
+     *            The value.
+     * @param <T>
+     *            The type of the value.
+     */
     <T> void push(Class<T> key, T value);
 
+    /**
+     * Peek for a value in the context.
+     * 
+     * @param key
+     *            The type of the value.
+     * @param <T>
+     *            The type of the value.
+     * @return The value.
+     */
     <T> T peek(Class<T> key);
 
+    /**
+     * Pop a value from the context.
+     * 
+     * @param key
+     *            The type of the value.
+     * @param <T>
+     *            The type of the value.
+     * @return The value.
+     */
     <T> T pop(Class<T> key);
+
 }
