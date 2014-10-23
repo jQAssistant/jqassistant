@@ -17,9 +17,9 @@ include::quickstart.adoc[]
 
 include::introduction.adoc[]
 
-include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
-
 include::{docRoot}/jqassistant.scm.cli/readme.adoc[]
+
+include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
 
 include::examples.adoc[]
 

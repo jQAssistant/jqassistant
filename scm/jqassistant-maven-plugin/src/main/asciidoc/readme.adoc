@@ -106,6 +106,12 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </goals>
                         <!--
                         <configuration>
+                            <concepts>
+                                <concept>junit4:TestClass</concept>
+                            </concepts>
+                            <constraints>
+                                <constraint>junit4:TestMethodWithoutAssertion</constraints>
+                            </constraints>
                             <groups>
                                 <group>default</group>
                             </groups>
@@ -116,6 +122,15 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                     </execution>
                 </executions>
                 <!--
+                <configuration>
+                    <skip>false</skip>
+                    <storeLifecycle>REACTOR</storeLifecycle>
+                    <rulesDirectory>jqassistant</rulesDirectory>
+                    <rulesDirectories>
+                        <rulesDirectory>target/generated-rules</rulesDirectory>
+                    </rulesDirectories>
+                    <xmlReportFile>target/jqassistant/jqassistant-report.xml</xmlReportFile>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -277,62 +292,59 @@ List all available rules.
 [[report]]
 ==== jqassistant:report
 ===== Description
-Transforms an XML report into HTML.
+Transforms the XML report into HTML (i.e. for generating a Maven site).
 
 ===== Configuration
 * <<xmlReportFile>>
-* htmlReportFile (-Djqassistant.report.html)
-** specifes the target file for writing the HTML report
-** default: '{rootModule}/target/site/jqassistant.html'
 
 === Common Configuration Properties
 ==== Execution
 
 [[skip]]
-* skip
-** skip execution of the plugin
-** default: false
+===== skip
+* skip execution of the plugin
+* default: 'false'
 
 ==== Store
 
 [[storeDirectory]]
-* storeDirectory (-Djqassistant.store.directory)
-** specifies the location of the database
-** default: '{rootModule}/target/jqassistant/store'
+===== storeDirectory (-Djqassistant.store.directory)
+* specifies the location of the database
+* default: '{rootModule}/target/jqassistant/store'
 
 [[storeLifecycle]]
-* storeLifecycle (-Djqassistant.store.lifecycle)
-** specifies the lifecycle of the data store
-*** REACTOR: cache the store for the execution time of the reactor for fast operations
-*** MODULE: open and close the store for each module
-** default: REACTOR
+===== storeLifecycle (-Djqassistant.store.lifecycle)
+* specifies the lifecycle of the data store
+** 'REACTOR': cache the store for the execution time of the reactor for fast operations
+** 'MODULE': open and close the store for each module
+* default: 'REACTOR'
 
 ==== Analysis And Report
 
 [[concepts]]
-* concepts (-Djqassistant.concepts)
-** specifies the ids of the concepts to be applied
+===== concepts (-Djqassistant.concepts)
+* specifies the ids of the concepts to be applied
 
 [[constraints]]
-* constraints (-Djqassistant.constraints)
-** specifies the ids of the constraints to be validated
+===== constraints (-Djqassistant.constraints)
+* specifies the ids of the constraints to be validated
 
 [[groups]]
-* groups (-Djqassistant.groups)
-** specifies the ids of the groups to be executed
-** default: 'default'
-
-[[xmlReportFile]]
-* xmlReportFile (-Djqassistant.report.xml)
-** specifes the target file for writing the XML report
-** default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
+===== groups (-Djqassistant.groups)
+* specifies the ids of the groups to be executed
+* default: 'default'
 
 [[rulesDirectory]]
-* rulesDirectory (-Djqassistant.rules.directory)
-** specifies the name of the directory which contains rules
-** this directory is also used to identify the root module of a project, see <<ProjectScope>>
-** default: 'jqassistant'
+===== rulesDirectory (-Djqassistant.rules.directory)
+* specifies the name of the directory which contains rules
+* this directory is also used to identify the root module of a project, see <<ProjectScope>>
+* default: 'jqassistant'
 
 [[rulesDirectories]]
-* rulesDirectories (-Djqassistant.rules.directories)
-** specifies a list of directory names relative to the root module containing additional rules
+===== rulesDirectories (-Djqassistant.rules.directories)
+* specifies a list of directory names relative to the root module containing additional rules
+
+[[xmlReportFile]]
+===== xmlReportFile (-Djqassistant.report.xml)
+* specifes the target file for writing the XML report
+* default: '{rootModule}/target/jqassistant/jqassistant-report.xml'
