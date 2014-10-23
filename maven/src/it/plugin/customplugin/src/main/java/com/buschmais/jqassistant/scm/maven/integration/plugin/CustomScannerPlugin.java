@@ -6,11 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 
