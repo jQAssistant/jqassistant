@@ -102,6 +102,8 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      *            The project.
      * @param projectDescriptor
      *            The project descriptor.
+     * @param scannerContext
+     *            The scanner context.
      */
     private void addModules(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, ScannerContext scannerContext) {
         File projectDirectory = project.getBasedir();
@@ -156,15 +158,25 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     }
 
     /**
-     * Scan the given directory for classes.
+     * Scan the given directory for classes and add them to an artifact.
      * 
+     * @param projectDescriptor
+     *            The maven project.
+     * @param artifact
+     *            The artifact.
+     * @param testJar
+     *            <code>true</code> indicates a test jar.
      * @param directoryName
-     *            The directory.
-     * @throws java.io.IOException
-     *             If scanning fails.
+     *            The name of the directory.
+     * @param scanner
+     *            The scanner.
      */
     private ArtifactDescriptor scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, Artifact artifact, boolean testJar,
-            final String directoryName, Scanner scanner) throws IOException {
+            final String directoryName, Scanner scanner) {
+        File directory = new File(directoryName);
+        if (!directory.exists()) {
+            return null;
+        }
         ArtifactDescriptor artifactDescriptor = resolveArtifact(artifact, testJar, scanner.getContext());
         projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
         scanner.getContext().push(ArtifactDescriptor.class, artifactDescriptor);
@@ -189,19 +201,42 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      *            The scanner.
      */
     private void scanPath(MavenProjectDirectoryDescriptor projectDescriptor, String path, Scope scope, Scanner scanner) {
-        File item = new File(path);
-        if (item.exists()) {
-            scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
-            try {
-                Descriptor descriptor = scanner.scan(item, path, scope);
-                if (descriptor != null) {
-                    projectDescriptor.addContains(descriptor);
-                }
-            } finally {
-                scanner.getContext().pop(MavenProjectDirectoryDescriptor.class);
-            }
+        File file = new File(path);
+        if (file.exists()) {
+            scanPath(projectDescriptor, file, path, scope, scanner);
         } else {
-            LOGGER.info(path + "' does not exist, skipping scan.");
+            LOGGER.info(file.getAbsolutePath() + " does not exist, skipping.");
+        }
+    }
+
+    /**
+     * Scan a given file.
+     * <p>
+     * The current project is pushed to the context.
+     * </p>
+     * 
+     * @param projectDescriptor
+     *            The maven project descriptor.
+     * @param directory
+     *            The file.
+     * @param path
+     *            The path.
+     * 
+     * @param scope
+     *            The scope.
+     * 
+     * @param scanner
+     *            The scanner.
+     */
+    private void scanPath(MavenProjectDirectoryDescriptor projectDescriptor, File directory, String path, Scope scope, Scanner scanner) {
+        scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
+        try {
+            Descriptor descriptor = scanner.scan(directory, path, scope);
+            if (descriptor != null) {
+                projectDescriptor.addContains(descriptor);
+            }
+        } finally {
+            scanner.getContext().pop(MavenProjectDirectoryDescriptor.class);
         }
     }
 }
