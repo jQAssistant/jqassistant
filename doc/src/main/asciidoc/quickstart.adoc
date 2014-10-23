@@ -1,6 +1,58 @@
 == Quickstart
 
-=== Add the Maven plugin
+=== Command Line
+
+==== Installation
+
+* Download and unpack the distribution, a directory ${project.artifactId}-${project.version} will be created.
+
+==== Scan
+
+[source]
+.Windows
+----
+bin/jqassistant.cmd scan -f lib
+----
+
+[source]
+.Linux
+----
+bin/jqassistant.sh scan -f lib
+----
+
+* The JAR files contained in the lib/ folder will be scanned.
+
+===== Explore
+
+[source]
+.Windows
+----
+bin/jqassistant.cmd server
+----
+
+[source]
+.Linux
+----
+bin/jqassistant.sh server
+----
+
+* Open the browser and navigate to http://localhost:7474[http://localhost:7474]
+* Execute a query:
+
+[source]
+----
+MATCH
+  (t:Type)-[:DECLARES]->(m:Method)
+RETURN
+  t.fqn AS Type, count(t) AS DeclaredMethods
+ORDER BY
+  DeclaredMethods DESC
+LIMIT 20
+----
+
+=== Maven
+
+==== Add the plugin
 
 Add the following lines to the parent pom.xml file of your project:
 
@@ -46,7 +98,7 @@ Add the following lines to the parent pom.xml file of your project:
 </reporting>
 ----
 
-=== Add a rule
+==== Add a rule
 
 Within your parent module create a directory "jqassistant" and a rules file in it:
 
@@ -75,7 +127,7 @@ Within your parent module create a directory "jqassistant" and a rules file in i
 
 ----
 
-=== Run the build
+==== Run the build
 
 Execute the following command from your parent module:
 
@@ -91,7 +143,7 @@ The build will fail with the message specified by your rule if it is violated. I
 mvn site
 ----
 
-=== Explore your application
+==== Explore your application
 
 jQAssistant comes with an integrated Neo4j server, you can run it using
 
