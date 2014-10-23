@@ -22,7 +22,7 @@ public class CustomScannerPlugin extends AbstractScannerPlugin<FileResource, Cus
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return false;
+        return true;
     }
 
     @Override
