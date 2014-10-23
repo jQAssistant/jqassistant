@@ -12,6 +12,9 @@
     <profiles>
         <profile>
             <id>IT</id>
+            <properties>
+                <maven.invoker.localRepositoryPath>${project.build.directory}/local-repo</maven.invoker.localRepositoryPath>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -21,7 +24,7 @@
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <settingsFile>src/it/settings.xml</settingsFile>
                             <mergeUserSettings>false</mergeUserSettings>
-                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <localRepositoryPath>${maven.invoker.localRepositoryPath}</localRepositoryPath>
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>true</streamLogs>
                             <pomIncludes>
@@ -29,6 +32,7 @@
                                 <pomInclude>singlemodule/junit-report/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/export-rules/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/skip/pom.xml</pomInclude>
+                                <pomInclude>singlemodule/scanincludes/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/customruledir/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/multipleruledirs/pom.xml</pomInclude>
@@ -36,7 +40,6 @@
                                 <pomInclude>multimodule/multiparent/singlestore/pom.xml</pomInclude>
                                 <pomInclude>plugin/pom.xml</pomInclude>
                                 <pomInclude>tycho/additionalfiles/pom.xml</pomInclude>
-                                <pomInclude>singlemodule/scanincludes/pom.xml</pomInclude>
                             </pomIncludes>
                         </configuration>
                         <executions>
