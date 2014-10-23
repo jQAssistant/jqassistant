@@ -17,11 +17,37 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${org.asciidoctor_version}</version>
+                <executions>
+                    <execution>
+                        <id>output-html</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>html</backend>
+                            <sourceHighlighter>coderay</sourceHighlighter>
+                            <attributes>
+                                <toc>auto</toc>
+                                <toclevels>3</toclevels>
+                                <tabsize>4</tabsize>
+                                <stylesheet>jqassistant.css</stylesheet>
+                                <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
+                                <projectVersion>${project.version}</projectVersion>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unpack-dependencies</id>
+                        <id>unpack-distributions</id>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
@@ -30,6 +56,19 @@
                             <outputDirectory>${distribution.directory}</outputDirectory>
                             <includeTypes>zip</includeTypes>
                             <includeClassifiers>distribution</includeClassifiers>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-asciidoc</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-sources/asciidoc</outputDirectory>
+                            <includeTypes>zip</includeTypes>
+                            <includeClassifiers>asciidoc</includeClassifiers>
                             <stripVersion>true</stripVersion>
                         </configuration>
                     </execution>
@@ -55,6 +94,15 @@
     </build>
 
     <dependencies>
+        <!-- Maven -->
+        <dependency>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <!-- CLI -->
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
             <artifactId>jqassistant.scm.cli</artifactId>
@@ -63,18 +111,147 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <artifactId>jqassistant.scm.cli</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <!-- Sonar -->
+        <dependency>
+        <groupId>com.buschmais.jqassistant.sonar</groupId>
             <artifactId>jqassistant.sonar.plugin</artifactId>
             <type>zip</type>
             <classifier>distribution</classifier>
             <version>${project.version}</version>
         </dependency>
+        <!-- Plugins -->
         <dependency>
-            <groupId>com.buschmais.jqassistant.doc</groupId>
-            <artifactId>jqassistant.doc</artifactId>
-            <type>zip</type>
-            <classifier>distribution</classifier>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java</artifactId>
             <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java8</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.cdi</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.ejb3</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.jaxrs</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.jpa2</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.junit4</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.maven3</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.osgi</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.tycho</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <!-- Examples -->
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.rules.naming</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.rules.forbiddenmethod</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.plugins.scanner</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.plugins.rule</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.plugins.report</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.plugins.project</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.sonar.ruleextension</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.examples</groupId>
+            <artifactId>jqassistant.examples.sonar.project</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
         </dependency>
     </dependencies>
 

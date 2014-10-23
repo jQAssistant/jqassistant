@@ -481,7 +481,6 @@
 
     <modules>
         <module>assembly</module>
-        <module>doc</module>
         <module>core</module>
         <module>plugin</module>
         <module>scm</module>

@@ -8,17 +8,25 @@
     <includeBaseDirectory>true</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>src/distribution</directory>
+            <directory>src/main/distribution</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
                 <include>**</include>
             </includes>
         </fileSet>
         <fileSet>
-        <directory>${distribution.directory}</directory>
+            <directory>${distribution.directory}</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
                 <include>**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <outputDirectory>doc</outputDirectory>
+            <directory>${project.build.directory}/generated-docs</directory>
+            <includes>
+                <include>index.html</include>
+                <include>images/**</include>
             </includes>
         </fileSet>
     </fileSets>
