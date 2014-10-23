@@ -1,0 +1,14 @@
+== Plugins
+
+This section provides detailed descriptions of all distributed plugins.
+
+include::{docRoot}/jqassistant.plugin.cdi/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.ejb3/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.jaxrs/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.java/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.java8/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.jpa2/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.junit4/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.maven3/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.osgi/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.tycho/plugin.adoc[]

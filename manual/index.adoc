@@ -1,0 +1,30 @@
+= Manual
+jQAssistant Team <info@jqassistant.org>
+
+image::jQA_logo.png[]
+
+The powerful Quality Assurance Tool for your Java application.
+
+This document describes the concepts of jQAssistant and usage information.
+
+:numbered!:
+[abstract]
+include::overview.adoc[]
+
+include::license.adoc[]
+
+include::quickstart.adoc[]
+
+include::introduction.adoc[]
+
+include::{docRoot}/jqassistant.scm.cli/readme.adoc[]
+
+include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
+
+include::examples.adoc[]
+
+include::plugins.adoc[]
+
+////
+include::devguide.adoc[]
+////

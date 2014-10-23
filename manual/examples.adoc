@@ -1,0 +1,15 @@
+== Examples
+
+=== Rules
+include::{docRoot}/jqassistant.examples.rules.forbiddenmethod/readme.adoc[]
+include::{docRoot}/jqassistant.examples.rules.naming/readme.adoc[]
+
+=== Plugins
+include::{docRoot}/jqassistant.examples.plugins.scanner/readme.adoc[]
+include::{docRoot}/jqassistant.examples.plugins.rule/readme.adoc[]
+include::{docRoot}/jqassistant.examples.plugins.report/readme.adoc[]
+include::{docRoot}/jqassistant.examples.plugins.project/readme.adoc[]
+
+=== SonarQube
+include::{docRoot}/jqassistant.examples.sonar.project/readme.adoc[]
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/readme.adoc[]
