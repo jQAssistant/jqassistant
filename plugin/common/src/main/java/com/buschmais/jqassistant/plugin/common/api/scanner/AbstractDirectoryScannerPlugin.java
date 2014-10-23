@@ -1,6 +1,10 @@
-package com.buschmais.jqassistant.plugin.common.impl.scanner;
+package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +18,9 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDi
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
+/**
+ * Abstract base implementation for directory scanners.
+ */
 public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerScannerPlugin<File, File> {
 
     @Override
@@ -23,7 +30,7 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
 
     @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
-        return item.isDirectory() && getScope().equals(scope);
+        return item.isDirectory() && getExpectedScope().equals(scope);
     }
 
     @Override
@@ -83,5 +90,10 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
         }
     }
 
-    protected abstract Scope getScope();
+    /**
+     * Return the scope the plugin expects for execution.
+     * 
+     * @return The scope.
+     */
+    protected abstract Scope getExpectedScope();
 }

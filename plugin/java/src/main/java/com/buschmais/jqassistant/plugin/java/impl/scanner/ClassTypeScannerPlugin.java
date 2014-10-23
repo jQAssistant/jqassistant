@@ -7,8 +7,8 @@ import java.io.InputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 
 public class ClassTypeScannerPlugin extends AbstractResourceScannerPlugin<Class<?>, ClassFileDescriptor> {

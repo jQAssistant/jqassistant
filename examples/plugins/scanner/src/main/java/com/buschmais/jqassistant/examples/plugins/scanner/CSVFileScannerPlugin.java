@@ -12,8 +12,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVColumnDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor;
 import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVRowDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
 
 /**
  * A CSV file scanner plugin.

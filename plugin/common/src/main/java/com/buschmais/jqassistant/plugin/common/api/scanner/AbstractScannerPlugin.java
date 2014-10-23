@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.impl.scanner;
+package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
