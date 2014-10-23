@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
 import static java.util.Collections.emptyList;
 
+import org.neo4j.server.configuration.Configurator;
+
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -20,7 +22,7 @@ public class DefaultServerImpl extends AbstractServer {
 
     /**
      * Constructor.
-     * 
+     *
      * @param graphStore
      *            The store instance to use.
      * @param scannerPluginRepository
@@ -32,6 +34,25 @@ public class DefaultServerImpl extends AbstractServer {
         super(graphStore);
         this.scannerPluginRepository = scannerPluginRepository;
         this.rulePluginRepository = rulePluginRepository;
+    }
+
+    /**
+     * Constructor.
+     * 
+     * @param graphStore
+     *            The store instance to use.
+     * @param scannerPluginRepository
+     *            The scanner plugin repository.
+     * @param rulePluginRepository
+     *            The rule plugin repository.
+     * @param port
+     *            The port number of the server.
+     */
+    public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository, int port) {
+        super(graphStore);
+        this.scannerPluginRepository = scannerPluginRepository;
+        this.rulePluginRepository = rulePluginRepository;
+        getConfigurator().configuration().setProperty(Configurator.WEBSERVER_PORT_PROPERTY_KEY, Integer.toString(port));
     }
 
     @Override

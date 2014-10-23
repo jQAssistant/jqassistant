@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.scm.neo4jserver.test;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,12 +11,14 @@ import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.AbstractServer;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 
 /**
  * Abstract base class for server tests.
  */
 public class AbstractServerTest extends AbstractJavaPluginIT {
+
+    public static final int SERVER_PORT = 17474;
 
     private Server server;
 
@@ -26,24 +27,7 @@ public class AbstractServerTest extends AbstractJavaPluginIT {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         final ScannerPluginRepository scannerPluginRepository = getScannerPluginRepository();
         final RulePluginRepository rulePluginRepository = getRulePluginRepository();
-
-        server = new AbstractServer(embeddedGraphStore) {
-            @Override
-            protected Iterable<? extends Class<?>> getExtensions() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            protected ScannerPluginRepository getScannerPluginRepository() {
-                return scannerPluginRepository;
-            }
-
-            @Override
-            protected RulePluginRepository getRulePluginRepository() {
-                return rulePluginRepository;
-            }
-        };
-
+        server = new DefaultServerImpl(embeddedGraphStore, scannerPluginRepository, rulePluginRepository, SERVER_PORT);
         server.start();
     }
 

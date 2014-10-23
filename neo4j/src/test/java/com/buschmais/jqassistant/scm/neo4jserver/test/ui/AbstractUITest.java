@@ -10,18 +10,19 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
 
 /**
- * Abstract class for all HTML unit tests.
+ * Abstract class for all UI tests.
  */
 public abstract class AbstractUITest extends AbstractServerTest {
 
     /** The base url for all HTMl tests. */
-    protected static final String BASE_URL = "http://localhost:7474/jqa/";
+    protected static final String BASE_URL = "http://localhost:" + SERVER_PORT + "/jqa/";
 
     /** The web driver. */
     protected WebDriver driver;
 
     /**
      * Get the web page that the driver should call.
+     * 
      * @return the page
      */
     protected abstract String getWebPage();
@@ -30,11 +31,10 @@ public abstract class AbstractUITest extends AbstractServerTest {
      * Setup the web driver
      */
     @Before
-    public void initializeWebDriver(){
+    public void initializeWebDriver() {
         try {
             driver = new FirefoxDriver();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             assumeNoException("Unable to load FirefoxDriver", e);
         }
         driver.get(BASE_URL + getWebPage());

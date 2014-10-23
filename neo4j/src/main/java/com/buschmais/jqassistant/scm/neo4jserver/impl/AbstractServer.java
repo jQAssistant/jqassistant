@@ -33,7 +33,6 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServer.class);
 
-
     protected final Store store;
 
     public AbstractServer(EmbeddedGraphStore graphStore) {
