@@ -1,2 +1,130 @@
 == Command Line
 
+Shell scripts are provided for executing jQAssistant from the command line of Microsoft Windows(R) or Unix compatible
+systems. They are located in the bin/ directory of the distribution:
+
+* jqassistant.cmd
+* jqassistant.sh
+
+The command line accepts tasks and their specific options:
+
+[source]
+----
+jqassistant.sh <task1> <task2> <task3> -<option1> -<option2>
+----
+
+The following example will scan the content of the directories classes/ and test-classes/:
+
+[source]
+----
+jqassistant.sh scan -f classes,test-classe
+----
+
+=== Tasks
+
+* <<cli:scan>>
+* <<cli:analyze>>
+* <<cli:available-rules>>
+* <<cli:effective-rules>>
+* <<cli:report>>
+* <<cli:server>>
+
+[[cli:scan]]
+==== scan
+===== Description
+Scans files or directories and stores the gathered information in database.
+
+===== Options
+* <<cli:storeDirectory>>
+
+* -f <file1>,<file2> or --files <file1>,<file2>
+** specifies a list of files or directories to scan
+
+* -u <url1>,<url2> or --urls <url1>,<url2>
+** specifies a list of URLs to scan
+
+* -reset
+** reset the database before scanning
+
+[[cli:analyze]]
+==== analyze
+===== Description
+Executes an analysis.
+
+===== Options
+* <<cli:concepts>>
+* <<cli:constraints>>
+* <<cli:groups>>
+* <<cli:storeDirectory>>
+* <<cli:ruleDirectory>>
+* <<cli:reportDirectory>>
+
+* -severity <severity>
+** specifies the severity of a problem for the analysis to fail. The program will return with exit code 2.
+** values: 'info', 'minor', 'major', 'critical' or 'blocker'
+** default: 'minor'
+
+[[cli:available-rules]]
+==== available-rules
+===== Description
+List all available rules.
+
+===== Options
+* <<cli:ruleDirectory>>
+
+[[cli:effective-rules]]
+==== effective-rules
+===== Description
+List the rules which would be executed for an analysis and the given concepts, constraints or groups.
+
+===== Options
+* <<cli:concepts>>
+* <<cli:constraints>>
+* <<cli:groups>>
+* <<cli:ruleDirectory>>
+
+[[cli:report]]
+==== report
+===== Description
+Transforms an XML report into HTML.
+
+===== Options
+* <<cli:reportDirectory>>
+
+[[cli:server]]
+==== effective-rules
+===== Description
+Starts the integrated Neo4j web server (http://localhost:7474).
+
+===== Options
+* <<cli:storeDirectory>>
+
+==== Common options
+
+[[cli:storeDirectory]]
+===== -s, --storeDirectory <directory>
+* specifies the location of the database to use
+* default: './jqassistant/store'
+
+[[cli:concepts]]
+===== -concepts <concept1>,<concept2>
+* specifies the ids of the concepts to be applied
+
+[[cli:constraints]]
+===== -constraints <constraint1>,<constraint2>
+* specifies the ids of the constraints to be validated
+
+[[cli:groups]]
+===== -groups <group1>,<group2>
+* specifies the ids of the groups to be executed
+* default: 'default'
+
+[[cli:ruleDirectory]]
+===== -r, --ruleDirectory <directory>
+* specifies the directory where reports (XML, HTML) will be stored
+* default: './jqassistant/rules'
+
+[[cli:reportDirectory]]
+===== -reportDirectory
+* specifies the directory where reports (XML, HTML) will be stored
+* default: './jqassistant/report'
