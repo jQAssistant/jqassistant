@@ -42,7 +42,7 @@ public class ReportMojo extends AbstractMavenReport {
     protected String outputDirectory;
 
     /**
-     * The file to write the XML report to.
+     * The file to read the XML report from.
      */
     @Parameter(property = "jqassistant.report.xml")
     protected File xmlReportFile;
