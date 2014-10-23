@@ -3,8 +3,8 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
