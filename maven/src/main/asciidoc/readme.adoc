@@ -86,6 +86,18 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         <goals>
                             <goal>scan</goal>
                         </goals>
+                        <!--
+                        <configuration>
+                            <scanIncludes>
+                                <scanInclude>
+                                    <path>config</path>
+                                </scanInclude>
+                            </scanIncludes>
+                            <scanProperties>
+                                <customScanner.property>value</customScanner.property>
+                            </scanProperties>
+                        </configuration>
+                        -->
                     </execution>
                     <execution>
                         <id>analyze</id>
@@ -133,6 +145,13 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </reports>
                     </reportSet>
                 </reportSets>
+                <!--
+                <configuration>
+                    <reportProperties>
+                        <customReport.fileName>target/customReport.txt</customReport.fileName>
+                    </reportProperties>
+                </configuration>
+                -->
             </plugin>
         </plugins>
     </reporting>
@@ -184,6 +203,11 @@ Scans the directories of compiled classes and test classes and stores the gather
 * <<skip>>
 * <<storeDirectory>>
 * <<storeLifecycle>>
+* scanIncludes
+** add directories or files to be included while scanning
+** wildcards are not supported
+* scanProperties
+** allows passing properties to scanner plugins.
 
 [[reset]]
 ==== jqassistant:reset
