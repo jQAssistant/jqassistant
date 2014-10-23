@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;

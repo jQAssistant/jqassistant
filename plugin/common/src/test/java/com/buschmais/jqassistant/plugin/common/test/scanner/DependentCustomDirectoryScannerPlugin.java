@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.impl.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 
 /**
  * A s

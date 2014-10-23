@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.impl.scanner;
+package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.IOException;
 
@@ -58,6 +58,8 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
      * 
      * @param container
      *            The container.
+     * @param scannerContext
+     *            The scanner context.
      * @return The artifact descriptor.
      */
     protected abstract FileContainerDescriptor getContainerDescriptor(I container, ScannerContext scannerContext);
@@ -107,9 +109,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
     protected abstract Scope createScope(Scope currentScope);
 
     /**
-     * Return a
-     * {@link com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource}
-     * representing an entry.
+     * Return a {@link Resource} representing an entry.
      * 
      * @param container
      *            The container.
