@@ -57,24 +57,79 @@ public class ScannerImpl implements Scanner {
         Class<?> itemClass = item.getClass();
         for (ScannerPlugin<?, ?> scannerPlugin : getScannerPluginsForType(itemClass)) {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
-            try {
-                if (selectedPlugin.accepts(item, path, scope)) {
-                    if (descriptor != null) {
-                        scannerContext.push((Class<Descriptor>) descriptor.getClass(), descriptor);
-                    }
-                    scannerListener.before(item, path, scope);
-                    D newDescriptor = selectedPlugin.scan(item, path, scope, this);
-                    scannerListener.after(item, path, scope, descriptor);
-                    if (descriptor != null) {
-                        scannerContext.pop(descriptor.getClass());
-                    }
-                    descriptor = newDescriptor;
+            if (accepts(selectedPlugin, item, path, scope)) {
+                pushDesriptor(descriptor);
+                scannerListener.before(item, path, scope);
+                D newDescriptor = null;
+                try {
+                    newDescriptor = selectedPlugin.scan(item, path, scope, this);
+                } catch (IOException e) {
+                    LOGGER.error("Cannot scan item " + path, e);
                 }
-            } catch (IOException e) {
-                LOGGER.error("Cannot scan item " + path, e);
+                scannerListener.after(item, path, scope, descriptor);
+                popDescriptor(descriptor);
+                descriptor = newDescriptor;
             }
         }
         return descriptor;
+    }
+
+    /**
+     * Checks whether a plugin accepts an item.
+     * 
+     * @param selectedPlugin
+     *            The plugin.
+     * @param item
+     *            The item.
+     * @param path
+     *            The path.
+     * @param scope
+     *            The scope.
+     * @param <I>
+     *            The item type.
+     * @param <D>
+     *            The descriptor type.
+     * @return <code>true</code> if the plugin accepts the item for scanning.
+     */
+    private <I, D extends Descriptor> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
+        try {
+            return selectedPlugin.accepts(item, path, scope);
+        } catch (IOException e) {
+            LOGGER.error("Plugin " + selectedPlugin + " cannot check if it accepts item " + path, e);
+            return false;
+        }
+    }
+
+    /**
+     * Push the given descriptor with all it's types to the context.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param <D>
+     *            The descriptor type.
+     */
+    private <D extends Descriptor> void pushDesriptor(D descriptor) {
+        if (descriptor != null) {
+            for (Class<?> type : descriptor.getClass().getInterfaces()) {
+                scannerContext.push((Class<Object>) type, descriptor);
+            }
+        }
+    }
+
+    /**
+     * Pop the given descriptor from the context.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param <D>
+     *            The descriptor type.
+     */
+    private <D extends Descriptor> void popDescriptor(D descriptor) {
+        if (descriptor != null) {
+            for (Class<?> type : descriptor.getClass().getInterfaces()) {
+                scannerContext.pop(type);
+            }
+        }
     }
 
     @Override
@@ -103,7 +158,7 @@ public class ScannerImpl implements Scanner {
                 @Override
                 public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();
-                    Requires annotation = dependent.getType().getAnnotation(Requires.class);
+                    Requires annotation = dependent.getClass().getAnnotation(Requires.class);
                     if (annotation != null) {
                         for (Class<? extends ScannerPlugin<?, ?>> pluginType : annotation.value()) {
                             dependencies.add(pluginsForType.get(pluginType));

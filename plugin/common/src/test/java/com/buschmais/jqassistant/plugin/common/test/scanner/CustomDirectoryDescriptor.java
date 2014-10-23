@@ -5,4 +5,9 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 
 @Label("Custom")
 public interface CustomDirectoryDescriptor extends DirectoryDescriptor {
+
+    void setValue(String value);
+
+    String getValue();
+
 }
