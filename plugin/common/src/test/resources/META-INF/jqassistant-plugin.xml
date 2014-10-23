@@ -4,6 +4,7 @@
         <class>com.buschmais.jqassistant.plugin.common.test.scanner.CustomDirectoryDescriptor</class>
     </model>
     <scanner>
+        <class>com.buschmais.jqassistant.plugin.common.test.scanner.DependentCustomDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.test.scanner.CustomDirectoryScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>
