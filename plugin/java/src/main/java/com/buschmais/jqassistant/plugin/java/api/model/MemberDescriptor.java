@@ -4,7 +4,6 @@ import static com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.Dec
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.xo.neo4j.api.annotation.Indexed;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
@@ -17,7 +16,6 @@ public interface MemberDescriptor extends Descriptor {
     TypeDescriptor getDeclaringType();
 
     @Property("signature")
-    @Indexed
     String getSignature();
 
     void setSignature(String signature);

@@ -5,7 +5,17 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -152,6 +162,51 @@ public class VisitorHelper {
             cachedType.addMethod(signature, methodDescriptor);
         }
         return methodDescriptor;
+    }
+
+    /**
+     * Add a invokes relation between two methods.
+     * 
+     * @param methodDescriptor
+     *            The invoking method.
+     * @param lineNumber
+     *            The line number.
+     * @param invokedMethodDescriptor
+     *            The invoked method.
+     */
+    public void addInvokes(MethodDescriptor methodDescriptor, int lineNumber, MethodDescriptor invokedMethodDescriptor) {
+        InvokesDescriptor invokesDescriptor = scannerContext.getStore().create(methodDescriptor, InvokesDescriptor.class, invokedMethodDescriptor);
+        invokesDescriptor.setLineNumber(lineNumber);
+    }
+
+    /**
+     * Add a reads relation between a method and a field.
+     * 
+     * @param methodDescriptor
+     *            The method.
+     * @param lineNumber
+     *            The line number.
+     * @param fieldDescriptor
+     *            The field.
+     */
+    public void addReads(MethodDescriptor methodDescriptor, int lineNumber, FieldDescriptor fieldDescriptor) {
+        ReadsDescriptor readsDescriptor = scannerContext.getStore().create(methodDescriptor, ReadsDescriptor.class, fieldDescriptor);
+        readsDescriptor.setLineNumber(lineNumber);
+    }
+
+    /**
+     * Add a writes relation between a method and a field.
+     * 
+     * @param methodDescriptor
+     *            The method.
+     * @param lineNumber
+     *            The line number.
+     * @param fieldDescriptor
+     *            The field.
+     */
+    public void addWrites(MethodDescriptor methodDescriptor, int lineNumber, FieldDescriptor fieldDescriptor) {
+        WritesDescriptor writesDescriptor = scannerContext.getStore().create(methodDescriptor, WritesDescriptor.class, fieldDescriptor);
+        writesDescriptor.setLineNumber(lineNumber);
     }
 
     /**

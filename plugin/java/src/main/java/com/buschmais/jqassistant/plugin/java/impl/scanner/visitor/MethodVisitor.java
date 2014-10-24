@@ -5,7 +5,11 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
@@ -49,11 +53,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         switch (opcode) {
         case Opcodes.GETFIELD:
         case Opcodes.GETSTATIC:
-            this.methodDescriptor.addReads(fieldDescriptor, line);
+            visitorHelper.addReads(methodDescriptor, line, fieldDescriptor);
             break;
         case Opcodes.PUTFIELD:
         case Opcodes.PUTSTATIC:
-            this.methodDescriptor.addWrites(fieldDescriptor, line);
+            visitorHelper.addWrites(methodDescriptor, line, fieldDescriptor);
             break;
         }
     }
@@ -63,7 +67,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
         VisitorHelper.CachedType cachedType = visitorHelper.getType(SignatureHelper.getObjectType(owner));
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature);
-        this.methodDescriptor.addInvokes(invokedMethodDescriptor, line);
+        visitorHelper.addInvokes(methodDescriptor, line, invokedMethodDescriptor);
         visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));
     }
 
