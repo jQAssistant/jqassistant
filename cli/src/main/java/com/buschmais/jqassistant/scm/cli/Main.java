@@ -80,7 +80,8 @@ public class Main {
         try {
             interpretCommandLine(args);
         } catch (JqaConstraintViolationException e) {
-            System.out.println(e.getMessage());
+            Log.getLog().error("Violation(s) detected.");
+            Log.getLog().error(e.getMessage());
             System.exit(2);
         }
     }

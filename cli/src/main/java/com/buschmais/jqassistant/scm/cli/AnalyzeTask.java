@@ -67,6 +67,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             IOUtils.closeQuietly(xmlReportFileWriter);
         }
         store.beginTransaction();
+        Log.getLog().info("Verifying results, severity=" + severity);
         try {
             final ReportHelper reportHelper = new ReportHelper(getLog());
             final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
@@ -78,8 +79,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
                 throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
             }
             reportHelper.verifyConstraintViolations(inMemoryReportWriter);
-        } catch (AnalysisListenerException e) {
-            throw new RuntimeException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
         }
