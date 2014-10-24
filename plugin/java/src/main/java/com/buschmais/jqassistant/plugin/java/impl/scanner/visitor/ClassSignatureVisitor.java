@@ -64,7 +64,7 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
             @Override
             public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                typeDescriptor.addInterface(resolvedTypeDescriptor);
+                typeDescriptor.getInterfaces().add(resolvedTypeDescriptor);
             }
         };
     }

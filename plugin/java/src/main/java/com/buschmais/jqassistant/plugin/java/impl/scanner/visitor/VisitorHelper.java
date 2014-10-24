@@ -1,9 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
-import com.buschmais.xo.api.CompositeObject;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -20,9 +23,54 @@ public class VisitorHelper {
     private DescriptorResolverFactory resolverFactory;
     private ScannerContext scannerContext;
 
-    private Cache<String, TypeDescriptor> typeCache;
-    private Cache<String, MethodDescriptor> methodCache;
-    private Cache<String, FieldDescriptor> fieldCache;
+    /**
+     * Represents a type and all of its declared members.
+     * 
+     * @param <T>
+     *            The descriptor type.
+     */
+    public static class CachedType<T extends TypeDescriptor> {
+        private T typeDescriptor;
+        private Map<String, MethodDescriptor> methods = new HashMap<>();
+        private Map<String, FieldDescriptor> fields = new HashMap<>();
+
+        /**
+         * Constructor.
+         * 
+         * @param typeDescriptor
+         *            The type descriptor.
+         */
+        public CachedType(T typeDescriptor) {
+            this.typeDescriptor = typeDescriptor;
+        }
+
+        public T getTypeDescriptor() {
+            return typeDescriptor;
+        }
+
+        public void migrate(T typeDescriptor) {
+            this.typeDescriptor = typeDescriptor;
+        }
+
+        FieldDescriptor getField(String signature) {
+            return fields.get(signature);
+        }
+
+        void addField(String signature, FieldDescriptor field) {
+            fields.put(signature, field);
+        }
+
+        MethodDescriptor getMethod(String signature) {
+            return methods.get(signature);
+        }
+
+        void addMethod(String signature, MethodDescriptor method) {
+            methods.put(signature, method);
+        }
+
+    }
+
+    private Cache<String, CachedType> typeCache;
 
     /**
      * Constructor.
@@ -33,9 +81,7 @@ public class VisitorHelper {
      *            The resolver factory used for looking up descriptors.
      */
     public VisitorHelper(ScannerContext scannerContext, DescriptorResolverFactory resolverFactory) {
-        this.typeCache = CacheBuilder.newBuilder().softValues().build();
-        this.methodCache = CacheBuilder.newBuilder().softValues().build();
-        this.fieldCache = CacheBuilder.newBuilder().softValues().build();
+        this.typeCache = CacheBuilder.newBuilder().maximumSize(2048).build();
         this.scannerContext = scannerContext;
         this.resolverFactory = resolverFactory;
     }
@@ -46,8 +92,8 @@ public class VisitorHelper {
      * @param typeName The full qualified name of the type (e.g.
      * java.lang.Object).
      */
-    TypeDescriptor getTypeDescriptor(String fullQualifiedName) {
-        return getTypeDescriptor(fullQualifiedName, TypeDescriptor.class);
+    CachedType getType(String fullQualifiedName) {
+        return getType(fullQualifiedName, TypeDescriptor.class);
     }
 
     /*
@@ -58,38 +104,52 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends TypeDescriptor> T getTypeDescriptor(String fullQualifiedName, Class<T> type) {
-        TypeDescriptor typeDescriptor = typeCache.getIfPresent(fullQualifiedName);
-        if (typeDescriptor != null && !type.isAssignableFrom(typeDescriptor.getClass())) {
-            typeCache.invalidate(typeDescriptor);
-            typeDescriptor = null;
+    <T extends TypeDescriptor> CachedType getType(String fullQualifiedName, Class<T> expectedType) {
+        CachedType cachedType = typeCache.getIfPresent(fullQualifiedName);
+        TypeDescriptor typeDescriptor;
+        if (cachedType != null && !expectedType.isAssignableFrom(cachedType.getTypeDescriptor().getClass())) {
+            typeDescriptor = scannerContext.getStore().migrate(cachedType.getTypeDescriptor(), expectedType);
+            cachedType.migrate(typeDescriptor);
+        } else if (cachedType == null) {
+            typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, expectedType, scannerContext);
+            cachedType = new CachedType(typeDescriptor);
+            for (Descriptor descriptor : typeDescriptor.getDeclaredFields()) {
+                if (descriptor instanceof FieldDescriptor) {
+                    FieldDescriptor fieldDescriptor = (FieldDescriptor) descriptor;
+                    cachedType.addField(fieldDescriptor.getSignature(), fieldDescriptor);
+                }
+            }
+            for (Descriptor descriptor : typeDescriptor.getDeclaredMethods()) {
+                if (descriptor instanceof MethodDescriptor) {
+                    MethodDescriptor methodDescriptor = (MethodDescriptor) descriptor;
+                    cachedType.addMethod(methodDescriptor.getSignature(), methodDescriptor);
+                }
+            }
+            typeCache.put(fullQualifiedName, cachedType);
         }
-        if (typeDescriptor == null) {
-            typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, type, scannerContext);
-            typeCache.put(fullQualifiedName, typeDescriptor);
-        }
-        return type.cast(typeDescriptor);
+        return cachedType;
     }
 
     /**
      * Return the method descriptor for the given type and method signature.
      * 
-     * @param type
+     * @param cachedType
      *            The containing type.
      * @param signature
      *            The method signature.
      * @return The method descriptor.
      */
-    MethodDescriptor getMethodDescriptor(TypeDescriptor type, String signature) {
-        String memberKey = getMemberKey(type, signature);
-        MethodDescriptor methodDescriptor = methodCache.getIfPresent(memberKey);
+    MethodDescriptor getMethodDescriptor(CachedType<?> cachedType, String signature) {
+        MethodDescriptor methodDescriptor = cachedType.getMethod(signature);
         if (methodDescriptor == null) {
             if (signature.startsWith(CONSTRUCTOR_METHOD)) {
-                methodDescriptor = type.getOrCreateConstructor(signature);
+                methodDescriptor = scannerContext.getStore().create(ConstructorDescriptor.class);
             } else {
-                methodDescriptor = type.getOrCreateMethod(signature);
+                methodDescriptor = scannerContext.getStore().create(MethodDescriptor.class);
             }
-            methodCache.put(memberKey, methodDescriptor);
+            methodDescriptor.setSignature(signature);
+            cachedType.getTypeDescriptor().getDeclaredMethods().add(methodDescriptor);
+            cachedType.addMethod(signature, methodDescriptor);
         }
         return methodDescriptor;
     }
@@ -97,33 +157,21 @@ public class VisitorHelper {
     /**
      * Return the field descriptor for the given type and field signature.
      * 
-     * @param type
+     * @param cachedType
      *            The containing type.
      * @param signature
      *            The field signature.
      * @return The field descriptor.
      */
-    FieldDescriptor getFieldDescriptor(TypeDescriptor type, String signature) {
-        String memberKey = getMemberKey(type, signature);
-        FieldDescriptor fieldDescriptor = fieldCache.getIfPresent(memberKey);
+    FieldDescriptor getFieldDescriptor(CachedType<?> cachedType, String signature) {
+        FieldDescriptor fieldDescriptor = cachedType.getField(signature);
         if (fieldDescriptor == null) {
-            fieldDescriptor = type.getOrCreateField(signature);
-            fieldCache.put(memberKey, fieldDescriptor);
+            fieldDescriptor = scannerContext.getStore().create(FieldDescriptor.class);
+            fieldDescriptor.setSignature(signature);
+            cachedType.getTypeDescriptor().getDeclaredFields().add(fieldDescriptor);
+            cachedType.addField(signature, fieldDescriptor);
         }
         return fieldDescriptor;
-    }
-
-    /**
-     * Creates a unique key for a type member.
-     * 
-     * @param type
-     *            The type.
-     * @param signature
-     *            The field signature.
-     * @return The key.
-     */
-    private String getMemberKey(TypeDescriptor type, String signature) {
-        return CompositeObject.class.cast(type).getId() + "#" + signature;
     }
 
     /**
@@ -154,7 +202,7 @@ public class VisitorHelper {
             throw new RuntimeException();
         }
         if (typeName != null) {
-            TypeDescriptor type = getTypeDescriptor(typeName);
+            TypeDescriptor type = getType(typeName).getTypeDescriptor();
             AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
             annotationDescriptor.setType(type);
             annotatedDescriptor.addAnnotatedBy(annotationDescriptor);
@@ -175,7 +223,7 @@ public class VisitorHelper {
      */
     void addDependency(TypeDescriptor containingTypeDescriptor, DependentDescriptor dependentDescriptor, String dependencyTypeName) {
         if (dependencyTypeName != null) {
-            TypeDescriptor dependency = getTypeDescriptor(dependencyTypeName);
+            TypeDescriptor dependency = getType(dependencyTypeName).getTypeDescriptor();
             if (!containingTypeDescriptor.equals(dependency)) {
                 dependentDescriptor.addDependency(dependency);
             }

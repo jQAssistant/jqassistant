@@ -1,17 +1,14 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
-import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Set;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.xo.api.annotation.ResultOf;
-import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
@@ -49,11 +46,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      * @return The implemented interfaces.
      */
     @Relation("IMPLEMENTS")
-    Set<TypeDescriptor> getInterfaces();
-
-    @ResultOf
-    @Cypher("match (t),(i) where id(t)={this} and id(i)={i} create unique (t)-[:IMPLEMENTS]->(i)")
-    void addInterface(@Parameter("i") TypeDescriptor i);
+    List<TypeDescriptor> getInterfaces();
 
     /**
      * Return the declared methods.
@@ -62,11 +55,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      */
     @Outgoing
     @Declares
-    Set<MethodDescriptor> getDeclaredMethods();
-
-    @ResultOf
-    @Cypher("match (t),(m) where id(t)={this} and id(m)={method} create unique (t)-[:DECLARES]->(m)")
-    void addDeclaredMethod(@Parameter("method") MethodDescriptor method);
+    List<MethodDescriptor> getDeclaredMethods();
 
     /**
      * Return the declared fields.
@@ -75,11 +64,7 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      */
     @Outgoing
     @Declares
-    Set<FieldDescriptor> getDeclaredFields();
-
-    @ResultOf
-    @Cypher("match (t),(f) where id(t)={this} and id(f)={field} create unique (t)-[:DECLARES]->(f)")
-    void addDeclaredField(@Parameter("field") FieldDescriptor field);
+    List<FieldDescriptor> getDeclaredFields();
 
     /**
      * Return the declared inner classes.
@@ -87,21 +72,6 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
      * @return The declared inner classes.
      */
     @Relation("DECLARES")
-    Set<TypeDescriptor> getDeclaredInnerClasses();
+    List<TypeDescriptor> getDeclaredInnerClasses();
 
-    @ResultOf
-    @Cypher("match (t),(i) where id(t)={this} and id(i)={innerClass} create unique (t)-[:DECLARES]->(i)")
-    void addDeclaredInnerClass(@Parameter("innerClass") TypeDescriptor innerClass);
-
-    @ResultOf
-    @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(f:Field {signature:{signature}}) return f as field")
-    FieldDescriptor getOrCreateField(@Parameter("signature") String signature);
-
-    @ResultOf
-    @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(m:Method {signature:{signature}}) return m as method")
-    MethodDescriptor getOrCreateMethod(@Parameter("signature") String signature);
-
-    @ResultOf
-    @Cypher("match (t:Type) where id(t)={this} create unique (t)-[:DECLARES]->(m:Method:Constructor {signature:{signature}}) return m as method")
-    MethodDescriptor getOrCreateConstructor(@Parameter("signature") String signature);
 }

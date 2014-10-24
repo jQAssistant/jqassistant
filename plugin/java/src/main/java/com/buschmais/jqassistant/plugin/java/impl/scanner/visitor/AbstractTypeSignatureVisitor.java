@@ -48,13 +48,13 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
 
     @Override
     public void visitClassType(String name) {
-        resolvedTypeDescriptor = visitorHelper.getTypeDescriptor(SignatureHelper.getObjectType(name));
+        resolvedTypeDescriptor = visitorHelper.getType(SignatureHelper.getObjectType(name)).getTypeDescriptor();
     }
 
     @Override
     public void visitInnerClassType(String name) {
         String innerClassName = resolvedTypeDescriptor.getFullQualifiedName() + "$" + name;
-        resolvedTypeDescriptor = visitorHelper.getTypeDescriptor(innerClassName);
+        resolvedTypeDescriptor = visitorHelper.getType(innerClassName).getTypeDescriptor();
     }
 
     @Override
