@@ -34,9 +34,9 @@ Imports Java classes, i.e. all scanned files having a '.class' suffix. Nodes wit
 <<:Parameter>>
 <<:Value>>
 
-*NOTE Some of these labels may be further qualified with other labels, see the description below.
+*NOTE* Some of these labels may be further qualified with other labels, see the description below.
 
-*NOTE The full set of information is only available for class files which have actually been scanned. Types which are
+*NOTE* The full set of information is only available for class files which have actually been scanned. Types which are
 only referenced (i.e. external libraries not included in the scan) are represented by ':TYPE' nodes providing the
 property 'fqn' and 'DECLARES' relations to their members, i.e. ':FIELD' or ':METHOD'. These member nodes which only
 provide the property 'signature'.
