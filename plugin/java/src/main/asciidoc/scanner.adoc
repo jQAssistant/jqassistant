@@ -37,8 +37,8 @@ Imports Java classes, i.e. all scanned files having a '.class' suffix. Nodes wit
 *NOTE* Some of these labels may be further qualified with other labels, see the description below.
 
 *NOTE* The full set of information is only available for class files which have actually been scanned. Types which are
-only referenced (i.e. external libraries not included in the scan) are represented by ':TYPE' nodes providing the
-property 'fqn' and 'DECLARES' relations to their members, i.e. ':FIELD' or ':METHOD'. These member nodes which only
+only referenced (i.e. from external libraries not included in the scan) are represented by ':TYPE' nodes with a
+property 'fqn' and 'DECLARES' relations to their members. These are ':FIELD' or ':METHOD' labeled nodes which only 
 provide the property 'signature'.
 
 [[:Type]]
@@ -98,7 +98,7 @@ A field declared in a Java type.
 |====
 | Name       | Description
 | name       | The field name, e.g. 'id'
-| signature  | The raw signature of the field, e.g. 'int id'
+| signature  | The raw signature of the field, e.g. 'int id', 'java.lang.String toString()'
 | visibility | optional, The visibility of the field, can be either 'public', 'protected', 'default' or 'private'
 | static     | optional, 'true' indicates that the field has the static modifier, e.g. 'static int id;'
 | final      | optional, 'true' indicates that the field is final, e.g. 'final int id;'
@@ -127,7 +127,7 @@ A method declared in a Java type.
 |====
 | Name       | Description
 | name       | The method name, e.g. 'getId'
-| signature  | The raw signature of the method, e.g. 'int getId()'
+| signature  | The raw signature of the method, e.g. 'int getId()', 'java.lang.String concat(java.lang.String,java.lang.String)'
 | visibility | optional, The visibility of the method, can be either 'public', 'protected', 'default' or 'private'
 | static     | optional, 'true' indicates that the method has the static modifier, e.g. 'static int getId();'
 | final      | optional, 'true' indicates that the method is final, e.g. 'final int getId();'
