@@ -3,7 +3,11 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -43,8 +47,8 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     /**
      * Indicates if the plugin shall fail if a constraint violation is detected.
      */
-    @Parameter(property = "jqassistant.failOnConstraintViolations", defaultValue = "false")
-    protected boolean failOnConstraintViolations;
+    @Parameter(property = "jqassistant.failOnViolations", defaultValue = "false")
+    protected boolean failOnViolations;
 
     /**
      * Severity level for constraint violation failure check. Default value is
@@ -118,11 +122,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         store.beginTransaction();
         try {
             int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
-            if (failOnConstraintViolations && conceptViolations > 0) {
+            if (failOnViolations && conceptViolations > 0) {
                 throw new MojoFailureException(conceptViolations + " concept(s) returned empty results!");
             }
-            int constraintViolations = reportHelper.verifyConstraintViolations(Severity.fromValue(severity), inMemoryReportWriter);
-            if (failOnConstraintViolations && constraintViolations > 0) {
+            int constraintViolations = reportHelper.verifyViolations(Severity.fromValue(severity), inMemoryReportWriter);
+            if (failOnViolations && constraintViolations > 0) {
                 throw new MojoFailureException(constraintViolations + " constraint(s) have been violated!");
             }
         } finally {

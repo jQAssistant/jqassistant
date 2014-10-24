@@ -115,7 +115,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <groups>
                                 <group>default</group>
                             </groups>
-                            <failOnConstraintViolations>true</failOnConstraintViolations>
+                            <failOnViolations>true</failOnViolations>
                             <severity>critical</severity>
                         </configuration>
                          -->
@@ -259,11 +259,11 @@ Executes an analysis.
 * <<rulesDirectory>>
 * <<rulesDirectories>>
 * <<xmlReportFile>>
-* failOnConstraintViolations
-** determines the jQAssistant shall break the build if constraint violations are detected
+* failOnViolations
+** determines if jQAssistant shall break the build if violations are detected (see also _severity_)
 ** default: 'false'
 * severity
-** determines if jQAssistant shall break the build when constraint with higher severity level are violated and _failOnConstraintViolations_ is set to _true_
+** determines if jQAssistant shall break the build when constraint with higher severity level are violated and _failOnViolations_ is set to _true_
 ** default: 'info'
 
 [[effective-rules]]
