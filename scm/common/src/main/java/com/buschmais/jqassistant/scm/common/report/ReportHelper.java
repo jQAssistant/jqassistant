@@ -7,7 +7,11 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -132,7 +136,7 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) {
-        return verifyConstraintViolations(DEFAULT_CONSTRAINT_SEVERITY, inMemoryReportWriter);
+        return verifyViolations(DEFAULT_CONSTRAINT_SEVERITY, inMemoryReportWriter);
     }
 
     /**
@@ -145,7 +149,7 @@ public final class ReportHelper {
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
-    public int verifyConstraintViolations(Severity severity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyViolations(Severity severity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations().values();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {
