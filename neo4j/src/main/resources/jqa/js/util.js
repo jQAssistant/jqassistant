@@ -4,7 +4,7 @@
 var JqaConstants = {};
 JqaConstants.GROUP_ID = 'groupMetricId';
 JqaConstants.METRICS_ID = 'metricId';
-JqaConstants.REST_BASE_URL = 'http://localhost:7474/jqa/rest';
+JqaConstants.REST_BASE_URL = '/jqa/rest';
 JqaConstants.REST_METRIC_GROUPS_URL = JqaConstants.REST_BASE_URL + '/metrics';
 JqaConstants.REST_RUN_METRIC_URL = JqaConstants.REST_METRIC_GROUPS_URL + '/run';
 JqaConstants.REST_ANALYSIS_RULES_URL = JqaConstants.REST_BASE_URL + '/analysis/rules';
