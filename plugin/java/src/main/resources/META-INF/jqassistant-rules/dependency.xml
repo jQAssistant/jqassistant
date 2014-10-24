@@ -1,7 +1,9 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="dependency:Annotation">
-        <description>Creates a DEPENDS_ON relationship between an annotated element and the types of the annotation and its values.</description>
+        <description>Creates a DEPENDS_ON relationship between an annotated element and the types of the annotation and
+            its values.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (e)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(at:Type)
@@ -38,7 +40,9 @@
 
     <concept id="dependency:MethodInvocation">
         <requiresConcept refId="dependency:MethodParameter"/>
-        <description>Creates a DEPENDS_ON relationship between a method and the dependencies of the method signature it invokes.</description>
+        <description>Creates a DEPENDS_ON relationship between a method and the dependencies of the method signature it
+            invokes.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (m:Method)-[:INVOKES]->(target:Method),
@@ -63,7 +67,8 @@
     </concept>
 
     <concept id="dependency:FieldAccess">
-        <description>Creates a DEPENDS_ON relationship between a method and all fields types it reads and writes.</description>
+        <description>Creates a DEPENDS_ON relationship between a method and all fields types it reads and writes.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (m:Method)-[:READS|WRITES]->(target:Field),
@@ -86,7 +91,9 @@
         <requiresConcept refId="dependency:MethodParameter"/>
         <requiresConcept refId="dependency:MethodInvocation"/>
         <requiresConcept refId="dependency:FieldAccess"/>
-        <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields) depends on.</description>
+        <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields)
+            depends on.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (t1:Type)-[:DECLARES*0..1]->(fieldOrMethod)-[:OF_TYPE|RETURNS|DEPENDS_ON|THROWS]->(t2:Type)
@@ -102,7 +109,8 @@
 
     <concept id="dependency:Type">
         <requiresConcept refId="dependency:TypeBody"/>
-        <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.</description>
+        <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (t1:Type)-[:EXTENDS|IMPLEMENTS]->(t2:Type)
@@ -117,7 +125,8 @@
 
     <concept id="dependency:Package">
         <requiresConcept refId="dependency:Type"/>
-        <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.</description>
+        <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (p1:Package)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(p2:Package)
@@ -132,7 +141,8 @@
 
     <concept id="dependency:Artifact">
         <requiresConcept refId="dependency:Type"/>
-        <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.</description>
+        <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.
+        </description>
         <cypher><![CDATA[
             MATCH
                 (a1:Artifact)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(a2:Artifact)
@@ -196,7 +206,7 @@
             RETURN
                 a1 AS Artifact, EXTRACT(a IN nodes(path) | a.fqn) AS Cycle
             ORDER BY
-                Artifact.FQN
+                Artifact.fqn
         ]]></cypher>
     </constraint>
 
