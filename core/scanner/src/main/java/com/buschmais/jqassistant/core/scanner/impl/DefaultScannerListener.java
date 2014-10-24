@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public class DefaultScannerListener implements ScannerListener {
 
-    public static final int THRESHOLD = 200;
+    public static final int THRESHOLD = 512;
 
     private int count = 0;
     private Store store;
