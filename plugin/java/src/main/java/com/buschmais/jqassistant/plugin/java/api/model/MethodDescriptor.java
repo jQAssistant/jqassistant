@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.java.api.model;
 
 import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Method;
 
-import java.util.Set;
+import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
@@ -23,7 +23,7 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
         AbstractDescriptor {
 
     @Relation("HAS")
-    Set<ParameterDescriptor> getParameters();
+    List<ParameterDescriptor> getParameters();
 
     @Relation("RETURNS")
     TypeDescriptor getReturns();
@@ -36,29 +36,17 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Dep
     void setHasDefault(ValueDescriptor<?> hasDefault);
 
     @Relation("THROWS")
-    Set<TypeDescriptor> getDeclaredThrowables();
+    List<TypeDescriptor> getDeclaredThrowables();
 
-    Set<ReadsDescriptor> getReads();
+    List<ReadsDescriptor> getReads();
 
-    @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[r:READS{lineNumber:{lineNumber}}]->(f) return r")
-    void addReads(@Parameter("target") FieldDescriptor target, @Parameter("lineNumber") int lineNumber);
-
-    Set<WritesDescriptor> getWrites();
-
-    @ResultOf
-    @Cypher("match (m),(f) where id(m)={this} and id(f)={target} create (m)-[w:WRITES{lineNumber:{lineNumber}}]->(f) return w")
-    void addWrites(@Parameter("target") FieldDescriptor target, @Parameter("lineNumber") int lineNumber);
+    List<WritesDescriptor> getWrites();
 
     @Outgoing
-    Set<InvokesDescriptor> getInvokes();
+    List<InvokesDescriptor> getInvokes();
 
     @Incoming
-    Set<InvokesDescriptor> getInvokedBy();
-
-    @ResultOf
-    @Cypher("match (m1),(m2) where id(m1)={this} and id(m2)={target} create (m1)-[i:INVOKES{lineNumber:{lineNumber}}]->(m2) return i")
-    void addInvokes(@Parameter("target") MethodDescriptor target, @Parameter("lineNumber") int lineNumber);
+    List<InvokesDescriptor> getInvokedBy();
 
     @ResultOf
     @Cypher("match (m:Method)-[:HAS]->(p:Parameter) where id(m)={this} and p.index={index} return p as parameter")

@@ -29,7 +29,6 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
-            // return true;
             try (InputStream stream = file.createStream()) {
                 byte[] header = new byte[4];
                 stream.read(header);
