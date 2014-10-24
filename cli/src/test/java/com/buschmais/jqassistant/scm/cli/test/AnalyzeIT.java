@@ -50,8 +50,8 @@ public class AnalyzeIT extends AbstractCLIIT {
 
     @Test
     public void constraintSeverity() throws IOException, InterruptedException {
-        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "minor" };
-        assertThat(execute(args).getExitCode(), equalTo(0));
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "info" };
+        assertThat(execute(args).getExitCode(), equalTo(2));
         verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
     }
 

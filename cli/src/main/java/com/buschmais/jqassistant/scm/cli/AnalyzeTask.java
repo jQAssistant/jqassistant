@@ -13,7 +13,11 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.IOUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -74,11 +78,10 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             if (conceptViolations > 0) {
                 throw new JqaConstraintViolationException(conceptViolations + " concept(s) returned empty results!");
             }
-            final int violations = reportHelper.verifyConstraintViolations(severity, inMemoryReportWriter);
+            final int violations = reportHelper.verifyViolations(severity, inMemoryReportWriter);
             if (violations > 0) {
                 throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
             }
-            reportHelper.verifyConstraintViolations(inMemoryReportWriter);
         } finally {
             store.commitTransaction();
         }
