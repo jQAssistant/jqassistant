@@ -81,7 +81,7 @@ public class VisitorHelper {
      *            The resolver factory used for looking up descriptors.
      */
     public VisitorHelper(ScannerContext scannerContext, DescriptorResolverFactory resolverFactory) {
-        this.typeCache = CacheBuilder.newBuilder().maximumSize(2048).build();
+        this.typeCache = CacheBuilder.newBuilder().softValues().build();
         this.scannerContext = scannerContext;
         this.resolverFactory = resolverFactory;
     }

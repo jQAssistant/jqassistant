@@ -118,16 +118,13 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         store.beginTransaction();
         try {
             int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
-            if(failOnConstraintViolations && conceptViolations > 0){
+            if (failOnConstraintViolations && conceptViolations > 0) {
                 throw new MojoFailureException(conceptViolations + " concept(s) returned empty results!");
             }
-            
             int constraintViolations = reportHelper.verifyConstraintViolations(Severity.fromValue(severity), inMemoryReportWriter);
             if (failOnConstraintViolations && constraintViolations > 0) {
                 throw new MojoFailureException(constraintViolations + " constraint(s) have been violated!");
             }
-        } catch (AnalysisListenerException e) {
-            throw new MojoExecutionException("Cannot print report.", e);
         } finally {
             store.commitTransaction();
         }

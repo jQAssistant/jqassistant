@@ -49,6 +49,13 @@ public class AnalyzeIT extends AbstractCLIIT {
     }
 
     @Test
+    public void constraintSeverity() throws IOException, InterruptedException {
+        String[] args = new String[] { "analyze", "-r", RULES_DIRECTORY, "-constraints", TEST_CONSTRAINT, "-severity", "minor" };
+        assertThat(execute(args).getExitCode(), equalTo(0));
+        verifyConcepts(getDefaultStoreDirectory(), TEST_CONCEPT);
+    }
+
+    @Test
     public void storeDirectory() throws IOException, InterruptedException {
         String rulesDirectory = AnalyzeIT.class.getResource("/rules").getFile();
         String customStoreDirectory = "tmp/customStore";
