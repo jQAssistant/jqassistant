@@ -25,19 +25,19 @@ public @interface Java {
         Package {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new SourceProvider<PackageDirectoryDescriptor>() {
+                return new SourceProvider<PackageDescriptor>() {
                     @Override
-                    public String getName(PackageDirectoryDescriptor descriptor) {
+                    public String getName(PackageDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(PackageDirectoryDescriptor descriptor) {
+                    public FileDescriptor getSourceFile(PackageDescriptor descriptor) {
                         return descriptor;
                     }
 
                     @Override
-                    public Integer getLineNumber(PackageDirectoryDescriptor descriptor) {
+                    public Integer getLineNumber(PackageDescriptor descriptor) {
                         return null;
                     }
                 };

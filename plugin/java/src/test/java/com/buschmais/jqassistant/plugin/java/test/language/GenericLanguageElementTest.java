@@ -1,12 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.language;
 
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Field;
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Method;
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.MethodInvocation;
+import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.*;
 import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Package;
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.ReadField;
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Type;
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.WriteField;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -15,14 +10,7 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
-import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PackageDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 
 public class GenericLanguageElementTest {
 
@@ -30,9 +18,9 @@ public class GenericLanguageElementTest {
 
     @Test
     public void packageName() {
-        PackageDirectoryDescriptor descriptor = mock(PackageDirectoryDescriptor.class);
+        PackageDescriptor descriptor = mock(PackageDescriptor.class);
         when(descriptor.getFullQualifiedName()).thenReturn("com.buschmais");
-        SourceProvider<PackageDirectoryDescriptor> sourceProvider = (SourceProvider<PackageDirectoryDescriptor>) Package.getSourceProvider();
+        SourceProvider<PackageDescriptor> sourceProvider = (SourceProvider<PackageDescriptor>) Package.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais"));
     }

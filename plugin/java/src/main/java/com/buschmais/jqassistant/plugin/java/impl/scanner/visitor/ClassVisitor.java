@@ -30,7 +30,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
-        cachedType = visitorHelper.getType(SignatureHelper.getObjectType(name), javaType);
+        cachedType = visitorHelper.getCachedType(SignatureHelper.getObjectType(name), javaType);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
             cachedType.getTypeDescriptor().setAbstract(Boolean.TRUE);
         }
@@ -102,7 +102,9 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             methodDescriptor.setReturns(visitorHelper.getType(returnType).getTypeDescriptor());
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
-                ParameterDescriptor parameterDescriptor = methodDescriptor.createParameter(i);
+                ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, i);
+                // ParameterDescriptor parameterDescriptor =
+                // methodDescriptor.createParameter(i);
                 String parameterType = SignatureHelper.getType(types[i]);
                 parameterDescriptor.setType(visitorHelper.getType(parameterType).getTypeDescriptor());
             }

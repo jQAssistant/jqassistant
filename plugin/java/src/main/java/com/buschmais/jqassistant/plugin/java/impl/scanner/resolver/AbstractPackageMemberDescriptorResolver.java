@@ -68,15 +68,11 @@ public abstract class AbstractPackageMemberDescriptorResolver<P extends PackageD
      *            the scanner context.
      * @return The descriptor.
      */
-    public <R extends T> R resolve(String fullQualifiedName, Class<R> concreteType, ScannerContext scannerContext) {
+    public T resolve(String fullQualifiedName, Class<? extends T> concreteType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
         T descriptor = store.find(getBaseType(), fullQualifiedName);
         if (descriptor != null) {
-            if (getBaseType().equals(concreteType)) {
-                return concreteType.cast(descriptor);
-            } else {
-                return store.migrate(descriptor, concreteType);
-            }
+            return descriptor;
         } else {
             P parent = null;
             String name;

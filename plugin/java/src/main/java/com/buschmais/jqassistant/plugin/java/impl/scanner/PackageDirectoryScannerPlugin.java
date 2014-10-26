@@ -8,13 +8,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.DirectoryResource;
-import com.buschmais.jqassistant.plugin.java.api.model.PackageDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.PackageDescriptorResolver;
 
 /**
  * Implementation of the {@link AbstractScannerPlugin} for java packages.
  */
-public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<DirectoryResource, PackageDirectoryDescriptor> {
+public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<DirectoryResource, PackageDescriptor> {
 
     private PackageDescriptorResolver packageDescriptorResolver = new PackageDescriptorResolver();
 
@@ -24,9 +24,9 @@ public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<Directo
     }
 
     @Override
-    public PackageDirectoryDescriptor scan(DirectoryResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public PackageDescriptor scan(DirectoryResource item, String path, Scope scope, Scanner scanner) throws IOException {
         String packageName = path.substring(1).replaceAll("/", ".");
-        PackageDirectoryDescriptor packageDescriptor = packageDescriptorResolver.resolve(packageName, PackageDirectoryDescriptor.class, scanner.getContext());
+        PackageDescriptor packageDescriptor = packageDescriptorResolver.resolve(packageName, scanner.getContext());
         return packageDescriptor;
     }
 
