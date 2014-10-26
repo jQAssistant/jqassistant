@@ -36,8 +36,8 @@ bin/jqassistant.cmd server
 bin/jqassistant.sh server
 ----
 
-* Open the browser and navigate to http://localhost:7474[http://localhost:7474]
-* Execute a query:
+* Open a browser and navigate to http://localhost:7474[http://localhost:7474]
+* Enter the follwoing query in the top level are and hit Ctrl-Enter:
 
 [source]
 ----
@@ -152,7 +152,8 @@ jQAssistant comes with an integrated Neo4j server, you can run it using
 mvn jqassistant:server
 ----
 
-Now point your browser to http://localhost:7474[http://localhost:7474] and execute a query:
+* Open a browser and navigate to http://localhost:7474[http://localhost:7474]
+* Enter the follwoing query in the top level are and hit Ctrl-Enter:
 
 [source]
 ----
