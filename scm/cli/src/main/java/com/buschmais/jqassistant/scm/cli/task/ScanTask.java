@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
@@ -20,6 +20,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import com.buschmais.jqassistant.scm.cli.OptionsConsumer;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -34,7 +37,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
     private boolean reset = false;
 
     @Override
-    protected void executeTask(final Store store) {
+    protected void executeTask(final Store store) throws CliExecutionException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
             scannerPlugins = scannerPluginRepository.getScannerPlugins();
@@ -58,7 +61,7 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
             try {
                 scan(store, new URL(url), url, scannerPlugins);
             } catch (MalformedURLException e) {
-                throw new IllegalArgumentException("Cannot parse URL " + url, e);
+                throw new CliConfigurationException("Cannot parse URL " + url, e);
             }
         }
     }
@@ -74,11 +77,11 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
     }
 
     @Override
-    public void withOptions(final CommandLine options) {
+    public void withOptions(final CommandLine options) throws CliConfigurationException {
         fileNames = getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList());
         urls = getOptionValues(options, CMDLINE_OPTION_URLS, Collections.<String> emptyList());
         if (fileNames.isEmpty() && urls.isEmpty()) {
-            throw new MissingConfigurationParameterException("No files, directories or urls given.");
+            throw new CliConfigurationException("No files, directories or urls given.");
         }
         reset = options.hasOption(CMDLINE_OPTION_RESET);
     }

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
@@ -8,6 +8,7 @@ import org.apache.commons.cli.CommandLine;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
 import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 
@@ -17,7 +18,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 public class ServerTask extends AbstractJQATask {
 
     @Override
-    protected void executeTask(final Store store) {
+    protected void executeTask(final Store store) throws CliExecutionException {
         Server server = new DefaultServerImpl((EmbeddedGraphStore) store, scannerPluginRepository, rulePluginRepository);
         server.start();
         getLog().info("Running server");
@@ -25,7 +26,7 @@ public class ServerTask extends AbstractJQATask {
         try {
             System.in.read();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new CliExecutionException("Cannot read from console.", e);
         } finally {
             server.stop();
         }

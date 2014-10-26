@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
@@ -13,11 +13,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.IOUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.Console;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -25,6 +21,9 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
+import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 
 /**
@@ -40,7 +39,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     private Severity severity;
 
     @Override
-    protected void executeTask(final Store store) {
+    protected void executeTask(final Store store) throws CliExecutionException {
         LOG.info("Executing analysis.");
         final RuleSet ruleSet = getEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
@@ -76,11 +75,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             final ReportHelper reportHelper = new ReportHelper(getLog());
             final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
             if (conceptViolations > 0) {
-                throw new JqaConstraintViolationException(conceptViolations + " concept(s) returned empty results!");
+                throw new CliRuleViolationException(conceptViolations + " concept(s) returned empty results!");
             }
             final int violations = reportHelper.verifyViolations(severity, inMemoryReportWriter);
             if (violations > 0) {
-                throw new JqaConstraintViolationException(violations + " constraint(s) violated!");
+                throw new CliRuleViolationException(violations + " constraint(s) violated!");
             }
         } finally {
             store.commitTransaction();

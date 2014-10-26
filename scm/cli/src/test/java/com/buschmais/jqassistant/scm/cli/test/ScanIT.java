@@ -15,7 +15,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.cli.ScanTask;
+import com.buschmais.jqassistant.scm.cli.task.ScanTask;
 
 /**
  * Verifies command line scanning.

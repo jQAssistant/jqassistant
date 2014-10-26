@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +23,9 @@ import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import com.buschmais.jqassistant.scm.cli.JQATask;
+import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 
 /**
@@ -126,7 +129,7 @@ public abstract class AbstractJQATask implements JQATask {
     }
 
     @Override
-    public void run() {
+    public void run() throws CliExecutionException {
         List<Class<?>> descriptorTypes;
         final Store store = getStore();
         try {
@@ -194,5 +197,5 @@ public abstract class AbstractJQATask implements JQATask {
         return new EmbeddedGraphStore(directory.getAbsolutePath());
     }
 
-    protected abstract void executeTask(final Store store);
+    protected abstract void executeTask(final Store store) throws CliExecutionException;
 }

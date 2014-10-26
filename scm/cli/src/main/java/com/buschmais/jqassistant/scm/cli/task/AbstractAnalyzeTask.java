@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,6 +19,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import com.buschmais.jqassistant.scm.cli.JQATask;
+import com.buschmais.jqassistant.scm.cli.Log;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -40,7 +43,7 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
     private List<String> groups;
 
     // copied from AbstractAnalysisMojo
-    protected RuleSet getEffectiveRules() {
+    protected RuleSet getEffectiveRules() throws CliExecutionException {
         RuleSet ruleSet = getAvailableRules();
         String message = reportHelper.validateRuleSet(ruleSet);
         if (StringUtils.isNotBlank(message)) {
@@ -49,12 +52,12 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
         try {
             return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
         } catch (RuleSetResolverException e) {
-            throw new RuntimeException("Cannot resolve rules.", e);
+            throw new CliExecutionException("Cannot resolve rules.", e);
         }
     }
 
     // copied from AbstractAnalysisMojo
-    protected RuleSet getAvailableRules() {
+    protected RuleSet getAvailableRules() throws CliExecutionException {
         File selectedDirectory = new File(ruleDirectory);
         List<RuleSource> sources = new ArrayList<>();
         // read rules from rules directory
@@ -78,7 +81,7 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
         return ruleSetReader.read(sources);
     }
 
-    private List<File> readRulesDirectory(File rulesDirectory) {
+    private List<File> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
@@ -100,13 +103,13 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
             }.scan(rulesDirectory);
             return ruleFiles;
         } catch (IOException e) {
-            throw new RuntimeException("Cannot read rules directory: " + rulesDirectory.getAbsolutePath(), e);
+            throw new CliExecutionException("Cannot read rules directory: " + rulesDirectory.getAbsolutePath(), e);
         }
     }
 
     @Override
     public void withOptions(CommandLine options) {
-        ruleDirectory = getOptionValue(options, CMDLINE_OPTION_RULEDIR, DEFAULT_RULE_DIRECTORY);
+        ruleDirectory = getOptionValue(options, CMDLINE_OPTION_RULEDIR, JQATask.DEFAULT_RULE_DIRECTORY);
         groups = getOptionValues(options, CMDLINE_OPTION_GROUPS, Arrays.asList("default"));
         constraints = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         concepts = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());

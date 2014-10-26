@@ -9,7 +9,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.scm.cli.JQATask;
-import com.buschmais.jqassistant.scm.cli.ReportTask;
+import com.buschmais.jqassistant.scm.cli.task.ReportTask;
 
 /**
  * Verifies command line reporting.
