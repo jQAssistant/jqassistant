@@ -5,12 +5,13 @@ As a pre-condition the jQAssistant SonarQube plugin must be downloaded. It is to
 group id "com.buschmais.jqassistant.sonar". For analyzing Java projects the plugin itself (jqassistant.sonar.plugin) and the Java extension
 (jqassistant.sonar.extension.java) are required.
 
-The JAR files must be deployed in the directory "extensions/plugins" of the SonarQube server. This makes a repository 'jQAssistant' and the rules defined in the
-deployed extensions available in the 'Coding rules' view of quality profiles.
+The plugin is available from the standalone distribution in the folder "sonar/" and must be copied to the directory
+"extensions/plugins" of the SonarQube server. After startup a repository 'jQAssistant' is available in the view
+'Coding rules' which provides all rules provided by jQAssistant.
+
 New rules can be added or created in the following ways:
 
 - by creating new concepts and constraints from the pre-defined templates (i.e. "Concept Template" and "Constraint Template")
-- by deploying a pre-defined rule extension available from Maven Central (see above)
 - by deploying a custom rule extension, this is demonstrated by the example "Custom Rule Extension"
 
 Next the following settings must be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:

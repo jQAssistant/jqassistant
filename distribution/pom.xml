@@ -22,13 +22,23 @@
                 <version>${org.asciidoctor_version}</version>
                 <executions>
                     <execution>
-                        <id>output-html</id>
+                        <id>index</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
                             <sourceDocumentName>index.adoc</sourceDocumentName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>releasenotes</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>releasenotes.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
                 </executions>
