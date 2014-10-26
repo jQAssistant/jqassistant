@@ -5,11 +5,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
 
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
@@ -35,7 +31,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             syntheticParameters++;
             return null;
         }
-        ParameterDescriptor parameterDescriptor = methodDescriptor.findParameter(parameter - syntheticParameters);
+        ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(parameterDescriptor, SignatureHelper.getType(desc));
         return new AnnotationVisitor(annotationDescriptor, visitorHelper);
     }

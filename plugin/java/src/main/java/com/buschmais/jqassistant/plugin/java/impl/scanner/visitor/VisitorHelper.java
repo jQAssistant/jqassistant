@@ -5,17 +5,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -103,7 +93,7 @@ public class VisitorHelper {
      * java.lang.Object).
      */
     CachedType getType(String fullQualifiedName) {
-        return getType(fullQualifiedName, TypeDescriptor.class);
+        return getCachedType(fullQualifiedName, TypeDescriptor.class);
     }
 
     /*
@@ -114,15 +104,13 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends TypeDescriptor> CachedType getType(String fullQualifiedName, Class<T> expectedType) {
-        CachedType cachedType = typeCache.getIfPresent(fullQualifiedName);
+    <T extends TypeDescriptor> CachedType getCachedType(String fullQualifiedName, Class<T> expectedType) {
         TypeDescriptor typeDescriptor;
-        if (cachedType != null && !expectedType.isAssignableFrom(cachedType.getTypeDescriptor().getClass())) {
-            typeDescriptor = scannerContext.getStore().migrate(cachedType.getTypeDescriptor(), expectedType);
-            cachedType.migrate(typeDescriptor);
-        } else if (cachedType == null) {
+        CachedType cachedType = typeCache.getIfPresent(fullQualifiedName);
+        if (cachedType == null) {
             typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, expectedType, scannerContext);
             cachedType = new CachedType(typeDescriptor);
+            typeCache.put(fullQualifiedName, cachedType);
             for (Descriptor descriptor : typeDescriptor.getDeclaredFields()) {
                 if (descriptor instanceof FieldDescriptor) {
                     FieldDescriptor fieldDescriptor = (FieldDescriptor) descriptor;
@@ -135,6 +123,10 @@ public class VisitorHelper {
                     cachedType.addMethod(methodDescriptor.getSignature(), methodDescriptor);
                 }
             }
+        }
+        if (!expectedType.isAssignableFrom(cachedType.getTypeDescriptor().getClass())) {
+            typeDescriptor = scannerContext.getStore().migrate(cachedType.getTypeDescriptor(), expectedType);
+            cachedType.migrate(typeDescriptor);
             typeCache.put(fullQualifiedName, cachedType);
         }
         return cachedType;
@@ -162,6 +154,18 @@ public class VisitorHelper {
             cachedType.addMethod(signature, methodDescriptor);
         }
         return methodDescriptor;
+    }
+
+    public ParameterDescriptor getParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
+        for (ParameterDescriptor parameterDescriptor : methodDescriptor.getParameters()) {
+            if (parameterDescriptor.getIndex() == index) {
+                return parameterDescriptor;
+            }
+        }
+        ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
+        parameterDescriptor.setIndex(index);
+        methodDescriptor.getParameters().add(parameterDescriptor);
+        return parameterDescriptor;
     }
 
     /**
