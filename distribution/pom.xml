@@ -28,22 +28,25 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <backend>html</backend>
-                            <sourceHighlighter>coderay</sourceHighlighter>
-                            <attributes>
-                                <toc>auto</toc>
-                                <toclevels>3</toclevels>
-                                <tabsize>4</tabsize>
-                                <stylesheet>jqassistant.css</stylesheet>
-                                <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
-                                <projectVersion>${project.version}</projectVersion>
-                            </attributes>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <backend>xhtml5</backend>
+                    <sourceHighlighter>coderay</sourceHighlighter>
+                    <attributes>
+                        <toc>auto</toc>
+                        <toclevels>3</toclevels>
+                        <tabsize>4</tabsize>
+                        <stylesheet>jqassistant.css</stylesheet>
+                        <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
+                        <projectVersion>${project.version}</projectVersion>
+                    </attributes>
+                </configuration>
             </plugin>
             <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
@@ -119,7 +122,7 @@
         </dependency>
         <!-- Sonar -->
         <dependency>
-        <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
             <artifactId>jqassistant.sonar.plugin</artifactId>
             <type>zip</type>
             <classifier>distribution</classifier>

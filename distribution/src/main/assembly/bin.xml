@@ -25,7 +25,7 @@
             <outputDirectory>doc</outputDirectory>
             <directory>${project.build.directory}/generated-docs</directory>
             <includes>
-                <include>index.html</include>
+                <include>*.html</include>
                 <include>images/**</include>
             </includes>
         </fileSet>
