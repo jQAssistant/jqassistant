@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,62 +8,11 @@ import java.util.Properties;
 
 import org.apache.commons.cli.*;
 
-import com.google.common.base.CaseFormat;
-
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  * @author Dirk Mahler
  */
 public class Main {
-
-    /**
-     * Define all known tasks.
-     */
-    private enum Task {
-        /**
-         * Scan.
-         */
-        SCAN(new ScanTask()),
-        /**
-         * Server.
-         */
-        SERVER(new ServerTask()),
-        /**
-         * Available rules.
-         */
-        AVAILABLE_RULES(new AvailableRulesTask()),
-        /**
-         * Available rules.
-         */
-        EFFECTIVE_RULES(new EffectiveRulesTask()),
-        /**
-         * Analyze.
-         */
-        ANALYZE(new AnalyzeTask()),
-        /**
-         * Reset.
-         */
-        RESET(new ResetTask()),
-        /**
-         * Report.
-         */
-        REPORT(new ReportTask());
-
-        private JQATask task;
-
-        /**
-         * Constructor.
-         * 
-         * @param task
-         */
-        private Task(JQATask task) {
-            this.task = task;
-        }
-
-        public JQATask getTask() {
-            return task;
-        }
-    }
 
     /**
      * The main method.
@@ -79,10 +25,9 @@ public class Main {
     public static void main(String[] args) throws IOException {
         try {
             interpretCommandLine(args);
-        } catch (JqaConstraintViolationException e) {
-            Log.getLog().error("Violation(s) detected.");
+        } catch (CliExecutionException e) {
             Log.getLog().error(e.getMessage());
-            System.exit(2);
+            System.exit(e.getExitCode());
         }
     }
 
@@ -119,7 +64,7 @@ public class Main {
      *            The task specific options.
      */
     private static void gatherTasksOptions(final Options options) {
-        for (Task task : Task.values()) {
+        for (Task task : com.buschmais.jqassistant.scm.cli.Task.values()) {
             for (Option option : task.getTask().getOptions()) {
                 options.addOption(option);
             }
@@ -133,8 +78,8 @@ public class Main {
      */
     private static String gatherTaskNames() {
         final StringBuilder builder = new StringBuilder();
-        for (Task task : Task.values()) {
-            builder.append(task.name().toLowerCase()).append(" ");
+        for (Task task : com.buschmais.jqassistant.scm.cli.Task.values()) {
+            builder.append("'").append(task.name().toLowerCase()).append("' ");
         }
         return builder.toString().trim();
     }
@@ -147,7 +92,7 @@ public class Main {
      * @throws IOException
      *             If an error occurs.
      */
-    private static void interpretCommandLine(final String[] arg) throws IOException {
+    private static void interpretCommandLine(final String[] arg) throws CliExecutionException {
         final CommandLineParser parser = new BasicParser();
         Options option = gatherOptions();
         CommandLine commandLine = null;
@@ -160,10 +105,10 @@ public class Main {
         List<String> requestedTasks = commandLine.getArgList();
         if (requestedTasks.isEmpty()) {
             printUsage(option, "A task must be specified, i.e. one  of " + gatherTaskNames());
-        } else {
-            for (String requestedTask : requestedTasks) {
-                executeTask(requestedTask, option, commandLine);
-            }
+            System.exit(1);
+        }
+        for (String requestedTask : requestedTasks) {
+            executeTask(requestedTask, option, commandLine);
         }
     }
 
@@ -178,13 +123,16 @@ public class Main {
      *            The command line.
      * @throws IOException
      */
-    private static void executeTask(String taskName, Options option, CommandLine commandLine) throws IOException {
-        String formattedTaskName = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, taskName);
-        final JQATask task = Task.valueOf(formattedTaskName).getTask();
+    private static void executeTask(String taskName, Options option, CommandLine commandLine) throws CliExecutionException {
+        final JQATask task = Task.fromName(taskName);
+        if (task == null) {
+            printUsage(option, "Unknown task " + taskName);
+            System.exit(1);
+        }
         try {
             task.withStandardOptions(commandLine);
             task.withOptions(commandLine);
-        } catch (MissingConfigurationParameterException e) {
+        } catch (CliConfigurationException e) {
             printUsage(option, e.getMessage());
             System.exit(1);
         }
@@ -193,21 +141,29 @@ public class Main {
         task.run();
     }
 
-    private static Map<String, Object> readProperties(CommandLine commandLine) throws IOException {
+    private static Map<String, Object> readProperties(CommandLine commandLine) throws CliConfigurationException {
         final Properties properties = new Properties();
         InputStream propertiesStream;
         if (commandLine.hasOption("p")) {
             File propertyFile = new File(commandLine.getOptionValue("p"));
             if (!propertyFile.exists()) {
-                throw new IOException("Property file given by command line does not exist: " + propertyFile.getAbsolutePath());
+                throw new CliConfigurationException("Property file given by command line does not exist: " + propertyFile.getAbsolutePath());
             }
-            propertiesStream = new FileInputStream(propertyFile);
+            try {
+                propertiesStream = new FileInputStream(propertyFile);
+            } catch (FileNotFoundException e) {
+                throw new CliConfigurationException("Cannot open property file.", e);
+            }
         } else {
             propertiesStream = Main.class.getResourceAsStream("/jqassistant.properties");
         }
         Map<String, Object> result = new HashMap<>();
         if (propertiesStream != null) {
-            properties.load(propertiesStream);
+            try {
+                properties.load(propertiesStream);
+            } catch (IOException e) {
+                throw new CliConfigurationException("Cannot load properties from file.", e);
+            }
             for (String name : properties.stringPropertyNames()) {
                 result.put(name, properties.getProperty(name));
             }
@@ -221,5 +177,4 @@ public class Main {
         formatter.printHelp(Main.class.getCanonicalName(), option);
         System.out.println("Example: " + Main.class.getCanonicalName() + " scan -d target/classes,target/test-classes");
     }
-
 }

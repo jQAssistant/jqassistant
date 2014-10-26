@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli;
+package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -15,6 +15,8 @@ import com.buschmais.jqassistant.core.report.api.ReportTransformer;
 import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
 import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import com.buschmais.jqassistant.scm.cli.Log;
 
 public class ReportTask extends AbstractJQATask {
 
@@ -23,7 +25,7 @@ public class ReportTask extends AbstractJQATask {
     private String reportDirectory;
 
     @Override
-    protected void executeTask(final Store store) {
+    protected void executeTask(final Store store) throws CliExecutionException {
         File xmlReportFile = new File(reportDirectory, REPORT_FILE_XML);
         if (!xmlReportFile.exists()) {
             Log.getLog().error(xmlReportFile.getName() + " does not exist.");
@@ -35,14 +37,14 @@ public class ReportTask extends AbstractJQATask {
             try {
                 writer = new FileWriter(htmlReportFile);
             } catch (IOException e) {
-                throw new RuntimeException("Cannot create HTML report file.", e);
+                throw new CliExecutionException("Cannot create HTML report file.", e);
             }
             Result htmlTarget = new StreamResult(writer);
             ReportTransformer transformer = new HtmlReportTransformer();
             try {
                 transformer.toStandalone(xmlSource, htmlTarget);
             } catch (ReportTransformerException e) {
-                throw new RuntimeException("Cannot transform report.", e);
+                throw new CliExecutionException("Cannot transform report.", e);
             }
         }
     }

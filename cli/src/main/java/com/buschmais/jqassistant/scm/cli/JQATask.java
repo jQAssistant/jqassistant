@@ -7,7 +7,7 @@ import org.apache.commons.cli.CommandLine;
 /**
  * @author jn4, Kontext E GmbH, 17.02.14
  */
-public interface JQATask extends Runnable, OptionsProvider, OptionsConsumer {
+public interface JQATask extends OptionsProvider, OptionsConsumer {
 
     public static final String DEFAULT_STORE_DIRECTORY = "jqassistant/store";
     public static final String DEFAULT_RULE_DIRECTORY = "jqassistant/rules";
@@ -18,4 +18,6 @@ public interface JQATask extends Runnable, OptionsProvider, OptionsConsumer {
     void initialize(Map<String, Object> properties);
 
     void withStandardOptions(CommandLine commandLine);
+
+    void run() throws CliExecutionException;
 }
