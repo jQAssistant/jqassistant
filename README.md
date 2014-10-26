@@ -1,4 +1,4 @@
-[![jQAssistant](https://github.com/buschmais/jqassistant/blob/master/doc/src/main/asciidoc/images/jQA_logo.png "jQAssistant")](http://jqassistant.org)
+[![jQAssistant](https://github.com/buschmais/jqassistant/blob/master/distribution/src/main/asciidoc/images/jQA_logo.png "jQAssistant")](http://jqassistant.org)
  
 
 [http://jqassistant.org](http://jqassistant.org) provides all the information you need for getting started with jQAssistant.
