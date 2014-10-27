@@ -1,4 +1,4 @@
-==== Rule Plugin
+==== Custom Rule Plugin
 
 Rules (i.e. concepts, constraints or groups) can be shared between projects by packaging their rule descriptors in JAR artifacts as a classpath resources under /META-INF/jqassistant-rules/, e.g.
 

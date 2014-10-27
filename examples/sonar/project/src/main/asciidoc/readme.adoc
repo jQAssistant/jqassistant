@@ -1,29 +1,27 @@
 ==== jQAssistant Plugin
 
-Projects may retrieve jQAssistant rules from a SonarQube instance using a permalink. Furthermore a sensor is provided which will create issues on violated constraints.
-As a pre-condition the jQAssistant SonarQube plugin must be downloaded. It is together with several extensions available from Maven Central Repository using
-group id "com.buschmais.jqassistant.sonar". For analyzing Java projects the plugin itself (jqassistant.sonar.plugin) and the Java extension
-(jqassistant.sonar.extension.java) are required.
+Projects may retrieve jQAssistant rules from a SonarQube instance using a permalink. Furthermore a sensor is provided
+which will create issues on violated constraints.
 
 The plugin is available from the standalone distribution in the folder "sonar/" and must be copied to the directory
 "extensions/plugins" of the SonarQube server. After startup a repository 'jQAssistant' is available in the view
-'Coding rules' which provides all rules provided by jQAssistant.
+'Coding rules' providing all rules which are distributed with jQAssistant.
 
 New rules can be added or created in the following ways:
 
 - by creating new concepts and constraints from the pre-defined templates (i.e. "Concept Template" and "Constraint Template")
-- by deploying a custom rule extension, this is demonstrated by the example "Custom Rule Extension"
+- by deploying a custom rule extension (demonstrated by the example "Custom Rule Extension")
 
 Next the following settings must be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
 
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=14..43]
+include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=15..44]
 ----
 
 * Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI. Note that special characters must be replaced by XML entities.
 * The specified 'group' must be the name of the quality profile used to analyze the project.
-* The build shall break if a violation is detected, therefore 'failOnConstraintViolations' is set to 'true'.
+* The build shall break if a violation is detected, therefore 'failOnViolations' is set to 'true'.
 * The build shall break only if violation is detected with severity equal to or higher than _critical_, therefore severity is set to _critical_
 

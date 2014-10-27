@@ -1,5 +1,6 @@
 ==== Custom Rule Extension
-A custom rule extension makes user defined jQAssistant rules available for SonarQube. It is a Maven project which declares packaging 'sonar-plugin':
+A custom rule extension can be implemented to make user defined jQAssistant rules available for SonarQube. It is a
+Maven project which declares packaging 'sonar-plugin':
 
 [source,xml]
 .pom.xml
