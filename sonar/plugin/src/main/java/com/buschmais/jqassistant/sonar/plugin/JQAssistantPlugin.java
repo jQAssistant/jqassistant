@@ -1,10 +1,12 @@
 package com.buschmais.jqassistant.sonar.plugin;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.List;
 
 import org.sonar.api.SonarPlugin;
 
+import com.buschmais.jqassistant.sonar.plugin.language.JavaResourceResolver;
 import com.buschmais.jqassistant.sonar.plugin.profile.JQAssistantProfileExporter;
 import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 import com.buschmais.jqassistant.sonar.plugin.sensor.JQAssistantSensor;
@@ -21,6 +23,6 @@ public class JQAssistantPlugin extends SonarPlugin {
      */
     @SuppressWarnings("rawtypes")
     public List getExtensions() {
-        return Arrays.asList(JQAssistantRuleRepository.class, JQAssistantSensor.class, JQAssistantProfileExporter.class);
+        return asList(JQAssistantRuleRepository.class, JQAssistantSensor.class, JQAssistantProfileExporter.class, JavaResourceResolver.class);
     }
 }
