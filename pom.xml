@@ -186,7 +186,7 @@
                         <groups>
                             <group>default</group>
                         </groups>
-                        <failOnConstraintViolations>false</failOnConstraintViolations>
+                        <failOnViolations>false</failOnViolations>
                         <storeLifecycle>MODULE</storeLifecycle>
                     </configuration>
                 </plugin>
@@ -374,7 +374,7 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.8</version>
+                <version>0.10</version>
                 <configuration>
                     <message>Creating site for ${project.artifactId}, ${project.version}</message>
                     <path>${project.distributionManagement.site.url}</path>
