@@ -8,6 +8,24 @@
     <includeBaseDirectory>true</includeBaseDirectory>
     <fileSets>
         <fileSet>
+            <!-- shell scripts provided from other modules -->
+            <directory>${distribution.directory}</directory>
+            <outputDirectory>.</outputDirectory>
+            <includes>
+                <include>**/*.sh</include>
+            </includes>
+            <fileMode>755</fileMode>
+        </fileSet>
+        <fileSet>
+            <!-- all files provided by other modules excluding shell scripts -->
+            <directory>${distribution.directory}</directory>
+            <outputDirectory>.</outputDirectory>
+            <excludes>
+                <exclude>**/*.sh</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <!-- extra distribution files -->
             <directory>src/main/distribution</directory>
             <outputDirectory>.</outputDirectory>
             <includes>
@@ -15,13 +33,7 @@
             </includes>
         </fileSet>
         <fileSet>
-            <directory>${distribution.directory}</directory>
-            <outputDirectory>.</outputDirectory>
-            <includes>
-                <include>**</include>
-            </includes>
-        </fileSet>
-        <fileSet>
+            <!-- documentation -->
             <outputDirectory>doc</outputDirectory>
             <directory>${project.build.directory}/generated-docs</directory>
             <includes>
