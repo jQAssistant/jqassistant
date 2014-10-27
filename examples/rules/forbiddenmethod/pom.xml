@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.examples</groupId>
         <artifactId>jqassistant.examples.rules</artifactId>
-        <version>1.0.0-RC</version>
+        <version>1.0.0-M4-SNAPSHOT</version>
     </parent>
     <artifactId>jqassistant.examples.rules.forbiddenmethod</artifactId>
 
