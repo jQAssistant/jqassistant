@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>jqassistant.plugin</artifactId>
-        <version>1.0.0-M4-SNAPSHOT</version>
+        <version>1.0.0-M4</version>
     </parent>
 
     <artifactId>jqassistant.plugin.jaxrs</artifactId>
