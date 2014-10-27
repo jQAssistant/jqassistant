@@ -14,12 +14,7 @@ import javax.xml.stream.XMLStreamWriter;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
@@ -225,7 +220,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                 stringValue = sourceProvider.getName(descriptor);
                 FileDescriptor sourceFile = sourceProvider.getSourceFile(descriptor);
                 Integer lineNumber = sourceProvider.getLineNumber(descriptor);
-                if (sourceFile != null) {
+                if (sourceFile != null && sourceFile.getFileName() != null) {
                     xmlStreamWriter.writeStartElement("source");
                     String fileName = sourceFile.getFileName();
                     xmlStreamWriter.writeAttribute("name", fileName);
