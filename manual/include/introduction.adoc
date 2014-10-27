@@ -64,7 +64,7 @@ Rules are expressed as Cypher queries and are specified in XML-files:
 </jqa:jqassistant-rules>
 ----
 
-Each rule comes with a unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
+Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
 the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
 
 A rule can optionally define the _severity_ level. jQAssistant allows to break the build if there are violations in the configured severity level (or higher).
