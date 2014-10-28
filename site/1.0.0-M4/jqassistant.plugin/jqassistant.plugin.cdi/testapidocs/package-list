@@ -1,0 +1,12 @@
+com.buschmais.jqassistant.plugin.cdi.test
+com.buschmais.jqassistant.plugin.cdi.test.rule
+com.buschmais.jqassistant.plugin.cdi.test.set.beans
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.event
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.specializes
+com.buschmais.jqassistant.plugin.cdi.test.set.beans.stereotype
