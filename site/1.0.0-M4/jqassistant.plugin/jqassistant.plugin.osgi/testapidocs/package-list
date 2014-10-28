@@ -1,0 +1,6 @@
+com.buschmais.jqassistant.plugin.osgi.test
+com.buschmais.jqassistant.plugin.osgi.test.api.data
+com.buschmais.jqassistant.plugin.osgi.test.api.service
+com.buschmais.jqassistant.plugin.osgi.test.impl
+com.buschmais.jqassistant.plugin.osgi.test.impl.a
+com.buschmais.jqassistant.plugin.osgi.test.impl.b
