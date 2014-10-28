@@ -1,0 +1,4 @@
+com.buschmais.jqassistant.core.analysis.api
+com.buschmais.jqassistant.core.analysis.api.rule
+com.buschmais.jqassistant.core.analysis.impl
+com.buschmais.jqassistant.core.analysis.impl.store.model
