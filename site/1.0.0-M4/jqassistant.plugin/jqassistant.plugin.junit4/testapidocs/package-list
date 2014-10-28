@@ -1,0 +1,6 @@
+com.buschmais.jqassistant.plugin.junit4.test.rule
+com.buschmais.jqassistant.plugin.junit4.test.scanner
+com.buschmais.jqassistant.plugin.junit4.test.set.assertion
+com.buschmais.jqassistant.plugin.junit4.test.set.junit3
+com.buschmais.jqassistant.plugin.junit4.test.set.junit4
+com.buschmais.jqassistant.plugin.junit4.test.set.report
