@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqassistant</artifactId>
-        <version>1.0.0-M4-SNAPSHOT</version>
+        <version>1.0.0-RC-SNAPSHOT</version>
     </parent>
     <groupId>com.buschmais.jqassistant.distribution</groupId>
     <artifactId>jqassistant.distribution</artifactId>
@@ -32,13 +31,13 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>releasenotes</id>
+                        <id>release-notes</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
-                            <sourceDocumentName>releasenotes.adoc</sourceDocumentName>
+                            <sourceDocumentName>release-notes.adoc</sourceDocumentName>
                         </configuration>
                     </execution>
                 </executions>
@@ -51,6 +50,8 @@
                         <tabsize>4</tabsize>
                         <stylesheet>jqassistant.css</stylesheet>
                         <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
+                        <projectGroupId>${project.groupId}</projectGroupId>
+                        <projectArtifactId>${project.artifactId}</projectArtifactId>
                         <projectVersion>${project.version}</projectVersion>
                     </attributes>
                 </configuration>

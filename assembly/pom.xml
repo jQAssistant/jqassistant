@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqassistant</artifactId>
-        <version>1.0.0-M4-SNAPSHOT</version>
+        <version>1.0.0-RC-SNAPSHOT</version>
     </parent>
     <artifactId>jqassistant.assembly</artifactId>
 </project>
