@@ -92,7 +92,7 @@ Transforms an XML report into HTML.
 * <<cli:reportDirectory>>
 
 [[cli:server]]
-==== effective-rules
+==== server
 ===== Description
 Starts the integrated Neo4j web server (http://localhost:7474).
 
@@ -121,7 +121,7 @@ Starts the integrated Neo4j web server (http://localhost:7474).
 
 [[cli:ruleDirectory]]
 ===== -r, --ruleDirectory <directory>
-* specifies the directory where reports (XML, HTML) will be stored
+* specifies the directory where rule files are located
 * default: './jqassistant/rules'
 
 [[cli:reportDirectory]]
