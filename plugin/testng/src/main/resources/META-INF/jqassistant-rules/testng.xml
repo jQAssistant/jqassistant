@@ -1,4 +1,135 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
+    <group id="testng:TestNG">
+        <includeConcept refId="testng:TestMethod"/>
+        <includeConcept refId="testng:TestClass"/>
+        <includeConcept refId="testng:BeforeClassMethod"/>
+        <includeConcept refId="testng:AfterClassMethod"/>
+        <includeConcept refId="testng:BeforeMethod"/>
+        <includeConcept refId="testng:AfterMethod"/>
+        <includeConcept refId="testng:BeforeTestMethod"/>
+        <includeConcept refId="testng:AfterTestMethod"/>
+    </group>
+
+    <concept id="testng:TestMethod">
+        <description>Finds all test methods (i.e. annotated with "@org.testng.annotations.Test") and labels them with "Test" and
+            "TestNG".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[:ANNOTATED_BY]-()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.Test"
+            SET
+              m:Test:TestNG
+            RETURN
+              m AS Test
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:TestClass">
+        <requiresConcept refId="testng:TestMethod"/>
+        <description>Labels all classes containing test methods with "Test" and "TestNG".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method:TestNG:Test)
+            SET
+              c:Test:TestNG
+            RETURN
+              c AS TestClass, COLLECT(m) AS TestMethods
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:BeforeClassMethod">
+        <description>Labels all methods annotated by "@org.testng.annotations.BeforeClass" with "TestNG" and "BeforeClassMethod".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.BeforeClass"
+            SET
+              m:TestNG:BeforeClassMethod
+            RETURN
+              m AS BeforeClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:AfterClassMethod">
+        <description>Labels all methods annotated by "@org.testng.annotations.AfterClass" with "TestNG" and "AfterClassMethod".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.AfterClass"
+            SET
+              m:TestNG:AfterClassMethod
+            RETURN
+              m AS AfterClassMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:BeforeMethod">
+        <description>Labels all methods annotated by "@org.testng.annotations.BeforeMethod" with "TestNG" and "BeforeMethod".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.BeforeMethod"
+            SET
+              m:TestNG:BeforeMethod
+            RETURN
+              m AS BeforeMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:AfterMethod">
+        <description>Labels all methods annotated by "@org.testng.annotations.AfterMethod" with "TestNG" and "AfterMethod".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.AfterMethod"
+            SET
+              m:TestNG:AfterMethod
+            RETURN
+              m AS AfterMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:BeforeTestMethod">
+        <description>Labels all methods annotated by "@org.testng.annotations.BeforeTest" with "TestNG" and "BeforeTestMethod".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.BeforeTest"
+            SET
+              m:TestNG:BeforeTestMethod
+            RETURN
+              m AS BeforeTestMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="testng:AfterTestMethod">
+        <description>Labels all methods annotated by "@org.testng.annotations.AfterTest" with "TestNG" and "AfterTestMethod".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:DECLARES]->(m:Method),
+              (m:Method)-[:ANNOTATED_BY]->()-[:OF_TYPE]->(a:Type)
+            WHERE
+              a.fqn="org.testng.annotations.AfterTest"
+            SET
+              m:TestNG:AfterTestMethod
+            RETURN
+              m AS AfterTestMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
 
 </jqa:jqassistant-rules>
