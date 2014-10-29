@@ -1,0 +1,6 @@
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+    <description>Provides rules for TestNG.</description>
+    <rules>
+        <resource>testng.xml</resource>
+    </rules>
+</v1:jqassistant-plugin>
