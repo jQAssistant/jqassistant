@@ -1,0 +1,76 @@
+<<SchemaScanner>>
+[[SchemaScanner]]
+==== Scanner for metadata of relation database schemas
+Imports the metadata of a relational database schema, i.e. schemas, tables and columns.
+
+The connection properties are taken from property files containing ${project.ArtifactId}, e.g. "${project.ArtifactId}-test.properties", and which contain the properties "driver", "url", "user" and "password", e.g.
+
+[source]
+.${project.ArtifactId}-test.properties
+----
+driver=org.hsqldb.jdbc.JDBCDriver
+url=jdbc:hsqldb:file:target/testdb
+user=SA
+password=
+----
+
+*NOTE* The JDBC driver must be part of the jQAssistant classpath, e.g. a dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
+
+[[:Rdbms:Connection:Properties]]
+===== :Rdbms:Connection:Properties
+Represents a file containing the connection properties described above which have been used to read the schema metadata. It provides the same
+properties and relations as <<:File:Properties>>.
+
+.Relations of :Rdbms:Connection:Properties
+[options="header"]
+|====
+| Name             | Target label(s)   | Cardinality | Description
+| DESCRIBES_SCHEMA | <<:Rdbms:Schema>> | 1           | References the schema
+|====
+
+[[:Rdbms:Schema]]
+===== :Rdbms:Schema
+Describes a database schema.
+
+.Properties of :Rdbms:Schema
+[options="header"]
+|====
+| Name | Description
+| name | The name of the schema.
+|====
+
+.Relations of :Rdbms:Schema
+[options="header"]
+|====
+| Name      | Target label(s)  | Cardinality | Description
+| HAS_TABLE | <<:Rdbms:Table>> | 0..n        | References the tables in the schema
+|====
+
+[[:Rdbms:Table]]
+===== :Rdbms:Table
+Describes a database table.
+
+.Properties of :Rdbms:Table
+[options="header"]
+|====
+| Name | Description
+| name | The name of the table.
+|====
+
+.Relations of :Rdbms:Table
+[options="header"]
+|====
+| Name       | Target label(s)   | Cardinality | Description
+| HAS_COLUMN | <<:Rdbms:Column>> | 0..n        | References the columns of the table
+|====
+
+[[:Rdbms:Column]]
+===== :Rdbms:Column
+Describes a column of a table.
+
+.Properties of :Rdbms:Column
+[options="header"]
+|====
+| Name | Description
+| name | The name of the column.
+|====

@@ -1,0 +1,13 @@
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+    <description>Provides a scanner for importing the metadata of a relational database schema.</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.RdbmsDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor</class>
+    </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>
+    </scanner>
+</v1:jqassistant-plugin>

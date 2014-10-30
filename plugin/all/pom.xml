@@ -66,6 +66,10 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.tycho</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.rdbms</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

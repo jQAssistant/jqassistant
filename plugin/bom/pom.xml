@@ -62,7 +62,12 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.buschmais.xo</groupId>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.rdbms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+            <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j</artifactId>
                 <version>${com.buschmais.xo_version}</version>
                 <scope>provided</scope>

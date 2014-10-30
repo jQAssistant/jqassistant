@@ -26,15 +26,13 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileResource, BeansDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
 
     private static final JAXBContext jaxbContext;
-
-    private DescriptorResolverFactory descriptorResolverFactory = new DescriptorResolverFactory();
 
     static {
         try {
@@ -66,7 +64,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
                 } else if (o instanceof Alternatives) {
                     List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
                     for (JAXBElement<String> element : clazzOrStereotype) {
-                        TypeDescriptor alternative = descriptorResolverFactory.getTypeDescriptorResolver().resolve(element.getValue(), context);
+                        TypeDescriptor alternative = TypeResolver.resolve(element.getValue(), context);
                         beansDescriptor.getAlternatives().add(alternative);
                     }
                 }
@@ -79,7 +77,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
 
     private void addTypes(List<String> typeNames, List<TypeDescriptor> types, ScannerContext scannerContext) {
         for (String typeName : typeNames) {
-            TypeDescriptor type = descriptorResolverFactory.getTypeDescriptorResolver().resolve(typeName, scannerContext);
+            TypeDescriptor type = TypeResolver.resolve(typeName, scannerContext);
             types.add(type);
         }
     }
