@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.rdbms.scanner;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -40,11 +38,6 @@ public class SchemaScannerIT extends AbstractPluginIT {
             }
             try (PreparedStatement preparedStatement = c.prepareStatement("create table PERSON(a integer, b varchar(255))")) {
                 preparedStatement.execute();
-            }
-            try (PreparedStatement preparedStatement = c.prepareStatement("select * from PERSON")) {
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    assertThat(resultSet.next(), equalTo(false));
-                }
             }
         }
         store.beginTransaction();

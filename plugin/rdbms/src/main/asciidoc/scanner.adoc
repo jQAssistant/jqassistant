@@ -1,6 +1,6 @@
 <<SchemaScanner>>
 [[SchemaScanner]]
-==== Scanner for metadata of relation database schemas
+==== Scanner for metadata of a relational database schema
 Imports the metadata of a relational database schema, i.e. schemas, tables and columns.
 
 The connection properties are taken from property files containing ${project.ArtifactId}, e.g. "${project.ArtifactId}-test.properties", and which contain the properties "driver", "url", "user" and "password", e.g.
