@@ -57,7 +57,8 @@
                                         </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <fileMapper
+                                                    implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                                 <pattern>^jqassistant-plugin\.xml$</pattern>
                                                 <replacement>plugin.adoc</replacement>
                                             </fileMapper>
@@ -79,7 +80,8 @@
                                         </stylesheet>
                                         <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
                                         <fileMappers>
-                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <fileMapper
+                                                    implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
                                                 <pattern>^(.*)\.xml$</pattern>
                                                 <replacement>$1.xml.adoc</replacement>
                                             </fileMapper>
@@ -182,6 +184,7 @@
         <module>jaxrs</module>
         <module>javaee6</module>
         <module>junit4</module>
+        <module>testng</module>
         <module>maven3</module>
         <module>osgi</module>
         <module>tycho</module>
