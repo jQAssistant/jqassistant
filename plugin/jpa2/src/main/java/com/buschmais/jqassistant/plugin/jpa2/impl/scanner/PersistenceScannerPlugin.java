@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
 import com.sun.java.xml.ns.persistence.ObjectFactory;
@@ -34,8 +34,6 @@ import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceDescriptor> {
 
     private static final JAXBContext jaxbContext;
-
-    private DescriptorResolverFactory descriptorResolverFactory = new DescriptorResolverFactory();
 
     static {
         try {
@@ -83,7 +81,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
                 persistenceUnitDescriptor.setSharedCacheMode(sharedCacheMode.name());
             }
             for (String clazz : persistenceUnit.getClazz()) {
-                TypeDescriptor typeDescriptor = descriptorResolverFactory.getTypeDescriptorResolver().resolve(clazz, scanner.getContext());
+                TypeDescriptor typeDescriptor = TypeResolver.resolve(clazz, scanner.getContext());
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
             // Create persistence unit properties

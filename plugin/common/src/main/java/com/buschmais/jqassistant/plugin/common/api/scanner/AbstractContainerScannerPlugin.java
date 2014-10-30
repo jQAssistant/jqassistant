@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
         containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
         context.push(FileContainerDescriptor.class, containerDescriptor);
+        Map<String, FileDescriptor> files = new HashMap<>();
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
@@ -41,6 +44,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
                     LOGGER.info("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
                     descriptor = toFileDescriptor(descriptor, relativePath, context);
+                    files.put(relativePath, descriptor);
                     if (containerDescriptor != null) {
                         containerDescriptor.getContains().add(descriptor);
                     }
@@ -50,6 +54,18 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
             context.pop(FileContainerDescriptor.class);
             LOGGER.info("Leaving {}", path);
         }
+        for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
+            String relativePath = entry.getKey();
+            int separatorIndex = relativePath.lastIndexOf('/');
+            if (separatorIndex != -1) {
+                String parentName = relativePath.substring(0, separatorIndex);
+                FileDescriptor fileDescriptor = files.get(parentName);
+                if (fileDescriptor instanceof FileContainerDescriptor) {
+                    ((FileContainerDescriptor) fileDescriptor).getContains().add(entry.getValue());
+                }
+            }
+        }
+
         return containerDescriptor;
     }
 

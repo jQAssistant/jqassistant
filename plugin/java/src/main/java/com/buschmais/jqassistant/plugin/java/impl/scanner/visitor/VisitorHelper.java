@@ -5,8 +5,19 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -20,7 +31,6 @@ public class VisitorHelper {
      */
     private static final String CONSTRUCTOR_METHOD = "void <init>";
 
-    private DescriptorResolverFactory resolverFactory;
     private ScannerContext scannerContext;
 
     /**
@@ -77,13 +87,10 @@ public class VisitorHelper {
      * 
      * @param scannerContext
      *            The scanner context
-     * @param resolverFactory
-     *            The resolver factory used for looking up descriptors.
      */
-    public VisitorHelper(ScannerContext scannerContext, DescriptorResolverFactory resolverFactory) {
+    public VisitorHelper(ScannerContext scannerContext) {
         this.typeCache = CacheBuilder.newBuilder().softValues().build();
         this.scannerContext = scannerContext;
-        this.resolverFactory = resolverFactory;
     }
 
     /*
@@ -108,7 +115,7 @@ public class VisitorHelper {
         TypeDescriptor typeDescriptor;
         CachedType cachedType = typeCache.getIfPresent(fullQualifiedName);
         if (cachedType == null) {
-            typeDescriptor = resolverFactory.getTypeDescriptorResolver().resolve(fullQualifiedName, expectedType, scannerContext);
+            typeDescriptor = TypeResolver.resolve(fullQualifiedName, expectedType, scannerContext);
             cachedType = new CachedType(typeDescriptor);
             typeCache.put(fullQualifiedName, cachedType);
             for (Descriptor descriptor : typeDescriptor.getDeclaredFields()) {
