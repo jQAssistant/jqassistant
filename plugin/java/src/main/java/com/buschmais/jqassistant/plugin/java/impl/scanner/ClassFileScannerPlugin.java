@@ -13,7 +13,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.resolver.DescriptorResolverFactory;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 
@@ -23,8 +22,6 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, ClassFileDescriptor> {
 
     private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
-
-    private DescriptorResolverFactory resolverFactory = new DescriptorResolverFactory();
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
@@ -40,7 +37,7 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
 
     @Override
     public ClassFileDescriptor scan(FileResource file, String path, Scope scope, Scanner scanner) throws IOException {
-        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext(), resolverFactory);
+        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
         ClassVisitor visitor = new ClassVisitor(visitorHelper);
         try (InputStream stream = file.createStream()) {
             new ClassReader(stream).accept(visitor, 0);
