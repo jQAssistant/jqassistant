@@ -16,10 +16,13 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  * Describes an artifact.
  * 
  * @author Herklotz
+ *
+ *
+ *
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 @Generic(Generic.GenericLanguageElement.Artifact)
-public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor, FileContainerDescriptor {
+public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor, FileDescriptor, FileContainerDescriptor {
 
     /**
      * @return the group
