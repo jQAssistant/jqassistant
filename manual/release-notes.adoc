@@ -1,51 +1,5 @@
 = Release Notes
 
 :numbered!:
-== 1.0.0-M4
-
-=== General
-- license changed from ASL 2.0 to GPLv3 to solve compatibility issues with Neo4j community edition
-
-=== Core
-==== Scanner
-- major performance improvements, especially for larger projects
-- all scanned files are represented with a file label, even if no scanner actually accepts the file type
-- a public API for scanner plugins is now provided, an example for SCV files is available in the documentation
-
-==== Analysis
-- constraints and concepts provide a severity
-
-=== Maven plugin
-- added support for additional scan directories (scanDirectories) and rule directories (rulesDirectories)
-- added 'skip' property for excluding single modules from scan
-- renamed property 'failOnConstraintViolations' to 'failOnViolations'
-- include JUnit test reports in scan
-- better support for multi-module projects
-
-=== Command line
-- added downloadable distribution providing a standalone CLI including shell scripts for Windows and Unix compatible systems
-
-=== Sonar
-- provide all plugins of jQAssistant distribution in sonar plugin
-
-=== Plugins
-==== Java
-- added scanner support for Java 8 bytecode
-- new concepts for throwable types are now provided
-
-==== Java 8
-- added concepts for functional interfaces and default methods
-
-==== JUnit4
-- new concepts for lifecycle annotations (@Before, @After, @BeforeClass, @AfterClass)
-- new concepts for JUnit3 tests
-- split up of concept "junit4:TestClassOrMethod" into "junit4:TestClass" and "junit4:TestMethod"
-- added constraints for unit tests
-
-==== CDI
-- new plugin containing a scanner for beans.xml descriptors, concepts and constrains
-
-=== Documentation
-- explanation of rule types added (concepts, constraints, groups)
-- an example is provided for distributing plugins containing rules
-
+include::include/1.0.0-RC.adoc[]
+include::include/1.0.0-M4.adoc[]
