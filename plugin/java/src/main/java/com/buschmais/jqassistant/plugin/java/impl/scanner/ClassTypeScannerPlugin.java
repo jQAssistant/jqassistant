@@ -20,13 +20,14 @@ public class ClassTypeScannerPlugin extends AbstractResourceScannerPlugin<Class<
 
     @Override
     public ClassFileDescriptor scan(final Class<?> item, String path, Scope scope, Scanner scanner) throws IOException {
-        final String resource = "/" + item.getName().replace('.', '/') + ".class";
-        ClassFileDescriptor fileDescriptor = scanner.scan(new AbstractFileResource() {
+        final String fileName = "/" + item.getName().replace('.', '/') + ".class";
+        AbstractFileResource fileResource = new AbstractFileResource() {
             @Override
             public InputStream createStream() throws IOException {
-                return item.getResourceAsStream(resource);
+                return item.getResourceAsStream(fileName);
             }
-        }, resource, scope);
-        return toFileDescriptor(fileDescriptor, resource, scanner.getContext());
+        };
+        ClassFileDescriptor fileDescriptor = scanner.scan(fileResource, fileName, scope);
+        return toFileDescriptor(fileResource, fileDescriptor, fileName, scanner.getContext());
     }
 }

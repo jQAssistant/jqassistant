@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -50,23 +49,6 @@ public class PackageIT extends AbstractJavaPluginIT {
         assertThat(query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) RETURN p").getColumn("p"), allOf(packageMatchers));
         assertThat(query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE NOT (p)-[:CONTAINS]->(:Type) RETURN p").getColumn("p"),
                 hasItem(packageDescriptor(EMPTY_PACKAGE)));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies that all packages containing elements have contains relations to
-     * their children.
-     * 
-     * @throws IOException
-     *             If the test fails.
-     */
-    @Test
-    public void nonEmptyPackages() throws IOException {
-        scanClassPathDirectory(getClassesDirectory(Pojo.class));
-        store.beginTransaction();
-        TestResult query = query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE NOT (p)-[:CONTAINS]->() RETURN p");
-        assertThat(query.getRows().size(), equalTo(1));
-        assertThat(query.getColumn("p"), hasItem(packageDescriptor(EMPTY_PACKAGE)));
         store.commitTransaction();
     }
 }
