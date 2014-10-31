@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.ClasspathRuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
@@ -23,46 +23,29 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
 
     private ClassLoader classLoader;
 
-    private List<RuleSource> ruleSources;
+    private List<RuleSource> sources;
 
     /**
      * Constructor.
      */
     public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
-        this.ruleSources = getRuleSources(pluginConfigurationReader.getPlugins());
+        this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
         this.classLoader = pluginConfigurationReader.getClassLoader();
     }
 
     @Override
     public List<RuleSource> getRuleSources() {
-        return ruleSources;
+        return sources;
     }
 
-    /**
-     * Get the URLs of the rules for the given plugins.
-     * 
-     * @param plugins
-     *            the plugins for which to get the URLs
-     * @return the list of URLs
-     */
     private List<RuleSource> getRuleSources(List<JqassistantPlugin> plugins) {
         List<RuleSource> sources = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
                 for (String resource : rulesType.getResource()) {
-                    final String resourceName = RULE_RESOURCE_PATH + resource;
-                    sources.add(new RuleSource() {
-                        @Override
-                        public String getId() {
-                            return classLoader.getResource(resourceName).toExternalForm();
-                        }
-
-                        @Override
-                        public InputStream getInputStream() {
-                            return classLoader.getResourceAsStream(resourceName);
-                        }
-                    });
+                    String resourceName = RULE_RESOURCE_PATH + resource;
+                    sources.add(new ClasspathRuleSource(classLoader, resourceName));
                 }
             }
         }

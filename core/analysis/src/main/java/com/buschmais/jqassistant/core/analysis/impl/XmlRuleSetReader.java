@@ -17,15 +17,16 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader}
  * implementation.
  */
-public class RuleSetReaderImpl implements RuleSetReader {
+public class XmlRuleSetReader implements RuleSetReader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RuleSetReaderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
 
     private static final JAXBContext jaxbContext;
 
@@ -41,31 +42,34 @@ public class RuleSetReaderImpl implements RuleSetReader {
     }
 
     @Override
-    public RuleSet read(List<RuleSource> sources) {
+    public RuleSet read(List<? extends RuleSource> sources) {
         List<JqassistantRules> rules = new ArrayList<>();
-        for (RuleSource source : sources) {
-            InputStream inputStream = null;
-            try {
-                inputStream = source.getInputStream();
-            } catch (IOException e) {
-                LOGGER.warn("An unexpected problem occured when opening stream for reading rules from '{}'", source.getId());
-            }
-            if (inputStream == null) {
-                LOGGER.warn("Cannot open stream to read rules from '{}'", source.getId());
-            } else {
-                try {
-                    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-                    unmarshaller.setSchema(XmlHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
-                    if (LOGGER.isInfoEnabled()) {
-                        LOGGER.info("Reading rules from '{}'.", source.getId());
-                    }
-                    rules.add(unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantRules.class).getValue());
-                } catch (JAXBException e) {
-                    throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
-                }
+        for (RuleSource ruleSource : sources) {
+            if (ruleSource.isType(RuleSource.Type.XML)) {
+                readXmlSource(rules, ruleSource);
             }
         }
         return convert(rules);
+    }
+
+    private void readXmlSource(List<JqassistantRules> rules, RuleSource ruleSource) {
+        InputStream inputStream;
+        try {
+            inputStream = ruleSource.getInputStream();
+        } catch (IOException e) {
+            LOGGER.warn("An unexpected problem occured when opening stream for reading rules from '{}'", ruleSource.getId());
+            return;
+        }
+        try {
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            unmarshaller.setSchema(XmlHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Reading rules descriptor '{}'.", ruleSource.getId());
+            }
+            rules.add(unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantRules.class).getValue());
+        } catch (JAXBException e) {
+            throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
+        }
     }
 
     /**
