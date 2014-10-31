@@ -27,10 +27,18 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
+import com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin;
 
-public class SchemaScannerIT extends AbstractPluginIT {
+public class SchemaScannerPluginIT extends AbstractPluginIT {
 
-    public static final String PROPERTY_FILE = "jqassistant.plugin.rdbms-test.properties";
+    public static final String DEFAULT_FILE = "default";
+    public static final String TABLE_PERSON = "PERSON";
+    public static final String COLUMN_A = "A";
+    public static final String COLUMN_B = "B";
+    public static final String COLUMN_C = "C";
+    public static final String COLUMNTYPE_DECIMAL = "DECIMAL";
+    public static final String COLUMNTYPE_VARCHAR = "VARCHAR";
+    public static final String SEQUENCE_PERSON_SEQ = "PERSON_SEQ";
 
     @Before
     public void createStructures() throws SQLException, ClassNotFoundException {
@@ -41,18 +49,41 @@ public class SchemaScannerIT extends AbstractPluginIT {
             execute(c, "drop sequence if exists PERSON_SEQ");
             execute(c, "create sequence PERSON_SEQ minvalue 100 maxvalue 10000  start with 100 increment by 10 cycle");
         }
-        scanSchema();
+    }
+
+    /**
+     * Scan using infolevel minimum
+     */
+    @Test
+    public void minimum() {
+        scan("minimum");
+        store.beginTransaction();
+        assertThat(getTable(TABLE_PERSON), notNullValue());
+        assertThat(getColumn(TABLE_PERSON, COLUMN_A), nullValue());
+        store.commitTransaction();
+    }
+
+    /**
+     * Scan using info level minimum
+     */
+    @Test
+    public void noTables() {
+        scan("notables");
+        store.beginTransaction();
+        assertThat(getTable(TABLE_PERSON), nullValue());
+        store.commitTransaction();
     }
 
     @Test
     public void tablesAndColumns() {
+        scan(DEFAULT_FILE);
         store.beginTransaction();
         // Verify person
-        TableDescriptor person = getTable("PERSON");
-        assertThat(person.getName(), equalTo("PERSON"));
+        TableDescriptor person = getTable(TABLE_PERSON);
+        assertThat(person.getName(), equalTo(TABLE_PERSON));
         // Verify column A
-        ColumnDescriptor a = getColumn("PERSON", "A");
-        assertThat(a.getName(), equalTo("A"));
+        ColumnDescriptor a = getColumn(TABLE_PERSON, COLUMN_A);
+        assertThat(a.getName(), equalTo(COLUMN_A));
         assertThat(a.getSize(), equalTo(10));
         assertThat(a.getDecimalDigits(), equalTo(5));
         assertThat(a.isAutoIncremented(), equalTo(false));
@@ -63,8 +94,8 @@ public class SchemaScannerIT extends AbstractPluginIT {
         assertThat(a.isPartOfForeignKey(), equalTo(false));
         assertThat(person.getColumns(), hasItem(a));
         // Verify column B
-        ColumnDescriptor b = getColumn("PERSON", "B");
-        assertThat(b.getName(), equalTo("B"));
+        ColumnDescriptor b = getColumn(TABLE_PERSON, COLUMN_B);
+        assertThat(b.getName(), equalTo(COLUMN_B));
         assertThat(b.getSize(), equalTo(5));
         assertThat(b.getDecimalDigits(), equalTo(2));
         assertThat(b.isAutoIncremented(), equalTo(false));
@@ -75,8 +106,8 @@ public class SchemaScannerIT extends AbstractPluginIT {
         assertThat(b.isPartOfForeignKey(), equalTo(false));
         assertThat(person.getColumns(), hasItem(b));
         // Verify column C
-        ColumnDescriptor c = getColumn("PERSON", "C");
-        assertThat(c.getName(), equalTo("C"));
+        ColumnDescriptor c = getColumn(TABLE_PERSON, COLUMN_C);
+        assertThat(c.getName(), equalTo(COLUMN_C));
         assertThat(c.getSize(), equalTo(255));
         assertThat(c.getDecimalDigits(), equalTo(0));
         assertThat(c.isAutoIncremented(), equalTo(false));
@@ -87,7 +118,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
         assertThat(c.isPartOfForeignKey(), equalTo(false));
         assertThat(person.getColumns(), hasItem(c));
         // Verify column type VARCHAR
-        ColumnTypeDescriptor decimal = getColumnType("DECIMAL");
+        ColumnTypeDescriptor decimal = getColumnType(COLUMNTYPE_DECIMAL);
         assertThat(a.getColumnType(), is(decimal));
         assertThat(b.getColumnType(), is(decimal));
         assertThat(decimal.getMinimumScale(), equalTo(0));
@@ -101,7 +132,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
         assertThat(decimal.isUnsigned(), equalTo(false));
         assertThat(decimal.isUserDefined(), equalTo(false));
         // Verfify column type VARCHAR
-        ColumnTypeDescriptor varchar = getColumnType("VARCHAR");
+        ColumnTypeDescriptor varchar = getColumnType(COLUMNTYPE_VARCHAR);
         assertThat(c.getColumnType(), is(varchar));
         assertThat(varchar.getMinimumScale(), equalTo(0));
         assertThat(varchar.getMaximumScale(), equalTo(0));
@@ -119,20 +150,24 @@ public class SchemaScannerIT extends AbstractPluginIT {
     @Test
     @Ignore("Need to investigate how schemacrawler needs to be configured to retrieve sequence information for hsqldb")
     public void sequences() throws IOException {
-        SequenceDesriptor sequence = getSequence("PERSON_SEQ");
-        assertThat(sequence.getName(), equalTo("PERSON_SEQ"));
+        scan(DEFAULT_FILE);
+        store.beginTransaction();
+        SequenceDesriptor sequence = getSequence(SEQUENCE_PERSON_SEQ);
+        assertThat(sequence.getName(), equalTo(SEQUENCE_PERSON_SEQ));
         assertThat(sequence.getMinimumValue(), equalTo(BigInteger.valueOf(100)));
         assertThat(sequence.getMaximumValue(), equalTo(BigInteger.valueOf(10000)));
         assertThat(sequence.getIncrement(), equalTo(10l));
         assertThat(sequence.isCycle(), equalTo(true));
+        store.commitTransaction();
     }
 
     /**
      * Scans the test tablesAndColumns.
      */
-    private void scanSchema() {
+    private void scan(String name) {
         store.beginTransaction();
-        File propertyFile = new File(getClassesDirectory(SchemaScannerIT.class), PROPERTY_FILE);
+        String fileName = SchemaScannerPlugin.PLUGIN_NAME + "-" + name + SchemaScannerPlugin.PROPERTIES_SUFFIX;
+        File propertyFile = new File(getClassesDirectory(SchemaScannerPluginIT.class), fileName);
         ConnectionPropertiesDescriptor descriptor = getScanner().scan(propertyFile, propertyFile.getAbsolutePath(), JavaScope.CLASSPATH);
         assertThat(descriptor, notNullValue());
         List<SchemaDescriptor> schemas = descriptor.getSchemas();
@@ -168,8 +203,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
     private TableDescriptor getTable(String table) {
         List<TableDescriptor> t = query("match (t:Rdbms:Table) where t.name={table} return t", MapBuilder.<String, Object> create("table", table).get())
                 .getColumn("t");
-        assertThat(t, hasSize(1));
-        return t.get(0);
+        return t == null ? null : t.get(0);
     }
 
     /**
@@ -184,8 +218,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
     private ColumnDescriptor getColumn(String table, String column) {
         List<ColumnDescriptor> c = query("match (t:Table)-[:HAS_COLUMN]->(c:Rdbms:Column) where t.name={table} and c.name={column} return c",
                 MapBuilder.<String, Object> create("table", table).put("column", column).get()).getColumn("c");
-        assertThat(c, hasSize(1));
-        return c.get(0);
+        return c == null ? null : c.get(0);
     }
 
     /**
@@ -198,8 +231,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
     private ColumnTypeDescriptor getColumnType(String databaseType) {
         List<ColumnTypeDescriptor> t = query("match (t:Rdbms:ColumnType) where t.databaseType={databaseType} return t",
                 MapBuilder.<String, Object> create("databaseType", databaseType).get()).getColumn("t");
-        assertThat(t, hasSize(1));
-        return t.get(0);
+        return t == null ? null : t.get(0);
     }
 
     /**
@@ -212,8 +244,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
     private SequenceDesriptor getSequence(String sequence) {
         List<SequenceDesriptor> s = query("match (s:Rdbms:Sequence) where s.name={sequence} return s",
                 MapBuilder.<String, Object> create("sequence", sequence).get()).getColumn("s");
-        assertThat(s, hasSize(1));
-        return s.get(0);
+        return s == null ? null : s.get(0);
     }
 
 }

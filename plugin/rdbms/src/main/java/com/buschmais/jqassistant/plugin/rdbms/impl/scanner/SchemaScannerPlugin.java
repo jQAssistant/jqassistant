@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 
 import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import schemacrawler.schema.*;
-import schemacrawler.schemacrawler.IncludeAll;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
@@ -38,6 +39,9 @@ import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, ConnectionPropertiesDescriptor> {
 
     public static final String PLUGIN_NAME = "jqassistant.plugin.rdbms";
+    public static final String PROPERTIES_SUFFIX = ".properties";
+
+    private static final String PROPERTY_INFOLEVEL = "info_level";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaScannerPlugin.class);
 
@@ -62,7 +66,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         String lowerCase = path.toLowerCase();
-        return lowerCase.contains(PLUGIN_NAME) && lowerCase.endsWith(".properties");
+        return lowerCase.contains(PLUGIN_NAME) && lowerCase.endsWith(PROPERTIES_SUFFIX);
     }
 
     @Override
@@ -95,7 +99,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             return connectionPropertiesDescriptor;
         }
         if (loadDriver(driver)) {
-            Catalog catalog = getCatalog(driver, url, user, password);
+            Catalog catalog = getCatalog(driver, url, user, password, properties);
             store(catalog, connectionPropertiesDescriptor, store);
         }
         return connectionPropertiesDescriptor;
@@ -118,13 +122,41 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
         return true;
     }
 
-    private Catalog getCatalog(String driver, String url, String user, String password) throws IOException {
+    /**
+     * Retrieves the catalog metadata using schema crawler.
+     * 
+     * @param driver
+     *            The driver name.
+     * @param url
+     *            The url.
+     * @param user
+     *            The user.
+     * @param password
+     *            The password.
+     * @param properties
+     *            The properties to pass to schema crawler.
+     * @return The catalog.
+     * @throws IOException
+     *             If retrieval fails.
+     */
+    private Catalog getCatalog(String driver, String url, String user, String password, Properties properties) throws IOException {
+        // Determine info level
+        String infoLevelName = properties.getProperty(PROPERTY_INFOLEVEL, InfoLevel.Standard.name());
+        InfoLevel level = InfoLevel.valueOf(LOWER_CAMEL.to(UPPER_CAMEL, infoLevelName));
+        LOGGER.info("Scanning database schemas for '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
+        SchemaCrawlerOptions options = new SchemaCrawlerOptions();
+        // Set options
+        SchemaInfoLevel schemaInfoLevel = level.getSchemaInfoLevel();
+        for (InfoLevelOption option : InfoLevelOption.values()) {
+            String value = properties.getProperty(option.getPropertyName());
+            if (value != null) {
+                LOGGER.info("Setting option " + option.name() + "=" + value);
+                option.set(schemaInfoLevel, Boolean.valueOf(value.toLowerCase()));
+            }
+        }
+        options.setSchemaInfoLevel(schemaInfoLevel);
         Catalog catalog;
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
-            SchemaCrawlerOptions options = new SchemaCrawlerOptions();
-            SchemaInfoLevel infoLevel = SchemaInfoLevel.standard();
-            options.setSchemaInfoLevel(infoLevel);
-            options.setSequenceInclusionRule(new IncludeAll());
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
         } catch (SQLException | SchemaCrawlerException e) {
             throw new IOException(String.format("Cannot scan schema (driver='%s', url='%s', user='%s'", driver, url, user), e);

@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -45,10 +46,62 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     protected void initialize() {
     }
 
+    /**
+     * Get all properties.
+     * 
+     * @return The properties.
+     */
     protected Map<String, Object> getProperties() {
         return properties;
     }
 
+    /**
+     * Get a property as string.
+     * 
+     * @param name
+     *            The name.
+     * @param defaultValue
+     *            The default value.
+     * @return The value.
+     * @throws IOException
+     */
+    protected String getStringProperty(String name, String defaultValue) {
+        return getProperty(name, String.class, defaultValue);
+    }
+
+    /**
+     * Get a property using a specified type.
+     * 
+     * @param name
+     *            The name.
+     * @param type
+     *            The type.
+     * @param defaultValue
+     *            The default value.
+     * @param <T>
+     *            The type.
+     * @return The value.
+     */
+    private <T> T getProperty(String name, Class<T> type, T defaultValue) {
+        Object o = properties.getOrDefault(name, defaultValue);
+        if (o == null) {
+            return defaultValue;
+        }
+        if (!type.isAssignableFrom(o.getClass())) {
+            throw new IllegalArgumentException("Found value of type " + o.getClass().getName() + "for property " + name + ", expected " + type.getName());
+        }
+        return type.cast(o);
+    }
+
+    /**
+     * Return the relative path of a file within a directory.
+     * 
+     * @param directory
+     *            The directory.
+     * @param entry
+     *            The file.
+     * @return The relative path.
+     */
     protected String getDirectoryPath(File directory, File entry) {
         String relativePath;
         if (entry.equals(directory)) {

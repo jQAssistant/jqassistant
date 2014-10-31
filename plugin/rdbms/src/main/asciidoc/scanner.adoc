@@ -3,16 +3,42 @@
 ==== Scanner for metadata of a relational database schema
 Imports the metadata of a relational database schema, i.e. schemas, tables and columns.
 
-The connection properties are taken from property files containing ${project.ArtifactId}, e.g. "${project.ArtifactId}-test.properties", and which contain the properties "driver", "url", "user" and "password", e.g.
+The connection properties are taken from property files containing ${project.ArtifactId}, e.g. "${project.ArtifactId}_test.properties",
+and which contains at least the properties "driver", "url", "user" and "password", e.g.
 
 [source]
-.${project.ArtifactId}-test.properties
-----
+.${project.ArtifactId}_test.properties
+____
 driver=org.hsqldb.jdbc.JDBCDriver
 url=jdbc:hsqldb:file:target/myDatabase
 user=SA
 password=
-----
+
+# optional properties which are passed to Schema Crawler (http://schemacrawler.sourceforge.net/), they affect the level
+# of queried information. It may be necessary to use another info level for performance or compatibility reasons, e.g.
+# if a database does not support retrieving metadata for stored procedures you might try to set "retrieve_routines=false"
+
+# The info level, allowed values are standard, minimum, maximum or detailed
+# info_level=standard
+
+## Activation/deactivation of single options on the selected info level
+# retrieve_additional_column_attributes=true
+# retrieve_additional_database_info=true
+# retrieve_additional_jdbc_driver_info=true
+# retrieve_additional_table_attributes=true
+# retrieve_foreign_keys=true
+# retrieve_indices=true
+# retrieve_index_information=true
+# retrieve_routines=true
+# retrieve_routine_columns=true
+# retrieve_routine_information=true
+# retrieve_schema_crawler_info=true
+# retrieve_sequence_information=true
+# retrieve_tables=true
+# retrieve_table_columns=true
+# retrieve_trigger_information=true
+# retrieve_view_information=true
+____
 
 *NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. a dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
