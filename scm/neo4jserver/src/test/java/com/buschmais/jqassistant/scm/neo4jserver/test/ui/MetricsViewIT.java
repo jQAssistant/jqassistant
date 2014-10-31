@@ -15,8 +15,6 @@ import org.openqa.selenium.support.PageFactory;
 import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
 import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.AbstractServer;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.MetricsPage;
 
 /**
@@ -42,7 +40,8 @@ public class MetricsViewIT extends AbstractUITest {
     }
 
     /**
-     * This test proves if the metrics service successfully returns the metric groups.
+     * This test proves if the metrics service successfully returns the metric
+     * groups.
      */
     @Test
     public void testGetMetricIds() {
@@ -54,7 +53,8 @@ public class MetricsViewIT extends AbstractUITest {
 
         assertFalse(metricGroupIds.isEmpty());
 
-        // check if the metric group ids of the rule set are available in the metrics page
+        // check if the metric group ids of the rule set are available in the
+        // metrics page
         Set<String> missingGroupIds = new HashSet<>();
         for (String ruleSetMetricGroupId : ruleSetMetricGroupIds) {
             if (!metricGroupIds.contains(ruleSetMetricGroupId)) {
@@ -71,24 +71,25 @@ public class MetricsViewIT extends AbstractUITest {
      */
     @Test
     public void testMetricGroupSelection() throws IOException {
-
         scanClasses("core", Store.class);
-        scanClasses("server", DefaultServerImpl.class, AbstractServer.class);
-        scanClasses("server-test", MetricsViewIT.class);
+        scanClassPathDirectory("server-test", getClassesDirectory(MetricsViewIT.class));
 
         // this will run the first metric of the group
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);
 
         // open the metrics details -> this is important for the next step,
-        // metricsPage.getCurrentMetricId() only returns a value if the element is visible
+        // metricsPage.getCurrentMetricId() only returns a value if the element
+        // is visible
         metricsPage.openMetricDetails();
 
         MetricGroup metricGroup = ruleSet.getMetricGroups().get(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
-        // if running the metric succeeded, the metric ID field in the metric page is filled with the metric ID
+        // if running the metric succeeded, the metric ID field in the metric
+        // page is filled with the metric ID
         assertEquals(firstMetric.getId(), metricsPage.getCurrentMetricId());
 
-       // the breadcrumb is updated and shows only one element: the first metric id
+        // the breadcrumb is updated and shows only one element: the first
+        // metric id
         List<String> breadcrumb = metricsPage.getBreadcrumb();
         assertEquals("The breadcrumb must have one element.", 1, breadcrumb.size());
         assertEquals(firstMetric.getId(), breadcrumb.get(0));
@@ -99,18 +100,15 @@ public class MetricsViewIT extends AbstractUITest {
      */
     @Test
     public void testDrillDown() throws Exception {
-
-        scanClasses("core", Store.class);
-        scanClasses("server", DefaultServerImpl.class, AbstractServer.class);
         String artifactId = "server-test";
-        scanClasses(artifactId, MetricsViewIT.class);
+        scanClassPathDirectory(artifactId, getClassesDirectory(MetricsViewIT.class));
+        scanClasses("core", Store.class);
 
-        // TODO Applying concept 'dependency:Package' doesn't work properly, as the classes are scanned directly. This is a workaround for that issue.
-        store.executeQuery("match " +
-                                   "(a:Artifact)-[:CONTAINS]->(t:Type), " +
-                                   "(p:Package)-[:CONTAINS*]->(t) " +
-                                   "create (a)-[c:CONTAINS]->(p) " +
- "return count(c)");
+        // TODO Applying concept 'dependency:Package' doesn't work properly, as
+        // the classes are scanned directly. This is a workaround for that
+        // issue.
+        store.executeQuery("match " + "(a:Artifact)-[:CONTAINS]->(t:Type), " + "(p:Package)-[:CONTAINS*]->(t) " + "create (a)-[c:CONTAINS]->(p) "
+                + "return count(c)");
 
         // for test step explanation see testMetricGroupSelection()
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);

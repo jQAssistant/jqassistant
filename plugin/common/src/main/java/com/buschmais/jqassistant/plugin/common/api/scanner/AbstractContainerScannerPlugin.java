@@ -23,12 +23,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
  * @param <E>
  *            The element type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResourceScannerPlugin<I, FileDescriptor> {
+public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResourceScannerPlugin<I, FileContainerDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public final FileDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
+    public final FileContainerDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
         containerDescriptor.setFileName(path);
