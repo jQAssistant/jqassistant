@@ -19,12 +19,12 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>com.buschmais.jqassistant.core</groupId>
-			<artifactId>jqassistant.core.analysis</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
+        </dependency>
+        <dependency>
+        <groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 		<dependency>

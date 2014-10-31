@@ -1,24 +1,31 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+
 import org.junit.Test;
 
-import java.io.File;
-import java.net.URL;
-import java.util.*;
-
-import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 
 public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void testReadDocument() throws Exception {
         AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
-        URL url = getClass().getResource("/junit-without-assert.adoc");
-        RuleSet ruleSet = reader.read(asList(new RuleSource(url, RuleSource.Type.AsciiDoc)));
-//        assertEquals(url.toString(),group.getId());
-//        assertEquals("Find JUnit tests without assertions",group.getDescription());
+        final URL url = getClass().getResource("/junit-without-assert.adoc");
+        RuleSource ruleSource = new UrlRuleSource(url);
+        RuleSet ruleSet = reader.read(asList(ruleSource));
+        // assertEquals(url.toString(),group.getId());
+        // assertEquals("Find JUnit tests without assertions",group.getDescription());
         Map<String, Concept> concepts = ruleSet.getConcepts();
         assertEquals(2, concepts.size());
         Concept concept1 = concepts.get("junit4:TestClassOrMethod");

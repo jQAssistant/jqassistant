@@ -3,37 +3,22 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONCEPT_SEVERITY;
 import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedRefereceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.QueryTemplateType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader}
@@ -57,7 +42,7 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     @Override
-    public RuleSet read(List<RuleSource> sources) {
+    public RuleSet read(List<? extends RuleSource> sources) {
         List<JqassistantRules> rules = new ArrayList<>();
         for (RuleSource ruleSource : sources) {
             if (ruleSource.isType(RuleSource.Type.XML)) {
@@ -68,16 +53,22 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private void readXmlSource(List<JqassistantRules> rules, RuleSource ruleSource) {
-        Source source = ruleSource.toSource();
+        InputStream inputStream;
+        try {
+            inputStream = ruleSource.getInputStream();
+        } catch (IOException e) {
+            LOGGER.warn("An unexpected problem occured when opening stream for reading rules from '{}'", ruleSource.getId());
+            return;
+        }
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             unmarshaller.setSchema(XmlHelper.getSchema("/META-INF/xsd/jqassistant-rules-1.0.xsd"));
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Reading rules descriptor '{}'.", source.getSystemId());
+                LOGGER.info("Reading rules descriptor '{}'.", ruleSource.getId());
             }
-            rules.add(unmarshaller.unmarshal(source, JqassistantRules.class).getValue());
+            rules.add(unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantRules.class).getValue());
         } catch (JAXBException e) {
-            throw new IllegalArgumentException("Cannot read rules from '" + source.getSystemId() + "'.", e);
+            throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
         }
     }
 
@@ -125,7 +116,9 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     /**
      * Reads {@link MetricGroupType}s and converts them to {@link MetricGroup}s.
-     * @param ruleSet The {@link RuleSet}.
+     * 
+     * @param ruleSet
+     *            The {@link RuleSet}.
      */
     private void readMetricGroups(Map<String, MetricGroupType> metricGroupTypes, RuleSet ruleSet) {
 
@@ -144,7 +137,8 @@ public class XmlRuleSetReader implements RuleSetReader {
                 Query query = new Query();
                 query.setCypher(metricType.getCypher());
                 for (ParameterDefinitionType parameterDefinitionType : metricType.getParameter()) {
-                    // put null here, the value will be added if the query is executed
+                    // put null here, the value will be added if the query is
+                    // executed
                     query.getParameters().put(parameterDefinitionType.getName(), null);
                 }
                 metric.setQuery(query);
@@ -152,7 +146,8 @@ public class XmlRuleSetReader implements RuleSetReader {
                 for (ReferenceType referenceType : metricType.getRequiresConcept()) {
                     Concept concept = ruleSet.getConcepts().get(referenceType.getRefId());
                     if (concept == null) {
-                        throw new IllegalArgumentException("Cannot resolve required concept for metric " + metric.getId() + " and concept " + referenceType.getRefId());
+                        throw new IllegalArgumentException("Cannot resolve required concept for metric " + metric.getId() + " and concept "
+                                + referenceType.getRefId());
                     }
                     metric.getRequiresConcepts().add(concept);
                 }
@@ -245,7 +240,8 @@ public class XmlRuleSetReader implements RuleSetReader {
                     if (referenceType.getSeverity() != null) {
                         concept.setSeverity(Severity.fromValue(referenceType.getSeverity().value()));
                     }
-                    group.getConcepts().add(concept);                }
+                    group.getConcepts().add(concept);
+                }
             }
             for (IncludedRefereceType referenceType : groupType.getIncludeConstraint()) {
                 ConstraintType constraintType = constraintTypes.get(referenceType.getRefId());

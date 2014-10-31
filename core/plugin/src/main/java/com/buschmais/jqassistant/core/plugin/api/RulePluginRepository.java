@@ -1,10 +1,8 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
-
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * Defines the interface for the scanner plugin repository.

@@ -1,19 +1,10 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.buschmais.jqassistant.core.analysis.api.rule.source.ClasspathRuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
@@ -25,7 +16,12 @@ import com.buschmais.jqassistant.core.plugin.schema.v1.RulesType;
  */
 public class RulePluginRepositoryImpl implements RulePluginRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RulePluginRepositoryImpl.class);
+    /**
+     * The resource path where to load rule files from.
+     */
+    private static final String RULE_RESOURCE_PATH = "META-INF/jqassistant-rules/";
+
+    private ClassLoader classLoader;
 
     private List<RuleSource> sources;
 
@@ -34,6 +30,7 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
      */
     public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
+        this.classLoader = pluginConfigurationReader.getClassLoader();
     }
 
     @Override
@@ -46,22 +43,9 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
         for (JqassistantPlugin plugin : plugins) {
             RulesType rulesType = plugin.getRules();
             if (rulesType != null) {
-                String directory = rulesType.getDirectory();
                 for (String resource : rulesType.getResource()) {
-                    StringBuilder fullResource = new StringBuilder();
-                    if (directory != null) {
-                        fullResource.append(directory);
-                    }
-                    fullResource.append(resource);
-                    URL url = RulePluginRepositoryImpl.class.getResource(fullResource.toString());
-                    if (url != null) {
-                        sources.add(new RuleSource(url));
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Adding rulesType from " + url.toString());
-                        }
-                    } else {
-                        LOGGER.warn("Cannot read rules from resource '{}'", fullResource);
-                    }
+                    String resourceName = RULE_RESOURCE_PATH + resource;
+                    sources.add(new ClasspathRuleSource(classLoader, resourceName));
                 }
             }
         }

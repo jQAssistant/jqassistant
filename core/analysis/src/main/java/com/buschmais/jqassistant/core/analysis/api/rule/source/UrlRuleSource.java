@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * A rule source which is provided from an URL file.
+ * A rule source which is provided from an URL.
  */
 public class UrlRuleSource extends RuleSource {
 
@@ -17,11 +17,11 @@ public class UrlRuleSource extends RuleSource {
 
     @Override
     public String getId() {
-        return null;
+        return url.toExternalForm();
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return null;
+        return url.openStream();
     }
 }

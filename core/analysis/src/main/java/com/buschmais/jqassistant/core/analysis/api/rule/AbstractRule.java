@@ -39,10 +39,10 @@ public abstract class AbstractRule implements Rule {
      */
     private Severity severity;
 
-    public static <T extends Rule> Map<String,T> toMap(Collection<T> rules) {
+    public static <T extends Rule> Map<String, T> toMap(Collection<T> rules) {
         Map<String, T> result = new LinkedHashMap<>();
         for (T rule : rules) {
-            result.put(rule.getId(),rule);
+            result.put(rule.getId(), rule);
         }
         return result;
     }

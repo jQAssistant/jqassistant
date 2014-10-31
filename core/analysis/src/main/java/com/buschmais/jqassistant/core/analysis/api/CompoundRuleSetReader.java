@@ -1,10 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.api;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import java.util.*;
+
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AsciiDocRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
-
-import java.util.*;
 
 /**
  * @author mh
@@ -12,16 +14,14 @@ import java.util.*;
  */
 public class CompoundRuleSetReader implements RuleSetReader {
     @Override
-    public RuleSet read(List<RuleSource> sources) {
+    public RuleSet read(List<? extends RuleSource> sources) {
         RuleSetReader xmlReader = new XmlRuleSetReader();
         RuleSet xmlRuleSet = xmlReader.read(sources);
         RuleSetReader adocReader = new AsciiDocRuleSetReader();
         RuleSet adocRuleSet = adocReader.read(sources);
-        return new RuleSet(
-                mergeMaps(xmlRuleSet.getConcepts(), adocRuleSet.getConcepts()),
-                mergeMaps(xmlRuleSet.getConstraints(), adocRuleSet.getConstraints()),
-                mergeMaps(xmlRuleSet.getGroups(), adocRuleSet.getGroups()),
-                mergeMaps(xmlRuleSet.getMetricGroups(), adocRuleSet.getMetricGroups()));
+        return new RuleSet(mergeMaps(xmlRuleSet.getConcepts(), adocRuleSet.getConcepts()),
+                mergeMaps(xmlRuleSet.getConstraints(), adocRuleSet.getConstraints()), mergeMaps(xmlRuleSet.getGroups(), adocRuleSet.getGroups()), mergeMaps(
+                        xmlRuleSet.getMetricGroups(), adocRuleSet.getMetricGroups()));
     }
 
     public Group createGroup(RuleSet xmlRuleSet, RuleSet adocRuleSet) {
@@ -38,10 +38,12 @@ public class CompoundRuleSetReader implements RuleSetReader {
         return result;
     }
 
-    public <T> Map<String, T> mergeMaps(Map<String, T> map1,Map<String, T> map2) {
+    public <T> Map<String, T> mergeMaps(Map<String, T> map1, Map<String, T> map2) {
         Map<String, T> result = new LinkedHashMap<>();
-        if (map1 != null && !map1.isEmpty()) result.putAll(map1);
-        if (map2 != null && !map2.isEmpty()) result.putAll(map2);
+        if (map1 != null && !map1.isEmpty())
+            result.putAll(map1);
+        if (map2 != null && !map2.isEmpty())
+            result.putAll(map2);
         return result;
     }
 }
