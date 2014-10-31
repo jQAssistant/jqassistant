@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
@@ -12,13 +10,14 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.commons.lang.StringUtils;
 
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
@@ -36,7 +35,7 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
     private static final Log LOG = Log.getLog();
 
     private final RuleSelector ruleSelector = new RuleSelectorImpl();
-    private final RuleSetReader ruleSetReader = new RuleSetReaderImpl();
+    private final RuleSetReader ruleSetReader = new CompoundRuleSetReader();
     private String ruleDirectory;
     private List<String> concepts;
     private List<String> constraints;
@@ -64,17 +63,7 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
         List<File> ruleFiles = readRulesDirectory(selectedDirectory);
         for (final File ruleFile : ruleFiles) {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new RuleSource() {
-                @Override
-                public String getId() {
-                    return ruleFile.getName();
-                }
-
-                @Override
-                public InputStream getInputStream() throws IOException {
-                    return new FileInputStream(ruleFile);
-                }
-            });
+            sources.add(new FileRuleSource(ruleFile));
         }
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         sources.addAll(ruleSources);
