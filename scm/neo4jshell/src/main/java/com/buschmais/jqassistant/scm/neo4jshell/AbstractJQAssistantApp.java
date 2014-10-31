@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.shell.AppCommandParser;
 import org.neo4j.shell.AppShellServer;
@@ -16,9 +17,8 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSetReaderImpl;
+import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -50,7 +50,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
     protected AbstractJQAssistantApp() throws PluginRepositoryException {
         pluginConfigurationReader = new PluginConfigurationReaderImpl();
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        ruleSetReader = new RuleSetReaderImpl();
+        ruleSetReader = new XmlRuleSetReader();
     }
 
     @Override
