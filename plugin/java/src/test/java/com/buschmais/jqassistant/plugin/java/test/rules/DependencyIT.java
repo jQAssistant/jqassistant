@@ -9,6 +9,12 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.util.*;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -28,18 +34,6 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodie
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
 
 /**
  * Tests for the dependency concepts and result.
@@ -193,7 +187,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      */
     @Test
     public void packages() throws IOException, AnalysisException {
-        scanClasses(A.class, B.class);
+        scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
         applyConcept("dependency:Package");
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();

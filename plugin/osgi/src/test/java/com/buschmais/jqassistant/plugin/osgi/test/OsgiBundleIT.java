@@ -11,6 +11,13 @@ import static org.hamcrest.collection.IsMapContaining.hasValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -25,15 +32,6 @@ import com.buschmais.jqassistant.plugin.osgi.test.impl.Activator;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.ServiceImpl;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.a.UsedPublicClass;
 import com.buschmais.jqassistant.plugin.osgi.test.impl.b.UnusedPublicClass;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Contains tests regarding manifest files.
@@ -70,7 +68,6 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void exportedPackages() throws IOException, AnalysisException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         scanClassPathDirectory(getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:ExportPackage");
         store.beginTransaction();
@@ -90,13 +87,13 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void importedPackages() throws IOException, AnalysisException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         scanClassPathDirectory(getClassesDirectory(Service.class));
+        query("create (:File:Directory:Package{fqn:'org.junit'})");
         applyConcept("osgi-bundle:ImportPackage");
         store.beginTransaction();
         List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Package) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(1));
-        assertThat(packages, hasItems(packageDescriptor(NotNull.class.getPackage())));
+        assertThat(packages, hasItems(packageDescriptor("org.junit")));
         store.commitTransaction();
     }
 
@@ -110,7 +107,6 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void activator() throws IOException, AnalysisException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         scanClassPathDirectory(getClassesDirectory(Service.class));
         applyConcept("osgi-bundle:Activator");
         store.beginTransaction();
@@ -130,7 +126,6 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void internalType() throws IOException, AnalysisException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         applyConcept("osgi-bundle:InternalType");
@@ -153,7 +148,6 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void unusedInternalType() throws IOException, AnalysisException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         validateConstraint("osgi-bundle:UnusedInternalType");
@@ -180,7 +174,6 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      */
     @Test
     public void internalTypeMustNotBePublic() throws IOException, AnalysisException {
-        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
