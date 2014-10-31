@@ -42,8 +42,9 @@ Describes a database schema.
 .Relations of :Rdbms:Schema
 [options="header"]
 |====
-| Name      | Target label(s)  | Cardinality | Description
-| HAS_TABLE | <<:Rdbms:Table>> | 0..n        | References the tables in the schema
+| Name         | Target label(s)     | Cardinality | Description
+| HAS_TABLE    | <<:Rdbms:Table>>    | 0..n        | References the tables in the schema
+| HAS_SEQUENCE | <<:Rdbms:Sequence>> | 0..n        | References the sequences in the schema
 |====
 
 [[:Rdbms:Table]]
@@ -108,4 +109,19 @@ Describes a column data type, e.g. VARCHAR.
 | caseSensitive         | Indicates that the type is case sensitive
 | unsigned              | Indicates that the type is unsigned
 | userDefined           | Indicates that the type is user defined
+|====
+
+[[:Rdbms:Sequence]]
+===== :Rdbms:Sequence
+Describes a database sequence.
+
+.Properties of :Rdbms:Sequence
+[options="header"]
+|====
+| Name         | Description
+| name         | The name of the sequence
+| minimumValue | The minimum value
+| maximumValue | The maximum value
+| increment    | The increment
+| cycle        | Indicates that the sequence restarts at the minimumValue if the the maximumValue has been reached.
 |====

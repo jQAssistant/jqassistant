@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.hsqldb.jdbc.JDBCDriver;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -29,33 +32,21 @@ public class SchemaScannerIT extends AbstractPluginIT {
 
     public static final String PROPERTY_FILE = "jqassistant.plugin.rdbms-test.properties";
 
-    @Test
-    public void schema() throws IOException, SQLException, ClassNotFoundException {
-        File testDb = new File("target/testdb");
-        if (testDb.exists()) {
-            testDb.delete();
-        }
+    @Before
+    public void createStructures() throws SQLException, ClassNotFoundException {
         Class.forName(JDBCDriver.class.getName());
         try (Connection c = DriverManager.getConnection("jdbc:hsqldb:file:target/testdb", "SA", "")) {
-            try (PreparedStatement preparedStatement = c.prepareStatement("drop table if exists PERSON")) {
-                preparedStatement.execute();
-            }
-            try (PreparedStatement preparedStatement = c
-                    .prepareStatement("create table PERSON(a decimal(10,5), b decimal(5,2), c varchar(255) default 'defaultValue', primary key (a,b))")) {
-                preparedStatement.execute();
-            }
+            execute(c, "drop table if exists PERSON");
+            execute(c, "create table PERSON(a decimal(10,5), b decimal(5,2), c varchar(255) default 'defaultValue', primary key (a,b))");
+            execute(c, "drop sequence if exists PERSON_SEQ");
+            execute(c, "create sequence PERSON_SEQ minvalue 100 maxvalue 10000  start with 100 increment by 10 cycle");
         }
+        scanSchema();
+    }
+
+    @Test
+    public void tablesAndColumns() {
         store.beginTransaction();
-        File propertyFile = new File(getClassesDirectory(SchemaScannerIT.class), PROPERTY_FILE);
-        ConnectionPropertiesDescriptor descriptor = getScanner().scan(propertyFile, propertyFile.getAbsolutePath(), JavaScope.CLASSPATH);
-        store.commitTransaction();
-        store.beginTransaction();
-        assertThat(descriptor, notNullValue());
-        // Verify schema
-        List<SchemaDescriptor> schemas = descriptor.getSchemas();
-        assertThat(schemas, hasSize(greaterThan(0)));
-        SchemaDescriptor schemaDescriptor = schemas.get(0);
-        assertThat(schemaDescriptor.getName(), notNullValue());
         // Verify person
         TableDescriptor person = getTable("PERSON");
         assertThat(person.getName(), equalTo("PERSON"));
@@ -125,6 +116,48 @@ public class SchemaScannerIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    @Ignore("Need to investigate how schemacrawler needs to be configured to retrieve sequence information for hsqldb")
+    public void sequences() throws IOException {
+        SequenceDesriptor sequence = getSequence("PERSON_SEQ");
+        assertThat(sequence.getName(), equalTo("PERSON_SEQ"));
+        assertThat(sequence.getMinimumValue(), equalTo(BigInteger.valueOf(100)));
+        assertThat(sequence.getMaximumValue(), equalTo(BigInteger.valueOf(10000)));
+        assertThat(sequence.getIncrement(), equalTo(10l));
+        assertThat(sequence.isCycle(), equalTo(true));
+    }
+
+    /**
+     * Scans the test tablesAndColumns.
+     */
+    private void scanSchema() {
+        store.beginTransaction();
+        File propertyFile = new File(getClassesDirectory(SchemaScannerIT.class), PROPERTY_FILE);
+        ConnectionPropertiesDescriptor descriptor = getScanner().scan(propertyFile, propertyFile.getAbsolutePath(), JavaScope.CLASSPATH);
+        assertThat(descriptor, notNullValue());
+        List<SchemaDescriptor> schemas = descriptor.getSchemas();
+        assertThat(schemas, hasSize(greaterThan(0)));
+        SchemaDescriptor schemaDescriptor = schemas.get(0);
+        assertThat(schemaDescriptor.getName(), notNullValue());
+        store.commitTransaction();
+    }
+
+    /**
+     * Execute a DDL statement.
+     *
+     * @param connection
+     *            The connection.
+     * @param ddl
+     *            The ddl.
+     * @throws SQLException
+     *             If execution fails.
+     */
+    private void execute(Connection connection, String ddl) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(ddl)) {
+            preparedStatement.execute();
+        }
+    }
+
     /**
      * Get a table.
      *
@@ -141,7 +174,7 @@ public class SchemaScannerIT extends AbstractPluginIT {
 
     /**
      * Get a column.
-     * 
+     *
      * @param table
      *            The table name.
      * @param column
@@ -168,4 +201,19 @@ public class SchemaScannerIT extends AbstractPluginIT {
         assertThat(t, hasSize(1));
         return t.get(0);
     }
+
+    /**
+     * Get a sequence.
+     *
+     * @param sequence
+     *            The sequence name.
+     * @return The table descriptor.
+     */
+    private SequenceDesriptor getSequence(String sequence) {
+        List<SequenceDesriptor> s = query("match (s:Rdbms:Sequence) where s.name={sequence} return s",
+                MapBuilder.<String, Object> create("sequence", sequence).get()).getColumn("s");
+        assertThat(s, hasSize(1));
+        return s.get(0);
+    }
+
 }

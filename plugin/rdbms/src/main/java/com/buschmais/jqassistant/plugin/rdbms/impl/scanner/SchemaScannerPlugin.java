@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import schemacrawler.schema.*;
+import schemacrawler.schemacrawler.IncludeAll;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
@@ -122,8 +123,8 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             SchemaCrawlerOptions options = new SchemaCrawlerOptions();
             SchemaInfoLevel infoLevel = SchemaInfoLevel.standard();
-            infoLevel.setRetrieveRoutines(false);
             options.setSchemaInfoLevel(infoLevel);
+            options.setSequenceInclusionRule(new IncludeAll());
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
         } catch (SQLException | SchemaCrawlerException e) {
             throw new IOException(String.format("Cannot scan schema (driver='%s', url='%s', user='%s'", driver, url, user), e);
@@ -147,6 +148,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             SchemaDescriptor schemaDescriptor = store.create(SchemaDescriptor.class);
             schemaDescriptor.setName(schema.getName());
             connectionPropertiesDescriptor.getSchemas().add(schemaDescriptor);
+            // Tables
             for (Table table : catalog.getTables(schema)) {
                 TableDescriptor tableDescriptor = store.create(TableDescriptor.class);
                 tableDescriptor.setName(table.getName());
@@ -168,6 +170,16 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                     ColumnTypeDescriptor columnTypeDescriptor = getColumnTypeDescriptor(columnDataType, columnTypes, store);
                     columnDescriptor.setColumnType(columnTypeDescriptor);
                 }
+            }
+            // Sequences
+            for (Sequence sequence : catalog.getSequences(schema)) {
+                SequenceDesriptor sequenceDesriptor = store.create(SequenceDesriptor.class);
+                sequenceDesriptor.setName(sequence.getName());
+                sequenceDesriptor.setIncrement(sequence.getIncrement());
+                sequenceDesriptor.setMinimumValue(sequence.getMinimumValue());
+                sequenceDesriptor.setMaximumValue(sequence.getMaximumValue());
+                sequenceDesriptor.setCycle(sequence.isCycle());
+                schemaDescriptor.getSequences().add(sequenceDesriptor);
             }
         }
     }

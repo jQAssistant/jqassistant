@@ -12,4 +12,6 @@ public interface SchemaDescriptor extends RdbmsDescriptor, NamedDescriptor {
     @Relation("HAS_TABLE")
     List<TableDescriptor> getTables();
 
+    @Relation("HAS_SEQUENCE")
+    List<SequenceDesriptor> getSequences();
 }
