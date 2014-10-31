@@ -10,6 +10,10 @@ public interface ColumnDescriptor extends RdbmsDescriptor, NamedDescriptor, Null
     @Relation("OF_COLUMN_TYPE")
     ColumnTypeDescriptor getColumnType();
 
+    PrimaryKeyOnColumnDescriptor getPrimaryKeyOnColumn();
+
+    IndexOnColumnDescriptor getIndexOnColumn();
+
     void setColumnType(ColumnTypeDescriptor columnType);
 
     boolean isAutoIncremented();

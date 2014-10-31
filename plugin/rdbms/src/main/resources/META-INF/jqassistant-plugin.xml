@@ -8,6 +8,10 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.IndexOnColumnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyOnColumnDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>

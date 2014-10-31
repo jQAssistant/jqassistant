@@ -185,6 +185,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 TableDescriptor tableDescriptor = store.create(TableDescriptor.class);
                 tableDescriptor.setName(table.getName());
                 schemaDescriptor.getTables().add(tableDescriptor);
+                Map<String, ColumnDescriptor> columns = new HashMap<>();
                 for (Column column : table.getColumns()) {
                     ColumnDescriptor columnDescriptor = store.create(ColumnDescriptor.class);
                     columnDescriptor.setName(column.getName());
@@ -201,6 +202,11 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                     ColumnDataType columnDataType = column.getColumnDataType();
                     ColumnTypeDescriptor columnTypeDescriptor = getColumnTypeDescriptor(columnDataType, columnTypes, store);
                     columnDescriptor.setColumnType(columnTypeDescriptor);
+                    columns.put(column.getName(), columnDescriptor);
+                }
+                storeIndex(table.getPrimaryKey(), tableDescriptor, columns, PrimaryKeyDescriptor.class, PrimaryKeyOnColumnDescriptor.class, store);
+                for (Index index : table.getIndices()) {
+                    storeIndex(index, tableDescriptor, columns, IndexDescriptor.class, IndexOnColumnDescriptor.class, store);
                 }
             }
             // Sequences
@@ -214,6 +220,39 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 schemaDescriptor.getSequences().add(sequenceDesriptor);
             }
         }
+    }
+
+    /**
+     * Stores index data.
+     * 
+     * @param index
+     *            The index.
+     * @param tableDescriptor
+     *            The table descriptor.
+     * @param columns
+     *            The cached columns.
+     * @param indexType
+     *            The index type to create.
+     * @param onColumnType
+     *            The type representing "on column" to create.
+     * @param store
+     *            The store.
+     */
+    private void storeIndex(Index index, TableDescriptor tableDescriptor, Map<String, ColumnDescriptor> columns, Class<? extends IndexDescriptor> indexType,
+            Class<? extends OnColumnDescriptor> onColumnType, Store store) {
+        IndexDescriptor indexDescriptor = store.create(indexType);
+        indexDescriptor.setName(index.getName());
+        indexDescriptor.setUnique(index.isUnique());
+        indexDescriptor.setCardinality(index.getCardinality());
+        indexDescriptor.setIndexType(index.getIndexType().name());
+        indexDescriptor.setPages(index.getPages());
+        for (IndexColumn indexColumn : index.getColumns()) {
+            ColumnDescriptor columnDescriptor = columns.get(indexColumn.getName());
+            OnColumnDescriptor onColumnDescriptor = store.create(indexDescriptor, onColumnType, columnDescriptor);
+            onColumnDescriptor.setIndexOrdinalPosition(indexColumn.getIndexOrdinalPosition());
+            onColumnDescriptor.setSortSequence(indexColumn.getSortSequence().name());
+        }
+        tableDescriptor.getIndices().add(indexDescriptor);
     }
 
     /**
