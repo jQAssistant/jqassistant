@@ -44,9 +44,12 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public void createStructures() throws SQLException, ClassNotFoundException {
         Class.forName(JDBCDriver.class.getName());
         try (Connection c = DriverManager.getConnection("jdbc:hsqldb:file:target/testdb", "SA", "")) {
+            execute(c, "drop sequence if exists PERSON_SEQ");
+            execute(c, "drop table if exists ADDRESS");
             execute(c, "drop table if exists PERSON");
             execute(c, "create table PERSON(a decimal(10,5), b decimal(5,2), c varchar(255) default 'defaultValue', primary key (a,b))");
-            execute(c, "drop sequence if exists PERSON_SEQ");
+            execute(c, "create table ADDRESS(PERSON_A decimal(10,5), PERSON_B decimal(5,2))");
+            execute(c, "alter table ADDRESS add foreign key (PERSON_A,PERSON_B) references PERSON(A,B)");
             execute(c, "create sequence PERSON_SEQ minvalue 100 maxvalue 10000  start with 100 increment by 10 cycle");
         }
     }

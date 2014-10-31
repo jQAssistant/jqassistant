@@ -12,6 +12,8 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.IndexOnColumnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyOnColumnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>

@@ -8,9 +8,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,6 +174,9 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      */
     private void store(Catalog catalog, ConnectionPropertiesDescriptor connectionPropertiesDescriptor, Store store) {
         Map<String, ColumnTypeDescriptor> columnTypes = new HashMap<>();
+        Map<Table, TableDescriptor> allTables = new HashMap<>();
+        Map<Column, ColumnDescriptor> allColumns = new HashMap<>();
+        Set<ForeignKey> allForeignKeys = new HashSet<>();
         for (Schema schema : catalog.getSchemas()) {
             SchemaDescriptor schemaDescriptor = store.create(SchemaDescriptor.class);
             schemaDescriptor.setName(schema.getName());
@@ -185,7 +186,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 TableDescriptor tableDescriptor = store.create(TableDescriptor.class);
                 tableDescriptor.setName(table.getName());
                 schemaDescriptor.getTables().add(tableDescriptor);
-                Map<String, ColumnDescriptor> columns = new HashMap<>();
+                Map<String, ColumnDescriptor> localColumns = new HashMap<>();
                 for (Column column : table.getColumns()) {
                     ColumnDescriptor columnDescriptor = store.create(ColumnDescriptor.class);
                     columnDescriptor.setName(column.getName());
@@ -202,12 +203,20 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                     ColumnDataType columnDataType = column.getColumnDataType();
                     ColumnTypeDescriptor columnTypeDescriptor = getColumnTypeDescriptor(columnDataType, columnTypes, store);
                     columnDescriptor.setColumnType(columnTypeDescriptor);
-                    columns.put(column.getName(), columnDescriptor);
+                    localColumns.put(column.getName(), columnDescriptor);
+                    allColumns.put(column, columnDescriptor);
                 }
-                storeIndex(table.getPrimaryKey(), tableDescriptor, columns, PrimaryKeyDescriptor.class, PrimaryKeyOnColumnDescriptor.class, store);
+                // Primary key
+                PrimaryKey primaryKey = table.getPrimaryKey();
+                if (primaryKey != null) {
+                    storeIndex(primaryKey, tableDescriptor, localColumns, PrimaryKeyDescriptor.class, PrimaryKeyOnColumnDescriptor.class, store);
+                }
+                // Indices
                 for (Index index : table.getIndices()) {
-                    storeIndex(index, tableDescriptor, columns, IndexDescriptor.class, IndexOnColumnDescriptor.class, store);
+                    storeIndex(index, tableDescriptor, localColumns, IndexDescriptor.class, IndexOnColumnDescriptor.class, store);
                 }
+                allTables.put(table, tableDescriptor);
+                allForeignKeys.addAll(table.getForeignKeys());
             }
             // Sequences
             for (Sequence sequence : catalog.getSequences(schema)) {
@@ -218,6 +227,30 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 sequenceDesriptor.setMaximumValue(sequence.getMaximumValue());
                 sequenceDesriptor.setCycle(sequence.isCycle());
                 schemaDescriptor.getSequences().add(sequenceDesriptor);
+            }
+        }
+        // Foreign keys
+        for (ForeignKey foreignKey : allForeignKeys) {
+            ForeignKeyDescriptor foreignKeyDescriptor = store.create(ForeignKeyDescriptor.class);
+            foreignKeyDescriptor.setName(foreignKey.getName());
+            foreignKeyDescriptor.setDeferrability(foreignKey.getDeferrability().name());
+            foreignKeyDescriptor.setDeleteRule(foreignKey.getDeleteRule().name());
+            foreignKeyDescriptor.setUpdateRule(foreignKey.getUpdateRule().name());
+            for (ForeignKeyColumnReference columnReference : foreignKey.getColumnReferences()) {
+                ForeignKeyReferenceDescriptor keyReferenceDescriptor = store.create(ForeignKeyReferenceDescriptor.class);
+                // foreign key table and column
+                Column foreignKeyColumn = columnReference.getForeignKeyColumn();
+                ColumnDescriptor foreignKeyColumnDescriptor = allColumns.get(foreignKeyColumn);
+                keyReferenceDescriptor.setForeignKeyColumn(foreignKeyColumnDescriptor);
+                TableDescriptor foreignKeyTableDescriptor = allTables.get(foreignKeyColumn.getParent());
+                keyReferenceDescriptor.setForeignKeyTable(foreignKeyTableDescriptor);
+                // primary key table and column
+                Column primaryKeyColumn = columnReference.getPrimaryKeyColumn();
+                ColumnDescriptor primaryKeyColumnDescriptor = allColumns.get(primaryKeyColumn);
+                keyReferenceDescriptor.setPrimaryKeyColumn(primaryKeyColumnDescriptor);
+                TableDescriptor primaryKeyTableDescriptor = allTables.get(primaryKeyColumn.getParent());
+                keyReferenceDescriptor.setPrimaryKeyTable(primaryKeyTableDescriptor);
+                foreignKeyDescriptor.getForeignKeyReferences().add(keyReferenceDescriptor);
             }
         }
     }
