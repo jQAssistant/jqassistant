@@ -1,28 +1,29 @@
 package com.buschmais.jqassistant.core.analysis.api.rule.source;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * A rule source which is provided from a file.
+ * A rule source which is provided from a classpath resource.
  */
 public class ClasspathRuleSource extends RuleSource {
 
-    private File file;
+    private ClassLoader classLoader;
+    private String resource;
 
-    public ClasspathRuleSource(File file) {
-        this.file = file;
+    public ClasspathRuleSource(ClassLoader classLoader, String resource) {
+        this.classLoader = classLoader;
+        this.resource = resource;
     }
 
     @Override
     public String getId() {
-        return file.getAbsolutePath();
+        return resource;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new FileInputStream(file);
+        ClassLoader currentClassloader = classLoader != null ? classLoader : Thread.currentThread().getContextClassLoader();
+        return currentClassloader.getResourceAsStream(resource);
     }
 }

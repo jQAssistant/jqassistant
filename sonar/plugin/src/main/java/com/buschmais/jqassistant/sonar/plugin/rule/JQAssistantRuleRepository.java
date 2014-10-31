@@ -5,16 +5,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleParam;
-import org.sonar.api.rules.RulePriority;
-import org.sonar.api.rules.RuleRepository;
+import org.sonar.api.rules.*;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;

@@ -7,10 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -22,6 +18,9 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -172,12 +171,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             }
         }
         if (rulesUrl != null) {
-            try {
-                getLog().debug("Adding rules from URL " + rulesUrl.toString());
-                sources.add(new RuleSource(rulesUrl));
-            } catch (IllegalStateException e) {
-                throw new MojoExecutionException("Cannot open rule URL " + rulesUrl.toExternalForm());
-            }
+            getLog().debug("Adding rules from URL " + rulesUrl.toString());
+            sources.add(new UrlRuleSource(rulesUrl));
         }
         List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
         sources.addAll(ruleSources);
@@ -213,9 +208,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private void addRuleFiles(List<RuleSource> sources, File directory) throws MojoExecutionException {
         List<File> ruleFiles = readRulesDirectory(directory);
-        for (File ruleFile : ruleFiles) {
+        for (final File ruleFile : ruleFiles) {
             getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new RuleSource(ruleFile));
+            sources.add(new FileRuleSource(ruleFile));
         }
     }
 

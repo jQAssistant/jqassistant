@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -72,7 +73,7 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-            <groupId>com.buschmais.xo</groupId>
+                <groupId>com.buschmais.xo</groupId>
                 <artifactId>xo.neo4j</artifactId>
                 <version>${com.buschmais.xo_version}</version>
                 <scope>provided</scope>
@@ -140,13 +141,6 @@
                 <artifactId>jqassistant.plugin.java</artifactId>
                 <version>${project.version}</version>
                 <type>test-jar</type>
-                <scope>test</scope>
-            </dependency>
-            <!-- External dependencies -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${org.slf4j_version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
