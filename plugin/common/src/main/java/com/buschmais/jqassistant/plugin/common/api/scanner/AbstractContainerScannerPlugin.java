@@ -38,16 +38,14 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
-                try (Resource entry = getEntry(container, e)) {
+                try (Resource resource = getEntry(container, e)) {
                     String relativePath = getRelativePath(container, e);
                     Scope entryScope = createScope(scope);
                     LOGGER.info("Scanning {}", relativePath);
-                    FileDescriptor descriptor = scanner.scan(entry, relativePath, entryScope);
-                    descriptor = toFileDescriptor(descriptor, relativePath, context);
+                    FileDescriptor descriptor = scanner.scan(resource, relativePath, entryScope);
+                    descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
                     files.put(relativePath, descriptor);
-                    if (containerDescriptor != null) {
-                        containerDescriptor.getContains().add(descriptor);
-                    }
+                    containerDescriptor.getContains().add(descriptor);
                 }
             }
         } finally {

@@ -31,14 +31,14 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
     public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
         LOGGER.info("Scanning url '{}'.", item.toString());
         Descriptor descriptor;
-        try (AbstractFileResource file = new AbstractFileResource() {
+        try (AbstractFileResource fileResource = new AbstractFileResource() {
             @Override
             public InputStream createStream() throws IOException {
                 return new BufferedInputStream(item.openStream());
             }
         }) {
-            descriptor = scanner.scan(file, path, scope);
+            descriptor = scanner.scan(fileResource, path, scope);
+            return toFileDescriptor(fileResource, descriptor, path, scanner.getContext());
         }
-        return toFileDescriptor(descriptor, path, scanner.getContext());
     }
 }

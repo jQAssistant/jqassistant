@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,9 +33,12 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
 
             @Override
             public InputStream createStream() throws IOException {
-                long length = file.length();
-                long bufferSize = length <= MAX_BUFFER_SIZE ? length : MAX_BUFFER_SIZE;
-                return new BufferedInputStream(new FileInputStream(file), (int) bufferSize);
+                // long length = file.length();
+                // long bufferSize = length <= MAX_BUFFER_SIZE ? length :
+                // MAX_BUFFER_SIZE;
+                // return new BufferedInputStream(new FileInputStream(file),
+                // (int) bufferSize);
+                return new BufferedInputStream(new FileInputStream(file));
             }
 
             @Override
@@ -52,7 +51,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
             }
         };) {
             fileDescriptor = scanner.scan(fileResource, path, scope);
+            return toFileDescriptor(fileResource, fileDescriptor, path, scanner.getContext());
         }
-        return toFileDescriptor(fileDescriptor, path, scanner.getContext());
     }
 }
