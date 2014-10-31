@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
+
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSource;
