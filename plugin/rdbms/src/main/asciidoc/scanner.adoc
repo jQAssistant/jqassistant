@@ -9,12 +9,12 @@ The connection properties are taken from property files containing ${project.Art
 .${project.ArtifactId}-test.properties
 ----
 driver=org.hsqldb.jdbc.JDBCDriver
-url=jdbc:hsqldb:file:target/testdb
+url=jdbc:hsqldb:file:target/myDatabase
 user=SA
 password=
 ----
 
-*NOTE* The JDBC driver must be part of the jQAssistant classpath, e.g. a dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
+*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. a dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
 [[:Rdbms:Connection:Properties]]
 ===== :Rdbms:Connection:Properties
@@ -71,6 +71,41 @@ Describes a column of a table.
 .Properties of :Rdbms:Column
 [options="header"]
 |====
-| Name | Description
-| name | The name of the column.
+| Name             | Description
+| name             | The name of the column
+| autoIncremented  | Indicates an auto incremented value
+| generated        | Indicates generated value
+| defaultValue     | The default value
+| size             | The size of the column
+| decimalDigits    | The number of digits for decimal types
+| partOfIndex      | Indicates that the column is part of an index
+| partOfPrimaryKey | Indicates that the column is part of the primary key
+| partOfForeignKey | Indicates that the column is part of a foreign key
+|====
+
+.Relations of :Rdbms:Column
+[options="header"]
+|====
+| Name           | Target label(s)       | Cardinality | Description
+| OF_COLUMN_TYPE | <<:Rdbms:ColumnType>> | 1           | References the column type
+|====
+
+[[:Rdbms:ColumnType]]
+===== :Rdbms:ColumnType
+Describes a column data type, e.g. VARCHAR.
+
+.Properties of :Rdbms:ColumnType
+[options="header"]
+|====
+| Name                  | Description
+| databaseType          | The database specific name of the type
+| autoIncrementable     | Indicates that values of this type can auto incremented
+| precision             | The precision
+| minimumScale          | The minimum scale
+| maximumScale          | The maximum scale
+| fixedPrecisionScale   | The fixed precision scale
+| numericPrecisionRadix | The numeric precision radix
+| caseSensitive         | Indicates that the type is case sensitive
+| unsigned              | Indicates that the type is unsigned
+| userDefined           | Indicates that the type is user defined
 |====

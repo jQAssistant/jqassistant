@@ -6,15 +6,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import schemacrawler.schema.Catalog;
-import schemacrawler.schema.Column;
-import schemacrawler.schema.Schema;
-import schemacrawler.schema.Table;
+import schemacrawler.schema.*;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
@@ -28,10 +27,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 
 /**
  * Scans a database schema, the connection properties are taken from a property
@@ -126,6 +122,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             SchemaCrawlerOptions options = new SchemaCrawlerOptions();
             SchemaInfoLevel infoLevel = SchemaInfoLevel.standard();
+            infoLevel.setRetrieveRoutines(false);
             options.setSchemaInfoLevel(infoLevel);
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
         } catch (SQLException | SchemaCrawlerException e) {
@@ -145,6 +142,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      *            The store.
      */
     private void store(Catalog catalog, ConnectionPropertiesDescriptor connectionPropertiesDescriptor, Store store) {
+        Map<String, ColumnTypeDescriptor> columnTypes = new HashMap<>();
         for (Schema schema : catalog.getSchemas()) {
             SchemaDescriptor schemaDescriptor = store.create(SchemaDescriptor.class);
             schemaDescriptor.setName(schema.getName());
@@ -156,9 +154,56 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 for (Column column : table.getColumns()) {
                     ColumnDescriptor columnDescriptor = store.create(ColumnDescriptor.class);
                     columnDescriptor.setName(column.getName());
+                    columnDescriptor.setDefaultValue(column.getDefaultValue());
+                    columnDescriptor.setGenerated(column.isGenerated());
+                    columnDescriptor.setPartOfIndex(column.isPartOfIndex());
+                    columnDescriptor.setPartOfPrimaryKey(column.isPartOfPrimaryKey());
+                    columnDescriptor.setPartOfForeignKey(column.isPartOfForeignKey());
+                    columnDescriptor.setNullable(column.isNullable());
+                    columnDescriptor.setAutoIncremented(column.isAutoIncremented());
+                    columnDescriptor.setSize(column.getSize());
+                    columnDescriptor.setDecimalDigits(column.getDecimalDigits());
                     tableDescriptor.getColumns().add(columnDescriptor);
+                    ColumnDataType columnDataType = column.getColumnDataType();
+                    ColumnTypeDescriptor columnTypeDescriptor = getColumnTypeDescriptor(columnDataType, columnTypes, store);
+                    columnDescriptor.setColumnType(columnTypeDescriptor);
                 }
             }
         }
+    }
+
+    /**
+     * Return the column type descriptor for the given data type.
+     * 
+     * @param columnDataType
+     *            The data type.
+     * @param columnTypes
+     *            The cached data types.
+     * @param store
+     *            The store.
+     * @return The column type descriptor.
+     */
+    private ColumnTypeDescriptor getColumnTypeDescriptor(ColumnDataType columnDataType, Map<String, ColumnTypeDescriptor> columnTypes, Store store) {
+        String databaseSpecificTypeName = columnDataType.getDatabaseSpecificTypeName();
+        ColumnTypeDescriptor columnTypeDescriptor = columnTypes.get(databaseSpecificTypeName);
+        if (columnTypeDescriptor == null) {
+            columnTypeDescriptor = store.find(ColumnTypeDescriptor.class, databaseSpecificTypeName);
+            if (columnTypeDescriptor == null) {
+                columnTypeDescriptor = store.create(ColumnTypeDescriptor.class);
+                columnTypeDescriptor.setDatabaseType(databaseSpecificTypeName);
+                columnTypeDescriptor.setAutoIncrementable(columnDataType.isAutoIncrementable());
+                columnTypeDescriptor.setCaseSensitive(columnDataType.isCaseSensitive());
+                columnTypeDescriptor.setPrecision(columnDataType.getPrecision());
+                columnTypeDescriptor.setMinimumScale(columnDataType.getMinimumScale());
+                columnTypeDescriptor.setMaximumScale(columnDataType.getMaximumScale());
+                columnTypeDescriptor.setFixedPrecisionScale(columnDataType.isFixedPrecisionScale());
+                columnTypeDescriptor.setNumericPrecisionRadix(columnDataType.getNumPrecisionRadix());
+                columnTypeDescriptor.setUnsigned(columnDataType.isUnsigned());
+                columnTypeDescriptor.setUserDefined(columnDataType.isUserDefined());
+                columnTypeDescriptor.setNullable(columnDataType.isNullable());
+            }
+            columnTypes.put(databaseSpecificTypeName, columnTypeDescriptor);
+        }
+        return columnTypeDescriptor;
     }
 }

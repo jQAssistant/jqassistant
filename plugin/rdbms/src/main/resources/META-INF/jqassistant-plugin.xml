@@ -6,6 +6,7 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>
