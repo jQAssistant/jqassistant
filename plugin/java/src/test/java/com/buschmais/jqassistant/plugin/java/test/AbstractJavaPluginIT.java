@@ -101,8 +101,22 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *             If scanning fails.
      */
     protected void scanClassPathDirectory(File directory) throws IOException {
+        scanClassPathDirectory(ARTIFACT_ID, directory);
+    }
+
+    /**
+     * Scans the a directory.
+     * 
+     * @param artifactId
+     *            The artifact to use.
+     * @param directory
+     *            The directory.
+     * @throws java.io.IOException
+     *             If scanning fails.
+     */
+    protected void scanClassPathDirectory(String artifactId, File directory) throws IOException {
         store.beginTransaction();
-        ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(ARTIFACT_ID);
+        ArtifactDirectoryDescriptor artifact = getArtifactDescriptor(artifactId);
         Scanner scanner = getScanner();
         scanner.getContext().push(ArtifactDescriptor.class, artifact);
         scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
