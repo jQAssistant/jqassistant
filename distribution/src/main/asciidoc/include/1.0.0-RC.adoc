@@ -1,0 +1,10 @@
+== 1.0.0-RC
+
+=== Plugins
+==== TestNG
+- added TestNG plugin containing concepts
+
+==== RDBMS
+- added RDBMS plugin containing a scanner to import schema metadata for relational databases
+
+
