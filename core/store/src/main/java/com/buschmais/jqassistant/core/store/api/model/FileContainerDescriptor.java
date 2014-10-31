@@ -8,7 +8,7 @@ import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface FileContainerDescriptor extends FileDescriptor {
+public interface FileContainerDescriptor extends FileNameDescriptor {
 
     /**
      * Return the contained descriptors.
