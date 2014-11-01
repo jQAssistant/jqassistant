@@ -209,11 +209,15 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 // Primary key
                 PrimaryKey primaryKey = table.getPrimaryKey();
                 if (primaryKey != null) {
-                    storeIndex(primaryKey, tableDescriptor, localColumns, PrimaryKeyDescriptor.class, PrimaryKeyOnColumnDescriptor.class, store);
+                    PrimaryKeyDescriptor primaryKeyDescriptor = storeIndex(primaryKey, tableDescriptor, localColumns, PrimaryKeyDescriptor.class,
+                            PrimaryKeyOnColumnDescriptor.class, store);
+                    tableDescriptor.setPrimaryKey(primaryKeyDescriptor);
                 }
                 // Indices
                 for (Index index : table.getIndices()) {
-                    storeIndex(index, tableDescriptor, localColumns, IndexDescriptor.class, IndexOnColumnDescriptor.class, store);
+                    IndexDescriptor indexDescriptor = storeIndex(index, tableDescriptor, localColumns, IndexDescriptor.class, IndexOnColumnDescriptor.class,
+                            store);
+                    tableDescriptor.getIndices().add(indexDescriptor);
                 }
                 allTables.put(table, tableDescriptor);
                 allForeignKeys.addAll(table.getForeignKeys());
@@ -270,10 +274,11 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      *            The type representing "on column" to create.
      * @param store
      *            The store.
+     * @return The created index descriptor.
      */
-    private void storeIndex(Index index, TableDescriptor tableDescriptor, Map<String, ColumnDescriptor> columns, Class<? extends IndexDescriptor> indexType,
+    private <I extends IndexDescriptor> I storeIndex(Index index, TableDescriptor tableDescriptor, Map<String, ColumnDescriptor> columns, Class<I> indexType,
             Class<? extends OnColumnDescriptor> onColumnType, Store store) {
-        IndexDescriptor indexDescriptor = store.create(indexType);
+        I indexDescriptor = store.create(indexType);
         indexDescriptor.setName(index.getName());
         indexDescriptor.setUnique(index.isUnique());
         indexDescriptor.setCardinality(index.getCardinality());
@@ -285,7 +290,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             onColumnDescriptor.setIndexOrdinalPosition(indexColumn.getIndexOrdinalPosition());
             onColumnDescriptor.setSortSequence(indexColumn.getSortSequence().name());
         }
-        tableDescriptor.getIndices().add(indexDescriptor);
+        return indexDescriptor;
     }
 
     /**

@@ -4,6 +4,8 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 public interface OnColumnDescriptor extends Descriptor {
 
+    ColumnDescriptor getColumn();
+
     int getIndexOrdinalPosition();
 
     void setIndexOrdinalPosition(int indexOrdinalPosition);

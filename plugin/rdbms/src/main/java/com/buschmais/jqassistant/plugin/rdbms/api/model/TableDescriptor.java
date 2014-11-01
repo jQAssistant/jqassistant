@@ -12,6 +12,11 @@ public interface TableDescriptor extends RdbmsDescriptor, NamedDescriptor {
     @Relation("HAS_COLUMN")
     List<ColumnDescriptor> getColumns();
 
+    @Relation("HAS_PRIMARY_KEY")
+    PrimaryKeyDescriptor getPrimaryKey();
+
+    void setPrimaryKey(PrimaryKeyDescriptor primaryKeyDescriptor);
+
     @Relation("HAS_INDEX")
     List<IndexDescriptor> getIndices();
 }

@@ -12,6 +12,6 @@ public interface PrimaryKeyOnColumnDescriptor extends OnColumnDescriptor {
     ColumnDescriptor getColumn();
 
     @Outgoing
-    PrimaryKeyDescriptor getIndex();
+    PrimaryKeyDescriptor getPrimaryKey();
 
 }

@@ -1,13 +1,9 @@
 package com.buschmais.jqassistant.plugin.rdbms.scanner;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +32,9 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public static final String COLUMN_A = "A";
     public static final String COLUMN_B = "B";
     public static final String COLUMN_C = "C";
+    public static final String TABLE_ADDRESS = "ADDRESS";
+    public static final String COLUMN_PERSON_A = "PERSON_A";
+    public static final String COLUMN_PERSON_B = "PERSON_B";
     public static final String COLUMNTYPE_DECIMAL = "DECIMAL";
     public static final String COLUMNTYPE_VARCHAR = "VARCHAR";
     public static final String SEQUENCE_PERSON_SEQ = "PERSON_SEQ";
@@ -47,9 +46,10 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
             execute(c, "drop sequence if exists PERSON_SEQ");
             execute(c, "drop table if exists ADDRESS");
             execute(c, "drop table if exists PERSON");
-            execute(c, "create table PERSON(a decimal(10,5), b decimal(5,2), c varchar(255) default 'defaultValue', primary key (a,b))");
+            execute(c, "create table PERSON(a decimal(10,5), b decimal(5,2), c varchar(255) default 'defaultValue')");
+            execute(c, "alter table PERSON add constraint PK_PERSON primary key (A,B)");
             execute(c, "create table ADDRESS(PERSON_A decimal(10,5), PERSON_B decimal(5,2))");
-            execute(c, "alter table ADDRESS add foreign key (PERSON_A,PERSON_B) references PERSON(A,B)");
+            execute(c, "alter table ADDRESS add constraint FK_ADDRESS_PERSON foreign key (PERSON_A,PERSON_B) references PERSON(A,B)");
             execute(c, "create sequence PERSON_SEQ minvalue 100 maxvalue 10000  start with 100 increment by 10 cycle");
         }
     }
@@ -147,11 +147,80 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         assertThat(varchar.isFixedPrecisionScale(), equalTo(false));
         assertThat(varchar.isUnsigned(), equalTo(false));
         assertThat(varchar.isUserDefined(), equalTo(false));
+        // Primary key
+        PrimaryKeyDescriptor personPK = person.getPrimaryKey();
+        assertThat(personPK, notNullValue());
+        assertThat(personPK.getName(), equalTo("PK_PERSON"));
+        assertThat(personPK.isUnique(), equalTo(true));
+        verifyIndexColumns(personPK.getPrimaryKeyOnColumns(), a, b);
+        // PK Index
+        List<IndexDescriptor> indices = person.getIndices();
+        assertThat(indices, hasSize(1));
+        IndexDescriptor pkIndex = indices.get(0);
+        assertThat(pkIndex.getName(), notNullValue());
+        assertThat(pkIndex.isUnique(), equalTo(true));
+        verifyIndexColumns(pkIndex.getIndexOnColumns(), a, b);
+        store.commitTransaction();
+    }
+
+    private void verifyIndexColumns(List<? extends OnColumnDescriptor> primaryKeyOnColumns, ColumnDescriptor a, ColumnDescriptor b) {
+        assertThat(primaryKeyOnColumns, hasSize(2));
+        for (OnColumnDescriptor primaryKeyOnColumn : primaryKeyOnColumns) {
+            assertThat(primaryKeyOnColumn.getSortSequence(), equalTo("ascending"));
+            int position = primaryKeyOnColumn.getIndexOrdinalPosition();
+            if (position == 1) {
+                assertThat(primaryKeyOnColumn.getColumn(), equalTo(a));
+            } else if (position == 2) {
+                assertThat(primaryKeyOnColumn.getColumn(), equalTo(b));
+            } else {
+                fail("Unexpected index " + position);
+            }
+        }
+    }
+
+    @Test
+    public void foreignKey() {
+        scan(DEFAULT_FILE);
+        store.beginTransaction();
+        TableDescriptor person = getTable(TABLE_PERSON);
+        assertThat(person, notNullValue());
+        ColumnDescriptor pkA = getColumn(TABLE_PERSON, COLUMN_A);
+        assertThat(pkA, notNullValue());
+        ColumnDescriptor pkB = getColumn(TABLE_PERSON, COLUMN_B);
+        assertThat(pkB, notNullValue());
+        TableDescriptor address = getTable(TABLE_ADDRESS);
+        assertThat(address, notNullValue());
+        ColumnDescriptor fkA = getColumn(TABLE_ADDRESS, COLUMN_PERSON_A);
+        assertThat(fkA, notNullValue());
+        ColumnDescriptor fkB = getColumn(TABLE_ADDRESS, COLUMN_PERSON_B);
+        assertThat(fkB, notNullValue());
+        ForeignKeyDescriptor foreignKey = getForeignKey("FK_ADDRESS_PERSON");
+        assertThat(foreignKey, notNullValue());
+        assertThat(foreignKey.getUpdateRule(), equalTo("noAction"));
+        assertThat(foreignKey.getDeleteRule(), equalTo("noAction"));
+        assertThat(foreignKey.getDeferrability(), equalTo("unknown"));
+        List<ForeignKeyReferenceDescriptor> references = foreignKey.getForeignKeyReferences();
+        assertThat(references, hasSize(2));
+        for (ForeignKeyReferenceDescriptor reference : references) {
+            assertThat(reference.getPrimaryKeyTable(), equalTo(person));
+            assertThat(reference.getForeignKeyTable(), equalTo(address));
+            ColumnDescriptor primaryKeyColumn = reference.getPrimaryKeyColumn();
+            assertThat(primaryKeyColumn, notNullValue());
+            ColumnDescriptor foreignKeyColumn = reference.getForeignKeyColumn();
+            assertThat(foreignKeyColumn, notNullValue());
+            if (pkA.equals(primaryKeyColumn)) {
+                assertThat(foreignKeyColumn, equalTo(fkA));
+            } else if (pkB.equals(primaryKeyColumn)) {
+                assertThat(foreignKeyColumn, equalTo(fkB));
+            } else {
+                fail("Unexpected primary key column " + primaryKeyColumn.getName());
+            }
+        }
         store.commitTransaction();
     }
 
     @Test
-    @Ignore("Need to investigate how schemacrawler needs to be configured to retrieve sequence information for hsqldb")
+    @Ignore("Need to investigate how schema crawler needs to be configured to retrieve sequence information for hsqldb")
     public void sequences() throws IOException {
         scan(DEFAULT_FILE);
         store.beginTransaction();
@@ -229,7 +298,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      *
      * @param databaseType
      *            The name of the database type.
-     * @return The table descriptor.
+     * @return The descriptor.
      */
     private ColumnTypeDescriptor getColumnType(String databaseType) {
         List<ColumnTypeDescriptor> t = query("match (t:Rdbms:ColumnType) where t.databaseType={databaseType} return t",
@@ -238,11 +307,24 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     }
 
     /**
+     * Get a foreign key.
+     *
+     * @param foreignKey
+     *            The foreign key name.
+     * @return The foreign key descriptor.
+     */
+    private ForeignKeyDescriptor getForeignKey(String foreignKey) {
+        List<ForeignKeyDescriptor> f = query("match (f:Rdbms:ForeignKey) where f.name={foreignKey} return f",
+                MapBuilder.<String, Object> create("foreignKey", foreignKey).get()).getColumn("f");
+        return f == null ? null : f.get(0);
+    }
+
+    /**
      * Get a sequence.
      *
      * @param sequence
      *            The sequence name.
-     * @return The table descriptor.
+     * @return The descriptor.
      */
     private SequenceDesriptor getSequence(String sequence) {
         List<SequenceDesriptor> s = query("match (s:Rdbms:Sequence) where s.name={sequence} return s",
