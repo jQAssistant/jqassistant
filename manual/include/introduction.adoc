@@ -22,9 +22,12 @@ is required. Neo4j has been chosen because:
 
 === Rules
 
-Rules are expressed as Cypher queries and are specified in XML-files:
+Rules are expressed as Cypher queries and are specified either in XML or AsciiDoc files.
+
+==== XML example
 
 [source,xml]
+.my-rules.xml
 ----
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
@@ -64,6 +67,42 @@ Rules are expressed as Cypher queries and are specified in XML-files:
 </jqa:jqassistant-rules>
 ----
 
+==== AsciiDoc example
+
+[source,asciidoc]
+.my-rules.adoc
+....
+
+[[my-rules:MyConcept]]
+.A human readable description of the concept.
+[source,cypher,role=concept]
+----
+MATCH
+  ...
+WHERE
+  ...
+SET
+  ...
+CREATE
+  ...
+RETURN
+  ...
+----
+
+[[my-rules:MyConstraint]]
+.A human readable description of the constraint.
+[source,cypher,role=constraint,depends="my-rules:MyConcept"]
+----
+MATCH
+  ...
+WHERE
+  ...
+RETURN
+  ...
+----
+
+....
+
 Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
 the correct order. Furthermore a human readable description shall help developers to understand the rationale behind them.
 
@@ -91,7 +130,7 @@ relations.
 
 jQAssistant comes with language and framework plugins which include general technical concepts, e.g.
 
-- "java:Entity" provided by the JPA2 plugin adds a label "Entity" to a node if it represents a class which is annotated by "@javax.persistence.Entity".
+- "jpa2:Entity" provided by the JPA2 plugin adds a label "Entity" to a node if it represents a class which is annotated by "@javax.persistence.Entity".
 - "java:MethodOverrides" provided by the Java plugin adds a relation "OVERRIDES" between a method of a sub class to the super class methods it overrides.
 
 It is recommended to use concepts to enrich the database with information which is specific for the concrete project, e.g. labels can be added to
