@@ -8,7 +8,7 @@ and which contains at least the properties "driver", "url", "user" and "password
 
 [source]
 .${project.ArtifactId}_test.properties
-____
+----
 driver=org.hsqldb.jdbc.JDBCDriver
 url=jdbc:hsqldb:file:target/myDatabase
 user=SA
@@ -38,7 +38,7 @@ password=
 # retrieve_table_columns=true
 # retrieve_trigger_information=true
 # retrieve_view_information=true
-____
+----
 
 *NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. a dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
