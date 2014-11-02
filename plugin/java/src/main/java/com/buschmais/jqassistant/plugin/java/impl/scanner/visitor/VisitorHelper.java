@@ -1,25 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotatedDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ReadsDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 /**
  * Class containing helper methods for ASM visitors.
@@ -33,54 +17,7 @@ public class VisitorHelper {
 
     private ScannerContext scannerContext;
 
-    /**
-     * Represents a type and all of its declared members.
-     * 
-     * @param <T>
-     *            The descriptor type.
-     */
-    public static class CachedType<T extends TypeDescriptor> {
-        private T typeDescriptor;
-        private Map<String, MethodDescriptor> methods = new HashMap<>();
-        private Map<String, FieldDescriptor> fields = new HashMap<>();
-
-        /**
-         * Constructor.
-         * 
-         * @param typeDescriptor
-         *            The type descriptor.
-         */
-        public CachedType(T typeDescriptor) {
-            this.typeDescriptor = typeDescriptor;
-        }
-
-        public T getTypeDescriptor() {
-            return typeDescriptor;
-        }
-
-        public void migrate(T typeDescriptor) {
-            this.typeDescriptor = typeDescriptor;
-        }
-
-        FieldDescriptor getField(String signature) {
-            return fields.get(signature);
-        }
-
-        void addField(String signature, FieldDescriptor field) {
-            fields.put(signature, field);
-        }
-
-        MethodDescriptor getMethod(String signature) {
-            return methods.get(signature);
-        }
-
-        void addMethod(String signature, MethodDescriptor method) {
-            methods.put(signature, method);
-        }
-
-    }
-
-    private Cache<String, CachedType> typeCache;
+    private TypeCache typeCache;
 
     /**
      * Constructor.
@@ -89,7 +26,7 @@ public class VisitorHelper {
      *            The scanner context
      */
     public VisitorHelper(ScannerContext scannerContext) {
-        this.typeCache = CacheBuilder.newBuilder().softValues().build();
+        this.typeCache = new TypeCache();
         this.scannerContext = scannerContext;
     }
 
@@ -99,7 +36,7 @@ public class VisitorHelper {
      * @param typeName The full qualified name of the type (e.g.
      * java.lang.Object).
      */
-    CachedType getType(String fullQualifiedName) {
+    TypeCache.CachedType getType(String fullQualifiedName) {
         return getCachedType(fullQualifiedName, TypeDescriptor.class);
     }
 
@@ -111,12 +48,12 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends TypeDescriptor> CachedType getCachedType(String fullQualifiedName, Class<T> expectedType) {
+    <T extends TypeDescriptor> TypeCache.CachedType getCachedType(String fullQualifiedName, Class<T> expectedType) {
         TypeDescriptor typeDescriptor;
-        CachedType cachedType = typeCache.getIfPresent(fullQualifiedName);
+        TypeCache.CachedType cachedType = typeCache.get(fullQualifiedName);
         if (cachedType == null) {
             typeDescriptor = TypeResolver.resolve(fullQualifiedName, expectedType, scannerContext);
-            cachedType = new CachedType(typeDescriptor);
+            cachedType = new TypeCache.CachedType(typeDescriptor);
             typeCache.put(fullQualifiedName, cachedType);
             for (Descriptor descriptor : typeDescriptor.getDeclaredFields()) {
                 if (descriptor instanceof FieldDescriptor) {
@@ -148,7 +85,7 @@ public class VisitorHelper {
      *            The method signature.
      * @return The method descriptor.
      */
-    MethodDescriptor getMethodDescriptor(CachedType<?> cachedType, String signature) {
+    MethodDescriptor getMethodDescriptor(TypeCache.CachedType<?> cachedType, String signature) {
         MethodDescriptor methodDescriptor = cachedType.getMethod(signature);
         if (methodDescriptor == null) {
             if (signature.startsWith(CONSTRUCTOR_METHOD)) {
@@ -229,7 +166,7 @@ public class VisitorHelper {
      *            The field signature.
      * @return The field descriptor.
      */
-    FieldDescriptor getFieldDescriptor(CachedType<?> cachedType, String signature) {
+    FieldDescriptor getFieldDescriptor(TypeCache.CachedType<?> cachedType, String signature) {
         FieldDescriptor fieldDescriptor = cachedType.getField(signature);
         if (fieldDescriptor == null) {
             fieldDescriptor = scannerContext.getStore().create(FieldDescriptor.class);

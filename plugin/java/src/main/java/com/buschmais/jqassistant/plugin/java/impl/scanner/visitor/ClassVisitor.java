@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
-    private VisitorHelper.CachedType<ClassFileDescriptor> cachedType;
+    private TypeCache.CachedType<ClassFileDescriptor> cachedType;
     private VisitorHelper visitorHelper;
 
     public ClassVisitor(VisitorHelper visitorHelper) {
