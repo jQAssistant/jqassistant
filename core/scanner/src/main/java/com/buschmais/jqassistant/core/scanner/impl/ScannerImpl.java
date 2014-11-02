@@ -4,18 +4,13 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerListener;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -33,8 +28,6 @@ public class ScannerImpl implements Scanner {
 
     private final List<ScannerPlugin<?, ?>> scannerPlugins;
 
-    private final ScannerListener scannerListener;
-
     private final Map<Class<?>, List<ScannerPlugin<?, ?>>> scannerPluginsPerType = new HashMap<>();
 
     /**
@@ -48,7 +41,6 @@ public class ScannerImpl implements Scanner {
     public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins) {
         this.scannerContext = new ScannerContextImpl(store);
         this.scannerPlugins = scannerPlugins;
-        this.scannerListener = new DefaultScannerListener(store);
     }
 
     @Override
@@ -59,14 +51,12 @@ public class ScannerImpl implements Scanner {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
             if (accepts(selectedPlugin, item, path, scope)) {
                 pushDesriptor(descriptor);
-                scannerListener.before(item, path, scope);
                 D newDescriptor = null;
                 try {
                     newDescriptor = selectedPlugin.scan(item, path, scope, this);
                 } catch (IOException e) {
                     LOGGER.error("Cannot scan item " + path, e);
                 }
-                scannerListener.after(item, path, scope, descriptor);
                 popDescriptor(descriptor);
                 descriptor = newDescriptor;
             }

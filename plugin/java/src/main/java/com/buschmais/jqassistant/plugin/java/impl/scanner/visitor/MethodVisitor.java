@@ -44,7 +44,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
         String fieldSignature = SignatureHelper.getFieldSignature(name, desc);
-        VisitorHelper.CachedType cachedType = visitorHelper.getType(SignatureHelper.getObjectType(owner));
+        TypeCache.CachedType cachedType = visitorHelper.getType(SignatureHelper.getObjectType(owner));
         FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(cachedType, fieldSignature);
         switch (opcode) {
         case Opcodes.GETFIELD:
@@ -61,7 +61,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc, boolean itf) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-        VisitorHelper.CachedType cachedType = visitorHelper.getType(SignatureHelper.getObjectType(owner));
+        TypeCache.CachedType cachedType = visitorHelper.getType(SignatureHelper.getObjectType(owner));
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(cachedType, methodSignature);
         visitorHelper.addInvokes(methodDescriptor, line, invokedMethodDescriptor);
         visitorHelper.addDependency(typeDescriptor, methodDescriptor, SignatureHelper.getType(Type.getReturnType(desc)));

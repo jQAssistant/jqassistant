@@ -29,8 +29,10 @@ import com.buschmais.xo.api.XOManagerFactory;
 public abstract class AbstractGraphStore implements Store {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
+    private static final int AUTOCOMMIT_THRESHOLD = 8192;
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
+    private int created;
 
     @Override
     public void start(Collection<Class<?>> types) {
@@ -55,6 +57,7 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public <T extends Descriptor> T create(Class<T> type) {
         T descriptor = xoManager.create(type);
+        autoCommit();
         return descriptor;
     }
 
@@ -64,9 +67,21 @@ public abstract class AbstractGraphStore implements Store {
         return descriptor;
     }
 
+    /**
+     * Verifies if the auto commit threshold has been reached. If yes the
+     * current transaction is committed and a new one started.
+     */
+    private void autoCommit() {
+        created++;
+        if (created == AUTOCOMMIT_THRESHOLD) {
+            commitTransaction();
+            beginTransaction();
+        }
+    }
+
     @Override
     public <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName) {
-        T descriptor = xoManager.create(type);
+        T descriptor = create(type);
         descriptor.setFullQualifiedName(fullQualifiedName);
         return descriptor;
     }
@@ -118,6 +133,7 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void beginTransaction() {
         xoManager.currentTransaction().begin();
+        created = 0;
     }
 
     @Override
