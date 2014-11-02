@@ -19,6 +19,10 @@ import com.buschmais.xo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
  */
 public class EmbeddedGraphStore extends AbstractGraphStore {
 
+    private static final String PROPERTY_NEO4J_CACHE_TYPE = "neo4j.cache_type";
+    private static final String VALUE_NEO4J_CACHE_TYPE_WEAK = "weak";
+    private static final String PROPERTY_NEO4J_ALLOW_STORE_UPGRADE = "neo4j.allow_store_upgrade";
+
     /**
      * The directory of the database.
      */
@@ -42,7 +46,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
-        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0])).property("neo4j.cache_type", "weak")
+        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
+                .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_WEAK).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString())
                 .create();
         return XO.createXOManagerFactory(xoUnit);
     }
