@@ -87,8 +87,10 @@ Describes a database table.
 .Relations of :Rdbms:Table
 [options="header"]
 |====
-| Name       | Target label(s)   | Cardinality | Description
-| HAS_COLUMN | <<:Rdbms:Column>> | 0..n        | References the columns of the table
+| Name            | Target label(s)       | Cardinality | Description
+| HAS_COLUMN      | <<:Rdbms:Column>>     | 0..n        | References the columns of the table
+| HAS_PRIMARY_KEY | <<:Rdbms:PrimaryKey>> | 0..1        | References the primary key of the table
+| HAS_INDEX       | <<:Rdbms:Index>>      | 0..*        | References indices defined for the table
 |====
 
 [[:Rdbms:Column]]
@@ -101,7 +103,7 @@ Describes a column of a table.
 | Name             | Description
 | name             | The name of the column
 | autoIncremented  | Indicates an auto incremented value
-| generated        | Indicates generated value
+| generated        | Indicates a generated value
 | defaultValue     | The default value
 | size             | The size of the column
 | decimalDigits    | The number of digits for decimal types
@@ -136,6 +138,112 @@ Describes a column data type, e.g. VARCHAR.
 | unsigned              | Indicates that the type is unsigned
 | userDefined           | Indicates that the type is user defined
 |====
+
+
+[[:Rdbms:PrimaryKey]]
+===== :Rdbms:PrimaryKey
+Describes a primary key of a table.
+
+.Properties of :Rdbms:PrimaryKey
+[options="header"]
+|====
+| Name | Description
+| name | The name of the primary key.
+|====
+
+.Relations of :Rdbms:PrimaryKey
+[options="header"]
+|====
+| Name                       | Target label(s)       | Cardinality | Description
+| <<ON_PRIMARY_KEY_COLUMN>> | <<:Rdbms:ColumnType>> | 1           | References a primary key column
+|====
+
+
+[[ON_PRIMARY_KEY_COLUMN]]
+===== ON_PRIMARY_KEY_COLUMN
+Describes the properties of a column in a primary key.
+
+.Properties of ON_PRIMARY_KEY_COLUMN
+[options="header"]
+|====
+| Name                 | Description
+| indexOrdinalPosition | The ordinal position of the column in the primary key.
+| sortSequence         | The sort sequence, i.e. "ascending" or "descending".
+|====
+
+
+[[:Rdbms:Index]]
+===== :Rdbms:Index
+Describes an index defined for table.
+
+.Properties of :Rdbms:Index
+[options="header"]
+|====
+| Name        | Description
+| name        | The name of the index.
+| unique      | "true" if the index is unique.
+| cardinality | The cardinality of the index.
+| indexType   | The index type.
+| pages       | The pages.
+|====
+
+.Relations of :Rdbms:Index
+[options="header"]
+|====
+| Name                | Target label(s)       | Cardinality | Description
+| <<ON_INDEX_COLUMN>> | <<:Rdbms:ColumnType>> | 1           | References an indexed column
+|====
+
+
+[[ON_INDEX_COLUMN]]
+===== ON_INDEX_COLUMN
+Describes the properties of a column used by an index.
+
+.Properties of ON_INDEX_COLUMN
+[options="header"]
+|====
+| Name                 | Description
+| indexOrdinalPosition | The ordinal position of the column in the primary key.
+| sortSequence         | The sort sequence, i.e. "ascending" or "descending".
+|====
+
+
+[[:Rdbms:ForeignKey]]
+===== :Rdbms:ForeignKey
+Describes a foreign key.
+
+.Properties of :Rdbms:ForeignKey
+[options="header"]
+|====
+| Name          | Description
+| name          | The name of the foreign key
+| deferrability | The deferrability
+| deleteRule    | The delete rule, e.g. "cascade"
+| updateRule    | The update rule
+|====
+
+.Relations of :Rdbms:ForeignKey
+[options="header"]
+|====
+| Name                      | Target label(s)                | Cardinality | Description
+| HAS_FOREIGN_KEY_REFERENCE | <<:Rdbms:ForeignKeyReference>> | 1..n        | The foreign key references
+|====
+
+
+[[:Rdbms:ForeignKeyReference]]
+===== :Rdbms:ForeignKeyReference
+Describes a foreign key reference, i.e. a pair consisting of a foreign key referencing a primary key.
+
+.Relations of :Rdbms:ForeignKeyReference
+[options="header"]
+|====
+| Name                    | Target label(s)   | Cardinality | Description
+| FROM_FOREIGN_KEY_TABLE  | <<:Rdbms:Table>>  | 1           | The table containing the foreign key
+| FROM_FOREIGN_KEY_COLUMN | <<:Rdbms:Column>> | 1           | The foreign key column
+| TO_PRIMARY_KEY_TABLE    | <<:Rdbms:Table>>  | 1           | The table containing the primary key
+| TO_PRIMARY_KEY_COLUMN   | <<:Rdbms:Column>> | 1           | The primary key column
+|====
+
 
 [[:Rdbms:Sequence]]
 ===== :Rdbms:Sequence

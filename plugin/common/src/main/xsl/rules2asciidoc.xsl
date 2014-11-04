@@ -45,7 +45,7 @@ Requires concepts:
 
         [source,cypher,indent=0]
         ----
-<xsl:value-of select="cypher"/>
+        <xsl:value-of select="cypher"/>
 ----
     </xsl:template>
 
