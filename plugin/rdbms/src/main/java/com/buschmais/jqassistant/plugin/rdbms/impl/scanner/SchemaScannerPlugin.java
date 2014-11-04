@@ -1,22 +1,42 @@
 package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 
 import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
-import static com.google.common.base.CaseFormat.LOWER_CAMEL;
+import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import schemacrawler.schema.*;
+import schemacrawler.schema.Catalog;
+import schemacrawler.schema.CheckOptionType;
+import schemacrawler.schema.Column;
+import schemacrawler.schema.ColumnDataType;
+import schemacrawler.schema.ForeignKey;
+import schemacrawler.schema.ForeignKeyColumnReference;
+import schemacrawler.schema.Index;
+import schemacrawler.schema.IndexColumn;
+import schemacrawler.schema.PrimaryKey;
+import schemacrawler.schema.Schema;
+import schemacrawler.schema.Sequence;
+import schemacrawler.schema.Table;
+import schemacrawler.schema.Trigger;
+import schemacrawler.schema.View;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
+import schemacrawler.tools.options.BundledDriverOptions;
+import schemacrawler.tools.options.InfoLevel;
 import schemacrawler.utility.SchemaCrawlerUtility;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -27,7 +47,21 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexOnColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.OnColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyOnColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor;
 
 /**
  * Scans a database schema, the connection properties are taken from a property
@@ -39,15 +73,13 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
     public static final String PLUGIN_NAME = "jqassistant.plugin.rdbms";
     public static final String PROPERTIES_SUFFIX = ".properties";
 
-    private static final String PROPERTY_INFOLEVEL = "info_level";
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemaScannerPlugin.class);
 
     /**
      * The supported JDBC properties.
      */
-    private enum JdbcProperties {
-        Driver, Url, User, Password;
+    private enum PluginProperty {
+        Driver, Url, User, Password, InfoLevel, BundledDriver;
 
         /**
          * Check if the property name matches this property.
@@ -57,7 +89,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
          * @return <code>true</code> if the name matches.
          */
         boolean matches(String name) {
-            return this.name().toLowerCase().equals(name.toLowerCase());
+            return this.name().equals(LOWER_UNDERSCORE.to(UPPER_CAMEL, name));
         }
     }
 
@@ -76,18 +108,24 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
         String url = null;
         String user = null;
         String password = null;
+        String infoLevel = InfoLevel.standard.name();
+        String bundledDriver = null;
         Properties properties = new Properties();
         for (PropertyDescriptor propertyDescriptor : connectionPropertiesDescriptor.getProperties()) {
             String name = propertyDescriptor.getName();
             String value = propertyDescriptor.getValue();
-            if (JdbcProperties.Driver.matches(name)) {
+            if (PluginProperty.Driver.matches(name)) {
                 driver = value;
-            } else if (JdbcProperties.Url.matches(name)) {
+            } else if (PluginProperty.Url.matches(name)) {
                 url = value;
-            } else if (JdbcProperties.User.matches(name)) {
+            } else if (PluginProperty.User.matches(name)) {
                 user = value;
-            } else if (JdbcProperties.Password.matches(name)) {
+            } else if (PluginProperty.Password.matches(name)) {
                 password = value;
+            } else if (PluginProperty.InfoLevel.matches(name)) {
+                infoLevel = value;
+            } else if (PluginProperty.BundledDriver.matches(name)) {
+                bundledDriver = value;
             } else {
                 properties.setProperty(name, value);
             }
@@ -96,28 +134,25 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             LOGGER.warn(path + " does not contain a driver or url, skipping scan of schema.");
             return connectionPropertiesDescriptor;
         }
-        if (loadDriver(driver)) {
-            Catalog catalog = getCatalog(driver, url, user, password, properties);
-            store(catalog, connectionPropertiesDescriptor, store);
-        }
+        loadDriver(driver);
+        Catalog catalog = getCatalog(driver, url, user, password, infoLevel, bundledDriver, properties);
+        store(catalog, connectionPropertiesDescriptor, store);
         return connectionPropertiesDescriptor;
     }
 
     /**
-     * Load the JDBC driver.
+     * Load a class, e.g. the JDBC driver.
      * 
      * @param driver
-     *            The driver name.
-     * @return <code>true</code> if the driver could be loaded.
+     *            The class name.
+     * @return <code>true</code> if the class could be loaded.
      */
-    private boolean loadDriver(String driver) {
+    private <T> Class<T> loadDriver(String driver) throws IOException {
         try {
-            Class.forName(driver);
+            return (Class<T>) Class.forName(driver);
         } catch (ClassNotFoundException e) {
-            LOGGER.warn(driver + " cannot be loaded, skipping scan of schema.");
-            return false;
+            throw new IOException(driver + " cannot be loaded, skipping scan of schema.", e);
         }
-        return true;
     }
 
     /**
@@ -133,18 +168,31 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      *            The password.
      * @param properties
      *            The properties to pass to schema crawler.
+     * @param infoLevelName
+     *            The name of the info level to use.
+     * @param bundledDriverName
+     *            The name of the bundled driver as provided by schema crawler.
      * @return The catalog.
      * @throws IOException
      *             If retrieval fails.
      */
-    private Catalog getCatalog(String driver, String url, String user, String password, Properties properties) throws IOException {
+    private Catalog getCatalog(String driver, String url, String user, String password, String infoLevelName, String bundledDriverName, Properties properties)
+            throws IOException {
         // Determine info level
-        String infoLevelName = properties.getProperty(PROPERTY_INFOLEVEL, InfoLevel.Standard.name());
-        InfoLevel level = InfoLevel.valueOf(LOWER_CAMEL.to(UPPER_CAMEL, infoLevelName));
+        InfoLevel level = InfoLevel.valueOf(infoLevelName.toLowerCase());
         LOGGER.info("Scanning database schemas for '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
-        SchemaCrawlerOptions options = new SchemaCrawlerOptions();
+
+        SchemaInfoLevel schemaInfoLevel;
+        SchemaCrawlerOptions options;
+        if (bundledDriverName != null) {
+            BundledDriverOptions bundledDriverOptions = getBundledDriverOptions(bundledDriverName);
+            options = bundledDriverOptions.getSchemaCrawlerOptions(level);
+            schemaInfoLevel = options.getSchemaInfoLevel();
+        } else {
+            options = new SchemaCrawlerOptions();
+            schemaInfoLevel = level.getSchemaInfoLevel();
+        }
         // Set options
-        SchemaInfoLevel schemaInfoLevel = level.getSchemaInfoLevel();
         for (InfoLevelOption option : InfoLevelOption.values()) {
             String value = properties.getProperty(option.getPropertyName());
             if (value != null) {
@@ -160,6 +208,26 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             throw new IOException(String.format("Cannot scan schema (driver='%s', url='%s', user='%s'", driver, url, user), e);
         }
         return catalog;
+    }
+
+    /**
+     * Loads the bundled driver options
+     * 
+     * @param bundledDriverName
+     *            The driver name.
+     * @return The options or <code>null</code>.
+     * @throws IOException
+     *             If loading fails.
+     */
+    private BundledDriverOptions getBundledDriverOptions(String bundledDriverName) throws IOException {
+        Class<BundledDriverOptions> bundledDriverOptionsClass = loadDriver(bundledDriverName);
+        BundledDriverOptions bundledDriverOptions;
+        try {
+            bundledDriverOptions = bundledDriverOptionsClass.newInstance();
+        } catch (Exception e) {
+            throw new IOException("Cannot create instance of bundled driver " + bundledDriverOptionsClass);
+        }
+        return bundledDriverOptions;
     }
 
     /**
@@ -182,57 +250,100 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             schemaDescriptor.setName(schema.getName());
             connectionPropertiesDescriptor.getSchemas().add(schemaDescriptor);
             // Tables
-            for (Table table : catalog.getTables(schema)) {
-                TableDescriptor tableDescriptor = store.create(TableDescriptor.class);
-                tableDescriptor.setName(table.getName());
-                schemaDescriptor.getTables().add(tableDescriptor);
-                Map<String, ColumnDescriptor> localColumns = new HashMap<>();
-                for (Column column : table.getColumns()) {
-                    ColumnDescriptor columnDescriptor = store.create(ColumnDescriptor.class);
-                    columnDescriptor.setName(column.getName());
-                    columnDescriptor.setDefaultValue(column.getDefaultValue());
-                    columnDescriptor.setGenerated(column.isGenerated());
-                    columnDescriptor.setPartOfIndex(column.isPartOfIndex());
-                    columnDescriptor.setPartOfPrimaryKey(column.isPartOfPrimaryKey());
-                    columnDescriptor.setPartOfForeignKey(column.isPartOfForeignKey());
-                    columnDescriptor.setNullable(column.isNullable());
-                    columnDescriptor.setAutoIncremented(column.isAutoIncremented());
-                    columnDescriptor.setSize(column.getSize());
-                    columnDescriptor.setDecimalDigits(column.getDecimalDigits());
-                    tableDescriptor.getColumns().add(columnDescriptor);
-                    ColumnDataType columnDataType = column.getColumnDataType();
-                    ColumnTypeDescriptor columnTypeDescriptor = getColumnTypeDescriptor(columnDataType, columnTypes, store);
-                    columnDescriptor.setColumnType(columnTypeDescriptor);
-                    localColumns.put(column.getName(), columnDescriptor);
-                    allColumns.put(column, columnDescriptor);
-                }
-                // Primary key
-                PrimaryKey primaryKey = table.getPrimaryKey();
-                if (primaryKey != null) {
-                    PrimaryKeyDescriptor primaryKeyDescriptor = storeIndex(primaryKey, tableDescriptor, localColumns, PrimaryKeyDescriptor.class,
-                            PrimaryKeyOnColumnDescriptor.class, store);
-                    tableDescriptor.setPrimaryKey(primaryKeyDescriptor);
-                }
-                // Indices
-                for (Index index : table.getIndices()) {
-                    IndexDescriptor indexDescriptor = storeIndex(index, tableDescriptor, localColumns, IndexDescriptor.class, IndexOnColumnDescriptor.class,
-                            store);
-                    tableDescriptor.getIndices().add(indexDescriptor);
-                }
-                allTables.put(table, tableDescriptor);
-                allForeignKeys.addAll(table.getForeignKeys());
-            }
+            createTables(catalog, schema, schemaDescriptor, columnTypes, allTables, allColumns, allForeignKeys, store);
             // Sequences
-            for (Sequence sequence : catalog.getSequences(schema)) {
-                SequenceDesriptor sequenceDesriptor = store.create(SequenceDesriptor.class);
-                sequenceDesriptor.setName(sequence.getName());
-                sequenceDesriptor.setIncrement(sequence.getIncrement());
-                sequenceDesriptor.setMinimumValue(sequence.getMinimumValue());
-                sequenceDesriptor.setMaximumValue(sequence.getMaximumValue());
-                sequenceDesriptor.setCycle(sequence.isCycle());
-                schemaDescriptor.getSequences().add(sequenceDesriptor);
-            }
+            createSequences(catalog.getSequences(schema), schemaDescriptor, store);
         }
+        createForeignKeys(allForeignKeys, allTables, allColumns, store);
+    }
+
+    /**
+     * Create the table descriptors.
+     * 
+     * @param catalog
+     *            The catalog.
+     * @param schema
+     *            The schema.
+     * @param schemaDescriptor
+     *            The schema descriptor.
+     * @param columnTypes
+     *            The cached data types.
+     * @param allTables
+     *            The map to collect all tables.
+     * @param allColumns
+     *            The map to collect all columns.
+     * @param allForeignKeys
+     *            The map to collect all foreign keys.
+     * @param store
+     *            The store.
+     */
+    private void createTables(Catalog catalog, Schema schema, SchemaDescriptor schemaDescriptor, Map<String, ColumnTypeDescriptor> columnTypes,
+            Map<Table, TableDescriptor> allTables, Map<Column, ColumnDescriptor> allColumns, Set<ForeignKey> allForeignKeys, Store store) {
+        for (Table table : catalog.getTables(schema)) {
+            TableDescriptor tableDescriptor = getTableDescriptor(table, store);
+            schemaDescriptor.getTables().add(tableDescriptor);
+            Map<String, ColumnDescriptor> localColumns = new HashMap<>();
+            for (Column column : table.getColumns()) {
+                ColumnDescriptor columnDescriptor = store.create(ColumnDescriptor.class);
+                columnDescriptor.setName(column.getName());
+                columnDescriptor.setDefaultValue(column.getDefaultValue());
+                columnDescriptor.setGenerated(column.isGenerated());
+                columnDescriptor.setPartOfIndex(column.isPartOfIndex());
+                columnDescriptor.setPartOfPrimaryKey(column.isPartOfPrimaryKey());
+                columnDescriptor.setPartOfForeignKey(column.isPartOfForeignKey());
+                columnDescriptor.setNullable(column.isNullable());
+                columnDescriptor.setAutoIncremented(column.isAutoIncremented());
+                columnDescriptor.setSize(column.getSize());
+                columnDescriptor.setDecimalDigits(column.getDecimalDigits());
+                tableDescriptor.getColumns().add(columnDescriptor);
+                ColumnDataType columnDataType = column.getColumnDataType();
+                ColumnTypeDescriptor columnTypeDescriptor = getColumnTypeDescriptor(columnDataType, columnTypes, store);
+                columnDescriptor.setColumnType(columnTypeDescriptor);
+                localColumns.put(column.getName(), columnDescriptor);
+                allColumns.put(column, columnDescriptor);
+            }
+            // Primary key
+            PrimaryKey primaryKey = table.getPrimaryKey();
+            if (primaryKey != null) {
+                PrimaryKeyDescriptor primaryKeyDescriptor = storeIndex(primaryKey, tableDescriptor, localColumns, PrimaryKeyDescriptor.class,
+                        PrimaryKeyOnColumnDescriptor.class, store);
+                tableDescriptor.setPrimaryKey(primaryKeyDescriptor);
+            }
+            // Indices
+            for (Index index : table.getIndices()) {
+                IndexDescriptor indexDescriptor = storeIndex(index, tableDescriptor, localColumns, IndexDescriptor.class, IndexOnColumnDescriptor.class, store);
+                tableDescriptor.getIndices().add(indexDescriptor);
+            }
+            // Trigger
+            for (Trigger trigger : table.getTriggers()) {
+                TriggerDescriptor triggerDescriptor = store.create(TriggerDescriptor.class);
+                triggerDescriptor.setName(trigger.getName());
+                triggerDescriptor.setActionCondition(trigger.getActionCondition());
+                triggerDescriptor.setActionOrder(trigger.getActionOrder());
+                triggerDescriptor.setActionOrientation(trigger.getActionOrientation().name());
+                triggerDescriptor.setActionStatement(trigger.getActionStatement());
+                triggerDescriptor.setConditionTiming(trigger.getConditionTiming().name());
+                triggerDescriptor.setEventManipulationTime(trigger.getEventManipulationType().name());
+                tableDescriptor.getTriggers().add(triggerDescriptor);
+            }
+            allTables.put(table, tableDescriptor);
+            allForeignKeys.addAll(table.getForeignKeys());
+        }
+    }
+
+    /**
+     * Create the foreign key descriptors.
+     * 
+     * @param allForeignKeys
+     *            All collected foreign keys.
+     * @param allTables
+     *            All collected tables.
+     * @param allColumns
+     *            All collected columns.
+     * @param store
+     *            The store.
+     */
+    private void createForeignKeys(Set<ForeignKey> allForeignKeys, Map<Table, TableDescriptor> allTables, Map<Column, ColumnDescriptor> allColumns, Store store) {
         // Foreign keys
         for (ForeignKey foreignKey : allForeignKeys) {
             ForeignKeyDescriptor foreignKeyDescriptor = store.create(ForeignKeyDescriptor.class);
@@ -257,6 +368,55 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 foreignKeyDescriptor.getForeignKeyReferences().add(keyReferenceDescriptor);
             }
         }
+    }
+
+    /**
+     * Add the sequences of a schema to the schema descriptor.
+     * 
+     * @param sequences
+     *            The sequences.
+     * @param schemaDescriptor
+     *            The schema descriptor.
+     * @param store
+     *            The store.
+     */
+    private void createSequences(Collection<Sequence> sequences, SchemaDescriptor schemaDescriptor, Store store) {
+        for (Sequence sequence : sequences) {
+            SequenceDesriptor sequenceDesriptor = store.create(SequenceDesriptor.class);
+            sequenceDesriptor.setName(sequence.getName());
+            sequenceDesriptor.setIncrement(sequence.getIncrement());
+            sequenceDesriptor.setMinimumValue(sequence.getMinimumValue());
+            sequenceDesriptor.setMaximumValue(sequence.getMaximumValue());
+            sequenceDesriptor.setCycle(sequence.isCycle());
+            schemaDescriptor.getSequences().add(sequenceDesriptor);
+        }
+    }
+
+    /**
+     * Create a table descriptor for the given table.
+     * 
+     * @param store
+     *            The store
+     * @param table
+     *            The table
+     * @return The table descriptor
+     */
+    private TableDescriptor getTableDescriptor(Table table, Store store) {
+        TableDescriptor tableDescriptor;
+        if (table instanceof View) {
+            View view = (View) table;
+            ViewDescriptor viewDescriptor = store.create(ViewDescriptor.class);
+            viewDescriptor.setUpdatable(view.isUpdatable());
+            CheckOptionType checkOption = view.getCheckOption();
+            if (checkOption != null) {
+                viewDescriptor.setCheckOption(checkOption.name());
+            }
+            tableDescriptor = viewDescriptor;
+        } else {
+            tableDescriptor = store.create(TableDescriptor.class);
+        }
+        tableDescriptor.setName(table.getName());
+        return tableDescriptor;
     }
 
     /**

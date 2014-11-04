@@ -9,14 +9,17 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("Table")
 public interface TableDescriptor extends RdbmsDescriptor, NamedDescriptor {
 
-    @Relation("HAS_COLUMN")
-    List<ColumnDescriptor> getColumns();
-
     @Relation("HAS_PRIMARY_KEY")
     PrimaryKeyDescriptor getPrimaryKey();
 
     void setPrimaryKey(PrimaryKeyDescriptor primaryKeyDescriptor);
 
+    @Relation("HAS_COLUMN")
+    List<ColumnDescriptor> getColumns();
+
     @Relation("HAS_INDEX")
     List<IndexDescriptor> getIndices();
+
+    @Relation("HAS_TRIGGER")
+    List<TriggerDescriptor> getTriggers();
 }

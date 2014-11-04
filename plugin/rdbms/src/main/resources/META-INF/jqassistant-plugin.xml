@@ -5,6 +5,7 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor</class>
@@ -14,6 +15,7 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyOnColumnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>

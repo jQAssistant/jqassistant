@@ -1,6 +1,12 @@
 package com.buschmais.jqassistant.plugin.rdbms.scanner;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -22,21 +28,35 @@ import org.junit.Test;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.OnColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin;
 
 public class SchemaScannerPluginIT extends AbstractPluginIT {
 
-    public static final String DEFAULT_FILE = "default";
+    public static final String PROPERTIES_MAXIMUM = "maximum";
+    public static final String PROPERTIES_DEFAULT = "default";
     public static final String TABLE_PERSON = "PERSON";
+    public static final String VIEW_PERSON = "PERSON_VIEW";
     public static final String COLUMN_A = "A";
     public static final String COLUMN_B = "B";
     public static final String COLUMN_C = "C";
     public static final String TABLE_ADDRESS = "ADDRESS";
     public static final String COLUMN_PERSON_A = "PERSON_A";
     public static final String COLUMN_PERSON_B = "PERSON_B";
-    public static final String COLUMNTYPE_DECIMAL = "DECIMAL";
-    public static final String COLUMNTYPE_VARCHAR = "VARCHAR";
+    public static final String COLUMN_TYPE_DECIMAL = "DECIMAL";
+    public static final String COLUMN_TYPE_VARCHAR = "VARCHAR";
     public static final String SEQUENCE_PERSON_SEQ = "PERSON_SEQ";
 
     @Before
@@ -45,13 +65,56 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         try (Connection c = DriverManager.getConnection("jdbc:hsqldb:file:target/testdb", "SA", "")) {
             execute(c, "drop sequence if exists PERSON_SEQ");
             execute(c, "drop table if exists ADDRESS");
+            execute(c, "drop trigger if exists PERSON_TRIGGER");
+            execute(c, "drop view if exists PERSON_VIEW");
             execute(c, "drop table if exists PERSON");
             execute(c, "create table PERSON(a decimal(10,5), b decimal(5,2), c varchar(255) default 'defaultValue')");
             execute(c, "alter table PERSON add constraint PK_PERSON primary key (A,B)");
             execute(c, "create table ADDRESS(PERSON_A decimal(10,5), PERSON_B decimal(5,2))");
             execute(c, "alter table ADDRESS add constraint FK_ADDRESS_PERSON foreign key (PERSON_A,PERSON_B) references PERSON(A,B)");
             execute(c, "create sequence PERSON_SEQ minvalue 100 maxvalue 10000  start with 100 increment by 10 cycle");
+            execute(c, "create view PERSON_VIEW as select a from PERSON");
+            execute(c, "create trigger PERSON_TRIGGER after insert ON PERSON when (true) delete from PERSON");
         }
+    }
+
+    /**
+     * Verify view scanning.
+     */
+    @Test
+    public void view() {
+        scan(PROPERTIES_DEFAULT);
+        store.beginTransaction();
+        TableDescriptor table = getTable(VIEW_PERSON);
+        assertThat(table, notNullValue());
+        assertThat(table, instanceOf(ViewDescriptor.class));
+        ViewDescriptor view = (ViewDescriptor) table;
+        assertThat(view.isUpdatable(), equalTo(false));
+        assertThat(view.getCheckOption(), nullValue());
+        assertThat(getColumn(VIEW_PERSON, COLUMN_A), notNullValue());
+        store.commitTransaction();
+    }
+
+    /**
+     * Verify trigger scanning.
+     */
+    @Test
+    public void trigger() {
+        scan(PROPERTIES_MAXIMUM);
+        store.beginTransaction();
+        TableDescriptor table = getTable(TABLE_PERSON);
+        assertThat(table, notNullValue());
+        List<TriggerDescriptor> triggers = table.getTriggers();
+        assertThat(triggers, hasSize(1));
+        TriggerDescriptor triggerDescriptor = triggers.get(0);
+        assertThat(triggerDescriptor.getName(), equalTo("PERSON_TRIGGER"));
+        assertThat(triggerDescriptor.getActionCondition(), equalTo("true"));
+        assertThat(triggerDescriptor.getActionOrder(), equalTo(0));
+        assertThat(triggerDescriptor.getActionOrientation(), equalTo("statement"));
+        assertThat(triggerDescriptor.getActionStatement(), equalTo("DELETE FROM PUBLIC.PERSON"));
+        assertThat(triggerDescriptor.getConditionTiming(), equalTo("after"));
+        assertThat(triggerDescriptor.getEventManipulationTime(), equalTo("insert"));
+        store.commitTransaction();
     }
 
     /**
@@ -79,7 +142,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void tablesAndColumns() {
-        scan(DEFAULT_FILE);
+        scan(PROPERTIES_DEFAULT);
         store.beginTransaction();
         // Verify person
         TableDescriptor person = getTable(TABLE_PERSON);
@@ -121,7 +184,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         assertThat(c.isPartOfForeignKey(), equalTo(false));
         assertThat(person.getColumns(), hasItem(c));
         // Verify column type VARCHAR
-        ColumnTypeDescriptor decimal = getColumnType(COLUMNTYPE_DECIMAL);
+        ColumnTypeDescriptor decimal = getColumnType(COLUMN_TYPE_DECIMAL);
         assertThat(a.getColumnType(), is(decimal));
         assertThat(b.getColumnType(), is(decimal));
         assertThat(decimal.getMinimumScale(), equalTo(0));
@@ -135,7 +198,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         assertThat(decimal.isUnsigned(), equalTo(false));
         assertThat(decimal.isUserDefined(), equalTo(false));
         // Verfify column type VARCHAR
-        ColumnTypeDescriptor varchar = getColumnType(COLUMNTYPE_VARCHAR);
+        ColumnTypeDescriptor varchar = getColumnType(COLUMN_TYPE_VARCHAR);
         assertThat(c.getColumnType(), is(varchar));
         assertThat(varchar.getMinimumScale(), equalTo(0));
         assertThat(varchar.getMaximumScale(), equalTo(0));
@@ -180,7 +243,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void foreignKey() {
-        scan(DEFAULT_FILE);
+        scan(PROPERTIES_DEFAULT);
         store.beginTransaction();
         TableDescriptor person = getTable(TABLE_PERSON);
         assertThat(person, notNullValue());
@@ -222,14 +285,15 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     @Test
     @Ignore("Need to investigate how schema crawler needs to be configured to retrieve sequence information for hsqldb")
     public void sequences() throws IOException {
-        scan(DEFAULT_FILE);
+        scan(PROPERTIES_MAXIMUM);
         store.beginTransaction();
-        SequenceDesriptor sequence = getSequence(SEQUENCE_PERSON_SEQ);
-        assertThat(sequence.getName(), equalTo(SEQUENCE_PERSON_SEQ));
-        assertThat(sequence.getMinimumValue(), equalTo(BigInteger.valueOf(100)));
-        assertThat(sequence.getMaximumValue(), equalTo(BigInteger.valueOf(10000)));
-        assertThat(sequence.getIncrement(), equalTo(10l));
-        assertThat(sequence.isCycle(), equalTo(true));
+        SequenceDesriptor sequenceDesriptor = getSequence(SEQUENCE_PERSON_SEQ);
+        assertThat(sequenceDesriptor, notNullValue());
+        assertThat(sequenceDesriptor.getName(), equalTo(SEQUENCE_PERSON_SEQ));
+        assertThat(sequenceDesriptor.getMinimumValue(), equalTo(BigInteger.valueOf(100)));
+        assertThat(sequenceDesriptor.getMaximumValue(), equalTo(BigInteger.valueOf(10000)));
+        assertThat(sequenceDesriptor.getIncrement(), equalTo(10l));
+        assertThat(sequenceDesriptor.isCycle(), equalTo(true));
         store.commitTransaction();
     }
 
