@@ -1,12 +1,6 @@
 package com.buschmais.jqassistant.plugin.rdbms.scanner;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -28,19 +22,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.OnColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 import com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin;
 
 public class SchemaScannerPluginIT extends AbstractPluginIT {
@@ -83,12 +65,12 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void view() {
-        scan(PROPERTIES_DEFAULT);
+        SchemaDescriptor schemaDescriptor = scan(PROPERTIES_DEFAULT);
         store.beginTransaction();
-        TableDescriptor table = getTable(VIEW_PERSON);
-        assertThat(table, notNullValue());
-        assertThat(table, instanceOf(ViewDescriptor.class));
-        ViewDescriptor view = (ViewDescriptor) table;
+        ViewDescriptor view = getTableOrView(VIEW_PERSON);
+        assertThat(schemaDescriptor.getViews(), hasItem(view));
+        assertThat(view, notNullValue());
+        assertThat(view, instanceOf(ViewDescriptor.class));
         assertThat(view.isUpdatable(), equalTo(false));
         assertThat(view.getCheckOption(), nullValue());
         assertThat(getColumn(VIEW_PERSON, COLUMN_A), notNullValue());
@@ -102,7 +84,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public void trigger() {
         scan(PROPERTIES_MAXIMUM);
         store.beginTransaction();
-        TableDescriptor table = getTable(TABLE_PERSON);
+        TableDescriptor table = getTableOrView(TABLE_PERSON);
         assertThat(table, notNullValue());
         List<TriggerDescriptor> triggers = table.getTriggers();
         assertThat(triggers, hasSize(1));
@@ -124,7 +106,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public void minimum() {
         scan("minimum");
         store.beginTransaction();
-        assertThat(getTable(TABLE_PERSON), notNullValue());
+        assertThat(getTableOrView(TABLE_PERSON), notNullValue());
         assertThat(getColumn(TABLE_PERSON, COLUMN_A), nullValue());
         store.commitTransaction();
     }
@@ -136,16 +118,17 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public void noTables() {
         scan("notables");
         store.beginTransaction();
-        assertThat(getTable(TABLE_PERSON), nullValue());
+        assertThat(getTableOrView(TABLE_PERSON), nullValue());
         store.commitTransaction();
     }
 
     @Test
     public void tablesAndColumns() {
-        scan(PROPERTIES_DEFAULT);
+        SchemaDescriptor schemaDescriptor = scan(PROPERTIES_DEFAULT);
         store.beginTransaction();
         // Verify person
-        TableDescriptor person = getTable(TABLE_PERSON);
+        TableDescriptor person = getTableOrView(TABLE_PERSON);
+        assertThat(schemaDescriptor.getTables(), hasItem(person));
         assertThat(person.getName(), equalTo(TABLE_PERSON));
         // Verify column A
         ColumnDescriptor a = getColumn(TABLE_PERSON, COLUMN_A);
@@ -245,13 +228,13 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public void foreignKey() {
         scan(PROPERTIES_DEFAULT);
         store.beginTransaction();
-        TableDescriptor person = getTable(TABLE_PERSON);
+        TableDescriptor person = getTableOrView(TABLE_PERSON);
         assertThat(person, notNullValue());
         ColumnDescriptor pkA = getColumn(TABLE_PERSON, COLUMN_A);
         assertThat(pkA, notNullValue());
         ColumnDescriptor pkB = getColumn(TABLE_PERSON, COLUMN_B);
         assertThat(pkB, notNullValue());
-        TableDescriptor address = getTable(TABLE_ADDRESS);
+        TableDescriptor address = getTableOrView(TABLE_ADDRESS);
         assertThat(address, notNullValue());
         ColumnDescriptor fkA = getColumn(TABLE_ADDRESS, COLUMN_PERSON_A);
         assertThat(fkA, notNullValue());
@@ -298,7 +281,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     /**
      * Scans the test tablesAndColumns.
      */
-    private void scan(String name) {
+    private SchemaDescriptor scan(String name) {
         store.beginTransaction();
         String fileName = SchemaScannerPlugin.PLUGIN_NAME + "-" + name + SchemaScannerPlugin.PROPERTIES_SUFFIX;
         File propertyFile = new File(getClassesDirectory(SchemaScannerPluginIT.class), fileName);
@@ -310,6 +293,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         SchemaDescriptor schemaDescriptor = schemas.get(0);
         assertThat(schemaDescriptor.getName(), notNullValue());
         store.commitTransaction();
+        return schemaDescriptor;
     }
 
     /**
@@ -335,9 +319,8 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      *            The table name.
      * @return The table descriptor.
      */
-    private TableDescriptor getTable(String table) {
-        List<TableDescriptor> t = query("match (t:Rdbms:Table) where t.name={table} return t", MapBuilder.<String, Object> create("table", table).get())
-                .getColumn("t");
+    private <T extends TableDescriptor> T getTableOrView(String table) {
+        List<T> t = query("match (t:Rdbms:Table) where t.name={table} return t", MapBuilder.<String, Object> create("table", table).get())                .getColumn("t");
         return t == null ? null : t.get(0);
     }
 
