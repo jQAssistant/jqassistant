@@ -148,12 +148,6 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             throws IOException {
         // Determine info level
         InfoLevel level = InfoLevel.valueOf(infoLevelName.toLowerCase());
-        SchemaCrawlerOptions options;
-        if (bundledDriverName != null) {
-            options = getOptions(bundledDriverName, level);
-        } else {
-            options = new SchemaCrawlerOptions();
-        }
         SchemaInfoLevel schemaInfoLevel = level.getSchemaInfoLevel();
         // Set options
         for (InfoLevelOption option : InfoLevelOption.values()) {
@@ -163,6 +157,13 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 option.set(schemaInfoLevel, Boolean.valueOf(value.toLowerCase()));
             }
         }
+        SchemaCrawlerOptions options;
+        if (bundledDriverName != null) {
+            options = getOptions(bundledDriverName, level);
+        } else {
+            options = new SchemaCrawlerOptions();
+        }
+        options.setSchemaInfoLevel(schemaInfoLevel);
         Catalog catalog;
         LOGGER.info("Scanning database schemas for '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
