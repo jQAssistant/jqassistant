@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.rdbms.api.model;
 
-import java.math.BigInteger;
-
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
@@ -12,13 +10,13 @@ public interface SequenceDesriptor extends RdbmsDescriptor, NamedDescriptor {
 
     void setIncrement(long increment);
 
-    BigInteger getMinimumValue();
+    long getMinimumValue();
 
-    void setMinimumValue(BigInteger minimumValue);
+    void setMinimumValue(long minimumValue);
 
-    BigInteger getMaximumValue();
+    long getMaximumValue();
 
-    void setMaximumValue(BigInteger maximumValue);
+    void setMaximumValue(long maximumValue);
 
     boolean isCycle();
 

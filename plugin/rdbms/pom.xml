@@ -10,6 +10,10 @@
 
     <artifactId>jqassistant.plugin.rdbms</artifactId>
 
+    <properties>
+        <us.fatehi.schemacrawler_version>11.02.01</us.fatehi.schemacrawler_version>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -59,13 +63,52 @@
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler</artifactId>
-                <version>11.02.01</version>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-db2</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-derby</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-hsqldb</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-mysql</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-oracle</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-postgresql</artifactId>
                 <version>11.02.01</version>
-                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-sqlite</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-sqlserver</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>us.fatehi</groupId>
+                <artifactId>schemacrawler-sybaseiq</artifactId>
+                <version>${us.fatehi.schemacrawler_version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hsqldb</groupId>
@@ -129,6 +172,48 @@
             <artifactId>schemacrawler</artifactId>
         </dependency>
         <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-db2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-derby</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-hsqldb</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-mysql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-oracle</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-sqlite</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.xerial</groupId>
+                    <artifactId>sqlite-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-sqlserver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>us.fatehi</groupId>
+            <artifactId>schemacrawler-sybaseiq</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
@@ -144,9 +229,14 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
         </dependency>
+
         <dependency>
-            <groupId>us.fatehi</groupId>
-            <artifactId>schemacrawler-hsqldb</artifactId>
+            <groupId>ojdbc6</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.3.0</version>
+            <scope>test</scope>
         </dependency>
+
+
     </dependencies>
 </project>

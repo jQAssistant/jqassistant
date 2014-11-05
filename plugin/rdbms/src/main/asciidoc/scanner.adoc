@@ -9,16 +9,19 @@ and which contains at least the properties "driver", "url", "user" and "password
 [source]
 .${project.ArtifactId}_test.properties
 ----
+## Required configuration properties
 driver=org.hsqldb.jdbc.JDBCDriver
 url=jdbc:hsqldb:file:target/myDatabase
 user=SA
 password=
 
-# optional properties which are passed to Schema Crawler (http://schemacrawler.sourceforge.net/), they affect the level
-# of queried information. It may be necessary to use another info level for performance or compatibility reasons, e.g.
-# if a database does not support retrieving metadata for stored procedures you might try to set "retrieve_routines=false"
+## Optional properties which are passed to Schema Crawler (http://schemacrawler.sourceforge.net/), they affect the level of queried information.
 
-# The info level, allowed values are standard, minimum, maximum or detailed
+## The name of the database specific driver provided by schema crawler, supported values are "sybaseiq", "sqlserver", "sqlite", "postgresql", "oracle", "mysql", "hsqldb", "derby", "db2"
+# bundled_driver=mysql
+
+## It may be necessary to use another info level for performance or compatibility reasons, e.g. if a database does not support retrieving metadata for stored
+## procedures you might try to set "retrieve_routines=false". Allowed values are "standard", "minimum", "maximum" or "detailed"
 # info_level=standard
 
 ## Activation/deactivation of single options on the selected info level
@@ -70,6 +73,7 @@ Describes a database schema.
 |====
 | Name         | Target label(s)     | Cardinality | Description
 | HAS_TABLE    | <<:Rdbms:Table>>    | 0..n        | References the tables in the schema
+| HAS_VIEW     | <<:Rdbms:View>>    | 0..n         | References the views in the schema
 | HAS_SEQUENCE | <<:Rdbms:Sequence>> | 0..n        | References the sequences in the schema
 |====
 
@@ -91,6 +95,25 @@ Describes a database table.
 | HAS_COLUMN      | <<:Rdbms:Column>>     | 0..n        | References the columns of the table
 | HAS_PRIMARY_KEY | <<:Rdbms:PrimaryKey>> | 0..1        | References the primary key of the table
 | HAS_INDEX       | <<:Rdbms:Index>>      | 0..*        | References indices defined for the table
+|====
+
+
+[[:Rdbms:View]]
+===== :Rdbms:View
+Describes a database view.
+
+.Properties of :Rdbms:View
+[options="header"]
+|====
+| Name | Description
+| name | The name of the view.
+|====
+
+.Relations of :Rdbms:View
+[options="header"]
+|====
+| Name            | Target label(s)       | Cardinality | Description
+| HAS_COLUMN      | <<:Rdbms:Column>>     | 0..n        | References the columns of the view
 |====
 
 [[:Rdbms:Column]]
@@ -238,9 +261,7 @@ Describes a foreign key reference, i.e. a pair consisting of a foreign key refer
 [options="header"]
 |====
 | Name                    | Target label(s)   | Cardinality | Description
-| FROM_FOREIGN_KEY_TABLE  | <<:Rdbms:Table>>  | 1           | The table containing the foreign key
 | FROM_FOREIGN_KEY_COLUMN | <<:Rdbms:Column>> | 1           | The foreign key column
-| TO_PRIMARY_KEY_TABLE    | <<:Rdbms:Table>>  | 1           | The table containing the primary key
 | TO_PRIMARY_KEY_COLUMN   | <<:Rdbms:Column>> | 1           | The primary key column
 |====
 

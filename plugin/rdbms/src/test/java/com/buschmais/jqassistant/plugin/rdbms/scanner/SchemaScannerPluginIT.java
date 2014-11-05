@@ -13,7 +13,6 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -25,6 +24,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -265,8 +265,6 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         List<ForeignKeyReferenceDescriptor> references = foreignKey.getForeignKeyReferences();
         assertThat(references, hasSize(2));
         for (ForeignKeyReferenceDescriptor reference : references) {
-            assertThat(reference.getPrimaryKeyTable(), equalTo(person));
-            assertThat(reference.getForeignKeyTable(), equalTo(address));
             ColumnDescriptor primaryKeyColumn = reference.getPrimaryKeyColumn();
             assertThat(primaryKeyColumn, notNullValue());
             ColumnDescriptor foreignKeyColumn = reference.getForeignKeyColumn();
@@ -283,15 +281,15 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    @Ignore("Need to investigate how schema crawler needs to be configured to retrieve sequence information for hsqldb")
+    @Ignore("Need to investigate how schema crawler needs to be configured to retrieve sequence information from hsqldb")
     public void sequences() throws IOException {
         scan(PROPERTIES_MAXIMUM);
         store.beginTransaction();
         SequenceDesriptor sequenceDesriptor = getSequence(SEQUENCE_PERSON_SEQ);
         assertThat(sequenceDesriptor, notNullValue());
         assertThat(sequenceDesriptor.getName(), equalTo(SEQUENCE_PERSON_SEQ));
-        assertThat(sequenceDesriptor.getMinimumValue(), equalTo(BigInteger.valueOf(100)));
-        assertThat(sequenceDesriptor.getMaximumValue(), equalTo(BigInteger.valueOf(10000)));
+        assertThat(sequenceDesriptor.getMinimumValue(), equalTo(100l));
+        assertThat(sequenceDesriptor.getMaximumValue(), equalTo(10000l));
         assertThat(sequenceDesriptor.getIncrement(), equalTo(10l));
         assertThat(sequenceDesriptor.isCycle(), equalTo(true));
         store.commitTransaction();
@@ -304,9 +302,10 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         store.beginTransaction();
         String fileName = SchemaScannerPlugin.PLUGIN_NAME + "-" + name + SchemaScannerPlugin.PROPERTIES_SUFFIX;
         File propertyFile = new File(getClassesDirectory(SchemaScannerPluginIT.class), fileName);
-        ConnectionPropertiesDescriptor descriptor = getScanner().scan(propertyFile, propertyFile.getAbsolutePath(), JavaScope.CLASSPATH);
+        Descriptor descriptor = getScanner().scan(propertyFile, propertyFile.getAbsolutePath(), JavaScope.CLASSPATH);
         assertThat(descriptor, notNullValue());
-        List<SchemaDescriptor> schemas = descriptor.getSchemas();
+        assertThat(descriptor, instanceOf(ConnectionPropertiesDescriptor.class));
+        List<SchemaDescriptor> schemas = ((ConnectionPropertiesDescriptor) descriptor).getSchemas();
         assertThat(schemas, hasSize(greaterThan(0)));
         SchemaDescriptor schemaDescriptor = schemas.get(0);
         assertThat(schemaDescriptor.getName(), notNullValue());

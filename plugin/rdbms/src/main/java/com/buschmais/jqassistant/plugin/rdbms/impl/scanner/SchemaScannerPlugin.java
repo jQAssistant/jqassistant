@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
+import static java.util.Arrays.asList;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -35,7 +36,6 @@ import schemacrawler.schema.View;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
-import schemacrawler.tools.options.BundledDriverOptions;
 import schemacrawler.tools.options.InfoLevel;
 import schemacrawler.utility.SchemaCrawlerUtility;
 
@@ -180,18 +180,13 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             throws IOException {
         // Determine info level
         InfoLevel level = InfoLevel.valueOf(infoLevelName.toLowerCase());
-        LOGGER.info("Scanning database schemas for '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
-
-        SchemaInfoLevel schemaInfoLevel;
         SchemaCrawlerOptions options;
         if (bundledDriverName != null) {
-            BundledDriverOptions bundledDriverOptions = getBundledDriverOptions(bundledDriverName);
-            options = bundledDriverOptions.getSchemaCrawlerOptions(level);
-            schemaInfoLevel = options.getSchemaInfoLevel();
+            options = getOptions(bundledDriverName, level);
         } else {
             options = new SchemaCrawlerOptions();
-            schemaInfoLevel = level.getSchemaInfoLevel();
         }
+        SchemaInfoLevel schemaInfoLevel = level.getSchemaInfoLevel();
         // Set options
         for (InfoLevelOption option : InfoLevelOption.values()) {
             String value = properties.getProperty(option.getPropertyName());
@@ -200,8 +195,8 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 option.set(schemaInfoLevel, Boolean.valueOf(value.toLowerCase()));
             }
         }
-        options.setSchemaInfoLevel(schemaInfoLevel);
         Catalog catalog;
+        LOGGER.info("Scanning database schemas for '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
         } catch (SQLException | SchemaCrawlerException e) {
@@ -215,19 +210,19 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      * 
      * @param bundledDriverName
      *            The driver name.
+     * @param level
+     *            The info level.
      * @return The options or <code>null</code>.
      * @throws IOException
      *             If loading fails.
      */
-    private BundledDriverOptions getBundledDriverOptions(String bundledDriverName) throws IOException {
-        Class<BundledDriverOptions> bundledDriverOptionsClass = loadDriver(bundledDriverName);
-        BundledDriverOptions bundledDriverOptions;
-        try {
-            bundledDriverOptions = bundledDriverOptionsClass.newInstance();
-        } catch (Exception e) {
-            throw new IOException("Cannot create instance of bundled driver " + bundledDriverOptionsClass);
+    private SchemaCrawlerOptions getOptions(String bundledDriverName, InfoLevel level) throws IOException {
+        for (BundledDriver bundledDriver : BundledDriver.values()) {
+            if (bundledDriver.name().toLowerCase().equals(bundledDriverName.toLowerCase())) {
+                return bundledDriver.getOptions(level);
+            }
         }
-        return bundledDriverOptions;
+        throw new IOException("Unknown bundled driver name '" + bundledDriverName + "', supported values are " + asList(BundledDriver.values()));
     }
 
     /**
@@ -242,7 +237,6 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      */
     private void store(Catalog catalog, ConnectionPropertiesDescriptor connectionPropertiesDescriptor, Store store) {
         Map<String, ColumnTypeDescriptor> columnTypes = new HashMap<>();
-        Map<Table, TableDescriptor> allTables = new HashMap<>();
         Map<Column, ColumnDescriptor> allColumns = new HashMap<>();
         Set<ForeignKey> allForeignKeys = new HashSet<>();
         for (Schema schema : catalog.getSchemas()) {
@@ -250,11 +244,11 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             schemaDescriptor.setName(schema.getName());
             connectionPropertiesDescriptor.getSchemas().add(schemaDescriptor);
             // Tables
-            createTables(catalog, schema, schemaDescriptor, columnTypes, allTables, allColumns, allForeignKeys, store);
+            createTables(catalog, schema, schemaDescriptor, columnTypes, allColumns, allForeignKeys, store);
             // Sequences
             createSequences(catalog.getSequences(schema), schemaDescriptor, store);
         }
-        createForeignKeys(allForeignKeys, allTables, allColumns, store);
+        createForeignKeys(allForeignKeys, allColumns, store);
     }
 
     /**
@@ -268,8 +262,6 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      *            The schema descriptor.
      * @param columnTypes
      *            The cached data types.
-     * @param allTables
-     *            The map to collect all tables.
      * @param allColumns
      *            The map to collect all columns.
      * @param allForeignKeys
@@ -278,7 +270,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      *            The store.
      */
     private void createTables(Catalog catalog, Schema schema, SchemaDescriptor schemaDescriptor, Map<String, ColumnTypeDescriptor> columnTypes,
-            Map<Table, TableDescriptor> allTables, Map<Column, ColumnDescriptor> allColumns, Set<ForeignKey> allForeignKeys, Store store) {
+            Map<Column, ColumnDescriptor> allColumns, Set<ForeignKey> allForeignKeys, Store store) {
         for (Table table : catalog.getTables(schema)) {
             TableDescriptor tableDescriptor = getTableDescriptor(table, store);
             schemaDescriptor.getTables().add(tableDescriptor);
@@ -326,7 +318,6 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 triggerDescriptor.setEventManipulationTime(trigger.getEventManipulationType().name());
                 tableDescriptor.getTriggers().add(triggerDescriptor);
             }
-            allTables.put(table, tableDescriptor);
             allForeignKeys.addAll(table.getForeignKeys());
         }
     }
@@ -336,14 +327,12 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      * 
      * @param allForeignKeys
      *            All collected foreign keys.
-     * @param allTables
-     *            All collected tables.
      * @param allColumns
      *            All collected columns.
      * @param store
      *            The store.
      */
-    private void createForeignKeys(Set<ForeignKey> allForeignKeys, Map<Table, TableDescriptor> allTables, Map<Column, ColumnDescriptor> allColumns, Store store) {
+    private void createForeignKeys(Set<ForeignKey> allForeignKeys, Map<Column, ColumnDescriptor> allColumns, Store store) {
         // Foreign keys
         for (ForeignKey foreignKey : allForeignKeys) {
             ForeignKeyDescriptor foreignKeyDescriptor = store.create(ForeignKeyDescriptor.class);
@@ -357,14 +346,10 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 Column foreignKeyColumn = columnReference.getForeignKeyColumn();
                 ColumnDescriptor foreignKeyColumnDescriptor = allColumns.get(foreignKeyColumn);
                 keyReferenceDescriptor.setForeignKeyColumn(foreignKeyColumnDescriptor);
-                TableDescriptor foreignKeyTableDescriptor = allTables.get(foreignKeyColumn.getParent());
-                keyReferenceDescriptor.setForeignKeyTable(foreignKeyTableDescriptor);
                 // primary key table and column
                 Column primaryKeyColumn = columnReference.getPrimaryKeyColumn();
                 ColumnDescriptor primaryKeyColumnDescriptor = allColumns.get(primaryKeyColumn);
                 keyReferenceDescriptor.setPrimaryKeyColumn(primaryKeyColumnDescriptor);
-                TableDescriptor primaryKeyTableDescriptor = allTables.get(primaryKeyColumn.getParent());
-                keyReferenceDescriptor.setPrimaryKeyTable(primaryKeyTableDescriptor);
                 foreignKeyDescriptor.getForeignKeyReferences().add(keyReferenceDescriptor);
             }
         }
@@ -385,8 +370,8 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             SequenceDesriptor sequenceDesriptor = store.create(SequenceDesriptor.class);
             sequenceDesriptor.setName(sequence.getName());
             sequenceDesriptor.setIncrement(sequence.getIncrement());
-            sequenceDesriptor.setMinimumValue(sequence.getMinimumValue());
-            sequenceDesriptor.setMaximumValue(sequence.getMaximumValue());
+            sequenceDesriptor.setMinimumValue(sequence.getMinimumValue().longValue());
+            sequenceDesriptor.setMaximumValue(sequence.getMaximumValue().longValue());
             sequenceDesriptor.setCycle(sequence.isCycle());
             schemaDescriptor.getSequences().add(sequenceDesriptor);
         }
