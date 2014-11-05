@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterable;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
@@ -110,24 +109,6 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public Result<CompositeRowObject> executeQuery(String query) {
         return xoManager.createQuery(query).execute();
-    }
-
-    @Override
-    public void reset() {
-        LOGGER.info("Resetting store.");
-        runQueryUntilResultIsZero("MATCH (n)-[r]-() WITH n, collect(r) as rels LIMIT 5000 FOREACH (r in rels | DELETE r) DELETE n RETURN COUNT(*) as deleted");
-        runQueryUntilResultIsZero("MATCH (n) WITH n LIMIT 5000 DELETE n RETURN COUNT(*) as deleted");
-        LOGGER.info("Reset finished.");
-    }
-
-    private void runQueryUntilResultIsZero(String deleteNodesAndRels) {
-        boolean hasResult;
-        do {
-            beginTransaction();
-            Query<Long> deleteNodesAndRelQuery = xoManager.createQuery(deleteNodesAndRels, Long.class);
-            hasResult = deleteNodesAndRelQuery.execute().getSingleResult() > 0;
-            commitTransaction();
-        } while (hasResult);
     }
 
     @Override
