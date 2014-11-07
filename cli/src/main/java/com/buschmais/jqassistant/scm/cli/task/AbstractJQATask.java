@@ -27,6 +27,7 @@ import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
+import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -46,6 +47,7 @@ public abstract class AbstractJQATask implements JQATask {
 
     protected Map<String, Object> properties = new HashMap<>();
     protected String storeDirectory;
+    protected RuleHelper ruleHelper;
     protected ReportHelper reportHelper;
     protected ClassLoader classLoader;
     protected ModelPluginRepository modelPluginRepository;
@@ -120,6 +122,7 @@ public abstract class AbstractJQATask implements JQATask {
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannpt create plugin repositories.", e);
         }
+        this.ruleHelper = new RuleHelper(Log.getLog());
         this.reportHelper = new ReportHelper(Log.getLog());
     }
 

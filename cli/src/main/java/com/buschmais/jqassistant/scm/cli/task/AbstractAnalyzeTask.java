@@ -8,16 +8,13 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.DirectoryWalker;
-import org.apache.commons.lang.StringUtils;
 
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
@@ -34,26 +31,11 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
 
     private static final Log LOG = Log.getLog();
 
-    private final RuleSelector ruleSelector = new RuleSelectorImpl();
     private final RuleSetReader ruleSetReader = new CompoundRuleSetReader();
     private String ruleDirectory;
-    private List<String> concepts;
-    private List<String> constraints;
-    private List<String> groups;
-
-    // copied from AbstractAnalysisMojo
-    protected RuleSet getEffectiveRules() throws CliExecutionException {
-        RuleSet ruleSet = getAvailableRules();
-        String message = reportHelper.validateRuleSet(ruleSet);
-        if (StringUtils.isNotBlank(message)) {
-            throw new RuntimeException("Rules are not valid: " + message);
-        }
-        try {
-            return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
-        } catch (RuleSetResolverException e) {
-            throw new CliExecutionException("Cannot resolve rules.", e);
-        }
-    }
+    private List<String> conceptIds;
+    private List<String> constraintIds;
+    private List<String> groupIds;
 
     // copied from AbstractAnalysisMojo
     protected RuleSet getAvailableRules() throws CliExecutionException {
@@ -68,6 +50,17 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
+    }
+
+    /**
+     * Return the selection of rules.
+     * 
+     * @param ruleSet
+     *            The rule set.
+     * @return The selection of rules.
+     */
+    protected RuleSelection getRuleSelection(RuleSet ruleSet) throws CliExecutionException {
+        return RuleSelection.Builder.select(ruleSet, groupIds, constraintIds, conceptIds);
     }
 
     private List<File> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
@@ -99,9 +92,9 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
     @Override
     public void withOptions(CommandLine options) {
         ruleDirectory = getOptionValue(options, CMDLINE_OPTION_RULEDIR, JQATask.DEFAULT_RULE_DIRECTORY);
-        groups = getOptionValues(options, CMDLINE_OPTION_GROUPS, Arrays.asList("default"));
-        constraints = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
-        concepts = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
+        groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Arrays.asList("default"));
+        constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
+        conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
     }
 
     @Override
