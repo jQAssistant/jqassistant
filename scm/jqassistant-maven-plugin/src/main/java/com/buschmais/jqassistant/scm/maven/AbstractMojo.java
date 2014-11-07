@@ -306,43 +306,45 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On execution failures.
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
-        Store store = null;
-        switch (storeLifecycle) {
-        case MODULE:
-            break;
-        case REACTOR:
-            Object existingStore = rootModule.getContextValue(Store.class.getName());
-            if (existingStore != null) {
-                if (!Store.class.isAssignableFrom(existingStore.getClass())) {
-                    throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle " + StoreLifecycle.MODULE);
-                }
-                store = (Store) existingStore;
-            }
-            break;
-        }
-        if (store == null) {
-            File directory = getStoreDirectory(rootModule);
-            List<Class<?>> descriptorTypes;
-            try {
-                descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
-            } catch (PluginRepositoryException e) {
-                throw new MojoExecutionException("Cannot determine model types.", e);
-            }
-            store = storeFactory.createStore(directory, descriptorTypes);
-        }
-        if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
-            store.reset();
-        }
-        try {
-            storeOperation.run(rootModule, store);
-        } finally {
+        synchronized (storeFactory) {
+            Store store = null;
             switch (storeLifecycle) {
             case MODULE:
-                storeFactory.closeStore(store);
                 break;
             case REACTOR:
-                rootModule.setContextValue(Store.class.getName(), store);
+                Object existingStore = rootModule.getContextValue(Store.class.getName());
+                if (existingStore != null) {
+                    if (!Store.class.isAssignableFrom(existingStore.getClass())) {
+                        throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle " + StoreLifecycle.MODULE);
+                    }
+                    store = (Store) existingStore;
+                }
                 break;
+            }
+            if (store == null) {
+                File directory = getStoreDirectory(rootModule);
+                List<Class<?>> descriptorTypes;
+                try {
+                    descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
+                } catch (PluginRepositoryException e) {
+                    throw new MojoExecutionException("Cannot determine model types.", e);
+                }
+                store = storeFactory.createStore(directory, descriptorTypes);
+            }
+            if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
+                store.reset();
+            }
+            try {
+                storeOperation.run(rootModule, store);
+            } finally {
+                switch (storeLifecycle) {
+                case MODULE:
+                    storeFactory.closeStore(store);
+                    break;
+                case REACTOR:
+                    rootModule.setContextValue(Store.class.getName(), store);
+                    break;
+                }
             }
         }
     }
