@@ -254,6 +254,29 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On execution failures.
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
+        synchronized (storeFactory) {
+            Store store = getStore(rootModule);
+            if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
+                store.reset();
+            }
+            try {
+                storeOperation.run(rootModule, store);
+            } finally {
+                releaseStore(rootModule, store);
+            }
+        }
+    }
+
+    /**
+     * Determine the store instance to use for the given root module.
+     * 
+     * @param rootModule
+     *            The root module.
+     * @return The store instance.
+     * @throws MojoExecutionException
+     *             If the store cannot be opened.
+     */
+    private Store getStore(MavenProject rootModule) throws MojoExecutionException {
         Store store = null;
         switch (storeLifecycle) {
         case MODULE:
@@ -278,20 +301,25 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             }
             store = storeFactory.createStore(directory, descriptorTypes);
         }
-        if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
-            store.reset();
-        }
-        try {
-            storeOperation.run(rootModule, store);
-        } finally {
-            switch (storeLifecycle) {
-            case MODULE:
-                storeFactory.closeStore(store);
-                break;
-            case REACTOR:
-                rootModule.setContextValue(Store.class.getName(), store);
-                break;
-            }
+        return store;
+    }
+
+    /**
+     * Release a store instance.
+     * 
+     * @param rootModule
+     *            The root module
+     * @param store
+     *            The store instance.
+     */
+    private void releaseStore(MavenProject rootModule, Store store) {
+        switch (storeLifecycle) {
+        case MODULE:
+            storeFactory.closeStore(store);
+            break;
+        case REACTOR:
+            rootModule.setContextValue(Store.class.getName(), store);
+            break;
         }
     }
 
