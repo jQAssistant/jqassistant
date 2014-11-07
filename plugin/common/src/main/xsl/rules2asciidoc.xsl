@@ -42,7 +42,6 @@ Requires concepts:
 <xsl:value-of select="$newline"/>
 <xsl:value-of select="description"/>
 <xsl:value-of select="$newline"/>
-
         [source,cypher,indent=0]
         ----
         <xsl:value-of select="cypher"/>

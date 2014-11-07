@@ -43,7 +43,7 @@ password=
 # retrieve_view_information=true
 ----
 
-*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. a dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
+*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. as dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
 [[:Rdbms:Connection:Properties]]
 ===== :Rdbms:Connection:Properties
