@@ -307,45 +307,71 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
         synchronized (storeFactory) {
-            Store store = null;
-            switch (storeLifecycle) {
-            case MODULE:
-                break;
-            case REACTOR:
-                Object existingStore = rootModule.getContextValue(Store.class.getName());
-                if (existingStore != null) {
-                    if (!Store.class.isAssignableFrom(existingStore.getClass())) {
-                        throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle " + StoreLifecycle.MODULE);
-                    }
-                    store = (Store) existingStore;
-                }
-                break;
-            }
-            if (store == null) {
-                File directory = getStoreDirectory(rootModule);
-                List<Class<?>> descriptorTypes;
-                try {
-                    descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
-                } catch (PluginRepositoryException e) {
-                    throw new MojoExecutionException("Cannot determine model types.", e);
-                }
-                store = storeFactory.createStore(directory, descriptorTypes);
-            }
+            Store store = getStore(rootModule);
             if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
                 store.reset();
             }
             try {
                 storeOperation.run(rootModule, store);
             } finally {
-                switch (storeLifecycle) {
-                case MODULE:
-                    storeFactory.closeStore(store);
-                    break;
-                case REACTOR:
-                    rootModule.setContextValue(Store.class.getName(), store);
-                    break;
-                }
+                releaseStore(rootModule, store);
             }
+        }
+    }
+
+    /**
+     * Determine the store instance to use for the given root module.
+     * 
+     * @param rootModule
+     *            The root module.
+     * @return The store instance.
+     * @throws MojoExecutionException
+     *             If the store cannot be opened.
+     */
+    private Store getStore(MavenProject rootModule) throws MojoExecutionException {
+        Store store = null;
+        switch (storeLifecycle) {
+        case MODULE:
+            break;
+        case REACTOR:
+            Object existingStore = rootModule.getContextValue(Store.class.getName());
+            if (existingStore != null) {
+                if (!Store.class.isAssignableFrom(existingStore.getClass())) {
+                    throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle " + StoreLifecycle.MODULE);
+                }
+                store = (Store) existingStore;
+            }
+            break;
+        }
+        if (store == null) {
+            File directory = getStoreDirectory(rootModule);
+            List<Class<?>> descriptorTypes;
+            try {
+                descriptorTypes = pluginRepositoryProvider.getModelPluginRepository().getDescriptorTypes();
+            } catch (PluginRepositoryException e) {
+                throw new MojoExecutionException("Cannot determine model types.", e);
+            }
+            store = storeFactory.createStore(directory, descriptorTypes);
+        }
+        return store;
+    }
+
+    /**
+     * Release a store instance.
+     * 
+     * @param rootModule
+     *            The root module
+     * @param store
+     *            The store instance.
+     */
+    private void releaseStore(MavenProject rootModule, Store store) {
+        switch (storeLifecycle) {
+        case MODULE:
+            storeFactory.closeStore(store);
+            break;
+        case REACTOR:
+            rootModule.setContextValue(Store.class.getName(), store);
+            break;
         }
     }
 
