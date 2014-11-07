@@ -2,6 +2,6 @@
         xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides elements for storing analysis results.</description>
     <model>
-        <class>com.buschmais.jqassistant.core.analysis.impl.store.model.ConceptDescriptor</class>
+        <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
     </model>
 </jqa-plugin:jqassistant-plugin>

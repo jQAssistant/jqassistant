@@ -165,7 +165,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
         }
         options.setSchemaInfoLevel(schemaInfoLevel);
         Catalog catalog;
-        LOGGER.info("Scanning database schemas for '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
+        LOGGER.info("Scanning database schemas on '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
         } catch (SQLException | SchemaCrawlerException e) {

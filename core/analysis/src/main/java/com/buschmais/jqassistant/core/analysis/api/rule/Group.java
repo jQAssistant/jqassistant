@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -21,56 +23,58 @@ public class Group implements Rule {
     /**
      * The set of concepts contained in the group.
      */
-    private Set<Concept> concepts = new HashSet<>();
+    private Map<String, Severity> concepts = new HashMap<>();
 
     /**
      * The set of constraints contained in the group.
      */
-    private Set<Constraint> constraints = new HashSet<Constraint>();
+    private Map<String, Severity> constraints = new HashMap<>();
 
     /**
      * The set of groups contained in the group.
      */
-    private Set<Group> groups = new HashSet<Group>();
+    private Set<String> groups = new HashSet<>();
+
+    /**
+     * Constructor.
+     * 
+     * @param id
+     *            The id of the group.
+     * @param description
+     *            The description.
+     * @param concepts
+     *            The included concepts.
+     * @param constraints
+     *            The included constraints.
+     * @param groups
+     *            The included groups.
+     */
+    public Group(String id, String description, Map<String, Severity> concepts, Map<String, Severity> constraints, Set<String> groups) {
+        this.id = id;
+        this.description = description;
+        this.concepts = concepts;
+        this.constraints = constraints;
+        this.groups = groups;
+    }
 
     public String getId() {
         return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<Concept> getConcepts() {
+    public Map<String, Severity> getConcepts() {
         return concepts;
     }
 
-    public void setConcepts(Set<Concept> concepts) {
-        this.concepts = concepts;
-    }
-
-    public Set<Constraint> getConstraints() {
+    public Map<String, Severity> getConstraints() {
         return constraints;
     }
 
-    public void setConstraints(Set<Constraint> constraints) {
-        this.constraints = constraints;
-    }
-
-    public Set<Group> getGroups() {
+    public Set<String> getGroups() {
         return groups;
-    }
-
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
     }
 
     @Override

@@ -4,12 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -154,7 +149,7 @@ public class AnalysisService extends AbstractJQARestService {
             JSONObject conceptObject = new JSONObject();
             conceptObject.put(JSON_OBJECT_KEY_ID, concept.getValue().getId());
             conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, concept.getValue().getDescription());
-            conceptObject.put(JSON_OBJECT_KEY_CYPHER, concept.getValue().getQuery().getCypher());
+            conceptObject.put(JSON_OBJECT_KEY_CYPHER, concept.getValue().getCypher());
             concepts.put(conceptObject);
         }
 
@@ -164,7 +159,7 @@ public class AnalysisService extends AbstractJQARestService {
             JSONObject constraintObject = new JSONObject();
             constraintObject.put(JSON_OBJECT_KEY_ID, constraint.getValue().getId());
             constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, constraint.getValue().getDescription());
-            constraintObject.put(JSON_OBJECT_KEY_CYPHER, constraint.getValue().getQuery().getCypher());
+            constraintObject.put(JSON_OBJECT_KEY_CYPHER, constraint.getValue().getCypher());
             constraints.put(constraintObject);
         }
 

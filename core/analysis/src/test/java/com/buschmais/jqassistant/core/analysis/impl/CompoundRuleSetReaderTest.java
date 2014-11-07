@@ -33,8 +33,8 @@ public class CompoundRuleSetReaderTest {
         Group group = ruleSet.getGroups().values().iterator().next();
         assertEquals("default", group.getId());
         assertEquals(1, group.getConcepts().size());
-        assertEquals("java:Throwable", group.getConcepts().iterator().next().getId());
+        assertEquals("java:Throwable", group.getConcepts().keySet().iterator().next());
         assertEquals(1, group.getConstraints().size());
-        assertEquals("example:ConstructorOfDateMustNotBeUsed", group.getConstraints().iterator().next().getId());
+        assertEquals("example:ConstructorOfDateMustNotBeUsed", group.getConstraints().keySet().iterator().next());
     }
 }

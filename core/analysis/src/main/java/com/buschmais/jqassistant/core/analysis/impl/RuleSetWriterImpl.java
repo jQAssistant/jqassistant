@@ -1,30 +1,11 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
 import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONCEPT_SEVERITY;
-
-import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedRefereceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
 
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -32,6 +13,14 @@ import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * Implementation of a {@link RuleSetWriter}.
@@ -49,17 +38,15 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     }
 
     @Override
-    public void write(RuleSet ruleSet, Writer writer) {
-        SortedMap<String, Group> groups = new TreeMap<>();
-        SortedMap<String, Concept> concepts = new TreeMap<>();
-        SortedMap<String, Constraint> constraints = new TreeMap<>();
-        for (Group group : ruleSet.getGroups().values()) {
-            addGroup(group, groups, concepts, constraints);
-        }
+    public void write(RuleSet ruleSet, Writer writer) throws AnalysisException {
+        CollectRulesVisitor visitor = new CollectRulesVisitor();
+        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroups().keySet())
+                .addConstraintIds(ruleSet.getConstraints().keySet()).addConceptIds(ruleSet.getConcepts().keySet()).get();
+        new RuleExecutor(visitor).execute(ruleSet, ruleSelection);
         JqassistantRules rules = new JqassistantRules();
-        writeGroups(groups.values(), rules);
-        writeConcepts(concepts.values(), rules);
-        writeConstraints(constraints.values(), rules);
+        writeGroups(visitor.getGroups(), rules);
+        writeConcepts(visitor.getConcepts().keySet(), rules);
+        writeConstraints(visitor.getConstraints().keySet(), rules);
 
         marshal(writer, rules);
     }
@@ -82,76 +69,41 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void addGroup(Group group, Map<String, Group> groups, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
-        if (!groups.containsKey(group.getId())) {
-            groups.put(group.getId(), group);
-            for (Group includeGroup : group.getGroups()) {
-                addGroup(includeGroup, groups, concepts, constraints);
-            }
-            for (Concept concept : group.getConcepts()) {
-                addConcept(concept, concepts);
-            }
-            for (Constraint constraint : group.getConstraints()) {
-                addConstraint(constraint, concepts, constraints);
-            }
-        }
-    }
-
-    private void addConcept(Concept concept, Map<String, Concept> concepts) {
-        if (!concepts.containsKey(concept.getId())) {
-            concepts.put(concept.getId(), concept);
-            addRequiredConcepts(concept, concepts);
-        }
-    }
-
-    private void addConstraint(Constraint constraint, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
-        if (!constraints.containsKey(constraint.getId())) {
-            constraints.put(constraint.getId(), constraint);
-            addRequiredConcepts(constraint, concepts);
-        }
-    }
-
-    private void addRequiredConcepts(AbstractRule executable, Map<String, Concept> concepts) {
-        for (Concept concept : executable.getRequiresConcepts()) {
-            addConcept(concept, concepts);
-        }
-    }
-
     private void writeGroups(Collection<Group> groups, JqassistantRules rules) {
         for (Group group : groups) {
             GroupType groupType = new GroupType();
             groupType.setId(group.getId());
-            for (Group includeGroup : group.getGroups()) {
+            for (String includeGroupId : group.getGroups()) {
                 ReferenceType groupReferenceType = new ReferenceType();
-                groupReferenceType.setRefId(includeGroup.getId());
+                groupReferenceType.setRefId(includeGroupId);
                 groupType.getIncludeGroup().add(groupReferenceType);
             }
-            for (Concept includeConcept : group.getConcepts()) {
-                IncludedRefereceType conceptReferenceType = new IncludedRefereceType();
-                conceptReferenceType.setRefId(includeConcept.getId());
-                conceptReferenceType.setSeverity(getSeverity(includeConcept.getSeverity(), DEFAULT_CONCEPT_SEVERITY));
+            for (Map.Entry<String, Severity> conceptEntry : group.getConcepts().entrySet()) {
+                IncludedReferenceType conceptReferenceType = new IncludedReferenceType();
+                conceptReferenceType.setRefId(conceptEntry.getKey());
+                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue(), DEFAULT_CONCEPT_SEVERITY));
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
-            for (Constraint includeConstraint : group.getConstraints()) {
-                IncludedRefereceType constraintReferenceType = new IncludedRefereceType();
-                constraintReferenceType.setRefId(includeConstraint.getId());
-                constraintReferenceType.setSeverity(getSeverity(includeConstraint.getSeverity(), DEFAULT_CONSTRAINT_SEVERITY));
+            for (Map.Entry<String, Severity> constraintEntry : group.getConstraints().entrySet()) {
+                IncludedReferenceType constraintReferenceType = new IncludedReferenceType();
+                constraintReferenceType.setRefId(constraintEntry.getKey());
+                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), DEFAULT_CONSTRAINT_SEVERITY));
                 groupType.getIncludeConstraint().add(constraintReferenceType);
             }
             rules.getQueryTemplateOrConceptOrConstraint().add(groupType);
         }
     }
 
-    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) {
+    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) throws AnalysisException {
         for (Concept concept : concepts) {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
             conceptType.setSeverity(getSeverity(concept.getSeverity(), DEFAULT_CONCEPT_SEVERITY));
-            conceptType.setCypher(concept.getQuery().getCypher());
-            for (Concept requiresConcept : concept.getRequiresConcepts()) {
+            conceptType.setCypher(concept.getCypher());
+            for (String requiresConceptId : concept.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
-                conceptReferenceType.setRefId(requiresConcept.getId());
+                conceptReferenceType.setRefId(requiresConceptId);
                 conceptType.getRequiresConcept().add(conceptReferenceType);
             }
             rules.getQueryTemplateOrConceptOrConstraint().add(conceptType);
@@ -164,10 +116,10 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
             constraintType.setSeverity(getSeverity(constraint.getSeverity(), DEFAULT_CONSTRAINT_SEVERITY));
-            constraintType.setCypher(constraint.getQuery().getCypher());
-            for (Concept requiresConcept : constraint.getRequiresConcepts()) {
+            constraintType.setCypher(constraint.getCypher());
+            for (String requiresConceptId : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
-                conceptReferenceType.setRefId(requiresConcept.getId());
+                conceptReferenceType.setRefId(requiresConceptId);
                 constraintType.getRequiresConcept().add(conceptReferenceType);
             }
             rules.getQueryTemplateOrConceptOrConstraint().add(constraintType);

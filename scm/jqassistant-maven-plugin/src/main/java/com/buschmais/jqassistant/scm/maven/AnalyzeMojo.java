@@ -3,11 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -16,10 +12,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -74,11 +67,10 @@ public class AnalyzeMojo extends AbstractProjectMojo {
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
-
         // perform validations
         validateParameters();
-
-        final RuleSet ruleSet = resolveEffectiveRules(rootModule);
+        RuleSet ruleSet = readRules(rootModule);
+        RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groupIds, constraintIds, conceptIds);
         List<AnalysisListener> reportWriters = new LinkedList<>();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         reportWriters.add(inMemoryReportWriter);
@@ -114,7 +106,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         MavenConsole console = new MavenConsole(getLog());
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         try {
-            analyzer.execute(ruleSet);
+            analyzer.execute(ruleSet, ruleSelection);
         } catch (AnalysisException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
@@ -125,7 +117,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             if (failOnViolations && conceptViolations > 0) {
                 throw new MojoFailureException(conceptViolations + " concept(s) returned empty results!");
             }
-            int constraintViolations = reportHelper.verifyViolations(Severity.fromValue(severity), inMemoryReportWriter);
+            int constraintViolations = reportHelper.verifyConstraintResults(Severity.fromValue(severity), inMemoryReportWriter);
             if (failOnViolations && constraintViolations > 0) {
                 throw new MojoFailureException(constraintViolations + " constraint(s) have been violated!");
             }

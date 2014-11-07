@@ -9,8 +9,6 @@ import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
@@ -23,7 +21,6 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public final class ReportHelper {
 
-    public static final String LOG_LINE_PREFIX = "  \"";
     private Console console;
 
     /**
@@ -36,72 +33,6 @@ public final class ReportHelper {
         this.console = console;
     }
 
-    /**
-     * Logs the given
-     * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet} on level
-     * info.
-     *
-     * @param ruleSet
-     *            The
-     *            {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}
-     *            .
-     */
-    public void printRuleSet(RuleSet ruleSet) {
-        console.info("Groups [" + ruleSet.getGroups().size() + "]");
-        for (Group group : ruleSet.getGroups().values()) {
-            console.info(LOG_LINE_PREFIX + group.getId() + "\"");
-        }
-        console.info("Constraints [" + ruleSet.getConstraints().size() + "]");
-        for (Constraint constraint : ruleSet.getConstraints().values()) {
-            console.info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
-        }
-        console.info("Concepts [" + ruleSet.getConcepts().size() + "]");
-        for (Concept concept : ruleSet.getConcepts().values()) {
-            console.info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
-        }
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            console.info("Missing concepts [" + ruleSet.getMissingConcepts().size() + "]");
-            for (String missingConcept : ruleSet.getMissingConcepts()) {
-                console.warn(LOG_LINE_PREFIX + missingConcept);
-            }
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            console.info("Missing constraints [" + ruleSet.getMissingConstraints().size() + "]");
-            for (String missingConstraint : ruleSet.getMissingConstraints()) {
-                console.warn(LOG_LINE_PREFIX + missingConstraint);
-            }
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            console.info("Missing groups [" + ruleSet.getMissingGroups().size() + "]");
-            for (String missingGroup : ruleSet.getMissingGroups()) {
-                console.warn(LOG_LINE_PREFIX + missingGroup);
-            }
-        }
-    }
-
-    /**
-     * Validates the given rules set for unresolved concepts, constraints or
-     * groups.
-     *
-     * @param ruleSet
-     *            The rules set.
-     */
-    public String validateRuleSet(RuleSet ruleSet) {
-        StringBuffer message = new StringBuffer();
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            message.append("\n  Concepts: ");
-            message.append(ruleSet.getMissingConcepts());
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            message.append("\n  Constraints: ");
-            message.append(ruleSet.getMissingConstraints());
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            message.append("\n  Groups: ");
-            message.append(ruleSet.getMissingGroups());
-        }
-        return message.length() == 0 ? null : message.toString();
-    }
 
     /**
      * Verifies the concept results returned by the
@@ -136,7 +67,7 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) {
-        return verifyViolations(DEFAULT_CONSTRAINT_SEVERITY, inMemoryReportWriter);
+        return verifyConstraintResults(DEFAULT_CONSTRAINT_SEVERITY, inMemoryReportWriter);
     }
 
     /**
@@ -149,7 +80,7 @@ public final class ReportHelper {
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
-    public int verifyViolations(Severity severity, InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConstraintResults(Severity severity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations().values();
         int violations = 0;
         for (Result<Constraint> constraintViolation : constraintViolations) {

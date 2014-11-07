@@ -13,7 +13,8 @@
                 <xs:element name="constraint" type="jqassistant-rules:constraintType" minOccurs="0"
                             maxOccurs="unbounded"/>
                 <xs:element name="group" type="jqassistant-rules:groupType" minOccurs="0" maxOccurs="unbounded"/>
-                <xs:element name="metricGroup" type="jqassistant-rules:metricGroupType" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="metricGroup" type="jqassistant-rules:metricGroupType" minOccurs="0"
+                            maxOccurs="unbounded"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>
@@ -63,7 +64,7 @@
             <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
             <xs:choice>
                 <xs:element name="cypher" type="xs:string"/>
-                <xs:element name="useQueryDefinition" type="jqassistant-rules:referenceType"/>
+                <xs:element name="useQueryTemplate" type="jqassistant-rules:referenceType"/>
             </xs:choice>
             <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
@@ -85,7 +86,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="includedRefereceType">
+    <xs:complexType name="includedReferenceType">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceType">
                 <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
@@ -102,7 +103,7 @@
                     <xs:group ref="jqassistant-rules:useQueryGroup"/>
                 </xs:sequence>
                 <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
-           </xs:extension>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
@@ -123,9 +124,9 @@
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
-                    <xs:element name="includeConcept" type="jqassistant-rules:includedRefereceType" minOccurs="0"
+                    <xs:element name="includeConcept" type="jqassistant-rules:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                    <xs:element name="includeConstraint" type="jqassistant-rules:includedRefereceType" minOccurs="0"
+                    <xs:element name="includeConstraint" type="jqassistant-rules:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:element name="includeGroup" type="jqassistant-rules:referenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
@@ -143,7 +144,8 @@
                                 maxOccurs="unbounded"/>
                     <xs:element name="cypher" type="xs:string"/>
                     <xs:sequence>
-                        <xs:element name="parameter" type="jqassistant-rules:parameterDefinitionType" minOccurs="0"
+                        <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType"
+                                    minOccurs="0"
                                     maxOccurs="unbounded"/>
                     </xs:sequence>
                 </xs:sequence>

@@ -4,7 +4,7 @@ import org.neo4j.helpers.Service;
 import org.neo4j.shell.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.scm.common.report.ReportHelper;
+import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 
 @Service.Implementation(App.class)
 public class AvailableRulesApp extends AbstractJQAssistantApp {
@@ -19,7 +19,7 @@ public class AvailableRulesApp extends AbstractJQAssistantApp {
 
     @Override
     public Continuation execute(AppCommandParser parser, Session session, Output out) throws Exception {
-        new ReportHelper(new ShellConsole(out)).printRuleSet(getAvailableRules());
+        new RuleHelper(new ShellConsole(out)).printRuleSet(getAvailableRules());
         return Continuation.INPUT_COMPLETE;
     }
 }

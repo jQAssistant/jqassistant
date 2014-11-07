@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.common.test;
 
 import static com.buschmais.xo.api.Query.Result;
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -21,10 +22,7 @@ import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
@@ -134,9 +132,6 @@ public class AbstractPluginIT {
         List<RuleSource> sources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new CompoundRuleSetReader();
         ruleSet = ruleSetReader.read(sources);
-        assertTrue("There must be no unresolved concepts.", ruleSet.getMissingConcepts().isEmpty());
-        assertTrue("There must be no unresolved result.", ruleSet.getMissingConstraints().isEmpty());
-        assertTrue("There must be no unresolved groups.", ruleSet.getMissingGroups().isEmpty());
     }
 
     @Before
@@ -272,11 +267,10 @@ public class AbstractPluginIT {
      *             If the analyzer reports an error.
      */
     protected void applyConcept(String id) throws AnalysisException {
+        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
         Concept concept = ruleSet.getConcepts().get(id);
-        Assert.assertNotNull("The requested concept cannot be resolved.", concept);
-        RuleSet targetRuleSet = new RuleSet();
-        targetRuleSet.getConcepts().put(concept.getId(), concept);
-        analyzer.execute(targetRuleSet);
+        assertNotNull("The requested concept cannot be resolved.", concept);
+        analyzer.execute(ruleSet, ruleSelection);
     }
 
     /**
@@ -288,11 +282,10 @@ public class AbstractPluginIT {
      *             If the analyzer reports an error.
      */
     protected void validateConstraint(String id) throws AnalysisException {
+        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
         Constraint constraint = ruleSet.getConstraints().get(id);
-        Assert.assertNotNull("The constraint must not be null", constraint);
-        RuleSet targetRuleSet = new RuleSet();
-        targetRuleSet.getConstraints().put(constraint.getId(), constraint);
-        analyzer.execute(targetRuleSet);
+        assertNotNull("The constraint must not be null", constraint);
+        analyzer.execute(ruleSet, ruleSelection);
     }
 
     /**
@@ -304,11 +297,10 @@ public class AbstractPluginIT {
      *             If the analyzer reports an error.
      */
     protected void executeGroup(String id) throws AnalysisException {
+        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
         Group group = ruleSet.getGroups().get(id);
-        Assert.assertNotNull("The group must not be null", group);
-        RuleSet targetRuleSet = new RuleSet();
-        targetRuleSet.getGroups().put(group.getId(), group);
-        analyzer.execute(targetRuleSet);
+        assertNotNull("The group must not be null", group);
+        analyzer.execute(ruleSet, ruleSelection);
     }
 
     /**

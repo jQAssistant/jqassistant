@@ -1,0 +1,42 @@
+
+[[module-structure:Api]]
+.Labels all "api" packages with "Api".
+[source,cypher,role=concept]
+----
+match
+  (p:Package)
+where
+  p.name="api"
+set
+  p:Api
+return
+  p as ApiPackage
+----
+
+[[module-structure:Impl]]
+.Labels all "impl" packages with "Impl".
+[source,cypher,role=concept]
+----
+match
+  (p:Package)
+where
+  p.name="api"
+set
+  p:Api
+return
+  p as ApiPackage
+----
+
+
+[[module-structure:ApiMustNotDependOnImplementation]]
+.Types contained within an API package must not have dependencies to types contained in an implementation package.
+[source,cypher,role=constraint,depends="module-structure:Api, module-structure:Impl,dependency:Type"]]
+----
+match
+  (:Api:Package)-[:CONTAINS*0..]->(t1:Type),
+  (:Impl:Package)-[:CONTAINS*0..]->(t2:Type),
+  (t1)-[:DEPENDS_ON]-(ts)
+return
+  t1 as ApiType, t2 as ImplementationType
+----
+

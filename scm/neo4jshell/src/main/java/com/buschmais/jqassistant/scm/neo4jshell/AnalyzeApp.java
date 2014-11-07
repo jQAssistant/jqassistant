@@ -4,6 +4,7 @@ import org.neo4j.helpers.Service;
 import org.neo4j.shell.*;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -24,13 +25,14 @@ public class AnalyzeApp extends AbstractJQAssistantApp {
 
     @Override
     public Continuation execute(AppCommandParser parser, Session session, final Output out) throws Exception {
-        RuleSet effectiveRuleSet = getEffectiveRuleSet(parser);
+        RuleSet availableRules = getAvailableRules();
+        RuleSelection ruleSelection = selectRules(parser);
         InMemoryReportWriter reportWriter = new InMemoryReportWriter();
         Store store = getStore();
         store.start(getModelPluginRepository().getDescriptorTypes());
         ShellConsole console = new ShellConsole(out);
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
-        analyzer.execute(effectiveRuleSet);
+        analyzer.execute(availableRules, ruleSelection);
         ReportHelper reportHelper = new ReportHelper(console);
         reportHelper.verifyConceptResults(reportWriter);
         reportHelper.verifyConstraintViolations(reportWriter);

@@ -290,10 +290,16 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         assertThat(descriptor, instanceOf(ConnectionPropertiesDescriptor.class));
         List<SchemaDescriptor> schemas = ((ConnectionPropertiesDescriptor) descriptor).getSchemas();
         assertThat(schemas, hasSize(greaterThan(0)));
-        SchemaDescriptor schemaDescriptor = schemas.get(0);
-        assertThat(schemaDescriptor.getName(), notNullValue());
+        SchemaDescriptor publicSchema = null;
+        for (SchemaDescriptor schema : schemas) {
+            assertThat(schema.getName(), notNullValue());
+            if ("PUBLIC".equals(schema.getName())) {
+                publicSchema = schema;
+            }
+        }
+        assertThat(publicSchema, notNullValue());
         store.commitTransaction();
-        return schemaDescriptor;
+        return publicSchema;
     }
 
     /**
@@ -320,7 +326,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      * @return The table descriptor.
      */
     private <T extends TableDescriptor> T getTableOrView(String table) {
-        List<T> t = query("match (t:Rdbms:Table) where t.name={table} return t", MapBuilder.<String, Object> create("table", table).get())                .getColumn("t");
+        List<T> t = query("match (t:Rdbms:Table) where t.name={table} return t", MapBuilder.<String, Object> create("table", table).get()).getColumn("t");
         return t == null ? null : t.get(0);
     }
 

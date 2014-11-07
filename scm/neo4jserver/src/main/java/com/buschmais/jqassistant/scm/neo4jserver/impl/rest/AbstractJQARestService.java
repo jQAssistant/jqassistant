@@ -3,19 +3,15 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
-import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
@@ -28,48 +24,34 @@ public abstract class AbstractJQARestService {
     /**
      * The rules reader instance.
      */
-    private RuleSetReader ruleSetReader;
-    private PluginConfigurationReader pluginConfigurationReader;
-    private RulePluginRepository rulePluginRepository;
+    private RuleSet availableRules;
 
     private Store store = null;
 
     protected AbstractJQARestService(Store store) throws PluginRepositoryException {
         this.store = store;
-        pluginConfigurationReader = new PluginConfigurationReaderImpl();
-        rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-        ruleSetReader = new XmlRuleSetReader();
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        RulePluginRepository rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
+        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
+        RuleSetReader ruleSetReader = new CompoundRuleSetReader();
+        availableRules = ruleSetReader.read(ruleSources);
     }
 
     protected RuleSet getAvailableRules() {
-        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
-        return ruleSetReader.read(ruleSources);
+        return availableRules;
     }
 
     protected Store getStore() {
         return store;
     }
 
-    protected ModelPluginRepository getModelPluginRepository() {
-        try {
-            return new ModelPluginRepositoryImpl(pluginConfigurationReader);
-        } catch (PluginRepositoryException e) {
-            throw new IllegalStateException("Cannot get model plugin repository", e);
-        }
-    }
-
-    protected RuleSet getEffectiveRuleSet(List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws RuleSetResolverException {
-        RuleSet availableRules = getAvailableRules();
-        RuleSelector ruleSelector = new RuleSelectorImpl();
-        return ruleSelector.getEffectiveRuleSet(availableRules, conceptNames, constraintNames, groupNames);
-    }
-
     public InMemoryReportWriter analyze(List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws Exception {
-        RuleSet effectiveRuleSet = getEffectiveRuleSet(conceptNames, constraintNames, groupNames);
+        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptIds(conceptNames).addConstraintIds(constraintNames).addGroupIds(groupNames)
+                .get();
         InMemoryReportWriter reportWriter = new InMemoryReportWriter();
         Slf4jConsole console = new Slf4jConsole();
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
-        analyzer.execute(effectiveRuleSet);
+        analyzer.execute(getAvailableRules(), ruleSelection);
         ReportHelper reportHelper = new ReportHelper(console);
         reportHelper.verifyConceptResults(reportWriter);
         reportHelper.verifyConstraintViolations(reportWriter);

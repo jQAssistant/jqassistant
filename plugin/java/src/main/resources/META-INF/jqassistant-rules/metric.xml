@@ -28,7 +28,8 @@
 
     <concept id="metric:Top10MethodsPerType">
         <requiresConcept refId="dependency:Type"/>
-        <description>Returns the top 10 types regarding to the number of declared methods (including constructors).</description>
+        <description>Returns the top 10 types regarding to the number of declared methods (including constructors).
+        </description>
         <cypher><![CDATA[
             MATCH
                 (t:Type:File)-[:DECLARES]->(m:Method)
@@ -112,7 +113,7 @@
                     RETURN
                         p.fqn as PackageName, TypesPerPackage, count(d) as Dependencies
                 ]]></cypher>
-            <parameter name="ArtifactName" type="string"/>
+            <parameterDefinition name="ArtifactName" type="string"/>
         </metric>
         <metric id="metric:ElementsAndDependenciesPerTypeByPackageAndArtifact">
             <description>Elements per type and dependencies per type by package and artifact.</description>
@@ -134,8 +135,8 @@
                     RETURN
                         t.fqn as TypeName, ElementsPerType, count(d) as Dependencies
                 ]]></cypher>
-            <parameter name="ArtifactName" type="string"/>
-            <parameter name="PackageName" type="string"/>
+            <parameterDefinition name="ArtifactName" type="string"/>
+            <parameterDefinition name="PackageName" type="string"/>
         </metric>
     </metricGroup>
 

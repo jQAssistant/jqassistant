@@ -14,15 +14,12 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
-import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.provider.PluginConfigurationProvider;
@@ -65,19 +62,19 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The list of concept names to be applied.
      */
     @Parameter(property = "jqassistant.concepts")
-    protected List<String> concepts;
+    protected List<String> conceptIds;
 
     /**
      * The list of constraint names to be validated.
      */
     @Parameter(property = "jqassistant.constraints")
-    protected List<String> constraints;
+    protected List<String> constraintIds;
 
     /**
      * The list of group names to be executed.
      */
     @Parameter(property = "jqassistant.groups")
-    protected List<String> groups;
+    protected List<String> groupIds;
 
     /**
      * The file to write the XML report to.
@@ -120,12 +117,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * The rules reader instance.
      */
-    private RuleSetReader ruleSetReader = new XmlRuleSetReader();
-
-    /**
-     * The rules selector.
-     */
-    private RuleSelector ruleSelector = new RuleSelectorImpl();
+    private RuleSetReader ruleSetReader = new CompoundRuleSetReader();
 
     @Override
     public final void execute() throws MojoExecutionException, MojoFailureException {
@@ -157,7 +149,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Reads the available rules from the rules directory and deployed catalogs.
      *
      * @return A
-     *         {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}.
+     *         {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
+     *         .
      * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
@@ -177,23 +170,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
-    }
-
-    /**
-     * Resolves the effective rules.
-     *
-     * @return The resolved rules set.
-     * @throws MojoExecutionException
-     *             If resolving fails.
-     */
-    protected RuleSet resolveEffectiveRules(MavenProject baseProject) throws MojoExecutionException {
-        RuleSet ruleSet = readRules(baseProject);
-        validateRuleSet(ruleSet);
-        try {
-            return ruleSelector.getEffectiveRuleSet(ruleSet, concepts, constraints, groups);
-        } catch (RuleSetResolverException e) {
-            throw new MojoExecutionException("Cannot resolve rules.", e);
-        }
     }
 
     /**
@@ -235,7 +211,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
                 @Override
                 protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (RuleSource.Type.XML.matches(file)) {
+                    if (RuleSource.Type.XML.matches(file) || RuleSource.Type.AsciiDoc.matches(file)) {
                         results.add(file);
                     }
                 }
@@ -247,34 +223,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             return ruleFiles;
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
-        }
-    }
-
-    /**
-     * Validates the given rules set for unresolved concepts, constraints or
-     * groups.
-     *
-     * @param ruleSet
-     *            The rules set.
-     * @throws MojoExecutionException
-     *             If there are unresolved concepts, constraints or groups.
-     */
-    private void validateRuleSet(RuleSet ruleSet) throws MojoExecutionException {
-        StringBuffer message = new StringBuffer();
-        if (!ruleSet.getMissingConcepts().isEmpty()) {
-            message.append("\n  Concepts: ");
-            message.append(ruleSet.getMissingConcepts());
-        }
-        if (!ruleSet.getMissingConstraints().isEmpty()) {
-            message.append("\n  Constraints: ");
-            message.append(ruleSet.getMissingConstraints());
-        }
-        if (!ruleSet.getMissingGroups().isEmpty()) {
-            message.append("\n  Groups: ");
-            message.append(ruleSet.getMissingGroups());
-        }
-        if (message.length() > 0) {
-            throw new MojoExecutionException("The following rules are referenced but are not available;" + message);
         }
     }
 

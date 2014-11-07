@@ -90,15 +90,15 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         // set priority based on severity value
         rule.setSeverity(RulePriority.valueOf(executable.getSeverity().name()));
         StringBuilder requiresConcepts = new StringBuilder();
-        for (Concept requiredConcept : executable.getRequiresConcepts()) {
+        for (String requiredConcept : executable.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {
                 requiresConcepts.append(",");
             }
-            requiresConcepts.append(requiredConcept.getId());
+            requiresConcepts.append(requiredConcept);
         }
         createRuleParameter(rule, RuleParameter.Type, ruleType.name());
         createRuleParameter(rule, RuleParameter.RequiresConcepts, requiresConcepts.toString());
-        createRuleParameter(rule, RuleParameter.Cypher, executable.getQuery().getCypher());
+        createRuleParameter(rule, RuleParameter.Cypher, executable.getCypher());
         return rule;
     }
 

@@ -12,12 +12,11 @@ import org.neo4j.shell.AppShellServer;
 import org.neo4j.shell.impl.AbstractApp;
 import org.neo4j.shell.kernel.GraphDatabaseShellServer;
 
-import com.buschmais.jqassistant.core.analysis.api.RuleSelector;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetResolverException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.impl.RuleSelectorImpl;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -85,7 +84,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
         }
     }
 
-    protected RuleSet getEffectiveRuleSet(AppCommandParser parser) throws RuleSetResolverException {
+    protected RuleSelection selectRules(AppCommandParser parser) throws AnalysisException {
         List<String> conceptNames = new ArrayList<>();
         List<String> constraintNames = new ArrayList<>();
         List<String> groupNames = new ArrayList<>();
@@ -100,9 +99,7 @@ public abstract class AbstractJQAssistantApp extends AbstractApp {
                 throw new IllegalArgumentException("Illegal argument " + argument);
             }
         }
-        RuleSet availableRules = getAvailableRules();
-        RuleSelector ruleSelector = new RuleSelectorImpl();
-        return ruleSelector.getEffectiveRuleSet(availableRules, conceptNames, constraintNames, groupNames);
+        return RuleSelection.Builder.newInstance().addConceptIds(conceptNames).addConstraintIds(constraintNames).addGroupIds(groupNames).get();
     }
 
     private boolean parseArgument(Pattern pattern, String argument, List<String> values) {

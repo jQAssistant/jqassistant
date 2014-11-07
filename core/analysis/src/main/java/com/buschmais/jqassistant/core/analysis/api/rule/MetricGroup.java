@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -12,7 +10,7 @@ public class MetricGroup {
     /**
      * The list of metrics.
      */
-    private final Map<String, Metric> metrics = new LinkedHashMap<>();
+    private Map<String, Metric> metrics;
     /**
      * The id of the rule.
      */
@@ -22,44 +20,31 @@ public class MetricGroup {
      */
     private String description;
 
-    public String getId() {
-        return id;
+    /**
+     * Constructor.
+     * 
+     * @param id
+     *            The metric id
+     * @param description
+     *            The description.
+     * @param metrics
+     *            The metrics.
+     */
+    public MetricGroup(String id, String description, Map<String, Metric> metrics) {
+        this.id = id;
+        this.description = description;
+        this.metrics = metrics;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getId() {
+        return id;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    /**
-     * Add a metric to this group.
-     * 
-     * @param metric
-     *            the metric to add
-     */
-    public void addMetric(Metric metric) {
-
-        if (metric == null) {
-            return;
-        }
-
-        metrics.put(metric.getId(), metric);
-    }
-
-    /**
-     * Get the list of metrics of this group.
-     * 
-     * @return the list of metrics, never {@code null}
-     */
     public Map<String, Metric> getMetrics() {
-
-        return Collections.unmodifiableMap(metrics);
+        return metrics;
     }
 }

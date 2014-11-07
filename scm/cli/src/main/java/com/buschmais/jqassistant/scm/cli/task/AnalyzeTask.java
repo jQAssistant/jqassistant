@@ -41,7 +41,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         LOG.info("Executing analysis.");
-        final RuleSet ruleSet = getEffectiveRules();
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
@@ -62,9 +61,10 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
             Analyzer analyzer = new AnalyzerImpl(store, reportWriter, getLog());
             try {
-                analyzer.execute(ruleSet);
+                RuleSet availableRules = getAvailableRules();
+                analyzer.execute(availableRules, getRuleSelection(availableRules));
             } catch (AnalysisException e) {
-                throw new RuntimeException("Analysis failed.", e);
+                throw new CliExecutionException("Analysis failed.", e);
             }
         } finally {
             IOUtils.closeQuietly(xmlReportFileWriter);
@@ -77,7 +77,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             if (conceptViolations > 0) {
                 throw new CliRuleViolationException(conceptViolations + " concept(s) returned empty results!");
             }
-            final int violations = reportHelper.verifyViolations(severity, inMemoryReportWriter);
+            final int violations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
             if (violations > 0) {
                 throw new CliRuleViolationException(violations + " constraint(s) violated!");
             }

@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.xo.api.Query.Result;
-import com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import java.text.MessageFormat;
+import java.util.*;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.*;
 
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
@@ -14,23 +15,12 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
+import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 @Path("/metrics")
 public class MetricsService extends AbstractJQARestService {
@@ -106,8 +96,8 @@ public class MetricsService extends AbstractJQARestService {
 
             // get the required concepts
             List<String> conceptIds = new ArrayList<>();
-            for (Concept concept : metric.getRequiresConcepts()) {
-                conceptIds.add(concept.getId());
+            for (String conceptId : metric.getRequiresConcepts()) {
+                conceptIds.add(conceptId);
             }
 
             // run the concepts - if there are some
@@ -122,14 +112,14 @@ public class MetricsService extends AbstractJQARestService {
 
             // create the parameter map for running the metric query
             Map<String, Object> queryParameters = new HashMap<>();
-            for (String queryParameter : metric.getQuery().getParameters().keySet()) {
+            for (String queryParameter : metric.getParameterTypes().keySet()) {
                 queryParameters.put(queryParameter, uriParameters.getFirst(queryParameter));
             }
 
             Store store = getStore();
 
             // run the metric query
-            Result<CompositeRowObject> queryResult = store.executeQuery(metric.getQuery().getCypher(), queryParameters);
+            Result<CompositeRowObject> queryResult = store.executeQuery(metric.getCypher(), queryParameters);
 
             // return the result
             try {
@@ -254,10 +244,10 @@ public class MetricsService extends AbstractJQARestService {
             JSONObject metricObject = new JSONObject();
             metricObject.put(JSON_OBJECT_KEY_ID, metric.getId());
             metricObject.put(JSON_OBJECT_KEY_DESCRIPTION, metric.getDescription());
-            metricObject.put(JSON_OBJECT_KEY_CYPHER, metric.getQuery().getCypher());
+            metricObject.put(JSON_OBJECT_KEY_CYPHER, metric.getCypher());
 
             JSONArray parameterArray = new JSONArray();
-            for (String parameterKey : metric.getQuery().getParameters().keySet()) {
+            for (String parameterKey : metric.getParameterTypes().keySet()) {
                 parameterArray.put(parameterKey);
             }
 

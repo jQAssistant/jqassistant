@@ -1,11 +1,7 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -40,12 +36,11 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Group group = new Group();
-        group.setId("default");
-        Concept concept = new Concept();
-        concept.setId("my:concept");
-        concept.setDescription("My concept description");
-        concept.setSeverity(Severity.MAJOR);
+        Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, "match...", null, Collections.<String, Object> emptyMap(),
+                Collections.<String> emptySet());
+        Map<String, Severity> concepts = new HashMap<>();
+        concepts.put("my:concept", Severity.INFO);
+        Group group = new Group("default", "My group", concepts, Collections.<String, Severity> emptyMap(), Collections.<String> emptySet());
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConcept(concept);
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -58,7 +53,7 @@ public final class XmlReportTestHelper {
             }
         });
         rows.add(row);
-        Result<Concept> result = new Result<>(concept, Arrays.asList(C1, C2), rows);
+        Result<Concept> result = new Result<>(concept, Severity.CRITICAL, Arrays.asList(C1, C2), rows);
         xmlReportWriter.setResult(result);
         xmlReportWriter.endConcept();
         xmlReportWriter.endGroup();
@@ -77,17 +72,16 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Group group = new Group();
-        group.setId("default");
-        Constraint constraint = new Constraint();
-        constraint.setId("my:Constraint");
-        constraint.setDescription("Constraint to verify severity");
-        constraint.setSeverity(Severity.CRITICAL);
 
+        Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, "match...", null,
+                Collections.<String, Object> emptyMap(), Collections.<String> emptySet());
+        Map<String, Severity> constraints = new HashMap<>();
+        constraints.put("my:Constraint", Severity.INFO);
+        Group group = new Group("default", "My group", Collections.<String, Severity> emptyMap(), constraints, Collections.<String> emptySet());
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConstraint(constraint);
         List<Map<String, Object>> rows = new ArrayList<>();
-        Result<Constraint> result = new Result<>(constraint, Arrays.asList(C1, C2), rows);
+        Result<Constraint> result = new Result<>(constraint, Severity.CRITICAL, Arrays.asList(C1, C2), rows);
         xmlReportWriter.setResult(result);
         xmlReportWriter.endConstraint();
         xmlReportWriter.endGroup();

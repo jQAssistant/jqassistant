@@ -10,13 +10,14 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
- * Exports the effective rules to an XML file.
+ * Exports the all rules to an XML file.
  */
 @Mojo(name = "export-rules")
 public class ExportRulesMojo extends AbstractProjectMojo {
@@ -29,7 +30,7 @@ public class ExportRulesMojo extends AbstractProjectMojo {
     @Override
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Exporting rules for '" + rootModule.getName() + "'.");
-        final RuleSet ruleSet = resolveEffectiveRules(rootModule);
+        final RuleSet ruleSet = readRules(rootModule);
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
         String exportedRules = rootModule.getBuild().getDirectory() + "/jqassistant/jqassistant-rules.xml";
         Writer writer;
@@ -38,7 +39,11 @@ public class ExportRulesMojo extends AbstractProjectMojo {
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot create writer for rule export.", e);
         }
-        ruleSetWriter.write(ruleSet, writer);
+        try {
+            ruleSetWriter.write(ruleSet, writer);
+        } catch (AnalysisException e) {
+            throw new MojoExecutionException("Cannot write rules.", e);
+        }
     }
 
 }
