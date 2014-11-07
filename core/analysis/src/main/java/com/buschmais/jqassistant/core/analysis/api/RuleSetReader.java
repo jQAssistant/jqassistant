@@ -13,7 +13,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 public interface RuleSetReader {
 
     /**
-     * Reads the given {@link Source}s and a returns {@link RuleSet}.
+     * Reads the given {@link Source}s and a returns
+     * {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}.
      * 
      * @param sources
      *            The sources to be read.

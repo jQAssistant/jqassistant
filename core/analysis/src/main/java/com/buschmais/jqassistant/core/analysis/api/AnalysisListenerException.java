@@ -4,7 +4,7 @@ package com.buschmais.jqassistant.core.analysis.api;
  * The exception will be thrown
  * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}s.
  */
-public class AnalysisListenerException extends Exception {
+public class AnalysisListenerException extends AnalysisException {
 
     private static final long serialVersionUID = 1L;
 

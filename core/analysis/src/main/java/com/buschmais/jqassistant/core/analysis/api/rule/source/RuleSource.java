@@ -59,4 +59,9 @@ public abstract class RuleSource {
     public int hashCode() {
         return getId().hashCode();
     }
+
+    @Override
+    public String toString() {
+        return getId();
+    }
 }

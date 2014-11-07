@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Defines an abstract rule which is has an unique identifier and references a
@@ -25,77 +27,103 @@ public abstract class AbstractRule implements Rule {
     private String description;
 
     /**
-     * The cypher query which represents this rule.
-     */
-    private Query query;
-
-    /**
-     * The concepts which must be applied before this rule can be executed.
-     */
-    private Set<Concept> requiresConcepts = new HashSet<>();
-
-    /**
      * The severity of the constraint.
      */
     private Severity severity;
 
-    public static <T extends Rule> Map<String, T> toMap(Collection<T> rules) {
-        Map<String, T> result = new LinkedHashMap<>();
-        for (T rule : rules) {
-            result.put(rule.getId(), rule);
-        }
-        return result;
+    /**
+     * The optional deprecated message.
+     */
+    private String deprecated;
+
+    /**
+     * The cypher query which represents this rule.
+     */
+    private String cypher;
+
+    /**
+     * The query template to use.
+     */
+    private String queryTemplateId;
+
+    /**
+     * The parameters to use.
+     */
+    private Map<String, Object> parameters;
+
+    /**
+     * The concepts which must be applied before this rule can be executed.
+     */
+    private Set<String> requiresConcepts = new HashSet<>();
+
+    /**
+     * Constructor.
+     *
+     * @param id
+     *            The id.
+     * @param description
+     *            The human readable description.
+     * @param severity
+     *            The severity.
+     * @param deprecated
+     *            The deprecated message.
+     * @param cypher
+     *            The cypher query.
+     * @param queryTemplateId
+     *            The query template.
+     * @param parameters
+     *            The parametes.
+     * @param requiresConcepts
+     *            The required concept ids.
+     */
+    protected AbstractRule(String id, String description, Severity severity, String deprecated, String cypher, String queryTemplateId,
+            Map<String, Object> parameters, Set<String> requiresConcepts) {
+        this.id = id;
+        this.description = description;
+        this.severity = severity;
+        this.deprecated = deprecated;
+        this.cypher = cypher;
+
+        this.queryTemplateId = queryTemplateId;
+        this.parameters = parameters;
+        this.requiresConcepts = requiresConcepts;
     }
 
     public String getId() {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Set<Concept> getRequiresConcepts() {
-        return requiresConcepts;
-    }
-
-    public void setRequiresConcepts(Set<Concept> requiresConcepts) {
-        this.requiresConcepts = requiresConcepts;
-    }
-
-    public Query getQuery() {
-        return query;
-    }
-
-    public void setQuery(Query query) {
-        this.query = query;
-    }
-
     /**
      * Returns the severity.
-     * 
+     *
      * @return {@link Severity}
      */
     public Severity getSeverity() {
         return severity;
     }
 
-    /**
-     * Sets the severity.
-     * 
-     * @param severity
-     *            severity value
-     */
-    public void setSeverity(Severity severity) {
-        this.severity = severity;
+    public String getDeprecated() {
+        return deprecated;
+    }
+
+    public Set<String> getRequiresConcepts() {
+        return requiresConcepts;
+    }
+
+    public String getCypher() {
+        return cypher;
+    }
+
+    public String getQueryTemplateId() {
+        return queryTemplateId;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 
     @Override
@@ -117,7 +145,7 @@ public abstract class AbstractRule implements Rule {
 
     @Override
     public String toString() {
-        return "AbstractRule [id=" + id + ", description=" + description + ", query=" + query + ", requiresConcepts=" + requiresConcepts + ", severity="
+        return "AbstractRule [id=" + id + ", description=" + description + ", cypher=" + cypher + ", requiresConcepts=" + requiresConcepts + ", severity="
                 + severity + "]";
     }
 

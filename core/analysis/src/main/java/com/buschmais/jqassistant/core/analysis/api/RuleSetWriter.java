@@ -10,12 +10,16 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 public interface RuleSetWriter {
 
     /**
-     * Writes the given {@link RuleSet} to an XML file.
+     * Writes the given
+     * {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
+     * to an XML file.
      * 
      * @param ruleSet
-     *            The {@link RuleSet}.
+     *            The
+     *            {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
+     *            .
      * @param writer
      *            The {@link Writer}.
      */
-    void write(RuleSet ruleSet, Writer writer);
+    void write(RuleSet ruleSet, Writer writer) throws AnalysisException;
 }

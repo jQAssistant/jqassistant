@@ -1,35 +1,34 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Defines a constraint to be validated.
  */
 public class Constraint extends AbstractRule {
 
-    /** Default severity level. */
-    public static Severity DEFAULT_SEVERITY = Severity.INFO;
-
     /**
-     * The severity of the constraint.
-     */
-    private Severity severity;
-
-    /**
-     * Returns the severity of the constraint.
-     * 
-     * @return {@link Severity}
-     */
-    public Severity getSeverity() {
-        return severity;
-    }
-
-    /**
-     * Sets the severity of the constraint.
-     * 
+     * Constructor.
+     *
+     * @param id
+     *            The id.
+     * @param description
+     *            The human readable description.
      * @param severity
-     *            severity value
+     *            The severity.
+     * @param deprecated
+     *            The deprecated message.
+     * @param cypher
+     *            The cypher query.
+     * @param queryTemplateId
+     *            The query template.
+     * @param parameters
+     *            The parametes.
+     * @param requiresConcepts
      */
-    public void setSeverity(Severity severity) {
-        this.severity = severity;
+    public Constraint(String id, String description, Severity severity, String deprecated, String cypher, String queryTemplateId,
+            Map<String, Object> parameters, Set<String> requiresConcepts) {
+        super(id, description, severity, deprecated, cypher, queryTemplateId, parameters, requiresConcepts);
     }
-
 }

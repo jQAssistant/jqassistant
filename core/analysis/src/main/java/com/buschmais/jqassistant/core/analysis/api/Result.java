@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 /**
  * The result of an executed {@link Rule}.
@@ -19,6 +20,11 @@ public class Result<T extends Rule> {
     private T rule;
 
     /**
+     * The effective severity.
+     */
+    private Severity severity;
+
+    /**
      * The list of returned columns.
      */
     private List<String> columnNames;
@@ -28,14 +34,31 @@ public class Result<T extends Rule> {
      */
     private List<Map<String, Object>> rows;
 
-    public Result(T rule, List<String> columnNames, List<Map<String, Object>> rows) {
+    /**
+     * Constructor.
+     * 
+     * @param rule
+     *            The executed rule.
+     * @param severity
+     *            The effective severity.
+     * @param columnNames
+     *            The names of the columns per row.
+     * @param rows
+     *            The rows.
+     */
+    public Result(T rule, Severity severity, List<String> columnNames, List<Map<String, Object>> rows) {
         this.rule = rule;
+        this.severity = severity;
         this.columnNames = columnNames;
         this.rows = rows;
     }
 
     public T getRule() {
         return rule;
+    }
+
+    public Severity getSeverity() {
+        return severity;
     }
 
     public List<String> getColumnNames() {

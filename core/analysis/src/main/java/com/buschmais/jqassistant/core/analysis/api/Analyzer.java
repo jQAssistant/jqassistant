@@ -8,13 +8,14 @@ import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 public interface Analyzer {
 
     /**
-     * Executes the given rules set.
+     * Executes the given rule set.
      * 
      * @param ruleSet
      *            The rules set.
-     * @throws AnalysisListenerException
-     *             If the report cannot be written.
+     * @param ruleSelection
+     *            The rule selection.
+     * @throws AnalysisException
+     *             If the analysis fails.
      */
-    void execute(RuleSet ruleSet) throws AnalysisException;
-
+    void execute(RuleSet ruleSet, RuleSelection ruleSelection) throws AnalysisException;
 }

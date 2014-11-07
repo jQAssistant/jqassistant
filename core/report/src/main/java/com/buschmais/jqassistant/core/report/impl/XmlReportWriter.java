@@ -184,7 +184,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                         xmlStreamWriter.writeEndElement(); // result
                     }
                     writeDuration(ruleBeginTime);
-                    writeSeverity(rule); // severity
+                    writeSeverity(result.getSeverity()); // severity
                     xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
             });
@@ -256,13 +256,12 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     /**
      * Writes the severity of the rule.
      * 
-     * @param rule
-     *            rule
+     * @param severity
+     *            The severity the rule has been executed with
      * @throws XMLStreamException
      *             If writing fails.
      */
-    private void writeSeverity(Rule rule) throws XMLStreamException {
-        Severity severity = ((AbstractRule) rule).getSeverity();
+    private void writeSeverity(Severity severity) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("severity");
         xmlStreamWriter.writeAttribute("level", severity.getLevel().toString());
         xmlStreamWriter.writeCharacters(severity.getValue());
