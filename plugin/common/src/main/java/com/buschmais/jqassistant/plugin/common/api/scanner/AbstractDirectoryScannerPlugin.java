@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,7 +11,6 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 /**
@@ -69,24 +64,9 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
     @Override
     protected Resource getEntry(File container, final File entry) {
         if (entry.isDirectory()) {
-            return new AbstractDirectoryResource() {
-            };
+            return new DirectoryResource();
         } else {
-            return new FileResource() {
-                @Override
-                public InputStream createStream() throws IOException {
-                    return new BufferedInputStream(new FileInputStream(entry));
-                }
-
-                @Override
-                public File getFile() {
-                    return entry;
-                }
-
-                @Override
-                public void close() {
-                }
-            };
+            return new FileResource(entry);
         }
     }
 
@@ -96,4 +76,35 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
      * @return The scope.
      */
     protected abstract Scope getExpectedScope();
+
+    /**
+     * A directory resource.
+     */
+    private static class DirectoryResource extends AbstractDirectoryResource {
+    }
+
+    /**
+     * A file resource.
+     */
+    private static class FileResource implements com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource {
+        private final File entry;
+
+        public FileResource(File entry) {
+            this.entry = entry;
+        }
+
+        @Override
+        public InputStream createStream() throws IOException {
+            return new BufferedInputStream(new FileInputStream(entry));
+        }
+
+        @Override
+        public File getFile() {
+            return entry;
+        }
+
+        @Override
+        public void close() {
+        }
+    }
 }
