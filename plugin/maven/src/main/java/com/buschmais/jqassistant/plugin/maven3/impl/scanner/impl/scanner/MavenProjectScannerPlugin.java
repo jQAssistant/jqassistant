@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -231,9 +231,9 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     private void scanPath(MavenProjectDirectoryDescriptor projectDescriptor, File directory, String path, Scope scope, Scanner scanner) {
         scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
         try {
-            Descriptor descriptor = scanner.scan(directory, path, scope);
+            FileDescriptor descriptor = scanner.scan(directory, path, scope);
             if (descriptor != null) {
-                projectDescriptor.addContains(descriptor);
+                projectDescriptor.getContains().add(descriptor);
             }
         } finally {
             scanner.getContext().pop(MavenProjectDirectoryDescriptor.class);
