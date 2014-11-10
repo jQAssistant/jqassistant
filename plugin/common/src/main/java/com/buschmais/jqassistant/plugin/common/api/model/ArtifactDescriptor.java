@@ -1,14 +1,11 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
-import static com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.*;
-import com.buschmais.xo.api.annotation.ResultOf;
-import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
@@ -69,10 +66,6 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     public String getType();
 
     public void setType(String type);
-
-    @ResultOf
-    @Cypher("match (a),(f) where id(a)={this} and id(f)={file} create unique (a)-[:CONTAINS]->(f)")
-    public void addContains(@Parameter("file") FileDescriptor file);
 
     @Outgoing
     List<DependsOnDescriptor> getDependencies();
