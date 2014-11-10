@@ -74,16 +74,34 @@
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-derby</artifactId>
                 <version>${us.fatehi.schemacrawler_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbyclient</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-hsqldb</artifactId>
                 <version>${us.fatehi.schemacrawler_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.hsqldb</groupId>
+                        <artifactId>hsqldb</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-mysql</artifactId>
                 <version>${us.fatehi.schemacrawler_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
@@ -93,17 +111,35 @@
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-postgresql</artifactId>
-                <version>11.02.01</version>
+                <version>${us.fatehi.schemacrawler_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-sqlite</artifactId>
                 <version>${us.fatehi.schemacrawler_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.xerial</groupId>
+                        <artifactId>sqlite-jdbc</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
                 <artifactId>schemacrawler-sqlserver</artifactId>
                 <version>${us.fatehi.schemacrawler_version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>net.sourceforge.jtds</groupId>
+                        <artifactId>jtds</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>us.fatehi</groupId>
@@ -198,12 +234,6 @@
         <dependency>
             <groupId>us.fatehi</groupId>
             <artifactId>schemacrawler-sqlite</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.xerial</groupId>
-                    <artifactId>sqlite-jdbc</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>us.fatehi</groupId>
