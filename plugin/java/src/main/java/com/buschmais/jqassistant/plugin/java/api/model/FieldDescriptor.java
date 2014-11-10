@@ -11,7 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  */
 @Java(Java.JavaLanguageElement.Field)
 @Label(value = "Field")
-public interface FieldDescriptor extends MemberDescriptor, NamedDescriptor, TypedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
+public interface FieldDescriptor extends MemberDescriptor, NamedDescriptor, TypedDescriptor, AnnotatedDescriptor, AccessModifierDescriptor {
 
     /**
      * @return the transientField

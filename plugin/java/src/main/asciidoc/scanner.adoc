@@ -68,7 +68,7 @@ A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Ann
 | EXTENDS      | <<:Type>>             | 0..1        | References a type this type extends from
 | IMPLEMENTS   | <<:Type>>             | 0..1        | References an "Interface" type this type implements
 | ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the type
-| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this type depends on according to its signature (e.g. due to generic type parameters)
+| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this type depends on (i.e. every reference to another class)
 |====
 
 *NOTE* Types which are referenced by scanned classes but have not been scanned themselves will only provide the property "fqn"
@@ -113,7 +113,6 @@ A field declared in a Java type.
 | Name         | Target label(s)       | Cardinality | Description
 | OF_TYPE      | <<:Type>>             | 1           | References the type of the field
 | ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the field
-| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this field depends on according to its signature (e.g. generic type parameters)
 |====
 
 *NOTE* Fields which are referenced by scanned classes but have not been scanned themselves will only provide the property "signature".
@@ -146,7 +145,6 @@ A method declared in a Java type.
 | READS        | <<:Field>>            | 0..n        | References a field which is read by the method
 | WRITES       | <<:Field>>            | 0..n        | References a field which is written by the method
 | INVOKES      | <<:Method>>           | 0..n        | References a method which is invoked by the method
-| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this method depends on (e.g. generic type parameters, dependencies from the method body)
 |====
 
 *NOTE* Methods which are referenced by scanned classes but have not been scanned themselves will only provide the property "signature".
@@ -171,7 +169,6 @@ A method parameter.
 | Name         | Target label(s)       | Cardinality | Description
 | OF_TYPE      | <<:Type>>             | 1           | References the type of the parameter
 | ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
-| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this parameter depends on according to its signature (e.g. generic type parameters)
 |====
 
 [[:Value]]

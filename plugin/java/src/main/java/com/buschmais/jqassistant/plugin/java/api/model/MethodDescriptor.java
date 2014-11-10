@@ -16,8 +16,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  */
 @Java(Method)
 @Label(value = "Method")
-public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
-        AbstractDescriptor {
+public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, AnnotatedDescriptor, AccessModifierDescriptor, AbstractDescriptor {
 
     @Relation("HAS")
     List<ParameterDescriptor> getParameters();

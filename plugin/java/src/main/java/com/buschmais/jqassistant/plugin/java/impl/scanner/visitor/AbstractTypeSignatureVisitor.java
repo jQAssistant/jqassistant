@@ -18,9 +18,9 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     private TypeDescriptor resolvedTypeDescriptor;
 
     /**
-     * The descriptor using the resolved types descriptor.
+     * 
      */
-    private T usingDescriptor;
+    private TypeCache.CachedType containingType;
 
     private VisitorHelper visitorHelper;
 
@@ -32,14 +32,14 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
      * @param visitorHelper
      *            The {@link VisitorHelper}.
      */
-    protected AbstractTypeSignatureVisitor(T usingDescriptor, VisitorHelper visitorHelper) {
+    protected AbstractTypeSignatureVisitor(TypeCache.CachedType containingType, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);
-        this.usingDescriptor = usingDescriptor;
+        this.containingType = containingType;
         this.visitorHelper = visitorHelper;
     }
 
-    protected T getUsingDescriptor() {
-        return usingDescriptor;
+    protected TypeCache.CachedType getContainingType() {
+        return containingType;
     }
 
     protected VisitorHelper getVisitorHelper() {
@@ -48,13 +48,13 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
 
     @Override
     public void visitClassType(String name) {
-        resolvedTypeDescriptor = visitorHelper.getType(SignatureHelper.getObjectType(name)).getTypeDescriptor();
+        resolvedTypeDescriptor = visitorHelper.getType(SignatureHelper.getObjectType(name), containingType).getTypeDescriptor();
     }
 
     @Override
     public void visitInnerClassType(String name) {
         String innerClassName = resolvedTypeDescriptor.getFullQualifiedName() + "$" + name;
-        resolvedTypeDescriptor = visitorHelper.getType(innerClassName).getTypeDescriptor();
+        resolvedTypeDescriptor = visitorHelper.getType(innerClassName, containingType).getTypeDescriptor();
     }
 
     @Override

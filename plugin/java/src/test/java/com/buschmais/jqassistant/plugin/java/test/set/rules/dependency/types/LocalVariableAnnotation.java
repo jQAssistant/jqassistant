@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation on types level.
+ * An annotation on field level.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface TypeAnnotation {
+@Target(ElementType.LOCAL_VARIABLE)
+public @interface LocalVariableAnnotation {
 
-    Class<TypeAnnotationValueType> value();
+    Class<LocalVariableAnnotationValueType> value();
 
 }

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -11,4 +11,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FieldAnnotation {
+
+    Class<FieldAnnotationValueType> value();
 }

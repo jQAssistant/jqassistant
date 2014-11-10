@@ -7,42 +7,42 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 public class ClassSignatureVisitor extends SignatureVisitor {
 
-    private TypeDescriptor typeDescriptor;
+    private TypeCache.CachedType cachedType;
 
     private VisitorHelper visitorHelper;
 
-    protected ClassSignatureVisitor(TypeDescriptor typeDescriptor, VisitorHelper visitorHelper) {
+    protected ClassSignatureVisitor(TypeCache.CachedType cachedType, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);
-        this.typeDescriptor = typeDescriptor;
+        this.cachedType = cachedType;
         this.visitorHelper = visitorHelper;
     }
 
     @Override
     public SignatureVisitor visitClassBound() {
-        return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
+        return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitInterfaceBound() {
-        return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
+        return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new AbstractTypeSignatureVisitor<TypeDescriptor>(typeDescriptor, visitorHelper) {
+        return new AbstractTypeSignatureVisitor<TypeDescriptor>(cachedType, visitorHelper) {
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
+                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
+                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
             }
 
             @Override
             public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                typeDescriptor.setSuperClass(resolvedTypeDescriptor);
+                cachedType.getTypeDescriptor().setSuperClass(resolvedTypeDescriptor);
             }
 
         };
@@ -50,21 +50,21 @@ public class ClassSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new AbstractTypeSignatureVisitor<TypeDescriptor>(typeDescriptor, visitorHelper) {
+        return new AbstractTypeSignatureVisitor<TypeDescriptor>(cachedType, visitorHelper) {
 
             @Override
             public SignatureVisitor visitArrayType() {
-                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
+                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
             }
 
             @Override
             public SignatureVisitor visitTypeArgument(char wildcard) {
-                return new DependentTypeSignatureVisitor(typeDescriptor, visitorHelper);
+                return new DependentTypeSignatureVisitor(cachedType, visitorHelper);
             }
 
             @Override
             public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-                typeDescriptor.getInterfaces().add(resolvedTypeDescriptor);
+                cachedType.getTypeDescriptor().getInterfaces().add(resolvedTypeDescriptor);
             }
         };
     }
