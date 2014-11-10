@@ -83,7 +83,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
      * @return The value.
      */
     private <T> T getProperty(String name, Class<T> type, T defaultValue) {
-        Object o = properties.getOrDefault(name, defaultValue);
+        Object o = properties.get(name);
         if (o == null) {
             return defaultValue;
         }
