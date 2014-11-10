@@ -30,7 +30,7 @@ return
 
 [[module-structure:ApiMustNotDependOnImplementation]]
 .Types contained within an API package must not have dependencies to types contained in an implementation package.
-[source,cypher,role=constraint,depends="module-structure:Api, module-structure:Impl,dependency:Type"]]
+[source,cypher,role=constraint,depends="module-structure:Api, module-structure:Impl"]]
 ----
 match
   (:Api:Package)-[:CONTAINS*0..]->(t1:Type),
