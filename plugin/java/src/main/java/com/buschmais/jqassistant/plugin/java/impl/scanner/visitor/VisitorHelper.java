@@ -36,8 +36,17 @@ public class VisitorHelper {
      * @param typeName The full qualified name of the type (e.g.
      * java.lang.Object).
      */
-    TypeCache.CachedType getType(String fullQualifiedName) {
-        return getCachedType(fullQualifiedName, TypeDescriptor.class);
+    TypeCache.CachedType getType(String fullQualifiedName, TypeCache.CachedType dependentType) {
+        TypeCache.CachedType cachedType = getCachedType(fullQualifiedName, TypeDescriptor.class);
+        if (!dependentType.equals(cachedType)) {
+            TypeDescriptor dependency = dependentType.getDependency(fullQualifiedName);
+            if (dependency == null) {
+                dependency = cachedType.getTypeDescriptor();
+                dependentType.addDependency(fullQualifiedName, dependency);
+                dependentType.getTypeDescriptor().getDependencies().add(dependency);
+            }
+        }
+        return cachedType;
     }
 
     /*
@@ -66,6 +75,9 @@ public class VisitorHelper {
                     MethodDescriptor methodDescriptor = (MethodDescriptor) descriptor;
                     cachedType.addMethod(methodDescriptor.getSignature(), methodDescriptor);
                 }
+            }
+            for (TypeDescriptor descriptor : typeDescriptor.getDependencies()) {
+                cachedType.addDependency(descriptor.getFullQualifiedName(), typeDescriptor);
             }
         }
         if (!expectedType.isAssignableFrom(cachedType.getTypeDescriptor().getClass())) {
@@ -200,36 +212,14 @@ public class VisitorHelper {
      *            The type name of the annotation.
      * @return The annotation descriptor.
      */
-    AnnotationValueDescriptor addAnnotation(AnnotatedDescriptor annotatedDescriptor, String typeName) {
-        if (annotatedDescriptor == null) {
-            throw new RuntimeException();
-        }
+    AnnotationValueDescriptor addAnnotation(TypeCache.CachedType containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
-            TypeDescriptor type = getType(typeName).getTypeDescriptor();
+            TypeDescriptor type = getType(typeName, containingDescriptor).getTypeDescriptor();
             AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
             annotationDescriptor.setType(type);
-            annotatedDescriptor.addAnnotatedBy(annotationDescriptor);
+            annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
             return annotationDescriptor;
         }
         return null;
-    }
-
-    /**
-     * Adds a dependency to the given type name to a dependent descriptor.
-     * 
-     * @param containingTypeDescriptor
-     *            The type containing the dependency.
-     * @param dependentDescriptor
-     *            The dependent descriptor.
-     * @param dependencyTypeName
-     *            The type name of the dependency.
-     */
-    void addDependency(TypeDescriptor containingTypeDescriptor, DependentDescriptor dependentDescriptor, String dependencyTypeName) {
-        if (dependencyTypeName != null) {
-            TypeDescriptor dependency = getType(dependencyTypeName).getTypeDescriptor();
-            if (!containingTypeDescriptor.equals(dependency)) {
-                dependentDescriptor.addDependency(dependency);
-            }
-        }
     }
 }

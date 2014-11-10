@@ -19,8 +19,8 @@ public class AnnotationDefaultVisitor extends AbstractAnnotationVisitor<MethodDe
      *            {@link com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper}
      *            .
      */
-    protected AnnotationDefaultVisitor(MethodDescriptor descriptor, VisitorHelper visitorHelper) {
-        super(descriptor, visitorHelper);
+    protected AnnotationDefaultVisitor(TypeCache.CachedType containingType, MethodDescriptor descriptor, VisitorHelper visitorHelper) {
+        super(containingType, descriptor, visitorHelper);
     }
 
     @Override

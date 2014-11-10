@@ -269,7 +269,7 @@ public class AbstractPluginIT {
     protected void applyConcept(String id) throws AnalysisException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
         Concept concept = ruleSet.getConcepts().get(id);
-        assertNotNull("The requested concept cannot be resolved.", concept);
+        assertNotNull("The requested concept cannot be resolved.", id);
         analyzer.execute(ruleSet, ruleSelection);
     }
 
@@ -284,7 +284,7 @@ public class AbstractPluginIT {
     protected void validateConstraint(String id) throws AnalysisException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
         Constraint constraint = ruleSet.getConstraints().get(id);
-        assertNotNull("The constraint must not be null", constraint);
+        assertNotNull("The constraint must not be null", id);
         analyzer.execute(ruleSet, ruleSelection);
     }
 

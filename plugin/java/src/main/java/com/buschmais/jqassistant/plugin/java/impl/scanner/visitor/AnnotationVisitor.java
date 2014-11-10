@@ -20,8 +20,8 @@ public class AnnotationVisitor extends AbstractAnnotationVisitor<AnnotationValue
      *            {@link com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper}
      *            .
      */
-    protected AnnotationVisitor(AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
-        super(descriptor, visitorHelper);
+    protected AnnotationVisitor(TypeCache.CachedType containingType, AnnotationValueDescriptor descriptor, VisitorHelper visitorHelper) {
+        super(containingType, descriptor, visitorHelper);
     }
 
     @Override

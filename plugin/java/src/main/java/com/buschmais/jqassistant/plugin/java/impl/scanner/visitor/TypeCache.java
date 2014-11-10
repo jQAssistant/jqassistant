@@ -72,6 +72,7 @@ public class TypeCache {
         private T typeDescriptor;
         private Map<String, MethodDescriptor> methods = new HashMap<>();
         private Map<String, FieldDescriptor> fields = new HashMap<>();
+        private Map<String, TypeDescriptor> dependencies = new HashMap<>();
 
         /**
          * Constructor.
@@ -107,5 +108,12 @@ public class TypeCache {
             methods.put(signature, method);
         }
 
+        TypeDescriptor getDependency(String fullQualifiedName) {
+            return dependencies.get(fullQualifiedName);
+        }
+
+        void addDependency(String fullQualifiedName, TypeDescriptor dependency) {
+            dependencies.put(fullQualifiedName, dependency);
+        }
     }
 }

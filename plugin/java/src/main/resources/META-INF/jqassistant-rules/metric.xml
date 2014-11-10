@@ -27,7 +27,6 @@
     </concept>
 
     <concept id="metric:Top10MethodsPerType">
-        <requiresConcept refId="dependency:Type"/>
         <description>Returns the top 10 types regarding to the number of declared methods (including constructors).
         </description>
         <cypher><![CDATA[
@@ -42,7 +41,6 @@
     </concept>
 
     <concept id="metric:Top10FieldsPerType">
-        <requiresConcept refId="dependency:Type"/>
         <description>Returns the top 10 types regarding to the number of declared fields.</description>
         <cypher><![CDATA[
             MATCH
@@ -56,7 +54,6 @@
     </concept>
 
     <concept id="metric:Top10TypeFanOut">
-        <requiresConcept refId="dependency:Type"/>
         <description>Returns the top 10 types regarding the number of other types they depend on.</description>
         <cypher><![CDATA[
             MATCH
@@ -70,7 +67,6 @@
     </concept>
 
     <concept id="metric:Top10TypeFanIn">
-        <requiresConcept refId="dependency:Type"/>
         <description>Returns the top 10 types regarding the number of other types depending on them.</description>
         <cypher><![CDATA[
             MATCH
@@ -87,7 +83,6 @@
         <description>Artifact dependencies</description>
         <metric id="metric:TypesAndDependenciesPerArtifact">
             <description>Types per artifact and dependencies per artifact.</description>
-            <requiresConcept refId="dependency:Type"/>
             <requiresConcept refId="dependency:Artifact"/>
             <cypher><![CDATA[
                     MATCH

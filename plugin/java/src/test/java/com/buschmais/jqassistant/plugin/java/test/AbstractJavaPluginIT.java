@@ -71,7 +71,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         ArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
         for (Class<?> item : classes) {
             FileDescriptor fileDescriptor = getScanner().scan(item, item.getName(), JavaScope.CLASSPATH);
-            artifact.addContains(fileDescriptor);
+            artifact.getContains().add(fileDescriptor);
         }
         store.commitTransaction();
     }
@@ -87,7 +87,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         for (String resource : resources) {
             File file = new File(directory, resource);
             FileDescriptor fileDescriptor = getScanner().scan(file, resource, scope);
-            artifact.addContains(fileDescriptor);
+            artifact.getContains().add(fileDescriptor);
         }
         store.commitTransaction();
     }

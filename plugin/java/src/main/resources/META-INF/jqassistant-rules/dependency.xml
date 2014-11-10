@@ -1,130 +1,6 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="dependency:Annotation">
-        <description>Creates a DEPENDS_ON relationship between an annotated element and the types of the annotation and
-            its values.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-                (e)-[:ANNOTATED_BY]->(a:Annotation)-[:OF_TYPE]->(at:Type)
-            WHERE
-                e:Type
-                or e:Method
-                or e:Parameter
-                or e:Field
-            CREATE UNIQUE
-                (e)-[:DEPENDS_ON]->(at)
-            WITH
-                e, a
-            MATCH
-                (a)-[:HAS|IS|CONTAINS|OF_TYPE*0..]->(vt:Type)
-            CREATE UNIQUE
-                (e)-[:DEPENDS_ON]->(vt)
-            RETURN
-                e AS AnnotatedType, COUNT(DISTINCT vt) as Elements
-        ]]></cypher>
-    </concept>
-
-    <concept id="dependency:MethodParameter">
-        <requiresConcept refId="dependency:Annotation"/>
-        <description>Creates a DEPENDS_ON relationship between a method and the types of its parameters.</description>
-        <cypher><![CDATA[
-            MATCH
-                (m:Method)-[:HAS]->(p:Parameter)-[:OF_TYPE|DEPENDS_ON]->(t:Type)
-            CREATE UNIQUE
-                (m)-[:DEPENDS_ON]->(t)
-            RETURN
-                m AS Method, COUNT(DISTINCT t) as Parameters
-        ]]></cypher>
-    </concept>
-
-    <concept id="dependency:MethodInvocation">
-        <requiresConcept refId="dependency:MethodParameter"/>
-        <description>Creates a DEPENDS_ON relationship between a method and the dependencies of the method signature it
-            invokes.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-                (m:Method)-[:INVOKES]->(target:Method),
-                (dt:Type)-[:DECLARES]->(target)
-            CREATE UNIQUE
-                (m)-[:DEPENDS_ON]->(dt)
-            WITH
-                m, target
-            MATCH
-                (target)-[:HAS]->(:Parameter)-[:DEPENDS_ON]->(pt)
-            CREATE UNIQUE
-                (m)-[:DEPENDS_ON]->(pt)
-            WITH
-                m, target
-            MATCH
-                (target)-[:RETURNS]->(rt)
-            CREATE UNIQUE
-                (m)-[:DEPENDS_ON]->(rt)
-            RETURN
-                m AS Method, COUNT(DISTINCT rt) AS MethodInvocations
-        ]]></cypher>
-    </concept>
-
-    <concept id="dependency:FieldAccess">
-        <description>Creates a DEPENDS_ON relationship between a method and all fields types it reads and writes.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-                (m:Method)-[:READS|WRITES]->(target:Field),
-                (dt:Type)-[:DECLARES]->(target)
-            CREATE UNIQUE
-                (m)-[:DEPENDS_ON]->(dt)
-            WITH
-                m, target
-            MATCH
-                  (target)-[:OF_TYPE|DEPENDS_ON]->(ft)
-            CREATE UNIQUE
-                (m)-[:DEPENDS_ON]->(ft)
-            RETURN
-                m AS method, COUNT(DISTINCT ft) AS FieldAccesseCount
-        ]]></cypher>
-    </concept>
-
-    <concept id="dependency:TypeBody">
-        <requiresConcept refId="dependency:Annotation"/>
-        <requiresConcept refId="dependency:MethodParameter"/>
-        <requiresConcept refId="dependency:MethodInvocation"/>
-        <requiresConcept refId="dependency:FieldAccess"/>
-        <description>Creates a DEPENDS_ON relationship between a type and all types its body (i.e. methods and fields)
-            depends on.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-                (t1:Type)-[:DECLARES*0..1]->(fieldOrMethod)-[:OF_TYPE|RETURNS|DEPENDS_ON|THROWS]->(t2:Type)
-            WHERE
-                t1<>t2
-                and (fieldOrMethod:Field OR fieldOrMethod:Method)
-            CREATE UNIQUE
-                (t1)-[:DEPENDS_ON]->(t2)
-            RETURN
-                t1 AS Type, COUNT(DISTINCT t2) AS DependencyCount
-        ]]></cypher>
-    </concept>
-
-    <concept id="dependency:Type">
-        <requiresConcept refId="dependency:TypeBody"/>
-        <description>Creates a DEPENDS_ON relationship between a type and all types its signature and body depends on.
-        </description>
-        <cypher><![CDATA[
-            MATCH
-                (t1:Type)-[:EXTENDS|IMPLEMENTS]->(t2:Type)
-            WHERE
-                t1<>t2
-            CREATE UNIQUE
-                (t1)-[:DEPENDS_ON]->(t2)
-            RETURN
-                t1 AS Type, COUNT(DISTINCT t2) AS DependencyCount
-        ]]></cypher>
-    </concept>
-
     <concept id="dependency:Package">
-        <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between a packages if there are type dependencies between them.
         </description>
         <cypher><![CDATA[
@@ -140,7 +16,6 @@
     </concept>
 
     <concept id="dependency:Artifact">
-        <requiresConcept refId="dependency:Type"/>
         <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.
         </description>
         <cypher><![CDATA[

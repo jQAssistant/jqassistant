@@ -13,37 +13,36 @@ public class DependentTypeSignatureVisitor extends AbstractTypeSignatureVisitor<
     /**
      * Constructor
      * 
-     * @param dependentDescriptor
-     *            The descriptor which depends on the resolvedd types.
+     * @param containingType
+     *            The type containing the dependent element.
      * @param visitorHelper
      *            The {@link VisitorHelper}
      */
-    DependentTypeSignatureVisitor(DependentDescriptor dependentDescriptor, VisitorHelper visitorHelper) {
-        super(dependentDescriptor, visitorHelper);
+    DependentTypeSignatureVisitor(TypeCache.CachedType containingType, VisitorHelper visitorHelper) {
+        super(containingType, visitorHelper);
     }
 
     @Override
     public SignatureVisitor visitSuperclass() {
-        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
+        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
     }
 
     @Override
     public SignatureVisitor visitInterface() {
-        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
+        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
     }
 
     @Override
     public SignatureVisitor visitArrayType() {
-        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
+        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
     }
 
     @Override
     public SignatureVisitor visitTypeArgument(char wildcard) {
-        return new DependentTypeSignatureVisitor(getUsingDescriptor(), getVisitorHelper());
+        return new DependentTypeSignatureVisitor(getContainingType(), getVisitorHelper());
     }
 
     @Override
     public void visitEnd(TypeDescriptor resolvedTypeDescriptor) {
-        getUsingDescriptor().addDependency(resolvedTypeDescriptor);
     }
 }

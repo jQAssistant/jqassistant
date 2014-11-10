@@ -50,7 +50,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.4.5</com.buschmais.xo_version>
         <org.neo4j_version>2.1.5</org.neo4j_version>
         <org.asciidoctor_version>1.5.0</org.asciidoctor_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>

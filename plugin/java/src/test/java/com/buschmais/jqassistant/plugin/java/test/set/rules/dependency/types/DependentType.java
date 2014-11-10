@@ -1,13 +1,24 @@
 package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types;
 
-/**
- * A types with dependencies on types level.
- */
-@TypeAnnotation
-public class DependentType extends SuperType implements Comparable<Integer> {
+@TypeAnnotation(TypeAnnotationValueType.class)
+public class DependentType extends SuperClass<SuperClassTypeParameter> implements ImplementedInterface<ImplementedInterfaceTypeParameter> {
 
-    @Override
-    public int compareTo(Integer o) {
-        return 0;
+    @FieldAnnotation(FieldAnnotationValueType.class)
+    private FieldType<FieldTypeParameter> field;
+
+    @MethodAnnotation(MethodAnnotationValueType.class)
+    public MethodReturnType<MethodReturnTypeParameter> iterator(MethodParameter<MethodParameterTypeParameter> n) throws MethodException {
+        @LocalVariableAnnotation(LocalVariableAnnotationValueType.class)
+        LocalVariable localVariable = new LocalVariable();
+        LocalVariable.ReadStaticVariable readStaticVariable = LocalVariable.readStaticVariable;
+        LocalVariable.ReadVariable readVariable = localVariable.readVariable;
+        LocalVariable.writeStaticVariable = null;
+        localVariable.writeVariable = null;
+        InvokeMethodType invokeMethodType = new InvokeMethodType();
+        try {
+            invokeMethodType.invoke(null);
+        } catch (InvokeMethodType.InvokeMethodException e) {
+        }
+        return null;
     }
 }

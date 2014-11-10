@@ -1,7 +1,9 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="osgi-bundle:Bundle">
-        <description>Labels all artifacts with a manifest declaring a bundle name as "Osgi" and "Bundle" and adds the properties "bundleSymbolicName" and "bundleVersion".</description>
+        <description>Labels all artifacts with a manifest declaring a bundle name as "Osgi" and "Bundle" and adds the
+            properties "bundleSymbolicName" and "bundleVersion".
+        </description>
         <cypher><![CDATA[
             MATCH
               (bundle:Artifact)-[:CONTAINS]->(manifest:Manifest:File),
@@ -22,7 +24,8 @@
 
     <concept id="osgi-bundle:ExportPackage">
         <requiresConcept refId="osgi-bundle:Bundle"/>
-        <description>Creates an EXPORTS relation from a bundle artifact to all packages which are declared as "Export-Package" in the bundle manifest.
+        <description>Creates an EXPORTS relation from a bundle artifact to all packages which are declared as
+            "Export-Package" in the bundle manifest.
         </description>
         <cypher><![CDATA[
             match
@@ -45,7 +48,8 @@
 
     <concept id="osgi-bundle:ImportPackage">
         <requiresConcept refId="osgi-bundle:Bundle"/>
-        <description>Creates an IMPORTS relation from a bundle artifact to all packages which are declared as "Import-Package" in the bundle manifest.
+        <description>Creates an IMPORTS relation from a bundle artifact to all packages which are declared as
+            "Import-Package" in the bundle manifest.
         </description>
         <cypher><![CDATA[
             match
@@ -68,7 +72,8 @@
 
     <concept id="osgi-bundle:Activator">
         <requiresConcept refId="osgi-bundle:Bundle"/>
-        <description>Creates an ACTIVATES relation between a class and the bundle artifact if the class is declared as "Bundle-Activator" in the bundle
+        <description>Creates an ACTIVATES relation between a class and the bundle artifact if the class is declared as
+            "Bundle-Activator" in the bundle
             manifest.
         </description>
         <cypher><![CDATA[
@@ -89,7 +94,8 @@
 
     <concept id="osgi-bundle:InternalType">
         <requiresConcept refId="osgi-bundle:ExportPackage"/>
-        <description>Labels all internal types (i.e. which are not located in an exported package) as "Internal".</description>
+        <description>Labels all internal types (i.e. which are not located in an exported package) as "Internal".
+        </description>
         <cypher><![CDATA[
             match
               (bundle:Bundle:Osgi)-[:CONTAINS]->(internalPackage:Package),
@@ -104,10 +110,10 @@
     </concept>
 
     <constraint id="osgi-bundle:UnusedInternalType">
-        <requiresConcept refId="dependency:Type"/>
         <requiresConcept refId="osgi-bundle:InternalType"/>
         <requiresConcept refId="osgi-bundle:Activator"/>
-        <description>A bundle must not contain internal types which are not used by other types in the bundle.</description>
+        <description>A bundle must not contain internal types which are not used by other types in the bundle.
+        </description>
         <cypher><![CDATA[
             match
               (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:Type:Internal)
@@ -122,10 +128,10 @@
     </constraint>
 
     <constraint id="osgi-bundle:InternalTypeMustNotBePublic">
-        <requiresConcept refId="dependency:Type"/>
         <requiresConcept refId="osgi-bundle:InternalType"/>
         <requiresConcept refId="osgi-bundle:Activator"/>
-        <description>Internal types must not be public if no depending types exist in other packages of the bundle.</description>
+        <description>Internal types must not be public if no depending types exist in other packages of the bundle.
+        </description>
         <cypher><![CDATA[
             match
               (bundle:Osgi:Bundle)-[:CONTAINS]->(internalType:Type:Internal),

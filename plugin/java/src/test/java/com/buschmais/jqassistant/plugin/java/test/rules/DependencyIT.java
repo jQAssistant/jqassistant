@@ -5,12 +5,13 @@ import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher
 import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.Test;
@@ -19,141 +20,14 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations.AnnotatedType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.annotations.Annotation;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.fieldaccesses.FieldAccess;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.fieldaccesses.FieldDependency;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.methodinvocations.MethodDependency;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.methodinvocations.MethodInvocation;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.parameters.Parameters;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies.FieldAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies.MethodAnnotation;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.typebodies.TypeBody;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.DependentType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.SuperType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.TypeAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.*;
 
 /**
  * Tests for the dependency concepts and result.
  */
 public class DependencyIT extends AbstractJavaPluginIT {
-
-    /**
-     * Verifies the concept "dependency:Annotation".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void annotations() throws IOException, AnalysisException {
-        scanClasses(AnnotatedType.class);
-        applyConcept("dependency:Annotation");
-        store.beginTransaction();
-        assertThat(query("MATCH (e:Type:Class)-[:DEPENDS_ON]->(t:Type) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
-        assertThat(query("MATCH (e:Field)-[:DEPENDS_ON]->(t:Type) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
-        assertThat(query("MATCH (e:Method)-[:DEPENDS_ON]->(t:Type) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
-        assertThat(query("MATCH (e:Parameter)-[:DEPENDS_ON]->(t:Type) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(Annotation.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(String.class))));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the concept "dependency:MethodParameter".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void parameters() throws IOException, AnalysisException {
-        scanClasses(Parameters.class);
-        applyConcept("dependency:MethodParameter");
-        store.beginTransaction();
-        assertThat(query("MATCH (m:Method)-[:DEPENDS_ON]->(t:Type) RETURN t").getColumn("t"),
-                allOf(hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(Integer.class))));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the concept "dependency:MethodInvocation".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void methodInvocations() throws IOException, AnalysisException {
-        scanClasses(MethodInvocation.class, MethodDependency.class);
-        applyConcept("dependency:MethodInvocation");
-        store.beginTransaction();
-        TestResult testResult = query("MATCH (m:Method)-[:DEPENDS_ON]->(t:Type) RETURN t");
-        assertThat(
-                testResult.getColumn("t"),
-                allOf(hasItem(typeDescriptor(MethodDependency.class)), hasItem(typeDescriptor(Map.class)), hasItem(typeDescriptor(SortedSet.class)),
-                        hasItem(typeDescriptor(Number.class))));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the concept "dependency:FieldAccess".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void fieldAccess() throws IOException, AnalysisException {
-        scanClasses(FieldAccess.class, FieldDependency.class);
-        applyConcept("dependency:FieldAccess");
-        store.beginTransaction();
-        String query = "MATCH (m:Method)-[:DEPENDS_ON]->(t:Type) WHERE m.signature =~ {method} RETURN t";
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("method", "void readField.*");
-        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
-        parameters.put("method", "void writeField.*");
-        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Set.class))));
-        parameters.put("method", "void readStaticField.*");
-        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
-        parameters.put("method", "void writeStaticField.*");
-        assertThat(query(query, parameters).getColumn("t"), allOf(hasItem(typeDescriptor(FieldDependency.class)), hasItem(typeDescriptor(Map.class))));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the concept "dependency:TypeBody".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void typeBodies() throws IOException, AnalysisException {
-        scanClasses(TypeBody.class);
-        applyConcept("dependency:TypeBody");
-        store.beginTransaction();
-        TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");
-        // field
-        assertThat(testResult.getColumn("t2"),
-                allOf(hasItem(typeDescriptor(List.class)), hasItem(typeDescriptor(String.class)), hasItem(typeDescriptor(FieldAnnotation.class))));
-        // method
-        assertThat(
-                testResult.getColumn("t2"),
-                allOf(hasItem(typeDescriptor(Iterator.class)), hasItem(typeDescriptor(Number.class)), hasItem(typeDescriptor(Integer.class)),
-                        hasItem(typeDescriptor(Exception.class)), hasItem(typeDescriptor(Double.class)), hasItem(typeDescriptor(Boolean.class)),
-                        hasItem(typeDescriptor(MethodAnnotation.class))));
-        store.commitTransaction();
-    }
 
     /**
      * Verifies the concept "dependency:Type".
@@ -166,14 +40,44 @@ public class DependencyIT extends AbstractJavaPluginIT {
     @Test
     public void types() throws IOException, AnalysisException {
         scanClasses(DependentType.class);
-        applyConcept("dependency:Type");
         store.beginTransaction();
         TestResult testResult = query("MATCH (t1:Type)-[:DEPENDS_ON]->(t2:Type) RETURN t2");
-        // field
-        assertThat(
-                testResult.getColumn("t2"),
-                allOf(hasItem(typeDescriptor(SuperType.class)), hasItem(typeDescriptor(Comparable.class)), hasItem(typeDescriptor(Integer.class)),
-                        hasItem(typeDescriptor(TypeAnnotation.class))));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(TypeAnnotation.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(TypeAnnotationValueType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(SuperClass.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(SuperClassTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(ImplementedInterface.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(ImplementedInterfaceTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldAnnotation.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldAnnotationValueType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(FieldTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotationValueType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodReturnType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodReturnTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodAnnotation.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodParameterTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(MethodException.class)));
+        // assertThat(testResult.getColumn("t2"),
+        // hasItem(typeDescriptor(LocalVariableAnnotation.class)));
+        // assertThat(testResult.getColumn("t2"),
+        // hasItem(typeDescriptor(LocalVariableAnnotationValueType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.ReadStaticVariable.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.ReadVariable.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.WriteStaticVariable.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(LocalVariable.WriteVariable.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnType.class)));
+        // assertThat(testResult.getColumn("t2"),
+        // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodReturnTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterType.class)));
+        // assertThat(testResult.getColumn("t2"),
+        // hasItem(typeDescriptor(InvokeMethodType.InvokeMethodParameterTypeTypeParameter.class)));
+        assertThat(testResult.getColumn("t2"), hasItem(typeDescriptor(InvokeMethodType.InvokeMethodException.class)));
         store.commitTransaction();
     }
 
