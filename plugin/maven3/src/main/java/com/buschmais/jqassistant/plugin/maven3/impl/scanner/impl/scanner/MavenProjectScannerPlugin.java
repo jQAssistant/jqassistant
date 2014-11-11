@@ -5,7 +5,11 @@ import static com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope.TES
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -58,7 +62,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, false, project.getBuild().getOutputDirectory(), scanner);
         addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
         // test artifact
-        ArtifactDescriptor testArtifactDescriptor = resolveArtifact(artifact, false, scanner.getContext());
+        ArtifactDescriptor testArtifactDescriptor = resolveArtifact(artifact, true, scanner.getContext());
         testArtifactDependencies.put(mainArtifactDescriptor, artifact);
         scanClassesDirectory(projectDescriptor, testArtifactDescriptor, true, project.getBuild().getTestOutputDirectory(), scanner);
         addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
