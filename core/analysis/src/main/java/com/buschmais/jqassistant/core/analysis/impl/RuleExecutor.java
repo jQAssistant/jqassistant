@@ -6,7 +6,12 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.QueryTemplate;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 /**
  * Implementation of the
@@ -137,7 +142,7 @@ public class RuleExecutor {
 
     public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws AnalysisException {
         Constraint constraint = ruleSet.getConstraints().get(constraintId);
-        if (constraintId == null) {
+        if (constraint == null) {
             throw new AnalysisException("Constraint '" + constraintId + "' not found.");
         }
         return constraint;
