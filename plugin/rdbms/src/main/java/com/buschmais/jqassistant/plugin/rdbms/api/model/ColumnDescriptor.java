@@ -1,32 +1,13 @@
 package com.buschmais.jqassistant.plugin.rdbms.api.model;
 
-import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("Column")
-public interface ColumnDescriptor extends RdbmsDescriptor, NamedDescriptor, NullableDescriptor {
-
-    @Relation("OF_COLUMN_TYPE")
-    ColumnTypeDescriptor getColumnType();
-
-    PrimaryKeyOnColumnDescriptor getPrimaryKeyOnColumn();
-
-    IndexOnColumnDescriptor getIndexOnColumn();
-
-    void setColumnType(ColumnTypeDescriptor columnType);
+public interface ColumnDescriptor extends RdbmsDescriptor, BaseColumnDescriptor {
 
     boolean isAutoIncremented();
 
     void setAutoIncremented(boolean autoIncremented);
-
-    int getSize();
-
-    void setSize(int size);
-
-    int getDecimalDigits();
-
-    void setDecimalDigits(int decimalDigits);
 
     String getDefaultValue();
 
@@ -47,4 +28,9 @@ public interface ColumnDescriptor extends RdbmsDescriptor, NamedDescriptor, Null
     boolean isPartOfForeignKey();
 
     void setPartOfForeignKey(boolean partOfForeignKey);
+
+    PrimaryKeyOnColumnDescriptor getPrimaryKeyOnColumn();
+
+    IndexOnColumnDescriptor getIndexOnColumn();
+
 }

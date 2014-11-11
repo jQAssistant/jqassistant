@@ -17,4 +17,13 @@ public interface SchemaDescriptor extends RdbmsDescriptor, NamedDescriptor {
 
     @Relation("HAS_SEQUENCE")
     List<SequenceDesriptor> getSequences();
+
+    @Relation("HAS_FUNCTION")
+    List<FunctionDescriptor> getFunctions();
+
+    @Relation("HAS_PROCEDURE")
+    List<ProcedureDescriptor> getProcedures();
+
+    @Relation("HAS_UNKNOWN_ROUTINE")
+    List<RoutineDescriptor> getUnknownRoutines();
 }

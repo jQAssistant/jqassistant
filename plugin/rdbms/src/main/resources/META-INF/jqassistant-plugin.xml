@@ -16,6 +16,10 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.FunctionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ProcedureDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineColumnDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>

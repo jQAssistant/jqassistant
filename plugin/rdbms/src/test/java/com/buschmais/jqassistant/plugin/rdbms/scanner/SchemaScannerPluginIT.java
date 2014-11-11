@@ -1,6 +1,13 @@
 package com.buschmais.jqassistant.plugin.rdbms.scanner;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -22,7 +29,23 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.FunctionDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.OnColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ProcedureDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineColumnDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin;
 
 public class SchemaScannerPluginIT extends AbstractPluginIT {
@@ -40,11 +63,15 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     public static final String COLUMN_TYPE_DECIMAL = "DECIMAL";
     public static final String COLUMN_TYPE_VARCHAR = "VARCHAR";
     public static final String SEQUENCE_PERSON_SEQ = "PERSON_SEQ";
+    public static final String ROUTINE_NEW_PERSON = "NEW_PERSON";
+    public static final String ROUTINE_AN_HOUR_BEFORE = "AN_HOUR_BEFORE";
 
     @Before
     public void createStructures() throws SQLException, ClassNotFoundException {
         Class.forName(JDBCDriver.class.getName());
         try (Connection c = DriverManager.getConnection("jdbc:hsqldb:file:target/testdb", "SA", "")) {
+            execute(c, "drop procedure if exists new_person;");
+            execute(c, "drop function if exists an_hour_before;");
             execute(c, "drop sequence if exists PERSON_SEQ");
             execute(c, "drop table if exists ADDRESS");
             execute(c, "drop trigger if exists PERSON_TRIGGER");
@@ -57,6 +84,9 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
             execute(c, "create sequence PERSON_SEQ minvalue 100 maxvalue 10000  start with 100 increment by 10 cycle");
             execute(c, "create view PERSON_VIEW as select a from PERSON");
             execute(c, "create trigger PERSON_TRIGGER after insert ON PERSON when (true) delete from PERSON");
+            execute(c, "CREATE FUNCTION an_hour_before(t TIMESTAMP)\n" + "  RETURNS TIMESTAMP\n" + "  RETURN t-1 HOUR");
+            execute(c, "CREATE PROCEDURE new_person(OUT c varchar(255), IN a decimal(10,5), IN b decimal(5,2))\n" + "  MODIFIES SQL DATA\n"
+                    + "  BEGIN ATOMIC\n" + "    INSERT INTO PERSON VALUES (a, b, 'test');\n" + "    SET c = 'test';\n" + "  END;");
         }
     }
 
@@ -96,6 +126,50 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         assertThat(triggerDescriptor.getActionStatement(), equalTo("DELETE FROM PUBLIC.PERSON"));
         assertThat(triggerDescriptor.getConditionTiming(), equalTo("after"));
         assertThat(triggerDescriptor.getEventManipulationTime(), equalTo("insert"));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verify functions and procedures.
+     */
+    @Test
+    public void routines() {
+        scan(PROPERTIES_MAXIMUM);
+        store.beginTransaction();
+        // Function
+        RoutineDescriptor anHourBefore = getRoutine(ROUTINE_AN_HOUR_BEFORE);
+        assertThat(anHourBefore, notNullValue());
+        assertThat(anHourBefore, instanceOf(FunctionDescriptor.class));
+        assertThat(anHourBefore.getName(), equalTo(ROUTINE_AN_HOUR_BEFORE));
+        assertThat(anHourBefore.getReturnType(), equalTo("noTable"));
+        assertThat(anHourBefore.getBodyType(), equalTo("sql"));
+        assertThat(anHourBefore.getDefinition(), containsString("T-1 HOUR"));
+        List<RoutineColumnDescriptor> anHourBeforeColumns = anHourBefore.getColumns();
+        assertThat(anHourBeforeColumns, hasSize(1));
+        RoutineColumnDescriptor t = anHourBeforeColumns.get(0);
+        assertThat(t.getName(), equalTo("T"));
+        assertThat(t.getType(), equalTo("in"));
+        // Procedure
+        RoutineDescriptor newPerson = getRoutine(ROUTINE_NEW_PERSON);
+        assertThat(newPerson, notNullValue());
+        assertThat(newPerson, instanceOf(ProcedureDescriptor.class));
+        assertThat(newPerson.getName(), equalTo(ROUTINE_NEW_PERSON));
+        assertThat(newPerson.getReturnType(), equalTo("noResult"));
+        assertThat(newPerson.getBodyType(), equalTo("sql"));
+        assertThat(newPerson.getDefinition(), containsString("INSERT INTO PUBLIC.PERSON"));
+        List<RoutineColumnDescriptor> newPersonColumns = newPerson.getColumns();
+        assertThat(newPersonColumns, hasSize(3));
+        for (RoutineColumnDescriptor column : newPersonColumns) {
+            if ("A".equals(column.getName())) {
+                assertThat(column.getType(), equalTo("in"));
+            } else if ("B".equals(column.getName())) {
+                assertThat(column.getType(), equalTo("in"));
+            } else if ("C".equals(column.getName())) {
+                assertThat(column.getType(), equalTo("out"));
+            } else {
+                fail("Unexpected column " + column.getName());
+            }
+        }
         store.commitTransaction();
     }
 
@@ -384,4 +458,15 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         return s == null ? null : s.get(0);
     }
 
+    /**
+     * Get a sequence.
+     *
+     * @param name
+     *            The routine name.
+     * @return The descriptor.
+     */
+    private <R extends RoutineDescriptor> R getRoutine(String name) {
+        List<R> s = query("match (s:Rdbms:Routine) where s.name={name} return s", MapBuilder.<String, Object> create("name", name).get()).getColumn("s");
+        return s == null ? null : s.get(0);
+    }
 }
