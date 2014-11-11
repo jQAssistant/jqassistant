@@ -5,9 +5,7 @@ import static com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope.TES
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -43,10 +41,23 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         ScannerContext context = scanner.getContext();
         MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         projectDescriptor.setPackaging(project.getPackaging());
+        Map<ArtifactDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
+        Map<ArtifactDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
+        for (Artifact dependency : (Set<Artifact>) project.getDependencyArtifacts()) {
+            ArtifactDescriptor dependencyDescriptor = resolveArtifact(dependency, scanner.getContext());
+            if (Artifact.SCOPE_TEST.equals(dependency.getScope())) {
+                testArtifactDependencies.put(dependencyDescriptor, dependency);
+            } else {
+                mainArtifactDependencies.put(dependencyDescriptor, dependency);
+            }
+        }
         Artifact artifact = project.getArtifact();
         ArtifactDescriptor mainArtifactDescriptor = scanClassesDirectory(projectDescriptor, artifact, false, project.getBuild().getOutputDirectory(), scanner);
+        addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
+        testArtifactDependencies.put(mainArtifactDescriptor, artifact);
         ArtifactDescriptor testArtifactDescriptor = scanClassesDirectory(projectDescriptor, artifact, true, project.getBuild().getTestOutputDirectory(),
                 scanner);
+        addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
         addProjectDetails(project, projectDescriptor, mainArtifactDescriptor, testArtifactDescriptor, context);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
@@ -76,7 +87,6 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
             ArtifactDescriptor testArtifactDescriptor, ScannerContext scannerContext) {
         addParent(project, projectDescriptor, scannerContext);
         addModules(project, projectDescriptor, scannerContext);
-        addDependencies(project, mainArtifactDescriptor, testArtifactDescriptor, scannerContext);
     }
 
     /**
@@ -123,37 +133,22 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     /**
      * Add dependency relations to the artifacts.
      * 
-     * @param project
-     *            The project.
-     * @param mainArtifactDescriptor
-     *            The artifact descriptor representing the main artifact.
-     * @param testArtifactDescriptor
-     *            The artifact descriptor representing the test artifact.
+     * @param artifactDescriptor
+     *            The artifact descriptor for adding dependencies to.
+     * @param dependencies
+     *            The map of dependency artifacts.
      * @param scannerContext
      *            The scanner context.
      */
-    private void addDependencies(MavenProject project, ArtifactDescriptor mainArtifactDescriptor, ArtifactDescriptor testArtifactDescriptor,
-            ScannerContext scannerContext) {
-        if (mainArtifactDescriptor != null && testArtifactDescriptor != null) {
-            DependsOnDescriptor dependsOnDescriptor = scannerContext.getStore().create(testArtifactDescriptor, DependsOnDescriptor.class,
-                    mainArtifactDescriptor);
-            dependsOnDescriptor.setScope(Artifact.SCOPE_TEST);
-        }
-        for (Artifact dependency : (Set<Artifact>) project.getDependencyArtifacts()) {
-            ArtifactDescriptor dependencyDescriptor = resolveArtifact(dependency, scannerContext);
+    private void addDependencies(ArtifactDescriptor artifactDescriptor, Map<ArtifactDescriptor, Artifact> dependencies, ScannerContext scannerContext) {
+        for (Map.Entry<ArtifactDescriptor, Artifact> entry : dependencies.entrySet()) {
+            ArtifactDescriptor dependencyDescriptor = entry.getKey();
+            Artifact dependency = entry.getValue();
             DependsOnDescriptor dependsOnDescriptor;
-            ArtifactDescriptor dependentDescriptor;
             String scope = dependency.getScope();
-            if (Artifact.SCOPE_TEST.equals(scope)) {
-                dependentDescriptor = testArtifactDescriptor;
-            } else {
-                dependentDescriptor = mainArtifactDescriptor;
-            }
-            if (dependentDescriptor != null) {
-                dependsOnDescriptor = scannerContext.getStore().create(dependentDescriptor, DependsOnDescriptor.class, dependencyDescriptor);
-                dependsOnDescriptor.setScope(scope);
-                dependsOnDescriptor.setOptional(dependency.isOptional());
-            }
+            dependsOnDescriptor = scannerContext.getStore().create(artifactDescriptor, DependsOnDescriptor.class, dependencyDescriptor);
+            dependsOnDescriptor.setScope(scope);
+            dependsOnDescriptor.setOptional(dependency.isOptional());
         }
     }
 
