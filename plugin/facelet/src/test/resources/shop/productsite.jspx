@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui:composition template="/templ/template.jspx"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+        >
+
+
+    <ui:include src="/shop/short_info.jspx"/>
+
+    <ui:include src="item.jspx"/>
+
+</ui:composition>

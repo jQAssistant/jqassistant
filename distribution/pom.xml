@@ -170,6 +170,13 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.facelet</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.jaxrs</artifactId>
             <version>${project.version}</version>
             <type>zip</type>

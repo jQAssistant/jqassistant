@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://java.sun.com/jsf/html">
+
+    <ui:param name="bean" value="#{ProductBean}"/>
+
+    <h:outputText value="#{ProductBean.name}"/>
+    <h:outputText value="#{bean.price}"/>
+
+</ui:composition>

@@ -32,6 +32,10 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.facelet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
         </dependency>
         <dependency>
