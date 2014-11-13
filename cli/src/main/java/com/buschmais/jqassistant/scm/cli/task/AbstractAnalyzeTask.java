@@ -2,7 +2,11 @@ package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -15,6 +19,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
@@ -36,6 +41,15 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
     private List<String> conceptIds;
     private List<String> constraintIds;
     private List<String> groupIds;
+
+    /**
+     * Constructor.
+     *
+     * @param pluginConfigurationReader
+     */
+    protected AbstractAnalyzeTask(PluginConfigurationReader pluginConfigurationReader) {
+        super(pluginConfigurationReader);
+    }
 
     // copied from AbstractAnalysisMojo
     protected RuleSet getAvailableRules() throws CliExecutionException {

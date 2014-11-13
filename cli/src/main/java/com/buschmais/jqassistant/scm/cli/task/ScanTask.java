@@ -15,6 +15,7 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -22,12 +23,11 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.OptionsConsumer;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ScanTask extends AbstractJQATask implements OptionsConsumer {
+public class ScanTask extends AbstractJQATask {
 
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URLS = "u";
@@ -35,6 +35,15 @@ public class ScanTask extends AbstractJQATask implements OptionsConsumer {
     private List<String> fileNames = new ArrayList<>();
     private List<String> urls = new ArrayList<>();
     private boolean reset = false;
+
+    /**
+     * Constructor.
+     *
+     * @param pluginConfigurationReader
+     */
+    public ScanTask(PluginConfigurationReader pluginConfigurationReader) {
+        super(pluginConfigurationReader);
+    }
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {

@@ -1,6 +1,13 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import com.buschmais.jqassistant.scm.cli.task.*;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.scm.cli.task.AnalyzeTask;
+import com.buschmais.jqassistant.scm.cli.task.AvailableRulesTask;
+import com.buschmais.jqassistant.scm.cli.task.EffectiveRulesTask;
+import com.buschmais.jqassistant.scm.cli.task.ReportTask;
+import com.buschmais.jqassistant.scm.cli.task.ResetTask;
+import com.buschmais.jqassistant.scm.cli.task.ScanTask;
+import com.buschmais.jqassistant.scm.cli.task.ServerTask;
 import com.google.common.base.CaseFormat;
 
 /**
@@ -10,58 +17,87 @@ public enum Task {
     /**
      * Scan.
      */
-    SCAN(new ScanTask()),
+    SCAN {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new ScanTask(pluginConfigurationReader);
+        }
+    },
     /**
      * Server.
      */
-    SERVER(new ServerTask()),
+    SERVER {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new ServerTask(pluginConfigurationReader);
+        }
+    },
     /**
      * Available rules.
      */
-    AVAILABLE_RULES(new AvailableRulesTask()),
+    AVAILABLE_RULES {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new AvailableRulesTask(pluginConfigurationReader);
+        }
+    },
     /**
      * Available rules.
      */
-    EFFECTIVE_RULES(new EffectiveRulesTask()),
+    EFFECTIVE_RULES {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new EffectiveRulesTask(pluginConfigurationReader);
+        }
+    },
     /**
      * Analyze.
      */
-    ANALYZE(new AnalyzeTask()),
+    ANALYZE {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new AnalyzeTask(pluginConfigurationReader);
+        }
+    },
     /**
      * Reset.
      */
-    RESET(new ResetTask()),
+    RESET {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new ResetTask(pluginConfigurationReader);
+        }
+    },
     /**
      * Report.
      */
-    REPORT(new ReportTask());
-
-    private JQATask task;
+    REPORT {
+        @Override
+        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
+            return new ReportTask(pluginConfigurationReader);
+        }
+    };
 
     /**
-     * Constructor.
+     * Return the task instance.
      * 
-     * @param task
+     * @return The task instance.
      */
-    private Task(JQATask task) {
-        this.task = task;
-    }
-
-    public JQATask getTask() {
-        return task;
-    }
+    public abstract JQATask getTask(PluginConfigurationReader pluginConfigurationReader);
 
     /**
      * Determine the task to execute from the given name.
      *
      * @param name
      *            The name.
+     * @param pluginConfigurationReader
+     *            The plugin configuration reader.
      * @return The task.
      */
-    public static JQATask fromName(String name) {
+    public static JQATask fromName(String name, PluginConfigurationReader pluginConfigurationReader) {
         String formattedTaskName = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, name);
         try {
-            return com.buschmais.jqassistant.scm.cli.Task.valueOf(formattedTaskName).getTask();
+            return com.buschmais.jqassistant.scm.cli.Task.valueOf(formattedTaskName).getTask(pluginConfigurationReader);
         } catch (IllegalArgumentException e) {
             System.exit(1);
         }
