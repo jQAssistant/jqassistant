@@ -115,6 +115,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <!-- CLI -->
         <dependency>
@@ -123,6 +124,7 @@
             <type>zip</type>
             <classifier>distribution</classifier>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.scm</groupId>
@@ -130,6 +132,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <!-- Sonar -->
         <dependency>
@@ -138,6 +141,7 @@
             <type>zip</type>
             <classifier>distribution</classifier>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Plugins -->
         <dependency>
@@ -146,6 +150,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -153,6 +158,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -160,6 +166,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -167,6 +174,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -181,6 +189,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -188,6 +197,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -195,6 +205,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -202,6 +213,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -209,6 +221,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -216,6 +229,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -223,6 +237,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -230,6 +245,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <!-- Examples -->
         <dependency>
@@ -238,6 +254,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -245,6 +262,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -252,6 +270,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -259,6 +278,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -266,6 +286,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -273,6 +294,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -280,6 +302,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
@@ -287,6 +310,7 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
