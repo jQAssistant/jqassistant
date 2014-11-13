@@ -21,7 +21,7 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        return path.endsWith(getExtension());
+        return path.toLowerCase().endsWith(getExtension());
     }
 
     @Override
