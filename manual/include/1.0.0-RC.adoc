@@ -7,4 +7,7 @@
 ==== RDBMS
 - added RDBMS plugin containing a scanner to import schema metadata for relational databases
 
+==== Facelet
+- added facelet plugin which providing a scanner for JSF 2.x views
+
 
