@@ -38,8 +38,7 @@ public class Main {
 
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
-    private static final File HOME_DIRECTORY = getHomeDirectory();
-
+   
     /**
      * The main method.
      * 
@@ -49,7 +48,7 @@ public class Main {
      *             If an error occurs.
      */
     public static void main(String[] args) throws IOException {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
         try {
             interpretCommandLine(args, pluginConfigurationReader);
         } catch (CliExecutionException e) {
@@ -234,8 +233,9 @@ public class Main {
      */
     private static ClassLoader createPluginClassLoader() {
         ClassLoader parentClassLoader = JQATask.class.getClassLoader();
-        if (HOME_DIRECTORY != null) {
-            File pluginDirectory = new File(HOME_DIRECTORY, DIRECTORY_PLUGINS);
+        File homeDirectory = getHomeDirectory();
+        if (homeDirectory != null) {
+            File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
             if (pluginDirectory.exists()) {
                 final Path pluginDirectoryPath = pluginDirectory.toPath();
                 final List<URL> files = new ArrayList<>();
