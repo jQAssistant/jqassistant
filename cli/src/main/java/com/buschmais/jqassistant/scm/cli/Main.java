@@ -254,7 +254,7 @@ public class Main {
                 } catch (IOException e) {
                     throw new IllegalStateException("Cannot read plugin directory.", e);
                 }
-                return new URLClassLoader(files.toArray(new URL[0]), parentClassLoader);
+                return new PluginClassLoader(files, parentClassLoader);
             }
         }
         return parentClassLoader;
