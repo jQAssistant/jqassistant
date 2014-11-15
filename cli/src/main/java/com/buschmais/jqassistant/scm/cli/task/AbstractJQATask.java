@@ -11,12 +11,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
@@ -39,7 +34,6 @@ public abstract class AbstractJQATask implements JQATask {
     protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
 
     private static final Console LOG = Log.getLog();
-
 
     protected Map<String, Object> properties = new HashMap<>();
     protected String storeDirectory;
