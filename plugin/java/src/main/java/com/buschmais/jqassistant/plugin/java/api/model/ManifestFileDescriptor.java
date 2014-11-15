@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("Manifest")
-public interface ManifestFileDescriptor extends FileDescriptor {
+public interface ManifestFileDescriptor extends JavaDescriptor, FileDescriptor {
 
     @Relation("DECLARES")
     @Outgoing

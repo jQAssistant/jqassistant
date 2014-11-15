@@ -1,31 +1,15 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -134,7 +118,7 @@ public class Main {
             System.exit(1);
         }
         for (String requestedTask : requestedTasks) {
-            executeTask(requestedTask, option, commandLine);
+            executeTask(requestedTask, option, commandLine, pluginConfigurationReader);
         }
     }
 
@@ -149,8 +133,8 @@ public class Main {
      *            The command line.
      * @throws IOException
      */
-    private static void executeTask(String taskName, Options option, CommandLine commandLine) throws CliExecutionException {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
+    private static void executeTask(String taskName, Options option, CommandLine commandLine, PluginConfigurationReader pluginConfigurationReader)
+            throws CliExecutionException {
         final JQATask task = Task.fromName(taskName, pluginConfigurationReader);
         if (task == null) {
             printUsage(option, "Unknown task " + taskName);

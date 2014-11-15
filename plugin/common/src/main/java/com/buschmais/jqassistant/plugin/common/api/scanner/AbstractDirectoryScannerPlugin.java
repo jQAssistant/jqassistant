@@ -9,6 +9,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
@@ -25,12 +26,16 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
 
     @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
-        return item.isDirectory() && getExpectedScope().equals(scope);
+        return item.isDirectory() && getRequiredScope().equals(scope);
     }
 
     @Override
-    protected Scope createScope(Scope currentScope) {
+    protected Scope createScope(Scope currentScope, ScannerContext context) {
         return currentScope;
+    }
+
+    @Override
+    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override
@@ -75,7 +80,7 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
      * 
      * @return The scope.
      */
-    protected abstract Scope getExpectedScope();
+    protected abstract Scope getRequiredScope();
 
     /**
      * A directory resource.

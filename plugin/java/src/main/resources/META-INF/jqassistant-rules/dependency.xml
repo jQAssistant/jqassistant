@@ -20,9 +20,10 @@
         </description>
         <cypher><![CDATA[
             MATCH
-                (a1:Artifact)-[:CONTAINS]->(t1:Type)-[:DEPENDS_ON]->(t2:Type)<-[:CONTAINS]-(a2:Artifact)
+                (a1:Artifact)-[:REQUIRES]->(t1:Type),
+                (a2:Artifact)-[:CONTAINS]-(t2:Type)
             WHERE
-                a1<>a2
+                t1.fqn=t2.fqn
             CREATE UNIQUE
                 (a1)-[:DEPENDS_ON]->(a2)
             RETURN

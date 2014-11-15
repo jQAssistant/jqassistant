@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
  * Visitor for default values of annotation methods.

@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("ManifestSection")
-public interface ManifestSectionDescriptor extends NamedDescriptor {
+public interface ManifestSectionDescriptor extends JavaDescriptor, NamedDescriptor {
 
     @Relation("HAS")
     @Outgoing

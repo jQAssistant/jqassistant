@@ -19,7 +19,8 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectScannerPlugin;
@@ -37,8 +38,8 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     @Override
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
-        final ArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), false, scanner.getContext());
-        scanner.getContext().push(ArtifactDescriptor.class, artifact);
+        final JavaArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), JavaClassesDirectoryDescriptor.class, false, scanner.getContext());
+        scanner.getContext().push(JavaArtifactDescriptor.class, artifact);
         try {
             for (File file : getPdeFiles(project)) {
                 String filePath = getDirectoryPath(project.getBasedir(), file);
@@ -48,7 +49,7 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
                 }
             }
         } finally {
-            scanner.getContext().pop(ArtifactDescriptor.class);
+            scanner.getContext().pop(JavaArtifactDescriptor.class);
         }
         return resolveProject(project, MavenProjectDirectoryDescriptor.class, scanner.getContext());
     }

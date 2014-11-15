@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.junit4.api.scanner.JunitScope;
 public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
 
     @Override
-    protected Scope getExpectedScope() {
+    protected Scope getRequiredScope() {
         return JunitScope.TESTREPORTS;
     }
 

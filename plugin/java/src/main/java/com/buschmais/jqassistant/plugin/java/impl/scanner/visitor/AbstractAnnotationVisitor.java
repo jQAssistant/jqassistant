@@ -8,6 +8,7 @@ import org.objectweb.asm.Type;
 
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.AnnotationVisitor {
 

@@ -10,11 +10,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
-import org.jcp.xmlns.xml.ns.javaee.Alternatives;
-import org.jcp.xmlns.xml.ns.javaee.Beans;
-import org.jcp.xmlns.xml.ns.javaee.Decorators;
-import org.jcp.xmlns.xml.ns.javaee.Interceptors;
-import org.jcp.xmlns.xml.ns.javaee.ObjectFactory;
+import org.jcp.xmlns.xml.ns.javaee.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +60,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
                 } else if (o instanceof Alternatives) {
                     List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
                     for (JAXBElement<String> element : clazzOrStereotype) {
-                        TypeDescriptor alternative = TypeResolver.resolve(element.getValue(), context);
+                        TypeDescriptor alternative = scanner.getContext().peek(TypeResolver.class).resolve(element.getValue(), context).getTypeDescriptor();
                         beansDescriptor.getAlternatives().add(alternative);
                     }
                 }
@@ -77,7 +73,7 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
 
     private void addTypes(List<String> typeNames, List<TypeDescriptor> types, ScannerContext scannerContext) {
         for (String typeName : typeNames) {
-            TypeDescriptor type = TypeResolver.resolve(typeName, scannerContext);
+            TypeDescriptor type = scannerContext.peek(TypeResolver.class).resolve(typeName, scannerContext).getTypeDescriptor();
             types.add(type);
         }
     }

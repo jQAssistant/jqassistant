@@ -33,14 +33,14 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
         containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
-        context.push(FileContainerDescriptor.class, containerDescriptor);
         Map<String, FileDescriptor> files = new HashMap<>();
+        context.push(FileContainerDescriptor.class, containerDescriptor);
+        Scope entryScope = createScope(scope, scanner.getContext());
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
                 try (Resource resource = getEntry(container, e)) {
                     String relativePath = getRelativePath(container, e);
-                    Scope entryScope = createScope(scope);
                     LOGGER.info("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, entryScope);
                     descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
@@ -50,6 +50,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
             }
         } finally {
             context.pop(FileContainerDescriptor.class);
+            destroyScope(scanner.getContext());
             LOGGER.info("Leaving {}", path);
         }
         for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
@@ -118,9 +119,19 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
      * 
      * @param currentScope
      *            The current scope.
+     * @param scannerContext
+     *            The scanner context.
      * @return The scope.
      */
-    protected abstract Scope createScope(Scope currentScope);
+    protected abstract Scope createScope(Scope currentScope, ScannerContext scannerContext);
+
+    /**
+     * Destroy the container dependent scope.
+     * 
+     * @param scannerContext
+     *            The scanner context.
+     */
+    protected abstract void destroyScope(ScannerContext scannerContext);
 
     /**
      * Return a {@link Resource} representing an entry.

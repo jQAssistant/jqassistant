@@ -16,8 +16,12 @@ public class EarArchiveScannerPlugin extends AbstractArchiveScannerPlugin {
     }
 
     @Override
-    protected Scope createScope(Scope currentScope) {
+    protected Scope createScope(Scope currentScope, ArchiveDescriptor archive, ScannerContext context) {
         return EnterpriseApplicationScope.EAR;
+    }
+
+    @Override
+    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override

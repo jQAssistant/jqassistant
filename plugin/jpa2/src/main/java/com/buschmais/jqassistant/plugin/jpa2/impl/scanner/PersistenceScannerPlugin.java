@@ -22,11 +22,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
-import com.sun.java.xml.ns.persistence.ObjectFactory;
-import com.sun.java.xml.ns.persistence.Persistence;
-import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
-import com.sun.java.xml.ns.persistence.PersistenceUnitTransactionType;
-import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
+import com.sun.java.xml.ns.persistence.*;
 
 /**
  * A scanner for JPA model units.
@@ -81,7 +77,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
                 persistenceUnitDescriptor.setSharedCacheMode(sharedCacheMode.name());
             }
             for (String clazz : persistenceUnit.getClazz()) {
-                TypeDescriptor typeDescriptor = TypeResolver.resolve(clazz, scanner.getContext());
+                TypeDescriptor typeDescriptor = scanner.getContext().peek(TypeResolver.class).resolve(clazz, scanner.getContext()).getTypeDescriptor();
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
             // Create persistence unit properties

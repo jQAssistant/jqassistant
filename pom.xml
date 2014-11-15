@@ -50,7 +50,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <com.buschmais.xo_version>0.4.5</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
         <org.neo4j_version>2.1.5</org.neo4j_version>
         <org.asciidoctor_version>1.5.0</org.asciidoctor_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
@@ -65,7 +65,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.14.1</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -90,7 +89,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.14.1</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -258,17 +256,31 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.14.1</version>
+                    <version>2.18</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>2.18</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.14.1</version>
+                    <version>2.18</version>
                     <configuration>
                         <includes>
                             <include>**/*Test.java</include>
                         </includes>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit47</artifactId>
+                            <version>2.18</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

@@ -8,6 +8,7 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 
 import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
  * A matcher for
@@ -38,7 +39,11 @@ public class AbstractMemberDescriptorMatcher<T extends MemberDescriptor> extends
 
     @Override
     protected void describeMismatchSafely(T item, Description mismatchDescription) {
-        mismatchDescription.appendText(item.getClass().getSimpleName()).appendText("(").appendText(item.getDeclaringType().getFullQualifiedName())
-                .appendText("#").appendText(item.getSignature()).appendText(")");
+        mismatchDescription.appendText(item.getClass().getSimpleName());
+        TypeDescriptor declaringType = item.getDeclaringType();
+        if (declaringType != null) {
+            mismatchDescription.appendText("(").appendText(declaringType.getFullQualifiedName());
+        }
+        mismatchDescription.appendText("#").appendText(item.getSignature()).appendText(")");
     }
 }

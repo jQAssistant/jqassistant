@@ -25,7 +25,7 @@ import org.mockito.Mockito;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 
 @RunWith(Parameterized.class)
@@ -81,7 +81,7 @@ public class TychoProjectScannerPluginTest {
         when(artifact.getVersion()).thenReturn("1.0.0");
         when(project.getArtifact()).thenReturn(artifact);
 
-        ArtifactDirectoryDescriptor artifactDescriptor = mock(ArtifactDirectoryDescriptor.class);
+        JavaClassesDirectoryDescriptor artifactDescriptor = mock(JavaClassesDirectoryDescriptor.class);
         when(store.create(Mockito.any(Class.class), Mockito.anyString())).thenReturn(artifactDescriptor);
 
         MavenProjectDirectoryDescriptor projectDirectoryDescriptor = mock(MavenProjectDirectoryDescriptor.class);

@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 /**
  * Abstract base implementation for archive scanners.
  */
-public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin<FileResource, ArchiveDescriptor> {
+public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> extends AbstractScannerPlugin<FileResource, D> {
 
     @Override
     public Class<? extends FileResource> getType() {
@@ -25,14 +25,15 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
     }
 
     @Override
-    public ArchiveDescriptor scan(FileResource file, String path, Scope currentScope, Scanner scanner) throws IOException {
-        Scope zipScope = createScope(currentScope);
-        ArchiveDescriptor archive = createArchive(file, path, scanner.getContext());
+    public D scan(FileResource file, String path, Scope currentScope, Scanner scanner) throws IOException {
+        D archive = createArchive(file, path, scanner.getContext());
         ZipFile zipFile = new ZipFile(file.getFile());
         scanner.getContext().push(ArchiveDescriptor.class, archive);
+        Scope zipScope = createScope(currentScope, archive, scanner.getContext());
         try {
             scanner.scan(zipFile, path, zipScope);
         } finally {
+            destroyScope(scanner.getContext());
             scanner.getContext().pop(ArchiveDescriptor.class);
         }
         return archive;
@@ -50,9 +51,22 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
      * 
      * @param currentScope
      *            The current scope.
+     * @param archiveDescriptor
+     *            The created archive descriptor.
+     * @param scannerContext
+     *            The scanner context
      * @return The new scope.
      */
-    protected abstract Scope createScope(Scope currentScope);
+    protected abstract Scope createScope(Scope currentScope, D archiveDescriptor, ScannerContext scannerContext);
+
+    /**
+     * Destroy the scope.
+     *
+     * @param scannerContext
+     *            The scanner context
+     * @return The new scope.
+     */
+    protected abstract void destroyScope(ScannerContext scannerContext);
 
     /**
      * Create descriptor which represents the archive type.
@@ -65,5 +79,5 @@ public abstract class AbstractArchiveScannerPlugin extends AbstractScannerPlugin
      *            The scanner context.
      * @return The descriptor.
      */
-    protected abstract ArchiveDescriptor createArchive(FileResource file, String path, ScannerContext scannerContext);
+    protected abstract D createArchive(FileResource file, String path, ScannerContext scannerContext);
 }

@@ -86,6 +86,11 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public <T extends Descriptor> void delete(T descriptor) {
+        xoManager.delete(descriptor);
+    }
+
+    @Override
     public <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types) {
         return xoManager.migrate(descriptor, concreteType, types).as(concreteType);
     }

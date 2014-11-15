@@ -98,6 +98,16 @@ public interface Store {
     <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);
 
     /**
+     * Delete a descriptor.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param <T>
+     *            The descriptor type.
+     */
+    <T extends Descriptor> void delete(T descriptor);
+
+    /**
      * Migrates the descriptor instance to the given sub-type.
      * 
      * @param descriptor
@@ -161,4 +171,5 @@ public interface Store {
      * @return The {@link Result}.
      */
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
+
 }

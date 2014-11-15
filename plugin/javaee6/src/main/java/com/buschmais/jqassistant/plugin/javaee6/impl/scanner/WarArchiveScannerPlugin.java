@@ -16,12 +16,17 @@ public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin {
     }
 
     @Override
-    protected Scope createScope(Scope currentScope) {
+    protected Scope createScope(Scope currentScope, ArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
         return WebApplicationScope.WAR;
+    }
+
+    @Override
+    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override
     protected ArchiveDescriptor createArchive(FileResource file, String path, ScannerContext scannerContext) {
         return scannerContext.getStore().create(WarArchiveDescriptor.class);
     }
+
 }

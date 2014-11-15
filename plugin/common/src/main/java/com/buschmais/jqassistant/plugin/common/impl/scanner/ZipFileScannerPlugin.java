@@ -72,8 +72,12 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected Scope createScope(Scope currentScope) {
+    protected Scope createScope(Scope currentScope, ScannerContext context) {
         return currentScope;
+    }
+
+    @Override
+    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override
