@@ -4,6 +4,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
  * Type signature visitor which adds a dependency to a resolved types.

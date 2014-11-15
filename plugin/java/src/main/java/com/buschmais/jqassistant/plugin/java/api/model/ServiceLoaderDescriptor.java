@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  *
  */
 @Label("ServiceLoader")
-public interface ServiceLoaderDescriptor extends FileDescriptor, TypedDescriptor {
+public interface ServiceLoaderDescriptor extends JavaDescriptor, FileDescriptor, TypedDescriptor {
 
     @Relation("CONTAINS")
     List<TypeDescriptor> getContains();

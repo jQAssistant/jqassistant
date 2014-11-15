@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 /**
@@ -17,8 +17,6 @@ public class VisitorHelper {
 
     private ScannerContext scannerContext;
 
-    private TypeCache typeCache;
-
     /**
      * Constructor.
      * 
@@ -26,7 +24,6 @@ public class VisitorHelper {
      *            The scanner context
      */
     public VisitorHelper(ScannerContext scannerContext) {
-        this.typeCache = new TypeCache();
         this.scannerContext = scannerContext;
     }
 
@@ -37,7 +34,7 @@ public class VisitorHelper {
      * java.lang.Object).
      */
     TypeCache.CachedType getType(String fullQualifiedName, TypeCache.CachedType dependentType) {
-        TypeCache.CachedType cachedType = getCachedType(fullQualifiedName, TypeDescriptor.class);
+        TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
         if (!dependentType.equals(cachedType)) {
             TypeDescriptor dependency = dependentType.getDependency(fullQualifiedName);
             if (dependency == null) {
@@ -57,35 +54,25 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends TypeDescriptor> TypeCache.CachedType getCachedType(String fullQualifiedName, Class<T> expectedType) {
-        TypeDescriptor typeDescriptor;
-        TypeCache.CachedType cachedType = typeCache.get(fullQualifiedName);
-        if (cachedType == null) {
-            typeDescriptor = TypeResolver.resolve(fullQualifiedName, expectedType, scannerContext);
-            cachedType = new TypeCache.CachedType(typeDescriptor);
-            typeCache.put(fullQualifiedName, cachedType);
-            for (Descriptor descriptor : typeDescriptor.getDeclaredFields()) {
-                if (descriptor instanceof FieldDescriptor) {
-                    FieldDescriptor fieldDescriptor = (FieldDescriptor) descriptor;
-                    cachedType.addField(fieldDescriptor.getSignature(), fieldDescriptor);
-                }
-            }
-            for (Descriptor descriptor : typeDescriptor.getDeclaredMethods()) {
-                if (descriptor instanceof MethodDescriptor) {
-                    MethodDescriptor methodDescriptor = (MethodDescriptor) descriptor;
-                    cachedType.addMethod(methodDescriptor.getSignature(), methodDescriptor);
-                }
-            }
-            for (TypeDescriptor descriptor : typeDescriptor.getDependencies()) {
-                cachedType.addDependency(descriptor.getFullQualifiedName(), typeDescriptor);
-            }
+    <T extends TypeDescriptor> TypeCache.CachedType getCachedType(String fullQualifiedName, Class<T> descriptorType) {
+        return getTypeResolver().create(fullQualifiedName, descriptorType, scannerContext);
+    }
+
+    /**
+     * Return the type resolver.
+     * <p>
+     * Looks up an instance in the scanner context. If none can be found the
+     * default resolver is used.
+     * </p>
+     * 
+     * @return The type resolver.
+     */
+    private TypeResolver getTypeResolver() {
+        TypeResolver typeResolver = scannerContext.peek(TypeResolver.class);
+        if (typeResolver == null) {
+            throw new IllegalStateException("Cannot get type resolver.");
         }
-        if (!expectedType.isAssignableFrom(cachedType.getTypeDescriptor().getClass())) {
-            typeDescriptor = scannerContext.getStore().migrate(cachedType.getTypeDescriptor(), expectedType);
-            cachedType.migrate(typeDescriptor);
-            typeCache.put(fullQualifiedName, cachedType);
-        }
-        return cachedType;
+        return typeResolver;
     }
 
     /**

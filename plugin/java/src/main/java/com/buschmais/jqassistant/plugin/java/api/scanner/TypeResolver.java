@@ -3,29 +3,34 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
-public class TypeResolver {
+/**
+ * Defines the interface for type resolvers.
+ */
+public interface TypeResolver {
 
-    private TypeResolver() {
-    }
+    /**
+     * Resolve the descriptor of for Java type name.
+     * 
+     * @param fullQualifiedName
+     *            The fully qualified type name, e.g. "java.lang.Object".
+     * @param expectedType
+     *            The expected type of the descriptor.
+     * @param scannerContext
+     *            The scanner context.
+     * @param <T>
+     *            The expected type of the descriptor.
+     * @return The type descriptor.
+     */
+    <T extends TypeDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> expectedType, ScannerContext scannerContext);
 
-    public static <T extends TypeDescriptor> TypeDescriptor resolve(String fullQualifiedName, Class<T> expectedType, ScannerContext scannerContext) {
-        TypeDescriptor typeDescriptor = scannerContext.getStore().find(TypeDescriptor.class, fullQualifiedName);
-        if (typeDescriptor == null) {
-            typeDescriptor = scannerContext.getStore().create(expectedType);
-            String name;
-            int separatorIndex = fullQualifiedName.lastIndexOf('.');
-            if (separatorIndex != -1) {
-                name = fullQualifiedName.substring(separatorIndex + 1);
-            } else {
-                name = fullQualifiedName;
-            }
-            typeDescriptor.setName(name);
-            typeDescriptor.setFullQualifiedName(fullQualifiedName);
-        }
-        return typeDescriptor;
-    }
+    /**
+     * Resolve the descriptor of for Java type name.
+     * 
+     * @param fullQualifiedName
+     *            The fully qualified type name, e.g. "java.lang.Object".
+     * @param context
+     *            The scanner context.
+     */
+    TypeCache.CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context);
 
-    public static TypeDescriptor resolve(String fullQualifiedName, ScannerContext context) {
-        return resolve(fullQualifiedName, TypeDescriptor.class, context);
-    }
 }

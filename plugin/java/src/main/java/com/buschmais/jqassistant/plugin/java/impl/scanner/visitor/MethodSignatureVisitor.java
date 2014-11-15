@@ -6,6 +6,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
  * Visitor for method signatures.

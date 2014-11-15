@@ -7,6 +7,7 @@ import org.objectweb.asm.signature.SignatureVisitor;
 
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 

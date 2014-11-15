@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  *            The value type.
  */
 @Label("Value")
-public interface ValueDescriptor<V> extends NamedDescriptor {
+public interface ValueDescriptor<V> extends JavaDescriptor, NamedDescriptor {
 
     /**
      * Set the value.

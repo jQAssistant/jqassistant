@@ -23,10 +23,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotatedType;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.Annotation;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.AnnotationWithDefaultValue;
-import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.NestedAnnotation;
+import com.buschmais.jqassistant.plugin.java.test.set.scanner.annotation.*;
 
 /**
  * Contains test which verify correct scanning of annotations and annotated
@@ -42,7 +39,7 @@ public class AnnotationIT extends AbstractJavaPluginIT {
      */
     @Test
     public void annotatedClass() throws IOException, NoSuchFieldException {
-        scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class);
+        scanClasses(AnnotatedType.class, Annotation.class, NestedAnnotation.class, Enumeration.class);
         // verify annotation type
         store.beginTransaction();
         TestResult testResult = query("MATCH (t:Type:Class)-[:ANNOTATED_BY]->(a:Value:Annotation)-[:OF_TYPE]->(at:Type:Annotation) RETURN t, a, at");

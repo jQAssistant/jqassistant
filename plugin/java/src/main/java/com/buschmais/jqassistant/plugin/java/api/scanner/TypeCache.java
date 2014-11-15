@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
+package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -92,28 +92,45 @@ public class TypeCache {
             this.typeDescriptor = typeDescriptor;
         }
 
-        FieldDescriptor getField(String signature) {
+        public FieldDescriptor getField(String signature) {
             return fields.get(signature);
         }
 
-        void addField(String signature, FieldDescriptor field) {
+        public void addField(String signature, FieldDescriptor field) {
             fields.put(signature, field);
         }
 
-        MethodDescriptor getMethod(String signature) {
+        public MethodDescriptor getMethod(String signature) {
             return methods.get(signature);
         }
 
-        void addMethod(String signature, MethodDescriptor method) {
+        public void addMethod(String signature, MethodDescriptor method) {
             methods.put(signature, method);
         }
 
-        TypeDescriptor getDependency(String fullQualifiedName) {
+        public TypeDescriptor getDependency(String fullQualifiedName) {
             return dependencies.get(fullQualifiedName);
         }
 
-        void addDependency(String fullQualifiedName, TypeDescriptor dependency) {
+        public void addDependency(String fullQualifiedName, TypeDescriptor dependency) {
             dependencies.put(fullQualifiedName, dependency);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof CachedType))
+                return false;
+            CachedType that = (CachedType) o;
+            if (!typeDescriptor.equals(that.typeDescriptor))
+                return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return typeDescriptor.hashCode();
         }
     }
 }
