@@ -40,14 +40,12 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 
 /**
  * Abstract base class for analysis tests.
  */
-public class AbstractPluginIT {
+public abstract class AbstractPluginIT {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
@@ -150,7 +148,7 @@ public class AbstractPluginIT {
      */
     @Before
     public void startStore() throws PluginRepositoryException {
-        store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName());
+        store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName());
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, Collections.<String, Object> emptyMap());
         store.start(getDescriptorTypes());
@@ -301,25 +299,6 @@ public class AbstractPluginIT {
         Group group = ruleSet.getGroups().get(id);
         assertNotNull("The group must not be null", group);
         analyzer.execute(ruleSet, ruleSelection);
-    }
-
-    /**
-     * Get or create an
-     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor}
-     * .
-     * 
-     * @param artifactId
-     *            The artifact id.
-     * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor}
-     *         .
-     */
-    protected ArtifactDirectoryDescriptor getArtifactDescriptor(String artifactId) {
-        ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
-        if (artifact == null) {
-            artifact = store.create(ArtifactDirectoryDescriptor.class, artifactId);
-        }
-        return ArtifactDirectoryDescriptor.class.cast(artifact);
     }
 
     private List<Class<?>> getDescriptorTypes() {

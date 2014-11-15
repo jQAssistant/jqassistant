@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScan
 public class CustomDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
 
     @Override
-    protected Scope getExpectedScope() {
+    protected Scope getRequiredScope() {
         return CustomScope.CUSTOM;
     }
 
