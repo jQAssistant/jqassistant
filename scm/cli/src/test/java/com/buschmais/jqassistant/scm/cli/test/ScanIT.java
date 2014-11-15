@@ -75,7 +75,7 @@ public class ScanIT extends AbstractCLIIT {
         EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());
         Long count = executeQuery(store, "match (b:Cdi:Beans) return count(b) as count", Collections.<String, Object> emptyMap(), "count", Long.class);
-        assertThat("Expecting on beans.xml descriptor.", count, equalTo(1l));
+        assertThat("Expecting one beans.xml descriptor.", count, equalTo(1l));
         store.stop();
     }
 
