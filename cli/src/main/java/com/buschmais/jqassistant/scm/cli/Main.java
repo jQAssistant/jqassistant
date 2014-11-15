@@ -1,18 +1,15 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.cli.*;
-import org.xeustechnologies.jcl.JarClassLoader;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -224,14 +221,14 @@ public class Main {
         if (homeDirectory != null) {
             File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
             if (pluginDirectory.exists()) {
-                final JarClassLoader jcl = new JarClassLoader();
+                final List<URL> urls = new ArrayList<>();
                 final Path pluginDirectoryPath = pluginDirectory.toPath();
                 SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         if (file.toFile().getName().endsWith(".jar")) {
-                            jcl.add(file.toFile().toURI().toURL());
+                            urls.add(file.toFile().toURI().toURL());
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -241,7 +238,7 @@ public class Main {
                 } catch (IOException e) {
                     throw new IllegalStateException("Cannot read plugin directory.", e);
                 }
-                return jcl;
+                return new PluginClassLoader(urls, parentClassLoader);
             }
         }
         return parentClassLoader;
