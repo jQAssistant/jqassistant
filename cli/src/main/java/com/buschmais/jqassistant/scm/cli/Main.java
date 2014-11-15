@@ -1,15 +1,18 @@
 package com.buschmais.jqassistant.scm.cli;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.cli.*;
+import org.xeustechnologies.jcl.JarClassLoader;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -22,7 +25,7 @@ public class Main {
 
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
-   
+
     /**
      * The main method.
      * 
@@ -221,14 +224,14 @@ public class Main {
         if (homeDirectory != null) {
             File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);
             if (pluginDirectory.exists()) {
+                final JarClassLoader jcl = new JarClassLoader();
                 final Path pluginDirectoryPath = pluginDirectory.toPath();
-                final List<URL> files = new ArrayList<>();
                 SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>() {
 
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                         if (file.toFile().getName().endsWith(".jar")) {
-                            files.add(file.toFile().toURI().toURL());
+                            jcl.add(file.toFile().toURI().toURL());
                         }
                         return FileVisitResult.CONTINUE;
                     }
@@ -238,7 +241,7 @@ public class Main {
                 } catch (IOException e) {
                     throw new IllegalStateException("Cannot read plugin directory.", e);
                 }
-                return new PluginClassLoader(files, parentClassLoader);
+                return jcl;
             }
         }
         return parentClassLoader;
