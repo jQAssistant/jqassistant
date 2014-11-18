@@ -5,7 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.sonar.api.rules.*;
+import org.sonar.api.rules.AnnotationRuleParser;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
+import org.sonar.api.rules.RulePriority;
+import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
@@ -54,7 +58,7 @@ public final class JQAssistantRuleRepository extends RuleRepository {
 
     @Override
     public List<Rule> createRules() {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(JQAssistantRuleRepository.class.getClassLoader());
         RulePluginRepository rulePluginRepository;
         try {
             rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);

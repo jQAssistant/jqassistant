@@ -105,7 +105,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Reading plugin descriptor from URL '{}'.", url);
+                    LOGGER.info("Reading plugin descriptor from '{}'.", url);
                 }
                 this.plugins.add(readPlugin(url));
             }

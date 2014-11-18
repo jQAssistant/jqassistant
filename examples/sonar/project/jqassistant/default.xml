@@ -2,4 +2,6 @@
 
     <!-- Rules defined here will *not* be evaluated by Sonar -->
 
+    <group id="default"/>
+
 </jqa:jqassistant-rules>

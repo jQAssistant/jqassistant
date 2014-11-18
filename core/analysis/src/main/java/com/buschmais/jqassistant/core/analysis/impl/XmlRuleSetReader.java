@@ -2,20 +2,51 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
+import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
+import com.buschmais.jqassistant.core.analysis.api.rule.QueryTemplate;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedReferenceType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.QueryTemplateType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader}
@@ -24,17 +55,18 @@ import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 public class XmlRuleSetReader implements RuleSetReader {
 
     public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.0.xsd";
+    public static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
 
-    private static final JAXBContext jaxbContext;
+    private static final JAXBContext JAXB_CONTEXT;
 
     /**
      * Static constructor.
      */
     static {
         try {
-            jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
+            JAXB_CONTEXT = JAXBContext.newInstance(ObjectFactory.class);
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot create JAXB context.", e);
         }
@@ -56,16 +88,18 @@ public class XmlRuleSetReader implements RuleSetReader {
         try {
             inputStream = ruleSource.getInputStream();
         } catch (IOException e) {
-            LOGGER.warn("An unexpected problem occured when opening stream for reading rules from '{}'", ruleSource.getId());
+            LOGGER.warn("An unexpected problem detected while opening stream for reading rules from '{}'", ruleSource.getId());
             return;
         }
         try {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setSchema(XmlHelper.getSchema(RULES_SCHEMA_LOCATION));
+            Unmarshaller unmarshaller = JAXB_CONTEXT.createUnmarshaller();
+            unmarshaller.setSchema(SCHEMA);
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Reading rules descriptor '{}'.", ruleSource.getId());
+                LOGGER.info("Reading rules from '{}'.", ruleSource.getId());
             }
-            rules.add(unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantRules.class).getValue());
+            StreamSource streamSource = new StreamSource(inputStream);
+            JAXBElement<JqassistantRules> jaxbElement = unmarshaller.unmarshal(streamSource, JqassistantRules.class);
+            rules.add(jaxbElement.getValue());
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
         }
