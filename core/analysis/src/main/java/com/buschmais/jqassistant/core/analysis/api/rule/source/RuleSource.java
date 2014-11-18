@@ -12,7 +12,11 @@ import java.util.Arrays;
 public abstract class RuleSource {
 
     public boolean isType(Type type) {
-        return type.equals(selectType());
+        Type thisType = getType();
+        if (thisType == null) {
+            throw new IllegalArgumentException("No matching type found for " + getId() + " available types " + Arrays.toString(Type.values()));
+        }
+        return type.equals(thisType);
     }
 
     public enum Type {
@@ -32,14 +36,16 @@ public abstract class RuleSource {
         }
     }
 
-    private Type selectType() {
+    protected Type selectTypeById() {
         String path = getId();
         for (Type type : Type.values()) {
             if (type.matches(path))
                 return type;
         }
-        throw new IllegalArgumentException("No matching type found for " + path + " available types " + Arrays.toString(Type.values()));
+        return null;
     }
+
+    protected abstract Type getType();
 
     public abstract String getId();
 

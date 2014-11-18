@@ -29,8 +29,8 @@ public class RulePluginRepositoryImpl implements RulePluginRepository {
      * Constructor.
      */
     public RulePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
-        this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
         this.classLoader = pluginConfigurationReader.getClassLoader();
+        this.sources = getRuleSources(pluginConfigurationReader.getPlugins());
     }
 
     @Override

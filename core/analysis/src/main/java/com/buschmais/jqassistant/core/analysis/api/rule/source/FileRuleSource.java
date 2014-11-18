@@ -17,6 +17,11 @@ public class FileRuleSource extends RuleSource {
     }
 
     @Override
+    protected Type getType() {
+        return selectTypeById();
+    }
+
+    @Override
     public String getId() {
         return file.getAbsolutePath();
     }
