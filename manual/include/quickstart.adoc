@@ -79,7 +79,7 @@ Add the following lines to the parent pom.xml file of your project:
             </executions>
         </plugin>
     </plugins>
-<build>
+</build>
 
 <reporting>
     <plugins>
