@@ -62,19 +62,19 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * The list of concept names to be applied.
      */
     @Parameter(property = "jqassistant.concepts")
-    protected List<String> conceptIds;
+    protected List<String> concepts;
 
     /**
      * The list of constraint names to be validated.
      */
     @Parameter(property = "jqassistant.constraints")
-    protected List<String> constraintIds;
+    protected List<String> constraints;
 
     /**
      * The list of group names to be executed.
      */
     @Parameter(property = "jqassistant.groups")
-    protected List<String> groupIds;
+    protected List<String> groups;
 
     /**
      * The file to write the XML report to.
