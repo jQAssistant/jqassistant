@@ -33,7 +33,7 @@
                                     <groups>
                                         <group>MyQualityProfile</group>
                                     </groups>
-                                    <failOnViolations>true</failOnViolations>
+                                    <failOnViolations>false</failOnViolations>
                                     <severity>critical</severity>
                                 </configuration>
                             </execution>
