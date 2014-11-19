@@ -48,11 +48,10 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         Map<ArtifactDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
         for (Artifact dependency : project.getDependencyArtifacts()) {
             ArtifactDescriptor dependencyDescriptor = resolveArtifact(dependency, JavaArtifactDescriptor.class, scanner.getContext());
-            if (Artifact.SCOPE_TEST.equals(dependency.getScope())) {
-                testArtifactDependencies.put(dependencyDescriptor, dependency);
-            } else {
+            if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                 mainArtifactDependencies.put(dependencyDescriptor, dependency);
             }
+            testArtifactDependencies.put(dependencyDescriptor, dependency);
         }
         Artifact artifact = project.getArtifact();
         // main artifact
