@@ -5,7 +5,7 @@
         <requiresConcept refId="module-scanner:Module"/>
         <requiresConcept refId="module-report:Module"/>
         <requiresConcept refId="module-analysis:Module"/>
-        <requiresConcept refId="module-pluginmanager:Module"/>
+        <requiresConcept refId="module-plugin:Module"/>
         <description>Returns all modules, i.e. all packages labelled with "Module".</description>
         <cypher><![CDATA[
 			MATCH

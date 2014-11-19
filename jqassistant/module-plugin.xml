@@ -1,14 +1,14 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="module-report:Module">
-        <description>Labels the module core.report as "Module" and "Report".</description>
+    <concept id="module-plugin:Module">
+        <description>Labels the module core.plugin as "Module", "Core" and "Plugin".</description>
         <cypher><![CDATA[
 			MATCH
 				(package:Package)
 			WHERE
-				package.fqn =~ ".*\\.core\\.report"
+				package.fqn = "com.buschmais.jqassistant.core.plugin"
 			SET
-			    package:Module:Report
+			    package:Module:Core:Plugin
 			RETURN
 				package as Module
         ]]></cypher>

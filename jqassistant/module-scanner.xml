@@ -1,14 +1,14 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
-    <concept id="module-store:Module">
-        <description>Labels the module core.store as "Module" and "Store".</description>
+    <concept id="module-scanner:Module">
+		<description>Labels the module core.scanner as "Module", "Core" and "Scanner".</description>
         <cypher><![CDATA[
 			MATCH
 				(package:Package)
 			WHERE
-				package.fqn =~ ".*\\.core\\.store"
+				package.fqn = "com.buschmais.jqassistant.core.scanner"
 			SET
-			    package:Module:Store
+			    package:Module:Core:Scanner
 			RETURN
 				package as Module
         ]]></cypher>
