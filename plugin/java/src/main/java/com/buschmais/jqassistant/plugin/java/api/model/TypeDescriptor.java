@@ -69,6 +69,15 @@ public interface TypeDescriptor extends PackageMemberDescriptor, DependentDescri
     List<FieldDescriptor> getDeclaredFields();
 
     /**
+     * Return the declared members, i.e. fields and methods.
+     *
+     * @return The declared members.
+     */
+    @Outgoing
+    @Declares
+    List<MemberDescriptor> getDeclaredMembers();
+
+    /**
      * Return the declared inner classes.
      * 
      * @return The declared inner classes.

@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 /**
  * Implementation of the
@@ -53,11 +54,8 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
     }
 
     private TypeDescriptor getTypeDescriptor(String fqn, ScannerContext scannerContext) {
-        TypeDescriptor typeDescriptor = scannerContext.getStore().find(TypeDescriptor.class, fqn);
-        if (typeDescriptor == null) {
-            typeDescriptor = scannerContext.getStore().create(TypeDescriptor.class, fqn);
-        }
-        return typeDescriptor;
+        TypeResolver typeResolver = scannerContext.peek(TypeResolver.class);
+        return typeResolver.resolve(fqn, scannerContext).getTypeDescriptor();
     }
 
 }

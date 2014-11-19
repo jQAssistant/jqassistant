@@ -1,19 +1,28 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
+/**
+ * A type resolver considering an artifact and its optional dependencies as
+ * scopes.
+ */
 class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     private JavaArtifactDescriptor artifact;
 
     private List<ArtifactDescriptor> dependencies;
+
+    private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
     /**
      * Constructor.
@@ -23,6 +32,15 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
      */
     ArtifactBasedTypeResolver(JavaArtifactDescriptor artifact) {
         this.artifact = artifact;
+        for (FileDescriptor fileDescriptor : artifact.getContains()) {
+            if (fileDescriptor instanceof TypeDescriptor) {
+                TypeDescriptor typeDescriptor = (TypeDescriptor) fileDescriptor;
+                artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
+            }
+        }
+        for (TypeDescriptor typeDescriptor : artifact.getRequiresTypes()) {
+            this.artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
+        }
         this.dependencies = new ArrayList<>();
         for (DependsOnDescriptor dependsOnDescriptor : artifact.getDependencies()) {
             dependencies.add(dependsOnDescriptor.getDependency());
@@ -30,17 +48,31 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
     }
 
     @Override
-    protected TypeDescriptor findType(String fullQualifiedName, ScannerContext context) {
-        return artifact.resolveType(fullQualifiedName, dependencies);
+    protected TypeDescriptor findInArtifact(String fullQualifiedName, ScannerContext context) {
+        return artifactTypes.get(fullQualifiedName);
     }
 
     @Override
-    protected void addRequiredType(TypeDescriptor typeDescriptor) {
+    protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
+        if (!dependencies.isEmpty()) {
+            return artifact.resolveRequiredType(fullQualifiedName, dependencies);
+        }
+        return null;
+    }
+
+    @Override
+    protected void addContainedType(String fqn, TypeDescriptor typeDescriptor) {
+        artifactTypes.put(fqn, typeDescriptor);
+    }
+
+    @Override
+    protected void addRequiredType(String fqn, TypeDescriptor typeDescriptor) {
+        artifactTypes.put(fqn, typeDescriptor);
         typeDescriptor.setRequiredBy(artifact);
     }
 
     @Override
-    protected <T extends TypeDescriptor> void removeRequiredType(T typeDescriptor) {
+    protected <T extends TypeDescriptor> void removeRequiredType(String fqn, T typeDescriptor) {
         typeDescriptor.setRequiredBy(null);
     }
 }

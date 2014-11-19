@@ -37,7 +37,7 @@ public class MethodSignatureVisitor extends SignatureVisitor {
 
     @Override
     public SignatureVisitor visitParameterType() {
-        final ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameterIndex);
+        final ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, parameterIndex);
         parameterIndex++;
         return new AbstractTypeSignatureVisitor<ParameterDescriptor>(containingType, visitorHelper) {
 

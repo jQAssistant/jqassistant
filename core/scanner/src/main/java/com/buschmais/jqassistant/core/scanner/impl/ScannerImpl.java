@@ -54,7 +54,7 @@ public class ScannerImpl implements Scanner {
                 D newDescriptor = null;
                 try {
                     newDescriptor = selectedPlugin.scan(item, path, scope, this);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     LOGGER.error("Cannot scan item " + path, e);
                 }
                 popDescriptor(descriptor);

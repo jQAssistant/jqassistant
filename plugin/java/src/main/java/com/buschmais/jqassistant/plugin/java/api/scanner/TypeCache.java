@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.google.common.cache.*;
@@ -20,7 +21,7 @@ public class TypeCache {
      * Constructor.
      */
     TypeCache() {
-        this.lruCache = CacheBuilder.newBuilder().maximumSize(16384).removalListener(new RemovalListener<String, CachedType>() {
+        this.lruCache = CacheBuilder.newBuilder().maximumSize(8192).removalListener(new RemovalListener<String, CachedType>() {
             @Override
             public void onRemoval(RemovalNotification<String, CachedType> notification) {
                 if (RemovalCause.SIZE.equals(notification.getCause())) {
@@ -70,8 +71,7 @@ public class TypeCache {
      */
     public static class CachedType<T extends TypeDescriptor> {
         private T typeDescriptor;
-        private Map<String, MethodDescriptor> methods = new HashMap<>();
-        private Map<String, FieldDescriptor> fields = new HashMap<>();
+        private Map<String, MemberDescriptor> members = new HashMap<>();
         private Map<String, TypeDescriptor> dependencies = new HashMap<>();
 
         /**
@@ -93,19 +93,15 @@ public class TypeCache {
         }
 
         public FieldDescriptor getField(String signature) {
-            return fields.get(signature);
-        }
-
-        public void addField(String signature, FieldDescriptor field) {
-            fields.put(signature, field);
+            return (FieldDescriptor) members.get(signature);
         }
 
         public MethodDescriptor getMethod(String signature) {
-            return methods.get(signature);
+            return (MethodDescriptor) members.get(signature);
         }
 
-        public void addMethod(String signature, MethodDescriptor method) {
-            methods.put(signature, method);
+        public void addMember(String signature, MemberDescriptor member) {
+            members.put(signature, member);
         }
 
         public TypeDescriptor getDependency(String fullQualifiedName) {

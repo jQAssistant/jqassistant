@@ -9,11 +9,15 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 public interface TypeResolver {
 
     /**
-     * Resolve the descriptor of for Java type name.
+     * Resolve or create the descriptor for a Java type name.
+     * <p>
+     * If a the descriptor already exists it will be used and migrated to the
+     * given type.
+     * </p>
      * 
      * @param fullQualifiedName
      *            The fully qualified type name, e.g. "java.lang.Object".
-     * @param expectedType
+     * @param descriptorType
      *            The expected type of the descriptor.
      * @param scannerContext
      *            The scanner context.
@@ -21,10 +25,11 @@ public interface TypeResolver {
      *            The expected type of the descriptor.
      * @return The type descriptor.
      */
-    <T extends TypeDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> expectedType, ScannerContext scannerContext);
+    <T extends TypeDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext scannerContext);
 
     /**
-     * Resolve the descriptor of for Java type name.
+     * Resolve or create the descriptor for Java type name to be used as
+     * dependency.
      * 
      * @param fullQualifiedName
      *            The fully qualified type name, e.g. "java.lang.Object".
