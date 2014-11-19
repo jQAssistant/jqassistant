@@ -33,7 +33,7 @@ public class VisitorHelper {
      * @param typeName The full qualified name of the type (e.g.
      * java.lang.Object).
      */
-    TypeCache.CachedType getType(String fullQualifiedName, TypeCache.CachedType dependentType) {
+    TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType dependentType) {
         TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
         if (!dependentType.equals(cachedType)) {
             TypeDescriptor dependency = dependentType.getDependency(fullQualifiedName);
@@ -54,7 +54,7 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends TypeDescriptor> TypeCache.CachedType getCachedType(String fullQualifiedName, Class<T> descriptorType) {
+    <T extends TypeDescriptor> TypeCache.CachedType createType(String fullQualifiedName, Class<T> descriptorType) {
         return getTypeResolver().create(fullQualifiedName, descriptorType, scannerContext);
     }
 
@@ -205,7 +205,7 @@ public class VisitorHelper {
      */
     AnnotationValueDescriptor addAnnotation(TypeCache.CachedType containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
-            TypeDescriptor type = getType(typeName, containingDescriptor).getTypeDescriptor();
+            TypeDescriptor type = resolveType(typeName, containingDescriptor).getTypeDescriptor();
             AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
             annotationDescriptor.setType(type);
             annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);

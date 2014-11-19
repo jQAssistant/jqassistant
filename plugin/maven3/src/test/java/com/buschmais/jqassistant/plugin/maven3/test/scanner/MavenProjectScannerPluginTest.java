@@ -6,7 +6,9 @@ import static org.mockito.Mockito.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -22,6 +24,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
@@ -35,7 +38,6 @@ public class MavenProjectScannerPluginTest {
 
         // Mock parent project
         MavenProject parentProject = mock(MavenProject.class);
-        Artifact parentArtifact = new DefaultArtifact("group", "parent-artifact", VersionRange.createFromVersion("1.0.0"), null, "pom", "main", null);
         when(parentProject.getGroupId()).thenReturn("group");
         when(parentProject.getArtifactId()).thenReturn("parent-artifact");
         when(parentProject.getVersion()).thenReturn("1.0.0");
@@ -52,6 +54,11 @@ public class MavenProjectScannerPluginTest {
         when(project.getArtifact()).thenReturn(artifact);
         when(project.getPackaging()).thenReturn("jar");
         when(project.getParent()).thenReturn(parentProject);
+
+        Set<Artifact> dependencies = new HashSet<>();
+        Artifact dependency = new DefaultArtifact("group", "dependency", VersionRange.createFromVersion("2.0.0"), "compile", "jar", "main", null);
+        dependencies.add(dependency);
+        when(project.getDependencyArtifacts()).thenReturn(dependencies);
 
         Build build = new Build();
         build.setOutputDirectory("target/classes");
@@ -78,8 +85,17 @@ public class MavenProjectScannerPluginTest {
         when(store.find(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(null, testArtifact);
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
 
-        DependsOnDescriptor dependsOnDescriptor = mock(DependsOnDescriptor.class);
-        when(store.create(testArtifact, DependsOnDescriptor.class, mainArtifact)).thenReturn(dependsOnDescriptor);
+        JavaArtifactDescriptor dependencyArtifact = mock(JavaArtifactDescriptor.class);
+        when(store.find(ArtifactDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
+
+        DependsOnDescriptor testDependsOnMainDescriptor = mock(DependsOnDescriptor.class);
+        when(store.create(testArtifact, DependsOnDescriptor.class, mainArtifact)).thenReturn(testDependsOnMainDescriptor);
+
+        DependsOnDescriptor mainDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
+        when(store.create(mainArtifact, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(mainDependsOnDependencyDescriptor);
+
+        DependsOnDescriptor testDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
+        when(store.create(testArtifact, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(testDependsOnDependencyDescriptor);
 
         MavenProjectDescriptor parentProjectDescriptor = mock(MavenProjectDescriptor.class);
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
@@ -114,5 +130,7 @@ public class MavenProjectScannerPluginTest {
         verify(testArtifact).setVersion("1.0.0");
 
         verify(store).create(testArtifact, DependsOnDescriptor.class, mainArtifact);
+        verify(store).create(mainArtifact, DependsOnDescriptor.class, dependencyArtifact);
+        verify(store).create(testArtifact, DependsOnDescriptor.class, dependencyArtifact);
     }
 }

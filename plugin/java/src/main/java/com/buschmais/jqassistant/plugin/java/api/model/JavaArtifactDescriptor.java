@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
@@ -16,7 +17,7 @@ public interface JavaArtifactDescriptor extends JavaDescriptor, ArtifactDescript
 
     @ResultOf
     @Cypher("match (type:Type)<-[:CONTAINS]-(a:Artifact) where type.fqn={fqn} and id(a) in {dependencies} return type")
-    TypeDescriptor resolveRequiredType(@Parameter("fqn") String fqn, @Parameter("dependencies") List<? extends ArtifactDescriptor> dependencies);
+    Query.Result<TypeDescriptor> resolveRequiredType(@Parameter("fqn") String fqn, @Parameter("dependencies") List<? extends ArtifactDescriptor> dependencies);
 
     @Outgoing
     @RequiresType

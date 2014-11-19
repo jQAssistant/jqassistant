@@ -42,13 +42,13 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
     @Override
     public void visitTypeInsn(final int opcode, final String type) {
-        visitorHelper.getType(SignatureHelper.getObjectType(type), containingType);
+        visitorHelper.resolveType(SignatureHelper.getObjectType(type), containingType);
     }
 
     @Override
     public void visitFieldInsn(final int opcode, final String owner, final String name, final String desc) {
         String fieldSignature = SignatureHelper.getFieldSignature(name, desc);
-        TypeCache.CachedType targetType = visitorHelper.getType(SignatureHelper.getObjectType(owner), containingType);
+        TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
         FieldDescriptor fieldDescriptor = visitorHelper.getFieldDescriptor(targetType, fieldSignature);
         switch (opcode) {
         case Opcodes.GETFIELD:
@@ -65,7 +65,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitMethodInsn(final int opcode, final String owner, final String name, final String desc, boolean itf) {
         String methodSignature = SignatureHelper.getMethodSignature(name, desc);
-        TypeCache.CachedType targetType = visitorHelper.getType(SignatureHelper.getObjectType(owner), containingType);
+        TypeCache.CachedType targetType = visitorHelper.resolveType(SignatureHelper.getObjectType(owner), containingType);
         MethodDescriptor invokedMethodDescriptor = visitorHelper.getMethodDescriptor(targetType, methodSignature);
         visitorHelper.addInvokes(methodDescriptor, line, invokedMethodDescriptor);
     }
@@ -73,13 +73,13 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public void visitLdcInsn(final Object cst) {
         if (cst instanceof Type) {
-            visitorHelper.getType(SignatureHelper.getType((Type) cst), containingType);
+            visitorHelper.resolveType(SignatureHelper.getType((Type) cst), containingType);
         }
     }
 
     @Override
     public void visitMultiANewArrayInsn(final String desc, final int dims) {
-        visitorHelper.getType(SignatureHelper.getType(desc), containingType);
+        visitorHelper.resolveType(SignatureHelper.getType(desc), containingType);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     public void visitTryCatchBlock(final Label start, final Label end, final Label handler, final String type) {
         if (type != null) {
             String fullQualifiedName = SignatureHelper.getObjectType(type);
-            visitorHelper.getType(fullQualifiedName, containingType);
+            visitorHelper.resolveType(fullQualifiedName, containingType);
         }
     }
 
