@@ -32,6 +32,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
         if (artifact == null) {
             artifact = store.create(JavaClassesDirectoryDescriptor.class, artifactId);
+            artifact.setFullQualifiedName(artifactId);
         }
         return JavaArtifactDescriptor.class.cast(artifact);
     }

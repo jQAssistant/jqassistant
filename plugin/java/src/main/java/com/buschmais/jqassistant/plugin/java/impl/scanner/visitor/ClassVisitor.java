@@ -105,7 +105,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
             methodDescriptor.setReturns(visitorHelper.getType(returnType, cachedType).getTypeDescriptor());
             org.objectweb.asm.Type[] types = org.objectweb.asm.Type.getArgumentTypes(desc);
             for (int i = 0; i < types.length; i++) {
-                ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, i);
+                ParameterDescriptor parameterDescriptor = visitorHelper.addParameterDescriptor(methodDescriptor, i);
                 // ParameterDescriptor parameterDescriptor =
                 // methodDescriptor.createParameter(i);
                 String parameterType = SignatureHelper.getType(types[i]);

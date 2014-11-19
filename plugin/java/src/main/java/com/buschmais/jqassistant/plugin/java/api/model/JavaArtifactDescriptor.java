@@ -15,10 +15,11 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 public interface JavaArtifactDescriptor extends JavaDescriptor, ArtifactDescriptor {
 
     @ResultOf
-    @Cypher("match (a:Artifact)-[r:CONTAINS|REQUIRES]->(type:Type) where (id(a)={this} or (type(r)='CONTAINS' and id(a) in {dependencies})) and type.fqn={fqn} return type")
-    TypeDescriptor resolveType(@Parameter("fqn") String fqn, @Parameter("dependencies") List<? extends ArtifactDescriptor> dependencies);
+    @Cypher("match (type:Type)<-[:CONTAINS]-(a:Artifact) where type.fqn={fqn} and id(a) in {dependencies} return type")
+    TypeDescriptor resolveRequiredType(@Parameter("fqn") String fqn, @Parameter("dependencies") List<? extends ArtifactDescriptor> dependencies);
 
     @Outgoing
+    @RequiresType
     List<TypeDescriptor> getRequiresTypes();
 
     @Relation("REQUIRES")

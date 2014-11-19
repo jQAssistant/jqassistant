@@ -94,9 +94,16 @@ public class VisitorHelper {
             }
             methodDescriptor.setSignature(signature);
             cachedType.getTypeDescriptor().getDeclaredMethods().add(methodDescriptor);
-            cachedType.addMethod(signature, methodDescriptor);
+            cachedType.addMember(signature, methodDescriptor);
         }
         return methodDescriptor;
+    }
+
+    public ParameterDescriptor addParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
+        ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
+        parameterDescriptor.setIndex(index);
+        methodDescriptor.getParameters().add(parameterDescriptor);
+        return parameterDescriptor;
     }
 
     public ParameterDescriptor getParameterDescriptor(MethodDescriptor methodDescriptor, int index) {
@@ -105,10 +112,7 @@ public class VisitorHelper {
                 return parameterDescriptor;
             }
         }
-        ParameterDescriptor parameterDescriptor = scannerContext.getStore().create(ParameterDescriptor.class);
-        parameterDescriptor.setIndex(index);
-        methodDescriptor.getParameters().add(parameterDescriptor);
-        return parameterDescriptor;
+        return null;
     }
 
     /**
@@ -171,7 +175,7 @@ public class VisitorHelper {
             fieldDescriptor = scannerContext.getStore().create(FieldDescriptor.class);
             fieldDescriptor.setSignature(signature);
             cachedType.getTypeDescriptor().getDeclaredFields().add(fieldDescriptor);
-            cachedType.addField(signature, fieldDescriptor);
+            cachedType.addMember(signature, fieldDescriptor);
         }
         return fieldDescriptor;
     }

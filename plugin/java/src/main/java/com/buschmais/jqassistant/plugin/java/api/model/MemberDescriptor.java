@@ -4,12 +4,14 @@ import static com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor.Dec
 import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
  * Defines a descriptor having a signature.
  */
-public interface MemberDescriptor extends Descriptor {
+@Label("Member")
+public interface MemberDescriptor extends JavaDescriptor, Descriptor {
 
     @Incoming
     @Declares
