@@ -11,6 +11,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.ResultIterator;
 
 /**
  * A type resolver considering an artifact and its optional dependencies as
@@ -54,10 +56,15 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     @Override
     protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
+        TypeDescriptor typeDescriptor = null;
         if (!dependencies.isEmpty()) {
-            return artifact.resolveRequiredType(fullQualifiedName, dependencies);
+            Query.Result<TypeDescriptor> typeDescriptors = artifact.resolveRequiredType(fullQualifiedName, dependencies);
+            ResultIterator<TypeDescriptor> iterator = typeDescriptors.iterator();
+            if (iterator.hasNext()) {
+                typeDescriptor = iterator.next();
+            }
         }
-        return null;
+        return typeDescriptor;
     }
 
     @Override

@@ -19,8 +19,15 @@ import com.buschmais.jqassistant.plugin.java.test.set.scanner.resolver.B;
 
 public class TypeResolverIT extends AbstractJavaPluginIT {
 
+    /**
+     * Verify scanning dependent types in one artifact where the dependent type
+     * is scanned first.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     */
     @Test
-    public void referenceFirst() throws IOException {
+    public void dependentTypeFirst() throws IOException {
         scanClasses("a1", B.class);
         scanClasses("a1", A.class);
         store.beginTransaction();
@@ -34,8 +41,15 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Verify scanning dependent types in one artifact where the dependency is
+     * scanned first.
+     *
+     * @throws IOException
+     *             If the test fails.
+     */
     @Test
-    public void typeFirst() throws IOException {
+    public void dependencyTypeFirst() throws IOException {
         scanClasses("a1", A.class);
         scanClasses("a1", B.class);
         store.beginTransaction();
@@ -49,6 +63,12 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Verifies scanning dependent types located in dependent artifacts.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     */
     @Test
     public void dependentArtifacts() throws IOException {
         store.beginTransaction();
@@ -74,6 +94,12 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Verifies scanning dependent types located in independent artifacts.
+     *
+     * @throws IOException
+     *             If the test fails.
+     */
     @Test
     public void independentArtifacts() throws IOException {
         scanClasses("a1", A.class);
@@ -99,13 +125,53 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    public void sameClassIndependentArtifacts() throws IOException {
+    /**
+     * Verifies scanning the same type which exists in two independent
+     * artifacts.
+     *
+     * @throws IOException
+     *             If the test fails.
+     */
+    @Test
+    public void duplicateType() throws IOException {
         scanClasses("a1", A.class);
         scanClasses("a2", A.class);
+        store.beginTransaction();
+        TestResult testResult = query("match (:Artifact)-[:CONTAINS]->(t:Type) where t.fqn={t} return t",
+                MapBuilder.<String, Object> create("t", A.class.getName()).get());
+        assertThat(testResult.getRows().size(), equalTo(2));
+        store.commitTransaction();
     }
 
-    public void sameClassDependentArtifacts() throws IOException {
+    /**
+     * Verifies scanning a type depending on another type which exists in two
+     * independent artifacts.
+     *
+     * @throws IOException
+     *             If the test fails.
+     */
+    @Test
+    public void ambiguousDependencies() throws IOException {
+        store.beginTransaction();
+        JavaArtifactDescriptor a1 = getArtifactDescriptor("a1");
+        JavaArtifactDescriptor a2 = getArtifactDescriptor("a2");
+        JavaArtifactDescriptor a3 = getArtifactDescriptor("a3");
+        store.create(a3, DependsOnDescriptor.class, a1);
+        store.create(a3, DependsOnDescriptor.class, a2);
+        store.commitTransaction();
         scanClasses("a1", A.class);
-        scanClasses("a1", A.class);
+        scanClasses("a2", A.class);
+        scanClasses("a3", B.class);
+        store.beginTransaction();
+        TestResult testResult = query("match (:Artifact)-[:CONTAINS]->(t:Type) where t.fqn={t} return t",
+                MapBuilder.<String, Object> create("t", A.class.getName()).get());
+        assertThat(testResult.getRows().size(), equalTo(2));
+        testResult = query(
+                "match (artifact3:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)-[:CONTAINS]-(otherArtifact:Artifact) where b.fqn={b} return otherArtifact",
+                MapBuilder.<String, Object> create("a", A.class.getName()).put("b", B.class.getName()).get());
+        assertThat(testResult.getRows().size(), equalTo(1));
+        JavaArtifactDescriptor otherArtifact = (JavaArtifactDescriptor) testResult.getColumn("otherArtifact").get(0);
+        assertThat(otherArtifact, anyOf(equalTo(a1), equalTo(a2)));
+        store.commitTransaction();
     }
 }
