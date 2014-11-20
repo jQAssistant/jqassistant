@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * Resets the store.
  */
-@Mojo(name = "reset", aggregator = true, requiresProject = false)
+@Mojo(name = "reset", aggregator = true, requiresProject = false, threadSafe = true)
 public class ResetMojo extends AbstractModuleMojo {
 
     @Override

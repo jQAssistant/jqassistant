@@ -243,6 +243,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Execute an operation with the store.
+     * <p>
+     * This method enforces thread safety based on the store factory.
+     * </p>
      * 
      * @param storeOperation
      *            The store.
