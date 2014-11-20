@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 /**
  * Lists all effective rules.
  */
-@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE)
+@Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EffectiveRulesMojo extends AbstractProjectMojo {
 
     @Override

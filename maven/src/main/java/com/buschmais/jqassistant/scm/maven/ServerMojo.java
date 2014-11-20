@@ -18,7 +18,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 /**
  * Starts an embedded Neo4j server.
  */
-@Mojo(name = "server")
+@Mojo(name = "server", threadSafe = true)
 public class ServerMojo extends AbstractProjectMojo {
 
     @Override

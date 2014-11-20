@@ -23,7 +23,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 /**
  * Scans the the output directory and test output directory.
  */
-@Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST)
+@Mojo(name = "scan", defaultPhase = LifecyclePhase.POST_INTEGRATION_TEST, threadSafe = true)
 public class ScanMojo extends AbstractModuleMojo {
 
     /**

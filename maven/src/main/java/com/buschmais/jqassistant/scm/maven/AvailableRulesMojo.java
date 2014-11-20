@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 /**
  * Lists all available rules.
  */
-@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE)
+@Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class AvailableRulesMojo extends AbstractProjectMojo {
 
     @Override

@@ -2,9 +2,12 @@ package com.buschmais.jqassistant.scm.maven;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -23,21 +26,48 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     @Parameter(property = "reactorProjects")
     protected List<MavenProject> reactorProjects;
 
+    @Parameter(property = "mojoExecution")
+    protected MojoExecution execution;
+
     @Override
     public final void doExecute() throws MojoExecutionException, MojoFailureException {
-        Map<MavenProject, List<MavenProject>> projects = getProjects(reactorProjects);
-        // Execute the goal if the current project is the last executed project
-        // of a base project
+        Map<MavenProject, List<MavenProject>> modules = getModules(reactorProjects);
         final MavenProject rootModule = ProjectResolver.getRootModule(currentProject, rulesDirectory);
-        final List<MavenProject> currentProjects = projects.get(rootModule);
-        if (currentProjects != null && currentProject.equals(currentProjects.get(currentProjects.size() - 1))) {
-            execute(new StoreOperation() {
-                @Override
-                public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
-                    aggregate(rootModule, currentProjects, store);
+        final List<MavenProject> currentModules = modules.get(rootModule);
+
+        execute(new StoreOperation() {
+            @Override
+            public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
+                Set<MavenProject> executedModules = getExecutedProjects(rootModule);
+                executedModules.add(currentProject);
+                if (currentModules != null && currentModules.size() == executedModules.size()) {
+                    aggregate(rootModule, currentModules, store);
                 }
-            }, rootModule);
+            }
+        }, rootModule);
+    }
+
+    /**
+     * Determine the already executed modules for a given root module.
+     * 
+     * @param rootModule
+     *            The root module.
+     * @return The set of already executed modules belonging to the root module.
+     */
+    private Set<MavenProject> getExecutedProjects(MavenProject rootModule) {
+        String key = execution.getExecutionId();
+        Map<String, Set<MavenProject>> executedProjectsPerExecutionId = (Map<String, Set<MavenProject>>) rootModule.getContextValue(AbstractProjectMojo.class
+                .getName());
+        if (executedProjectsPerExecutionId == null) {
+            executedProjectsPerExecutionId = new HashMap<>();
+            rootModule.setContextValue(AbstractProjectMojo.class.getName(), executedProjectsPerExecutionId);
         }
+        Set<MavenProject> executedProjects = executedProjectsPerExecutionId.get(key);
+        if (executedProjects == null) {
+            executedProjects = new HashSet<>();
+            executedProjectsPerExecutionId.put(key, executedProjects);
+        }
+        return executedProjects;
     }
 
     /**
@@ -50,7 +80,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * @throws MojoExecutionException
      *             If aggregation fails.
      */
-    private Map<MavenProject, List<MavenProject>> getProjects(List<MavenProject> reactorProjects) throws MojoExecutionException {
+    private Map<MavenProject, List<MavenProject>> getModules(List<MavenProject> reactorProjects) throws MojoExecutionException {
         Map<MavenProject, List<MavenProject>> rootModules = new HashMap<>();
         for (MavenProject reactorProject : reactorProjects) {
             MavenProject rootModule = ProjectResolver.getRootModule(reactorProject, rulesDirectory);
