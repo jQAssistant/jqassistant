@@ -111,7 +111,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.junit4</artifactId>
+            <artifactId>jqassistant.plugin.junit</artifactId>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -1,6 +1,8 @@
 == 1.0.0-RC
 
 === Plugins
+==== JUnit
+- renamed JUnit4 plugin to JUnit as it also contains rules for JUnit3
 ==== TestNG
 - added TestNG plugin containing concepts
 
