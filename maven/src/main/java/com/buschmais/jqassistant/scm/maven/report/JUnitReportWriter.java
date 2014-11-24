@@ -16,11 +16,11 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.Error;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.Failure;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.ObjectFactory;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testcase;
-import com.buschmais.jqassistant.plugin.junit4.impl.schema.Testsuite;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.ObjectFactory;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.Testcase;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.Testsuite;
 
 /**
  * {@link AnalysisListener} implementation to write JUnit style reports.
