@@ -1,0 +1,64 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="junit3:TestClass">
+        <description>Labels all non-abstract classes extending from junit.framework.TestCase "Test" and "Junit3".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Type:Class)-[:EXTENDS*]->(testCaseType:Type)
+            WHERE
+              testCaseType.fqn = "junit.framework.TestCase"
+            SET
+              c:Test:Junit3
+            RETURN
+              c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit3:TestMethod">
+        <requiresConcept refId="junit3:TestClass"/>
+        <description>Labels all test methods declared by a test class with "Test" and "Junit3".
+        </description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Class:Test:Junit3)-[:DECLARES]->(m:Method)
+            WHERE
+              m.signature =~ "void test.*\\(.*\\)"
+            SET
+              m:Test:Junit3
+            RETURN
+              m AS Test, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+
+    <concept id="junit3:SetUpMethod">
+        <requiresConcept refId="junit3:TestClass"/>
+        <description>Labels all setUp methods declared by a test class with "SetUp" and "Junit3".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Class:Test:Junit3)-[:DECLARES]->(m:Method)
+            WHERE
+              m.signature = "void setUp()"
+            SET
+              m:SetUp:Junit3
+            RETURN
+              m AS SetUpMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+    <concept id="junit3:TearDownMethod">
+        <requiresConcept refId="junit3:TestClass"/>
+        <description>Labels all tearDown methods declared by a test class with "TearDown" and "Junit3".</description>
+        <cypher><![CDATA[
+            MATCH
+              (c:Class:Test:Junit3)-[:DECLARES]->(m:Method)
+            WHERE
+              m.signature = "void tearDown()"
+            SET
+              m:TearDown:Junit3
+            RETURN
+              m AS TearDownMethod, c AS TestClass
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
