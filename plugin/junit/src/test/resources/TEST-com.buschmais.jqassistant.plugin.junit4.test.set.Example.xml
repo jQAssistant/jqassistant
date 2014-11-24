@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="1" time="0.058" errors="1" skipped="1" tests="4"
+           name="com.buschmais.jqassistant.plugin.junit.test.set.report.Example">
+<properties>
+        <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    </properties>
+    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="success"/>
+    <testcase time="0.003" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="failure">
+        <failure type="java.lang.AssertionError">java.lang.AssertionError
+            at org.junit.Assert.fail(Assert.java:86)
+            at org.junit.Assert.fail(Assert.java:95)
+            at com.buschmais.jqassistant.plugin.junit.test.set.report.Example.failure(Example.java:15)
+            at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+            at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+            at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+            at java.lang.reflect.Method.invoke(Method.java:606)
+            at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+            at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+            at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+            at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+            at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+            at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+            at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+            at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+            at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+            at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+            at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+            at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+            at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+            at org.apache.maven.surefire.junit4.JUnit4TestSet.execute(JUnit4TestSet.java:53)
+            at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:123)
+            at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:104)
+            at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+            at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+            at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+            at java.lang.reflect.Method.invoke(Method.java:606)
+            at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:164)
+            at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:110)
+            at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
+            at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
+            at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
+        </failure>
+    </testcase>
+    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="error">
+        <error type="java.lang.RuntimeException">java.lang.RuntimeException
+            at com.buschmais.jqassistant.plugin.junit.test.set.report.Example.error(Example.java:20)
+            at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+            at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+            at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+            at java.lang.reflect.Method.invoke(Method.java:606)
+            at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:47)
+            at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+            at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:44)
+            at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+            at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:271)
+            at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:70)
+            at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:50)
+            at org.junit.runners.ParentRunner$3.run(ParentRunner.java:238)
+            at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:63)
+            at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:236)
+            at org.junit.runners.ParentRunner.access$000(ParentRunner.java:53)
+            at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:229)
+            at org.junit.runners.ParentRunner.run(ParentRunner.java:309)
+            at org.apache.maven.surefire.junit4.JUnit4TestSet.execute(JUnit4TestSet.java:53)
+            at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:123)
+            at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:104)
+            at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+            at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+            at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+            at java.lang.reflect.Method.invoke(Method.java:606)
+            at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:164)
+            at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:110)
+            at org.apache.maven.surefire.booter.SurefireStarter.invokeProvider(SurefireStarter.java:175)
+            at org.apache.maven.surefire.booter.SurefireStarter.runSuitesInProcessWhenForked(SurefireStarter.java:107)
+            at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
+        </error>
+    </testcase>
+    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="skipped">
+        <skipped/>
+    </testcase>
+</testsuite>

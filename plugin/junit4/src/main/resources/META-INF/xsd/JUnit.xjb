@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<xjb:bindings xmlns:xjb="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0">
-<xjb:bindings schemaLocation="JUnit.xsd" node="/xs:schema">
-        <xjb:schemaBindings>
-            <xjb:package name="com.buschmais.jqassistant.plugin.junit4.impl.schema"/>
-        </xjb:schemaBindings>
-    </xjb:bindings>
-</xjb:bindings>
