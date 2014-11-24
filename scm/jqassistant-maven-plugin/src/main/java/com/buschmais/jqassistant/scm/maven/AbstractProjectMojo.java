@@ -1,11 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -19,6 +14,51 @@ import com.buschmais.jqassistant.core.store.api.Store;
  * Abstract base class for mojos which are executed per project.
  */
 public abstract class AbstractProjectMojo extends AbstractMojo {
+
+    /**
+     * A marker for an already executed goal of a project.
+     */
+    private static class ExecutionKey {
+
+        private String goal;
+
+        private String execution;
+
+        /**
+         * Constructor.
+         * 
+         * @param mojoExecution
+         *            The mojo execution as provided by Maven.
+         */
+        private ExecutionKey(MojoExecution mojoExecution) {
+            this.goal = mojoExecution.getGoal();
+            this.execution = mojoExecution.getExecutionId();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof ExecutionKey))
+                return false;
+
+            ExecutionKey that = (ExecutionKey) o;
+
+            if (!execution.equals(that.execution))
+                return false;
+            if (!goal.equals(that.goal))
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = goal.hashCode();
+            result = 31 * result + execution.hashCode();
+            return result;
+        }
+    }
 
     /**
      * Contains the full list of projects in the reactor.
@@ -38,7 +78,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         execute(new StoreOperation() {
             @Override
             public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
-                Set<MavenProject> executedModules = getExecutedProjects(rootModule);
+                Set<MavenProject> executedModules = getExecutedModules(rootModule);
                 executedModules.add(currentProject);
                 if (currentModules != null && currentModules.size() == executedModules.size()) {
                     aggregate(rootModule, currentModules, store);
@@ -54,18 +94,18 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      *            The root module.
      * @return The set of already executed modules belonging to the root module.
      */
-    private Set<MavenProject> getExecutedProjects(MavenProject rootModule) {
-        String key = execution.getExecutionId();
-        Map<String, Set<MavenProject>> executedProjectsPerExecutionId = (Map<String, Set<MavenProject>>) rootModule.getContextValue(AbstractProjectMojo.class
-                .getName());
-        if (executedProjectsPerExecutionId == null) {
-            executedProjectsPerExecutionId = new HashMap<>();
-            rootModule.setContextValue(AbstractProjectMojo.class.getName(), executedProjectsPerExecutionId);
+    private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
+        ExecutionKey key = new ExecutionKey(execution);
+        Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey = (Map<ExecutionKey, Set<MavenProject>>) rootModule
+                .getContextValue(AbstractProjectMojo.class.getName());
+        if (executedProjectsPerExecutionKey == null) {
+            executedProjectsPerExecutionKey = new HashMap<>();
+            rootModule.setContextValue(AbstractProjectMojo.class.getName(), executedProjectsPerExecutionKey);
         }
-        Set<MavenProject> executedProjects = executedProjectsPerExecutionId.get(key);
+        Set<MavenProject> executedProjects = executedProjectsPerExecutionKey.get(key);
         if (executedProjects == null) {
             executedProjects = new HashSet<>();
-            executedProjectsPerExecutionId.put(key, executedProjects);
+            executedProjectsPerExecutionKey.put(key, executedProjects);
         }
         return executedProjects;
     }
