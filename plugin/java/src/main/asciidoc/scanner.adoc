@@ -1,14 +1,45 @@
-<<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>> <<ServiceLoaderFileScanner>>
+<<ArtifactScanner>> <<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>> <<ServiceLoaderFileScanner>>
+
+==== Artifact Scanner
+
+[[:Java:Artifact]]
+===== :Java:Artifact
+A directory or archive containing packages, classes and resources.
+
+.Properties of :Java:Artifact
+[options="header"]
+|====
+| Name       | Description
+| fqn        | Fully qualified name, e.g. 'java.lang'
+| fileName   | The file name of the artifact.
+|====
+
+.Relations of :Java:Artifact
+[options="header"]
+|====
+| Name         | Target label(s) | Cardinality | Description
+| CONTAINS     | <<:File>>       | 0..n        | References contained files, e.g. packages, classes or resources
+| REQUIRES     | <<:Java:Type>>  | 0..n        | References a type which is required by a class in this artifact
+|====
+
+[[:Java:Artifact:Directory]]
+===== :Java:Artifact:Directory
+A directory representing a Java artifact.
+
+[[:Java:Artifact:Jar:Archive]]
+===== :Java:Artifact:Jar:Archive
+A JAR file representing a Java artifact.
+
 
 [[PackageScanner]]
 ==== Package Scanner
 Imports Java packages.
 
-[[:Package]]
-===== :Package
+[[:Java:Package]]
+===== :Java:Package
 A Java package, i.e. a directory containing '.class' files or other directories.
 
-.Properties of :Package
+.Properties of :Java:Package
 [options="header"]
 |====
 | Name       | Description
@@ -16,19 +47,19 @@ A Java package, i.e. a directory containing '.class' files or other directories.
 | name       | The local name, e.g. 'lang'
 |====
 
-.Relations of :Package
+.Relations of :Java:Package
 [options="header"]
 |====
-| Name         | Target label(s) | Cardinality | Description
-| CONTAINS     | <<:Type>>       | 0..n        | References a type located in the package
-| CONTAINS     | <<:Package>>    | 0..n        | References a package located in the package
+| Name         | Target label(s)   | Cardinality | Description
+| CONTAINS     | <<:Java:Type>>    | 0..n        | References a type located in the package
+| CONTAINS     | <<:Java:Package>> | 0..n        | References a package located in the package
 |====
 
 [[ClassScanner]]
 ==== Class Scanner
 Imports Java classes, i.e. all scanned files having a '.class' suffix. Nodes with following labels will be created:
 
-<<:Type>>
+<<:Java:Type>>
 <<:Field>>
 <<:Method>>
 <<:Parameter>>
@@ -41,11 +72,11 @@ only referenced (i.e. from external libraries not included in the scan) are repr
 property 'fqn' and 'DECLARES' relations to their members. These are ':FIELD' or ':METHOD' labeled nodes which only 
 provide the property 'signature'.
 
-[[:Type]]
-===== :Type
+[[:Java:Type]]
+===== :Java:Type
 A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Annotation'
 
-.Properties of :Type
+.Properties of :Java:Type
 [options="header"]
 |====
 | Name       | Description
@@ -58,17 +89,17 @@ A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Ann
 | synthetic  | optional, 'true' indicates that the type is synthetic, i.e. it has been generated
 |====
 
-.Relations of :Type
+.Relations of :Java:Type
 [options="header"]
 |====
-| Name         | Target label(s)       | Cardinality | Description
-| DECLARES     | <<:Type>>             | 0..n        | Declares an inner type of the type
-| DECLARES     | <<:Method>>           | 0..n        | Declares a method of the type
-| DECLARES     | <<:Field>>            | 0..n        | Declares a field of the type
-| EXTENDS      | <<:Type>>             | 0..1        | References a type this type extends from
-| IMPLEMENTS   | <<:Type>>             | 0..1        | References an "Interface" type this type implements
-| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the type
-| DEPENDS_ON   | <<:Type>>             | 0..n        | References a type which this type depends on (i.e. every reference to another class)
+| Name         | Target label(s)            | Cardinality | Description
+| DECLARES     | <<:Java:Type>>             | 0..n        | Declares an inner type of the type
+| DECLARES     | <<:Java:Method>>           | 0..n        | Declares a method of the type
+| DECLARES     | <<:Java:Field>>            | 0..n        | Declares a field of the type
+| EXTENDS      | <<:Java:Type>>             | 0..1        | References a type this type extends from
+| IMPLEMENTS   | <<:Java:Type>>             | 0..1        | References an "Interface" type this type implements
+| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the type
+| DEPENDS_ON   | <<:Java:Type>>             | 0..n        | References a type which this type depends on (i.e. every reference to another class)
 |====
 
 *NOTE* Types which are referenced by scanned classes but have not been scanned themselves will only provide the property "fqn"
@@ -77,23 +108,23 @@ and the relation "DECLARES".
 *NOTE* Inheritance between interfaces (i.e. "public interface A extends B { ... }") is represented using IMPLEMENTS relations, i.e. queries must
  use (a:Type:Interface)-[:IMPLEMENTS]->(b:Type:Interface) for pattern matching.
 
-===== :Type:Class
+===== :Java:Type:Class
 Qualifies a Java type as class.
 
-===== :Type:Interface
+===== :Java:Type:Interface
 Qualifies a Java type node as interface.
 
-===== :Type:Enum
+===== :Java:Type:Enum
 Qualifies a Java type as enumeration.
 
-===== :Type:Annotation
+===== :Java:Type:Annotation
 Qualifies a Java type as annotation.
 
-[[:Field]]
-===== :Field
+[[:Java:Field]]
+===== :Java:Field
 A field declared in a Java type.
 
-.Properties of :Field
+.Properties of :Java:Field
 [options="header"]
 |====
 | Name       | Description
@@ -107,21 +138,21 @@ A field declared in a Java type.
 | synthetic  | optional, 'true' indicates that the field is synthetic, i.e. it has been generated
 |====
 
-.Relations of :Field
+.Relations of :Java:Field
 [options="header"]
 |====
-| Name         | Target label(s)       | Cardinality | Description
-| OF_TYPE      | <<:Type>>             | 1           | References the type of the field
-| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the field
+| Name         | Target label(s)            | Cardinality | Description
+| OF_TYPE      | <<:Java:Type>>             | 1           | References the type of the field
+| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the field
 |====
 
 *NOTE* Fields which are referenced by scanned classes but have not been scanned themselves will only provide the property "signature".
 
-[[:Method]]
-===== :Method
+[[:Java:Method]]
+===== :Java:Method
 A method declared in a Java type.
 
-.Properties of :Method
+.Properties of :Java:Method
 [options="header"]
 |====
 | Name       | Description
@@ -134,108 +165,108 @@ A method declared in a Java type.
 | synthetic  | optional, 'true' indicates that the method is synthetic, i.e. it has been generated
 |====
 
-.Relations of :Method
+.Relations of :Java:Method
 [options="header"]
 |====
-| Name         | Target label(s)       | Cardinality | Description
-| HAS          | <<:Parameter>>        | 0..n        | References a parameter of the method
-| THROWS       | <<:Type>>             | 0..n        | References the exception type thrown by the method
-| RETURNS      | <<:Type>>             | 0..n        | References the return type of the method
-| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the method declaration
-| READS        | <<:Field>>            | 0..n        | References a field which is read by the method
-| WRITES       | <<:Field>>            | 0..n        | References a field which is written by the method
-| INVOKES      | <<:Method>>           | 0..n        | References a method which is invoked by the method
+| Name         | Target label(s)            | Cardinality | Description
+| HAS          | <<:Java:Parameter>>        | 0..n        | References a parameter of the method
+| THROWS       | <<:Java:Type>>             | 0..n        | References the exception type thrown by the method
+| RETURNS      | <<:Java:Type>>             | 0..n        | References the return type of the method
+| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the method declaration
+| READS        | <<:Java:Field>>            | 0..n        | References a field which is read by the method
+| WRITES       | <<:Java:Field>>            | 0..n        | References a field which is written by the method
+| INVOKES      | <<:Java:Method>>           | 0..n        | References a method which is invoked by the method
 |====
 
 *NOTE* Methods which are referenced by scanned classes but have not been scanned themselves will only provide the property "signature".
 
-===== :Method:Constructor
+===== :Java:Method:Constructor
 Qualifies a method as constructor.
 
-[[:Parameter]]
-===== :Parameter
+[[:Java:Parameter]]
+===== :Java:Parameter
 A method parameter.
 
-.Properties of :Parameter
+.Properties of :Java:Parameter
 [options="header"]
 |====
 | Name       | Description
 | index      | The index of the parameter according to the method signature (starting with 0)
 |====
 
-.Properties of :Parameter
+.Properties of :Java:Parameter
 [options="header"]
 |====
-| Name         | Target label(s)       | Cardinality | Description
-| OF_TYPE      | <<:Type>>             | 1           | References the type of the parameter
-| ANNOTATED_BY | <<:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
+| Name         | Target label(s)            | Cardinality | Description
+| OF_TYPE      | <<:Java:Type>>             | 1           | References the type of the parameter
+| ANNOTATED_BY | <<:Java:Value:Annotation>> | 0..n        | References an annotation which is present on the parameter
 |====
 
-[[:Value]]
-===== :Value
+[[:Java:Value]]
+===== :Java:Value
 A value, can be qualified by either ':Primitive', ':Annotation', ':Class', ':Enum' or ':Array'.
 
-.Properties of :Value
+.Properties of :Java:Value
 [options="header"]
 |====
 | Name | Description
 | name | The method name, e.g. 'value'
 |====
 
-[[:Value:Primitive]]
+[[:Java:Value:Primitive]]
 ===== :Value:Primitive
 A primitive value.
 
-.Properties of :Value:Primitive
+.Properties of :Java:Value:Primitive
 [options="header"]
 |====
 | Name  | Description
 | value | The value
 |====
 
-[[:Value:Annotation]]
-===== :Value:Annotation
+[[:Java:Value:Annotation]]
+===== :Java:Value:Annotation
 Represents a annotation on a Java element, e.g. '@Entity public class ...'
 
-.Relations of :Value:Annotation:
+.Relations of :Java:Value:Annotation:
 [options="header"]
 |====
-| Name    | Target label(s) | Cardinality | Description
-| OF_TYPE | <<:Type>>       | 1           | References the type of the annotation
-| HAS     | <<:Value>>      | 0..n        | References an attribute of the annotation, e.g. '@Entity(name="MyEntity")'
+| Name    | Target label(s)      | Cardinality | Description
+| OF_TYPE | <<:Java:Type>>       | 1           | References the type of the annotation
+| HAS     | <<:Java:Value>>      | 0..n        | References an attribute of the annotation, e.g. '@Entity(name="MyEntity")'
 |====
 
-[[:Value:Class]]
-===== :Value:Class
+[[:Java:Value:Class]]
+===== :Java:Value:Class
 Represents a class instance, e.g. as specified by annotation attribute.
 
-.Relations of :Value:Class:
+.Relations of :Java:Value:Class:
 [options="header"]
 |====
-| Name | Target label(s) | Cardinality | Description
-| IS   | <<:Type>>       | 1           | References the type
+| Name | Target label(s)      | Cardinality | Description
+| IS   | <<:Java:Type>>       | 1           | References the type
 |====
 
-[[:Value:Enum]]
-===== :Value:Enum
+[[:Java:Value:Enum]]
+===== :Java:Value:Enum
 Represents an enum value.
 
-.Relations of :Value:Enum:
+.Relations of :Java:Value:Enum:
 [options="header"]
 |====
 | Name | Target label(s) | Cardinality | Description
-| IS   | <<:Field>>      | 1           | References the field representing the enumeration value
+| IS   | <<:Java:Field>>      | 1           | References the field representing the enumeration value
 |====
 
-[[:Value:Array]]
-===== :Value:Array
+[[:Java:Value:Array]]
+===== :Java:Value:Array
 Represents an array value, i.e. a node referencing value nodes.
 
-.Relations of :Value:Array:
+.Relations of :Java:Value:Array:
 [options="header"]
 |====
-| Name     | Target label(s) | Cardinality | Description
-| CONTAINS | <<:Value>>      | 0..n        | References a value contained in the array
+| Name     | Target label(s)      | Cardinality | Description
+| CONTAINS | <<:Java:Value>>      | 0..n        | References a value contained in the array
 |====
 
 
@@ -244,40 +275,40 @@ Represents an array value, i.e. a node referencing value nodes.
 ==== Manifest File Scanner
 Imports manifest descriptors from META-INF/MANIFEST.MF files.
 
-[[:File:Manifest]]
-===== :File:Manifest
+[[:File:Java:Manifest]]
+===== :File:Java:Manifest
 A MANIFEST.MF file containing sections.
 
-.Properties of :File:Manifest
+.Properties of :File:Java:Manifest
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :Manifest
+.Relations of :File:Java:Manifest
 [options="header"]
 |====
 | Name     | Target label(s)      | Cardinality | Description
-| DECLARES | <<:ManifestSection>> | 0..n        | References a manifest section
+| DECLARES | <<:Java:ManifestSection>> | 0..n        | References a manifest section
 |====
 
-[[:ManifestSection]]
-===== :ManifestSection
+[[:Java:ManifestSection]]
+===== :Java:ManifestSection
 A manifest section.
 
-.Relations of :ManifestSection
+.Relations of :Java:ManifestSection
 [options="header"]
 |====
-| Name | Target label(s)          | Cardinality | Description
-| HAS  | <<:Value:ManifestEntry>> | 0..n        | References a manifest entry in the section
+| Name | Target label(s)               | Cardinality | Description
+| HAS  | <<:Java:Value:ManifestEntry>> | 0..n        | References a manifest entry in the section
 |====
 
-[[:Value:ManifestEntry]]
-===== :Value:ManifestEntry
+[[:Java:Value:ManifestEntry]]
+===== :Java:Value:ManifestEntry
 A manifest entry.
 
-.Properties of :Value:ManifestEntry
+.Properties of :Java:Value:ManifestEntry
 [options="header"]
 |====
 | Name  | Description
@@ -291,29 +322,29 @@ A manifest entry.
 ==== Property File Scanner
 Imports property files, i.e. all files having a suffix '.properties'.
 
-[[:File:Properties]]
+[[:File:Java:Properties]]
 ===== :File:Properties
 A property file containing key/value pairs.
 
-.Properties of :File:Properties
+.Properties of :File:Java:Properties
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :File:Properties
+.Relations of :File:Java:Properties
 [options="header"]
 |====
 | Name | Target label(s)     | Cardinality | Description
-| HAS  | <<:Value:Property>> | 0..n        | References a property value
+| HAS  | <<:Java:Value:Property>> | 0..n        | References a property value
 |====
 
-[[:Value:Property]]
-===== :Value:Property
+[[:Java:Value:Property]]
+===== :Java:Value:Property
 A key value/pair.
 
-.Properties of :Value:Property
+.Properties of :Java:Value:Property
 [options="header"]
 |====
 | Name  | Description
@@ -327,21 +358,21 @@ A key value/pair.
 ==== Service Loader File Scanner
 Imports service loader descriptors from "META-INF/services" directories.
 
-[[:File:ServiceLoader]]
-===== :File:ServiceLoader
+[[:File:Java:ServiceLoader]]
+===== :File:Java:ServiceLoader
 A file containing the implementation class names for a service interface
 
-.Properties of :File:ServiceLoader
+.Properties of :File:Java:ServiceLoader
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :File:ServiceLoader
+.Relations of :File:Java:ServiceLoader
 [options="header"]
 |====
 | Name     | Target label(s)  | Cardinality | Description
-| OF_TYPE  | <<:Type>> | 1    | The type representing the service interface
-| CONTAINS | <<:Type>> | 0..n | References a type which implements the service interface
+| OF_TYPE  | <<:Java:Type>> | 1    | The type representing the service interface
+| CONTAINS | <<:Java:Type>> | 0..n | References a type which implements the service interface
 |====
