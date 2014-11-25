@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -11,6 +12,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,8 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
 
     private static final JAXBContext jaxbContext;
 
+    private static final Schema schema;
+
     private final ClassLoader pluginClassLoader;
 
     private List<JqassistantPlugin> plugins = null;
@@ -39,6 +43,7 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot create JAXB context.", e);
         }
+        schema = XmlHelper.getSchema(PLUGIN_SCHEMA_RESOURCE);
     }
 
     /**
@@ -73,13 +78,13 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
     private JqassistantPlugin readPlugin(URL pluginUrl) {
         InputStream inputStream;
         try {
-            inputStream = pluginUrl.openStream();
+            inputStream = new BufferedInputStream(pluginUrl.openStream());
         } catch (IOException e) {
             throw new IllegalStateException("Cannot open plugin stream.", e);
         }
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            unmarshaller.setSchema(XmlHelper.getSchema(PLUGIN_SCHEMA_RESOURCE));
+            unmarshaller.setSchema(schema);
             return unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantPlugin.class).getValue();
         } catch (JAXBException e) {
             throw new IllegalArgumentException("Cannot read plugin from " + pluginUrl.toString(), e);
