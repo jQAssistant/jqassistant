@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.String;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,10 +21,53 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescr
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.AsyncSupportedDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DispatcherDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.MultipartConfigDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ParamValueDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.RunAsDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleRefDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletMappingDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.UrlPatternDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
-import com.sun.java.xml.ns.javaee.*;
+import com.sun.java.xml.ns.javaee.DescriptionType;
+import com.sun.java.xml.ns.javaee.DispatcherType;
+import com.sun.java.xml.ns.javaee.DisplayNameType;
+import com.sun.java.xml.ns.javaee.FilterMappingType;
+import com.sun.java.xml.ns.javaee.FilterNameType;
+import com.sun.java.xml.ns.javaee.FilterType;
+import com.sun.java.xml.ns.javaee.FullyQualifiedClassType;
+import com.sun.java.xml.ns.javaee.IconType;
+import com.sun.java.xml.ns.javaee.JspFileType;
+import com.sun.java.xml.ns.javaee.MultipartConfigType;
+import com.sun.java.xml.ns.javaee.ObjectFactory;
+import com.sun.java.xml.ns.javaee.ParamValueType;
+import com.sun.java.xml.ns.javaee.PathType;
+import com.sun.java.xml.ns.javaee.RoleNameType;
+import com.sun.java.xml.ns.javaee.RunAsType;
+import com.sun.java.xml.ns.javaee.SecurityRoleRefType;
+import com.sun.java.xml.ns.javaee.ServletMappingType;
+import com.sun.java.xml.ns.javaee.ServletNameType;
+import com.sun.java.xml.ns.javaee.ServletType;
+import com.sun.java.xml.ns.javaee.SessionConfigType;
+import com.sun.java.xml.ns.javaee.TrueFalseType;
+import com.sun.java.xml.ns.javaee.UrlPatternType;
+import com.sun.java.xml.ns.javaee.WebAppType;
+import com.sun.java.xml.ns.javaee.XsdIntegerType;
+import com.sun.java.xml.ns.javaee.XsdStringType;
 
+/**
+ * Scanner plugin for the content of web application XML descriptors (i.e.
+ * WEB-INF/web.xml)
+ */
 public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileResource, WebXmlDescriptor> {
 
     private JAXBContext jaxbContext;
@@ -70,7 +112,8 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
                 FilterDescriptor filterDescriptor = createFilter(filterType, scanner.getContext());
                 webXmlDescriptor.getFilters().add(filterDescriptor);
             } else if (value instanceof FilterMappingType) {
-                FilterMappingType filterMappingType = (FilterMappingType) value;
+                FilterMappingDescriptor filterMapping = createFilterMapping((FilterMappingType) value, servlets, store);
+                webXmlDescriptor.getFilterMappings().add(filterMapping);
             } else if (value instanceof ServletType) {
                 ServletDescriptor servletDescriptor = createServlet((ServletType) value, servlets, scanner.getContext());
                 webXmlDescriptor.getServlets().add(servletDescriptor);
@@ -79,6 +122,15 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return webXmlDescriptor;
     }
 
+    /**
+     * Create a filter descriptor.
+     * 
+     * @param filterType
+     *            The XML filter type.
+     * @param context
+     *            The scanner context.
+     * @return The filter descriptor.
+     */
     private FilterDescriptor createFilter(FilterType filterType, ScannerContext context) {
         Store store = context.getStore();
         FilterDescriptor filterDescriptor = store.create(FilterDescriptor.class);
@@ -110,6 +162,17 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return filterDescriptor;
     }
 
+    /**
+     * Create a filter mapping descriptor.
+     * 
+     * @param filterMappingType
+     *            The XML filter mapping type.
+     * @param servlets
+     *            The map of known servlets.
+     * @param store
+     *            The store.
+     * @return The filter mapping descriptor.
+     */
     private FilterMappingDescriptor createFilterMapping(FilterMappingType filterMappingType, Map<String, ServletDescriptor> servlets, Store store) {
         FilterMappingDescriptor filterMappingDescriptor = store.create(FilterMappingDescriptor.class);
         FilterNameType filterName = filterMappingType.getFilterName();
@@ -122,18 +185,33 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
                 filterMappingDescriptor.getUrlPatterns().add(urlPatternDescriptor);
             } else if (urlPatternOrServletName instanceof ServletNameType) {
                 ServletNameType servletNameType = (ServletNameType) urlPatternOrServletName;
+                ServletDescriptor servletDescriptor = getOrCreateServletDescriptor(servletNameType, servlets, store);
+                filterMappingDescriptor.setServlet(servletDescriptor);
             }
         }
+        for (DispatcherType dispatcherType : filterMappingType.getDispatcher()) {
+            DispatcherDescriptor dispatcherDescriptor = store.create(DispatcherDescriptor.class);
+            dispatcherDescriptor.setValue(dispatcherType.getValue());
+            filterMappingDescriptor.getDispatchers().add(dispatcherDescriptor);
+        }
+
         return filterMappingDescriptor;
     }
 
+    /**
+     * Create a servlet descriptor.
+     * 
+     * @param servletType
+     *            The XML servlet type.
+     * @param servlets
+     *            The map of known servlets.
+     * @param context
+     *            The scanner context.
+     * @return The servlet descriptor.
+     */
     private ServletDescriptor createServlet(ServletType servletType, Map<String, ServletDescriptor> servlets, ScannerContext context) {
         Store store = context.getStore();
-        ServletNameType servletNameType = servletType.getServletName();
-        ServletDescriptor servletDescriptor = store.create(ServletDescriptor.class);
-        if (servletNameType != null) {
-            servletDescriptor.setName(servletNameType.getValue());
-        }
+        ServletDescriptor servletDescriptor = getOrCreateServletDescriptor(servletType.getServletName(), servlets, store);
         setAsyncSupported(servletDescriptor, servletType.getAsyncSupported());
         for (DescriptionType descriptionType : servletType.getDescription()) {
             servletDescriptor.getDescriptions().add(createDescription(descriptionType, store));
@@ -207,6 +285,36 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return servletDescriptor;
     }
 
+    /**
+     * Get or create a servlet descriptor.
+     * 
+     * @param servletType
+     *            The XML servlet name type.
+     * @param servlets
+     *            The map of known servlets.
+     * @param store
+     *            The store.
+     * @return The servlet descriptor.
+     */
+    private ServletDescriptor getOrCreateServletDescriptor(ServletNameType servletType, Map<String, ServletDescriptor> servlets, Store store) {
+        String servletName = servletType.getValue();
+        ServletDescriptor servletDescriptor = servlets.get(servletName);
+        if (servletDescriptor == null) {
+            store.create(ServletDescriptor.class);
+            servletDescriptor.setName(servletName);
+        }
+        return servletDescriptor;
+    }
+
+    /**
+     * Create a param value descriptor.
+     * 
+     * @param paramValueType
+     *            The XML param value type.
+     * @param store
+     *            The store.
+     * @return The param value descriptor.
+     */
     private ParamValueDescriptor createParamValue(ParamValueType paramValueType, Store store) {
         ParamValueDescriptor paramValueDescriptor = store.create(ParamValueDescriptor.class);
         for (DescriptionType descriptionType : paramValueType.getDescription()) {
@@ -221,6 +329,15 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return paramValueDescriptor;
     }
 
+    /**
+     * Create an icon descriptor.
+     * 
+     * @param iconType
+     *            The XML icon type.
+     * @param store
+     *            The store
+     * @return The icon descriptor.
+     */
     private IconDescriptor createIcon(IconType iconType, Store store) {
         IconDescriptor iconDescriptor = store.create(IconDescriptor.class);
         iconDescriptor.setLang(iconType.getLang());
@@ -235,6 +352,15 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return iconDescriptor;
     }
 
+    /**
+     * Create a display name descriptor.
+     * 
+     * @param displayNameType
+     *            The XML display name type.
+     * @param store
+     *            The store.
+     * @return The display name descriptor.
+     */
     private DisplayNameDescriptor createDisplayName(DisplayNameType displayNameType, Store store) {
         DisplayNameDescriptor displayNameDescriptor = store.create(DisplayNameDescriptor.class);
         displayNameDescriptor.setLang(displayNameType.getLang());
@@ -242,12 +368,29 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return displayNameDescriptor;
     }
 
+    /**
+     * Set the value for an async supported on the given descriptor.
+     * 
+     * @param asyncSupportedDescriptor
+     *            The async supported descriptor.
+     * @param asyncSupported
+     *            The value.
+     */
     private void setAsyncSupported(AsyncSupportedDescriptor asyncSupportedDescriptor, TrueFalseType asyncSupported) {
         if (asyncSupported != null) {
             asyncSupportedDescriptor.setAsyncSupported(asyncSupported.isValue());
         }
     }
 
+    /**
+     * Create a description descriptor.
+     * 
+     * @param descriptionType
+     *            The XML description type.
+     * @param store
+     *            The store.
+     * @return The description descriptor.
+     */
     private DescriptionDescriptor createDescription(DescriptionType descriptionType, Store store) {
         DescriptionDescriptor descriptionDescriptor = store.create(DescriptionDescriptor.class);
         descriptionDescriptor.setLang(descriptionType.getLang());
@@ -255,6 +398,15 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return descriptionDescriptor;
     }
 
+    /**
+     * Create a servlet mapping descriptor.
+     * 
+     * @param servletMappingType
+     *            The XML servlet mapping type.
+     * @param store
+     *            The store.
+     * @return The servlet mapping descriptor.
+     */
     private ServletMappingDescriptor createServletMapping(ServletMappingType servletMappingType, Store store) {
         ServletMappingDescriptor servletMappingDescriptor = store.create(ServletMappingDescriptor.class);
         ServletNameType servletName = servletMappingType.getServletName();
@@ -267,6 +419,15 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return servletMappingDescriptor;
     }
 
+    /**
+     * Create a session config descriptor.
+     * 
+     * @param sessionConfigType
+     *            The XML session config type.
+     * @param store
+     *            The store.
+     * @return The session config descriptor.
+     */
     private SessionConfigDescriptor createSessionConfig(SessionConfigType sessionConfigType, Store store) {
         SessionConfigDescriptor sessionConfigDescriptor = store.create(SessionConfigDescriptor.class);
         XsdIntegerType sessionTimeout = sessionConfigType.getSessionTimeout();

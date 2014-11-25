@@ -14,4 +14,13 @@ public interface FilterMappingDescriptor extends WebDescriptor {
 
     @Relation("ON_URL_PATTERN")
     List<UrlPatternDescriptor> getUrlPatterns();
+
+    @Relation("ON_SERVLET")
+    ServletDescriptor getServlet();
+
+    void setServlet(ServletDescriptor servletDescriptor);
+
+    @Relation("USES_DISPATCHER")
+    List<DispatcherDescriptor> getDispatchers();
+
 }
