@@ -1,6 +1,11 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -96,11 +101,12 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      */
     private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
         ExecutionKey key = new ExecutionKey(execution);
+        String executedModulesContextKey = AbstractProjectMojo.class.getName() + "#executedModules";
         Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey = (Map<ExecutionKey, Set<MavenProject>>) rootModule
-                .getContextValue(AbstractProjectMojo.class.getName());
+                .getContextValue(executedModulesContextKey);
         if (executedProjectsPerExecutionKey == null) {
             executedProjectsPerExecutionKey = new HashMap<>();
-            rootModule.setContextValue(AbstractProjectMojo.class.getName(), executedProjectsPerExecutionKey);
+            rootModule.setContextValue(executedModulesContextKey, executedProjectsPerExecutionKey);
         }
         Set<MavenProject> executedProjects = executedProjectsPerExecutionKey.get(key);
         if (executedProjects == null) {

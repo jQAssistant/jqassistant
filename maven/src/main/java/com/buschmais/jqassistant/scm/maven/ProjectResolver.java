@@ -44,21 +44,23 @@ public final class ProjectResolver {
      *             If the directory cannot be resolved.
      */
     static MavenProject getRootModule(MavenProject module, String rulesDirectory) throws MojoExecutionException {
-        MavenProject currentModule = module;
-        if (module != null) {
-            do {
-                File directory = getRulesDirectory(currentModule, rulesDirectory);
-                if (directory.exists() && directory.isDirectory()) {
-                    return currentModule;
+        String rootModuleContextKey = ProjectResolver.class.getName() + "#rootModule";
+        MavenProject rootModule = (MavenProject) module.getContextValue(rootModuleContextKey);
+        if (rootModule == null) {
+            File directory = getRulesDirectory(module, rulesDirectory);
+            if (directory.exists() && directory.isDirectory()) {
+                rootModule = module;
+            } else {
+                MavenProject parent = module.getParent();
+                if (parent != null && parent.getBasedir() != null) {
+                    rootModule = getRootModule(parent, rulesDirectory);
+                } else {
+                    rootModule = module;
                 }
-                MavenProject parent = currentModule.getParent();
-                if (parent == null || parent.getBasedir() == null) {
-                    return currentModule;
-                }
-                currentModule = parent;
-            } while (currentModule != null);
+            }
+            module.setContextValue(rootModuleContextKey, rootModule);
         }
-        throw new MojoExecutionException("Cannot resolve base directory.");
+        return rootModule;
     }
 
     /**
