@@ -36,4 +36,7 @@ public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDesc
 
     @Relation("HAS_FILTER_MAPPING")
     List<FilterMappingDescriptor> getFilterMappings();
+
+    @Relation("HAS_LISTENER")
+    List<ListenerDescriptor> getListeners();
 }

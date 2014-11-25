@@ -28,6 +28,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.MultipartConfigDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.ParamValueDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.RunAsDescriptor;
@@ -47,6 +48,7 @@ import com.sun.java.xml.ns.javaee.FilterType;
 import com.sun.java.xml.ns.javaee.FullyQualifiedClassType;
 import com.sun.java.xml.ns.javaee.IconType;
 import com.sun.java.xml.ns.javaee.JspFileType;
+import com.sun.java.xml.ns.javaee.ListenerType;
 import com.sun.java.xml.ns.javaee.MultipartConfigType;
 import com.sun.java.xml.ns.javaee.ObjectFactory;
 import com.sun.java.xml.ns.javaee.ParamValueType;
@@ -117,6 +119,23 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
             } else if (value instanceof ServletType) {
                 ServletDescriptor servletDescriptor = createServlet((ServletType) value, servlets, scanner.getContext());
                 webXmlDescriptor.getServlets().add(servletDescriptor);
+            } else if (value instanceof ListenerType) {
+                ListenerType listenerType = (ListenerType) value;
+                ListenerDescriptor listenerDescriptor = store.create(ListenerDescriptor.class);
+                for (DescriptionType descriptionType : listenerType.getDescription()) {
+                    listenerDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+                }
+                for (DisplayNameType displayNameType : listenerType.getDisplayName()) {
+                    listenerDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+                }
+                for (IconType iconType : listenerType.getIcon()) {
+                    listenerDescriptor.getIcons().add(createIcon(iconType, store));
+                }
+                TypeResolver typeResolver = scanner.getContext().peek(TypeResolver.class);
+                FullyQualifiedClassType listenerClass = listenerType.getListenerClass();
+                TypeCache.CachedType<TypeDescriptor> listenerClassDescriptor = typeResolver.resolve(listenerClass.getValue(), scanner.getContext());
+                listenerDescriptor.setType(listenerClassDescriptor.getTypeDescriptor());
+                webXmlDescriptor.getListeners().add(listenerDescriptor);
             }
         }
         return webXmlDescriptor;

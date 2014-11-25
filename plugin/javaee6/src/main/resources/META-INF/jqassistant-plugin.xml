@@ -18,6 +18,7 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.DispatcherDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>
