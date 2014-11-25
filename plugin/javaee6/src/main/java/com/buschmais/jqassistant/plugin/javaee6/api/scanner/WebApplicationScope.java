@@ -7,6 +7,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum WebApplicationScope implements Scope {
 
-    WAR, RESOURCES, WEB_INF, LIB;
+    WAR;
 
 }

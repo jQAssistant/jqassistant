@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+
+    <display-name>WebApplication</display-name>
+    <description>Web application description.</description>
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+        <cookie-config>
+            <domain>domain</domain>
+            <comment>comment</comment>
+            <http-only>true</http-only>
+            <secure>true</secure>
+            <max-age>20</max-age>
+        </cookie-config>
+        <tracking-mode>SSL</tracking-mode>
+        <tracking-mode>URL</tracking-mode>
+    </session-config>
+
+    <context-param>
+        <param-name>contextParam</param-name>
+        <param-value>contextParamValue</param-value>
+    </context-param>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/errorpage.jsp</location>
+    </error-page>
+
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>com.buschmais.jqassistant.TestServlet</servlet-class>
+        <init-param>
+            <param-name>servletParam</param-name>
+            <param-value>servletParamValue</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <listener>
+        <listener-class>com.buschmais.jqassistant.TestListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>TestFilter</filter-name>
+        <filter-class>com.buschmais.jqassistant.TestFilter</filter-class>
+        <init-param>
+            <param-name>filterParam</param-name>
+            <param-value>filterParamValue</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>TestFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>secureResource</web-resource-name>
+            <url-pattern>/secureResource/*</url-pattern>
+            <http-method>get</http-method>
+        </web-resource-collection>
+    </security-constraint>
+
+    <security-role>
+        <description>Admin users</description>
+        <role-name>Admin</role-name>
+    </security-role>
+
+    <env-entry>
+        <env-entry-name>envEntry</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>envEntryValue</env-entry-value>
+    </env-entry>
+</web-app>

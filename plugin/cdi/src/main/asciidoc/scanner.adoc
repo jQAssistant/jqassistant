@@ -19,7 +19,7 @@ Represents a beans.xml file.
 [options="header"]
 |====
 | Name            | Target label(s)  | Cardinality | Description
-| HAS_INTERCEPTOR | <<:Type>> | 0..n | References an interceptor type which is activated
-| HAS_DECORATOR   | <<:Type>> | 0..n | References a decorator type which is activated
-| HAS_ALTERNATIVE | <<:Type>> | 0..n | References an alternative type (class or stereotype annotation) which is activated
+| HAS_INTERCEPTOR | <<:Java:Type>> | 0..n | References an interceptor type which is activated
+| HAS_DECORATOR   | <<:Java:Type>> | 0..n | References a decorator type which is activated
+| HAS_ALTERNATIVE | <<:Java:Type>> | 0..n | References an alternative type (class or stereotype annotation) which is activated
 |====

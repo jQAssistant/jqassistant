@@ -1,12 +1,27 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Aggregates plugins providing scanners and rules for Java EE 6 technologies (e.g. JPA2, EJB3).</description>
     <model>
-        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WarArchiveDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EarArchiveDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EnterpriseApplicationArchiveDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ServletDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ServletMappingDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.UrlPatternDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ParamValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.MultipartConfigDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.RunAsDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleRefDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

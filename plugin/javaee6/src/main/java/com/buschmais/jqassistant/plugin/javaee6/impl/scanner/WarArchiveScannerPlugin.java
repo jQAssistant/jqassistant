@@ -4,10 +4,10 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WarArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WarArchiveDescriptor> {
+public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WebApplicationArchiveDescriptor> {
 
     @Override
     protected String getExtension() {
@@ -15,19 +15,19 @@ public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WarArc
     }
 
     @Override
-    protected Scope createScope(Scope currentScope, WarArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
-        scannerContext.push(WarArchiveDescriptor.class, archiveDescriptor);
+    protected Scope createScope(Scope currentScope, WebApplicationArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
+        scannerContext.push(WebApplicationArchiveDescriptor.class, archiveDescriptor);
         return WebApplicationScope.WAR;
     }
 
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
-        scannerContext.pop(WarArchiveDescriptor.class);
+        scannerContext.pop(WebApplicationArchiveDescriptor.class);
     }
 
     @Override
-    protected WarArchiveDescriptor createArchive(FileResource file, String path, ScannerContext scannerContext) {
-        return scannerContext.getStore().create(WarArchiveDescriptor.class);
+    protected WebApplicationArchiveDescriptor createArchive(FileResource file, String path, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(WebApplicationArchiveDescriptor.class);
     }
 
 }

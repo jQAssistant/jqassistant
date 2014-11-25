@@ -42,6 +42,6 @@ A persistence unit.
 [options="header"]
 |====
 | Name      | Target label(s)     | Cardinality | Description
-| CONTAINS  | <<:Type>>           | 0..n    | References a persistent type (entity) contained in the persistence unit
+| CONTAINS  | <<:Java:Type>>           | 0..n    | References a persistent type (entity) contained in the persistence unit
 | HAS       | <<:Value:Property>> | 0..n    | References a property of the persistence unit
 |====
