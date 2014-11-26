@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.String;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,50 +22,9 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescr
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.AsyncSupportedDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DispatcherDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.MultipartConfigDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ParamValueDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.RunAsDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleRefDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletMappingDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.UrlPatternDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
-import com.sun.java.xml.ns.javaee.DescriptionType;
-import com.sun.java.xml.ns.javaee.DispatcherType;
-import com.sun.java.xml.ns.javaee.DisplayNameType;
-import com.sun.java.xml.ns.javaee.FilterMappingType;
-import com.sun.java.xml.ns.javaee.FilterNameType;
-import com.sun.java.xml.ns.javaee.FilterType;
-import com.sun.java.xml.ns.javaee.FullyQualifiedClassType;
-import com.sun.java.xml.ns.javaee.IconType;
-import com.sun.java.xml.ns.javaee.JspFileType;
-import com.sun.java.xml.ns.javaee.ListenerType;
-import com.sun.java.xml.ns.javaee.MultipartConfigType;
-import com.sun.java.xml.ns.javaee.ObjectFactory;
-import com.sun.java.xml.ns.javaee.ParamValueType;
-import com.sun.java.xml.ns.javaee.PathType;
-import com.sun.java.xml.ns.javaee.RoleNameType;
-import com.sun.java.xml.ns.javaee.RunAsType;
-import com.sun.java.xml.ns.javaee.SecurityRoleRefType;
-import com.sun.java.xml.ns.javaee.ServletMappingType;
-import com.sun.java.xml.ns.javaee.ServletNameType;
-import com.sun.java.xml.ns.javaee.ServletType;
-import com.sun.java.xml.ns.javaee.SessionConfigType;
-import com.sun.java.xml.ns.javaee.TrueFalseType;
-import com.sun.java.xml.ns.javaee.UrlPatternType;
-import com.sun.java.xml.ns.javaee.WebAppType;
-import com.sun.java.xml.ns.javaee.XsdIntegerType;
-import com.sun.java.xml.ns.javaee.XsdStringType;
+import com.sun.java.xml.ns.javaee.*;
 
 /**
  * Scanner plugin for the content of web application XML descriptors (i.e.
@@ -319,8 +279,9 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         String servletName = servletType.getValue();
         ServletDescriptor servletDescriptor = servlets.get(servletName);
         if (servletDescriptor == null) {
-            store.create(ServletDescriptor.class);
+            servletDescriptor = store.create(ServletDescriptor.class);
             servletDescriptor.setName(servletName);
+            servlets.put(servletName, servletDescriptor);
         }
         return servletDescriptor;
     }

@@ -8,6 +8,7 @@
 
     <session-config>
         <session-timeout>30</session-timeout>
+        <!--
         <cookie-config>
             <domain>domain</domain>
             <comment>comment</comment>
@@ -17,8 +18,10 @@
         </cookie-config>
         <tracking-mode>SSL</tracking-mode>
         <tracking-mode>URL</tracking-mode>
+        -->
     </session-config>
 
+    <!--
     <context-param>
         <param-name>contextParam</param-name>
         <param-value>contextParamValue</param-value>
@@ -28,14 +31,25 @@
         <error-code>500</error-code>
         <location>/errorpage.jsp</location>
     </error-page>
+    -->
 
     <servlet>
         <servlet-name>TestServlet</servlet-name>
         <servlet-class>com.buschmais.jqassistant.TestServlet</servlet-class>
+        <async-supported>true</async-supported>
+        <description lang="en">Test Servlet Description</description>
+        <display-name lang="en"></display-name>
+        <enabled>true</enabled>
+        <icon>
+            <small-icon>testIcon-small.png</small-icon>
+            <large-icon>testIcon-large.png</large-icon>
+        </icon>
+        <jsp-file>/testJsp.jsp</jsp-file>
         <init-param>
             <param-name>servletParam</param-name>
             <param-value>servletParamValue</param-value>
         </init-param>
+        <load-on-startup>true</load-on-startup>
     </servlet>
 
     <servlet-mapping>
