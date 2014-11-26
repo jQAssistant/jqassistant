@@ -60,6 +60,11 @@
 				</executions>
 				<configuration>
 					<shadedArtifactAttached>false</shadedArtifactAttached>
+					<artifactSet>
+						<includes>
+							<include>us.fatehi:schemacrawler*</include>
+						</includes>
+					</artifactSet>
 				</configuration>
 			</plugin>
 		</plugins>
