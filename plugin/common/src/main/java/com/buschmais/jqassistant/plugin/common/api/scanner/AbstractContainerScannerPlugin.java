@@ -28,14 +28,14 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public final FileContainerDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
+    public final FileContainerDescriptor scan(I container, String path, Scope currentScope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
         containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
         Map<String, FileDescriptor> files = new HashMap<>();
         context.push(FileContainerDescriptor.class, containerDescriptor);
-        Scope entryScope = createScope(scope, scanner.getContext());
+        Scope entryScope = getScope(currentScope);
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
@@ -50,7 +50,6 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
             }
         } finally {
             context.pop(FileContainerDescriptor.class);
-            destroyScope(scanner.getContext());
             LOGGER.info("Leaving {}", path);
         }
         for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
@@ -67,6 +66,8 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
 
         return containerDescriptor;
     }
+
+    protected abstract Scope getScope(Scope currentScope);
 
     /**
      * Return the descriptor representing the artifact.
@@ -113,25 +114,6 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
      */
     protected abstract String getRelativePath(I container, E entry);
 
-    /**
-     * Create a scope depending on the container type, e.g. a JAR file should
-     * return classpath scope.
-     * 
-     * @param currentScope
-     *            The current scope.
-     * @param scannerContext
-     *            The scanner context.
-     * @return The scope.
-     */
-    protected abstract Scope createScope(Scope currentScope, ScannerContext scannerContext);
-
-    /**
-     * Destroy the container dependent scope.
-     * 
-     * @param scannerContext
-     *            The scanner context.
-     */
-    protected abstract void destroyScope(ScannerContext scannerContext);
 
     /**
      * Return a {@link Resource} representing an entry.

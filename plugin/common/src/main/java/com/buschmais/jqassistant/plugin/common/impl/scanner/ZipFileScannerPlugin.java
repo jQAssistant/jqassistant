@@ -29,6 +29,11 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
+    protected Scope getScope(Scope currentScope) {
+        return currentScope;
+    }
+
+    @Override
     protected FileContainerDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
         return scannerContext.peek(ArchiveDescriptor.class);
     }
@@ -69,15 +74,6 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
         } else {
             return "/" + name;
         }
-    }
-
-    @Override
-    protected Scope createScope(Scope currentScope, ScannerContext context) {
-        return currentScope;
-    }
-
-    @Override
-    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override

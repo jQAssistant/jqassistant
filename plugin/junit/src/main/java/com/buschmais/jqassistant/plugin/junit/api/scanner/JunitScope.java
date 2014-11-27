@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.junit.api.scanner;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 
 /**
@@ -7,7 +8,15 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum JunitScope implements Scope {
 
-    TESTREPORTS;
+    TESTREPORTS {
+        @Override
+        public void create(ScannerContext context) {
+        }
+
+        @Override
+        public void destroy(ScannerContext context) {
+        }
+    };
 
     @Override
     public String getPrefix() {

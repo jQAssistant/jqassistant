@@ -4,7 +4,11 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +44,7 @@ public class ScannerImpl implements Scanner {
      */
     public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins) {
         this.scannerContext = new ScannerContextImpl(store);
+        this.scannerContext.push(Scope.class, null);
         this.scannerPlugins = scannerPlugins;
     }
 
@@ -51,12 +56,14 @@ public class ScannerImpl implements Scanner {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
             if (accepts(selectedPlugin, item, path, scope)) {
                 pushDesriptor(descriptor);
+                enterScope(scope);
                 D newDescriptor = null;
                 try {
                     newDescriptor = selectedPlugin.scan(item, path, scope, this);
                 } catch (Exception e) {
                     LOGGER.error("Cannot scan item " + path, e);
                 }
+                leaveScope(scope);
                 popDescriptor(descriptor);
                 descriptor = newDescriptor;
             }
@@ -160,5 +167,21 @@ public class ScannerImpl implements Scanner {
             scannerPluginsPerType.put(type, plugins);
         }
         return plugins;
+    }
+
+    private void enterScope(Scope newScope) {
+        Scope oldScope = scannerContext.peek(Scope.class);
+        if (newScope != null && !newScope.equals(oldScope)) {
+            newScope.create(scannerContext);
+        }
+        scannerContext.push(Scope.class, newScope);
+    }
+
+    private void leaveScope(Scope newScope) {
+        scannerContext.pop(Scope.class);
+        Scope oldScope = scannerContext.peek(Scope.class);
+        if (newScope != null && !newScope.equals(oldScope)) {
+            newScope.destroy(scannerContext);
+        }
     }
 }

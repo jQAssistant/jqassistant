@@ -29,9 +29,9 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
         D archive = createArchive(file, path, scanner.getContext());
         ZipFile zipFile = new ZipFile(file.getFile());
         scanner.getContext().push(ArchiveDescriptor.class, archive);
-        Scope zipScope = createScope(currentScope, archive, scanner.getContext());
+        Scope archiveScope = createScope(currentScope, archive, scanner.getContext());
         try {
-            scanner.scan(zipFile, path, zipScope);
+            scanner.scan(zipFile, path, archiveScope);
         } finally {
             destroyScope(scanner.getContext());
             scanner.getContext().pop(ArchiveDescriptor.class);

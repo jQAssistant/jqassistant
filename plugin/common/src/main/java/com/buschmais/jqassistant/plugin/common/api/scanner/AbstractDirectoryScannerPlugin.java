@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +13,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
@@ -27,15 +30,6 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
     @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
         return item.isDirectory() && getRequiredScope().equals(scope);
-    }
-
-    @Override
-    protected Scope createScope(Scope currentScope, ScannerContext context) {
-        return currentScope;
-    }
-
-    @Override
-    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override
@@ -61,6 +55,18 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
         return files;
     }
 
+    /**
+     * Return the scope the plugin expects for execution.
+     *
+     * @return The scope.
+     */
+    protected abstract Scope getRequiredScope();
+
+    @Override
+    protected Scope getScope(Scope currentScope) {
+        return getRequiredScope();
+    }
+
     @Override
     protected String getRelativePath(File container, File entry) {
         return getDirectoryPath(container, entry);
@@ -74,13 +80,6 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
             return new FileResource(entry);
         }
     }
-
-    /**
-     * Return the scope the plugin expects for execution.
-     * 
-     * @return The scope.
-     */
-    protected abstract Scope getRequiredScope();
 
     /**
      * A directory resource.

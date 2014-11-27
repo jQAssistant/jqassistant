@@ -17,6 +17,12 @@ public class ScannerContextImpl implements ScannerContext {
 
     private final Map<Class<?>, Deque<?>> valuesPerKey = new HashMap<>();
 
+    /**
+     * Constructor.
+     * 
+     * @param store
+     *            The store.
+     */
     public ScannerContextImpl(Store store) {
         this.store = store;
     }
