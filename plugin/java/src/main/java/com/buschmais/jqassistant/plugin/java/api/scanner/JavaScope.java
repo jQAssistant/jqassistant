@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 
 /**
@@ -7,7 +8,17 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum JavaScope implements Scope {
 
-    CLASSPATH;
+    CLASSPATH {
+        @Override
+        public void create(ScannerContext context) {
+            context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
+        }
+
+        @Override
+        public void destroy(ScannerContext context) {
+            context.pop(TypeResolver.class);
+        }
+    };
 
     @Override
     public String getPrefix() {

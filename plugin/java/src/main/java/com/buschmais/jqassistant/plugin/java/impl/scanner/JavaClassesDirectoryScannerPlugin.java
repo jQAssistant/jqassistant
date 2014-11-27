@@ -21,17 +21,6 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
     }
 
     @Override
-    protected Scope createScope(Scope currentScope, ScannerContext context) {
-        context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
-        return currentScope;
-    }
-
-    @Override
-    protected void destroyScope(ScannerContext context) {
-        context.pop(TypeResolver.class);
-    }
-
-    @Override
     protected FileContainerDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
         ArtifactDescriptor artifactDescriptor = scannerContext.peek(JavaArtifactDescriptor.class);
         if (artifactDescriptor == null) {
