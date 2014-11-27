@@ -50,5 +50,4 @@ public interface ScannerContext {
      * @return The value.
      */
     <T> T pop(Class<T> key);
-
 }

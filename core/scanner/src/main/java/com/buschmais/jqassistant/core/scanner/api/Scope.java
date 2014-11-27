@@ -19,4 +19,20 @@ public interface Scope {
      */
     String getName();
 
+    /**
+     * Create the scope.
+     * 
+     * @param context
+     *            The current scanner context.
+     */
+    void create(ScannerContext context);
+
+    /**
+     * Destroy the scope.
+     * 
+     * @param context
+     *            The current scanner context.
+     */
+    void destroy(ScannerContext context);
+
 }
