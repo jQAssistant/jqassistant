@@ -30,6 +30,9 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor</class>
     </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope</class>
+    </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.JarScannerPlugin</class>
