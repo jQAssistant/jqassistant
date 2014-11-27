@@ -7,6 +7,16 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum EnterpriseApplicationScope implements Scope {
 
-    EAR, APPLICATION_INF, LIB;
+    EAR;
+
+    @Override
+    public String getPrefix() {
+        return "java-ee";
+    }
+
+    @Override
+    public String getName() {
+        return name();
+    }
 
 }

@@ -20,6 +20,10 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.DispatcherDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor</class>
     </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope</class>
+    </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarArchiveScannerPlugin</class>

@@ -4,6 +4,9 @@
         <class>com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor</class>
     </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope</class>
+    </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.junit.impl.scanner.TestReportDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.junit.impl.scanner.TestReportScannerPlugin</class>
