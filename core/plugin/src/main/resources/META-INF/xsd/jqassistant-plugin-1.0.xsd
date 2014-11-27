@@ -9,6 +9,7 @@
             <xs:sequence>
                 <xs:element name="description" type="xs:string"/>
                 <xs:element name="model" type="jqassistant-plugin:ModelType" minOccurs="0"/>
+                <xs:element name="scope" type="jqassistant-plugin:ScopeType" minOccurs="0"/>
                 <xs:element name="scanner" type="jqassistant-plugin:ScannerType" minOccurs="0"/>
                 <xs:element name="rules" type="jqassistant-plugin:RulesType" minOccurs="0"/>
                 <xs:element name="report" type="jqassistant-plugin:ReportType" minOccurs="0"/>
@@ -23,6 +24,12 @@
     </xs:complexType>
 
     <xs:complexType name="ScannerType">
+        <xs:sequence>
+            <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ScopeType">
         <xs:sequence>
             <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
