@@ -8,18 +8,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
@@ -39,52 +38,42 @@ public class ScanTask extends AbstractJQATask {
     private List<String> urls = new ArrayList<>();
     private boolean reset = false;
 
-    /**
-     * Constructor.
-     *
-     * @param pluginConfigurationReader
-     */
-    public ScanTask(PluginConfigurationReader pluginConfigurationReader) {
-        super(pluginConfigurationReader);
-    }
-
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
             scannerPlugins = scannerPluginRepository.getScannerPlugins();
         } catch (PluginRepositoryException e) {
-            throw new RuntimeException(e);
+            throw new CliExecutionException("Cannot get scanner plugins.", e);
         }
         if (reset) {
             store.reset();
         }
-        properties = new HashMap<>();
         for (String fileName : fileNames) {
             final File file = new File(fileName);
             String absolutePath = file.getAbsolutePath();
             if (!file.exists()) {
                 getLog().info(absolutePath + "' does not exist, skipping scan.");
             } else {
-                scan(store, file, file.getAbsolutePath(), scannerPlugins);
+                scan(store, file, file.getAbsolutePath(), CLASSPATH, scannerPlugins);
             }
         }
         for (String url : urls) {
             try {
-                scan(store, new URL(url), url, scannerPlugins);
+                scan(store, new URL(url), url, CLASSPATH, scannerPlugins);
             } catch (MalformedURLException e) {
                 throw new CliConfigurationException("Cannot parse URL " + url, e);
             }
         }
     }
 
-    private <T> void scan(Store store, T element, String path, List<ScannerPlugin<?, ?>> scannerPlugins) {
+    private <T> void scan(Store store, T element, String path, Scope scope, List<ScannerPlugin<?, ?>> scannerPlugins) {
         store.beginTransaction();
-        Scanner scanner = new ScannerImpl(store, scannerPlugins);
+        Scanner scanner = new ScannerImpl(store, scannerPlugins, scopePluginRepository.getScopes());
         ScannerContext context = scanner.getContext();
         context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
         try {
-            scanner.scan(element, path, CLASSPATH);
+            scanner.scan(element, path, scope);
         } finally {
             context.pop(TypeResolver.class);
             store.commitTransaction();

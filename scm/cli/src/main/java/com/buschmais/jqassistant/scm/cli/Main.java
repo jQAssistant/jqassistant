@@ -1,15 +1,30 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
@@ -47,9 +62,9 @@ public class Main {
      * 
      * @return The options.
      */
-    private static Options gatherOptions(PluginConfigurationReader pluginConfigurationReader) {
+    private static Options gatherOptions() {
         final Options options = new Options();
-        gatherTasksOptions(options, pluginConfigurationReader);
+        gatherTasksOptions(options);
         gatherStandardOptions(options);
         return options;
     }
@@ -73,9 +88,9 @@ public class Main {
      * @param options
      *            The task specific options.
      */
-    private static void gatherTasksOptions(final Options options, PluginConfigurationReader pluginConfigurationReader) {
+    private static void gatherTasksOptions(final Options options) {
         for (Task task : com.buschmais.jqassistant.scm.cli.Task.values()) {
-            for (Option option : task.getTask(pluginConfigurationReader).getOptions()) {
+            for (Option option : task.getTask().getOptions()) {
                 options.addOption(option);
             }
         }
@@ -104,7 +119,7 @@ public class Main {
      */
     private static void interpretCommandLine(final String[] arg, PluginConfigurationReader pluginConfigurationReader) throws CliExecutionException {
         final CommandLineParser parser = new BasicParser();
-        Options option = gatherOptions(pluginConfigurationReader);
+        Options option = gatherOptions();
         CommandLine commandLine = null;
         try {
             commandLine = parser.parse(option, arg);
@@ -135,7 +150,7 @@ public class Main {
      */
     private static void executeTask(String taskName, Options option, CommandLine commandLine, PluginConfigurationReader pluginConfigurationReader)
             throws CliExecutionException {
-        final JQATask task = Task.fromName(taskName, pluginConfigurationReader);
+        final JQATask task = Task.fromName(taskName);
         if (task == null) {
             printUsage(option, "Unknown task " + taskName);
             System.exit(1);
@@ -148,7 +163,7 @@ public class Main {
             System.exit(1);
         }
         final Map<String, Object> properties = readProperties(commandLine);
-        task.initialize(properties);
+        task.initialize(pluginConfigurationReader, properties);
         task.run();
     }
 

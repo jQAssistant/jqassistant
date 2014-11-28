@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+
 /**
  * @author jn4, Kontext E GmbH, 17.02.14
  */
@@ -15,7 +17,7 @@ public interface JQATask extends OptionsProvider, OptionsConsumer {
 
     public static final String REPORT_FILE_XML = "jqassistant-report.xml";
 
-    void initialize(Map<String, Object> properties);
+    void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties);
 
     void withStandardOptions(CommandLine commandLine);
 

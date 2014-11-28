@@ -24,7 +24,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
@@ -77,7 +76,17 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         List<ScanInclude> scanDirectories = (List<ScanInclude>) getProperties().get(ScanInclude.class.getName());
         if (scanDirectories != null) {
             for (ScanInclude scanInclude : scanDirectories) {
-                scanPath(projectDescriptor, scanInclude.getPath(), JavaScope.CLASSPATH, scanner);
+                String includeScopeName = scanInclude.getScope();
+                Scope includeScope;
+                if (includeScopeName != null) {
+                    includeScope = scanner.getContext().resolveScope(includeScopeName);
+                    if (includeScope == null) {
+                        throw new IOException("Cannot resolve scope for name " + includeScopeName);
+                    }
+                } else {
+                    includeScope = null;
+                }
+                scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
             }
         }
         return projectDescriptor;

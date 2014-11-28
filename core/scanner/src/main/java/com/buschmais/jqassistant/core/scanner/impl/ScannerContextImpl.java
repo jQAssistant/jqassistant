@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -15,7 +16,9 @@ public class ScannerContextImpl implements ScannerContext {
 
     private final Store store;
 
-    private final Map<Class<?>, Deque<?>> valuesPerKey = new HashMap<>();
+    private final Map<Class<?>, Deque<?>> contextValuesPerKey = new HashMap<>();
+
+    private final Map<String, Scope> scopes;
 
     /**
      * Constructor.
@@ -23,8 +26,9 @@ public class ScannerContextImpl implements ScannerContext {
      * @param store
      *            The store.
      */
-    public ScannerContextImpl(Store store) {
+    public ScannerContextImpl(Store store, Map<String, Scope> scopes) {
         this.store = store;
+        this.scopes = scopes;
     }
 
     @Override
@@ -42,6 +46,11 @@ public class ScannerContextImpl implements ScannerContext {
         return getValues(key).pop();
     }
 
+    @Override
+    public Scope resolveScope(String name) {
+        return scopes.get(name);
+    }
+
     /**
      * Determine the stack for the given key.
      * 
@@ -52,10 +61,10 @@ public class ScannerContextImpl implements ScannerContext {
      * @return The stack.
      */
     <T> Deque<T> getValues(Class<T> key) {
-        Deque<T> values = (Deque<T>) valuesPerKey.get(key);
+        Deque<T> values = (Deque<T>) contextValuesPerKey.get(key);
         if (values == null) {
             values = new LinkedList<>();
-            valuesPerKey.put(key, values);
+            contextValuesPerKey.put(key, values);
         }
         return values;
     }
