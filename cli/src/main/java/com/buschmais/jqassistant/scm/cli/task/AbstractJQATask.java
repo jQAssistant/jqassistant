@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,11 +10,18 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
@@ -35,24 +41,25 @@ public abstract class AbstractJQATask implements JQATask {
 
     private static final Console LOG = Log.getLog();
 
-    protected Map<String, Object> properties = new HashMap<>();
+    protected Map<String, Object> properties;
     protected String storeDirectory;
     protected RuleHelper ruleHelper;
     protected ReportHelper reportHelper;
     protected ClassLoader classLoader;
     protected ModelPluginRepository modelPluginRepository;
     protected ScannerPluginRepository scannerPluginRepository;
+    protected ScopePluginRepository scopePluginRepository;
     protected RulePluginRepository rulePluginRepository;
     protected ReportPluginRepository reportPluginRepository;
 
-    /**
-     * Constructor.
-     */
-    protected AbstractJQATask(PluginConfigurationReader pluginConfigurationReader) {
+    @Override
+    public void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) {
+        this.properties = properties;
         try {
             classLoader = pluginConfigurationReader.getClassLoader();
             modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
             scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
+            scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
             rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
             reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
         } catch (PluginRepositoryException e) {
@@ -60,11 +67,6 @@ public abstract class AbstractJQATask implements JQATask {
         }
         this.ruleHelper = new RuleHelper(Log.getLog());
         this.reportHelper = new ReportHelper(Log.getLog());
-    }
-
-    @Override
-    public void initialize(Map<String, Object> properties) {
-        this.properties = properties;
     }
 
     @Override

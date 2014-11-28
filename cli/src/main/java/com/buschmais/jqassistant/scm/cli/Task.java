@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.scm.cli.task.AnalyzeTask;
 import com.buschmais.jqassistant.scm.cli.task.AvailableRulesTask;
+import com.buschmais.jqassistant.scm.cli.task.AvailableScopesTask;
 import com.buschmais.jqassistant.scm.cli.task.EffectiveRulesTask;
 import com.buschmais.jqassistant.scm.cli.task.ReportTask;
 import com.buschmais.jqassistant.scm.cli.task.ResetTask;
@@ -19,8 +19,17 @@ public enum Task {
      */
     SCAN {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new ScanTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new ScanTask();
+        }
+    },
+    /**
+     * Available scopes.
+     */
+    AVAILABLE_SCOPES {
+        @Override
+        public JQATask getTask() {
+            return new AvailableScopesTask();
         }
     },
     /**
@@ -28,8 +37,8 @@ public enum Task {
      */
     SERVER {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new ServerTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new ServerTask();
         }
     },
     /**
@@ -37,8 +46,8 @@ public enum Task {
      */
     AVAILABLE_RULES {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new AvailableRulesTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new AvailableRulesTask();
         }
     },
     /**
@@ -46,8 +55,8 @@ public enum Task {
      */
     EFFECTIVE_RULES {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new EffectiveRulesTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new EffectiveRulesTask();
         }
     },
     /**
@@ -55,8 +64,8 @@ public enum Task {
      */
     ANALYZE {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new AnalyzeTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new AnalyzeTask();
         }
     },
     /**
@@ -64,8 +73,8 @@ public enum Task {
      */
     RESET {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new ResetTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new ResetTask();
         }
     },
     /**
@@ -73,8 +82,8 @@ public enum Task {
      */
     REPORT {
         @Override
-        public JQATask getTask(PluginConfigurationReader pluginConfigurationReader) {
-            return new ReportTask(pluginConfigurationReader);
+        public JQATask getTask() {
+            return new ReportTask();
         }
     };
 
@@ -83,21 +92,19 @@ public enum Task {
      * 
      * @return The task instance.
      */
-    public abstract JQATask getTask(PluginConfigurationReader pluginConfigurationReader);
+    public abstract JQATask getTask();
 
     /**
      * Determine the task to execute from the given name.
      *
      * @param name
      *            The name.
-     * @param pluginConfigurationReader
-     *            The plugin configuration reader.
      * @return The task.
      */
-    public static JQATask fromName(String name, PluginConfigurationReader pluginConfigurationReader) {
+    public static JQATask fromName(String name) {
         String formattedTaskName = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, name);
         try {
-            return com.buschmais.jqassistant.scm.cli.Task.valueOf(formattedTaskName).getTask(pluginConfigurationReader);
+            return com.buschmais.jqassistant.scm.cli.Task.valueOf(formattedTaskName).getTask();
         } catch (IllegalArgumentException e) {
             System.exit(1);
         }

@@ -21,7 +21,6 @@ import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
@@ -42,15 +41,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private String reportDirectory;
     private Severity severity;
-
-    /**
-     * Constructor.
-     *
-     * @param pluginConfigurationReader
-     */
-    public AnalyzeTask(PluginConfigurationReader pluginConfigurationReader) {
-        super(pluginConfigurationReader);
-    }
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
