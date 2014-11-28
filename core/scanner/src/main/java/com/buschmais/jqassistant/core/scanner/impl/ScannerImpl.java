@@ -42,8 +42,8 @@ public class ScannerImpl implements Scanner {
      * @param scannerPlugins
      *            The configured plugins.
      */
-    public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins) {
-        this.scannerContext = new ScannerContextImpl(store);
+    public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
+        this.scannerContext = new ScannerContextImpl(store, scopes);
         this.scannerContext.push(Scope.class, null);
         this.scannerPlugins = scannerPlugins;
     }

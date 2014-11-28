@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public class ScopePluginRepositoryImpl extends AbstractPluginRepository implemen
     public ScopePluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
         List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
-        this.scopes = this.getScopes(plugins);
+        this.scopes = Collections.unmodifiableMap(this.getScopes(plugins));
     }
 
     private Map<String, Scope> getScopes(List<JqassistantPlugin> plugins) throws PluginRepositoryException {
@@ -48,5 +49,10 @@ public class ScopePluginRepositoryImpl extends AbstractPluginRepository implemen
     @Override
     public Scope getScope(String name) {
         return scopes.get(name.toLowerCase());
+    }
+
+    @Override
+    public Map<String, Scope> getScopes() {
+        return scopes;
     }
 }
