@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +51,10 @@ public class ScanMojo extends AbstractModuleMojo {
      * @return The plugin properties.
      */
     protected Map<String, Object> getPluginProperties() {
-        Map<String, Object> properties = scanProperties != null ? scanProperties : Collections.<String, Object> emptyMap();
+        Map<String, Object> properties = new HashMap<>();
+        if (scanProperties != null) {
+            properties.putAll(scanProperties);
+        }
         properties.put(ScanInclude.class.getName(), scanIncludes);
         return properties;
     }
