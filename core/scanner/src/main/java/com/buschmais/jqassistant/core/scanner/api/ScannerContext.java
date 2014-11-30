@@ -51,12 +51,4 @@ public interface ScannerContext {
      */
     <T> T pop(Class<T> key);
 
-    /**
-     * Resolve the scope identified by the given fully qualified name.
-     * 
-     * @param name
-     *            The fully qualified name.
-     * @return The scope or <code>null</code> if it cannot be resolved.
-     */
-    Scope resolveScope(String name);
 }
