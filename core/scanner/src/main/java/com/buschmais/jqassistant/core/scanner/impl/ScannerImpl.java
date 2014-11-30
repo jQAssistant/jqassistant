@@ -4,11 +4,7 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +30,8 @@ public class ScannerImpl implements Scanner {
 
     private final Map<Class<?>, List<ScannerPlugin<?, ?>>> scannerPluginsPerType = new HashMap<>();
 
+    private final Map<String, Scope> scopes;
+
     /**
      * Constructor.
      * 
@@ -43,9 +41,10 @@ public class ScannerImpl implements Scanner {
      *            The configured plugins.
      */
     public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
-        this.scannerContext = new ScannerContextImpl(store, scopes);
-        this.scannerContext.push(Scope.class, null);
         this.scannerPlugins = scannerPlugins;
+        this.scopes = scopes;
+        this.scannerContext = new ScannerContextImpl(store);
+        this.scannerContext.push(Scope.class, null);
     }
 
     @Override
@@ -132,6 +131,11 @@ public class ScannerImpl implements Scanner {
     @Override
     public ScannerContext getContext() {
         return scannerContext;
+    }
+
+    @Override
+    public Scope resolveScope(String name) {
+        return scopes.get(name);
     }
 
     /**

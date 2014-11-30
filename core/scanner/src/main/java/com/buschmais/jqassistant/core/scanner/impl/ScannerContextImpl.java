@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
@@ -18,17 +17,14 @@ public class ScannerContextImpl implements ScannerContext {
 
     private final Map<Class<?>, Deque<?>> contextValuesPerKey = new HashMap<>();
 
-    private final Map<String, Scope> scopes;
-
     /**
      * Constructor.
      * 
      * @param store
      *            The store.
      */
-    public ScannerContextImpl(Store store, Map<String, Scope> scopes) {
+    public ScannerContextImpl(Store store) {
         this.store = store;
-        this.scopes = scopes;
     }
 
     @Override
@@ -46,10 +42,6 @@ public class ScannerContextImpl implements ScannerContext {
         return getValues(key).pop();
     }
 
-    @Override
-    public Scope resolveScope(String name) {
-        return scopes.get(name);
-    }
 
     /**
      * Determine the stack for the given key.
