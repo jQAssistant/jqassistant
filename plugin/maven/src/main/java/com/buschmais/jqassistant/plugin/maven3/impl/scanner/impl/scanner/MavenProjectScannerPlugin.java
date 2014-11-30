@@ -72,12 +72,12 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         List<ScanInclude> scanIncludes = (List<ScanInclude>) getProperties().get(ScanInclude.class.getName());
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
-                String includeScopeName = scanInclude.getScope();
+                String scopeName = scanInclude.getScope();
                 Scope includeScope;
-                if (includeScopeName != null) {
-                    includeScope = scanner.getContext().resolveScope(includeScopeName);
+                if (scopeName != null) {
+                    includeScope = scanner.resolveScope(scopeName);
                     if (includeScope == null) {
-                        throw new IOException("Cannot resolve scope for name " + includeScopeName);
+                        throw new IOException("Cannot resolve scope for name " + scopeName);
                     }
                 } else {
                     includeScope = null;
