@@ -39,4 +39,11 @@ public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDesc
 
     @Relation("HAS_LISTENER")
     List<ListenerDescriptor> getListeners();
+
+    @Relation("HAS_CONTEXT_PARAM")
+    List<ParamValueDescriptor> getContextParams();
+
+    @Relation("HAS_ERROR_PAGE")
+    List<ErrorPageDescriptor> getErrorPages();
+
 }

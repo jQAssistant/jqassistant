@@ -5,6 +5,7 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ErrorPageDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ServletDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ServletMappingDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.UrlPatternDescriptor</class>

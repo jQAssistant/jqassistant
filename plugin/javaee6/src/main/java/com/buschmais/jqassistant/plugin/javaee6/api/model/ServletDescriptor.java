@@ -30,9 +30,9 @@ public interface ServletDescriptor extends WebDescriptor, NamedDescriptor, Typed
 
     void setJspFile(String value);
 
-    Boolean isLoadOnStartup();
+    String getLoadOnStartup();
 
-    void setLoadOnStartup(Boolean loadOnStartup);
+    void setLoadOnStartup(String loadOnStartup);
 
     @Relation("HAS_MULTI_PART_CONFIG")
     MultipartConfigDescriptor getMultipartConfig();
@@ -47,4 +47,6 @@ public interface ServletDescriptor extends WebDescriptor, NamedDescriptor, Typed
     @Relation("HAS_SECURITY_ROLE_REFS")
     List<SecurityRoleRefDescriptor> getSecurityRoleRefs();
 
+    @Relation("HAS_MAPPING")
+    List<ServletMappingDescriptor> getMappings();
 }

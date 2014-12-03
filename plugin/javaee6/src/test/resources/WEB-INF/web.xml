@@ -21,12 +21,12 @@
         -->
     </session-config>
 
-    <!--
     <context-param>
         <param-name>contextParam</param-name>
         <param-value>contextParamValue</param-value>
     </context-param>
 
+    <!--
     <error-page>
         <error-code>500</error-code>
         <location>/errorpage.jsp</location>
@@ -34,22 +34,25 @@
     -->
 
     <servlet>
+        <description xml:lang="en">Test Servlet Description</description>
+        <display-name xml:lang="en">Test Servlet</display-name>
+        <icon>
+            <small-icon>servletIcon-small.png</small-icon>
+            <large-icon>servletIcon-large.png</large-icon>
+        </icon>
         <servlet-name>TestServlet</servlet-name>
         <servlet-class>com.buschmais.jqassistant.TestServlet</servlet-class>
-        <async-supported>true</async-supported>
-        <description lang="en">Test Servlet Description</description>
-        <display-name lang="en"></display-name>
-        <enabled>true</enabled>
-        <icon>
-            <small-icon>testIcon-small.png</small-icon>
-            <large-icon>testIcon-large.png</large-icon>
-        </icon>
-        <jsp-file>/testJsp.jsp</jsp-file>
         <init-param>
             <param-name>servletParam</param-name>
             <param-value>servletParamValue</param-value>
         </init-param>
-        <load-on-startup>true</load-on-startup>
+        <load-on-startup>1</load-on-startup>
+        <enabled>true</enabled>
+        <async-supported>true</async-supported>
+        <run-as>
+            <description xml:lang="en">Administrator</description>
+            <role-name>Admin</role-name>
+        </run-as>
     </servlet>
 
     <servlet-mapping>
@@ -62,6 +65,12 @@
     </listener>
 
     <filter>
+        <description xml:lang="en">Test Filter Description</description>
+        <display-name xml:lang="en">Test Filter</display-name>
+        <icon>
+            <small-icon>filterIcon-small.png</small-icon>
+            <large-icon>filterIcon-large.png</large-icon>
+        </icon>
         <filter-name>TestFilter</filter-name>
         <filter-class>com.buschmais.jqassistant.TestFilter</filter-class>
         <init-param>
@@ -75,6 +84,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!--
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>secureResource</web-resource-name>
@@ -93,4 +103,5 @@
         <env-entry-type>java.lang.String</env-entry-type>
         <env-entry-value>envEntryValue</env-entry-value>
     </env-entry>
+    -->
 </web-app>
