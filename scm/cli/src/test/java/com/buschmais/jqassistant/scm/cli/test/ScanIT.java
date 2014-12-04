@@ -22,6 +22,8 @@ import com.buschmais.jqassistant.scm.cli.task.ScanTask;
  */
 public class ScanIT extends AbstractCLIIT {
 
+    private static final String CLASSPATH_SCOPE = "java:classpath";
+
     @Test
     public void files() throws IOException, InterruptedException {
         URL file = getResource(ScanTask.class);

@@ -4,7 +4,11 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +139,15 @@ public class ScannerImpl implements Scanner {
 
     @Override
     public Scope resolveScope(String name) {
-        return scopes.get(name);
+        if (name == null) {
+            return null;
+        }
+        Scope scope = scopes.get(name);
+        if (scope == null) {
+            LOGGER.warn("No scope found for name '" + name + "'.");
+            scope = Scope.Default.NONE;
+        }
+        return scope;
     }
 
     /**

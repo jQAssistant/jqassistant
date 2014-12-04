@@ -5,7 +5,11 @@ import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TEST
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -73,15 +77,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
                 String scopeName = scanInclude.getScope();
-                Scope includeScope;
-                if (scopeName != null) {
-                    includeScope = scanner.resolveScope(scopeName);
-                    if (includeScope == null) {
-                        throw new IOException("Cannot resolve scope for name " + scopeName);
-                    }
-                } else {
-                    includeScope = null;
-                }
+                Scope includeScope = scanner.resolveScope(scopeName);
                 scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
             }
         }
