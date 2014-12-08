@@ -50,13 +50,11 @@ public class WebXmlScannerPluginTest {
     @Mock
     private ParamValueDescriptor contextParamDescriptor;
 
+    // Error Page
     @Mock
-    private List<ParamValueDescriptor> contextParamDescriptors;
+    private ErrorPageDescriptor errorPageDescriptor;
 
     // Servlet
-    @Mock
-    private List<ServletDescriptor> servletDescriptors;
-
     @Mock
     private ServletDescriptor servletDescriptor;
 
@@ -64,19 +62,10 @@ public class WebXmlScannerPluginTest {
     private DescriptionDescriptor servletDescriptionDescriptor;
 
     @Mock
-    private List<DescriptionDescriptor> servletDescriptionDescriptors;
-
-    @Mock
     private DisplayNameDescriptor servletDisplayNameDescriptor;
 
     @Mock
-    private List<DisplayNameDescriptor> servletDisplayNameDescriptors;
-
-    @Mock
     private IconDescriptor servletIconDescriptor;
-
-    @Mock
-    private List<IconDescriptor> servletIconDescriptors;
 
     @Mock
     private RunAsDescriptor runAsDescriptor;
@@ -85,13 +74,7 @@ public class WebXmlScannerPluginTest {
     private DescriptionDescriptor servletRunAsDescriptionDescriptor;
 
     @Mock
-    private List<DescriptionDescriptor> servletRunAsDescriptionDescriptors;
-
-    @Mock
     private ParamValueDescriptor servletInitParamDescriptor;
-
-    @Mock
-    private List<ParamValueDescriptor> servletInitParamDescriptors;
 
     @Mock
     private ClassFileDescriptor servletClassDescriptor;
@@ -105,48 +88,23 @@ public class WebXmlScannerPluginTest {
     private ServletMappingDescriptor servletMappingDescriptor;
 
     @Mock
-    private List<ServletMappingDescriptor> servletMappingDescriptors;
-
-    @Mock
-    private List<ServletMappingDescriptor> allServletMappingDescriptors;
-
-    @Mock
     private UrlPatternDescriptor servletUrlMappingDescriptor;
 
-    @Mock
-    private List<UrlPatternDescriptor> servletUrlMappingDescriptors;
-
     // Filter
-
     @Mock
     private FilterDescriptor filterDescriptor;
-
-    @Mock
-    private List<FilterDescriptor> filterDescriptors;
 
     @Mock
     private DescriptionDescriptor filterDescriptionDescriptor;
 
     @Mock
-    private List<DescriptionDescriptor> filterDescriptionDescriptors;
-
-    @Mock
     private DisplayNameDescriptor filterDisplayNameDescriptor;
-
-    @Mock
-    private List<DisplayNameDescriptor> filterDisplayNameDescriptors;
 
     @Mock
     private IconDescriptor filterIconDescriptor;
 
     @Mock
-    private List<IconDescriptor> filterIconDescriptors;
-
-    @Mock
     private ParamValueDescriptor filterInitParamDescriptor;
-
-    @Mock
-    private List<ParamValueDescriptor> filterInitParamDescriptors;
 
     @Mock
     private TypeCache.CachedType<TypeDescriptor> cachedFilterClassDescriptor;
@@ -160,16 +118,7 @@ public class WebXmlScannerPluginTest {
     private FilterMappingDescriptor filterMappingDescriptor;
 
     @Mock
-    private List<FilterMappingDescriptor> filterMappingDescriptors;
-
-    @Mock
-    private List<FilterMappingDescriptor> allFilterMappingDescriptors;
-
-    @Mock
     private UrlPatternDescriptor filterUrlMappingDescriptor;
-
-    @Mock
-    private List<UrlPatternDescriptor> filterUrlMappingDescriptors;
 
     // Listener
 
@@ -182,8 +131,54 @@ public class WebXmlScannerPluginTest {
     @Mock
     private ListenerDescriptor listenerDescriptor;
 
+    // Security Constraint
     @Mock
-    private List<ListenerDescriptor> allListenerDescriptors;
+    private SecurityConstraintDescriptor securityConstraintDescriptor;
+
+    @Mock
+    private DisplayNameDescriptor securityConstraintDisplayNameDescriptor;
+
+    @Mock
+    private WebResourceCollectionDescriptor webResourceCollectionDescriptor;
+
+    @Mock
+    private DescriptionDescriptor webResourceCollectionDescriptionDescriptor;
+
+    @Mock
+    private HttpMethodDescriptor httpMethodDescriptor;
+
+    @Mock
+    private UserDataConstraintDescriptor userDataConstraintDescriptor;
+
+    @Mock
+    private UrlPatternDescriptor webResourceCollectionUrlPatternDescriptor;
+
+    @Mock
+    private AuthConstraintDescriptor authConstraintDescriptor;
+
+    @Mock
+    private DescriptionDescriptor authConstraintDescriptionDescriptor;
+
+    @Mock
+    private RoleNameDescriptor authConstraintRoleNameDescriptor;
+
+    // Security Role
+
+    @Mock
+    private SecurityRoleDescriptor securityRoleDescriptor;
+
+    @Mock
+    private DescriptionDescriptor securityRoleDescriptionDescriptor;
+
+    @Mock
+    private RoleNameDescriptor securityRoleRoleNameDescriptor;
+
+    // Login Config
+    @Mock
+    private LoginConfigDescriptor loginConfigDescriptor;
+
+    @Mock
+    private FormLoginConfigDescriptor formLoginConfigDescriptor;
 
     @Test
     public void webXml() throws IOException {
@@ -196,29 +191,34 @@ public class WebXmlScannerPluginTest {
         when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/WEB-INF/web.xml"));
 
         when(store.create(WebXmlDescriptor.class)).thenReturn(webXmlDescriptor);
-        when(webXmlDescriptor.getContextParams()).thenReturn(contextParamDescriptors);
-        when(webXmlDescriptor.getServlets()).thenReturn(servletDescriptors);
-        when(webXmlDescriptor.getServletMappings()).thenReturn(allServletMappingDescriptors);
-        when(webXmlDescriptor.getFilterMappings()).thenReturn(allFilterMappingDescriptors);
-        when(webXmlDescriptor.getListeners()).thenReturn(allListenerDescriptors);
+        when(webXmlDescriptor.getContextParams()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getErrorPages()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getServlets()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getServletMappings()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getFilterMappings()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getListeners()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getSecurityConstraints()).thenReturn(mock(List.class));
 
         when(store.create(SessionConfigDescriptor.class)).thenReturn(sessionConfigDescriptor);
+        when(store.create(ErrorPageDescriptor.class)).thenReturn(errorPageDescriptor);
 
         // Servlet
         when(store.create(ServletDescriptor.class)).thenReturn(servletDescriptor);
         when(servletDescriptor.getName()).thenReturn("TestServlet");
-        when(servletDescriptor.getDescriptions()).thenReturn(servletDescriptionDescriptors);
-        when(servletDescriptor.getDisplayNames()).thenReturn(servletDisplayNameDescriptors);
-        when(servletDescriptor.getIcons()).thenReturn(servletIconDescriptors);
-        when(servletDescriptor.getInitParams()).thenReturn(servletInitParamDescriptors);
-        when(servletDescriptor.getMappings()).thenReturn(servletMappingDescriptors);
+        when(servletDescriptor.getDescriptions()).thenReturn(mock(List.class));
+        when(servletDescriptor.getDisplayNames()).thenReturn(mock(List.class));
+        when(servletDescriptor.getIcons()).thenReturn(mock(List.class));
+        when(servletDescriptor.getInitParams()).thenReturn(mock(List.class));
+        when(servletDescriptor.getMappings()).thenReturn(mock(List.class));
 
         when(store.create(RunAsDescriptor.class)).thenReturn(runAsDescriptor);
-        when(runAsDescriptor.getDescriptions()).thenReturn(servletRunAsDescriptionDescriptors);
+        when(runAsDescriptor.getDescriptions()).thenReturn(mock(List.class));
 
         when(store.create(DescriptionDescriptor.class)).thenReturn(servletDescriptionDescriptor, servletRunAsDescriptionDescriptor,
-                filterDescriptionDescriptor, null);
-        when(store.create(DisplayNameDescriptor.class)).thenReturn(servletDisplayNameDescriptor, filterDisplayNameDescriptor, null);
+                filterDescriptionDescriptor, authConstraintDescriptionDescriptor, webResourceCollectionDescriptionDescriptor,
+                securityRoleDescriptionDescriptor, null);
+        when(store.create(DisplayNameDescriptor.class)).thenReturn(servletDisplayNameDescriptor, filterDisplayNameDescriptor,
+                securityConstraintDisplayNameDescriptor, null);
         when(store.create(IconDescriptor.class)).thenReturn(servletIconDescriptor, filterIconDescriptor, null);
 
         when(store.create(ParamValueDescriptor.class)).thenReturn(contextParamDescriptor, servletInitParamDescriptor, filterInitParamDescriptor, null);
@@ -227,28 +227,54 @@ public class WebXmlScannerPluginTest {
 
         // Servlet Mapping
         when(store.create(ServletMappingDescriptor.class)).thenReturn(servletMappingDescriptor);
-        when(store.create(UrlPatternDescriptor.class)).thenReturn(servletUrlMappingDescriptor, filterUrlMappingDescriptor, null);
-        when(servletMappingDescriptor.getUrlPatterns()).thenReturn(servletUrlMappingDescriptors);
+        when(store.create(UrlPatternDescriptor.class)).thenReturn(servletUrlMappingDescriptor, filterUrlMappingDescriptor,
+                webResourceCollectionUrlPatternDescriptor, null);
+        when(servletMappingDescriptor.getUrlPatterns()).thenReturn(mock(List.class));
 
         // Filter
         when(store.create(FilterDescriptor.class)).thenReturn(filterDescriptor);
-        when(webXmlDescriptor.getFilters()).thenReturn(filterDescriptors);
+        when(webXmlDescriptor.getFilters()).thenReturn(mock(List.class));
         when(typeResolver.resolve("com.buschmais.jqassistant.TestFilter", scannerContext)).thenReturn(cachedFilterClassDescriptor);
         when(cachedFilterClassDescriptor.getTypeDescriptor()).thenReturn(filterClassDescriptor);
-        when(filterDescriptor.getDescriptions()).thenReturn(filterDescriptionDescriptors);
-        when(filterDescriptor.getDisplayNames()).thenReturn(filterDisplayNameDescriptors);
-        when(filterDescriptor.getIcons()).thenReturn(filterIconDescriptors);
-        when(filterDescriptor.getInitParams()).thenReturn(filterInitParamDescriptors);
-        when(filterDescriptor.getMappings()).thenReturn(filterMappingDescriptors);
+        when(filterDescriptor.getDescriptions()).thenReturn(mock(List.class));
+        when(filterDescriptor.getDisplayNames()).thenReturn(mock(List.class));
+        when(filterDescriptor.getIcons()).thenReturn(mock(List.class));
+        when(filterDescriptor.getInitParams()).thenReturn(mock(List.class));
+        when(filterDescriptor.getMappings()).thenReturn(mock(List.class));
 
         // Filter Mapping
         when(store.create(FilterMappingDescriptor.class)).thenReturn(filterMappingDescriptor);
-        when(filterMappingDescriptor.getUrlPatterns()).thenReturn(filterUrlMappingDescriptors);
+        when(filterMappingDescriptor.getUrlPatterns()).thenReturn(mock(List.class));
 
         // Listener
         when(typeResolver.resolve("com.buschmais.jqassistant.TestListener", scannerContext)).thenReturn(cachedListenerClassDescriptor);
         when(cachedListenerClassDescriptor.getTypeDescriptor()).thenReturn(listenerClassDescriptor);
         when(store.create(ListenerDescriptor.class)).thenReturn(listenerDescriptor);
+
+        // Security Constraint
+        when(store.create(SecurityConstraintDescriptor.class)).thenReturn(securityConstraintDescriptor);
+        when(securityConstraintDescriptor.getDisplayNames()).thenReturn(mock(List.class));
+        when(securityConstraintDescriptor.getWebResourceCollections()).thenReturn(mock(List.class));
+        when(store.create(WebResourceCollectionDescriptor.class)).thenReturn(webResourceCollectionDescriptor);
+        when(webResourceCollectionDescriptor.getDescriptions()).thenReturn(mock(List.class));
+        when(webResourceCollectionDescriptor.getUrlPatterns()).thenReturn(mock(List.class));
+        when(webResourceCollectionDescriptor.getHttpMethods()).thenReturn(mock(List.class));
+        when(store.create(AuthConstraintDescriptor.class)).thenReturn(authConstraintDescriptor);
+        when(authConstraintDescriptor.getDescriptions()).thenReturn(mock(List.class));
+        when(authConstraintDescriptor.getRoleNames()).thenReturn(mock(List.class));
+        when(store.create(RoleNameDescriptor.class)).thenReturn(authConstraintRoleNameDescriptor, securityRoleRoleNameDescriptor, null);
+        when(securityConstraintDescriptor.getAuthConstraints()).thenReturn(mock(List.class));
+        when(store.create(UserDataConstraintDescriptor.class)).thenReturn(userDataConstraintDescriptor);
+        when(securityConstraintDescriptor.getUserDataConstraints()).thenReturn(mock(List.class));
+        when(store.create(HttpMethodDescriptor.class)).thenReturn(httpMethodDescriptor);
+
+        // Security Role
+        when(store.create(SecurityRoleDescriptor.class)).thenReturn(securityRoleDescriptor);
+        when(securityRoleDescriptor.getDescriptions()).thenReturn(mock(List.class));
+
+        // Login Config
+        when(store.create(LoginConfigDescriptor.class)).thenReturn(loginConfigDescriptor);
+        when(store.create(FormLoginConfigDescriptor.class)).thenReturn(formLoginConfigDescriptor);
 
         WebXmlScannerPlugin scannerPlugin = new WebXmlScannerPlugin();
         scannerPlugin.initialize(Collections.<String, Object> emptyMap());
@@ -257,66 +283,97 @@ public class WebXmlScannerPluginTest {
         verify(store).create(WebXmlDescriptor.class);
         verify(webXmlDescriptor).setVersion("3.0");
         verify(webXmlDescriptor).setSessionConfig(sessionConfigDescriptor);
-        verify(contextParamDescriptors).add(contextParamDescriptor);
+        verify(webXmlDescriptor.getContextParams()).add(contextParamDescriptor);
         verify(contextParamDescriptor).setName("contextParam");
         verify(contextParamDescriptor).setValue("contextParamValue");
         verify(sessionConfigDescriptor).setSessionTimeout(30);
 
+        verifyErrorPage();
         verifyServlet();
         verifyServletMapping();
         verifyFilter();
         verifyFilterMapping();
         verifyListener();
+        verifySecurityConstraint();
+        verifyLoginConfig();
+    }
+
+    private void verifyLoginConfig() {
+    }
+
+    private void verifySecurityConstraint() {
+        verify(store).create(SecurityConstraintDescriptor.class);
+        verify(webXmlDescriptor.getSecurityConstraints()).add(securityConstraintDescriptor);
+        verifyDisplayName(securityConstraintDescriptor.getDisplayNames(), securityConstraintDisplayNameDescriptor, "en", "Security Constraint");
+        verify(securityConstraintDescriptor.getWebResourceCollections()).add(webResourceCollectionDescriptor);
+        verify(webResourceCollectionDescriptor).setName("secureResource");
+        verifyDescription(webResourceCollectionDescriptor.getDescriptions(), webResourceCollectionDescriptionDescriptor, "en", "Web Resource Description");
+        verify(webResourceCollectionDescriptor.getUrlPatterns()).add(webResourceCollectionUrlPatternDescriptor);
+        verify(webResourceCollectionUrlPatternDescriptor).setValue("/secureResource/*");
+        verify(webResourceCollectionDescriptor.getHttpMethods()).add(httpMethodDescriptor);
+        verify(httpMethodDescriptor).setName("get");
+        verify(securityConstraintDescriptor.getAuthConstraints()).add(authConstraintDescriptor);
+        verifyDescription(authConstraintDescriptor.getDescriptions(), authConstraintDescriptionDescriptor, "en", "Auth Constraint Description");
+        verify(authConstraintDescriptor.getRoleNames()).add(authConstraintRoleNameDescriptor);
+        verify(authConstraintRoleNameDescriptor).setName("Admin");
+        verify(securityConstraintDescriptor.getUserDataConstraints()).add(userDataConstraintDescriptor);
+        verify(userDataConstraintDescriptor).setTransportGuarantee("CONFIDENTIAL");
+    }
+
+    private void verifyErrorPage() {
+        verify(store).create(ErrorPageDescriptor.class);
+        verify(webXmlDescriptor.getErrorPages()).add(errorPageDescriptor);
+        verify(errorPageDescriptor).setErrorPage("/errorpage.jsp");
     }
 
     private void verifyListener() {
-        verify(allListenerDescriptors).add(listenerDescriptor);
+        verify(store).create(FilterDescriptor.class);
+        verify(webXmlDescriptor.getListeners()).add(listenerDescriptor);
         verify(listenerDescriptor).setType(listenerClassDescriptor);
-
     }
 
     private void verifyFilterMapping() {
         verify(store).create(FilterMappingDescriptor.class);
-        verify(filterMappingDescriptors).add(filterMappingDescriptor);
-        verify(filterUrlMappingDescriptors).add(filterUrlMappingDescriptor);
+        verify(filterDescriptor.getMappings()).add(filterMappingDescriptor);
+        verify(filterMappingDescriptor.getUrlPatterns()).add(filterUrlMappingDescriptor);
         verify(filterUrlMappingDescriptor).setValue("/*");
     }
 
     private void verifyFilter() {
         verify(store).create(FilterDescriptor.class);
-        verify(filterDescriptors).add(filterDescriptor);
+        verify(webXmlDescriptor.getFilters()).add(filterDescriptor);
         verify(filterDescriptor).setName("TestFilter");
         verify(filterDescriptor).setType(filterClassDescriptor);
-        verifyDescription(filterDescriptionDescriptors, filterDescriptionDescriptor, "en", "Test Filter Description");
-        verifyDisplayName(filterDisplayNameDescriptors, filterDisplayNameDescriptor, "en", "Test Filter");
-        verifyIcon(filterIconDescriptors, filterIconDescriptor, "filterIcon-small.png", "filterIcon-large.png");
-        verifyInitParam(filterInitParamDescriptors, filterInitParamDescriptor, "filterParam", "filterParamValue");
-        verify(filterMappingDescriptors).add(filterMappingDescriptor);
+        verifyDescription(filterDescriptor.getDescriptions(), filterDescriptionDescriptor, "en", "Test Filter Description");
+        verifyDisplayName(filterDescriptor.getDisplayNames(), filterDisplayNameDescriptor, "en", "Test Filter");
+        verifyIcon(filterDescriptor.getIcons(), filterIconDescriptor, "filterIcon-small.png", "filterIcon-large.png");
+        verifyInitParam(filterDescriptor.getInitParams(), filterInitParamDescriptor, "filterParam", "filterParamValue");
+        verify(filterDescriptor.getMappings()).add(filterMappingDescriptor);
     }
 
     private void verifyServletMapping() {
         verify(store).create(ServletMappingDescriptor.class);
-        verify(allServletMappingDescriptors).add(servletMappingDescriptor);
-        verify(store, times(2)).create(UrlPatternDescriptor.class);
-        verify(servletUrlMappingDescriptors).add(servletUrlMappingDescriptor);
+        verify(webXmlDescriptor.getServletMappings()).add(servletMappingDescriptor);
+        verify(store, times(3)).create(UrlPatternDescriptor.class);
+        verify(servletMappingDescriptor.getUrlPatterns()).add(servletUrlMappingDescriptor);
         verify(servletUrlMappingDescriptor).setValue("/*");
     }
 
     private void verifyServlet() {
-        verify(servletDescriptors).add(servletDescriptor);
+        verify(webXmlDescriptor.getServlets()).add(servletDescriptor);
         verify(servletDescriptor).setName("TestServlet");
         verify(servletDescriptor).setType(servletClassDescriptor);
-        verifyDescription(servletDescriptionDescriptors, servletDescriptionDescriptor, "en", "Test Servlet Description");
-        verifyDisplayName(servletDisplayNameDescriptors, servletDisplayNameDescriptor, "en", "Test Servlet");
-        verifyIcon(servletIconDescriptors, servletIconDescriptor, "servletIcon-small.png", "servletIcon-large.png");
-        verifyInitParam(servletInitParamDescriptors, servletInitParamDescriptor, "servletParam", "servletParamValue");
-        verify(servletMappingDescriptors).add(servletMappingDescriptor);
+        verifyDescription(servletDescriptor.getDescriptions(), servletDescriptionDescriptor, "en", "Test Servlet Description");
+        verifyDisplayName(servletDescriptor.getDisplayNames(), servletDisplayNameDescriptor, "en", "Test Servlet");
+        verifyIcon(servletDescriptor.getIcons(), servletIconDescriptor, "servletIcon-small.png", "servletIcon-large.png");
+        verifyInitParam(servletDescriptor.getInitParams(), servletInitParamDescriptor, "servletParam", "servletParamValue");
+        verify(webXmlDescriptor.getServletMappings()).add(servletMappingDescriptor);
         verify(servletDescriptor).setLoadOnStartup("1");
         verify(servletDescriptor).setEnabled(true);
         verify(servletDescriptor).setAsyncSupported(true);
         verify(servletDescriptor).setRunAs(runAsDescriptor);
         verify(runAsDescriptor).setRoleName("Admin");
-        verify(servletRunAsDescriptionDescriptors).add(servletRunAsDescriptionDescriptor);
+        verify(runAsDescriptor.getDescriptions()).add(servletRunAsDescriptionDescriptor);
         verify(servletRunAsDescriptionDescriptor).setLang("en");
         verify(servletRunAsDescriptionDescriptor).setValue("Administrator");
     }

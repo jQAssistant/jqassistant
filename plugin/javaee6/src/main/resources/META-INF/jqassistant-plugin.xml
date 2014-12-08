@@ -20,6 +20,16 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.DispatcherDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityConstraintDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.AuthConstraintDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.UserDataConstraintDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.RoleNameDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebResourceCollectionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.HttpMethodDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.HttpMethodOmissionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.LoginConfigDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FormLoginConfigDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>

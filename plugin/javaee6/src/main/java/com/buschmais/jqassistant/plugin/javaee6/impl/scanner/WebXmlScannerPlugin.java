@@ -69,7 +69,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
                 ParamValueDescriptor paramValue = createParamValue((ParamValueType) value, store);
                 webXmlDescriptor.getContextParams().add(paramValue);
             } else if (value instanceof ErrorPageType) {
-                ErrorPageDescriptor errorPageDescriptor = createErrorPage((ErrorPageType) value, store);
+                ErrorPageDescriptor errorPageDescriptor = createErrorPage((ErrorPageType) value, scanner.getContext());
                 webXmlDescriptor.getErrorPages().add(errorPageDescriptor);
             } else if (value instanceof ServletMappingType) {
                 ServletMappingDescriptor servletMappingDescriptor = createServletMapping((ServletMappingType) value, servlets, store);
@@ -88,29 +88,141 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
                 ServletDescriptor servletDescriptor = createServlet((ServletType) value, servlets, scanner.getContext());
                 webXmlDescriptor.getServlets().add(servletDescriptor);
             } else if (value instanceof ListenerType) {
-                ListenerType listenerType = (ListenerType) value;
-                ListenerDescriptor listenerDescriptor = store.create(ListenerDescriptor.class);
-                for (DescriptionType descriptionType : listenerType.getDescription()) {
-                    listenerDescriptor.getDescriptions().add(createDescription(descriptionType, store));
-                }
-                for (DisplayNameType displayNameType : listenerType.getDisplayName()) {
-                    listenerDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
-                }
-                for (IconType iconType : listenerType.getIcon()) {
-                    listenerDescriptor.getIcons().add(createIcon(iconType, store));
-                }
-                TypeResolver typeResolver = scanner.getContext().peek(TypeResolver.class);
-                FullyQualifiedClassType listenerClass = listenerType.getListenerClass();
-                TypeCache.CachedType<TypeDescriptor> listenerClassDescriptor = typeResolver.resolve(listenerClass.getValue(), scanner.getContext());
-                listenerDescriptor.setType(listenerClassDescriptor.getTypeDescriptor());
+                ListenerDescriptor listenerDescriptor = createListener((ListenerType) value, scanner.getContext());
                 webXmlDescriptor.getListeners().add(listenerDescriptor);
+            } else if (value instanceof SecurityConstraintType) {
+                SecurityConstraintDescriptor securityConstraintDescriptor = createSecurityConstraint((SecurityConstraintType) value, store);
+                webXmlDescriptor.getSecurityConstraints().add(securityConstraintDescriptor);
+            } else if (value instanceof SecurityRoleType) {
+                SecurityRoleDescriptor securityRoleDescriptor = createSecurityRole((SecurityRoleType) value, store);
+                webXmlDescriptor.getSecurityRoles().add(securityRoleDescriptor);
+            } else if (value instanceof LoginConfigType) {
+                LoginConfigDescriptor loginConfigDescriptor = createLoginConfig((LoginConfigType) value, store);
+                webXmlDescriptor.getLoginConfigs().add(loginConfigDescriptor);
             }
         }
         return webXmlDescriptor;
     }
 
-    private ErrorPageDescriptor createErrorPage(ErrorPageType value, Store store) {
-        return store.create(ErrorPageDescriptor.class);
+    private LoginConfigDescriptor createLoginConfig(LoginConfigType loginConfigType, Store store) {
+        LoginConfigDescriptor loginConfigDescriptor = store.create(LoginConfigDescriptor.class);
+        AuthMethodType authMethod = loginConfigType.getAuthMethod();
+        if (authMethod != null) {
+            loginConfigDescriptor.setAuthMethod(authMethod.getValue());
+        }
+        FormLoginConfigType formLoginConfigType = loginConfigType.getFormLoginConfig();
+        if (formLoginConfigType != null) {
+            FormLoginConfigDescriptor formLoginConfigDescriptor = store.create(FormLoginConfigDescriptor.class);
+            formLoginConfigDescriptor.setFormLoginPage(formLoginConfigType.getFormLoginPage().getValue());
+            formLoginConfigDescriptor.setFormErrorPage(formLoginConfigType.getFormErrorPage().getValue());
+            loginConfigDescriptor.setFormLoginConfig(formLoginConfigDescriptor);
+        }
+        com.sun.java.xml.ns.javaee.String realmName = loginConfigType.getRealmName();
+        if (realmName != null) {
+            loginConfigDescriptor.setRealmName(realmName.getValue());
+        }
+        return loginConfigDescriptor;
+    }
+
+    private SecurityRoleDescriptor createSecurityRole(SecurityRoleType securityRoleType, Store store) {
+        SecurityRoleDescriptor securityRoleDescriptor = store.create(SecurityRoleDescriptor.class);
+        for (DescriptionType descriptionType : securityRoleType.getDescription()) {
+            securityRoleDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+        }
+        securityRoleDescriptor.setRoleName(createRoleName(securityRoleType.getRoleName(), store));
+        return securityRoleDescriptor;
+    }
+
+    private SecurityConstraintDescriptor createSecurityConstraint(SecurityConstraintType securityConstraintType, Store store) {
+        SecurityConstraintDescriptor securityConstraintDescriptor = store.create(SecurityConstraintDescriptor.class);
+        for (DisplayNameType displayNameType : securityConstraintType.getDisplayName()) {
+            securityConstraintDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+        }
+        UserDataConstraintType userDataConstraint = securityConstraintType.getUserDataConstraint();
+        if (userDataConstraint != null) {
+            UserDataConstraintDescriptor userDataConstraintDescriptor = store.create(UserDataConstraintDescriptor.class);
+            userDataConstraintDescriptor.setTransportGuarantee(userDataConstraint.getTransportGuarantee().getValue());
+            for (DescriptionType descriptionType : userDataConstraint.getDescription()) {
+                userDataConstraintDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+            }
+            securityConstraintDescriptor.getUserDataConstraints().add(userDataConstraintDescriptor);
+        }
+        AuthConstraintType authConstraint = securityConstraintType.getAuthConstraint();
+        if (authConstraint != null) {
+            AuthConstraintDescriptor authConstraintDescriptor = store.create(AuthConstraintDescriptor.class);
+            for (DescriptionType descriptionType : authConstraint.getDescription()) {
+                authConstraintDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+            }
+            for (RoleNameType roleNameType : authConstraint.getRoleName()) {
+                RoleNameDescriptor roleNameDescriptor = createRoleName(roleNameType, store);
+                authConstraintDescriptor.getRoleNames().add(roleNameDescriptor);
+            }
+            securityConstraintDescriptor.getAuthConstraints().add(authConstraintDescriptor);
+        }
+        for (WebResourceCollectionType webResourceCollectionType : securityConstraintType.getWebResourceCollection()) {
+            WebResourceCollectionDescriptor webResourceCollectionDescriptor = store.create(WebResourceCollectionDescriptor.class);
+            webResourceCollectionDescriptor.setName(webResourceCollectionType.getWebResourceName().getValue());
+            for (DescriptionType descriptionType : webResourceCollectionType.getDescription()) {
+                webResourceCollectionDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+            }
+            for (String httpMethod : webResourceCollectionType.getHttpMethod()) {
+                HttpMethodDescriptor httpMethodDescriptor = store.create(HttpMethodDescriptor.class);
+                httpMethodDescriptor.setName(httpMethod);
+                webResourceCollectionDescriptor.getHttpMethods().add(httpMethodDescriptor);
+            }
+            for (String httpMethodOmission : webResourceCollectionType.getHttpMethodOmission()) {
+                HttpMethodOmissionDescriptor httpMethodOmissionDescriptor = store.create(HttpMethodOmissionDescriptor.class);
+                httpMethodOmissionDescriptor.setName(httpMethodOmission);
+                webResourceCollectionDescriptor.getHttpMethodOmissions().add(httpMethodOmissionDescriptor);
+            }
+            for (UrlPatternType urlPatternType : webResourceCollectionType.getUrlPattern()) {
+                UrlPatternDescriptor urlPatternDescriptor = createUrlPattern(urlPatternType, store);
+                webResourceCollectionDescriptor.getUrlPatterns().add(urlPatternDescriptor);
+            }
+            securityConstraintDescriptor.getWebResourceCollections().add(webResourceCollectionDescriptor);
+        }
+        return securityConstraintDescriptor;
+    }
+
+    private RoleNameDescriptor createRoleName(RoleNameType roleNameType, Store store) {
+        RoleNameDescriptor roleNameDescriptor = store.create(RoleNameDescriptor.class);
+        roleNameDescriptor.setName(roleNameType.getValue());
+        return roleNameDescriptor;
+    }
+
+    private ListenerDescriptor createListener(ListenerType listenerType, ScannerContext context) {
+        Store store = context.getStore();
+        ListenerDescriptor listenerDescriptor = store.create(ListenerDescriptor.class);
+        for (DescriptionType descriptionType : listenerType.getDescription()) {
+            listenerDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+        }
+        for (DisplayNameType displayNameType : listenerType.getDisplayName()) {
+            listenerDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+        }
+        for (IconType iconType : listenerType.getIcon()) {
+            listenerDescriptor.getIcons().add(createIcon(iconType, store));
+        }
+        TypeResolver typeResolver = context.peek(TypeResolver.class);
+        FullyQualifiedClassType listenerClass = listenerType.getListenerClass();
+        TypeCache.CachedType<TypeDescriptor> listenerClassDescriptor = typeResolver.resolve(listenerClass.getValue(), context);
+        listenerDescriptor.setType(listenerClassDescriptor.getTypeDescriptor());
+        return listenerDescriptor;
+    }
+
+    private ErrorPageDescriptor createErrorPage(ErrorPageType errorPageType, ScannerContext context) {
+        ErrorPageDescriptor errorPageDescriptor = context.getStore().create(ErrorPageDescriptor.class);
+        ErrorCodeType errorCode = errorPageType.getErrorCode();
+        if (errorCode != null) {
+            errorPageDescriptor.setErrorCode(errorCode.getValue().intValue());
+        }
+        FullyQualifiedClassType exceptionType = errorPageType.getExceptionType();
+        if (exceptionType != null) {
+            TypeResolver typeResolver = context.peek(TypeResolver.class);
+            TypeCache.CachedType<TypeDescriptor> cachedType = typeResolver.resolve(exceptionType.getValue(), context);
+            errorPageDescriptor.setExceptionType(cachedType.getTypeDescriptor());
+        }
+        errorPageDescriptor.setErrorPage(errorPageType.getLocation().getValue());
+        return errorPageDescriptor;
     }
 
     /**
@@ -169,8 +281,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         for (Object urlPatternOrServletName : filterMappingType.getUrlPatternOrServletName()) {
             if (urlPatternOrServletName instanceof UrlPatternType) {
                 UrlPatternType urlPatternType = (UrlPatternType) urlPatternOrServletName;
-                UrlPatternDescriptor urlPatternDescriptor = store.create(UrlPatternDescriptor.class);
-                urlPatternDescriptor.setValue(urlPatternType.getValue());
+                UrlPatternDescriptor urlPatternDescriptor = createUrlPattern(urlPatternType, store);
                 filterMappingDescriptor.getUrlPatterns().add(urlPatternDescriptor);
             } else if (urlPatternOrServletName instanceof ServletNameType) {
                 ServletNameType servletNameType = (ServletNameType) urlPatternOrServletName;
@@ -185,6 +296,12 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         }
 
         return filterMappingDescriptor;
+    }
+
+    private UrlPatternDescriptor createUrlPattern(UrlPatternType urlPatternType, Store store) {
+        UrlPatternDescriptor urlPatternDescriptor = store.create(UrlPatternDescriptor.class);
+        urlPatternDescriptor.setValue(urlPatternType.getValue());
+        return urlPatternDescriptor;
     }
 
     /**
@@ -404,8 +521,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         ServletDescriptor servletDescriptor = getOrCreateNamedDescriptor(ServletDescriptor.class, servletName.getValue(), servlets, store);
         servletDescriptor.getMappings().add(servletMappingDescriptor);
         for (UrlPatternType urlPatternType : servletMappingType.getUrlPattern()) {
-            UrlPatternDescriptor urlPatternDescriptor = store.create(UrlPatternDescriptor.class);
-            urlPatternDescriptor.setValue(urlPatternType.getValue());
+            UrlPatternDescriptor urlPatternDescriptor = createUrlPattern(urlPatternType, store);
             servletMappingDescriptor.getUrlPatterns().add(urlPatternDescriptor);
         }
         return servletMappingDescriptor;

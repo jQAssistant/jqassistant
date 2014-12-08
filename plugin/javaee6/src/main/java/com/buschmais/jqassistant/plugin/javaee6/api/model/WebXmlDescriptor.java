@@ -46,4 +46,12 @@ public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDesc
     @Relation("HAS_ERROR_PAGE")
     List<ErrorPageDescriptor> getErrorPages();
 
+    @Relation("HAS_SECURITY_CONSTRAINT")
+    List<SecurityConstraintDescriptor> getSecurityConstraints();
+
+    @Relation("HAS_SECURITY_ROLE")
+    List<SecurityRoleDescriptor> getSecurityRoles();
+
+    @Relation("HAS_LOGIN_CONFIG")
+    List<LoginConfigDescriptor> getLoginConfigs();
 }
