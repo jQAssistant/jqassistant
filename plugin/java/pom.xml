@@ -72,6 +72,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>${org.ow2.asm_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>${org.ow2.asm_version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.common</artifactId>
         </dependency>
@@ -121,16 +131,6 @@
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.analysis</artifactId>
             <type>test-jar</type>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>${org.ow2.asm_version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm-util</artifactId>
-            <version>${org.ow2.asm_version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
