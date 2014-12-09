@@ -8,10 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("ServletMapping")
 public interface ServletMappingDescriptor extends WebDescriptor {
 
-    String getServletName();
-
-    void setServletName(String value);
-
     @Relation("ON_URL_PATTERN")
     List<UrlPatternDescriptor> getUrlPatterns();
+
 }
