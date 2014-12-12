@@ -101,7 +101,7 @@
     </security-constraint>
 
     <security-role>
-        <description>Admin users</description>
+        <description xml:lang="en">Admin users</description>
         <role-name>Admin</role-name>
     </security-role>
 

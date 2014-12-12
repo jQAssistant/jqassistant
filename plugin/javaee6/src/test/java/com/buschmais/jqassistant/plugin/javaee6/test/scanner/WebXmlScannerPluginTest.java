@@ -198,6 +198,7 @@ public class WebXmlScannerPluginTest {
         when(webXmlDescriptor.getFilterMappings()).thenReturn(mock(List.class));
         when(webXmlDescriptor.getListeners()).thenReturn(mock(List.class));
         when(webXmlDescriptor.getSecurityConstraints()).thenReturn(mock(List.class));
+        when(webXmlDescriptor.getSecurityRoles()).thenReturn(mock(List.class));
 
         when(store.create(SessionConfigDescriptor.class)).thenReturn(sessionConfigDescriptor);
         when(store.create(ErrorPageDescriptor.class)).thenReturn(errorPageDescriptor);
@@ -295,10 +296,26 @@ public class WebXmlScannerPluginTest {
         verifyFilterMapping();
         verifyListener();
         verifySecurityConstraint();
+        verifySecurityRole();
         verifyLoginConfig();
     }
 
+    private void verifySecurityRole() {
+        verify(store).create(SecurityRoleDescriptor.class);
+        verify(webXmlDescriptor.getSecurityRoles()).add(securityRoleDescriptor);
+        verifyDescription(securityRoleDescriptor.getDescriptions(), securityRoleDescriptionDescriptor, "en", "Admin users");
+        verify(securityRoleDescriptor).setRoleName(securityRoleRoleNameDescriptor);
+        verify(securityRoleRoleNameDescriptor).setName("Admin");
+    }
+
     private void verifyLoginConfig() {
+        verify(store).create(LoginConfigDescriptor.class);
+        verify(loginConfigDescriptor).setAuthMethod("FORM");
+        verify(loginConfigDescriptor).setRealmName("TestRealm");
+        verify(store).create(FormLoginConfigDescriptor.class);
+        verify(loginConfigDescriptor).setFormLoginConfig(formLoginConfigDescriptor);
+        verify(formLoginConfigDescriptor).setFormLoginPage("/login.jsp");
+        verify(formLoginConfigDescriptor).setFormErrorPage("/error.jsp");
     }
 
     private void verifySecurityConstraint() {
