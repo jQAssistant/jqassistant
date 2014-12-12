@@ -10,25 +10,25 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
-import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEmbeddable;
-import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
+import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEmbeddable;
+import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
 
 /**
  * Tests for the JPA concepts.
@@ -141,12 +141,12 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     public void fullPersistenceDescriptor() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         store.beginTransaction();
-        TestResult testResult = query("MATCH (p:Jpa:Persistence) RETURN p");
+        TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
-        List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
-        PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);
-        assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
-        List<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
+        List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
+        PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
+        assertThat(persistenceXmlDescriptor.getVersion(), equalTo("2.0"));
+        List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
     }
@@ -193,12 +193,12 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     public void minimalPersistenceDescriptor() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         store.beginTransaction();
-        TestResult testResult = query("MATCH (p:Jpa:Persistence) RETURN p");
+        TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
-        List<? super PersistenceDescriptor> persistenceDescriptors = testResult.getColumn("p");
-        PersistenceDescriptor persistenceDescriptor = (PersistenceDescriptor) persistenceDescriptors.get(0);
-        assertThat(persistenceDescriptor.getVersion(), equalTo("2.0"));
-        List<PersistenceUnitDescriptor> persistenceUnits = persistenceDescriptor.getContains();
+        List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
+        PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
+        assertThat(persistenceXmlDescriptor.getVersion(), equalTo("2.0"));
+        List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
     }
