@@ -20,14 +20,14 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
 import com.sun.java.xml.ns.persistence.*;
 
 /**
  * A scanner for JPA model units.
  */
-public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceDescriptor> {
+public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceXmlDescriptor> {
 
     private static final JAXBContext jaxbContext;
 
@@ -45,7 +45,7 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
     }
 
     @Override
-    public PersistenceDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public PersistenceXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Persistence persistence;
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -54,8 +54,8 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
             throw new IOException("Cannot read model descriptor.", e);
         }
         Store store = scanner.getContext().getStore();
-        PersistenceDescriptor persistenceDescriptor = store.create(PersistenceDescriptor.class);
-        persistenceDescriptor.setVersion(persistence.getVersion());
+        PersistenceXmlDescriptor persistenceXmlDescriptor = store.create(PersistenceXmlDescriptor.class);
+        persistenceXmlDescriptor.setVersion(persistence.getVersion());
         // Create model units
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class);
@@ -91,8 +91,8 @@ public class PersistenceScannerPlugin extends AbstractScannerPlugin<FileResource
                 }
             }
             // Add model unit to model descriptor
-            persistenceDescriptor.getContains().add(persistenceUnitDescriptor);
+            persistenceXmlDescriptor.getContains().add(persistenceUnitDescriptor);
         }
-        return persistenceDescriptor;
+        return persistenceXmlDescriptor;
     }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.cdi.api.model.BeansDescriptor;
+import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
@@ -353,16 +353,16 @@ public class CdiIT extends AbstractJavaPluginIT {
     public void beansDescriptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClassPathDirectory(getClassesDirectory(CdiIT.class));
         store.beginTransaction();
-        List<Object> column = query("MATCH (beans:Cdi:Beans:File) RETURN beans").getColumn("beans");
+        List<Object> column = query("MATCH (beans:Cdi:Beans:Xml:File) RETURN beans").getColumn("beans");
         assertThat(column.size(), equalTo(1));
-        BeansDescriptor beansDescriptor = (BeansDescriptor) column.get(0);
-        assertThat(beansDescriptor.getFileName(), equalTo("/META-INF/beans.xml"));
-        assertThat(beansDescriptor.getVersion(), equalTo("1.1"));
-        assertThat(beansDescriptor.getBeanDiscoveryMode(), equalTo("annotated"));
-        assertThat(beansDescriptor.getAlternatives(),
+        BeansXmlDescriptor beansXmlDescriptor = (BeansXmlDescriptor) column.get(0);
+        assertThat(beansXmlDescriptor.getFileName(), equalTo("/META-INF/beans.xml"));
+        assertThat(beansXmlDescriptor.getVersion(), equalTo("1.1"));
+        assertThat(beansXmlDescriptor.getBeanDiscoveryMode(), equalTo("annotated"));
+        assertThat(beansXmlDescriptor.getAlternatives(),
                 allOf(hasItem(typeDescriptor(AlternativeBean.class)), hasItem(typeDescriptor(AlternativeStereotype.class))));
-        assertThat(beansDescriptor.getDecorators(), hasItem(typeDescriptor(DecoratorBean.class)));
-        assertThat(beansDescriptor.getInterceptors(), hasItem(typeDescriptor(CustomInterceptor.class)));
+        assertThat(beansXmlDescriptor.getDecorators(), hasItem(typeDescriptor(DecoratorBean.class)));
+        assertThat(beansXmlDescriptor.getInterceptors(), hasItem(typeDescriptor(CustomInterceptor.class)));
         store.commitTransaction();
     }
 }

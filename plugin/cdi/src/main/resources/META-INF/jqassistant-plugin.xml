@@ -2,10 +2,10 @@
     <description>Provides rules for CDI.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.cdi.api.model.CdiDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.cdi.api.model.BeansDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor</class>
     </model>
     <scanner>
-        <class>com.buschmais.jqassistant.plugin.cdi.impl.scanner.BeansDescriptorScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.cdi.impl.scanner.BeansXmlScannerPlugin</class>
     </scanner>
     <rules>
         <resource>cdi.xml</resource>
