@@ -216,6 +216,7 @@
 		<module>javaee6</module>
 		<module>junit</module>
 		<module>testng</module>
+		<module>m2repo</module>
 		<module>maven3</module>
 		<module>osgi</module>
 		<module>tycho</module>
