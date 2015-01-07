@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.maven.index.Indexer;
 import org.apache.maven.index.context.ExistingLuceneIndexMismatchException;
 import org.apache.maven.index.context.IndexCreator;
@@ -29,8 +30,18 @@ import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * This class downloads and updates the remote maven index.
+ * 
+ * @author pherklotz
+ */
 public class MavenIndexDownloader {
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(MavenIndexDownloader.class);
 
 	private IndexingContext indexingContext;
 
@@ -40,8 +51,19 @@ public class MavenIndexDownloader {
 			throws ExistingLuceneIndexMismatchException,
 			IllegalArgumentException, PlexusContainerException,
 			ComponentLookupException, IOException {
+		this(repoUrl, null, null);
+	}
+
+	public MavenIndexDownloader(URL repoUrl, String username, String password)
+			throws ExistingLuceneIndexMismatchException,
+			IllegalArgumentException, PlexusContainerException,
+			ComponentLookupException, IOException {
 		createIndexingContext(repoUrl);
-		updateIndex();
+		updateIndex(username, password);
+	}
+
+	public void closeIndexSearcher(IndexSearcher searcher) throws IOException {
+		indexingContext.releaseIndexSearcher(searcher);
 	}
 
 	private void createIndexingContext(URL repoUrl)
@@ -76,20 +98,25 @@ public class MavenIndexDownloader {
 		return indexingContext;
 	}
 
-	private void updateIndex() throws ComponentLookupException, IOException {
+	public IndexSearcher newIndexSearcher() throws IOException {
+		return indexingContext.acquireIndexSearcher();
+	}
+
+	private void updateIndex(String username, String password)
+			throws ComponentLookupException, IOException {
 		IndexUpdater indexUpdater = plexusContainer.lookup(IndexUpdater.class);
 		Wagon httpWagon = plexusContainer.lookup(Wagon.class, "http");
 
-		System.out.println("Updating Index...");
-		System.out
-				.println("This might take a while on first run, so please be patient!");
+		LOGGER.info("Updating maven index...");
 		// Create ResourceFetcher implementation to be used with
 		// IndexUpdateRequest Here, we use Wagon based one as shorthand, but
 		// all we need is a ResourceFetcher implementation
 		TransferListener listener = new AbstractTransferListener() {
 			@Override
 			public void transferCompleted(TransferEvent transferEvent) {
-				System.out.println(" - Done");
+				LOGGER.debug("Downloading "
+						+ transferEvent.getResource().getName()
+						+ " successfull");
 			}
 
 			@Override
@@ -99,13 +126,17 @@ public class MavenIndexDownloader {
 
 			@Override
 			public void transferStarted(TransferEvent transferEvent) {
-				System.out.print(" Downloading "
+				LOGGER.debug("Downloading "
 						+ transferEvent.getResource().getName());
 			}
 		};
-		AuthenticationInfo info = new AuthenticationInfo();
-		info.setUserName(MavenRepoCredentials.USERNAME);
-		info.setPassword(MavenRepoCredentials.PASSWORD);
+
+		AuthenticationInfo info = null;
+		if (username != null && password != null) {
+			info = new AuthenticationInfo();
+			info.setUserName(username);
+			info.setPassword(password);
+		}
 		ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(
 				httpWagon, listener, info, null);
 		Date centralContextCurrentTimestamp = indexingContext.getTimestamp();
@@ -114,12 +145,12 @@ public class MavenIndexDownloader {
 		IndexUpdateResult updateResult = indexUpdater
 				.fetchAndUpdateIndex(updateRequest);
 		if (updateResult.isFullUpdate()) {
-			System.out.println("Full update happened!");
+			LOGGER.debug("Full update happened!");
 		} else if (updateResult.getTimestamp().equals(
 				centralContextCurrentTimestamp)) {
-			System.out.println("No update needed, index is up to date!");
+			LOGGER.debug("No update needed, index is up to date!");
 		} else {
-			System.out.println("Incremental update happened, change covered "
+			LOGGER.debug("Incremental update happened, change covered "
 					+ centralContextCurrentTimestamp + " - "
 					+ updateResult.getTimestamp() + " period.");
 		}

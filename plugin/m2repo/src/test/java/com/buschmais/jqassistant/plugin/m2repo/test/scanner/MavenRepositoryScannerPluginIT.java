@@ -15,9 +15,13 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 	@Test
 	public void testMavenRepoScanner() throws MalformedURLException {
 		try {
+			long beginn = System.currentTimeMillis();
 			store.beginTransaction();
 			getScanner().scan(new URL(MavenRepoCredentials.REPO_URL),
 					MavenRepoCredentials.REPO_URL, MavenScope.REPOSITORY);
+
+			System.out.println("Dauer: "
+					+ (System.currentTimeMillis() - beginn));
 			System.in.read();
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 
@@ -22,35 +21,50 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ArtifactDownloader {
+/**
+ * Transfers artifacts from a remote repository to a local repository.
+ * 
+ * @author pherklotz
+ */
+public class ArtifactResolver {
 
-	public static void main(String[] args) {
-		try {
-			File file = new ArtifactDownloader(new URL(
-					MavenRepoCredentials.REPO_URL),
-					MavenRepoCredentials.USERNAME,
-					MavenRepoCredentials.PASSWORD).downloadArtifact(
-					"com.buschmais.tinkerforge4jenkins",
-					"tinkerforge4jenkins-core", "jar", "1.0.0");
-			System.out.println(file.getAbsolutePath());
-		} catch (ArtifactResolutionException | MalformedURLException e) {
-			e.printStackTrace();
-		}
-
-	}
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(ArtifactResolver.class);
 
 	private final RemoteRepository repository;
 	private final RepositorySystem repositorySystem;
 
 	private final DefaultRepositorySystemSession session;
 
-	public ArtifactDownloader(URL repositoryUrl) {
+	/**
+	 * Creates a new object.
+	 * 
+	 * @param repositoryUrl
+	 *            the repository url
+	 */
+	public ArtifactResolver(URL repositoryUrl) {
 		this(repositoryUrl, null, null);
 	}
 
-	public ArtifactDownloader(URL repositoryUrl, String username,
+	/**
+	 * Creates a new object.
+	 * 
+	 * @param repositoryUrl
+	 *            the repository url
+	 * @param username
+	 *            an username for authentication
+	 * @param password
+	 *            a password for authentication
+	 */
+	public ArtifactResolver(URL repositoryUrl, String username,
 			String password) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Create new " + this.getClass().getSimpleName()
+					+ " for URL " + repositoryUrl.toString());
+		}
 		AuthenticationBuilder authBuilder = new AuthenticationBuilder();
 		if (username != null) {
 			authBuilder.addUsername(username);
@@ -59,15 +73,31 @@ public class ArtifactDownloader {
 			authBuilder.addPassword(password);
 		}
 		Authentication auth = authBuilder.build();
-		repository = new RemoteRepository.Builder("buschmais-public",
-				"default", repositoryUrl.toString()).setAuthentication(auth)
-				.build();
+		repository = new RemoteRepository.Builder("jqa", "default",
+				repositoryUrl.toString()).setAuthentication(auth).build();
 		repositorySystem = newRepositorySystem();
 		session = newRepositorySystemSession(repositorySystem);
 	}
 
+	/**
+	 * Resolves an artifact with the given properties and transfers it in a
+	 * local repository.
+	 * 
+	 * @param groupId
+	 *            the artifact groupId
+	 * @param artifactId
+	 *            the artifact artifactId
+	 * @param type
+	 *            the artifact type (e.g. jar, pom, ...)
+	 * @param version
+	 *            the artifact version
+	 * @return the local file handle
+	 * @throws ArtifactResolutionException
+	 *             in case of a unresolvable artifacts
+	 */
 	public File downloadArtifact(String groupId, String artifactId,
 			String type, String version) throws ArtifactResolutionException {
+
 		if (type == null) {
 			type = "jar";
 		}
@@ -75,6 +105,9 @@ public class ArtifactDownloader {
 		final String gav = String.format("%s:%s:%s:%s", groupId, artifactId,
 				type, version);
 
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Download artifact: " + gav);
+		}
 		ArtifactRequest artifactRequest = newArtifactRequest(gav);
 
 		ArtifactResult artifactResult = repositorySystem.resolveArtifact(
@@ -83,6 +116,13 @@ public class ArtifactDownloader {
 		return artifactResult.getArtifact().getFile();
 	}
 
+	/**
+	 * Creates a new {@link ArtifactRequest} Object with the artifact GAV and
+	 * the repository.
+	 * 
+	 * @param artifactGav
+	 * @return
+	 */
 	private ArtifactRequest newArtifactRequest(String artifactGav) {
 		ArtifactRequest artifactRequest = new ArtifactRequest();
 		artifactRequest.setArtifact(new DefaultArtifact(artifactGav));
@@ -99,13 +139,6 @@ public class ArtifactDownloader {
 				FileTransporterFactory.class);
 		locator.addService(TransporterFactory.class,
 				HttpTransporterFactory.class);
-		locator.setErrorHandler(new DefaultServiceLocator.ErrorHandler() {
-			@Override
-			public void serviceCreationFailed(Class<?> type, Class<?> impl,
-					Throwable exception) {
-				exception.printStackTrace();
-			}
-		});
 
 		return locator.getService(RepositorySystem.class);
 	}

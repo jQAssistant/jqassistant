@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Indexed;
 import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
  * Describes a maven repository.
@@ -16,8 +16,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 @Label(value = "Repository")
 public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
 
-	@Outgoing
-	List<ContainsDescriptor> getArtifacts();
+	@Relation("CONTAINS_ARTIFACT")
+	List<RepositoryArtifactDescriptor> getArtifacts();
 
 	@Indexed
 	String getUrl();
