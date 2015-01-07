@@ -16,11 +16,11 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label(value = "Repository")
 public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
 
-	@Relation("CONTAINS_ARTIFACT")
-	List<RepositoryArtifactDescriptor> getArtifacts();
+    @Relation("CONTAINS_ARTIFACT")
+    List<RepositoryArtifactDescriptor> getArtifacts();
 
-	@Indexed
-	String getUrl();
+    @Indexed
+    String getUrl();
 
-	void setUrl(String url);
+    void setUrl(String url);
 }

@@ -31,101 +31,77 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
  * 
  * @author pherklotz
  */
-public class MavenRepositoryScannerPlugin extends
-		AbstractScannerPlugin<URL, MavenRepositoryDescriptor> {
+public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, MavenRepositoryDescriptor> {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(MavenRepositoryScannerPlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenRepositoryScannerPlugin.class);
 
-	@Override
-	public boolean accepts(URL item, String path, Scope scope)
-			throws IOException {
-		return MavenScope.REPOSITORY == scope;
-	}
+    @Override
+    public boolean accepts(URL item, String path, Scope scope) throws IOException {
+        return MavenScope.REPOSITORY == scope;
+    }
 
-	private MavenRepositoryDescriptor getRepositoryDescriptor(Store store,
-			String url) {
-		MavenRepositoryDescriptor repoDescriptor;
-		repoDescriptor = store.create(MavenRepositoryDescriptor.class);
-		repoDescriptor.setUrl(url);
-		return repoDescriptor;
-	}
+    private MavenRepositoryDescriptor getRepositoryDescriptor(Store store, String url) {
+        MavenRepositoryDescriptor repoDescriptor;
+        repoDescriptor = store.create(MavenRepositoryDescriptor.class);
+        repoDescriptor.setUrl(url);
+        return repoDescriptor;
+    }
 
-	private void migrateToArtifactAndSetRelation(Store store,
-			MavenRepositoryDescriptor repoDescriptor, String lastModified,
-			Descriptor descriptor) {
-		RepositoryArtifactDescriptor artifactDescriptor = store.migrate(
-				descriptor, RepositoryArtifactDescriptor.class);
+    private void migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, String lastModified, Descriptor descriptor) {
+        RepositoryArtifactDescriptor artifactDescriptor = store.migrate(descriptor, RepositoryArtifactDescriptor.class);
 
-		repoDescriptor.getArtifacts().add(artifactDescriptor);
-		// ContainsDescriptor containsDescriptor = store.create(repoDescriptor,
-		// ContainsDescriptor.class, artifactDescriptor);
-		// containsDescriptor.setLastModified(lastModified);
-	}
+        repoDescriptor.getArtifacts().add(artifactDescriptor);
+        // ContainsDescriptor containsDescriptor = store.create(repoDescriptor,
+        // ContainsDescriptor.class, artifactDescriptor);
+        // containsDescriptor.setLastModified(lastModified);
+    }
 
-	@Override
-	public MavenRepositoryDescriptor scan(URL item, String path, Scope scope,
-			Scanner scanner) throws IOException {
-		Store store = scanner.getContext().getStore();
-		IndexSearcher searcher = null;
-		MavenRepositoryDescriptor repoDescriptor = null;
-		// handles the remote maven index
-		MavenIndexDownloader indexDownloader = null;
-		try {
-			indexDownloader = new MavenIndexDownloader(item,
-					MavenRepoCredentials.USERNAME,
-					MavenRepoCredentials.PASSWORD);
-			// the MavenRepositoryDescriptor
-			repoDescriptor = getRepositoryDescriptor(store, item.toString());
-			// used to resolve (remote) artifacts
-			ArtifactResolver artifactDownloader = new ArtifactResolver(item,
-					MavenRepoCredentials.USERNAME,
-					MavenRepoCredentials.PASSWORD);
-			searcher = indexDownloader.newIndexSearcher();
-			IndexReader ir = searcher.getIndexReader();
-			for (int i = 0; i < ir.maxDoc() && i < 5_000; i++) {
-				Document doc = ir.document(i);
-				ArtifactInfo ai = IndexUtils.constructArtifactInfo(doc,
-						indexDownloader.getIndexingContext());
-				if (ai != null) {
-					File artifactFile = null;
-					try {
-						artifactFile = artifactDownloader.downloadArtifact(
-								ai.getFieldValue(MAVEN.GROUP_ID),
-								ai.getFieldValue(MAVEN.ARTIFACT_ID),
-								ai.getFieldValue(MAVEN.PACKAGING),
-								ai.getFieldValue(MAVEN.VERSION));
-						try (FileResource fileResource = new ArtifactFileResource(
-								artifactFile)) {
-							Descriptor descriptor = scanner.scan(fileResource,
-									artifactFile.getAbsolutePath(), null);
-							if (descriptor != null) {
-								migrateToArtifactAndSetRelation(store,
-										repoDescriptor,
-										ai.getFieldValue(MAVEN.LAST_MODIFIED),
-										descriptor);
-							} else {
-								LOGGER.debug("Could not scan artifact: "
-										+ artifactFile.getAbsoluteFile());
-							}
-						}
-					} catch (ArtifactResolutionException e) {
-						LOGGER.warn(e.getMessage());
-					}
-				} else {
-					LOGGER.debug("Could not construct ArtifactInfo for document: "
-							+ doc.toString());
-				}
-			}
-		} catch (IllegalArgumentException | PlexusContainerException
-				| ComponentLookupException e) {
-			throw new IOException(e);
-		} finally {
-			if (searcher != null) {
-				indexDownloader.closeIndexSearcher(searcher);
-			}
-		}
+    @Override
+    public MavenRepositoryDescriptor scan(URL item, String path, Scope scope, Scanner scanner) throws IOException {
+        Store store = scanner.getContext().getStore();
+        IndexSearcher searcher = null;
+        MavenRepositoryDescriptor repoDescriptor = null;
+        // handles the remote maven index
+        MavenIndexDownloader indexDownloader = null;
+        try {
+            indexDownloader = new MavenIndexDownloader(item, MavenRepoCredentials.USERNAME, MavenRepoCredentials.PASSWORD);
+            // the MavenRepositoryDescriptor
+            repoDescriptor = getRepositoryDescriptor(store, item.toString());
+            // used to resolve (remote) artifacts
+            ArtifactResolver artifactDownloader = new ArtifactResolver(item, MavenRepoCredentials.USERNAME, MavenRepoCredentials.PASSWORD);
+            searcher = indexDownloader.newIndexSearcher();
+            IndexReader ir = searcher.getIndexReader();
+            for (int i = 0; i < ir.maxDoc() && i < 5_000; i++) {
+                Document doc = ir.document(i);
+                ArtifactInfo ai = IndexUtils.constructArtifactInfo(doc, indexDownloader.getIndexingContext());
+                if (ai != null) {
+                    File artifactFile = null;
+                    try {
+                        artifactFile = artifactDownloader.downloadArtifact(ai.getFieldValue(MAVEN.GROUP_ID), ai.getFieldValue(MAVEN.ARTIFACT_ID),
+                                ai.getFieldValue(MAVEN.PACKAGING), ai.getFieldValue(MAVEN.VERSION));
+                        try (FileResource fileResource = new ArtifactFileResource(artifactFile)) {
+                            Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
+                            if (descriptor != null) {
+                                migrateToArtifactAndSetRelation(store, repoDescriptor, ai.getFieldValue(MAVEN.LAST_MODIFIED), descriptor);
+                            } else {
+                                LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
+                            }
+                        }
+                    } catch (ArtifactResolutionException e) {
+                        LOGGER.warn(e.getMessage());
+                    }
+                } else {
+                    LOGGER.debug("Could not construct ArtifactInfo for document: " + doc.toString());
+                }
+            }
+        } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
+            throw new IOException(e);
+        } finally {
+            if (searcher != null) {
+                indexDownloader.closeIndexSearcher(searcher);
+            }
+        }
 
-		return repoDescriptor;
-	}
+        return repoDescriptor;
+    }
 }

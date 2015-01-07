@@ -11,14 +11,14 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 // @Relation("CONTAINS_ARTIFACT")
 public interface ContainsDescriptor extends Descriptor {
 
-	// @Incoming
-	// RepositoryArtifactDescriptor getArtifactDescriptor();
-	//
-	// @Property("lastModified")
-	// String getLastModified();
-	//
-	// @Outgoing
-	// MavenRepositoryDescriptor getMavenRepository();
-	//
-	// void setLastModified(String lastModified);
+    // @Incoming
+    // RepositoryArtifactDescriptor getArtifactDescriptor();
+    //
+    // @Property("lastModified")
+    // String getLastModified();
+    //
+    // @Outgoing
+    // MavenRepositoryDescriptor getMavenRepository();
+    //
+    // void setLastModified(String lastModified);
 }

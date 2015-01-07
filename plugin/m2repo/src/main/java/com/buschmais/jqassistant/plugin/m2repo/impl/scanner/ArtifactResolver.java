@@ -31,127 +31,118 @@ import org.slf4j.LoggerFactory;
  */
 public class ArtifactResolver {
 
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ArtifactResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResolver.class);
 
-	private final RemoteRepository repository;
-	private final RepositorySystem repositorySystem;
+    private final RemoteRepository repository;
+    private final RepositorySystem repositorySystem;
 
-	private final DefaultRepositorySystemSession session;
+    private final DefaultRepositorySystemSession session;
 
-	/**
-	 * Creates a new object.
-	 * 
-	 * @param repositoryUrl
-	 *            the repository url
-	 */
-	public ArtifactResolver(URL repositoryUrl) {
-		this(repositoryUrl, null, null);
-	}
+    /**
+     * Creates a new object.
+     * 
+     * @param repositoryUrl
+     *            the repository url
+     */
+    public ArtifactResolver(URL repositoryUrl) {
+        this(repositoryUrl, null, null);
+    }
 
-	/**
-	 * Creates a new object.
-	 * 
-	 * @param repositoryUrl
-	 *            the repository url
-	 * @param username
-	 *            an username for authentication
-	 * @param password
-	 *            a password for authentication
-	 */
-	public ArtifactResolver(URL repositoryUrl, String username,
-			String password) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Create new " + this.getClass().getSimpleName()
-					+ " for URL " + repositoryUrl.toString());
-		}
-		AuthenticationBuilder authBuilder = new AuthenticationBuilder();
-		if (username != null) {
-			authBuilder.addUsername(username);
-		}
-		if (password != null) {
-			authBuilder.addPassword(password);
-		}
-		Authentication auth = authBuilder.build();
-		repository = new RemoteRepository.Builder("jqa", "default",
-				repositoryUrl.toString()).setAuthentication(auth).build();
-		repositorySystem = newRepositorySystem();
-		session = newRepositorySystemSession(repositorySystem);
-	}
+    /**
+     * Creates a new object.
+     * 
+     * @param repositoryUrl
+     *            the repository url
+     * @param username
+     *            an username for authentication
+     * @param password
+     *            a password for authentication
+     */
+    public ArtifactResolver(URL repositoryUrl, String username, String password) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + repositoryUrl.toString());
+        }
+        AuthenticationBuilder authBuilder = new AuthenticationBuilder();
+        if (username != null) {
+            authBuilder.addUsername(username);
+        }
+        if (password != null) {
+            authBuilder.addPassword(password);
+        }
+        Authentication auth = authBuilder.build();
+        repository = new RemoteRepository.Builder("jqa", "default", repositoryUrl.toString()).setAuthentication(auth).build();
+        repositorySystem = newRepositorySystem();
+        session = newRepositorySystemSession(repositorySystem);
+    }
 
-	/**
-	 * Resolves an artifact with the given properties and transfers it in a
-	 * local repository.
-	 * 
-	 * @param groupId
-	 *            the artifact groupId
-	 * @param artifactId
-	 *            the artifact artifactId
-	 * @param type
-	 *            the artifact type (e.g. jar, pom, ...)
-	 * @param version
-	 *            the artifact version
-	 * @return the local file handle
-	 * @throws ArtifactResolutionException
-	 *             in case of a unresolvable artifacts
-	 */
-	public File downloadArtifact(String groupId, String artifactId,
-			String type, String version) throws ArtifactResolutionException {
+    /**
+     * Resolves an artifact with the given properties and transfers it in a
+     * local repository.
+     * 
+     * @param groupId
+     *            the artifact groupId
+     * @param artifactId
+     *            the artifact artifactId
+     * @param type
+     *            the artifact type (e.g. jar, pom, ...)
+     * @param version
+     *            the artifact version
+     * @return the local file handle
+     * @throws ArtifactResolutionException
+     *             in case of a unresolvable artifacts
+     */
+    public File downloadArtifact(String groupId, String artifactId, String type, String version) throws ArtifactResolutionException {
 
-		if (type == null) {
-			type = "jar";
-		}
+        if (type == null) {
+            type = "jar";
+        }
 
-		final String gav = String.format("%s:%s:%s:%s", groupId, artifactId,
-				type, version);
+        final String gav = String.format("%s:%s:%s:%s", groupId, artifactId, type, version);
 
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Download artifact: " + gav);
-		}
-		ArtifactRequest artifactRequest = newArtifactRequest(gav);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Download artifact: " + gav);
+        }
+        ArtifactRequest artifactRequest = newArtifactRequest(gav);
 
-		ArtifactResult artifactResult = repositorySystem.resolveArtifact(
-				session, artifactRequest);
+        ArtifactResult artifactResult = repositorySystem.resolveArtifact(session, artifactRequest);
 
-		return artifactResult.getArtifact().getFile();
-	}
+        return artifactResult.getArtifact().getFile();
+    }
 
-	/**
-	 * Creates a new {@link ArtifactRequest} Object with the artifact GAV and
-	 * the repository.
-	 * 
-	 * @param artifactGav
-	 * @return
-	 */
-	private ArtifactRequest newArtifactRequest(String artifactGav) {
-		ArtifactRequest artifactRequest = new ArtifactRequest();
-		artifactRequest.setArtifact(new DefaultArtifact(artifactGav));
-		artifactRequest.setRepositories(Arrays.asList(repository));
-		return artifactRequest;
-	}
+    /**
+     * Creates a new {@link ArtifactRequest} Object with the artifact GAV and
+     * the repository.
+     * 
+     * @param artifactGav
+     * @return
+     */
+    private ArtifactRequest newArtifactRequest(String artifactGav) {
+        ArtifactRequest artifactRequest = new ArtifactRequest();
+        artifactRequest.setArtifact(new DefaultArtifact(artifactGav));
+        artifactRequest.setRepositories(Arrays.asList(repository));
+        return artifactRequest;
+    }
 
-	private RepositorySystem newRepositorySystem() {
-		DefaultServiceLocator locator = MavenRepositorySystemUtils
-				.newServiceLocator();
-		locator.addService(RepositoryConnectorFactory.class,
-				BasicRepositoryConnectorFactory.class);
-		locator.addService(TransporterFactory.class,
-				FileTransporterFactory.class);
-		locator.addService(TransporterFactory.class,
-				HttpTransporterFactory.class);
+    /**
+     * Creates a new {@link RepositorySystem} object.
+     * 
+     * @return the new object
+     */
+    private RepositorySystem newRepositorySystem() {
+        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+        locator.addService(TransporterFactory.class, FileTransporterFactory.class);
+        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
 
-		return locator.getService(RepositorySystem.class);
-	}
+        return locator.getService(RepositorySystem.class);
+    }
 
-	private DefaultRepositorySystemSession newRepositorySystemSession(
-			RepositorySystem system) {
-		DefaultRepositorySystemSession session = MavenRepositorySystemUtils
-				.newSession();
+    private DefaultRepositorySystemSession newRepositorySystemSession(RepositorySystem system) {
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-		LocalRepository localRepo = new LocalRepository("target/local-repo");
-		session.setLocalRepositoryManager(system.newLocalRepositoryManager(
-				session, localRepo));
+        LocalRepository localRepo = new LocalRepository("target/local-repo");
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
-		return session;
-	}
+        return session;
+    }
 }
