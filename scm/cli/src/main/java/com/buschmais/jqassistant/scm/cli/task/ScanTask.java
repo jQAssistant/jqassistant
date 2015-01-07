@@ -21,7 +21,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverBuilder;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
@@ -75,7 +74,7 @@ public class ScanTask extends AbstractJQATask {
     private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) {
         store.beginTransaction();
         Scanner scanner = new ScannerImpl(store, scannerPlugins, scopePluginRepository.getScopes());
-        Scope scope = JavaScope.CLASSPATH; // scanner.resolveScope(scopeName);
+        Scope scope = scanner.resolveScope(scopeName);
         ScannerContext context = scanner.getContext();
         context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
         try {
