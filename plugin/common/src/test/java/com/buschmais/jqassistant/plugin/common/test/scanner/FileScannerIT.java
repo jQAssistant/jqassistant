@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -14,6 +16,7 @@ import java.util.Scanner;
 
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -24,23 +27,23 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 public class FileScannerIT extends AbstractPluginIT {
 
     /**
-     * Scan a directory using two dependent plugins for a custom scope.
+     * Scan a directory using two dependent plugins.
      * 
      * @throws IOException
      *             If the test fails.
      */
     @Test
-    public void customDirectory() throws IOException {
+    public void directory() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), CustomScope.CUSTOM);
-        assertThat(descriptor, instanceOf(CustomDirectoryDescriptor.class));
-        CustomDirectoryDescriptor customDirectoryDescriptor = (CustomDirectoryDescriptor) descriptor;
-        assertThat(customDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
+        FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), Scope.Default.NONE);
+        assertThat(descriptor, instanceOf(DependentDirectoryDescriptor.class));
+        DependentDirectoryDescriptor dependentDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
+        assertThat(dependentDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
-        assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
-        assertThat(customDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
-        assertThat(customDirectoryDescriptor.getValue(), equalTo("TEST"));
+        assertThat(dependentDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
+        assertThat(dependentDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
+        assertThat(dependentDirectoryDescriptor.getValue(), equalTo("TEST"));
         store.commitTransaction();
     }
 
@@ -54,7 +57,7 @@ public class FileScannerIT extends AbstractPluginIT {
     public void directoryContainsChildren() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), CustomScope.CUSTOM);
+        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), Scope.Default.NONE);
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
 
         Scanner scanner = new Scanner(expectedFilename).useDelimiter("/");
