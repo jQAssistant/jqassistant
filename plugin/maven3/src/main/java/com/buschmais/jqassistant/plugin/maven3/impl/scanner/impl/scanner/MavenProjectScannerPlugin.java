@@ -73,7 +73,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         addProjectDetails(project, projectDescriptor, context);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
-        List<ScanInclude> scanIncludes = (List<ScanInclude>) getProperties().get(ScanInclude.class.getName());
+        List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
                 String scopeName = scanInclude.getScope();

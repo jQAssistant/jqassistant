@@ -26,6 +26,22 @@ public class ScanIT extends AbstractCLIIT {
 
     @Test
     public void files() throws IOException, InterruptedException {
+        URL directory = ScanIT.class.getResource("/");
+        String[] args = new String[] { "scan", "-f", directory.getFile() };
+        assertThat(execute(args).getExitCode(), equalTo(0));
+
+        EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
+        store.start(Collections.<Class<?>> emptyList());
+        Map<String, Object> params = new HashMap<>();
+        params.put("fileName", "/META-INF");
+        String query = "match (f:File:Directory) where f.fileName={fileName} return count(f) as count";
+        Long count = executeQuery(store, query, params, "count", Long.class);
+        store.stop();
+        assertThat(count, equalTo(1l));
+    }
+
+    @Test
+    public void classesFromFiles() throws IOException, InterruptedException {
         URL file = getResource(ScanTask.class);
         URL directory = ScanIT.class.getResource("/");
         String[] args = new String[] { "scan", "-f", file.getFile() + CLASSPATH_SCOPE_SUFFIX + "," + directory.getFile() + CLASSPATH_SCOPE_SUFFIX };
@@ -34,7 +50,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @Test
-    public void urls() throws IOException, InterruptedException {
+    public void classesFromUrls() throws IOException, InterruptedException {
         URL url1 = getResource(ScanTask.class);
         URL url2 = getResource(ScanIT.class);
         String[] args = new String[] { "scan", "-u", url1 + CLASSPATH_SCOPE_SUFFIX + "," + url2 + CLASSPATH_SCOPE_SUFFIX };
@@ -70,7 +86,7 @@ public class ScanIT extends AbstractCLIIT {
     }
 
     @Test
-    public void pluginClassloader() throws IOException, InterruptedException {
+    public void pluginClassLoader() throws IOException, InterruptedException {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
         String[] args = new String[] { "scan", "-f", testClassDirectory.getAbsolutePath() + CLASSPATH_SCOPE_SUFFIX };
         assertThat(execute(args).getExitCode(), equalTo(0));

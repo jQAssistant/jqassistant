@@ -18,7 +18,6 @@
                     <scanIncludes>
                         <scanInclude>
                             <path>${basedir}/config</path>
-                            <scope>java:classpath</scope>
                         </scanInclude>
                     </scanIncludes>
                 </configuration>

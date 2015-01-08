@@ -16,7 +16,7 @@ import java.util.Scanner;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -36,7 +36,7 @@ public class FileScannerIT extends AbstractPluginIT {
     public void directory() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), Scope.Default.NONE);
+        FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
         assertThat(descriptor, instanceOf(DependentDirectoryDescriptor.class));
         DependentDirectoryDescriptor dependentDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
         assertThat(dependentDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
@@ -57,7 +57,7 @@ public class FileScannerIT extends AbstractPluginIT {
     public void directoryContainsChildren() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), Scope.Default.NONE);
+        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
 
         Scanner scanner = new Scanner(expectedFilename).useDelimiter("/");
