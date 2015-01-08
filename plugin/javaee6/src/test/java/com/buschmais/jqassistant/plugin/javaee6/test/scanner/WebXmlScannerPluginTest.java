@@ -11,9 +11,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -24,16 +21,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
 
 @RunWith(MockitoJUnitRunner.class)
-public class WebXmlScannerPluginTest {
-
-    @Mock
-    private Scanner scanner;
-
-    @Mock
-    private ScannerContext scannerContext;
-
-    @Mock
-    private Store store;
+public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
 
     @Mock
     private TypeResolver typeResolver;
@@ -182,8 +170,6 @@ public class WebXmlScannerPluginTest {
 
     @Test
     public void webXml() throws IOException {
-        when(scanner.getContext()).thenReturn(scannerContext);
-        when(scannerContext.getStore()).thenReturn(store);
         when(scannerContext.peek(WebApplicationArchiveDescriptor.class)).thenReturn(warDescriptor);
         when(scannerContext.peek(TypeResolver.class)).thenReturn(typeResolver);
 
@@ -296,16 +282,9 @@ public class WebXmlScannerPluginTest {
         verifyFilterMapping();
         verifyListener();
         verifySecurityConstraint();
-        verifySecurityRole();
+        verifySecurityRole(webXmlDescriptor.getSecurityRoles(), securityRoleDescriptor, securityRoleDescriptionDescriptor, securityRoleRoleNameDescriptor,
+                "en", "Admin users", "Admin");
         verifyLoginConfig();
-    }
-
-    private void verifySecurityRole() {
-        verify(store).create(SecurityRoleDescriptor.class);
-        verify(webXmlDescriptor.getSecurityRoles()).add(securityRoleDescriptor);
-        verifyDescription(securityRoleDescriptor.getDescriptions(), securityRoleDescriptionDescriptor, "en", "Admin users");
-        verify(securityRoleDescriptor).setRoleName(securityRoleRoleNameDescriptor);
-        verify(securityRoleRoleNameDescriptor).setName("Admin");
     }
 
     private void verifyLoginConfig() {
@@ -401,21 +380,4 @@ public class WebXmlScannerPluginTest {
         verify(descriptor).setValue(value);
     }
 
-    private void verifyIcon(List<IconDescriptor> descriptors, IconDescriptor descriptor, String smallIcon, String largeIcon) {
-        verify(descriptors).add(descriptor);
-        verify(descriptor).setSmallIcon(smallIcon);
-        verify(descriptor).setLargeIcon(largeIcon);
-    }
-
-    private void verifyDisplayName(List<DisplayNameDescriptor> descriptors, DisplayNameDescriptor descriptor, String lang, String value) {
-        verify(descriptors).add(descriptor);
-        verify(descriptor).setLang(lang);
-        verify(descriptor).setValue(value);
-    }
-
-    private void verifyDescription(List<DescriptionDescriptor> descriptors, DescriptionDescriptor descriptor, String lang, String value) {
-        verify(descriptors).add(descriptor);
-        verify(descriptor).setLang(lang);
-        verify(descriptor).setValue(value);
-    }
 }

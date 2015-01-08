@@ -6,11 +6,7 @@ import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDescriptor {
-
-    String getVersion();
-
-    void setVersion(String attributeValue);
+public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDescriptor, VersionDescriptor {
 
     String getDisplayName();
 
