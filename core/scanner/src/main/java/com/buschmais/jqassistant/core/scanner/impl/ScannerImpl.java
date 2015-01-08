@@ -13,6 +13,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -140,12 +141,12 @@ public class ScannerImpl implements Scanner {
     @Override
     public Scope resolveScope(String name) {
         if (name == null) {
-            return null;
+            return DefaultScope.NONE;
         }
         Scope scope = scopes.get(name);
         if (scope == null) {
             LOGGER.warn("No scope found for name '" + name + "'.");
-            scope = Scope.Default.NONE;
+            scope = DefaultScope.NONE;
         }
         return scope;
     }

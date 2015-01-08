@@ -5,28 +5,6 @@ package com.buschmais.jqassistant.core.scanner.api;
  */
 public interface Scope {
 
-    enum Default implements Scope {
-        NONE {
-            @Override
-            public String getPrefix() {
-                return "default";
-            }
-
-            @Override
-            public String getName() {
-                return name();
-            }
-
-            @Override
-            public void create(ScannerContext context) {
-            }
-
-            @Override
-            public void destroy(ScannerContext context) {
-            }
-        };
-    }
-
     /**
      * Return the prefix of the scope, e.g. "java".
      * 

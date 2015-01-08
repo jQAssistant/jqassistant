@@ -41,7 +41,7 @@ public interface Scanner {
      *
      * @param name
      *            The fully qualified name.
-     * @return The scope or <code>null</code> if it cannot be resolved.
+     * @return The scope.
      */
     Scope resolveScope(String name);
 }
