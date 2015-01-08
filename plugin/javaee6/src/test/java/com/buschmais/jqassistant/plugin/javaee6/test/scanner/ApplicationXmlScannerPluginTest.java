@@ -85,6 +85,7 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         scannerPlugin.scan(fileResource, "/META-INF/application.xml", EnterpriseApplicationScope.EAR, scanner);
 
         verify(store).create(ApplicationXmlDescriptor.class);
+        verify(applicationXmlDescriptor).setVersion("6");
         verify(applicationXmlDescriptor).setName("TestApplication");
         verify(applicationXmlDescriptor).setInitializeInOrder("true");
         verify(applicationXmlDescriptor).setLibraryDirectory("lib");

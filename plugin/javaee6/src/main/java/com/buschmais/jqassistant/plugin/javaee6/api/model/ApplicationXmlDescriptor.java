@@ -8,7 +8,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface ApplicationXmlDescriptor extends ApplicationDescriptor, XmlDescriptor, FileDescriptor, NamedDescriptor, VersionDescriptor {
+public interface ApplicationXmlDescriptor extends EnterpriseDescriptor, ApplicationDescriptor, XmlDescriptor, FileDescriptor, NamedDescriptor,
+        VersionDescriptor {
 
     @Relation("HAS_DISPLAY_NAME")
     List<DisplayNameDescriptor> getDisplayNames();
