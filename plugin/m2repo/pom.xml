@@ -9,7 +9,7 @@
 	</parent>
 	<artifactId>jqassistant.plugin.m2repo</artifactId>
 	<properties>
-		<aetherVersion>1.0.0.v20140518</aetherVersion>
+ 		<aetherVersion>1.0.0.v20140518</aetherVersion>
 		<mavenVersion>3.1.0</mavenVersion>
 		<wagonVersion>1.0</wagonVersion>
 		<mavenIndexerVersion>5.1.1</mavenIndexerVersion>
@@ -137,7 +137,7 @@
 			<groupId>org.eclipse.aether</groupId>
 			<artifactId>aether-impl</artifactId>
 			<version>${aetherVersion}</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.aether</groupId>
 			<artifactId>aether-connector-basic</artifactId>
@@ -152,18 +152,19 @@
 			<groupId>org.eclipse.aether</groupId>
 			<artifactId>aether-transport-http</artifactId>
 			<version>${aetherVersion}</version>
-		</dependency>
+		</dependency> 
 		<dependency>
 			<groupId>org.eclipse.aether</groupId>
 			<artifactId>aether-transport-wagon</artifactId>
 			<version>${aetherVersion}</version>
 		</dependency>
-		<dependency>
+		
+ 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-aether-provider</artifactId>
 			<version>${mavenVersion}</version>
 		</dependency>
-		<dependency>
+ 		<dependency>
 			<groupId>org.apache.maven.wagon</groupId>
 			<artifactId>wagon-ssh</artifactId>
 			<version>${wagonVersion}</version>

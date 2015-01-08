@@ -38,9 +38,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author pherklotz
  */
-public class MavenIndexDownloader {
+public class MavenIndex {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MavenIndexDownloader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MavenIndex.class);
 
     private IndexingContext indexingContext;
 
@@ -51,32 +51,56 @@ public class MavenIndexDownloader {
      * 
      * @param repoUrl
      *            the repository url
-     * @throws ExistingLuceneIndexMismatchException
-     *             error by index context creation
-     * @throws IllegalArgumentException
-     *             error during index context creation
-     * @throws PlexusContainerException
-     *             error during index context creation
-     * @throws ComponentLookupException
-     *             error during index update
      * @throws IOException
-     *             error during index update
+     *             error during index creation/update
      */
-    public MavenIndexDownloader(URL repoUrl) throws ExistingLuceneIndexMismatchException, IllegalArgumentException, PlexusContainerException,
-            ComponentLookupException, IOException {
+    public MavenIndex(URL repoUrl) throws IOException {
         this(repoUrl, null, null);
     }
 
-    public MavenIndexDownloader(URL repoUrl, String username, String password) throws ExistingLuceneIndexMismatchException, IllegalArgumentException,
-            PlexusContainerException, ComponentLookupException, IOException {
-        createIndexingContext(repoUrl);
-        updateIndex(username, password);
+    /**
+     * Constructs a new object.
+     * 
+     * @param repoUrl
+     *            the repository url
+     * @param username
+     *            the username for authentication (optional)
+     * @param password
+     *            the password for authentication (optional)
+     * @throws IOException
+     *             error during index creation/update
+     */
+    public MavenIndex(URL repoUrl, String username, String password) throws IOException {
+        try {
+            createIndexingContext(repoUrl);
+            updateIndex(username, password);
+        } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
+            throw new IOException(e);
+        }
     }
 
+    /**
+     * Releases the {@link IndexSearcher} instance.
+     * 
+     * @param searcher
+     *            the {@link IndexSearcher}
+     * @throws IOException
+     */
     public void closeIndexSearcher(IndexSearcher searcher) throws IOException {
         indexingContext.releaseIndexSearcher(searcher);
     }
 
+    /**
+     * Creates a new {@link IndexingContext}.
+     * 
+     * @param repoUrl
+     *            the URL of the remote Repository.
+     * @throws PlexusContainerException
+     * @throws ComponentLookupException
+     * @throws ExistingLuceneIndexMismatchException
+     * @throws IllegalArgumentException
+     * @throws IOException
+     */
     private void createIndexingContext(URL repoUrl) throws PlexusContainerException, ComponentLookupException, ExistingLuceneIndexMismatchException,
             IllegalArgumentException, IOException {
         plexusContainer = new DefaultPlexusContainer();
@@ -85,7 +109,8 @@ public class MavenIndexDownloader {
         // Files where local cache is (if any) and Lucene Index should be
         // located
         File localArtifactCache = new File("target/repo-artifact-cache");
-        File localIndexDir = new File("target/repo-index");
+        String repoSuffix = repoUrl.getHost();
+        File localIndexDir = new File("target/repo-index/" + repoSuffix);
         // Creators we want to use (search for fields it defines)
         List<IndexCreator> indexers = new ArrayList<>();
         indexers.add(plexusContainer.lookup(IndexCreator.class, MinimalArtifactInfoIndexCreator.ID));
@@ -94,26 +119,44 @@ public class MavenIndexDownloader {
         indexers.add(plexusContainer.lookup(IndexCreator.class, MavenArchetypeArtifactInfoIndexCreator.ID));
 
         // Create context for central repository index
-        indexingContext = indexer.createIndexingContext("jqassistant-context", "jqassistant-analysis", localArtifactCache, localIndexDir, repoUrl.toString(),
-                null, true, true, indexers);
+        indexingContext = indexer.createIndexingContext("jqa-cxt-" + repoSuffix, "jqa-repo-id-" + repoSuffix, localArtifactCache, localIndexDir,
+                repoUrl.toString(), null, true, true, indexers);
     }
 
+    /**
+     * Returns the actual {@link IndexingContext}.
+     * 
+     * @return {@link IndexingContext}.
+     */
     public IndexingContext getIndexingContext() {
         return indexingContext;
     }
 
+    /**
+     * Creates a new {@link IndexSearcher}
+     * 
+     * @return a new {@link IndexSearcher}
+     * @throws IOException
+     */
     public IndexSearcher newIndexSearcher() throws IOException {
         return indexingContext.acquireIndexSearcher();
     }
 
+    /**
+     * Update the local index.
+     * 
+     * @param username
+     *            the username for authentication (optional)
+     * @param password
+     *            the password for authentication (optional)
+     * @throws ComponentLookupException
+     * @throws IOException
+     */
     private void updateIndex(String username, String password) throws ComponentLookupException, IOException {
         IndexUpdater indexUpdater = plexusContainer.lookup(IndexUpdater.class);
         Wagon httpWagon = plexusContainer.lookup(Wagon.class, "http");
 
         LOGGER.info("Updating maven index...");
-        // Create ResourceFetcher implementation to be used with
-        // IndexUpdateRequest Here, we use Wagon based one as shorthand, but
-        // all we need is a ResourceFetcher implementation
         TransferListener listener = new AbstractTransferListener() {
             @Override
             public void transferCompleted(TransferEvent transferEvent) {
@@ -137,15 +180,15 @@ public class MavenIndexDownloader {
             info.setPassword(password);
         }
         ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, info, null);
-        Date centralContextCurrentTimestamp = indexingContext.getTimestamp();
+        Date repoUpdateTimestamp = indexingContext.getTimestamp();
         IndexUpdateRequest updateRequest = new IndexUpdateRequest(indexingContext, resourceFetcher);
         IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
         if (updateResult.isFullUpdate()) {
             LOGGER.debug("Full update happened!");
-        } else if (updateResult.getTimestamp().equals(centralContextCurrentTimestamp)) {
+        } else if (updateResult.getTimestamp().equals(repoUpdateTimestamp)) {
             LOGGER.debug("No update needed, index is up to date!");
         } else {
-            LOGGER.debug("Incremental update happened, change covered " + centralContextCurrentTimestamp + " - " + updateResult.getTimestamp() + " period.");
+            LOGGER.debug("Incremental update happened, change covered " + repoUpdateTimestamp + " - " + updateResult.getTimestamp() + " period.");
         }
     }
 

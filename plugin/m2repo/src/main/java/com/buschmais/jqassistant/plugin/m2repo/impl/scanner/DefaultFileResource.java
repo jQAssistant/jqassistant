@@ -8,11 +8,11 @@ import java.io.InputStream;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
- * Simple FileRessource for Maven artifacts.
+ * Simple FileRessource for {@link File}s.
  * 
  * @author pherklotz
  */
-public class ArtifactFileResource implements FileResource {
+public class DefaultFileResource implements FileResource {
 
     private final File file;
     private FileInputStream fis;
@@ -23,7 +23,7 @@ public class ArtifactFileResource implements FileResource {
      * @param file
      *            the file
      */
-    public ArtifactFileResource(File file) {
+    public DefaultFileResource(File file) {
         this.file = file;
     }
 

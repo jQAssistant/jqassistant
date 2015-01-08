@@ -19,7 +19,6 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             store.beginTransaction();
             getScanner().scan(new URL(MavenRepoCredentials.REPO_URL), MavenRepoCredentials.REPO_URL, MavenScope.REPOSITORY);
             System.out.println("Dauer: " + (System.currentTimeMillis() - beginn));
-            System.in.read();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

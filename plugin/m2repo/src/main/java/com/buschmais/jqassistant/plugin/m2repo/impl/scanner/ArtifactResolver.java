@@ -7,6 +7,7 @@ import java.util.Arrays;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
@@ -38,6 +39,8 @@ public class ArtifactResolver {
 
     private final DefaultRepositorySystemSession session;
 
+    private final URL repositoryUrl;
+
     /**
      * Creates a new object.
      * 
@@ -59,6 +62,7 @@ public class ArtifactResolver {
      *            a password for authentication
      */
     public ArtifactResolver(URL repositoryUrl, String username, String password) {
+        this.repositoryUrl = repositoryUrl;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + repositoryUrl.toString());
         }
@@ -137,10 +141,17 @@ public class ArtifactResolver {
         return locator.getService(RepositorySystem.class);
     }
 
+    /**
+     * Creates a new {@link RepositorySystemSession}.
+     * 
+     * @param system
+     *            the {@link RepositorySystem}
+     * @return a new {@link RepositorySystemSession}.
+     */
     private DefaultRepositorySystemSession newRepositorySystemSession(RepositorySystem system) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
 
-        LocalRepository localRepo = new LocalRepository("target/local-repo");
+        LocalRepository localRepo = new LocalRepository("target/local-repo/" + repositoryUrl.getHost());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 
         return session;

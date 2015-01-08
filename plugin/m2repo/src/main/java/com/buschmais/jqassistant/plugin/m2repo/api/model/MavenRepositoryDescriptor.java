@@ -17,7 +17,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
 
     @Relation("CONTAINS_ARTIFACT")
-    List<RepositoryArtifactDescriptor> getArtifacts();
+    List<RepositoryArtifactDescriptor> getContainedArtifacts();
 
     @Indexed
     String getUrl();

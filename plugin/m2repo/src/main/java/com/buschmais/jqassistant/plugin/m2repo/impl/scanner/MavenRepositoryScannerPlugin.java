@@ -10,8 +10,6 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.MAVEN;
 import org.apache.maven.index.context.IndexUtils;
-import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,52 +48,78 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private void migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, String lastModified, Descriptor descriptor) {
         RepositoryArtifactDescriptor artifactDescriptor = store.migrate(descriptor, RepositoryArtifactDescriptor.class);
 
-        repoDescriptor.getArtifacts().add(artifactDescriptor);
+        repoDescriptor.getContainedArtifacts().add(artifactDescriptor);
         // ContainsDescriptor containsDescriptor = store.create(repoDescriptor,
         // ContainsDescriptor.class, artifactDescriptor);
         // containsDescriptor.setLastModified(lastModified);
     }
 
+    /**
+     * Resolves, scans and add the artifact to the
+     * {@link MavenRepositoryDescriptor}.
+     * 
+     * @param scanner
+     *            the {@link Scanner}
+     * @param repoDescriptor
+     *            the {@link MavenRepositoryDescriptor}
+     * @param artifactResolver
+     *            the {@link ArtifactResolver}
+     * @param artifactInfo
+     *            informations about the searches artifact
+     * @throws IOException
+     */
+    private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactResolver artifactResolver, ArtifactInfo artifactInfo)
+            throws IOException {
+        try {
+            Store store = scanner.getContext().getStore();
+
+            String groupId = artifactInfo.getFieldValue(MAVEN.GROUP_ID);
+            String artifactId = artifactInfo.getFieldValue(MAVEN.ARTIFACT_ID);
+            String packaging = artifactInfo.getFieldValue(MAVEN.PACKAGING);
+            String version = artifactInfo.getFieldValue(MAVEN.VERSION);
+
+            File artifactFile = artifactResolver.downloadArtifact(groupId, artifactId, packaging, version);
+            try (FileResource fileResource = new DefaultFileResource(artifactFile)) {
+                Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
+                if (descriptor != null) {
+                    String lastModified = artifactInfo.getFieldValue(MAVEN.LAST_MODIFIED);
+                    migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
+                } else {
+                    LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
+                }
+            }
+        } catch (ArtifactResolutionException e) {
+            LOGGER.warn(e.getMessage());
+        }
+    }
+
     @Override
     public MavenRepositoryDescriptor scan(URL item, String path, Scope scope, Scanner scanner) throws IOException {
+        String username = MavenRepoCredentials.USERNAME;
+        String password = MavenRepoCredentials.PASSWORD;
+
         Store store = scanner.getContext().getStore();
         IndexSearcher searcher = null;
         MavenRepositoryDescriptor repoDescriptor = null;
         // handles the remote maven index
-        MavenIndexDownloader indexDownloader = null;
+        MavenIndex indexDownloader = null;
         try {
-            indexDownloader = new MavenIndexDownloader(item, MavenRepoCredentials.USERNAME, MavenRepoCredentials.PASSWORD);
+            indexDownloader = new MavenIndex(item, username, password);
             // the MavenRepositoryDescriptor
             repoDescriptor = getRepositoryDescriptor(store, item.toString());
             // used to resolve (remote) artifacts
-            ArtifactResolver artifactDownloader = new ArtifactResolver(item, MavenRepoCredentials.USERNAME, MavenRepoCredentials.PASSWORD);
+            ArtifactResolver artifactResolver = new ArtifactResolver(item, username, password);
             searcher = indexDownloader.newIndexSearcher();
             IndexReader ir = searcher.getIndexReader();
-            for (int i = 0; i < ir.maxDoc() && i < 5_000; i++) {
+            for (int i = 0; i < ir.maxDoc() && i < 100; i++) {
                 Document doc = ir.document(i);
                 ArtifactInfo ai = IndexUtils.constructArtifactInfo(doc, indexDownloader.getIndexingContext());
-                if (ai != null) {
-                    File artifactFile = null;
-                    try {
-                        artifactFile = artifactDownloader.downloadArtifact(ai.getFieldValue(MAVEN.GROUP_ID), ai.getFieldValue(MAVEN.ARTIFACT_ID),
-                                ai.getFieldValue(MAVEN.PACKAGING), ai.getFieldValue(MAVEN.VERSION));
-                        try (FileResource fileResource = new ArtifactFileResource(artifactFile)) {
-                            Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
-                            if (descriptor != null) {
-                                migrateToArtifactAndSetRelation(store, repoDescriptor, ai.getFieldValue(MAVEN.LAST_MODIFIED), descriptor);
-                            } else {
-                                LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
-                            }
-                        }
-                    } catch (ArtifactResolutionException e) {
-                        LOGGER.warn(e.getMessage());
-                    }
-                } else {
+                if (ai == null) {
                     LOGGER.debug("Could not construct ArtifactInfo for document: " + doc.toString());
+                    continue;
                 }
+                resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
             }
-        } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
-            throw new IOException(e);
         } finally {
             if (searcher != null) {
                 indexDownloader.closeIndexSearcher(searcher);
