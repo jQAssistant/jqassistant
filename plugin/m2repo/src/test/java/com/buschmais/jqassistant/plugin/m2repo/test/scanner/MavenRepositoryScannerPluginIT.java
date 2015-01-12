@@ -62,8 +62,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
                 + info.version + "." + info.packaging);
     }
 
-    @Test
-    public void testMavenRepoScanner() throws MalformedURLException {
+    public void testMavenRepoScannerRealRepo() throws MalformedURLException {
         try {
             long beginn = System.currentTimeMillis();
             store.beginTransaction();
