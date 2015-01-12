@@ -2,7 +2,7 @@
     <description>Provides a scanner for maven repositories.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.m2repo.api.model.ContainsDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.m2repo.api.model.ContainsArtifactDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor</class>
     </model>
     <scanner>

@@ -4,11 +4,18 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.maven.index.ArtifactInfo;
+import org.apache.maven.index.ArtifactInfoFilter;
+import org.apache.maven.index.Field;
 import org.apache.maven.index.Indexer;
+import org.apache.maven.index.IteratorSearchRequest;
+import org.apache.maven.index.MAVEN;
 import org.apache.maven.index.context.ExistingLuceneIndexMismatchException;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
@@ -16,6 +23,7 @@ import org.apache.maven.index.creator.JarFileContentsIndexCreator;
 import org.apache.maven.index.creator.MavenArchetypeArtifactInfoIndexCreator;
 import org.apache.maven.index.creator.MavenPluginArtifactInfoIndexCreator;
 import org.apache.maven.index.creator.MinimalArtifactInfoIndexCreator;
+import org.apache.maven.index.expr.SourcedSearchExpression;
 import org.apache.maven.index.updater.IndexUpdateRequest;
 import org.apache.maven.index.updater.IndexUpdateResult;
 import org.apache.maven.index.updater.IndexUpdater;
@@ -46,6 +54,8 @@ public class MavenIndex {
 
     private PlexusContainer plexusContainer;
 
+    private Indexer indexer;
+
     /**
      * Constructs a new object.
      * 
@@ -55,25 +65,8 @@ public class MavenIndex {
      *             error during index creation/update
      */
     public MavenIndex(URL repoUrl) throws IOException {
-        this(repoUrl, null, null);
-    }
-
-    /**
-     * Constructs a new object.
-     * 
-     * @param repoUrl
-     *            the repository url
-     * @param username
-     *            the username for authentication (optional)
-     * @param password
-     *            the password for authentication (optional)
-     * @throws IOException
-     *             error during index creation/update
-     */
-    public MavenIndex(URL repoUrl, String username, String password) throws IOException {
         try {
             createIndexingContext(repoUrl);
-            updateIndex(username, password);
         } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
             throw new IOException(e);
         }
@@ -104,8 +97,7 @@ public class MavenIndex {
     private void createIndexingContext(URL repoUrl) throws PlexusContainerException, ComponentLookupException, ExistingLuceneIndexMismatchException,
             IllegalArgumentException, IOException {
         plexusContainer = new DefaultPlexusContainer();
-        // lookup the indexer components from plexus
-        Indexer indexer = plexusContainer.lookup(Indexer.class);
+        indexer = plexusContainer.lookup(Indexer.class);
         // Files where local cache is (if any) and Lucene Index should be
         // located
         File localArtifactCache = new File("target/repo-artifact-cache");
@@ -123,6 +115,20 @@ public class MavenIndex {
                 repoUrl.toString(), null, true, true, indexers);
     }
 
+    public Iterable<ArtifactInfo> getArtifactsSince(final Date startDate) throws IOException {
+        final long startDateMillis = startDate.getTime();
+        // find only maven artifact documents
+        Query query = indexer.constructQuery(MAVEN.GROUP_ID, new SourcedSearchExpression(Field.NOT_PRESENT));
+        IteratorSearchRequest request = new IteratorSearchRequest(query, Collections.singletonList(indexingContext), new ArtifactInfoFilter() {
+
+            @Override
+            public boolean accepts(IndexingContext ctx, ArtifactInfo ai) {
+                return startDateMillis < ai.lastModified;
+            }
+        });
+        return indexer.searchIterator(request);
+    }
+
     /**
      * Returns the actual {@link IndexingContext}.
      * 
@@ -130,6 +136,15 @@ public class MavenIndex {
      */
     public IndexingContext getIndexingContext() {
         return indexingContext;
+    }
+
+    /**
+     * Returns a timestamp of the last local repository index update.
+     * 
+     * @returna timestamp of the last local repository index update.
+     */
+    public Date getLastUpdateLocalRepo() {
+        return getIndexingContext().getTimestamp();
     }
 
     /**
@@ -152,9 +167,15 @@ public class MavenIndex {
      * @throws ComponentLookupException
      * @throws IOException
      */
-    private void updateIndex(String username, String password) throws ComponentLookupException, IOException {
-        IndexUpdater indexUpdater = plexusContainer.lookup(IndexUpdater.class);
-        Wagon httpWagon = plexusContainer.lookup(Wagon.class, "http");
+    public void updateIndex(String username, String password) throws IOException {
+        IndexUpdater indexUpdater;
+        Wagon httpWagon;
+        try {
+            indexUpdater = plexusContainer.lookup(IndexUpdater.class);
+            httpWagon = plexusContainer.lookup(Wagon.class, "http");
+        } catch (ComponentLookupException e) {
+            throw new IOException(e);
+        }
 
         LOGGER.info("Updating maven index...");
         TransferListener listener = new AbstractTransferListener() {
@@ -180,15 +201,15 @@ public class MavenIndex {
             info.setPassword(password);
         }
         ResourceFetcher resourceFetcher = new WagonHelper.WagonFetcher(httpWagon, listener, info, null);
-        Date repoUpdateTimestamp = indexingContext.getTimestamp();
+        Date lastUpdateLocalRepo = indexingContext.getTimestamp();
         IndexUpdateRequest updateRequest = new IndexUpdateRequest(indexingContext, resourceFetcher);
         IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
         if (updateResult.isFullUpdate()) {
             LOGGER.debug("Full update happened!");
-        } else if (updateResult.getTimestamp().equals(repoUpdateTimestamp)) {
+        } else if (updateResult.getTimestamp().equals(lastUpdateLocalRepo)) {
             LOGGER.debug("No update needed, index is up to date!");
         } else {
-            LOGGER.debug("Incremental update happened, change covered " + repoUpdateTimestamp + " - " + updateResult.getTimestamp() + " period.");
+            LOGGER.debug("Incremental update happened, change covered " + lastUpdateLocalRepo + " - " + updateResult.getTimestamp() + " period.");
         }
     }
 
