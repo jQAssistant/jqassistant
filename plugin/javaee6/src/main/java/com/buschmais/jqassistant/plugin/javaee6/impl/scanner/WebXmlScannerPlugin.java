@@ -94,7 +94,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
                 SecurityConstraintDescriptor securityConstraintDescriptor = createSecurityConstraint((SecurityConstraintType) value, store);
                 webXmlDescriptor.getSecurityConstraints().add(securityConstraintDescriptor);
             } else if (value instanceof SecurityRoleType) {
-                SecurityRoleDescriptor securityRoleDescriptor = createSecurityRole((SecurityRoleType) value, store);
+                SecurityRoleDescriptor securityRoleDescriptor = XmlDescriptorHelper.createSecurityRole((SecurityRoleType) value, store);
                 webXmlDescriptor.getSecurityRoles().add(securityRoleDescriptor);
             } else if (value instanceof LoginConfigType) {
                 LoginConfigDescriptor loginConfigDescriptor = createLoginConfig((LoginConfigType) value, store);
@@ -124,26 +124,18 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return loginConfigDescriptor;
     }
 
-    private SecurityRoleDescriptor createSecurityRole(SecurityRoleType securityRoleType, Store store) {
-        SecurityRoleDescriptor securityRoleDescriptor = store.create(SecurityRoleDescriptor.class);
-        for (DescriptionType descriptionType : securityRoleType.getDescription()) {
-            securityRoleDescriptor.getDescriptions().add(createDescription(descriptionType, store));
-        }
-        securityRoleDescriptor.setRoleName(createRoleName(securityRoleType.getRoleName(), store));
-        return securityRoleDescriptor;
-    }
 
     private SecurityConstraintDescriptor createSecurityConstraint(SecurityConstraintType securityConstraintType, Store store) {
         SecurityConstraintDescriptor securityConstraintDescriptor = store.create(SecurityConstraintDescriptor.class);
         for (DisplayNameType displayNameType : securityConstraintType.getDisplayName()) {
-            securityConstraintDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+            securityConstraintDescriptor.getDisplayNames().add(XmlDescriptorHelper.createDisplayName(displayNameType, store));
         }
         UserDataConstraintType userDataConstraint = securityConstraintType.getUserDataConstraint();
         if (userDataConstraint != null) {
             UserDataConstraintDescriptor userDataConstraintDescriptor = store.create(UserDataConstraintDescriptor.class);
             userDataConstraintDescriptor.setTransportGuarantee(userDataConstraint.getTransportGuarantee().getValue());
             for (DescriptionType descriptionType : userDataConstraint.getDescription()) {
-                userDataConstraintDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+                userDataConstraintDescriptor.getDescriptions().add(XmlDescriptorHelper.createDescription(descriptionType, store));
             }
             securityConstraintDescriptor.getUserDataConstraints().add(userDataConstraintDescriptor);
         }
@@ -151,10 +143,10 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         if (authConstraint != null) {
             AuthConstraintDescriptor authConstraintDescriptor = store.create(AuthConstraintDescriptor.class);
             for (DescriptionType descriptionType : authConstraint.getDescription()) {
-                authConstraintDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+                authConstraintDescriptor.getDescriptions().add(XmlDescriptorHelper.createDescription(descriptionType, store));
             }
             for (RoleNameType roleNameType : authConstraint.getRoleName()) {
-                RoleNameDescriptor roleNameDescriptor = createRoleName(roleNameType, store);
+                RoleNameDescriptor roleNameDescriptor = XmlDescriptorHelper.createRoleName(roleNameType, store);
                 authConstraintDescriptor.getRoleNames().add(roleNameDescriptor);
             }
             securityConstraintDescriptor.getAuthConstraints().add(authConstraintDescriptor);
@@ -163,7 +155,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
             WebResourceCollectionDescriptor webResourceCollectionDescriptor = store.create(WebResourceCollectionDescriptor.class);
             webResourceCollectionDescriptor.setName(webResourceCollectionType.getWebResourceName().getValue());
             for (DescriptionType descriptionType : webResourceCollectionType.getDescription()) {
-                webResourceCollectionDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+                webResourceCollectionDescriptor.getDescriptions().add(XmlDescriptorHelper.createDescription(descriptionType, store));
             }
             for (String httpMethod : webResourceCollectionType.getHttpMethod()) {
                 HttpMethodDescriptor httpMethodDescriptor = store.create(HttpMethodDescriptor.class);
@@ -184,23 +176,17 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         return securityConstraintDescriptor;
     }
 
-    private RoleNameDescriptor createRoleName(RoleNameType roleNameType, Store store) {
-        RoleNameDescriptor roleNameDescriptor = store.create(RoleNameDescriptor.class);
-        roleNameDescriptor.setName(roleNameType.getValue());
-        return roleNameDescriptor;
-    }
-
     private ListenerDescriptor createListener(ListenerType listenerType, ScannerContext context) {
         Store store = context.getStore();
         ListenerDescriptor listenerDescriptor = store.create(ListenerDescriptor.class);
         for (DescriptionType descriptionType : listenerType.getDescription()) {
-            listenerDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+            listenerDescriptor.getDescriptions().add(XmlDescriptorHelper.createDescription(descriptionType, store));
         }
         for (DisplayNameType displayNameType : listenerType.getDisplayName()) {
-            listenerDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+            listenerDescriptor.getDisplayNames().add(XmlDescriptorHelper.createDisplayName(displayNameType, store));
         }
         for (IconType iconType : listenerType.getIcon()) {
-            listenerDescriptor.getIcons().add(createIcon(iconType, store));
+            listenerDescriptor.getIcons().add(XmlDescriptorHelper.createIcon(iconType, store));
         }
         TypeResolver typeResolver = context.peek(TypeResolver.class);
         FullyQualifiedClassType listenerClass = listenerType.getListenerClass();
@@ -239,10 +225,10 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         FilterDescriptor filterDescriptor = getOrCreateNamedDescriptor(FilterDescriptor.class, filterType.getFilterName().getValue(), filters, store);
         setAsyncSupported(filterDescriptor, filterType.getAsyncSupported());
         for (DescriptionType descriptionType : filterType.getDescription()) {
-            filterDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+            filterDescriptor.getDescriptions().add(XmlDescriptorHelper.createDescription(descriptionType, store));
         }
         for (DisplayNameType displayNameType : filterType.getDisplayName()) {
-            filterDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+            filterDescriptor.getDisplayNames().add(XmlDescriptorHelper.createDisplayName(displayNameType, store));
         }
         FullyQualifiedClassType filterClass = filterType.getFilterClass();
         if (filterClass != null) {
@@ -251,7 +237,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
             filterDescriptor.setType(filterClassDescriptor.getTypeDescriptor());
         }
         for (IconType iconType : filterType.getIcon()) {
-            IconDescriptor iconDescriptor = createIcon(iconType, store);
+            IconDescriptor iconDescriptor = XmlDescriptorHelper.createIcon(iconType, store);
             filterDescriptor.getIcons().add(iconDescriptor);
         }
         for (ParamValueType paramValueType : filterType.getInitParam()) {
@@ -320,17 +306,17 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         ServletDescriptor servletDescriptor = getOrCreateNamedDescriptor(ServletDescriptor.class, servletType.getServletName().getValue(), servlets, store);
         setAsyncSupported(servletDescriptor, servletType.getAsyncSupported());
         for (DescriptionType descriptionType : servletType.getDescription()) {
-            servletDescriptor.getDescriptions().add(createDescription(descriptionType, store));
+            servletDescriptor.getDescriptions().add(XmlDescriptorHelper.createDescription(descriptionType, store));
         }
         for (DisplayNameType displayNameType : servletType.getDisplayName()) {
-            servletDescriptor.getDisplayNames().add(createDisplayName(displayNameType, store));
+            servletDescriptor.getDisplayNames().add(XmlDescriptorHelper.createDisplayName(displayNameType, store));
         }
         TrueFalseType enabled = servletType.getEnabled();
         if (enabled != null) {
             servletDescriptor.setEnabled(enabled.isValue());
         }
         for (IconType iconType : servletType.getIcon()) {
-            IconDescriptor iconDescriptor = createIcon(iconType, store);
+            IconDescriptor iconDescriptor = XmlDescriptorHelper.createIcon(iconType, store);
             servletDescriptor.getIcons().add(iconDescriptor);
         }
         for (ParamValueType paramValueType : servletType.getInitParam()) {
@@ -361,7 +347,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         if (runAs != null) {
             RunAsDescriptor runAsDescriptor = store.create(RunAsDescriptor.class);
             for (DescriptionType descriptionType : runAs.getDescription()) {
-                DescriptionDescriptor descriptionDescriptor = createDescription(descriptionType, store);
+                DescriptionDescriptor descriptionDescriptor = XmlDescriptorHelper.createDescription(descriptionType, store);
                 runAsDescriptor.getDescriptions().add(descriptionDescriptor);
             }
             RoleNameType roleName = runAs.getRoleName();
@@ -374,7 +360,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
             SecurityRoleRefDescriptor securityRoleRefDescriptor = store.create(SecurityRoleRefDescriptor.class);
             securityRoleRefDescriptor.setRoleName(securityRoleRefType.getRoleName().getValue());
             for (DescriptionType descriptionType : securityRoleRefType.getDescription()) {
-                DescriptionDescriptor descriptionDescriptor = createDescription(descriptionType, store);
+                DescriptionDescriptor descriptionDescriptor = XmlDescriptorHelper.createDescription(descriptionType, store);
                 securityRoleRefDescriptor.getDescriptions().add(descriptionDescriptor);
             }
             RoleNameType roleLink = securityRoleRefType.getRoleLink();
@@ -426,7 +412,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
     private ParamValueDescriptor createParamValue(ParamValueType paramValueType, Store store) {
         ParamValueDescriptor paramValueDescriptor = store.create(ParamValueDescriptor.class);
         for (DescriptionType descriptionType : paramValueType.getDescription()) {
-            DescriptionDescriptor descriptionDescriptor = createDescription(descriptionType, store);
+            DescriptionDescriptor descriptionDescriptor = XmlDescriptorHelper.createDescription(descriptionType, store);
             paramValueDescriptor.getDescriptions().add(descriptionDescriptor);
         }
         paramValueDescriptor.setName(paramValueType.getParamName().getValue());
@@ -435,45 +421,6 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
             paramValueDescriptor.setValue(paramValue.getValue());
         }
         return paramValueDescriptor;
-    }
-
-    /**
-     * Create an icon descriptor.
-     * 
-     * @param iconType
-     *            The XML icon type.
-     * @param store
-     *            The store
-     * @return The icon descriptor.
-     */
-    private IconDescriptor createIcon(IconType iconType, Store store) {
-        IconDescriptor iconDescriptor = store.create(IconDescriptor.class);
-        iconDescriptor.setLang(iconType.getLang());
-        PathType largeIcon = iconType.getLargeIcon();
-        if (largeIcon != null) {
-            iconDescriptor.setLargeIcon(largeIcon.getValue());
-        }
-        PathType smallIcon = iconType.getSmallIcon();
-        if (smallIcon != null) {
-            iconDescriptor.setSmallIcon(smallIcon.getValue());
-        }
-        return iconDescriptor;
-    }
-
-    /**
-     * Create a display name descriptor.
-     * 
-     * @param displayNameType
-     *            The XML display name type.
-     * @param store
-     *            The store.
-     * @return The display name descriptor.
-     */
-    private DisplayNameDescriptor createDisplayName(DisplayNameType displayNameType, Store store) {
-        DisplayNameDescriptor displayNameDescriptor = store.create(DisplayNameDescriptor.class);
-        displayNameDescriptor.setLang(displayNameType.getLang());
-        displayNameDescriptor.setValue(displayNameType.getValue());
-        return displayNameDescriptor;
     }
 
     /**
@@ -488,22 +435,6 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
         if (asyncSupported != null) {
             asyncSupportedDescriptor.setAsyncSupported(asyncSupported.isValue());
         }
-    }
-
-    /**
-     * Create a description descriptor.
-     * 
-     * @param descriptionType
-     *            The XML description type.
-     * @param store
-     *            The store.
-     * @return The description descriptor.
-     */
-    private DescriptionDescriptor createDescription(DescriptionType descriptionType, Store store) {
-        DescriptionDescriptor descriptionDescriptor = store.create(DescriptionDescriptor.class);
-        descriptionDescriptor.setLang(descriptionType.getLang());
-        descriptionDescriptor.setValue(descriptionType.getValue());
-        return descriptionDescriptor;
     }
 
     /**

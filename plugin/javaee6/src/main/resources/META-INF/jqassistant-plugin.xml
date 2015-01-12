@@ -30,11 +30,21 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.LoginConfigDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.FormLoginConfigDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EnterpriseApplicationModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EjbDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EjbModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.JavaModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>
