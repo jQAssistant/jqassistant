@@ -153,6 +153,10 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             artifactResolver = new ArtifactResolver(item, username, password);
         }
         Date lastUpdateTime = mavenIndex.getLastUpdateLocalRepo();
+        // if no index found
+        if (lastUpdateTime == null) {
+            lastUpdateTime = new Date(0L);
+        }
         mavenIndex.updateIndex(username, password);
 
         // Search artifacts

@@ -16,6 +16,7 @@ import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.MAVEN;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.junit.Test;
+import org.mockito.internal.verification.Times;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -101,6 +102,10 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
         when(scanner.getContext()).thenReturn(context);
 
         Descriptor descriptor = mock(Descriptor.class);
+        RepositoryArtifactDescriptor artifactDescriptor = mock(RepositoryArtifactDescriptor.class);
+        when(store.migrate(descriptor, RepositoryArtifactDescriptor.class)).thenReturn(artifactDescriptor);
+        ContainsArtifactDescriptor containsArtifactDescriptor = mock(ContainsArtifactDescriptor.class);
+        when(store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor)).thenReturn(containsArtifactDescriptor);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
             File artifactFile = newFile(artifactInfo);
@@ -110,8 +115,8 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin(mavenIndex, artifactResolver);
         plugin.scan(new URL(repoUrl), repoUrl, MavenScope.REPOSITORY, scanner);
         verify(mavenIndex).updateIndex(anyString(), anyString());
-        verify(store).migrate(descriptor, RepositoryArtifactDescriptor.class);
-        verify(store).create(repoDescriptor, ContainsArtifactDescriptor.class, descriptor);
-
+        verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
+        verify(store, new Times(3)).migrate(descriptor, RepositoryArtifactDescriptor.class);
+        verify(store, new Times(3)).create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor);
     }
 }
