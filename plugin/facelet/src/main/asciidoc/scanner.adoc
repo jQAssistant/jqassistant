@@ -16,7 +16,7 @@ Configure the scanner with following properties.
 ===== :File:Jsf:Facelet
 A JSF template file.
 
-.Properties of :File:Jpa:Persistence
+.Properties of :File:Jsf:Facelet
 [options="header"]
 |====
 | Name     | Description

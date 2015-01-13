@@ -61,12 +61,14 @@ public class MavenIndex {
      * 
      * @param repoUrl
      *            the repository url
+     * @param indexDirectory
+     *            the directory for local index data
      * @throws IOException
      *             error during index creation/update
      */
-    public MavenIndex(URL repoUrl) throws IOException {
+    public MavenIndex(URL repoUrl, File indexDirectory) throws IOException {
         try {
-            createIndexingContext(repoUrl);
+            createIndexingContext(repoUrl, indexDirectory);
         } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
             throw new IOException(e);
         }
@@ -88,21 +90,23 @@ public class MavenIndex {
      * 
      * @param repoUrl
      *            the URL of the remote Repository.
+     * @param indexDirectory
+     *            the dir for local index data
      * @throws PlexusContainerException
      * @throws ComponentLookupException
      * @throws ExistingLuceneIndexMismatchException
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    private void createIndexingContext(URL repoUrl) throws PlexusContainerException, ComponentLookupException, ExistingLuceneIndexMismatchException,
-            IllegalArgumentException, IOException {
+    private void createIndexingContext(URL repoUrl, File indexDirectory) throws PlexusContainerException, ComponentLookupException,
+            ExistingLuceneIndexMismatchException, IllegalArgumentException, IOException {
         plexusContainer = new DefaultPlexusContainer();
         indexer = plexusContainer.lookup(Indexer.class);
         // Files where local cache is (if any) and Lucene Index should be
         // located
-        File localArtifactCache = new File("target/repo-artifact-cache");
+        File localArtifactCache = new File(indexDirectory, "repo-artifact-cache");
         String repoSuffix = repoUrl.getHost();
-        File localIndexDir = new File("target/repo-index/" + repoSuffix);
+        File localIndexDir = new File(indexDirectory, "repo-index");
         // Creators we want to use (search for fields it defines)
         List<IndexCreator> indexers = new ArrayList<>();
         indexers.add(plexusContainer.lookup(IndexCreator.class, MinimalArtifactInfoIndexCreator.ID));

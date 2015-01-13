@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.MAVEN;
@@ -33,6 +35,13 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenRepositoryScannerPlugin.class);
     private MavenIndex mavenIndex;
     private ArtifactResolver artifactResolver;
+
+    private static final String PROPERTY_NAME_DIRECTORY = "m2repo.directory";
+    private static final String PROPERTY_NAME_DELETE_ARTIFACTS = "m2repo.delete.artifacts";
+
+    private File localDirectory;
+
+    private boolean deleteArtifactsAfterScan = false;
 
     /**
      * Creates a new Object.
@@ -77,6 +86,24 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         return repositoryDescriptor;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    protected void initialize() {
+        super.initialize();
+        localDirectory = new File("./target/m2repo-data");
+        if (getProperties().containsKey(PROPERTY_NAME_DIRECTORY)) {
+            localDirectory = new File(getProperties().get(PROPERTY_NAME_DIRECTORY).toString());
+        }
+        if (!localDirectory.exists()) {
+            localDirectory.mkdirs();
+        }
+
+        if (getProperties().containsKey(PROPERTY_NAME_DELETE_ARTIFACTS)) {
+            deleteArtifactsAfterScan = BooleanUtils.toBoolean(getProperties().get(PROPERTY_NAME_DELETE_ARTIFACTS).toString());
+        }
+
+    }
+
     /**
      * Migrates the descriptor to a {@link RepositoryArtifactDescriptor} and
      * creates a relation between the descriptor and the repoDescriptor.
@@ -113,13 +140,14 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      */
     private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactResolver artifactResolver, ArtifactInfo artifactInfo)
             throws IOException {
+        File artifactFile = null;
         try {
             String groupId = artifactInfo.getFieldValue(MAVEN.GROUP_ID);
             String artifactId = artifactInfo.getFieldValue(MAVEN.ARTIFACT_ID);
             String packaging = artifactInfo.getFieldValue(MAVEN.PACKAGING);
             String version = artifactInfo.getFieldValue(MAVEN.VERSION);
 
-            File artifactFile = artifactResolver.downloadArtifact(groupId, artifactId, packaging, version);
+            artifactFile = artifactResolver.downloadArtifact(groupId, artifactId, packaging, version);
             try (FileResource fileResource = new DefaultFileResource(artifactFile)) {
                 Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
                 if (descriptor != null) {
@@ -132,30 +160,39 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             }
         } catch (ArtifactResolutionException e) {
             LOGGER.warn(e.getMessage());
+        } finally {
+            if (artifactFile != null && deleteArtifactsAfterScan) {
+                artifactFile.delete();
+            }
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public MavenRepositoryDescriptor scan(URL item, String path, Scope scope, Scanner scanner) throws IOException {
-        String username = MavenRepoCredentials.USERNAME;
-        String password = MavenRepoCredentials.PASSWORD;
+        String userInfo = item.getUserInfo();
+        String username = StringUtils.substringBefore(userInfo, ":");
+        String password = StringUtils.substringAfter(userInfo, ":");
+
+        File localRepoDir = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
 
         Store store = scanner.getContext().getStore();
         // handles the remote maven index
         if (mavenIndex == null) {
-            mavenIndex = new MavenIndex(item);
+            mavenIndex = new MavenIndex(item, localRepoDir);
         }
         // the MavenRepositoryDescriptor
         MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(store, item.toString());
         // used to resolve (remote) artifacts
         if (artifactResolver == null) {
-            artifactResolver = new ArtifactResolver(item, username, password);
+            artifactResolver = new ArtifactResolver(item, localRepoDir, username, password);
         }
         Date lastUpdateTime = mavenIndex.getLastUpdateLocalRepo();
         // if no index found
         if (lastUpdateTime == null) {
             lastUpdateTime = new Date(0L);
+        } else { // TODO remove after plugin completion
+            lastUpdateTime = new Date(lastUpdateTime.getTime() - (3 * 24 * 60 * 60 * 1000));
         }
         mavenIndex.updateIndex(username, password);
 
@@ -165,7 +202,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         for (ArtifactInfo ai : searchResponse) {
             resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
             numberOfArtifacts++;
-            if (numberOfArtifacts > 50) {// TODO remove after plugin completion
+            if (numberOfArtifacts > 10) {// TODO remove after plugin completion
                 break;
             }
         }
