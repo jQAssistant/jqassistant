@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner;
+package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;

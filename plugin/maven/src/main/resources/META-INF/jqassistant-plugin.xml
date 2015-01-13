@@ -1,12 +1,27 @@
 <jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
     <description>Provides a scanner for Maven 3 modules.</description>
     <model>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.MavenPropertyDescriptor</class>
+        <!-- Relations -->
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.api.model.ProfileManagesDependencyDescriptor</class>
     </model>
     <scanner>
-        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.impl.scanner.MavenProjectScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin</class>
     </scanner>
     <rules>
         <resource>maven3.xml</resource>
