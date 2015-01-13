@@ -9,8 +9,9 @@ Configure the scanner with following properties.
 .Configuration of MavenRepositoryScanner
 [options="header"]
 |====
-| Property     			| Description														| Default
-|  	| 	| 
+| Property     			  | Description																			| Default
+| m2repo.directory 		  | A directory path. This directory is the target for Maven indices and artifacts. 	| ./target/m2repo-data
+| m2repo.delete.artifacts | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
 |====
 
 ===== :Maven:Repository
@@ -30,19 +31,13 @@ A remote Maven repository.
 | CONTAINS_ARTIFACT | <<:Maven:Artifact>> 	  	  | 0..n        | References a repository artifact
 |====
 
+.Properties of CONTAINS_ARTIFACT
+[options="header"]
+|====
+| Name      	| Description
+| lastModified 	| timestamp of the last artifact modification
+|====
+
+
 ===== :Maven:Artifact
 A Maven artifact.
-
-.Properties of :Maven:Artifact
-[options="header"]
-|====
-| Name      | Description
-|  			| 
-|====
-
-.Relations of :Maven:Artifact
-[options="header"]
-|====
-| Name          	| Target label(s)       | Cardinality | Description
-|  |  | | 
-|====
