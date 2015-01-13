@@ -191,8 +191,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         // if no index found
         if (lastUpdateTime == null) {
             lastUpdateTime = new Date(0L);
-        } else { // TODO remove after plugin completion
-            lastUpdateTime = new Date(lastUpdateTime.getTime() - (3 * 24 * 60 * 60 * 1000));
         }
         mavenIndex.updateIndex(username, password);
 
