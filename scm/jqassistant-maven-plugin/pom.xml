@@ -80,6 +80,27 @@
                                         <ignore />
                                     </action>
                                 </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>
+                                			org.codehaus.plexus
+                                		</groupId>
+                                		<artifactId>
+                                			plexus-component-metadata
+                                		</artifactId>
+                                		<versionRange>
+                                			[1.5.5,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>
+                                				generate-metadata
+                                			</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore></ignore>
+                                	</action>
+                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
