@@ -136,7 +136,7 @@ public interface Store {
      *            The expected return type.
      * @return The migrated descriptor.
      */
-    <T extends Descriptor, N extends Descriptor> N addDescriptor(T descriptor, Class<?> newDescriptorType, Class<N> as);
+    <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<?> newDescriptorType, Class<N> as);
 
     /**
      * Remove a descriptor type from an existing descriptor.
@@ -153,7 +153,7 @@ public interface Store {
      *            The expected return type.
      * @return The migrated descriptor.
      */
-    <T extends Descriptor, N extends Descriptor> N removeDescriptor(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as);
+    <T extends Descriptor, N extends Descriptor> N removeDescriptorType(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as);
 
     /**
      * Finds a {@link Descriptor}.
