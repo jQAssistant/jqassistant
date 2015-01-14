@@ -6,11 +6,7 @@ import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDescriptor {
-
-    String getVersion();
-
-    void setVersion(String attributeValue);
+public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDescriptor, VersionDescriptor {
 
     String getDisplayName();
 
@@ -39,4 +35,19 @@ public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDesc
 
     @Relation("HAS_LISTENER")
     List<ListenerDescriptor> getListeners();
+
+    @Relation("HAS_CONTEXT_PARAM")
+    List<ParamValueDescriptor> getContextParams();
+
+    @Relation("HAS_ERROR_PAGE")
+    List<ErrorPageDescriptor> getErrorPages();
+
+    @Relation("HAS_SECURITY_CONSTRAINT")
+    List<SecurityConstraintDescriptor> getSecurityConstraints();
+
+    @Relation("HAS_SECURITY_ROLE")
+    List<SecurityRoleDescriptor> getSecurityRoles();
+
+    @Relation("HAS_LOGIN_CONFIG")
+    List<LoginConfigDescriptor> getLoginConfigs();
 }

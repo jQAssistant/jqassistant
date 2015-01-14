@@ -5,17 +5,13 @@ import java.util.List;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-@Label("SecurityRoleRef")
-public interface SecurityRoleRefDescriptor extends WebDescriptor {
-
-    String getRoleName();
-
-    void setRoleName(String roleName);
-
+@Label("SecurityRole")
+public interface SecurityRoleDescriptor extends WebDescriptor {
     @Relation("HAS_DESCRIPTION")
     List<DescriptionDescriptor> getDescriptions();
 
-    String getRoleLink();
+    @Relation("HAS_ROLE_NAME")
+    RoleNameDescriptor getRoleName();
 
-    void setRoleLink(String value);
+    void setRoleName(RoleNameDescriptor roleName);
 }

@@ -1,0 +1,40 @@
+<<EarArchiveScanner>> <<ApplicationXmlScanner>> <<WarArchiveScanner>> <<WebXmlScanner>>
+[[EarArchiveScanner]]
+==== Scanner for EAR files
+Imports EAR (Enterprise ARchive) files.
+
+===== :File:Enterprise:Application:Archive
+A file representing an EAR file.
+
+.Properties of :File:Enterprise:Application:Archive
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:Enterprise:Application:Archive
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| CONTAINS | <<:File>>       | 0..n        | References the files contained in the archive.
+|====
+
+[[WarArchiveScanner]]
+===== :File:Web:Application:Archive
+A file representing WAR file.
+
+.Properties of :File:Web:Application:Archive
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:Enterprise:Application:Archive
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| CONTAINS | <<:File>>       | 0..n        | References the files contained in the archive.
+|====
+

@@ -8,10 +8,6 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("FilterMapping")
 public interface FilterMappingDescriptor extends WebDescriptor {
 
-    String getFilterName();
-
-    void setFilterName(String value);
-
     @Relation("ON_URL_PATTERN")
     List<UrlPatternDescriptor> getUrlPatterns();
 

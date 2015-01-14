@@ -17,16 +17,16 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.cdi.api.model.BeansDescriptor;
+import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
-public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileResource, BeansDescriptor> {
+public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BeansDescriptorScannerPlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeansXmlScannerPlugin.class);
 
     private static final JAXBContext jaxbContext;
 
@@ -44,31 +44,31 @@ public class BeansDescriptorScannerPlugin extends AbstractScannerPlugin<FileReso
     }
 
     @Override
-    public BeansDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public BeansXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        BeansDescriptor beansDescriptor = context.getStore().create(BeansDescriptor.class);
+        BeansXmlDescriptor beansXmlDescriptor = context.getStore().create(BeansXmlDescriptor.class);
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();
-            beansDescriptor.setVersion(beans.getVersion());
-            beansDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());
+            beansXmlDescriptor.setVersion(beans.getVersion());
+            beansXmlDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());
             for (Object o : beans.getInterceptorsOrDecoratorsOrAlternatives()) {
                 if (o instanceof Interceptors) {
-                    addTypes(((Interceptors) o).getClazz(), beansDescriptor.getInterceptors(), context);
+                    addTypes(((Interceptors) o).getClazz(), beansXmlDescriptor.getInterceptors(), context);
                 } else if (o instanceof Decorators) {
-                    addTypes(((Decorators) o).getClazz(), beansDescriptor.getDecorators(), context);
+                    addTypes(((Decorators) o).getClazz(), beansXmlDescriptor.getDecorators(), context);
                 } else if (o instanceof Alternatives) {
                     List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
                     for (JAXBElement<String> element : clazzOrStereotype) {
                         TypeDescriptor alternative = scanner.getContext().peek(TypeResolver.class).resolve(element.getValue(), context).getTypeDescriptor();
-                        beansDescriptor.getAlternatives().add(alternative);
+                        beansXmlDescriptor.getAlternatives().add(alternative);
                     }
                 }
             }
         } catch (JAXBException e) {
             LOGGER.warn("Cannot read CDI beans descriptor '{}'.", path, e);
         }
-        return beansDescriptor;
+        return beansXmlDescriptor;
     }
 
     private void addTypes(List<String> typeNames, List<TypeDescriptor> types, ScannerContext scannerContext) {

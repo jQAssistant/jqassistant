@@ -122,6 +122,40 @@ public interface Store {
     <T extends Descriptor, C> C migrate(T descriptor, Class<C> concreteType, Class<?>... types);
 
     /**
+     * Add a descriptor type to an existing descriptor.
+     * 
+     * @param descriptor
+     *            The descriptor.
+     * @param newDescriptorType
+     *            The new descriptor type.
+     * @param as
+     *            The expected return type.
+     * @param <T>
+     *            The descriptor type.
+     * @param <N>
+     *            The expected return type.
+     * @return The migrated descriptor.
+     */
+    <T extends Descriptor, N extends Descriptor> N addDescriptor(T descriptor, Class<?> newDescriptorType, Class<N> as);
+
+    /**
+     * Remove a descriptor type from an existing descriptor.
+     *
+     * @param descriptor
+     *            The descriptor.
+     * @param obsoleteDescriptorType
+     *            The new descriptor type.
+     * @param as
+     *            The expected return type.
+     * @param <T>
+     *            The descriptor type.
+     * @param <N>
+     *            The expected return type.
+     * @return The migrated descriptor.
+     */
+    <T extends Descriptor, N extends Descriptor> N removeDescriptor(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as);
+
+    /**
      * Finds a {@link Descriptor}.
      * 
      * @param type
