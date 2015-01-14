@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -9,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
@@ -62,6 +66,42 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
                 .getColumn("type");
         assertThat(classes, hasItem(TypeDescriptorMatcher.typeDescriptor(ClassType.class)));
         assertThat(classes, hasItem(TypeDescriptorMatcher.typeDescriptor(SubClassType.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies that the concept "java:InvokeOverriddenMethod" keeps line number
+     * information.
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void lineNumbers() throws IOException, AnalysisException, NoSuchMethodException {
+        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        applyConcept("java:InvokesOverriddenMethod");
+        store.beginTransaction();
+        List<InvokesDescriptor> interfaceInvocations = query(
+                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[invocation:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) "
+                        + "WHERE client.name='InvokeClient' and clientMethod.name='invokeInterfaceTypeMethod' and type.name='InterfaceType'"
+                        + "RETURN invocation ORDER BY invocation.lineNumber").getColumn("invocation");
+        assertThat(interfaceInvocations.size(), equalTo(2));
+        InvokesDescriptor interfaceInvocation1 = interfaceInvocations.get(0);
+        InvokesDescriptor interfaceInvocation2 = interfaceInvocations.get(1);
+        assertThat(interfaceInvocation1.getLineNumber(), notNullValue());
+        assertThat(interfaceInvocation2.getLineNumber(), notNullValue());
+        assertThat(interfaceInvocation1.getLineNumber(), not(equalTo(interfaceInvocation2.getLineNumber())));
+        List<InvokesDescriptor> classInvocations = query(
+                "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[invocation:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) "
+                        + "WHERE client.name='InvokeClient' and clientMethod.name='invokeInterfaceTypeMethod' and type.name='ClassType'"
+                        + "RETURN invocation ORDER BY invocation.lineNumber").getColumn("invocation");
+        assertThat(classInvocations.size(), equalTo(2));
+        InvokesDescriptor classInvocation1 = classInvocations.get(0);
+        InvokesDescriptor classInvocation2 = classInvocations.get(1);
+        assertThat(classInvocation1.getLineNumber(), equalTo(interfaceInvocation1.getLineNumber()));
+        assertThat(classInvocation2.getLineNumber(), equalTo(interfaceInvocation2.getLineNumber()));
         store.commitTransaction();
     }
 

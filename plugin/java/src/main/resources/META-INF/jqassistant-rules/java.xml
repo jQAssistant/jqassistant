@@ -72,11 +72,11 @@
         <description>Propagates INVOKES relationships to methods which implement or override the invoked method.</description>
         <cypher><![CDATA[
             MATCH
-              (method:Method)-[:INVOKES]->(invokedMethod:Method),
+              (method:Method)-[invocation:INVOKES]->(invokedMethod:Method),
               (overridingMethod:Method)-[:OVERRIDES]->(invokedMethod)
             CREATE UNIQUE
-              (method)-[r:INVOKES]->(overridingMethod)
-            RETURN r AS OverridingInvocation
+              (method)-[r:INVOKES{lineNumber:invocation.lineNumber}]->(overridingMethod)
+            RETURN count(r) AS OverridingInvocations
         ]]></cypher>
     </concept>
 
