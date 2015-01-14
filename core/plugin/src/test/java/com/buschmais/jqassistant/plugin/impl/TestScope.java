@@ -1,14 +1,14 @@
-package com.buschmais.jqassistant.plugin.common.test.scanner;
+package com.buschmais.jqassistant.plugin.impl;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 
-public enum CustomScope implements Scope {
+public enum TestScope implements Scope {
 
-    CUSTOM;
+    FOO;
 
     @Override
     public String getPrefix() {
-        return "custom";
+        return "test";
     }
 
     @Override
