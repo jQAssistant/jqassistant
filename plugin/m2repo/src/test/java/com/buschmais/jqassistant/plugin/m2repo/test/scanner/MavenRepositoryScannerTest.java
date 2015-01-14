@@ -88,7 +88,7 @@ public class MavenRepositoryScannerTest {
 
         Descriptor descriptor = mock(Descriptor.class);
         RepositoryArtifactDescriptor artifactDescriptor = mock(RepositoryArtifactDescriptor.class);
-        when(store.migrate(descriptor, RepositoryArtifactDescriptor.class)).thenReturn(artifactDescriptor);
+        when(store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class, RepositoryArtifactDescriptor.class)).thenReturn(artifactDescriptor);
         ContainsArtifactDescriptor containsArtifactDescriptor = mock(ContainsArtifactDescriptor.class);
         when(store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor)).thenReturn(containsArtifactDescriptor);
 
@@ -101,7 +101,7 @@ public class MavenRepositoryScannerTest {
         plugin.scan(new URL(repoUrl), repoUrl, MavenScope.REPOSITORY, scanner);
         verify(mavenIndex).updateIndex(anyString(), anyString());
         verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
-        verify(store, new Times(3)).migrate(descriptor, RepositoryArtifactDescriptor.class);
+        verify(store, new Times(3)).addDescriptorType(descriptor, RepositoryArtifactDescriptor.class, RepositoryArtifactDescriptor.class);
         verify(store, new Times(3)).create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor);
     }
 }
