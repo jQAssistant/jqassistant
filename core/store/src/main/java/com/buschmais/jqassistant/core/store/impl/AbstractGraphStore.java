@@ -96,6 +96,16 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public <T extends Descriptor, N extends Descriptor> N addDescriptor(T descriptor, Class<?> newDescriptorType, Class<N> as) {
+        return xoManager.migrate(descriptor).add(newDescriptorType).as(as);
+    }
+
+    @Override
+    public <T extends Descriptor, N extends Descriptor> N removeDescriptor(T descriptor, Class<?> obsoleteDescriptorType, Class<N> as) {
+        return xoManager.migrate(descriptor).remove(obsoleteDescriptorType).as(as);
+    }
+
+    @Override
     public <T extends Descriptor> T find(Class<T> type, String fullQualifiedName) {
         ResultIterable<T> result = xoManager.find(type, fullQualifiedName);
         return result.hasResult() ? result.getSingleResult() : null;
