@@ -7,10 +7,12 @@ public class InvokeClient {
 
     public void invokeInterfaceTypeMethod(InterfaceType interfaceType) {
         interfaceType.doSomething(0);
+        interfaceType.doSomething(1);
     }
 
     public void invokeClassTypeMethod(ClassType classType) {
         classType.doSomething(0);
+        classType.doSomething(1);
     }
 
 }
