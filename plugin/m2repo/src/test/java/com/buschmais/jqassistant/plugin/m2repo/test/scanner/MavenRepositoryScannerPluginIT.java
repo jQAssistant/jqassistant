@@ -29,7 +29,6 @@ import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescr
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.DefaultFileResource;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepoCredentials;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
@@ -41,6 +40,8 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
     private static final String VERSION_PREFIX = "1.";
     private static final String CLASSIFIER = "jar";
     private static final String PACKAGING = "jar";
+
+    private static final String MAVEN_CENTRAL_URL = "http://repo1.maven.org/maven2/";
 
     private void buildWhenThenReturn(ArtifactResolver artifactResolver, ArtifactInfo info) throws ArtifactResolutionException {
         when(artifactResolver.downloadArtifact(info.groupId, info.artifactId, info.packaging, info.version)).thenReturn(newFile(info));
@@ -62,12 +63,12 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
                 + info.version + "." + info.packaging);
     }
 
-    // @Test
+    @Test
     public void testMavenRepoScannerRealRepo() throws MalformedURLException {
         try {
             long beginn = System.currentTimeMillis();
             store.beginTransaction();
-            getScanner().scan(new URL(MavenRepoCredentials.REPO_URL), MavenRepoCredentials.REPO_URL, MavenScope.REPOSITORY);
+            getScanner().scan(new URL(MAVEN_CENTRAL_URL), MAVEN_CENTRAL_URL, MavenScope.REPOSITORY);
             System.out.println("Dauer: " + (System.currentTimeMillis() - beginn));
         } finally {
             store.commitTransaction();
