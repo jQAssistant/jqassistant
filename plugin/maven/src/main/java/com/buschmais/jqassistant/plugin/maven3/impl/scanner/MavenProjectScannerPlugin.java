@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
@@ -48,10 +48,10 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
         projectDescriptor.setPackaging(project.getPackaging());
         // resolve dependencies
-        Map<ArtifactDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
-        Map<ArtifactDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
+        Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
+        Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
         for (Artifact dependency : project.getDependencyArtifacts()) {
-            ArtifactDescriptor dependencyDescriptor = resolveArtifact(dependency, JavaArtifactDescriptor.class, scanner.getContext());
+            ArtifactFileDescriptor dependencyDescriptor = resolveArtifact(dependency, JavaArtifactDescriptor.class, scanner.getContext());
             if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                 mainArtifactDependencies.put(dependencyDescriptor, dependency);
             }
@@ -147,9 +147,9 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      * @param scannerContext
      *            The scanner context.
      */
-    private void addDependencies(ArtifactDescriptor artifactDescriptor, Map<ArtifactDescriptor, Artifact> dependencies, ScannerContext scannerContext) {
-        for (Map.Entry<ArtifactDescriptor, Artifact> entry : dependencies.entrySet()) {
-            ArtifactDescriptor dependencyDescriptor = entry.getKey();
+    private void addDependencies(ArtifactFileDescriptor artifactDescriptor, Map<ArtifactFileDescriptor, Artifact> dependencies, ScannerContext scannerContext) {
+        for (Map.Entry<ArtifactFileDescriptor, Artifact> entry : dependencies.entrySet()) {
+            ArtifactFileDescriptor dependencyDescriptor = entry.getKey();
             Artifact dependency = entry.getValue();
             DependsOnDescriptor dependsOnDescriptor = scannerContext.getStore().create(artifactDescriptor, DependsOnDescriptor.class, dependencyDescriptor);
             dependsOnDescriptor.setScope(dependency.getScope());

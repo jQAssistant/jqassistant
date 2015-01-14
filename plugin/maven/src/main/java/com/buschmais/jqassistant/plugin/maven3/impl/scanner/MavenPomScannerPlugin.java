@@ -24,7 +24,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.BaseDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
@@ -41,6 +41,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPropertyDescriptor;
@@ -119,7 +120,7 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
         Parent parent = model.getParent();
         if (null != parent) {
 
-            MavenPomXmlDescriptor parentDescriptor = store.create(MavenPomXmlDescriptor.class, parent.getId());
+            MavenPomDescriptor parentDescriptor = store.create(MavenPomDescriptor.class, parent.getId());
             parentDescriptor.setGroup(parent.getGroupId());
             parentDescriptor.setName(parent.getArtifactId());
             parentDescriptor.setVersion(parent.getVersion());
@@ -205,7 +206,7 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
      * @return The MavenArtifactDescriptor.
      */
     private MavenArtifactDescriptor createMavenArtifactDescriptor(Dependency dependency, Store store) {
-        ArtifactDescriptor artifactDescriptor = store.create(ArtifactDescriptor.class, dependency.getManagementKey());
+        ArtifactFileDescriptor artifactDescriptor = store.create(ArtifactFileDescriptor.class, dependency.getManagementKey());
         artifactDescriptor.setGroup(dependency.getGroupId());
         artifactDescriptor.setName(dependency.getArtifactId());
         artifactDescriptor.setVersion(dependency.getVersion());
