@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -22,7 +22,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     private JavaArtifactDescriptor artifact;
 
-    private List<ArtifactDescriptor> dependencies;
+    private List<ArtifactFileDescriptor> dependencies;
 
     private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
@@ -45,7 +45,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
         }
         this.dependencies = new ArrayList<>();
         for (DependsOnDescriptor dependsOnDescriptor : artifact.getDependencies()) {
-            dependencies.add(dependsOnDescriptor.getDependency());
+            dependencies.add((ArtifactFileDescriptor) dependsOnDescriptor.getDependency());
         }
     }
 
