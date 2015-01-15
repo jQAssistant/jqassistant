@@ -5,7 +5,11 @@ import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TEST
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -69,19 +73,11 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         addProjectDetails(project, projectDescriptor, context);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
-        List<ScanInclude> scanIncludes = (List<ScanInclude>) getProperties().get(ScanInclude.class.getName());
+        List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
                 String scopeName = scanInclude.getScope();
-                Scope includeScope;
-                if (scopeName != null) {
-                    includeScope = scanner.resolveScope(scopeName);
-                    if (includeScope == null) {
-                        throw new IOException("Cannot resolve scope for name " + scopeName);
-                    }
-                } else {
-                    includeScope = null;
-                }
+                Scope includeScope = scanner.resolveScope(scopeName);
                 scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
             }
         }

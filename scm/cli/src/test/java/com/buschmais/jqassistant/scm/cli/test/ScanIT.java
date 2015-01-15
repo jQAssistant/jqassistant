@@ -22,20 +22,38 @@ import com.buschmais.jqassistant.scm.cli.task.ScanTask;
  */
 public class ScanIT extends AbstractCLIIT {
 
+    private static final String CLASSPATH_SCOPE_SUFFIX = ";java:classpath";
+
     @Test
     public void files() throws IOException, InterruptedException {
+        URL directory = ScanIT.class.getResource("/");
+        String[] args = new String[] { "scan", "-f", directory.getFile() };
+        assertThat(execute(args).getExitCode(), equalTo(0));
+
+        EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
+        store.start(Collections.<Class<?>> emptyList());
+        Map<String, Object> params = new HashMap<>();
+        params.put("fileName", "/META-INF");
+        String query = "match (f:File:Directory) where f.fileName={fileName} return count(f) as count";
+        Long count = executeQuery(store, query, params, "count", Long.class);
+        store.stop();
+        assertThat(count, equalTo(1l));
+    }
+
+    @Test
+    public void classesFromFiles() throws IOException, InterruptedException {
         URL file = getResource(ScanTask.class);
         URL directory = ScanIT.class.getResource("/");
-        String[] args = new String[] { "scan", "-f", file.getFile() + "," + directory.getFile() };
+        String[] args = new String[] { "scan", "-f", file.getFile() + CLASSPATH_SCOPE_SUFFIX + "," + directory.getFile() + CLASSPATH_SCOPE_SUFFIX };
         assertThat(execute(args).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class, ScanIT.class);
     }
 
     @Test
-    public void urls() throws IOException, InterruptedException {
-        URL directory1 = getResource(ScanTask.class);
-        URL directory2 = getResource(ScanIT.class);
-        String[] args = new String[] { "scan", "-u", directory1 + "," + directory2 };
+    public void classesFromUrls() throws IOException, InterruptedException {
+        URL url1 = getResource(ScanTask.class);
+        URL url2 = getResource(ScanIT.class);
+        String[] args = new String[] { "scan", "-u", url1 + CLASSPATH_SCOPE_SUFFIX + "," + url2 + CLASSPATH_SCOPE_SUFFIX };
         assertThat(execute(args).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class, ScanIT.class);
     }
@@ -44,7 +62,7 @@ public class ScanIT extends AbstractCLIIT {
     public void storeDirectory() throws IOException, InterruptedException {
         URL file = getResource(ScanTask.class);
         String customStoreDirectory = "tmp/customStore";
-        String[] args = new String[] { "scan", "-f", file.getFile(), "-s", customStoreDirectory };
+        String[] args = new String[] { "scan", "-f", file.getFile() + CLASSPATH_SCOPE_SUFFIX, "-s", customStoreDirectory };
         assertThat(execute(args).getExitCode(), equalTo(0));
         verifyTypesScanned(new File(getWorkingDirectory(), customStoreDirectory), ScanTask.class);
     }
@@ -53,24 +71,24 @@ public class ScanIT extends AbstractCLIIT {
     public void reset() throws IOException, InterruptedException {
         // Scan a file
         URL file1 = getResource(ScanIT.class);
-        String[] args1 = new String[] { "scan", "-f", file1.getFile() };
+        String[] args1 = new String[] { "scan", "-f", file1.getFile() + CLASSPATH_SCOPE_SUFFIX };
         assertThat(execute(args1).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
         // Scan a second file using reset
         URL file2 = getResource(ScanTask.class);
-        String[] args2 = new String[] { "scan", "-f", file2.getFile(), "-reset" };
+        String[] args2 = new String[] { "scan", "-f", file2.getFile() + CLASSPATH_SCOPE_SUFFIX, "-reset" };
         assertThat(execute(args2).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanTask.class);
-        verifyTypesNotScanned(getWorkingDirectory(), ScanIT.class);
-        // Scan the first file againg without reset
+        verifyTypesNotScanned(getDefaultStoreDirectory(), ScanIT.class);
+        // Scan the first file again without reset
         assertThat(execute(args1).getExitCode(), equalTo(0));
         verifyTypesScanned(getDefaultStoreDirectory(), ScanIT.class);
     }
 
     @Test
-    public void pluginClassloader() throws IOException, InterruptedException {
+    public void pluginClassLoader() throws IOException, InterruptedException {
         File testClassDirectory = new File(ScanIT.class.getResource("/").getFile());
-        String[] args = new String[] { "scan", "-f", testClassDirectory.getAbsolutePath() };
+        String[] args = new String[] { "scan", "-f", testClassDirectory.getAbsolutePath() + CLASSPATH_SCOPE_SUFFIX };
         assertThat(execute(args).getExitCode(), equalTo(0));
         EmbeddedGraphStore store = new EmbeddedGraphStore(getDefaultStoreDirectory().getAbsolutePath());
         store.start(Collections.<Class<?>> emptyList());

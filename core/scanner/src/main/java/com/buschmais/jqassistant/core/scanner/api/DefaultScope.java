@@ -1,11 +1,11 @@
-package com.buschmais.jqassistant.plugin.common.test.scanner;
+package com.buschmais.jqassistant.core.scanner.api;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
+/**
+ * The default scope(s).
+ */
+public enum DefaultScope implements Scope {
 
-public enum CustomScope implements Scope {
-
-    CUSTOM {
+    NONE {
         @Override
         public void create(ScannerContext context) {
         }
@@ -17,7 +17,7 @@ public enum CustomScope implements Scope {
 
     @Override
     public String getPrefix() {
-        return "custom";
+        return "default";
     }
 
     @Override

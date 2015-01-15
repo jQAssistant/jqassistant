@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -34,8 +34,8 @@ public class ScanTask extends AbstractJQATask {
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URLS = "u";
     public static final String CMDLINE_OPTION_RESET = "reset";
-    private List<String> fileNames = new ArrayList<>();
-    private List<String> urls = new ArrayList<>();
+    private Map<String, String> files = Collections.emptyMap();
+    private Map<String, String> urls = Collections.emptyMap();
     private boolean reset = false;
 
     @Override
@@ -49,27 +49,32 @@ public class ScanTask extends AbstractJQATask {
         if (reset) {
             store.reset();
         }
-        for (String fileName : fileNames) {
+        for (Map.Entry<String, String> entry : files.entrySet()) {
+            String fileName = entry.getKey();
+            String scopeName = entry.getValue();
             final File file = new File(fileName);
             String absolutePath = file.getAbsolutePath();
             if (!file.exists()) {
                 getLog().info(absolutePath + "' does not exist, skipping scan.");
             } else {
-                scan(store, file, file.getAbsolutePath(), CLASSPATH, scannerPlugins);
+                scan(store, file, file.getAbsolutePath(), scopeName, scannerPlugins);
             }
         }
-        for (String url : urls) {
+        for (Map.Entry<String, String> entry : urls.entrySet()) {
+            String url = entry.getKey();
+            String scopeName = entry.getValue();
             try {
-                scan(store, new URL(url), url, CLASSPATH, scannerPlugins);
+                scan(store, new URL(url), url, scopeName, scannerPlugins);
             } catch (MalformedURLException e) {
                 throw new CliConfigurationException("Cannot parse URL " + url, e);
             }
         }
     }
 
-    private <T> void scan(Store store, T element, String path, Scope scope, List<ScannerPlugin<?, ?>> scannerPlugins) {
+    private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) {
         store.beginTransaction();
         Scanner scanner = new ScannerImpl(store, scannerPlugins, scopePluginRepository.getScopes());
+        Scope scope = scanner.resolveScope(scopeName);
         ScannerContext context = scanner.getContext();
         context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
         try {
@@ -82,12 +87,26 @@ public class ScanTask extends AbstractJQATask {
 
     @Override
     public void withOptions(final CommandLine options) throws CliConfigurationException {
-        fileNames = getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList());
-        urls = getOptionValues(options, CMDLINE_OPTION_URLS, Collections.<String> emptyList());
-        if (fileNames.isEmpty() && urls.isEmpty()) {
+        files = parseResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList()));
+        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URLS, Collections.<String> emptyList()));
+        if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
         reset = options.hasOption(CMDLINE_OPTION_RESET);
+    }
+
+    private Map<String, String> parseResources(List<String> optionValues) {
+        Map<String, String> resources = new HashMap<>();
+        for (String file : optionValues) {
+            String[] parts = file.split(";");
+            String fileName = parts[0];
+            String scopeName = null;
+            if (parts.length == 2) {
+                scopeName = parts[1];
+            }
+            resources.put(fileName, scopeName);
+        }
+        return resources;
     }
 
     @SuppressWarnings("static-access")
