@@ -7,6 +7,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.maven.model.Activation;
+import org.apache.maven.model.ActivationFile;
+import org.apache.maven.model.ActivationOS;
+import org.apache.maven.model.ActivationProperty;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
@@ -24,16 +28,18 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.BaseDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.java.api.model.ArrayValueDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.BaseProfileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.ConfigurableDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
@@ -43,8 +49,8 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPropertyDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileManagesDependencyDescriptor;
@@ -103,6 +109,42 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
             addManagedPlugins(mavenProfileDescriptor, profile.getBuild(), store);
             addManagedDependencies(mavenProfileDescriptor, profile.getDependencyManagement(), store, ProfileManagesDependencyDescriptor.class);
             addProfileDependencies(mavenProfileDescriptor, profile.getDependencies(), store);
+            addActivation(mavenProfileDescriptor, profile.getActivation(), store);
+        }
+    }
+
+    private void addActivation(MavenProfileDescriptor mavenProfileDescriptor, Activation activation, Store store) {
+        if (null == activation) {
+            return;
+        }
+        MavenProfileActivationDescriptor profileActivationDescriptor = store.create(MavenProfileActivationDescriptor.class);
+        mavenProfileDescriptor.setActivation(profileActivationDescriptor);
+
+        profileActivationDescriptor.setJdk(activation.getJdk());
+        profileActivationDescriptor.setActiveByDefault(activation.isActiveByDefault());
+
+        ActivationFile activationFile = activation.getFile();
+        if (null != activationFile) {
+            MavenActivationFileDescriptor activationFileDescriptor = store.create(MavenActivationFileDescriptor.class);
+            profileActivationDescriptor.setActivationFile(activationFileDescriptor);
+            activationFileDescriptor.setExists(activationFile.getExists());
+            activationFileDescriptor.setMissing(activationFile.getMissing());
+        }
+        ActivationOS os = activation.getOs();
+        if (null != os) {
+            MavenActivationOSDescriptor osDescriptor = store.create(MavenActivationOSDescriptor.class);
+            profileActivationDescriptor.setActivationOS(osDescriptor);
+            osDescriptor.setArch(os.getArch());
+            osDescriptor.setFamily(os.getFamily());
+            osDescriptor.setName(os.getName());
+            osDescriptor.setVersion(os.getVersion());
+        }
+        ActivationProperty property = activation.getProperty();
+        if (null != property) {
+            PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
+            profileActivationDescriptor.setProperty(propertyDescriptor);
+            propertyDescriptor.setName(property.getName());
+            propertyDescriptor.setValue(property.getValue());
         }
     }
 
@@ -142,7 +184,7 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
     private void addProperties(BaseProfileDescriptor pomDescriptor, Properties properties, Store store) {
         Set<Entry<Object, Object>> entrySet = properties.entrySet();
         for (Entry<Object, Object> entry : entrySet) {
-            MavenPropertyDescriptor propertyDescriptor = store.create(MavenPropertyDescriptor.class);
+            PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
             propertyDescriptor.setName(entry.getKey().toString());
             propertyDescriptor.setValue(entry.getValue().toString());
             pomDescriptor.getProperties().add(propertyDescriptor);

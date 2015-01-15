@@ -11,8 +11,11 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
@@ -22,8 +25,8 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPropertyDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor;
 
@@ -163,17 +166,12 @@ public class PomIT extends AbstractJavaPluginIT {
         Assert.assertEquals(0, pomDescriptor.getDependencies().size());
 
         // properties
-        List<MavenPropertyDescriptor> propertyDescriptors = pomDescriptor.getProperties();
+        List<PropertyDescriptor> propertyDescriptors = pomDescriptor.getProperties();
         Properties properties = new Properties();
         properties.put("project.build.sourceEncoding", "UTF-8");
         properties.put("org.slf4j_version", "1.7.5");
 
-        Assert.assertEquals(2, propertyDescriptors.size());
-        for (MavenPropertyDescriptor mavenPropertyDescriptor : propertyDescriptors) {
-            String value = properties.getProperty(mavenPropertyDescriptor.getName());
-            Assert.assertNotNull(value);
-            Assert.assertEquals(value, mavenPropertyDescriptor.getValue());
-        }
+        validateProperties(propertyDescriptors, properties);
 
         // modules
         List<MavenModuleDescriptor> modules = pomDescriptor.getModules();
@@ -198,12 +196,21 @@ public class PomIT extends AbstractJavaPluginIT {
 
         // profiles
         List<MavenProfileDescriptor> profileDescriptors = pomDescriptor.getProfiles();
-        Assert.assertEquals(3, profileDescriptors.size());
         List<Profile> parentProfiles = createParentProfiles();
+        Assert.assertEquals(2, profileDescriptors.size());
         for (Profile profile : parentProfiles) {
             checkProfile(profileDescriptors, profile);
         }
 
+    }
+
+    private void validateProperties(List<PropertyDescriptor> propertyDescriptors, Properties properties) {
+        Assert.assertEquals(properties.size(), propertyDescriptors.size());
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            String value = properties.getProperty(propertyDescriptor.getName());
+            Assert.assertNotNull(value);
+            Assert.assertEquals(value, propertyDescriptor.getValue());
+        }
     }
 
     /**
@@ -235,17 +242,62 @@ public class PomIT extends AbstractJavaPluginIT {
     private void checkProfile(List<MavenProfileDescriptor> profileDescriptors, Profile profile) {
         for (MavenProfileDescriptor mavenProfileDescriptor : profileDescriptors) {
             if (mavenProfileDescriptor.getId().equals(profile.id)) {
+                // dependencies
                 List<Dependency> dependencies = profile.dependencies;
                 for (Dependency dependency : dependencies) {
                     checkProfileDependency(mavenProfileDescriptor.getDependencies(), dependency);
                 }
+                // modules
+                List<MavenModuleDescriptor> modules = mavenProfileDescriptor.getModules();
+                Assert.assertEquals(profile.modules.size(), modules.size());
+                for (MavenModuleDescriptor mavenModuleDescriptor : modules) {
+                    Assert.assertTrue(profile.modules.contains(mavenModuleDescriptor.getName()));
+                }
+                // properties
+                validateProperties(mavenProfileDescriptor.getProperties(), profile.properties);
+                // plugins
                 List<Plugin> plugins = profile.plugins;
                 for (Plugin plugin : plugins) {
                     checkPlugin(mavenProfileDescriptor.getPlugins(), plugin);
                 }
+                // managed plugins
+                List<MavenPluginDescriptor> managedPlugins = mavenProfileDescriptor.getManagedPlugins();
+                Assert.assertEquals(profile.managedPlugins.size(), managedPlugins.size());
+                for (Plugin plugin : profile.managedPlugins) {
+                    checkPlugin(managedPlugins, plugin);
+                }
+                checkActivation(mavenProfileDescriptor.getActivation(), profile.activation);
             }
         }
 
+    }
+
+    private void checkActivation(MavenProfileActivationDescriptor activationDescriptor, ProfileActivation activation) {
+        if (null != activation) {
+            Assert.assertNotNull(activationDescriptor);
+            Assert.assertEquals(activation.jdk, activationDescriptor.getJdk());
+            Assert.assertEquals(activation.activeByDefault, activationDescriptor.isActiveByDefault());
+            if (null != activation.fileExists || null != activation.fileMissing) {
+                MavenActivationFileDescriptor activationFileDescriptor = activationDescriptor.getActivationFile();
+                Assert.assertNotNull(activationFileDescriptor);
+                Assert.assertEquals(activation.fileExists, activationFileDescriptor.getExists());
+                Assert.assertEquals(activation.fileMissing, activationFileDescriptor.getMissing());
+            }
+            if (null != activation.propertyName || null != activation.propertyValue) {
+                PropertyDescriptor propertyDescriptor = activationDescriptor.getProperty();
+                Assert.assertNotNull(propertyDescriptor);
+                Assert.assertEquals(activation.propertyName, propertyDescriptor.getName());
+                Assert.assertEquals(activation.propertyValue, propertyDescriptor.getValue());
+            }
+            if (null != activation.osArch || null != activation.osFamily || null != activation.osName || null != activation.osVersion) {
+                MavenActivationOSDescriptor activationOSDescriptor = activationDescriptor.getActivationOS();
+                Assert.assertNotNull(activationOSDescriptor);
+                Assert.assertEquals(activation.osArch, activationOSDescriptor.getArch());
+                Assert.assertEquals(activation.osFamily, activationOSDescriptor.getFamily());
+                Assert.assertEquals(activation.osName, activationOSDescriptor.getName());
+                Assert.assertEquals(activation.osVersion, activationOSDescriptor.getVersion());
+            }
+        }
     }
 
     private void checkPlugin(List<MavenPluginDescriptor> managedPluginDescriptors, Plugin plugin) {
@@ -396,6 +448,7 @@ public class PomIT extends AbstractJavaPluginIT {
         profiles.add(itProfile);
         itProfile.dependencies.add(new Dependency("dummyGroup", "dummyArtifact", "dummyVersion"));
         itProfile.managedDependencies.add(new Dependency("dummyManagedGroup", "dummyManagedArtifact", "dummyManagedVersion"));
+        // plugin
         Plugin failsafePlugin = new Plugin("org.apache.maven.plugins", "maven-failsafe-plugin", null, null);
         itProfile.plugins.add(failsafePlugin);
         Execution failsafeExecution = new Execution();
@@ -408,6 +461,29 @@ public class PomIT extends AbstractJavaPluginIT {
         failsafeConfig.entries.add(new SimpleConfigEntry("argLine", "-Xmx512M"));
         failsafeConfig.entries.add(new SimpleConfigEntry("forkCount", "1"));
         failsafeConfig.entries.add(new SimpleConfigEntry("reuseForks", "true"));
+        // managed plugin
+        Plugin managedPlugin = new Plugin("org.apache.maven.plugins", "maven-failsafe-plugin", "unknownVersion", null);
+        managedPlugin.inherited = false;
+        itProfile.managedPlugins.add(managedPlugin);
+        // modules
+        itProfile.modules.add("childModule1");
+        itProfile.modules.add("childModule2");
+        // profiles
+        itProfile.properties.put("testProperty1", "testValue");
+        itProfile.properties.put("testProperty2", "anotherTestValue");
+        // activation
+        ProfileActivation activation = new ProfileActivation();
+        itProfile.activation = activation;
+        activation.activeByDefault = true;
+        activation.jdk = "1.8";
+        activation.propertyName = "activationProperty";
+        activation.propertyValue = "activationPropertyValue";
+        activation.fileExists = "activate.xml";
+        activation.fileMissing = "deactivate.xml";
+        activation.osArch = "x86";
+        activation.osFamily = "Windows";
+        activation.osName = "Windows XP";
+        activation.osVersion = "5.1.2600";
         return profiles;
     }
 
@@ -487,10 +563,19 @@ public class PomIT extends AbstractJavaPluginIT {
         private List<Dependency> managedDependencies = new ArrayList<>();
         private List<Dependency> dependencies = new ArrayList<>();
         private Properties properties = new Properties();
+        private ProfileActivation activation;
 
         private Profile(String id) {
             this.id = id;
         }
+    }
+
+    private class ProfileActivation {
+        private boolean activeByDefault = false;
+        private String jdk;
+        private String propertyName, propertyValue;
+        private String fileExists, fileMissing;
+        private String osArch, osFamily, osName, osVersion;
     }
 
     private class Artifact {

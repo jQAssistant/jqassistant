@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
@@ -23,7 +24,7 @@ public interface BaseProfileDescriptor extends Descriptor {
      * @return The properties.
      */
     @Relation("HAS_PROPERTY")
-    List<MavenPropertyDescriptor> getProperties();
+    List<PropertyDescriptor> getProperties();
 
     /**
      * Get plugin information.
