@@ -210,7 +210,7 @@ public class MavenIndex {
         IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
         if (updateResult.isFullUpdate()) {
             LOGGER.debug("Full update happened!");
-        } else if (updateResult.getTimestamp().equals(lastUpdateLocalRepo)) {
+        } else if (updateResult.getTimestamp() == null) {
             LOGGER.debug("No update needed, index is up to date!");
         } else {
             LOGGER.debug("Incremental update happened, change covered " + lastUpdateLocalRepo + " - " + updateResult.getTimestamp() + " period.");

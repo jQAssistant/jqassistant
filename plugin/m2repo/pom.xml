@@ -126,6 +126,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>
+		<dependency>
+		    <groupId>org.javastack</groupId>
+		    <artifactId>httpd</artifactId>
+		    <version>1.0.0</version>
+		    <scope>test</scope>
+		</dependency>
 		
 		<!-- Aether -->
 		<dependency>

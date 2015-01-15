@@ -3,12 +3,16 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
@@ -86,34 +90,15 @@ public class ArtifactResolver {
      * Resolves an artifact with the given properties and transfers it in a
      * local repository.
      * 
-     * @param groupId
-     *            the artifact groupId
-     * @param artifactId
-     *            the artifact artifactId
-     * @param type
-     *            the artifact type (e.g. jar, pom, ...)
-     * @param version
-     *            the artifact version
+     * @param artifact
+     *            the artifact to resolve
      * @return the local file handle
      * @throws ArtifactResolutionException
      *             in case of a unresolvable artifacts
      */
-    public File downloadArtifact(String groupId, String artifactId, String type, String version) throws ArtifactResolutionException {
-
-        if (type == null) {
-            type = "jar";
-        }
-
-        final String gav = String.format("%s:%s:%s:%s", groupId, artifactId, type, version);
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Download artifact: " + gav);
-        }
-        ArtifactRequest artifactRequest = newArtifactRequest(gav);
-
-        ArtifactResult artifactResult = repositorySystem.resolveArtifact(session, artifactRequest);
-
-        return artifactResult.getArtifact().getFile();
+    public List<ArtifactResult> downloadArtifact(Artifact artifact) throws ArtifactResolutionException {
+        Set<ArtifactRequest> artifactRequests = newArtifactRequests(artifact);
+        return repositorySystem.resolveArtifacts(session, artifactRequests);
     }
 
     /**
@@ -123,11 +108,25 @@ public class ArtifactResolver {
      * @param artifactGav
      * @return
      */
-    private ArtifactRequest newArtifactRequest(String artifactGav) {
+    private Set<ArtifactRequest> newArtifactRequests(Artifact artifact) {
         ArtifactRequest artifactRequest = new ArtifactRequest();
-        artifactRequest.setArtifact(new DefaultArtifact(artifactGav));
-        artifactRequest.setRepositories(Arrays.asList(repository));
-        return artifactRequest;
+        artifactRequest.setArtifact(artifact);
+        final List<RemoteRepository> repositories = Arrays.asList(repository);
+        artifactRequest.setRepositories(repositories);
+
+        Set<ArtifactRequest> requests = new HashSet<>();
+        requests.add(artifactRequest);
+
+        if ((artifact.getExtension() == null || "jar".equals(artifact.getExtension().toLowerCase())) && StringUtils.isBlank(artifact.getClassifier())) {
+            ArtifactRequest pomRequest = new ArtifactRequest();
+            Artifact pomArtifact = new DefaultArtifact(artifact.getGroupId(), artifact.getArtifactId(), null, "pom", artifact.getVersion());
+            pomRequest.setArtifact(pomArtifact);
+            pomRequest.setRepositories(repositories);
+
+            requests.add(pomRequest);
+        }
+
+        return requests;
     }
 
     /**

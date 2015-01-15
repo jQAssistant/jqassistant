@@ -4,13 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.MAVEN;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,13 +120,15 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            timestamp of last martifact modification
      * @param descriptor
      *            the artifact descriptor
+     * @return
      */
-    private void migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, String lastModified, Descriptor descriptor) {
+    private RepositoryArtifactDescriptor migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, String lastModified,
+            Descriptor descriptor) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class,
                 RepositoryArtifactDescriptor.class);
-
         ContainsArtifactDescriptor containsDescriptor = store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor);
         containsDescriptor.setLastModified(StringUtils.defaultString(lastModified));
+        return artifactDescriptor;
     }
 
     /**
@@ -141,30 +147,41 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      */
     private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactResolver artifactResolver, ArtifactInfo artifactInfo)
             throws IOException {
-        File artifactFile = null;
+        List<ArtifactResult> artifactResults = null;
         try {
             String groupId = artifactInfo.getFieldValue(MAVEN.GROUP_ID);
             String artifactId = artifactInfo.getFieldValue(MAVEN.ARTIFACT_ID);
+            String classifier = artifactInfo.getFieldValue(MAVEN.CLASSIFIER);
             String packaging = artifactInfo.getFieldValue(MAVEN.PACKAGING);
             String version = artifactInfo.getFieldValue(MAVEN.VERSION);
+            Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, packaging, version);
 
-            artifactFile = artifactResolver.downloadArtifact(groupId, artifactId, packaging, version);
-            try (FileResource fileResource = new DefaultFileResource(artifactFile)) {
-                Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
-                if (descriptor != null) {
-                    String lastModified = new Date(artifactInfo.lastModified).toString();
-                    Store store = scanner.getContext().getStore();
-                    migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
-                } else {
-                    LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
+            artifactResults = artifactResolver.downloadArtifact(artifact);
+            for (ArtifactResult artifactResult : artifactResults) {
+                final Artifact resolvedArtifact = artifactResult.getArtifact();
+                final File artifactFile = resolvedArtifact.getFile();
+                try (FileResource fileResource = new DefaultFileResource(artifactFile)) {
+                    Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
+                    if (descriptor != null) {
+                        String lastModified = new Date(artifactInfo.lastModified).toString();
+                        Store store = scanner.getContext().getStore();
+                        RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
+                        artifactDescriptor.setClassifier(artifact.getClassifier());
+                        artifactDescriptor.setGroup(artifact.getGroupId());
+                        artifactDescriptor.setName(artifact.getArtifactId());
+                        artifactDescriptor.setType(artifact.getExtension());
+                        artifactDescriptor.setVersion(artifact.getVersion());
+                    } else {
+                        LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
+                    }
+                } finally {
+                    if (artifactResult != null && deleteArtifactsAfterScan) {
+                        artifactFile.delete();
+                    }
                 }
             }
         } catch (ArtifactResolutionException e) {
             LOGGER.warn(e.getMessage());
-        } finally {
-            if (artifactFile != null && deleteArtifactsAfterScan) {
-                artifactFile.delete();
-            }
         }
     }
 
@@ -201,9 +218,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         for (ArtifactInfo ai : searchResponse) {
             resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
             numberOfArtifacts++;
-            if (numberOfArtifacts > 10) {// TODO remove after plugin completion
-                break;
-            }
         }
         LOGGER.info("Scanned " + numberOfArtifacts + " new artifacts.");
         return repoDescriptor;
