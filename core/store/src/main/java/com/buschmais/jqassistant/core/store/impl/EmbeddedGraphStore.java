@@ -27,7 +27,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbeddedGraphStore.class);
 
     private static final String PROPERTY_NEO4J_CACHE_TYPE = "neo4j.cache_type";
-    private static final String VALUE_NEO4J_CACHE_TYPE_WEAK = "weak";
+    private static final String VALUE_NEO4J_CACHE_TYPE_NONE = "none";
     private static final String PROPERTY_NEO4J_ALLOW_STORE_UPGRADE = "neo4j.allow_store_upgrade";
 
     /**
@@ -54,8 +54,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
         XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
-                .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_WEAK).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString())
-                .property("neostore.relationshipgroupstore.db.mapped_memory", "10M").create();
+                .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_NONE).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString())
+                .create();
         return XO.createXOManagerFactory(xoUnit);
     }
 
