@@ -56,6 +56,21 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     }
 
     /**
+     * Get the value of a property.
+     * 
+     * @param name
+     *            The name of the property.
+     * @param type
+     *            The expected type.
+     * @param <T>
+     *            The type.
+     * @return The value.
+     */
+    protected <T> T getProperty(String name, Class<T> type) {
+        return type.cast(properties.get(name));
+    }
+
+    /**
      * Get a property as string.
      * 
      * @param name
