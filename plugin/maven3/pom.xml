@@ -90,12 +90,17 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
-            <version>3.0</version>
+            <version>${org.apache.maven_version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>3.0</version>
+            <version>${org.apache.maven_version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.analysis</artifactId>
+            <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -103,8 +108,8 @@
             <type>test-jar</type>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.analysis</artifactId>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>

@@ -1,25 +1,22 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
-import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
-import static com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
-
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.model.*;
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
  * Describes an artifact.
  * 
- * @author Herklotz
- *
- *
+ * @author ronald.kunzmann@buschmais.com
  *
  */
 @Label(value = "Artifact", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-@Generic(Generic.GenericLanguageElement.Artifact)
-public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQualifiedNameDescriptor, FileDescriptor, FileContainerDescriptor {
+public interface ArtifactDescriptor extends NamedDescriptor, FullQualifiedNameDescriptor {
 
     /**
      * @return the group
@@ -36,6 +33,7 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
     /**
      * @return the name
      */
+    @Override
     @Property("name")
     public String getName();
 
@@ -43,6 +41,7 @@ public interface ArtifactDescriptor extends Descriptor, NamedDescriptor, FullQua
      * @param name
      *            the name to set
      */
+    @Override
     public void setName(String name);
 
     /**
