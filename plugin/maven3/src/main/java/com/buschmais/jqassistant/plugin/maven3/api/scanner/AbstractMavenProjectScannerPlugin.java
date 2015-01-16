@@ -6,6 +6,7 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
@@ -41,7 +42,7 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
         return expectedType.cast(projectDescriptor);
     }
 
-    protected <A extends ArtifactDescriptor> A resolveArtifact(Artifact artifact, Class<A> descriptorType, ScannerContext scannerContext) {
+    protected <A extends ArtifactFileDescriptor> A resolveArtifact(Artifact artifact, Class<A> descriptorType, ScannerContext scannerContext) {
         boolean testJar = ARTIFACTTYPE_TEST_JAR.equals(artifact.getType());
         return resolveArtifact(artifact, descriptorType, testJar, scannerContext);
     }

@@ -51,6 +51,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
+		<org.apache.maven_version>3.0.5</org.apache.maven_version>
         <org.neo4j_version>2.1.6</org.neo4j_version>
         <org.asciidoctor_version>1.5.0</org.asciidoctor_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
@@ -382,6 +383,9 @@
                     </execution>
                 </executions>
                 <configuration>
+					<links>
+						<link>http://maven.apache.org/ref/${org.apache.maven_version}/apidocs/</link>
+					</links>
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <excludePackageNames>*.schema.*</excludePackageNames>
                 </configuration>
@@ -431,8 +435,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.1</version>
                 <configuration>
+					<links>
+						<link>http://maven.apache.org/ref/${org.apache.maven_version}/apidocs/</link>
+					</links>
                     <additionalparam>-Xdoclint:none</additionalparam>
                     <excludePackageNames>*.schema.*</excludePackageNames>
                 </configuration>

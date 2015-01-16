@@ -19,13 +19,13 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
      * Get or create an
-     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor}
+     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
      * .
      *
      * @param artifactId
      *            The artifact id.
      * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor}
+     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
      *         .
      */
     protected JavaArtifactDescriptor getArtifactDescriptor(String artifactId) {
