@@ -214,12 +214,9 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
         // Search artifacts
         Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(lastUpdateTime);
-        int numberOfArtifacts = 0;
         for (ArtifactInfo ai : searchResponse) {
             resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
-            numberOfArtifacts++;
         }
-        LOGGER.info("Scanned " + numberOfArtifacts + " new artifacts.");
         return repoDescriptor;
     }
 }

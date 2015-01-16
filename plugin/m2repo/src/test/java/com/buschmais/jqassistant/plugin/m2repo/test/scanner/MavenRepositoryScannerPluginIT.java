@@ -6,10 +6,12 @@ import java.net.URL;
 
 import org.javastack.httpd.HttpServer;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
@@ -60,6 +62,16 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
         try {
             store.beginTransaction();
             getScanner().scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
+
+            Long countJarNodes = store.executeQuery("MATCH (n:Maven:Artifact:Jar) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
+            final int expectedJarNodes = 40;
+            Assert.assertEquals("Number of jar nodes is wrong.", new Long(expectedJarNodes), countJarNodes);
+
+            MavenRepositoryDescriptor repositoryDescriptor = store.executeQuery("MATCH (n:Maven:Repository) RETURN n").getSingleResult()
+                    .get("n", MavenRepositoryDescriptor.class);
+            Assert.assertNotNull(repositoryDescriptor);
+            Assert.assertEquals(TEST_REPOSITORY_URL, repositoryDescriptor.getUrl());
+            Assert.assertEquals(expectedJarNodes, repositoryDescriptor.getContainedArtifacts().size());
         } finally {
             store.commitTransaction();
         }
