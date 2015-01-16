@@ -8,14 +8,19 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.MAVEN;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -41,7 +46,7 @@ public class MavenRepositoryScannerTest {
     private static final String PACKAGING = "jar";
 
     private void buildWhenThenReturn(ArtifactResolver artifactResolver, ArtifactInfo info) throws ArtifactResolutionException {
-        // when(artifactResolver.downloadArtifact(Mockito.any(Artifact.class))).thenReturn(newFile(info));
+        when(artifactResolver.downloadArtifact(Mockito.any(Artifact.class))).thenReturn(newArtifactResultList(info));
     }
 
     private Iterable<ArtifactInfo> getTestArtifactInfos() {
@@ -55,12 +60,19 @@ public class MavenRepositoryScannerTest {
         return infos;
     }
 
-    private Set<File> newFile(ArtifactInfo info) {
-        return Collections.singleton(new File("test-repo/" + info.groupId + "/" + info.artifactId + "/" + info.version + "/" + info.groupId + "-"
-                + info.artifactId + "-" + info.version + "." + info.packaging));
+    private List<ArtifactResult> newArtifactResultList(ArtifactInfo info) {
+        ArtifactResult result = new ArtifactResult(new ArtifactRequest());
+        Artifact artifact = new DefaultArtifact(info.groupId, info.artifactId, info.packaging, info.version);
+        result.setArtifact(artifact.setFile(newFile(info)));
+        return Arrays.asList(result);
     }
 
-    // @Test
+    private File newFile(ArtifactInfo info) {
+        return new File("test-repo/" + info.groupId + "/" + info.artifactId + "/" + info.version + "/" + info.groupId + "-" + info.artifactId + "-"
+                + info.version + "." + info.packaging);
+    }
+
+    @Test
     public void testMockMavenRepoScanner() throws Exception {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.WEEK_OF_YEAR, -1);
@@ -94,10 +106,8 @@ public class MavenRepositoryScannerTest {
         when(store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor)).thenReturn(containsArtifactDescriptor);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
-            Set<File> artifactFile = newFile(artifactInfo);
-            for (File file : artifactFile) {
-                when(scanner.scan(new DefaultFileResource(file), file.getAbsolutePath(), null)).thenReturn(descriptor);
-            }
+            File artifactFile = newFile(artifactInfo);
+            when(scanner.scan(new DefaultFileResource(artifactFile), artifactFile.getAbsolutePath(), null)).thenReturn(descriptor);
         }
 
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin(mavenIndex, artifactResolver);
