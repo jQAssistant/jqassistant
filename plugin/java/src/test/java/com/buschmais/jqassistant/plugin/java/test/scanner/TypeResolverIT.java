@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
@@ -120,7 +120,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
         testResult = query("match (artifact:Artifact)-[:REQUIRES]->(a:Type) where a.fqn={a} return artifact",
                 MapBuilder.<String, Object> create("a", A.class.getName()).get());
         assertThat(testResult.getRows().size(), equalTo(1));
-        ArtifactDescriptor a = (ArtifactDescriptor) testResult.getColumn("artifact").get(0);
+        ArtifactFileDescriptor a = (ArtifactFileDescriptor) testResult.getColumn("artifact").get(0);
         assertThat(a.getFullQualifiedName(), equalTo("a2"));
         store.commitTransaction();
     }
