@@ -7,6 +7,11 @@ import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.xo.api.annotation.Abstract;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
+/**
+ * Base descriptor for pom an profile.
+ * 
+ * @author ronald.kunzmann@buschmais.com
+ */
 @Abstract
 public interface BaseProfileDescriptor extends Descriptor {
 

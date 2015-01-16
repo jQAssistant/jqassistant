@@ -7,6 +7,11 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
+/**
+ * Descriptor for a maven profile.
+ * 
+ * @author ronald.kunzmann@buschmais.com
+ */
 @Label("Profile")
 public interface MavenProfileDescriptor extends MavenDescriptor, BaseProfileDescriptor {
 
@@ -31,6 +36,11 @@ public interface MavenProfileDescriptor extends MavenDescriptor, BaseProfileDesc
     @Outgoing
     List<ProfileDependsOnDescriptor> getDependencies();
 
+    /**
+     * Get information about conditions to activate the profile.
+     * 
+     * @return The activation information.
+     */
     @Relation("HAS_ACTIVATION")
     MavenProfileActivationDescriptor getActivation();
 

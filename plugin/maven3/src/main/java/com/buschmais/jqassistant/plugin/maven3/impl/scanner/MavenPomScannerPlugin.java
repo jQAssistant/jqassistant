@@ -97,6 +97,16 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
         return pomDescriptor;
     }
 
+    /**
+     * Adds information about defined profile.
+     * 
+     * @param pomDescriptor
+     *            The descriptor for the current POM.
+     * @param model
+     *            The Maven Model.
+     * @param store
+     *            The database.
+     */
     private void addProfiles(MavenPomXmlDescriptor pomDescriptor, Model model, Store store) {
         List<Profile> profiles = model.getProfiles();
         for (Profile profile : profiles) {
@@ -113,6 +123,16 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
         }
     }
 
+    /**
+     * Adds activation information for the given profile.
+     * 
+     * @param mavenProfileDescriptor
+     *            The profile descriptor.
+     * @param activation
+     *            The activation information.
+     * @param store
+     *            The database.
+     */
     private void addActivation(MavenProfileDescriptor mavenProfileDescriptor, Activation activation, Store store) {
         if (null == activation) {
             return;
@@ -197,8 +217,8 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
      * 
      * @param pomDescriptor
      *            The descriptor for the current POM.
-     * @param model
-     *            The Maven Model.
+     * @param modules
+     *            The modules.
      * @param store
      *            The database.
      */
@@ -216,8 +236,8 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
      * 
      * @param pomDescriptor
      *            The descriptor for the current POM.
-     * @param model
-     *            The Maven Model.
+     * @param dependencyManagement
+     *            The dependency management information.
      * @param store
      *            The database.
      */
@@ -263,8 +283,8 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
      * 
      * @param currentArtifactDescriptor
      *            The descriptor for the current artifact.
-     * @param model
-     *            The Maven Model.
+     * @param dependencies
+     *            The dependencies information.
      * @param store
      *            The database.
      */
@@ -278,12 +298,12 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
     }
 
     /**
-     * Adds information about artifact dependencies.
+     * Adds information about profile dependencies.
      * 
-     * @param currentArtifactDescriptor
-     *            The descriptor for the current artifact.
-     * @param model
-     *            The Maven Model.
+     * @param profileDescriptor
+     *            The descriptor for the current profile.
+     * @param dependencies
+     *            The dependencies information.
      * @param store
      *            The database.
      */
@@ -302,8 +322,8 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
      * 
      * @param pomDescriptor
      *            The descriptor for the current POM.
-     * @param model
-     *            The Maven Model.
+     * @param build
+     *            Information required to build the project.
      * @param store
      *            The database.
      */
@@ -334,8 +354,8 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
      * 
      * @param pomDescriptor
      *            The descriptor for the current POM.
-     * @param model
-     *            The Maven Model.
+     * @param build
+     *            Information required to build the project.
      * @param store
      *            The database.
      */
@@ -357,6 +377,17 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
         }
     }
 
+    /**
+     * Adds configuration information.
+     * 
+     * @param configurableDescriptor
+     *            The descriptor for the configured element (Plugin,
+     *            PluginExecution).
+     * @param config
+     *            The configuration information.
+     * @param store
+     *            The database.
+     */
     private void addConfiguration(ConfigurableDescriptor configurableDescriptor, Xpp3Dom config, Store store) {
         if (null == config) {
             return;
@@ -365,11 +396,20 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
         configurableDescriptor.setConfiguration(configDescriptor);
         Xpp3Dom[] children = config.getChildren();
         for (Xpp3Dom child : children) {
-            configDescriptor.getValues().add(getChildNodes(child, store));
+            configDescriptor.getValues().add(getConfigChildNodes(child, store));
         }
     }
 
-    private ValueDescriptor<?> getChildNodes(Xpp3Dom node, Store store) {
+    /**
+     * Returns information about child config entries.
+     * 
+     * @param node
+     *            Current config node.
+     * @param store
+     *            The database.
+     * @return Child config information.
+     */
+    private ValueDescriptor<?> getConfigChildNodes(Xpp3Dom node, Store store) {
         Xpp3Dom[] children = node.getChildren();
         if (children.length == 0) {
             PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
@@ -380,7 +420,7 @@ public class MavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, M
         ArrayValueDescriptor childDescriptor = store.create(ArrayValueDescriptor.class);
         childDescriptor.setName(node.getName());
         for (Xpp3Dom child : children) {
-            childDescriptor.getValue().add(getChildNodes(child, store));
+            childDescriptor.getValue().add(getConfigChildNodes(child, store));
         }
         return childDescriptor;
     }
