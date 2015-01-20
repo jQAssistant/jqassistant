@@ -42,6 +42,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
     private static final String PROPERTY_NAME_DIRECTORY = "m2repo.directory";
     private static final String PROPERTY_NAME_DELETE_ARTIFACTS = "m2repo.delete.artifacts";
+    public static final String DEFAULT_M2REPO_DIR = "./target/m2repo-data";
 
     private File localDirectory;
 
@@ -94,7 +95,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     @Override
     protected void initialize() {
         super.initialize();
-        localDirectory = new File("./target/m2repo-data");
+        localDirectory = new File(DEFAULT_M2REPO_DIR);
         if (getProperties().containsKey(PROPERTY_NAME_DIRECTORY)) {
             localDirectory = new File(getProperties().get(PROPERTY_NAME_DIRECTORY).toString());
         }
@@ -157,6 +158,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, packaging, version);
 
             artifactResults = artifactResolver.downloadArtifact(artifact);
+            Store store = scanner.getContext().getStore();
             for (ArtifactResult artifactResult : artifactResults) {
                 final Artifact resolvedArtifact = artifactResult.getArtifact();
                 final File artifactFile = resolvedArtifact.getFile();
@@ -164,7 +166,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
                     if (descriptor != null) {
                         String lastModified = new Date(artifactInfo.lastModified).toString();
-                        Store store = scanner.getContext().getStore();
                         RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
                         artifactDescriptor.setClassifier(artifact.getClassifier());
                         artifactDescriptor.setGroup(artifact.getGroupId());

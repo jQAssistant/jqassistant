@@ -1,5 +1,8 @@
 == 1.0.0-RC
 
+=== Dependencies
+- requires Apache Maven 3.2.5
+
 === Plugins
 ==== JUnit
 - renamed JUnit4 plugin to JUnit as it also contains rules for JUnit3

@@ -18,6 +18,11 @@ public interface ContainsArtifactDescriptor extends Descriptor {
     @Incoming
     RepositoryArtifactDescriptor getArtifactDescriptor();
 
+    /**
+     * The last modified date as String.
+     * 
+     * @return the last modified date as String.
+     */
     @Property("lastModified")
     String getLastModified();
 

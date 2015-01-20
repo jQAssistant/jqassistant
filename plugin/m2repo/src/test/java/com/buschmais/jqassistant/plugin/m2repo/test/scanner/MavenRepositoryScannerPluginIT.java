@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
 import org.javastack.httpd.HttpServer;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,6 +14,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
@@ -45,6 +48,10 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
     @Before
     public void startServer() throws IOException {
         getHttpServer().start();
+        File m2Dir = new File(MavenRepositoryScannerPlugin.DEFAULT_M2REPO_DIR);
+        if (m2Dir.exists()) {
+            FileUtils.deleteDirectory(m2Dir);
+        }
     }
 
     /**
@@ -58,7 +65,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    public void testMavenRepoScannerRealRepo() throws MalformedURLException {
+    public void testMavenRepoScanner() throws MalformedURLException {
         try {
             store.beginTransaction();
             getScanner().scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
@@ -71,7 +78,8 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
                     .get("n", MavenRepositoryDescriptor.class);
             Assert.assertNotNull(repositoryDescriptor);
             Assert.assertEquals(TEST_REPOSITORY_URL, repositoryDescriptor.getUrl());
-            Assert.assertEquals(expectedJarNodes, repositoryDescriptor.getContainedArtifacts().size());
+            final int expectedPomNodes = 9;
+            Assert.assertEquals(expectedJarNodes + expectedPomNodes, repositoryDescriptor.getContainedArtifacts().size());
         } finally {
             store.commitTransaction();
         }
