@@ -35,9 +35,17 @@ A remote Maven repository.
 [options="header"]
 |====
 | Name      	| Description
-| lastModified 	| timestamp of the last artifact modification
+| lastModified 	| Timestamp of the last artifact modification.
 |====
 
 
 ===== :Maven:Artifact
-A Maven artifact.
+A Maven artifact (e.g. *.pom, *.jar).
+
+.Properties of :Maven:Artifact
+[options="header"]
+|====
+| Name      | Description
+| url 		| the remote URL
+|====
+
