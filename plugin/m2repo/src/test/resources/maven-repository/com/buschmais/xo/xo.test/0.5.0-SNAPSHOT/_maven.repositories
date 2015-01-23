@@ -1,0 +1,8 @@
+#NOTE: This is an internal implementation file, its format can be changed without prior notice.
+#Mon Jan 12 08:45:15 CET 2015
+xo.test-0.5.0-SNAPSHOT-sources.jar>=
+xo.test-0.5.0-SNAPSHOT.jar>=
+xo.test-0.5.0-SNAPSHOT.pom>=
+xo.test-0.5.0-SNAPSHOT-javadoc.jar>=
+xo.test-0.5.0-SNAPSHOT-java8.jar>=
+xo.test-0.5.0-SNAPSHOT-tests.jar>=

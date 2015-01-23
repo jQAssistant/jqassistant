@@ -1,0 +1,149 @@
+<<EarArchiveScanner>> <<ApplicationXmlScanner>> <<WarArchiveScanner>> <<WebXmlScanner>>
+[[EarArchiveScanner]]
+==== Scanner for EAR files
+Imports EAR (Enterprise ARchive) files.
+
+===== :File:Enterprise:Application:Archive
+A file representing an EAR file.
+
+.Properties of :File:Enterprise:Application:Archive
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:Enterprise:Application:Archive
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| CONTAINS | <<:File>>       | 0..n        | References the files contained in the archive.
+|====
+
+[[WarArchiveScanner]]
+==== Scanner for WAR files
+Imports WAR (Web Application Archive) files.
+
+===== :File:Web:Application:Archive
+A file representing WAR file.
+
+.Properties of :File:Web:Application:Archive
+[options="header"]
+|====
+| Name     | Description
+| fileName | The file name
+|====
+
+.Relations of :File:Web:Application:Archive
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| CONTAINS | <<:File>>       | 0..n        | References the files contained in the archive.
+|====
+
+[[ApplicationXmlScanner]]
+===== :File:Enterprise:Application:Xml
+Represents a Java EE application.xml descriptor.
+
+.Properties of :File:Enterprise:Application:Xml
+[options="header"]
+|====
+| Name              | Description
+| fileName          | The file name
+| initializeInOrder | If initialize-in-order is true, modules must be initialized in the order they're listed in the deployment descriptor
+| libraryDirectory  | The path to the library directory.
+|====
+
+.Relations of :File:Enterprise:Application:Xml
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| HAS_DESCRIPTION   | <<:Description>>                   | 0..n | References a description of this descriptor.
+| HAS_DISPLAY_NAME  | <<:DisplayName>>                   | 0..n | References a display name of this descriptor.
+| HAS_ICON          | <<:Icon>>                          | 0..n | References an icon of this descriptor.
+| HAS_MODULE        | <<:Enterprise:Application:Module>> | 1..n | References a module specified by this descriptor.
+| HAS_SECURITY_ROLE | <<:SecurityRole>>                  | 0..n | References a security role defined by this descriptor.
+|====
+
+[[:Enterprise:Application:Module]]
+===== :Enterprise:Application:Module
+Represents a declared module of a Java EE Java application. Can be qualified by either :Ejb, :Web, :Connector or :JavaClient.
+
+.Properties of :Enterprise:Application:Module
+[options="header"]
+|====
+| Name | Description
+| path | The path to the module archive within the enterprise application archive.
+|====
+
+[[:Enterprise:Application:Module:Web]]
+===== :Enterprise:Application:Module:Web
+Represents a declared web module of a Java EE Java application.
+
+.Properties of :Enterprise:Application:Module:Web
+[options="header"]
+|====
+| Name        | Description
+| contextRoot | The context root path to use for the web module.
+|====
+
+
+[[WeXmlScanner]]
+===== :File:Web:Xml
+Represents a web application descriptor.
+
+.Relations of :File:Web:Xml
+[options="header"]
+|====
+| Name                    | Target label(s)     | Cardinality | Description
+| HAS_SESSION_CONFIG      | <<:SessionConfig>>  | 0..1 | References the session configuration.
+| HAS_SERVLET             | <<:Servlet>>        | 0..n | References a servlet declaration.
+| HAS_SERVLET_MAPPING     | ServletMapping      | 0..n | References a servlet mapping declaration.
+| HAS_FILTER              | Filter              | 0..n | References a filter declaration.
+| HAS_FILTER_MAPPING      | FilterMapping       | 0..n | References a filter mapping declaration.
+| HAS_LISTENER            | Listener            | 0..n | References a listener declaration.
+| HAS_CONTEXT_PARAM       | <<.ParamValue>>     | 0..n | References a context parameter declaration.
+| HAS_ERROR_PAGE          | ErrorPage           | 0..n | References an error page declaration.
+| HAS_SECURITY_CONSTRAINT | SecurityConstraint  | 0..n | References a security constraint declaration.
+| HAS_SECURITY_ROLE       | <<:SecurityRole>>   | 0..n | References a security role declaration.
+| HAS_LOGIN_CONFIG        | LoginConfig         | 0..n | References a login configuration.
+|====
+
+
+[[:SessionConfig]]
+===== :SessionConfig
+Represents a session configuration.
+
+.Properties of :SessionConfig
+[options="header"]
+|====
+| Name           | Description
+| sessionTimeout | The session timeout.
+|====
+
+
+[[:Servlet]]
+===== :Servlet
+Represents a servlet declaration.
+
+.Properties of :Servlet
+[options="header"]
+|====
+| Name          | Description
+| enabled       | Indicates if this servlet is enabled.
+| jspFile       | The JSP file representing the servlet.
+| loadOnStartup | Indicates whether the servlet will be loaded on startup.
+|====
+
+.Relations of :Servlet
+[options="header"]
+|====
+| Name     | Target label(s) | Cardinality | Description
+| HAS_DESCRIPTION       | <<:Description>>                   | 0..n | References a description of this descriptor.
+| HAS_DISPLAY_NAME      | <<:DisplayName>>                   | 0..n | References a display name of this descriptor.
+| HAS_ICON              | <<:Icon>>                          | 0..n | References an icon of this descriptor.
+| HAS_INIT_PARAM        | <<:ParamValue>>                    | 0..n | References a init parameter.
+|====
+
+
+include::{docRoot}/jqassistant.plugin.javaee6/common.adoc[]

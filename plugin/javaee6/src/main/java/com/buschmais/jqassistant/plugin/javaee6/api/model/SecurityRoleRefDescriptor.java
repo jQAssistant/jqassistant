@@ -7,6 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("SecurityRoleRef")
 public interface SecurityRoleRefDescriptor extends WebDescriptor {
+
     String getRoleName();
 
     void setRoleName(String roleName);

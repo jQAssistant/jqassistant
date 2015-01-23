@@ -21,4 +21,7 @@ public interface FilterDescriptor extends WebDescriptor, NamedDescriptor, AsyncS
 
     @Relation("HAS_INIT_PARAM")
     List<ParamValueDescriptor> getInitParams();
+
+    @Relation("HAS_MAPPING")
+    List<FilterMappingDescriptor> getMappings();
 }

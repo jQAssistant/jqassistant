@@ -2,8 +2,11 @@
     <description>Provides common elements to be re-used by other plugins.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor</class>
     </model>
     <scanner>

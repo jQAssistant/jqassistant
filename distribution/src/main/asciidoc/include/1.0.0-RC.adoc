@@ -1,8 +1,13 @@
 == 1.0.0-RC
 
+=== Dependencies
+- requires Apache Maven 3.2.5
+
 === Plugins
+
 ==== JUnit
 - renamed JUnit4 plugin to JUnit as it also contains rules for JUnit3
+
 ==== TestNG
 - added TestNG plugin containing concepts
 
@@ -12,4 +17,6 @@
 ==== Facelet
 - added facelet plugin which providing a scanner for JSF 2.x views
 
-
+==== Java EE 6
+- added scanners for EAR archives and application.xml descriptors
+- added scanners for WAR archives and web.xml descriptors

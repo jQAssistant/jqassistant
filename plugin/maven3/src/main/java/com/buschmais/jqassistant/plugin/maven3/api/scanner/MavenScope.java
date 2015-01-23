@@ -16,7 +16,8 @@ public enum MavenScope implements Scope {
         @Override
         public void destroy(ScannerContext context) {
         }
-    };
+    },
+	REPOSITORY;
 
     @Override
     public String getPrefix() {
