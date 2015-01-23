@@ -22,23 +22,23 @@ public @interface Generic {
     GenericLanguageElement value();
 
     public enum GenericLanguageElement implements LanguageElement {
-        Artifact {
+        ArtifactFile {
 
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
-                return new SourceProvider<ArtifactDescriptor>() {
+                return new SourceProvider<ArtifactFileDescriptor>() {
                     @Override
-                    public String getName(ArtifactDescriptor descriptor) {
+                    public String getName(ArtifactFileDescriptor descriptor) {
                         return descriptor.getFullQualifiedName();
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(ArtifactDescriptor descriptor) {
+                    public FileDescriptor getSourceFile(ArtifactFileDescriptor descriptor) {
                         return descriptor;
                     }
 
                     @Override
-                    public Integer getLineNumber(ArtifactDescriptor descriptor) {
+                    public Integer getLineNumber(ArtifactFileDescriptor descriptor) {
                         return null;
                     }
                 };
