@@ -1,5 +1,8 @@
 == 1.0.0-RC
 
+=== Dependencies
+- requires Apache Maven 3.2.5
+
 === Plugins
 
 ==== JUnit
