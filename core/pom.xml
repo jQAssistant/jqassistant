@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctorj</artifactId>
-                <version>1.5.2</version>
+                <version>${org.asciidoctor_version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jruby</groupId>
@@ -61,8 +61,13 @@
             </dependency>
             <dependency>
                 <groupId>org.jruby</groupId>
-                <artifactId>jruby</artifactId>
-                <version>1.7.16.1</version>
+                <artifactId>jruby-core</artifactId>
+                <version>${org.jruby_version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jruby</groupId>
+                <artifactId>jruby-stdlib</artifactId>
+                <version>${org.jruby_version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
