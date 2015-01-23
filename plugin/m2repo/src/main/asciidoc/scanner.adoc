@@ -1,0 +1,55 @@
+<<MavenRepositoryScanner>>
+[[MavenRepositoryScanner]]
+==== Scanner for remote maven repositories
+Downloads the repository index and all new artifacts. After that the plugin delegates all new artifacts to other plugins.
+
+==== Configuration
+Configure the scanner with following properties.
+
+.Configuration of MavenRepositoryScanner
+[options="header"]
+|====
+| Property     			  | Description																			| Default
+| m2repo.directory 		  | A directory path. This directory is the target for Maven indices and artifacts. 	| ./target/m2repo-data
+| m2repo.delete.artifacts | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
+|====
+
+===== :Maven:Repository
+A remote Maven repository.
+
+.Properties of :Maven:Repository
+[options="header"]
+|====
+| Name      | Description
+| url 		| the remote URL
+|====
+
+.Relations of :Maven:Repository
+[options="header"]
+|====
+| Name          	| Target label(s)             | Cardinality | Description
+| CONTAINS_ARTIFACT | <<:Maven:Artifact>> 	  	  | 0..n        | References repository artifacts
+|====
+
+.Properties of CONTAINS_ARTIFACT
+[options="header"]
+|====
+| Name      	| Description
+| lastModified 	| Timestamp of the last artifact modification.
+|====
+
+
+===== :Maven:Artifact
+A Maven artifact (e.g. *.pom, *.jar).
+
+.Properties of :Maven:Artifact
+[options="header"]
+|====
+| Name       | Description
+| group      | The group id
+| name 		 | The artifact id
+| type       | The type, e.g. "jar"
+| classifier | The classifiert
+| version    | The version
+|====
+
