@@ -8,14 +8,6 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDescriptor, VersionDescriptor {
 
-    String getDisplayName();
-
-    void setDisplayName(String elementText);
-
-    String getDescription();
-
-    void setDescription(String elementText);
-
     @Relation("HAS_SESSION_CONFIG")
     SessionConfigDescriptor getSessionConfig();
 

@@ -42,7 +42,7 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
     private ConnectorModuleDescriptor connectorModuleDescriptor;
 
     @Mock
-    private JavaModuleDescriptor javaModuleDescriptor;
+    private ClientModuleDescriptor clientModuleDescriptor;
 
     @Mock
     private SecurityRoleDescriptor securityRoleDescriptor;
@@ -73,7 +73,7 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(store.create(EjbModuleDescriptor.class)).thenReturn(ejbModuleDescriptor);
         when(store.create(WebModuleDescriptor.class)).thenReturn(webModuleDescriptor);
         when(store.create(ConnectorModuleDescriptor.class)).thenReturn(connectorModuleDescriptor);
-        when(store.create(JavaModuleDescriptor.class)).thenReturn(javaModuleDescriptor);
+        when(store.create(ClientModuleDescriptor.class)).thenReturn(clientModuleDescriptor);
 
         // Security Role
         when(store.create(SecurityRoleDescriptor.class)).thenReturn(securityRoleDescriptor);
@@ -100,8 +100,8 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         verify(webModuleDescriptor).setPath("webModule.war");
         verify(store).create(ConnectorModuleDescriptor.class);
         verify(connectorModuleDescriptor).setPath("connectorModule.rar");
-        verify(store).create(JavaModuleDescriptor.class);
-        verify(javaModuleDescriptor).setPath("javaModule.jar");
+        verify(store).create(ClientModuleDescriptor.class);
+        verify(clientModuleDescriptor).setPath("javaModule.jar");
 
         verifySecurityRole(applicationXmlDescriptor.getSecurityRoles(), securityRoleDescriptor, securityRoleDescriptionDescriptor, roleNameDescriptor, "en",
                 "Admin Role", "Admin");

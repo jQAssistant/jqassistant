@@ -93,7 +93,7 @@ public class ApplicationXmlScannerPlugin extends AbstractResourceScannerPlugin<F
                 moduleDescriptor = store.create(ConnectorModuleDescriptor.class);
             } else if (moduleType.getJava() != null) {
                 pathType = moduleType.getJava();
-                moduleDescriptor = store.create(JavaModuleDescriptor.class);
+                moduleDescriptor = store.create(ClientModuleDescriptor.class);
             }
             if (moduleDescriptor != null) {
                 moduleDescriptor.setPath(pathType.getValue());

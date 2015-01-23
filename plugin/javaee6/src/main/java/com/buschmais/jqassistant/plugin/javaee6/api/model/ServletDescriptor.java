@@ -10,21 +10,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 @Label("Servlet")
 public interface ServletDescriptor extends WebDescriptor, NamedDescriptor, TypedDescriptor, AsyncSupportedDescriptor {
 
-    @Relation("HAS_DESCRIPTION")
-    List<DescriptionDescriptor> getDescriptions();
-
-    @Relation("HAS_DISPLAY_NAME")
-    List<DisplayNameDescriptor> getDisplayNames();
-
     boolean isEnabled();
 
     void setEnabled(boolean value);
-
-    @Relation("HAS_ICON")
-    List<IconDescriptor> getIcons();
-
-    @Relation("HAS_INIT_PARAM")
-    List<ParamValueDescriptor> getInitParams();
 
     String getJspFile();
 
@@ -33,6 +21,18 @@ public interface ServletDescriptor extends WebDescriptor, NamedDescriptor, Typed
     String getLoadOnStartup();
 
     void setLoadOnStartup(String loadOnStartup);
+
+    @Relation("HAS_DESCRIPTION")
+    List<DescriptionDescriptor> getDescriptions();
+
+    @Relation("HAS_DISPLAY_NAME")
+    List<DisplayNameDescriptor> getDisplayNames();
+
+    @Relation("HAS_ICON")
+    List<IconDescriptor> getIcons();
+
+    @Relation("HAS_INIT_PARAM")
+    List<ParamValueDescriptor> getInitParams();
 
     @Relation("HAS_MULTI_PART_CONFIG")
     MultipartConfigDescriptor getMultipartConfig();
