@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.api.model;
+package com.buschmais.jqassistant.plugin.common.api.model;
 
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
@@ -10,7 +10,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  *            The value type.
  */
 @Label("Value")
-public interface ValueDescriptor<V> extends JavaDescriptor, NamedDescriptor {
+public interface ValueDescriptor<V> extends NamedDescriptor {
 
     /**
      * Set the value.
