@@ -28,7 +28,7 @@ A remote Maven repository.
 [options="header"]
 |====
 | Name          	| Target label(s)             | Cardinality | Description
-| CONTAINS_ARTIFACT | <<:Maven:Artifact>> 	  	  | 0..n        | References a repository artifact
+| CONTAINS_ARTIFACT | <<:Maven:Artifact>> 	  	  | 0..n        | References repository artifacts
 |====
 
 .Properties of CONTAINS_ARTIFACT
@@ -45,7 +45,11 @@ A Maven artifact (e.g. *.pom, *.jar).
 .Properties of :Maven:Artifact
 [options="header"]
 |====
-| Name      | Description
-| url 		| the remote URL
+| Name       | Description
+| group      | The group id
+| name 		 | The artifact id
+| type       | The type, e.g. "jar"
+| classifier | The classifiert
+| version    | The version
 |====
 

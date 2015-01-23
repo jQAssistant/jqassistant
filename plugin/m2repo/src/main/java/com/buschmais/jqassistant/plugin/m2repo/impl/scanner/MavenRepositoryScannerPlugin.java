@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -104,7 +105,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         }
 
         if (getProperties().containsKey(PROPERTY_NAME_DELETE_ARTIFACTS)) {
-            deleteArtifactsAfterScan = BooleanUtils.toBoolean(getProperties().get(PROPERTY_NAME_DELETE_ARTIFACTS).toString());
+            deleteArtifactsAfterScan = BooleanUtils.toBoolean(Objects.toString(getProperties().get(PROPERTY_NAME_DELETE_ARTIFACTS)));
         }
 
     }
