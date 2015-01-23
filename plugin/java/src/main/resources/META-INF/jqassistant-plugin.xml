@@ -16,9 +16,7 @@
         <class>com.buschmais.jqassistant.plugin.java.api.model.WritesDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ConstructorDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ParameterDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.java.api.model.ArrayValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.ClassValueDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.java.api.model.PropertyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.PrimitiveValueDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.java.api.model.EnumValueDescriptor</class>
