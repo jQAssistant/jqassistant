@@ -17,15 +17,23 @@ public enum MavenScope implements Scope {
         public void destroy(ScannerContext context) {
         }
     },
-	REPOSITORY;
+    REPOSITORY {
+        @Override
+        public void create(ScannerContext context) {
+        }
 
-    @Override
-    public String getPrefix() {
-        return "maven";
-    }
+        @Override
+        public void destroy(ScannerContext context) {
+        }
+    };
 
     @Override
     public String getName() {
         return name();
+    }
+
+    @Override
+    public String getPrefix() {
+        return "maven";
     }
 }
