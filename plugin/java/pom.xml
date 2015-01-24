@@ -10,10 +10,6 @@
 
     <artifactId>jqassistant.plugin.java</artifactId>
 
-    <properties>
-        <org.ow2.asm_version>5.0.3</org.ow2.asm_version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
