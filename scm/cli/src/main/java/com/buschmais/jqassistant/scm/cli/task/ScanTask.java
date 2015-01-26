@@ -35,6 +35,17 @@ public class ScanTask extends AbstractJQATask {
     private Map<String, String> urls = Collections.emptyMap();
     private boolean reset = false;
 
+    @SuppressWarnings("static-access")
+    @Override
+    protected void addTaskOptions(final List<Option> options) {
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files")
+                .withDescription("The files or directories to be scanned, comma separated.").withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_FILES));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls").withDescription("The URLs to be scanned, comma separated.")
+                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_URLS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).")
+                .create(CMDLINE_OPTION_RESET));
+    }
+
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
@@ -68,6 +79,23 @@ public class ScanTask extends AbstractJQATask {
         }
     }
 
+    private Map<String, String> parseResources(List<String> optionValues) {
+        Map<String, String> resources = new HashMap<>();
+        for (String file : optionValues) {
+            String[] parts = file.split("::");
+            String fileName = null;
+            String scopeName = null;
+            if (parts.length == 2) {
+                scopeName = parts[0];
+                fileName = parts[1];
+            } else {
+                fileName = parts[0];
+            }
+            resources.put(fileName, scopeName);
+        }
+        return resources;
+    }
+
     private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) {
         store.beginTransaction();
         Scanner scanner = new ScannerImpl(store, scannerPlugins, scopePluginRepository.getScopes());
@@ -87,30 +115,5 @@ public class ScanTask extends AbstractJQATask {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
         reset = options.hasOption(CMDLINE_OPTION_RESET);
-    }
-
-    private Map<String, String> parseResources(List<String> optionValues) {
-        Map<String, String> resources = new HashMap<>();
-        for (String file : optionValues) {
-            String[] parts = file.split(";");
-            String fileName = parts[0];
-            String scopeName = null;
-            if (parts.length == 2) {
-                scopeName = parts[1];
-            }
-            resources.put(fileName, scopeName);
-        }
-        return resources;
-    }
-
-    @SuppressWarnings("static-access")
-    @Override
-    protected void addTaskOptions(final List<Option> options) {
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files")
-                .withDescription("The files or directories to be scanned, comma separated.").withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_FILES));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls").withDescription("The URLs to be scanned, comma separated.")
-                .withValueSeparator(',').hasArgs().create(CMDLINE_OPTION_URLS));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).")
-                .create(CMDLINE_OPTION_RESET));
     }
 }

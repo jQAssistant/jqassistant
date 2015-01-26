@@ -56,6 +56,7 @@
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
         <org.jruby_version>1.7.16.1</org.jruby_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
+        <org.ow2.asm_version>5.0.3</org.ow2.asm_version>
         <github.global.server>github</github.global.server>
     </properties>
 

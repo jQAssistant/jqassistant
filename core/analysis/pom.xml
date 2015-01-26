@@ -52,6 +52,17 @@
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-core</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>asm</artifactId>
+            		<groupId>org.ow2.asm</groupId>
+            	</exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+      		<groupId>org.ow2.asm</groupId>
+      		<artifactId>asm</artifactId>
+      		<version>${org.ow2.asm_version}</version>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
