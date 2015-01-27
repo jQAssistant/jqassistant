@@ -75,6 +75,26 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     }
 
     /**
+     * Returns a string with the artifact coords
+     * (groupId:artifactId:[classifier:]version).
+     * 
+     * @param artifact
+     *            the artifact
+     * @return a string with the artifact coords
+     *         (groupId:artifactId:[classifier:]version).
+     */
+    private String getFqn(Artifact artifact) {
+        StringBuilder builder = new StringBuilder(artifact.getGroupId()).append(":");
+        builder.append(artifact.getArtifactId()).append(":");
+        if (StringUtils.isNotBlank(artifact.getClassifier())) {
+            builder.append(artifact.getClassifier()).append(":");
+        }
+        builder.append(artifact.getVersion());
+
+        return builder.toString();
+    }
+
+    /**
      * Finds or creates a repository descriptor for the given url.
      * 
      * @param store
@@ -173,6 +193,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                         artifactDescriptor.setName(artifact.getArtifactId());
                         artifactDescriptor.setType(artifact.getExtension());
                         artifactDescriptor.setVersion(artifact.getVersion());
+                        artifactDescriptor.setFullQualifiedName(getFqn(artifact));
                     } else {
                         LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
                     }
