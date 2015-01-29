@@ -37,7 +37,7 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EjbDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EjbModuleDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.JavaModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ClientModuleDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor</class>
     </model>
     <scope>

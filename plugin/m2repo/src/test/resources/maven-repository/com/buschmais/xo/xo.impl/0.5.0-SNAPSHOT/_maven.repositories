@@ -1,0 +1,11 @@
+#NOTE: This is an internal implementation file, its format can be changed without prior notice.
+#Wed Jan 14 10:16:23 CET 2015
+xo.impl-0.5.0-SNAPSHOT.pom>sonatype-nexus-snapshots=
+xo.impl-0.5.0-SNAPSHOT.jar>=
+xo.impl-0.5.0-SNAPSHOT-sources.jar>sonatype-nexus-snapshots=
+xo.impl-0.5.0-SNAPSHOT.pom>=
+xo.impl-0.5.0-SNAPSHOT-tests.jar>=
+xo.impl-0.5.0-SNAPSHOT-sources.jar>=
+xo.impl-0.5.0-SNAPSHOT-javadoc.jar>=
+xo.impl-0.5.0-SNAPSHOT-java8.jar>=
+xo.impl-0.5.0-SNAPSHOT.jar>sonatype-nexus-snapshots=
