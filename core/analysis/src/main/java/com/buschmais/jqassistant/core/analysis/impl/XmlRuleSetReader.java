@@ -88,8 +88,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         try {
             inputStream = ruleSource.getInputStream();
         } catch (IOException e) {
-            LOGGER.warn("An unexpected problem detected while opening stream for reading rules from '{}'", ruleSource.getId());
-            return;
+            throw new IllegalArgumentException("An unexpected problem detected while opening stream for reading rules from '" + ruleSource.getId() +"'", e);
         }
         try {
             Unmarshaller unmarshaller = JAXB_CONTEXT.createUnmarshaller();
