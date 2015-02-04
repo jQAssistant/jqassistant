@@ -54,8 +54,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
         XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
-                .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_WEAK).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString())
-                .property("neostore.relationshipgroupstore.db.mapped_memory", "10M").create();
+                .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_WEAK).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString()).create();
         return XO.createXOManagerFactory(xoUnit);
     }
 
