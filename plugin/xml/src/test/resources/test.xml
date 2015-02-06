@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<BookCatalogue xmlns="http://www.publishing.org">
+    <Book>
+        <Title>Yogasana Vijnana: the Science of Yoga</Title>
+        <ISBN>81-40-34319-4</ISBN>
+        <Cost currency="INR">11.50</Cost>
+    </Book>
+</BookCatalogue>
