@@ -2,12 +2,13 @@
     <description>
     </description>
     <model>
-        <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlDocumentDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlCharactersDescriptor</class>
     </model>
     <scanner>
-        <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlDocumentScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

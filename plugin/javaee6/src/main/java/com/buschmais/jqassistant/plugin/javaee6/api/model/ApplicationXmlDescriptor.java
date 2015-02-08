@@ -5,7 +5,7 @@ import java.util.List;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 public interface ApplicationXmlDescriptor extends EnterpriseDescriptor, ApplicationDescriptor, XmlDescriptor, FileDescriptor, NamedDescriptor,

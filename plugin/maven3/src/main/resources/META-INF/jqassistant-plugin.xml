@@ -26,6 +26,7 @@
     </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomXmlScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin</class>
     </scanner>
     <rules>

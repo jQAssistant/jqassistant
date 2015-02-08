@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
@@ -59,7 +60,8 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         FileResource fileResource = mock(FileResource.class);
         when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/META-INF/application.xml"));
 
-        when(store.create(ApplicationXmlDescriptor.class)).thenReturn(applicationXmlDescriptor);
+        when(scannerContext.peek(XmlDescriptor.class)).thenReturn(applicationXmlDescriptor);
+        when(store.addDescriptorType(applicationXmlDescriptor, ApplicationXmlDescriptor.class)).thenReturn(applicationXmlDescriptor);
         when(applicationXmlDescriptor.getDescriptions()).thenReturn(mock(List.class));
         when(applicationXmlDescriptor.getDisplayNames()).thenReturn(mock(List.class));
         when(applicationXmlDescriptor.getIcons()).thenReturn(mock(List.class));
@@ -84,7 +86,8 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         scannerPlugin.initialize(Collections.<String, Object> emptyMap());
         scannerPlugin.scan(fileResource, "/META-INF/application.xml", EnterpriseApplicationScope.EAR, scanner);
 
-        verify(store).create(ApplicationXmlDescriptor.class);
+        verify(scannerContext).peek(XmlDescriptor.class);
+        verify(store).addDescriptorType(applicationXmlDescriptor, ApplicationXmlDescriptor.class);
         verify(applicationXmlDescriptor).setVersion("6");
         verify(applicationXmlDescriptor).setName("TestApplication");
         verify(applicationXmlDescriptor).setInitializeInOrder("true");
