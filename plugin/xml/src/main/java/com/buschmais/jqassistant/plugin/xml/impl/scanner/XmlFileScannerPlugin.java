@@ -8,7 +8,10 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.*;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.Characters;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -18,25 +21,26 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.google.common.base.Strings;
 
-public class XmlDocumentScannerPlugin extends AbstractScannerPlugin<FileResource, XmlDocumentDescriptor> {
+public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, XmlFileDescriptor> {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(".xml");
+        String lowerCase = path.toLowerCase();
+        return lowerCase.endsWith(".xml") || lowerCase.endsWith(".xsd");
     }
 
     @Override
-    public XmlDocumentDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public XmlFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = scanner.getContext().getStore();
         XmlElementDescriptor parentElement = null;
-        XmlDocumentDescriptor documentDescriptor = null;
+        XmlFileDescriptor documentDescriptor = null;
         XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         try (InputStream stream = item.createStream()) {
             XMLEventReader eventReader = inputFactory.createXMLEventReader(stream);
             while (eventReader.hasNext()) {
                 XMLEvent xmlEvent = eventReader.nextEvent();
                 if (xmlEvent.isStartDocument()) {
-                    documentDescriptor = store.create(XmlDocumentDescriptor.class);
+                    documentDescriptor = store.create(XmlFileDescriptor.class);
                 } else if (xmlEvent.isStartElement()) {
                     XmlElementDescriptor elementDescriptor = store.create(XmlElementDescriptor.class);
                     StartElement startElement = xmlEvent.asStartElement();
