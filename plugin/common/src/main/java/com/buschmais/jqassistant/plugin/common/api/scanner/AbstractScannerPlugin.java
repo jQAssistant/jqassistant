@@ -27,6 +27,15 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
         return getType(AbstractScannerPlugin.class, 0);
     }
 
+    /**
+     * Determines the type parameter for a generic super class.
+     * 
+     * @param expectedSuperClass
+     *            The generic super class.
+     * @param genericTypeParameterIndex
+     *            The index, e.g. 0 for the first.
+     * @return The type parameter.
+     */
     protected Class<? extends I> getType(Class<?> expectedSuperClass, int genericTypeParameterIndex) {
         Class<? extends AbstractScannerPlugin> thisClass = this.getClass();
         if (!thisClass.getSuperclass().equals(expectedSuperClass)) {
