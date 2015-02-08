@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.maven.model.Model;
 
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
