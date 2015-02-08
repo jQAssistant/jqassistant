@@ -139,6 +139,21 @@ public interface Store {
     <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<?> newDescriptorType, Class<N> as);
 
     /**
+     * Add a descriptor type to an existing descriptor.
+     *
+     * @param descriptor
+     *            The descriptor.
+     * @param newDescriptorType
+     *            The new descriptor type.
+     * @param <T>
+     *            The descriptor type.
+     * @param <N>
+     *            The expected return type.
+     * @return The migrated descriptor.
+     */
+    <T extends Descriptor, N extends Descriptor> N addDescriptorType(T descriptor, Class<N> newDescriptorType);
+
+    /**
      * Remove a descriptor type from an existing descriptor.
      *
      * @param descriptor
