@@ -27,6 +27,10 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.*;
  */
 public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, MavenPomXmlDescriptor> {
 
+    @Override
+    public Class<? extends MavenPomXmlDescriptor> getDescriptorType() {
+        return MavenPomXmlDescriptor.class;
+    }
 
     /**
      * Adds activation information for the given profile.
