@@ -35,7 +35,7 @@ public class FileScannerIT extends AbstractPluginIT {
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), CustomScope.CUSTOM);
         assertThat(descriptor, instanceOf(CustomDirectoryDescriptor.class));
-        CustomDirectoryDescriptor customDirectoryDescriptor = (CustomDirectoryDescriptor) descriptor;
+        DependentCustomDirectoryDescriptor customDirectoryDescriptor = (DependentCustomDirectoryDescriptor) descriptor;
         assertThat(customDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
         assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));

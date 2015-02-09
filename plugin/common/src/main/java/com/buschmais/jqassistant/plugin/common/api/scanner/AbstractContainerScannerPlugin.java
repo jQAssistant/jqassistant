@@ -28,6 +28,11 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
+    public Class<? extends FileContainerDescriptor> getDescriptorType() {
+        return FileContainerDescriptor.class;
+    }
+
+    @Override
     public final FileContainerDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);

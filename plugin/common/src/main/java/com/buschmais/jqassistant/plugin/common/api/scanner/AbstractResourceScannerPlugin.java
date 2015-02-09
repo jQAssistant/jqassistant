@@ -26,6 +26,11 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> ext
         return getType(AbstractResourceScannerPlugin.class, 0);
     }
 
+    @Override
+    public Class<? extends D> getDescriptorType() {
+        return getType(AbstractResourceScannerPlugin.class, 1);
+    }
+
     /**
      * Ensures that a file descriptor is returned.
      * 
