@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
@@ -13,7 +14,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverBuilder;
 
-public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
+public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<JavaClassesDirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -32,11 +33,7 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
-        ArtifactFileDescriptor artifactDescriptor = scannerContext.peek(JavaArtifactDescriptor.class);
-        if (artifactDescriptor == null) {
-            artifactDescriptor = scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class);
-        }
-        return artifactDescriptor;
+    protected JavaClassesDirectoryDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class);
     }
 }
