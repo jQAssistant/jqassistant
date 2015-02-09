@@ -137,21 +137,22 @@ public class ScannerImpl implements Scanner {
     private List<ScannerPlugin<?, ?>> getScannerPluginsForType(Class<?> type) {
         List<ScannerPlugin<?, ?>> plugins = scannerPluginsPerType.get(type);
         if (plugins == null) {
-            final Map<Class<?>, ScannerPlugin<?, ?>> pluginsForType = new HashMap<>();
+            final Map<Class<? extends Descriptor>, ScannerPlugin<?, ?>> pluginsByDescriptor = new HashMap<>();
             for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
-                    pluginsForType.put(scannerPlugin.getClass(), scannerPlugin);
+                    pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
                 }
             }
-            plugins = DependencyResolver.newInstance(pluginsForType.values(), new DependencyProvider<ScannerPlugin<?, ?>>() {
+            plugins = DependencyResolver.newInstance(pluginsByDescriptor.values(), new DependencyProvider<ScannerPlugin<?, ?>>() {
                 @Override
                 public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();
                     Requires annotation = dependent.getClass().getAnnotation(Requires.class);
                     if (annotation != null) {
-                        for (Class<? extends ScannerPlugin<?, ?>> pluginType : annotation.value()) {
-                            dependencies.add(pluginsForType.get(pluginType));
+                        for (Class<? extends Descriptor> descriptorType : annotation.value()) {
+                            ScannerPlugin<?, ?> scannerPlugin = pluginsByDescriptor.get(descriptorType);
+                            dependencies.add(scannerPlugin);
                         }
                     }
                     return dependencies;
