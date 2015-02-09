@@ -22,8 +22,4 @@ public class MavenPomScannerPlugin extends AbstractMavenPomScannerPlugin {
         return scanner.getContext().getStore().create(MavenPomXmlDescriptor.class);
     }
 
-    @Override
-    protected Class<? extends FileResource> getType(Class<?> expectedSuperClass, int genericTypeParameterIndex) {
-        return super.getType(expectedSuperClass, genericTypeParameterIndex);
-    }
 }

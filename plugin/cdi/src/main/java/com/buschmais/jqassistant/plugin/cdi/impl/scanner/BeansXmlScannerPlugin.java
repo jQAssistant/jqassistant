@@ -24,10 +24,9 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
-import com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 
-@Requires(XmlFileScannerPlugin.class)
+@Requires(XmlFileDescriptor.class)
 public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansXmlScannerPlugin.class);
@@ -50,8 +49,8 @@ public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, B
     @Override
     public BeansXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        XmlDescriptor xmlDescriptor = context.peek(XmlDescriptor.class);
-        BeansXmlDescriptor beansXmlDescriptor = context.getStore().addDescriptorType(xmlDescriptor, BeansXmlDescriptor.class);
+        XmlFileDescriptor xmlFileDescriptor = context.peek(XmlFileDescriptor.class);
+        BeansXmlDescriptor beansXmlDescriptor = context.getStore().addDescriptorType(xmlFileDescriptor, BeansXmlDescriptor.class);
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();

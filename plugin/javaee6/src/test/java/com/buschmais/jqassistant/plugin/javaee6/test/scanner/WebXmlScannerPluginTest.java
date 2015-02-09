@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
@@ -177,7 +177,7 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         FileResource fileResource = mock(FileResource.class);
         when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/WEB-INF/web.xml"));
 
-        when(scannerContext.peek(XmlDescriptor.class)).thenReturn(webXmlDescriptor);
+        when(scannerContext.peek(XmlFileDescriptor.class)).thenReturn(webXmlDescriptor);
         when(store.addDescriptorType(webXmlDescriptor, WebXmlDescriptor.class)).thenReturn(webXmlDescriptor);
         when(webXmlDescriptor.getContextParams()).thenReturn(mock(List.class));
         when(webXmlDescriptor.getErrorPages()).thenReturn(mock(List.class));
@@ -269,7 +269,7 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         scannerPlugin.initialize(Collections.<String, Object> emptyMap());
         scannerPlugin.scan(fileResource, "/WEB-INF/web.xml", WebApplicationScope.WAR, scanner);
 
-        verify(scannerContext).peek(XmlDescriptor.class);
+        verify(scannerContext).peek(XmlFileDescriptor.class);
         verify(store).addDescriptorType(webXmlDescriptor, WebXmlDescriptor.class);
         verify(webXmlDescriptor).setVersion("3.0");
         verify(webXmlDescriptor).setSessionConfig(sessionConfigDescriptor);

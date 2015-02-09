@@ -17,8 +17,13 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveD
 public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D extends Descriptor> extends AbstractResourceScannerPlugin<R, D> {
 
     @Override
-    protected Class<? extends R> getType(Class<?> expectedSuperClass, int genericTypeParameterIndex) {
+    public Class<? extends R> getType() {
         return super.getType(AbstractWarResourceScannerPlugin.class, 0);
+    }
+
+    @Override
+    public Class<? extends D> getDescriptorType() {
+        return super.getType(AbstractWarResourceScannerPlugin.class, 1);
     }
 
     @Override

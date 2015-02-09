@@ -23,14 +23,13 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
-import com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.sun.java.xml.ns.persistence.*;
 
 /**
  * A scanner for JPA model units.
  */
-@Requires(XmlFileScannerPlugin.class)
+@Requires(XmlFileDescriptor.class)
 public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceXmlDescriptor> {
 
     private static final JAXBContext jaxbContext;
@@ -58,8 +57,8 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
             throw new IOException("Cannot read model descriptor.", e);
         }
         Store store = scanner.getContext().getStore();
-        XmlDescriptor xmlDescriptor = scanner.getContext().peek(XmlDescriptor.class);
-        PersistenceXmlDescriptor persistenceXmlDescriptor = store.addDescriptorType(xmlDescriptor, PersistenceXmlDescriptor.class);
+        XmlFileDescriptor xmlFileDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
+        PersistenceXmlDescriptor persistenceXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);
         persistenceXmlDescriptor.setVersion(persistence.getVersion());
         // Create model units
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {

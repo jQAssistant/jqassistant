@@ -2,6 +2,7 @@
     <description>Provides test types.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.common.test.scanner.CustomDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.test.scanner.DependentCustomDirectoryDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.test.scanner.DependentCustomDirectoryScannerPlugin</class>
