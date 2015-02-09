@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.xml.impl.scanner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+import java.util.Stack;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -23,6 +24,8 @@ import com.google.common.base.Strings;
 
 public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, XmlFileDescriptor> {
 
+    private XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         String lowerCase = path.toLowerCase();
@@ -34,7 +37,6 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
         Store store = scanner.getContext().getStore();
         XmlElementDescriptor parentElement = null;
         XmlFileDescriptor documentDescriptor = null;
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         try (InputStream stream = item.createStream()) {
             XMLEventReader eventReader = inputFactory.createXMLEventReader(stream);
             while (eventReader.hasNext()) {
