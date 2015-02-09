@@ -23,23 +23,17 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
  * @param <E>
  *            The element type.
  */
-public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResourceScannerPlugin<I, FileContainerDescriptor> {
+public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 
     @Override
-    public Class<? extends FileContainerDescriptor> getDescriptorType() {
-        return FileContainerDescriptor.class;
-    }
-
-    @Override
-    public final FileContainerDescriptor scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
+    public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        FileContainerDescriptor containerDescriptor = getContainerDescriptor(container, context);
+        D containerDescriptor = getContainerDescriptor(container, context);
         containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
         Map<String, FileDescriptor> files = new HashMap<>();
-        context.push(FileContainerDescriptor.class, containerDescriptor);
         Scope entryScope = createScope(scope, scanner.getContext());
         try {
             Iterable<? extends E> entries = getEntries(container);
@@ -54,7 +48,6 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
                 }
             }
         } finally {
-            context.pop(FileContainerDescriptor.class);
             destroyScope(scanner.getContext());
             LOGGER.info("Leaving {}", path);
         }
@@ -82,7 +75,7 @@ public abstract class AbstractContainerScannerPlugin<I, E> extends AbstractResou
      *            The scanner context.
      * @return The artifact descriptor.
      */
-    protected abstract FileContainerDescriptor getContainerDescriptor(I container, ScannerContext scannerContext);
+    protected abstract D getContainerDescriptor(I container, ScannerContext scannerContext);
 
     /**
      * Return an iterable which delivers the entries of the container.

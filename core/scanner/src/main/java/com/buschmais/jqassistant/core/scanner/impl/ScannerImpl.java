@@ -77,11 +77,9 @@ public class ScannerImpl implements Scanner {
      *            The scope.
      * @param <I>
      *            The item type.
-     * @param <D>
-     *            The descriptor type.
      * @return <code>true</code> if the plugin accepts the item for scanning.
      */
-    private <I, D extends Descriptor> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
+    private <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
         try {
             return selectedPlugin.accepts(item, path, scope);
         } catch (IOException e) {
@@ -138,13 +136,15 @@ public class ScannerImpl implements Scanner {
         List<ScannerPlugin<?, ?>> plugins = scannerPluginsPerType.get(type);
         if (plugins == null) {
             final Map<Class<? extends Descriptor>, ScannerPlugin<?, ?>> pluginsByDescriptor = new HashMap<>();
+            plugins = new ArrayList<>();
             for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
+                pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
-                    pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
+                    plugins.add(scannerPlugin);
                 }
             }
-            plugins = DependencyResolver.newInstance(pluginsByDescriptor.values(), new DependencyProvider<ScannerPlugin<?, ?>>() {
+            plugins = DependencyResolver.newInstance(plugins, new DependencyProvider<ScannerPlugin<?, ?>>() {
                 @Override
                 public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();

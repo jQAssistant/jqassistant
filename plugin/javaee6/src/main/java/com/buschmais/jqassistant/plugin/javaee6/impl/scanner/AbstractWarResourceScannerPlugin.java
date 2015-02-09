@@ -18,12 +18,12 @@ public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D ext
 
     @Override
     public Class<? extends R> getType() {
-        return super.getType(AbstractWarResourceScannerPlugin.class, 0);
+        return super.getTypeParameter(AbstractWarResourceScannerPlugin.class, 0);
     }
 
     @Override
     public Class<? extends D> getDescriptorType() {
-        return super.getType(AbstractWarResourceScannerPlugin.class, 1);
+        return super.getTypeParameter(AbstractWarResourceScannerPlugin.class, 1);
     }
 
     @Override

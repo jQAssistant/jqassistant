@@ -26,6 +26,11 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
         return MavenProject.class;
     }
 
+    @Override
+    public Class<? extends MavenProjectDirectoryDescriptor> getDescriptorType() {
+        return MavenProjectDirectoryDescriptor.class;
+    }
+
     protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
         String id = project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion();

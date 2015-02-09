@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 /**
  *
  */
-public class XmlScannerIT extends AbstractPluginIT {
+public class XmlFileScannerIT extends AbstractPluginIT {
 
     /**
      *
@@ -22,8 +22,7 @@ public class XmlScannerIT extends AbstractPluginIT {
     @Test
     public void xmlDocument() throws IOException, AnalysisException {
         store.beginTransaction();
-        File xmlFile = new File(getClassesDirectory(XmlScannerIT.class), "/test.xml");
-//        File xmlFile = new File(getClassesDirectory(XmlScannerIT.class), "/ADELmetrology.xml");
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/test.xml");
         Descriptor descriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), null);
         // MATCH (d:Xml:Document) RETURN d").getColumn("d")
         store.commitTransaction();

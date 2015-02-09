@@ -21,7 +21,7 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
 
     @Override
     public Class<? extends D> getDescriptorType() {
-        return getType(AbstractArchiveScannerPlugin.class, 0);
+        return getTypeParameter(AbstractArchiveScannerPlugin.class, 0);
     }
 
     @Override

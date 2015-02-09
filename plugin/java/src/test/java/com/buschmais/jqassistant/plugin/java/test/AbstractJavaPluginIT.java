@@ -150,9 +150,9 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         store.beginTransaction();
         Scanner scanner = getScanner();
         JavaArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
-        scanner.getContext().push(JavaArtifactDescriptor.class, artifact);
+        //scanner.getContext().push(JavaArtifactDescriptor.class, artifact);
         scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
-        scanner.getContext().pop(JavaArtifactDescriptor.class);
+        //scanner.getContext().pop(JavaArtifactDescriptor.class);
         store.commitTransaction();
     }
 
