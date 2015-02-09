@@ -7,9 +7,10 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
+import com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 
-public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
+public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<TestReportDirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -17,8 +18,8 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
-        return scannerContext.getStore().create(DirectoryDescriptor.class);
+    protected TestReportDirectoryDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(TestReportDirectoryDescriptor.class);
     }
 
 }
