@@ -23,12 +23,12 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> ext
 
     @Override
     public Class<? extends I> getType() {
-        return getType(AbstractResourceScannerPlugin.class, 0);
+        return getTypeParameter(AbstractResourceScannerPlugin.class, 0);
     }
 
     @Override
     public Class<? extends D> getDescriptorType() {
-        return getType(AbstractResourceScannerPlugin.class, 1);
+        return getTypeParameter(AbstractResourceScannerPlugin.class, 1);
     }
 
     /**

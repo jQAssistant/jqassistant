@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
 
-public class CustomDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
+public class CustomDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<CustomDirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -15,7 +15,7 @@ public class CustomDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
+    protected CustomDirectoryDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
         return scannerContext.getStore().create(CustomDirectoryDescriptor.class);
     }
 

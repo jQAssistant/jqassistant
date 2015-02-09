@@ -24,12 +24,12 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     @Override
     public Class<? extends I> getType() {
-        return getType(AbstractScannerPlugin.class, 0);
+        return getTypeParameter(AbstractScannerPlugin.class, 0);
     }
 
     @Override
     public Class<? extends D> getDescriptorType() {
-        return getType(AbstractScannerPlugin.class, 1);
+        return getTypeParameter(AbstractScannerPlugin.class, 1);
     }
 
     /**
@@ -41,7 +41,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
      *            The index, e.g. 0 for the first.
      * @return The type parameter.
      */
-    protected <T> Class<T> getType(Class<?> expectedSuperClass, int genericTypeParameterIndex) {
+    protected <T> Class<T> getTypeParameter(Class<?> expectedSuperClass, int genericTypeParameterIndex) {
         Class<? extends AbstractScannerPlugin> thisClass = this.getClass();
         if (!thisClass.getSuperclass().equals(expectedSuperClass)) {
             throw new IllegalStateException("Cannot determine type argument of " + thisClass.getName());
