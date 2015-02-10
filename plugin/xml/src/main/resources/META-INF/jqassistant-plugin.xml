@@ -7,7 +7,8 @@
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlNamespaceDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlElementDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlAttributeDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlCharactersDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin</class>
