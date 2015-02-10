@@ -22,7 +22,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     @Test
     public void xmlDocument() throws IOException, AnalysisException {
         store.beginTransaction();
-        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/test.xml");
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/ADELmetrology.xml");
         Descriptor descriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), null);
         // MATCH (d:Xml:Document) RETURN d").getColumn("d")
         store.commitTransaction();
