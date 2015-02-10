@@ -11,4 +11,13 @@ public interface XmlFileDescriptor extends XmlDescriptor, FileDescriptor {
     XmlElementDescriptor getRootElement();
 
     void setRootElement(XmlElementDescriptor rootElement);
+
+    String getVersion();
+    void setVersion(String version);
+
+    String getCharacterEncodingScheme();
+    void setCharacterEncodingScheme(String characterEncodingScheme);
+
+    boolean isStandalone();
+    void setStandalone(boolean standalone);
 }

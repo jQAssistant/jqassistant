@@ -26,8 +26,8 @@ public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescript
     @Relation("HAS_ATTRIBUTE")
     List<XmlAttributeDescriptor> getAttributes();
 
-    @Relation("HAS_CHARACTERS")
-    List<XmlCharactersDescriptor> getCharacters();
+    @Relation("HAS_TEXT")
+    List<XmlTextDescriptor> getCharacters();
 
     @Relation("DECLARES_NAMESPACE")
     List<XmlNamespaceDescriptor> getDeclaredNamespaces();
