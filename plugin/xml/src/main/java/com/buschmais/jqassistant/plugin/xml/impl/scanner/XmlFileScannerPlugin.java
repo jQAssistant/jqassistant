@@ -2,17 +2,15 @@ package com.buschmais.jqassistant.plugin.xml.impl.scanner;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Stack;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.Characters;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
+import javax.xml.stream.events.*;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -37,39 +35,65 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
         Store store = scanner.getContext().getStore();
         XmlElementDescriptor parentElement = null;
         XmlFileDescriptor documentDescriptor = null;
+        Map<String, XmlNamespaceDescriptor> namespaceMappings = new HashMap<>();
         try (InputStream stream = item.createStream()) {
             XMLEventReader eventReader = inputFactory.createXMLEventReader(stream);
             while (eventReader.hasNext()) {
                 XMLEvent xmlEvent = eventReader.nextEvent();
                 if (xmlEvent.isStartDocument()) {
                     documentDescriptor = store.create(XmlFileDescriptor.class);
-                } else if (xmlEvent.isStartElement()) {
-                    XmlElementDescriptor elementDescriptor = store.create(XmlElementDescriptor.class);
-                    StartElement startElement = xmlEvent.asStartElement();
-                    setName(elementDescriptor, startElement.getName());
-                    Iterator attributes = startElement.getAttributes();
-                    while (attributes.hasNext()) {
-                        Attribute attribute = (Attribute) attributes.next();
-                        XmlAttributeDescriptor attributeDescriptor = store.create(XmlAttributeDescriptor.class);
-                        setName(attributeDescriptor, attribute.getName());
-                        attributeDescriptor.setValue(attribute.getValue());
-                        elementDescriptor.getAttributes().add(attributeDescriptor);
-                    }
-                    if (parentElement == null) {
-                        documentDescriptor.setRootElement(elementDescriptor);
-                    } else {
-                        parentElement.getElements().add(elementDescriptor);
-                    }
-                    parentElement = elementDescriptor;
-                } else if (xmlEvent.isEndElement()) {
-                    parentElement = parentElement.getParent();
-                } else if (xmlEvent.isCharacters()) {
-                    Characters characters = xmlEvent.asCharacters();
-                    if (!characters.isWhiteSpace()) {
-                        XmlCharactersDescriptor charactersDescriptor = store.create(XmlCharactersDescriptor.class);
-                        charactersDescriptor.setData(characters.getData());
-                        charactersDescriptor.setCData(characters.isCData());
-                        parentElement.getCharacters().add(charactersDescriptor);
+                } else {
+                    if (xmlEvent.isStartElement()) {
+                        XmlElementDescriptor elementDescriptor = store.create(XmlElementDescriptor.class);
+                        StartElement startElement = xmlEvent.asStartElement();
+                        // get declared namespaces
+                        Iterator namespaces = startElement.getNamespaces();
+                        while (namespaces.hasNext()) {
+                            Namespace namespace = (Namespace) namespaces.next();
+                            XmlNamespaceDescriptor namespaceDescriptor = store.create(XmlNamespaceDescriptor.class);
+                            String prefix = namespace.getPrefix();
+                            if (!Strings.isNullOrEmpty(prefix)) {
+                                namespaceDescriptor.setPrefix(prefix);
+                                namespaceMappings.put(prefix, namespaceDescriptor);
+                            }
+                            namespaceDescriptor.setUri(namespace.getNamespaceURI());
+                            elementDescriptor.getDeclaredNamespaces().add(namespaceDescriptor);
+                        }
+                        // set name of element
+                        setName(elementDescriptor, startElement.getName(), namespaceMappings);
+                        // get attributes
+                        Iterator attributes = startElement.getAttributes();
+                        while (attributes.hasNext()) {
+                            Attribute attribute = (Attribute) attributes.next();
+                            XmlAttributeDescriptor attributeDescriptor = store.create(XmlAttributeDescriptor.class);
+                            setName(attributeDescriptor, attribute.getName(), namespaceMappings);
+                            attributeDescriptor.setValue(attribute.getValue());
+                            elementDescriptor.getAttributes().add(attributeDescriptor);
+                        }
+                        if (parentElement == null) {
+                            documentDescriptor.setRootElement(elementDescriptor);
+                        } else {
+                            parentElement.getElements().add(elementDescriptor);
+                        }
+                        parentElement = elementDescriptor;
+                    } else if (xmlEvent.isEndElement()) {
+                        parentElement = parentElement.getParent();
+                        Iterator namespaces = xmlEvent.asEndElement().getNamespaces();
+                        while (namespaces.hasNext()) {
+                            Namespace namespace = (Namespace) namespaces.next();
+                            String prefix = namespace.getPrefix();
+                            if (prefix != null) {
+                                namespaceMappings.remove(prefix);
+                            }
+                        }
+                    } else if (xmlEvent.isCharacters()) {
+                        Characters characters = xmlEvent.asCharacters();
+                        if (!characters.isWhiteSpace()) {
+                            XmlCharactersDescriptor charactersDescriptor = store.create(XmlCharactersDescriptor.class);
+                            charactersDescriptor.setData(characters.getData());
+                            charactersDescriptor.setCData(characters.isCData());
+                            parentElement.getCharacters().add(charactersDescriptor);
+                        }
                     }
                 }
             }
@@ -80,22 +104,19 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
     }
 
     /**
-     * Set name and namespace related attributes for the given descriptor.
+     * Set name and namespace related attributes for the given ofNamespaceDescriptor.
      * 
-     * @param descriptor
-     *            The descriptor.
+     * @param ofNamespaceDescriptor
+     *            The ofNamespaceDescriptor.
      * @param name
      *            The {@link javax.xml.namespace.QName}.
      */
-    private void setName(NamespaceDescriptor descriptor, QName name) {
-        descriptor.setName(name.getLocalPart());
-        String namespaceURI = name.getNamespaceURI();
-        if (!Strings.isNullOrEmpty(namespaceURI)) {
-            descriptor.setNamespaceUri(namespaceURI);
-        }
+    private void setName(OfNamespaceDescriptor ofNamespaceDescriptor, QName name, Map<String, XmlNamespaceDescriptor> namespaceMappings) {
+        ofNamespaceDescriptor.setName(name.getLocalPart());
         String namespacePrefix = name.getPrefix();
         if (!Strings.isNullOrEmpty(namespacePrefix)) {
-            descriptor.setNamespacePrefix(namespacePrefix);
+            XmlNamespaceDescriptor namespaceDescriptor = namespaceMappings.get(namespacePrefix);
+            ofNamespaceDescriptor.setNamespaceDeclaration(namespaceDescriptor);
         }
     }
 }

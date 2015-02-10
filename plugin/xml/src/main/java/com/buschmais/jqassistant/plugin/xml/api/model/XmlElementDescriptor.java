@@ -13,7 +13,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Label("Element")
-public interface XmlElementDescriptor extends XmlDescriptor, NamespaceDescriptor {
+public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescriptor {
 
     @Outgoing
     @HasElement
@@ -29,9 +29,9 @@ public interface XmlElementDescriptor extends XmlDescriptor, NamespaceDescriptor
     @Relation("HAS_CHARACTERS")
     List<XmlCharactersDescriptor> getCharacters();
 
-    /**
-    * Created by dimahler on 2/6/2015.
-    */
+    @Relation("DECLARES_NAMESPACE")
+    List<XmlNamespaceDescriptor> getDeclaredNamespaces();
+
     @Relation("HAS_ELEMENT")
     @Retention(RUNTIME)
     @Target(METHOD)
