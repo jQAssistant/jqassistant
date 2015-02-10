@@ -1,8 +1,11 @@
-<?xml version="1.0"?>
-<BookCatalogue xmlns="http://www.publishing.org">
-    <Book>
-        <Title>Yogasana Vijnana: the Science of Yoga</Title>
-        <ISBN>81-40-34319-4</ISBN>
-        <Cost currency="INR">11.50</Cost>
-    </Book>
-</BookCatalogue>
+<?xml version="1.0" encoding="UTF-8"?>
+<RootElement xmlns="http://jqassistant.org/plugin/xml/test/root">
+    <ChildElement attribute1="attribute1">
+        Child Text
+    </ChildElement>
+    <ExtraElement xmlns:extra="http://jqassistant.org/plugin/xml/test/extra">
+        <extra:ChildElement extra:attribute2="attribute2">
+            Extra Child Text
+        </extra:ChildElement>
+    </ExtraElement>
+</RootElement>
