@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven3.api.scanner;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 
 /**
@@ -7,15 +8,32 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
  */
 public enum MavenScope implements Scope {
 
-	PROJECT, REPOSITORY;
+    PROJECT {
+        @Override
+        public void create(ScannerContext context) {
+        }
 
-    @Override
-    public String getPrefix() {
-        return "maven";
-    }
+        @Override
+        public void destroy(ScannerContext context) {
+        }
+    },
+    REPOSITORY {
+        @Override
+        public void create(ScannerContext context) {
+        }
+
+        @Override
+        public void destroy(ScannerContext context) {
+        }
+    };
 
     @Override
     public String getName() {
         return name();
+    }
+
+    @Override
+    public String getPrefix() {
+        return "maven";
     }
 }

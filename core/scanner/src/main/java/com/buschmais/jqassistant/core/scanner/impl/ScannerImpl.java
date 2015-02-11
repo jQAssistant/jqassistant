@@ -9,6 +9,7 @@ import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -30,6 +31,8 @@ public class ScannerImpl implements Scanner {
 
     private final Map<Class<?>, List<ScannerPlugin<?, ?>>> scannerPluginsPerType = new HashMap<>();
 
+    private final Map<String, Scope> scopes;
+
     /**
      * Constructor.
      * 
@@ -38,9 +41,11 @@ public class ScannerImpl implements Scanner {
      * @param scannerPlugins
      *            The configured plugins.
      */
-    public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins) {
-        this.scannerContext = new ScannerContextImpl(store);
+    public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
         this.scannerPlugins = scannerPlugins;
+        this.scopes = scopes;
+        this.scannerContext = new ScannerContextImpl(store);
+        this.scannerContext.push(Scope.class, null);
     }
 
     @Override
@@ -51,12 +56,14 @@ public class ScannerImpl implements Scanner {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
             if (accepts(selectedPlugin, item, path, scope)) {
                 pushDesriptor(descriptor);
+                enterScope(scope);
                 D newDescriptor = null;
                 try {
                     newDescriptor = selectedPlugin.scan(item, path, scope, this);
                 } catch (Exception e) {
                     LOGGER.error("Cannot scan item " + path, e);
                 }
+                leaveScope(scope);
                 popDescriptor(descriptor);
                 descriptor = newDescriptor;
             }
@@ -125,6 +132,19 @@ public class ScannerImpl implements Scanner {
         return scannerContext;
     }
 
+    @Override
+    public Scope resolveScope(String name) {
+        if (name == null) {
+            return DefaultScope.NONE;
+        }
+        Scope scope = scopes.get(name);
+        if (scope == null) {
+            LOGGER.warn("No scope found for name '" + name + "'.");
+            scope = DefaultScope.NONE;
+        }
+        return scope;
+    }
+
     /**
      * Determine the list of scanner plugins that handle the given type.
      * 
@@ -136,15 +156,15 @@ public class ScannerImpl implements Scanner {
         List<ScannerPlugin<?, ?>> plugins = scannerPluginsPerType.get(type);
         if (plugins == null) {
             final Map<Class<? extends Descriptor>, ScannerPlugin<?, ?>> pluginsByDescriptor = new HashMap<>();
-            plugins = new ArrayList<>();
+            final List<ScannerPlugin<?, ?>> candidates = new ArrayList<>();
             for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
                 pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
-                    plugins.add(scannerPlugin);
+                    candidates.add(scannerPlugin);
                 }
             }
-            plugins = DependencyResolver.newInstance(plugins, new DependencyProvider<ScannerPlugin<?, ?>>() {
+            plugins = DependencyResolver.newInstance(candidates, new DependencyProvider<ScannerPlugin<?, ?>>() {
                 @Override
                 public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();
@@ -161,5 +181,21 @@ public class ScannerImpl implements Scanner {
             scannerPluginsPerType.put(type, plugins);
         }
         return plugins;
+    }
+
+    private void enterScope(Scope newScope) {
+        Scope oldScope = scannerContext.peek(Scope.class);
+        if (newScope != null && !newScope.equals(oldScope)) {
+            newScope.create(scannerContext);
+        }
+        scannerContext.push(Scope.class, newScope);
+    }
+
+    private void leaveScope(Scope newScope) {
+        scannerContext.pop(Scope.class);
+        Scope oldScope = scannerContext.peek(Scope.class);
+        if (newScope != null && !newScope.equals(oldScope)) {
+            newScope.destroy(scannerContext);
+        }
     }
 }

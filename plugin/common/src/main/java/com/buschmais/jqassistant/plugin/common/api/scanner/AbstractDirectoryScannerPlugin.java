@@ -1,6 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,7 +13,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
@@ -36,15 +39,6 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     }
 
     @Override
-    protected Scope createScope(Scope currentScope, ScannerContext context) {
-        return currentScope;
-    }
-
-    @Override
-    protected void destroyScope(ScannerContext scannerContext) {
-    }
-
-    @Override
     protected Iterable<? extends File> getEntries(File container) throws IOException {
         final Path directoryPath = container.toPath();
         final List<File> files = new ArrayList<>();
@@ -67,6 +61,13 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
         return files;
     }
 
+    /**
+     * Return the scope the plugin expects for execution.
+     *
+     * @return The scope.
+     */
+    protected abstract Scope getRequiredScope();
+
     @Override
     protected String getRelativePath(File container, File entry) {
         return getDirectoryPath(container, entry);
@@ -80,13 +81,6 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
             return new FileResource(entry);
         }
     }
-
-    /**
-     * Return the scope the plugin expects for execution.
-     * 
-     * @return The scope.
-     */
-    protected abstract Scope getRequiredScope();
 
     /**
      * A directory resource.

@@ -1,25 +1,24 @@
-package com.buschmais.jqassistant.plugin.junit.impl.scanner;
+package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.File;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
-import com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 
-public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<TestReportDirectoryDescriptor> {
+public class DirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<DirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
-        return JunitScope.TESTREPORTS;
+        return DefaultScope.NONE;
     }
 
     @Override
-    protected TestReportDirectoryDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
-        return scannerContext.getStore().create(TestReportDirectoryDescriptor.class);
+    protected DirectoryDescriptor getContainerDescriptor(File container, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(DirectoryDescriptor.class);
     }
 
     @Override

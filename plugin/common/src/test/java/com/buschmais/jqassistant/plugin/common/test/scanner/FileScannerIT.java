@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
@@ -19,7 +20,7 @@ import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 /**
- * Verfies file/directory scanning.
+ * Verifies file/directory scanning.
  */
 public class FileScannerIT extends AbstractPluginIT {
 
@@ -33,9 +34,9 @@ public class FileScannerIT extends AbstractPluginIT {
     public void customDirectory() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), CustomScope.CUSTOM);
-        assertThat(descriptor, instanceOf(CustomDirectoryDescriptor.class));
-        DependentCustomDirectoryDescriptor customDirectoryDescriptor = (DependentCustomDirectoryDescriptor) descriptor;
+        FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
+        assertThat(descriptor, instanceOf(DirectoryDescriptor.class));
+        DependentDirectoryDescriptor customDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
         assertThat(customDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
         assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
@@ -54,7 +55,7 @@ public class FileScannerIT extends AbstractPluginIT {
     public void directoryContainsChildren() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
-        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), CustomScope.CUSTOM);
+        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
 
         Scanner scanner = new Scanner(expectedFilename).useDelimiter("/");

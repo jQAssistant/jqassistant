@@ -1,14 +1,11 @@
-package com.buschmais.jqassistant.plugin.junit.api.scanner;
-
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
+package com.buschmais.jqassistant.core.scanner.api;
 
 /**
- * Defines the scopes for junit.
+ * The default scope(s).
  */
-public enum JunitScope implements Scope {
+public enum DefaultScope implements Scope {
 
-    TESTREPORTS {
+    NONE {
         @Override
         public void create(ScannerContext context) {
         }
@@ -20,7 +17,7 @@ public enum JunitScope implements Scope {
 
     @Override
     public String getPrefix() {
-        return "junit";
+        return "default";
     }
 
     @Override

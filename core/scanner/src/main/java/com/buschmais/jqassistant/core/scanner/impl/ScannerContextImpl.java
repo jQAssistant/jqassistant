@@ -15,8 +15,14 @@ public class ScannerContextImpl implements ScannerContext {
 
     private final Store store;
 
-    private final Map<Class<?>, Deque<?>> valuesPerKey = new HashMap<>();
+    private final Map<Class<?>, Deque<?>> contextValuesPerKey = new HashMap<>();
 
+    /**
+     * Constructor.
+     * 
+     * @param store
+     *            The store.
+     */
     public ScannerContextImpl(Store store) {
         this.store = store;
     }
@@ -36,6 +42,7 @@ public class ScannerContextImpl implements ScannerContext {
         return getValues(key).pop();
     }
 
+
     /**
      * Determine the stack for the given key.
      * 
@@ -46,10 +53,10 @@ public class ScannerContextImpl implements ScannerContext {
      * @return The stack.
      */
     <T> Deque<T> getValues(Class<T> key) {
-        Deque<T> values = (Deque<T>) valuesPerKey.get(key);
+        Deque<T> values = (Deque<T>) contextValuesPerKey.get(key);
         if (values == null) {
             values = new LinkedList<>();
-            valuesPerKey.put(key, values);
+            contextValuesPerKey.put(key, values);
         }
         return values;
     }

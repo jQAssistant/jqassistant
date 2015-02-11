@@ -35,4 +35,13 @@ public interface Scanner {
      * @return The scanner context.
      */
     ScannerContext getContext();
+
+    /**
+     * Resolve the scope identified by the given fully qualified name.
+     *
+     * @param name
+     *            The fully qualified name.
+     * @return The scope.
+     */
+    Scope resolveScope(String name);
 }

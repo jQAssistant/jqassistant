@@ -10,6 +10,10 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.scanner</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.analysis</artifactId>
         </dependency>
         <dependency>

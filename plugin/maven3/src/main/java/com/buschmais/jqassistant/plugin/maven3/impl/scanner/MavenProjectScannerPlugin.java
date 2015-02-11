@@ -24,7 +24,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
@@ -74,10 +73,12 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         addProjectDetails(project, projectDescriptor, context);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
-        List<ScanInclude> scanDirectories = (List<ScanInclude>) getProperties().get(ScanInclude.class.getName());
-        if (scanDirectories != null) {
-            for (ScanInclude scanInclude : scanDirectories) {
-                scanPath(projectDescriptor, scanInclude.getPath(), JavaScope.CLASSPATH, scanner);
+        List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
+        if (scanIncludes != null) {
+            for (ScanInclude scanInclude : scanIncludes) {
+                String scopeName = scanInclude.getScope();
+                Scope includeScope = scanner.resolveScope(scopeName);
+                scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
             }
         }
         return projectDescriptor;

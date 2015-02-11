@@ -12,8 +12,6 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverBuilder;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
@@ -96,12 +94,10 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         Scanner scanner = getScanner();
         ScannerContext context = scanner.getContext();
         context.push(JavaArtifactDescriptor.class, artifact);
-        createScannerContext(context);
         for (Class<?> item : classes) {
             FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
             artifact.getContains().add(fileDescriptor);
         }
-        destroyScannerContext(context);
         store.commitTransaction();
     }
 
@@ -114,13 +110,11 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         store.beginTransaction();
         JavaArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
         Scanner scanner = getScanner();
-        createScannerContext(scanner.getContext());
         for (String resource : resources) {
             File file = new File(directory, resource);
             FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
             artifact.getContains().add(fileDescriptor);
         }
-        destroyScannerContext(scanner.getContext());
         store.commitTransaction();
     }
 
@@ -155,13 +149,4 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         //scanner.getContext().pop(JavaArtifactDescriptor.class);
         store.commitTransaction();
     }
-
-    private void createScannerContext(ScannerContext context) {
-        context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
-    }
-
-    private void destroyScannerContext(ScannerContext context) {
-        context.pop(TypeResolver.class);
-    }
-
 }

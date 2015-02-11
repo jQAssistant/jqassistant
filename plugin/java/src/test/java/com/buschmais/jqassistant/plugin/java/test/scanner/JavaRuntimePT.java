@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -40,7 +39,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
         File runtimeJar = new File(javaHome + "/lib/rt.jar");
         Assume.assumeTrue("Java Runtime JAR not found: " + runtimeJar.getAbsolutePath(), runtimeJar.exists());
         store.beginTransaction();
-        getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), JavaScope.CLASSPATH);
+        getScanner().scan(runtimeJar, runtimeJar.getAbsolutePath(), null);
         store.commitTransaction();
     }
 

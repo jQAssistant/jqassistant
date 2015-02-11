@@ -2,11 +2,14 @@ package com.buschmais.jqassistant.plugin.xml.test;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -42,15 +45,22 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         assertThat(rootNS.getPrefix(), nullValue());
         List<XmlElementDescriptor> childElements = rootElement.getElements();
         assertThat(childElements.size(), equalTo(2));
-        XmlElementDescriptor childElement = childElements.get(0);
-        assertThat(childElement.getName(), equalTo("ChildElement"));
-        assertThat(childElement.getDeclaredNamespaces().size(), equalTo(0));
-        List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
-        assertThat(childElementAttributes.size(), equalTo(1));
-        XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
-        assertThat(childElementAttribute.getName(), equalTo("attribute1"));
-        List<XmlTextDescriptor> childElementText = childElement.getCharacters();
-        assertThat(childElementText.size(), equalTo(1));
+        for (XmlElementDescriptor childElement : childElements) {
+            if ("ChildElement".equals(childElement.getName())) {
+                assertThat(childElement.getDeclaredNamespaces().size(), equalTo(0));
+                List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
+                assertThat(childElementAttributes.size(), equalTo(1));
+                XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
+                assertThat(childElementAttribute.getName(), equalTo("attribute1"));
+                List<XmlTextDescriptor> childElementText = childElement.getCharacters();
+                assertThat(childElementText.size(), equalTo(1));
+            } else if ("ExtraElement".equals(childElement.getName())) {
+
+            } else {
+                fail("Found unexpected child element: " + childElement.getName());
+            }
+        }
+
         store.commitTransaction();
     }
 }
