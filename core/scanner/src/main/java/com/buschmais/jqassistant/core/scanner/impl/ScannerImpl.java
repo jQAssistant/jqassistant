@@ -4,11 +4,7 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,11 +84,9 @@ public class ScannerImpl implements Scanner {
      *            The scope.
      * @param <I>
      *            The item type.
-     * @param <D>
-     *            The descriptor type.
      * @return <code>true</code> if the plugin accepts the item for scanning.
      */
-    private <I, D extends Descriptor> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
+    private <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
         try {
             return selectedPlugin.accepts(item, path, scope);
         } catch (IOException e) {
@@ -161,21 +155,24 @@ public class ScannerImpl implements Scanner {
     private List<ScannerPlugin<?, ?>> getScannerPluginsForType(Class<?> type) {
         List<ScannerPlugin<?, ?>> plugins = scannerPluginsPerType.get(type);
         if (plugins == null) {
-            final Map<Class<?>, ScannerPlugin<?, ?>> pluginsForType = new HashMap<>();
+            final Map<Class<? extends Descriptor>, ScannerPlugin<?, ?>> pluginsByDescriptor = new HashMap<>();
+            final List<ScannerPlugin<?, ?>> candidates = new ArrayList<>();
             for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
+                pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
-                    pluginsForType.put(scannerPlugin.getClass(), scannerPlugin);
+                    candidates.add(scannerPlugin);
                 }
             }
-            plugins = DependencyResolver.newInstance(pluginsForType.values(), new DependencyProvider<ScannerPlugin<?, ?>>() {
+            plugins = DependencyResolver.newInstance(candidates, new DependencyProvider<ScannerPlugin<?, ?>>() {
                 @Override
                 public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();
                     Requires annotation = dependent.getClass().getAnnotation(Requires.class);
                     if (annotation != null) {
-                        for (Class<? extends ScannerPlugin<?, ?>> pluginType : annotation.value()) {
-                            dependencies.add(pluginsForType.get(pluginType));
+                        for (Class<? extends Descriptor> descriptorType : annotation.value()) {
+                            ScannerPlugin<?, ?> scannerPlugin = pluginsByDescriptor.get(descriptorType);
+                            dependencies.add(scannerPlugin);
                         }
                     }
                     return dependencies;
