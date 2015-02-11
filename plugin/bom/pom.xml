@@ -10,6 +10,8 @@
     <artifactId>jqassistant.plugin.bom</artifactId>
     <packaging>pom</packaging>
 
+    <description>This BOM defines all core dependencies required for plugins.</description>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

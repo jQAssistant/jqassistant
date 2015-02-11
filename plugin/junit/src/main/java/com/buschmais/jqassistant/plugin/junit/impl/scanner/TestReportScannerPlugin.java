@@ -17,12 +17,16 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 
+@Requires(XmlFileDescriptor.class)
 public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource, TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
@@ -49,7 +53,8 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
                     Iterator<Attribute> attributes = element.getAttributes();
                     switch (elementName) {
                     case "testsuite":
-                        testSuiteDescriptor = scanner.getContext().getStore().create(TestSuiteDescriptor.class);
+                        XmlFileDescriptor xmlFileDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
+                        testSuiteDescriptor = scanner.getContext().getStore().addDescriptorType(xmlFileDescriptor, TestSuiteDescriptor.class);
                         while (attributes.hasNext()) {
                             Attribute attribute = attributes.next();
                             String attributeName = attribute.getName().getLocalPart();

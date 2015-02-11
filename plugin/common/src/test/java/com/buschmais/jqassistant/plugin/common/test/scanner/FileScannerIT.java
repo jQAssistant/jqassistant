@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -14,36 +12,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 /**
- * Verfies file/directory scanning.
+ * Verifies file/directory scanning.
  */
 public class FileScannerIT extends AbstractPluginIT {
 
     /**
-     * Scan a directory using two dependent plugins.
+     * Scan a directory using two dependent plugins for a custom scope.
      * 
      * @throws IOException
      *             If the test fails.
      */
     @Test
-    public void directory() throws IOException {
+    public void customDirectory() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(FileScannerIT.class);
         FileDescriptor descriptor = getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), DefaultScope.NONE);
-        assertThat(descriptor, instanceOf(DependentDirectoryDescriptor.class));
-        DependentDirectoryDescriptor dependentDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
-        assertThat(dependentDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
+        assertThat(descriptor, instanceOf(DirectoryDescriptor.class));
+        DependentDirectoryDescriptor customDirectoryDescriptor = (DependentDirectoryDescriptor) descriptor;
+        assertThat(customDirectoryDescriptor.getFileName(), equalTo(classesDirectory.getAbsolutePath()));
         String expectedFilename = "/" + FileScannerIT.class.getName().replace('.', '/') + ".class";
-        assertThat(dependentDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
-        assertThat(dependentDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
-        assertThat(dependentDirectoryDescriptor.getValue(), equalTo("TEST"));
+        assertThat(customDirectoryDescriptor.getContains(), hasItem(fileDescriptorMatcher(expectedFilename)));
+        assertThat(customDirectoryDescriptor.getContains(), not(hasItem(fileDescriptorMatcher("/"))));
+        assertThat(customDirectoryDescriptor.getValue(), equalTo("TEST"));
         store.commitTransaction();
     }
 

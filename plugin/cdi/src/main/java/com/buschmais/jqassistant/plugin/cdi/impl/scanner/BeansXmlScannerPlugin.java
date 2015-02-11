@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
@@ -23,7 +24,9 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 
+@Requires(XmlFileDescriptor.class)
 public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansXmlScannerPlugin.class);
@@ -46,7 +49,8 @@ public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, B
     @Override
     public BeansXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        BeansXmlDescriptor beansXmlDescriptor = context.getStore().create(BeansXmlDescriptor.class);
+        XmlFileDescriptor xmlFileDescriptor = context.peek(XmlFileDescriptor.class);
+        BeansXmlDescriptor beansXmlDescriptor = context.getStore().addDescriptorType(xmlFileDescriptor, BeansXmlDescriptor.class);
         try (InputStream stream = item.createStream()) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();

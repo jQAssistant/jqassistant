@@ -27,7 +27,7 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
     public void reportFile() throws IOException {
         scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         store.beginTransaction();
-        List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
+        List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:Xml:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         TestSuiteDescriptor testSuiteDescriptor = testSuiteDescriptors.get(0);
         assertThat(testSuiteDescriptor.getFileName(), endsWith("TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));

@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -25,7 +27,9 @@ public class TestReportDirectoryScannerIT extends AbstractJavaPluginIT {
     public void reportFile() throws IOException {
         store.beginTransaction();
         File classesDirectory = getClassesDirectory(TestReportDirectoryScannerIT.class);
-        getScanner().scan(classesDirectory, classesDirectory.getAbsolutePath(), JunitScope.TESTREPORTS);
+        String absolutePath = classesDirectory.getAbsolutePath();
+        TestReportDirectoryDescriptor directory = getScanner().scan(classesDirectory, absolutePath, JunitScope.TESTREPORTS);
+        assertThat(directory.getFileName(), equalTo(absolutePath));
         List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:File) RETURN suite").getColumn("suite");
         assertThat(testSuiteDescriptors.size(), equalTo(1));
         store.commitTransaction();

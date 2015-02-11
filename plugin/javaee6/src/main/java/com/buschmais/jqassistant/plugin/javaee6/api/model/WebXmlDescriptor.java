@@ -2,11 +2,10 @@ package com.buschmais.jqassistant.plugin.javaee6.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface WebXmlDescriptor extends WebDescriptor, XmlDescriptor, FileDescriptor, VersionDescriptor {
+public interface WebXmlDescriptor extends WebDescriptor, XmlFileDescriptor, VersionDescriptor {
 
     @Relation("HAS_SESSION_CONFIG")
     SessionConfigDescriptor getSessionConfig();

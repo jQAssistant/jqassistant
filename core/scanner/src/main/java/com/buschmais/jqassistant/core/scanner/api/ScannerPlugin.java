@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
@@ -15,7 +16,7 @@ import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
  * @param <I>
  *            The item type accepted by the plugin.
  */
-public interface ScannerPlugin<I, D> {
+public interface ScannerPlugin<I, D extends Descriptor> {
 
     /**
      * Defines an annotation for specifying dependencies between scanner
@@ -28,7 +29,7 @@ public interface ScannerPlugin<I, D> {
         /**
          * @return The scanner plugins which must be executed first.
          */
-        Class<? extends ScannerPlugin<?, ?>>[] value();
+        Class<? extends Descriptor>[] value();
     }
 
     /**
@@ -45,6 +46,13 @@ public interface ScannerPlugin<I, D> {
      * @return The item type.
      */
     Class<? extends I> getType();
+
+    /**
+     * Return the descriptor type produced by the plugin.
+     *
+     * @return The descriptor type.
+     */
+    Class<? extends D> getDescriptorType();
 
     /**
      * Determine if the item is accepted by the plugin.

@@ -23,12 +23,11 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
 
 /**
  * Implementation of a {@link ScannerPlugin} for tycho projects
  */
-@Requires(MavenProjectScannerPlugin.class)
+@Requires(MavenProjectDirectoryDescriptor.class)
 public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
     @Override

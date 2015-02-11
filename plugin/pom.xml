@@ -204,6 +204,11 @@
 				<artifactId>jqassistant.plugin.tycho</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.buschmais.jqassistant.plugin</groupId>
+				<artifactId>jqassistant.plugin.xml</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -226,6 +231,7 @@
 		<module>osgi</module>
 		<module>tycho</module>
 		<module>rdbms</module>
+		<module>xml</module>
 	</modules>
 
 </project>

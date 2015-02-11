@@ -10,18 +10,21 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.sun.java.xml.ns.javaee.*;
 
 /**
  * Scanner plugin for the content of application XML descriptors (i.e.
  * APP-INF/application.xml)
  */
+@Requires(XmlFileDescriptor.class)
 public class ApplicationXmlScannerPlugin extends AbstractResourceScannerPlugin<FileResource, ApplicationXmlDescriptor> {
 
     private JAXBContext jaxbContext;
@@ -50,7 +53,8 @@ public class ApplicationXmlScannerPlugin extends AbstractResourceScannerPlugin<F
             throw new IOException("Cannot read " + path, e);
         }
         Store store = scanner.getContext().getStore();
-        ApplicationXmlDescriptor applicationXmlDescriptor = store.create(ApplicationXmlDescriptor.class);
+        XmlFileDescriptor xmlFileDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
+        ApplicationXmlDescriptor applicationXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, ApplicationXmlDescriptor.class);
         com.sun.java.xml.ns.javaee.String applicationName = applicationType.getApplicationName();
         if (applicationName != null) {
             applicationXmlDescriptor.setName(applicationName.getValue());

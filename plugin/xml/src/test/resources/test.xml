@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RootElement xmlns="http://jqassistant.org/plugin/xml/test/root">
+    <ChildElement attribute1="attribute1">
+        Child Text
+    </ChildElement>
+    <ExtraElement xmlns:extra="http://jqassistant.org/plugin/xml/test/extra">
+        <extra:ChildElement extra:attribute2="attribute2">
+            Extra Child Text
+        </extra:ChildElement>
+    </ExtraElement>
+</RootElement>

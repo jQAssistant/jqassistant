@@ -2,14 +2,12 @@ package com.buschmais.jqassistant.plugin.javaee6.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-public interface ApplicationXmlDescriptor extends EnterpriseDescriptor, ApplicationDescriptor, XmlDescriptor, FileDescriptor, NamedDescriptor,
-        VersionDescriptor {
+public interface ApplicationXmlDescriptor extends EnterpriseDescriptor, ApplicationDescriptor, XmlFileDescriptor, NamedDescriptor, VersionDescriptor {
 
     @Relation("HAS_DISPLAY_NAME")
     List<DisplayNameDescriptor> getDisplayNames();

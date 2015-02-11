@@ -82,6 +82,10 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.rdbms</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.xml</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -9,38 +9,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import schemacrawler.schema.BaseColumn;
-import schemacrawler.schema.Catalog;
-import schemacrawler.schema.CheckOptionType;
-import schemacrawler.schema.Column;
-import schemacrawler.schema.ColumnDataType;
-import schemacrawler.schema.ForeignKey;
-import schemacrawler.schema.ForeignKeyColumnReference;
-import schemacrawler.schema.FunctionColumnType;
-import schemacrawler.schema.FunctionReturnType;
-import schemacrawler.schema.Index;
-import schemacrawler.schema.IndexColumn;
-import schemacrawler.schema.PrimaryKey;
-import schemacrawler.schema.ProcedureColumnType;
-import schemacrawler.schema.ProcedureReturnType;
-import schemacrawler.schema.Routine;
-import schemacrawler.schema.RoutineColumn;
-import schemacrawler.schema.RoutineColumnType;
-import schemacrawler.schema.Schema;
-import schemacrawler.schema.Sequence;
-import schemacrawler.schema.Table;
-import schemacrawler.schema.Trigger;
-import schemacrawler.schema.View;
+import schemacrawler.schema.*;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
@@ -54,33 +28,13 @@ import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.impl.scanner.PropertyFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.BaseColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.FunctionDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexOnColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.OnColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyOnColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ProcedureDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 
 /**
  * Scans a database schema, the connection properties are taken from a property
  * file following which contains the plugin name.
  */
-@Requires(PropertyFileScannerPlugin.class)
+@Requires(PropertyFileDescriptor.class)
 public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, ConnectionPropertiesDescriptor> {
 
     public static final String PLUGIN_NAME = "jqassistant.plugin.rdbms";

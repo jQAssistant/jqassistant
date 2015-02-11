@@ -16,11 +16,16 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDi
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
-public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry> {
+public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry, ArchiveDescriptor> {
 
     @Override
     public Class<? extends ZipFile> getType() {
         return ZipFile.class;
+    }
+
+    @Override
+    public Class<? extends ArchiveDescriptor> getDescriptorType() {
+        return ArchiveDescriptor.class;
     }
 
     @Override
@@ -29,12 +34,7 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected Scope getScope(Scope currentScope) {
-        return currentScope;
-    }
-
-    @Override
-    protected FileContainerDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
+    protected ArchiveDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
         return scannerContext.peek(ArchiveDescriptor.class);
     }
 
@@ -74,6 +74,15 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
         } else {
             return "/" + name;
         }
+    }
+
+    @Override
+    protected Scope createScope(Scope currentScope, ScannerContext context) {
+        return currentScope;
+    }
+
+    @Override
+    protected void destroyScope(ScannerContext scannerContext) {
     }
 
     @Override

@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverBuilder;
 
-public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin {
+public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<JavaClassesDirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -21,11 +21,18 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
     }
 
     @Override
-    protected FileContainerDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
-        ArtifactFileDescriptor artifactDescriptor = scannerContext.peek(JavaArtifactDescriptor.class);
-        if (artifactDescriptor == null) {
-            artifactDescriptor = scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class);
-        }
-        return artifactDescriptor;
+    protected Scope createScope(Scope currentScope, ScannerContext context) {
+        context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
+        return currentScope;
+    }
+
+    @Override
+    protected void destroyScope(ScannerContext context) {
+        context.pop(TypeResolver.class);
+    }
+
+    @Override
+    protected JavaClassesDirectoryDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
+        return scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class);
     }
 }

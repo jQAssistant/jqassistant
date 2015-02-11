@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.maven3.test.rule;
+package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,21 +14,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationFileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenActivationOSDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenConfigurationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenExecutionGoalDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenLicenseDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenModuleDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPluginExecutionDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileActivationDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProfileDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.PomManagesDependencyDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.ProfileDependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 
 public class PomIT extends AbstractJavaPluginIT {
 
