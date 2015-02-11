@@ -34,21 +34,21 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
         Map<String, FileDescriptor> files = new HashMap<>();
-        Scope entryScope = createScope(scope, scanner.getContext());
+        enterContainer(containerDescriptor, scanner.getContext());
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
                 try (Resource resource = getEntry(container, e)) {
                     String relativePath = getRelativePath(container, e);
                     LOGGER.info("Scanning {}", relativePath);
-                    FileDescriptor descriptor = scanner.scan(resource, relativePath, entryScope);
+                    FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
                     descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
                     files.put(relativePath, descriptor);
                     containerDescriptor.getContains().add(descriptor);
                 }
             }
         } finally {
-            destroyScope(scanner.getContext());
+            leaveContainer(scanner.getContext());
             LOGGER.info("Leaving {}", path);
         }
         for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
@@ -115,13 +115,12 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * Create a scope depending on the container type, e.g. a JAR file should
      * return classpath scope.
      * 
-     * @param currentScope
-     *            The current scope.
+     * @param containerDescriptor
+     *            The container descriptor.
      * @param scannerContext
      *            The scanner context.
-     * @return The scope.
      */
-    protected abstract Scope createScope(Scope currentScope, ScannerContext scannerContext);
+    protected abstract void enterContainer(D containerDescriptor, ScannerContext scannerContext);
 
     /**
      * Destroy the container dependent scope.
@@ -129,7 +128,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * @param scannerContext
      *            The scanner context.
      */
-    protected abstract void destroyScope(ScannerContext scannerContext);
+    protected abstract void leaveContainer(ScannerContext scannerContext);
 
     /**
      * Return a {@link Resource} representing an entry.

@@ -23,12 +23,11 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected Scope createScope(Scope currentScope, ScannerContext scannerContext) {
-        return currentScope;
+    protected void enterContainer(TestReportDirectoryDescriptor testReportDirectoryDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
-    protected void destroyScope(ScannerContext scannerContext) {
+    protected void leaveContainer(ScannerContext scannerContext) {
     }
 
 }

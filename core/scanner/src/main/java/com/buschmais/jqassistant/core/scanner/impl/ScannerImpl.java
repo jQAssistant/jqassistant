@@ -152,19 +152,17 @@ public class ScannerImpl implements Scanner {
      *            The type.
      * @return The list of plugins.
      */
-    private List<ScannerPlugin<?, ?>> getScannerPluginsForType(Class<?> type) {
+    private List<ScannerPlugin<?, ?>> getScannerPluginsForType(final Class<?> type) {
         List<ScannerPlugin<?, ?>> plugins = scannerPluginsPerType.get(type);
         if (plugins == null) {
             final Map<Class<? extends Descriptor>, ScannerPlugin<?, ?>> pluginsByDescriptor = new HashMap<>();
-            final List<ScannerPlugin<?, ?>> candidates = new ArrayList<>();
             for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
-                pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
-                    candidates.add(scannerPlugin);
+                    pluginsByDescriptor.put(scannerPlugin.getDescriptorType(), scannerPlugin);
                 }
             }
-            plugins = DependencyResolver.newInstance(candidates, new DependencyProvider<ScannerPlugin<?, ?>>() {
+            plugins = DependencyResolver.newInstance(pluginsByDescriptor.values(), new DependencyProvider<ScannerPlugin<?, ?>>() {
                 @Override
                 public Set<ScannerPlugin<?, ?>> getDependencies(ScannerPlugin<?, ?> dependent) {
                     Set<ScannerPlugin<?, ?>> dependencies = new HashSet<>();

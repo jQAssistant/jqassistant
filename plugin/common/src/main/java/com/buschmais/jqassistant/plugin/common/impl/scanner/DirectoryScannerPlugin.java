@@ -22,12 +22,11 @@ public class DirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<Direc
     }
 
     @Override
-    protected Scope createScope(Scope currentScope, ScannerContext scannerContext) {
-        return currentScope;
+    protected void enterContainer(DirectoryDescriptor directoryDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
-    protected void destroyScope(ScannerContext scannerContext) {
+    protected void leaveContainer(ScannerContext scannerContext) {
     }
 
 }
