@@ -4,8 +4,6 @@
         Child Text
     </ChildElement>
     <ExtraElement xmlns:extra="http://jqassistant.org/plugin/xml/test/extra">
-        <extra:ChildElement extra:attribute2="attribute2">
-            Extra Child Text
-        </extra:ChildElement>
+        <extra:ExtraChildElement extra:attribute2="attribute2"><![CDATA[Extra Child Text]]></extra:ExtraChildElement>
     </ExtraElement>
 </RootElement>

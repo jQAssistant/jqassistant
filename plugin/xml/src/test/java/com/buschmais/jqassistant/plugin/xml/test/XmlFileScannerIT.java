@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -52,15 +53,36 @@ public class XmlFileScannerIT extends AbstractPluginIT {
                 assertThat(childElementAttributes.size(), equalTo(1));
                 XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
                 assertThat(childElementAttribute.getName(), equalTo("attribute1"));
-                List<XmlTextDescriptor> childElementText = childElement.getCharacters();
-                assertThat(childElementText.size(), equalTo(1));
+                List<XmlTextDescriptor> childElementTexts = childElement.getCharacters();
+                assertThat(childElementTexts.size(), equalTo(1));
+                XmlTextDescriptor childElementText = childElementTexts.get(0);
+                assertThat(childElementText.getValue(), equalTo("Child Text"));
             } else if ("ExtraElement".equals(childElement.getName())) {
+                assertThat(childElement.getDeclaredNamespaces().size(), equalTo(1));
+                XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces().get(0);
+                assertThat(extraNamespace.getUri(), equalTo("http://jqassistant.org/plugin/xml/test/extra"));
+                assertThat(extraNamespace.getPrefix(), equalTo("extra"));
+                List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
+                assertThat(childElementAttributes.size(), equalTo(0));
+                List<XmlElementDescriptor> extraChildElements = childElement.getElements();
+                assertThat(extraChildElements.size(), equalTo(1));
+                XmlElementDescriptor extraChildElement = extraChildElements.get(0);
+                assertThat(extraChildElement.getName(), equalTo("ExtraChildElement"));
+                assertThat(extraChildElement.getNamespaceDeclaration(), equalTo(extraNamespace));
+                List<XmlTextDescriptor> extraChildElementTexts = extraChildElement.getCharacters();
+                assertThat(extraChildElementTexts.size(), equalTo(1));
+                XmlTextDescriptor extraChildElementText = extraChildElementTexts.get(0);
+                assertThat(extraChildElementText.getValue(), equalTo("Extra Child Text"));
+                List<XmlAttributeDescriptor> extraChildElementAttributes = extraChildElement.getAttributes();
+                assertThat(extraChildElementAttributes.size(),equalTo(1));
+                XmlAttributeDescriptor extraChildElementAttribute = extraChildElementAttributes.get(0);
+                assertThat(extraChildElementAttribute.getName(), equalTo("attribute2"));
+                assertThat(extraChildElementAttribute.getNamespaceDeclaration(), equalTo(extraNamespace));
 
             } else {
                 fail("Found unexpected child element: " + childElement.getName());
             }
         }
-
         store.commitTransaction();
     }
 }

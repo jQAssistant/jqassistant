@@ -123,13 +123,15 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
     }
 
     private void characters(XMLStreamReader streamReader, Class<? extends XmlTextDescriptor> type, XmlElementDescriptor parentElement, Store store) {
-        int start = streamReader.getTextStart();
-        int length = streamReader.getTextLength();
-        String text = new String(streamReader.getTextCharacters(), start, length).trim();
-        if (!Strings.isNullOrEmpty(text)) {
-            XmlTextDescriptor charactersDescriptor = store.create(type);
-            charactersDescriptor.setValue(text);
-            parentElement.getCharacters().add(charactersDescriptor);
+        if (streamReader.hasText()) {
+            int start = streamReader.getTextStart();
+            int length = streamReader.getTextLength();
+            String text = new String(streamReader.getTextCharacters(), start, length).trim();
+            if (!Strings.isNullOrEmpty(text)) {
+                XmlTextDescriptor charactersDescriptor = store.create(type);
+                charactersDescriptor.setValue(text);
+                parentElement.getCharacters().add(charactersDescriptor);
+            }
         }
     }
 
