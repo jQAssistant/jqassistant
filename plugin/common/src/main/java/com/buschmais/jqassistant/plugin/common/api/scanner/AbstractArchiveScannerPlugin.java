@@ -20,6 +20,11 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
     }
 
     @Override
+    public Class<? extends D> getDescriptorType() {
+        return getTypeParameter(AbstractArchiveScannerPlugin.class, 0);
+    }
+
+    @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(getExtension());
     }

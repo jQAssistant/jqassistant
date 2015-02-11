@@ -24,7 +24,7 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 public class ZipScannerIT extends AbstractPluginIT {
 
     /**
-     * The strategies for refencing the archive to scan.
+     * The strategies for referencing the archive to scan.
      */
     enum Strategy {
         /**

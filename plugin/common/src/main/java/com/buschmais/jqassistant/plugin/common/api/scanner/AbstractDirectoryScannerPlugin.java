@@ -14,17 +14,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 /**
  * Abstract base implementation for directory scanners.
  */
-public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerScannerPlugin<File, File> {
+public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescriptor> extends AbstractContainerScannerPlugin<File, File, D> {
 
     @Override
     public Class<? extends File> getType() {
         return File.class;
+    }
+
+    @Override
+    public Class<? extends D> getDescriptorType() {
+        return getTypeParameter(AbstractDirectoryScannerPlugin.class, 0);
     }
 
     @Override
@@ -61,11 +67,6 @@ public abstract class AbstractDirectoryScannerPlugin extends AbstractContainerSc
      * @return The scope.
      */
     protected abstract Scope getRequiredScope();
-
-    @Override
-    protected Scope getScope(Scope currentScope) {
-        return getRequiredScope();
-    }
 
     @Override
     protected String getRelativePath(File container, File entry) {
