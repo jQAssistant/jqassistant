@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.ClassFileScannerPlugin;
 
-@Requires(ClassFileScannerPlugin.class)
+@Requires(ClassFileDescriptor.class)
 public class CustomScannerPlugin extends AbstractScannerPlugin<FileResource, CustomDescriptor> {
 
     private static final String PROPERTY_VALUE = "custom.scan.value";
