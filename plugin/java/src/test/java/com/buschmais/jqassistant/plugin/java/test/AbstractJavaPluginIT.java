@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -26,13 +27,13 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
      *         .
      */
-    protected JavaArtifactDescriptor getArtifactDescriptor(String artifactId) {
+    protected JavaClassesDirectoryDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
         if (artifact == null) {
             artifact = store.create(JavaClassesDirectoryDescriptor.class, artifactId);
             artifact.setFullQualifiedName(artifactId);
         }
-        return JavaArtifactDescriptor.class.cast(artifact);
+        return JavaClassesDirectoryDescriptor.class.cast(artifact);
     }
 
     /**
@@ -98,6 +99,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
             FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
             artifact.getContains().add(fileDescriptor);
         }
+        context.pop(JavaArtifactDescriptor.class);
         store.commitTransaction();
     }
 
@@ -143,10 +145,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClassPathDirectory(String artifactId, File directory) throws IOException {
         store.beginTransaction();
         Scanner scanner = getScanner();
-        JavaArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
-        //scanner.getContext().push(JavaArtifactDescriptor.class, artifact);
-        scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
-        //scanner.getContext().pop(JavaArtifactDescriptor.class);
+        JavaClassesDirectoryDescriptor scan = scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
+        scan.setFullQualifiedName(artifactId);
         store.commitTransaction();
     }
 }
