@@ -28,6 +28,11 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, MavenPomXmlDescriptor> {
 
     @Override
+    public Class<? extends FileResource> getType() {
+        return FileResource.class;
+    }
+
+    @Override
     public Class<? extends MavenPomXmlDescriptor> getDescriptorType() {
         return MavenPomXmlDescriptor.class;
     }
@@ -455,11 +460,6 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
         addPlugins(pomDescriptor, model.getBuild(), store);
         addLicenses(pomDescriptor, model, store);
         return pomDescriptor;
-    }
-
-    @Override
-    public Class<? extends FileResource> getType() {
-        return FileResource.class;
     }
 
     protected abstract MavenPomXmlDescriptor createDescriptor(Scanner scanner);
