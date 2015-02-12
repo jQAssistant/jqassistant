@@ -65,11 +65,6 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.scm</groupId>
-                <artifactId>jqassistant.scm.neo4jshell</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.scm</groupId>
                 <artifactId>jqassistant.scm.neo4jserver</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -80,7 +75,6 @@
         <module>common</module>
         <module>cli</module>
         <module>jqassistant-maven-plugin</module>
-        <module>neo4jshell</module>
         <module>neo4jserver</module>
     </modules>
 
