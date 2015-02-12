@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.api.model;
+package com.buschmais.jqassistant.plugin.java.api.report;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +9,8 @@ import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 
 /**
  * Defines the language elements for "Java".
@@ -32,8 +33,8 @@ public @interface Java {
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(PackageDescriptor descriptor) {
-                        return descriptor;
+                    public String getSourceFile(PackageDescriptor descriptor) {
+                        return descriptor.getFileName();
                     }
 
                     @Override
@@ -53,8 +54,8 @@ public @interface Java {
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(ClassFileDescriptor descriptor) {
-                        return descriptor;
+                    public String getSourceFile(ClassFileDescriptor descriptor) {
+                        return descriptor.getFileName();
                     }
 
                     @Override
@@ -80,9 +81,9 @@ public @interface Java {
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(ReadsDescriptor descriptor) {
+                    public String getSourceFile(ReadsDescriptor descriptor) {
                         TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
+                        return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) descriptor).getFileName() : null;
                     }
 
                     @Override
@@ -102,9 +103,9 @@ public @interface Java {
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(WritesDescriptor descriptor) {
+                    public String getSourceFile(WritesDescriptor descriptor) {
                         TypeDescriptor declaringType = descriptor.getMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
+                        return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
                     }
 
                     @Override
@@ -136,9 +137,9 @@ public @interface Java {
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(InvokesDescriptor descriptor) {
+                    public String getSourceFile(InvokesDescriptor descriptor) {
                         TypeDescriptor declaringType = descriptor.getInvokingMethod().getDeclaringType();
-                        return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
+                        return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
                     }
 
                     @Override
@@ -165,9 +166,9 @@ public @interface Java {
             }
 
             @Override
-            public FileDescriptor getSourceFile(MemberDescriptor descriptor) {
+            public String getSourceFile(MemberDescriptor descriptor) {
                 TypeDescriptor declaringType = descriptor.getDeclaringType();
-                return declaringType instanceof ClassFileDescriptor ? (FileDescriptor) declaringType : null;
+                return declaringType instanceof ClassFileDescriptor ? ((FileDescriptor) declaringType).getFileName() : null;
             }
 
             @Override
@@ -178,7 +179,7 @@ public @interface Java {
 
         /**
          * Returns the file name of the given descriptor if it extends
-         * {@link com.buschmais.jqassistant.core.store.api.model.FileDescriptor}
+         * {@link com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor}
          * .
          * 
          * @param descriptor

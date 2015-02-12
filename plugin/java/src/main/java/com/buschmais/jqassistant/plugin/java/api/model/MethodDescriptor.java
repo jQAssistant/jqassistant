@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Method;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Method;
 
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;

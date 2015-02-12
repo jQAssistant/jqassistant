@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
+import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 /**

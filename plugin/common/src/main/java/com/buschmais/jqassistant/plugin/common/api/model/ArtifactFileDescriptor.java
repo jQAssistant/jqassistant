@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
-import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.report.Generic;
 
 /**
  * Describes an artifact as a file.

@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.core.store.api.model;
+package com.buschmais.jqassistant.plugin.common.api.model;
 
 import java.util.List;
 
