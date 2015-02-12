@@ -139,10 +139,6 @@
             <artifactId>jqassistant.scm.neo4jserver</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.scm</groupId>
-            <artifactId>jqassistant.scm.neo4jshell</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
             <version>${project.version}</version>
