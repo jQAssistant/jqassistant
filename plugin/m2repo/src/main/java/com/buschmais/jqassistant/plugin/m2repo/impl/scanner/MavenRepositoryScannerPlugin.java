@@ -43,7 +43,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
     private static final String PROPERTY_NAME_DIRECTORY = "m2repo.directory";
     private static final String PROPERTY_NAME_DELETE_ARTIFACTS = "m2repo.delete.artifacts";
-    public static final String DEFAULT_M2REPO_DIR = "./target/m2repo-data";
+    public static final String DEFAULT_M2REPO_DIR = "./jqassistant/data/m2repo";
 
     private File localDirectory;
 
