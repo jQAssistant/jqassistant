@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
+import com.buschmais.jqassistant.plugin.java.api.report.Java;
+
 /**
  * Denotes a class type.
  */
