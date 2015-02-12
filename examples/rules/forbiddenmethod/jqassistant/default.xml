@@ -18,18 +18,4 @@
         <includeConstraint refId="example:ConstructorOfDateMustNotBeUsed"/>
     </group>
 
-    <queryTemplate id="template:CustomLabel">
-        <description>A template</description>
-        <cypher>
-            MATCH (t:Type) set t:Custom return t
-        </cypher>
-        <parameterDefinition name="fqn" type="string"/>
-    </queryTemplate>
-
-    <constraint id="example:ConstructorOfDateMustNotBeUsed">
-        <description>Constructors of java.util.Date must not be used.</description>
-        <useQueryTemplate refId="template:CustomLabel"/>
-        <parameter name="fqn" type="string" value="com.buschmais.demo.MyType"/>
-    </constraint>
-
 </jqa:jqassistant-rules>

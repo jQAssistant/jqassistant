@@ -24,10 +24,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
     private static final int REPO_SERVER_PORT = 8080;
     private static final String REPO_SERVER_BASE_DIR = "./src/test/resources/maven-repository";
 
-    // private static final String TEST_REPOSITORY_URL = "http://localhost:" +
-    // REPO_SERVER_PORT;
-    private static final String TEST_REPOSITORY_URL = "http://drs-repo.asml.com/artifactory/libs-release-local";
-    // http://drs-repo.asml.com/artifactory/libs-release-local/
+    private static final String TEST_REPOSITORY_URL = "http://localhost:" + REPO_SERVER_PORT;
     private HttpServer httpServer;
 
     /**
