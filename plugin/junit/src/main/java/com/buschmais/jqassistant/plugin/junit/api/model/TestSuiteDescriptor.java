@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.junit.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
