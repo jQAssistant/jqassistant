@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.core.scanner.api;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
  * Defines the scanner interface.
@@ -23,7 +22,7 @@ public interface Scanner {
      *            The item type.
      * @param <D>
      *            The corresponding descriptor type.
-     * @return The {@link FileDescriptor} as returned by the plugins.
+     * @return The {@link Descriptor} as returned by the plugins.
      * @throws IOException
      *             If scanning fails.
      */

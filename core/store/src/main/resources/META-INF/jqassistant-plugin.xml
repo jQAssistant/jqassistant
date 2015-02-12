@@ -1,8 +1,0 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
-    <description>Provides core elements used by the store and plugins.</description>
-    <model>
-        <class>com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor</class>
-        <class>com.buschmais.jqassistant.core.store.api.model.FileDescriptor</class>
-        <class>com.buschmais.jqassistant.core.store.api.model.DirectoryDescriptor</class>
-    </model>
-</jqa-plugin:jqassistant-plugin>
