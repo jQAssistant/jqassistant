@@ -5,6 +5,9 @@ import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.common.report.ScopeHelper;
 
+/**
+ * A task for listing all available scanner scopes as provided by plugins.
+ */
 public class AvailableScopesTask extends AbstractAnalyzeTask {
 
     @Override
