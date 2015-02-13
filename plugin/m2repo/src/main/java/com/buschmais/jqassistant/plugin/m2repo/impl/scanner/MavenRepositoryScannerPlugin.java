@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,6 +31,8 @@ import com.buschmais.jqassistant.plugin.m2repo.api.model.ContainsArtifactDescrip
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 /**
  * A scanner for (remote) maven repositories.
@@ -86,6 +90,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private String getFqn(Artifact artifact) {
         StringBuilder builder = new StringBuilder(artifact.getGroupId()).append(":");
         builder.append(artifact.getArtifactId()).append(":");
+        builder.append(artifact.getExtension()).append(":");
         if (StringUtils.isNotBlank(artifact.getClassifier())) {
             builder.append(artifact.getClassifier()).append(":");
         }
@@ -146,9 +151,15 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      */
     private RepositoryArtifactDescriptor migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, String lastModified,
             Descriptor descriptor) {
-        RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
-        ContainsArtifactDescriptor containsDescriptor = store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor);
-        containsDescriptor.setLastModified(StringUtils.defaultString(lastModified));
+    	RepositoryArtifactDescriptor artifactDescriptor = null;
+//    	if(descriptor instanceof RepositoryArtifactDescriptor){
+//    		artifactDescriptor = (RepositoryArtifactDescriptor) descriptor;
+//    	}else{
+//    		artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);    		
+//    	}
+    	artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
+        artifactDescriptor.setLastModified(StringUtils.defaultString(lastModified));
+        store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor);
         return artifactDescriptor;
     }
 
@@ -187,12 +198,24 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     if (descriptor != null) {
                         String lastModified = new Date(artifactInfo.lastModified).toString();
                         RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
-                        artifactDescriptor.setClassifier(artifact.getClassifier());
-                        artifactDescriptor.setGroup(artifact.getGroupId());
-                        artifactDescriptor.setName(artifact.getArtifactId());
-                        artifactDescriptor.setType(artifact.getExtension());
-                        artifactDescriptor.setVersion(artifact.getVersion());
-                        artifactDescriptor.setFullQualifiedName(getFqn(artifact));
+                        artifactDescriptor.setClassifier(classifier);
+                        artifactDescriptor.setGroup(groupId);
+                        artifactDescriptor.setName(artifactId);
+                        artifactDescriptor.setType(packaging);
+                        artifactDescriptor.setVersion(version);
+                        String fqn = getFqn(artifact);
+						artifactDescriptor.setFullQualifiedName(fqn);
+
+                        Map<String, Object> queryParams = new HashMap<>();
+                        queryParams.put("fqn", fqn);
+                        queryParams.put("lastModified", lastModified);
+                        Result<CompositeRowObject> queryResult = store.executeQuery("MATCH (n:Artifact:Maven)<-[CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.fqn={fqn} AND n.lastModified<>{lastModified} RETURN n", queryParams);
+                        if(queryResult.hasResult()){
+                        	LOGGER.info("Artifact "+fqn+" has predecessor.");
+                        	RepositoryArtifactDescriptor predecessorArtifactDescriptor = queryResult.getSingleResult().get("n", RepositoryArtifactDescriptor.class);
+                        	artifactDescriptor.setPredecessorArtifact(predecessorArtifactDescriptor);
+                        	predecessorArtifactDescriptor.setContainingRepository(null);
+                        }
                     } else {
                         LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
                     }

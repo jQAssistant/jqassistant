@@ -84,5 +84,5 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             store.commitTransaction();
         }
     }
-
+   
 }

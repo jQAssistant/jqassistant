@@ -18,6 +18,7 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.Times;
 
@@ -33,6 +34,8 @@ import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.DefaultFileResource;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.xo.api.Query.Result;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 public class MavenRepositoryScannerTest {
 
@@ -102,6 +105,10 @@ public class MavenRepositoryScannerTest {
         when(store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class)).thenReturn(artifactDescriptor);
         ContainsArtifactDescriptor containsArtifactDescriptor = mock(ContainsArtifactDescriptor.class);
         when(store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor)).thenReturn(containsArtifactDescriptor);
+
+        Result<CompositeRowObject> queryResult = mock(Result.class);
+        when(queryResult.hasResult()).thenReturn(false);
+        when(store.executeQuery(anyString(), Matchers.anyMap())).thenReturn(queryResult);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
             File artifactFile = newFile(artifactInfo);
