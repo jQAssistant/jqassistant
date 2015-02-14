@@ -1,10 +1,10 @@
 <<MavenProjectScanner>>
 [[MavenProjectScanner]]
-==== Scanner for Maven projects
+== Scanner for Maven projects
 Imports information from Maven projects.
 
 [[:Maven:Project]]
-===== :Maven:Project:File:Directory
+=== :Maven:Project:File:Directory
 A pom.xml file describing a single Maven project.
 
 .Properties of :Maven:Project:File:Directory
@@ -29,7 +29,7 @@ A pom.xml file describing a single Maven project.
 |====
 
 [[:Artifact]]
-===== :Artifact
+=== :Artifact
 Represents an artifact, e.g. a JAR-File.
 
 .Properties of :Artifact
@@ -61,11 +61,11 @@ Represents an artifact, e.g. a JAR-File.
 
 <<MavenPomScanner>>
 [[MavenPomScanner]]
-==== Scanner for Maven pom.xml files
+== Scanner for Maven pom.xml files
 Imports raw information from Maven pom.xml files.
 
 [[:Maven:Pom:Xml]]
-===== :Maven:Artifact:Pom:Xml:File
+=== :Maven:Artifact:Pom:Xml:File
 A pom.xml file describing a single Maven project.
 
 .Properties of :Maven:Artifact:Pom:Xml:File
@@ -95,7 +95,7 @@ A pom.xml file describing a single Maven project.
 |====
 
 [[:Maven:Profile]]
-===== :Maven:Profile
+=== :Maven:Profile
 A maven profile
 
 .Properties of :Maven:Profile
@@ -119,7 +119,7 @@ A maven profile
 |====
 
 [[:Maven:ProfileActivation]]
-===== :Maven:ProfileActivation
+=== :Maven:ProfileActivation
 A maven profile activation
 
 .Properties of :Maven:ProfileActivation
@@ -140,7 +140,7 @@ A maven profile activation
 |====
 
 [[:Maven:ActivationFile]]
-===== :Maven:ActivationFile
+=== :Maven:ActivationFile
 File specification used to activate a profile
 
 .Properties of :Maven:ActivationFile
@@ -152,7 +152,7 @@ File specification used to activate a profile
 |====
 
 [[:Maven:ActivationOS]]
-===== :Maven:ActivationOS
+=== :Maven:ActivationOS
 Defines operating system's attributes to activate a profile
 
 .Properties of :Maven:ActivationOS
@@ -166,7 +166,7 @@ Defines operating system's attributes to activate a profile
 |====
 
 [[:Maven:Module]]
-===== :Maven:Module
+=== :Maven:Module
 A maven module
 
 .Properties of :Maven:Module
@@ -177,7 +177,7 @@ A maven module
 |====
 
 [[:Maven:Plugin]]
-===== :Maven:Plugin
+=== :Maven:Plugin
 A maven plugin
 
 .Properties of :Maven:Plugin
@@ -201,7 +201,7 @@ A maven plugin
 |====
 
 [[:Maven:License]]
-===== :Maven:License
+=== :Maven:License
 A used license
 
 .Properties of :Maven:License
@@ -215,7 +215,7 @@ A used license
 |====
 
 [[:Maven:PluginExecution]]
-===== :Maven:PluginExecution
+=== :Maven:PluginExecution
 A plugin execution
 
 .Properties of :Maven:PluginExecution
@@ -236,7 +236,7 @@ A plugin execution
 |====
 
 [[:Maven:Configuration]]
-===== :Maven:Configuration
+=== :Maven:Configuration
 A configuration for plugins, executions
 
 .Relations of :Maven:Configuration
@@ -247,7 +247,7 @@ A configuration for plugins, executions
 |====
 
 [[:Maven:ExecutionGoal]]
-===== :Maven:ExecutionGoal
+=== :Maven:ExecutionGoal
 A goal for plugin executions
 
 .Properties of :Maven:ExecutionGoal
