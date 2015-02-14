@@ -1,9 +1,9 @@
 <<XmlFileScanner>>
 [[XmlFileScanner]]
-==== Generic scanner for XML and XSD files
+== Generic scanner for XML and XSD files
 Imports all XML or XSD files in a generic representation, e.g. namespaces, elements, attributes and text.
 
-===== :File:Xml
+=== :File:Xml
 Represents an XML file.
 
 .Properties of :File:Xml
@@ -23,7 +23,7 @@ Represents an XML file.
 |====
 
 [[:Xml:Element]]
-===== :Xml:Element
+=== :Xml:Element
 An XML element.
 
 .Relations of :Xml:Element
@@ -38,7 +38,7 @@ An XML element.
 |====
 
 [[:Xml:Namespace]]
-===== :Xml:Namespace
+=== :Xml:Namespace
 A XML namespace declaration.
 
 .Properties of :Xml:Namespace
@@ -51,7 +51,7 @@ A XML namespace declaration.
 
 
 [[:Xml:Attribute]]
-===== :Xml:Attribute
+=== :Xml:Attribute
 An XML attribute.
 
 .Properties of :Xml:Attribute
@@ -71,7 +71,7 @@ An XML attribute.
 
 
 [[:Xml:Text]]
-===== :Xml:Text
+=== :Xml:Text
 A text value of an XML element.
 
 .Properties of :Xml:Element
