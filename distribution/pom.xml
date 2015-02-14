@@ -225,6 +225,14 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.m2repo</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.maven3</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
@@ -250,6 +258,14 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.rdbms</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.xml</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>

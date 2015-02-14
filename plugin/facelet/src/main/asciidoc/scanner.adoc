@@ -3,10 +3,9 @@
 ==== Scanner for JSF-template files
 Imports JSF template files (e.g. *.jspx) and builds references between them (template/includes).
 
-==== Configuration
-Configure the scanner with following properties.
+===== Configuration
 
-.Configuration of FaceletScanner
+.Configuration properties
 [options="header"]
 |====
 | Property     			| Description														| Default

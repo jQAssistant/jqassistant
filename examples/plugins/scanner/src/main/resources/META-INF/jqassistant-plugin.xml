@@ -1,5 +1,5 @@
 <jqa-plugin:jqassistant-plugin
-        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="CSV Example">
     <description>Provides a scanner for CSV file.</description>
     <model>
         <class>com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor</class>

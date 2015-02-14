@@ -4,13 +4,12 @@
 Downloads the repository index and all new artifacts. After that the plugin delegates all new artifacts to other plugins.
 
 ==== Configuration
-Configure the scanner with following properties.
 
-.Configuration of MavenRepositoryScanner
+.Configuration properties
 [options="header"]
 |====
 | Property     			  | Description																			| Default
-| m2repo.directory 		  | A directory path. This directory is the target for Maven indices and artifacts. 	| ./target/m2repo-data
+| m2repo.directory 		  | A directory path. This directory is the target for Maven indices and artifacts. 	| ./jqassistant/data/m2repo
 | m2repo.delete.artifacts | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
 |====
 
