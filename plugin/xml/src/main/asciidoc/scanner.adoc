@@ -1,0 +1,82 @@
+<<XmlFileScanner>>
+[[XmlFileScanner]]
+==== Generic scanner for XML and XSD files
+Imports all XML or XSD files in a generic representation, e.g. namespaces, elements, attributes and text.
+
+===== :File:Xml
+Represents an XML file.
+
+.Properties of :File:Xml
+[options="header"]
+|====
+| Name                    | Description
+| version                 | The XML version
+| standalone              | The "standalone" attribute of the XML declaration.
+| characterEncodingScheme | The encoding of the XML file.
+|====
+
+.Relations of :File:Xml
+[options="header"]
+|====
+| Name             | Target label(s)  | Cardinality | Description
+| HAS_ROOT_ELEMENT | <<:Xml:Element>> | 1           | References the root element of the document.
+|====
+
+[[:Xml:Element]]
+===== :Xml:Element
+An XML element.
+
+.Relations of :Xml:Element
+[options="header"]
+|====
+| Name      | Target label(s)             | Cardinality  | Description
+| DECLARES_NAMESPACE | <<:Xml:Namespace>> | 0..n         | References namespaces which are declared on the element.
+| OF_NAMESPACE       | <<:Xml:Namespace>> | 0..1         | References the namespace of the element.
+| HAS_ELEMENT        | <<:Xml:Element>>   | 0..n         | References child elements of the element.
+| HAS_ATTRIBUTE      | <<:Xml:Attribute>> | 0..n         | References attributes of the element.
+| HAS_TEXT           | <<:Xml:Text>>      | 0..n         | References the text values of the element.
+|====
+
+[[:Xml:Namespace]]
+===== :Xml:Namespace
+A XML namespace declaration.
+
+.Properties of :Xml:Namespace
+[options="header"]
+|====
+| Name   | Description
+| uri    | The namespace URI.
+| prefix | The optional namespace prefix
+|====
+
+
+[[:Xml:Attribute]]
+===== :Xml:Attribute
+An XML attribute.
+
+.Properties of :Xml:Attribute
+[options="header"]
+|====
+| Name   | Description
+| name   | The name of the atribute.
+| value  | The value of the attribute.
+|====
+
+.Relations of :Xml:Attribute
+[options="header"]
+|====
+| Name         | Target label(s)    | Cardinality | Description
+| OF_NAMESPACE | <<:Xml:Namespace>> | 0..1        | References the namespace of the attribute.
+|====
+
+
+[[:Xml:Text]]
+===== :Xml:Text
+A text value of an XML element.
+
+.Properties of :Xml:Element
+[options="header"]
+|====
+| Name   | Description
+| value  | The text value.
+|====
