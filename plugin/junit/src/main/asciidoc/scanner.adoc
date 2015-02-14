@@ -1,10 +1,10 @@
 <<Junit4TestSuiteScanner>>
 [[Junit4TestSuiteScanner]]
-==== Scanner for JUnit4 test suite results
+== Scanner for JUnit4 test suite results
 Imports results from JUnit4 test suites matching the file name '*TEST-*.xml'.
 
 [[:File:TestSuite]]
-===== :File:TestSuite
+=== :File:TestSuite
 A file containing results of a JUnit4 test suite.
 
 .Properties of :File:TestSuite
@@ -28,7 +28,7 @@ A file containing results of a JUnit4 test suite.
 |====
 
 [[:TestCase]]
-===== :TestCase
+=== :TestCase
 A test case.
 
 .Properties of :TestCase
