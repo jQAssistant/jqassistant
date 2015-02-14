@@ -10,7 +10,7 @@
     </xsl:variable>
 
     <xsl:template match="plugin:jqassistant-plugin">
-=== <xsl:value-of select="@name"/>
+= <xsl:value-of select="@name"/>
 <xsl:value-of select="$newline"/>
 <xsl:apply-templates select="//description"/>
 <xsl:value-of select="$newline"/>
@@ -32,7 +32,7 @@ include::{docRoot}/<xsl:value-of select="$pluginName"/>/scanner.adoc[]
 
     <xsl:template match="resource">
 [[<xsl:value-of select="text()"/>]]
-==== <xsl:value-of select="text()"/>
+== <xsl:value-of select="text()"/>
 include::{docRoot}/<xsl:value-of select="$pluginName"/>/<xsl:value-of select="text()"/>.adoc[]
 <xsl:value-of select="$newline"/>
     </xsl:template>

@@ -1,9 +1,9 @@
 <<ArtifactScanner>> <<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>> <<ServiceLoaderFileScanner>>
 
-==== Artifact Scanner
+== Artifact Scanner
 
 [[:Java:Artifact]]
-===== :Java:Artifact
+=== :Java:Artifact
 A directory or archive containing packages, classes and resources.
 
 .Properties of :Java:Artifact
@@ -23,20 +23,20 @@ A directory or archive containing packages, classes and resources.
 |====
 
 [[:Java:Artifact:Directory]]
-===== :Java:Artifact:Directory
+=== :Java:Artifact:Directory
 A directory representing a Java artifact.
 
 [[:Java:Artifact:Jar:Archive]]
-===== :Java:Artifact:Jar:Archive
+=== :Java:Artifact:Jar:Archive
 A JAR file representing a Java artifact.
 
 
 [[PackageScanner]]
-==== Package Scanner
+== Package Scanner
 Imports Java packages.
 
 [[:Java:Package]]
-===== :Java:Package
+=== :Java:Package
 A Java package, i.e. a directory containing '.class' files or other directories.
 
 .Properties of :Java:Package
@@ -56,7 +56,7 @@ A Java package, i.e. a directory containing '.class' files or other directories.
 |====
 
 [[ClassScanner]]
-==== Class Scanner
+== Class Scanner
 Imports Java classes, i.e. all scanned files having a '.class' suffix. Nodes with following labels will be created:
 
 <<:Java:Type>>
@@ -73,7 +73,7 @@ property 'fqn' and 'DECLARES' relations to their members. These are ':FIELD' or 
 provide the property 'signature'.
 
 [[:Java:Type]]
-===== :Java:Type
+=== :Java:Type
 A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Annotation'
 
 .Properties of :Java:Type
@@ -108,20 +108,20 @@ and the relation "DECLARES".
 *NOTE* Inheritance between interfaces (i.e. "public interface A extends B { ... }") is represented using IMPLEMENTS relations, i.e. queries must
  use (a:Type:Interface)-[:IMPLEMENTS]->(b:Type:Interface) for pattern matching.
 
-===== :Java:Type:Class
+=== :Java:Type:Class
 Qualifies a Java type as class.
 
-===== :Java:Type:Interface
+=== :Java:Type:Interface
 Qualifies a Java type node as interface.
 
-===== :Java:Type:Enum
+=== :Java:Type:Enum
 Qualifies a Java type as enumeration.
 
-===== :Java:Type:Annotation
+=== :Java:Type:Annotation
 Qualifies a Java type as annotation.
 
 [[:Java:Field]]
-===== :Java:Field
+=== :Java:Field
 A field declared in a Java type.
 
 .Properties of :Java:Field
@@ -149,7 +149,7 @@ A field declared in a Java type.
 *NOTE* Fields which are referenced by scanned classes but have not been scanned themselves will only provide the property "signature".
 
 [[:Java:Method]]
-===== :Java:Method
+=== :Java:Method
 A method declared in a Java type.
 
 .Properties of :Java:Method
@@ -180,11 +180,11 @@ A method declared in a Java type.
 
 *NOTE* Methods which are referenced by scanned classes but have not been scanned themselves will only provide the property "signature".
 
-===== :Java:Method:Constructor
+=== :Java:Method:Constructor
 Qualifies a method as constructor.
 
 [[:Java:Parameter]]
-===== :Java:Parameter
+=== :Java:Parameter
 A method parameter.
 
 .Properties of :Java:Parameter
@@ -203,7 +203,7 @@ A method parameter.
 |====
 
 [[:Java:Value]]
-===== :Java:Value
+=== :Java:Value
 A value, can be qualified by either ':Primitive', ':Annotation', ':Class', ':Enum' or ':Array'.
 
 .Properties of :Java:Value
@@ -214,7 +214,7 @@ A value, can be qualified by either ':Primitive', ':Annotation', ':Class', ':Enu
 |====
 
 [[:Java:Value:Primitive]]
-===== :Value:Primitive
+=== :Value:Primitive
 A primitive value.
 
 .Properties of :Java:Value:Primitive
@@ -225,7 +225,7 @@ A primitive value.
 |====
 
 [[:Java:Value:Annotation]]
-===== :Java:Value:Annotation
+=== :Java:Value:Annotation
 Represents a annotation on a Java element, e.g. '@Entity public class ...'
 
 .Relations of :Java:Value:Annotation:
@@ -237,7 +237,7 @@ Represents a annotation on a Java element, e.g. '@Entity public class ...'
 |====
 
 [[:Java:Value:Class]]
-===== :Java:Value:Class
+=== :Java:Value:Class
 Represents a class instance, e.g. as specified by annotation attribute.
 
 .Relations of :Java:Value:Class:
@@ -248,7 +248,7 @@ Represents a class instance, e.g. as specified by annotation attribute.
 |====
 
 [[:Java:Value:Enum]]
-===== :Java:Value:Enum
+=== :Java:Value:Enum
 Represents an enum value.
 
 .Relations of :Java:Value:Enum:
@@ -259,7 +259,7 @@ Represents an enum value.
 |====
 
 [[:Java:Value:Array]]
-===== :Java:Value:Array
+=== :Java:Value:Array
 Represents an array value, i.e. a node referencing value nodes.
 
 .Relations of :Java:Value:Array:
@@ -272,11 +272,11 @@ Represents an array value, i.e. a node referencing value nodes.
 
 
 [[ManifestFileScanner]]
-==== Manifest File Scanner
+== Manifest File Scanner
 Imports manifest descriptors from META-INF/MANIFEST.MF files.
 
 [[:File:Java:Manifest]]
-===== :File:Java:Manifest
+=== :File:Java:Manifest
 A MANIFEST.MF file containing sections.
 
 .Properties of :File:Java:Manifest
@@ -294,7 +294,7 @@ A MANIFEST.MF file containing sections.
 |====
 
 [[:Java:ManifestSection]]
-===== :Java:ManifestSection
+=== :Java:ManifestSection
 A manifest section.
 
 .Relations of :Java:ManifestSection
@@ -305,7 +305,7 @@ A manifest section.
 |====
 
 [[:Java:Value:ManifestEntry]]
-===== :Java:Value:ManifestEntry
+=== :Java:Value:ManifestEntry
 A manifest entry.
 
 .Properties of :Java:Value:ManifestEntry
@@ -319,11 +319,11 @@ A manifest entry.
 
 
 [[PropertyFileScanner]]
-==== Property File Scanner
+== Property File Scanner
 Imports property files, i.e. all files having a suffix '.properties'.
 
 [[:File:Java:Properties]]
-===== :File:Properties
+=== :File:Properties
 A property file containing key/value pairs.
 
 .Properties of :File:Java:Properties
@@ -341,7 +341,7 @@ A property file containing key/value pairs.
 |====
 
 [[:Java:Value:Property]]
-===== :Java:Value:Property
+=== :Java:Value:Property
 A key value/pair.
 
 .Properties of :Java:Value:Property
@@ -355,11 +355,11 @@ A key value/pair.
 
 
 [[ServiceLoaderFileScanner]]
-==== Service Loader File Scanner
+== Service Loader File Scanner
 Imports service loader descriptors from "META-INF/services" directories.
 
 [[:File:Java:ServiceLoader]]
-===== :File:Java:ServiceLoader
+=== :File:Java:ServiceLoader
 A file containing the implementation class names for a service interface
 
 .Properties of :File:Java:ServiceLoader

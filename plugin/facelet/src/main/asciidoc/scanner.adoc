@@ -1,9 +1,9 @@
 <<FaceletScanner>>
 [[FaceletScanner]]
-==== Scanner for JSF-template files
+== Scanner for JSF-template files
 Imports JSF template files (e.g. *.jspx) and builds references between them (template/includes).
 
-===== Configuration
+=== Configuration
 
 .Configuration properties
 [options="header"]
@@ -12,7 +12,7 @@ Imports JSF template files (e.g. *.jspx) and builds references between them (tem
 | facelet.file.pattern 	| Regular expression that describes scanable JSF template files.	| .*\\.jspx
 |====
 
-===== :File:Jsf:Facelet
+=== :File:Jsf:Facelet
 A JSF template file.
 
 .Properties of :File:Jsf:Facelet

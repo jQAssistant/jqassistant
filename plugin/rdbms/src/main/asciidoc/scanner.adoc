@@ -1,6 +1,6 @@
 <<SchemaScanner>>
 [[SchemaScanner]]
-==== Scanner for metadata of a relational database schema
+== Scanner for metadata of a relational database schema
 Imports the metadata of a relational database schema, i.e. schemas, tables and columns.
 
 The connection properties are taken from property files containing ${project.ArtifactId}, e.g. "${project.ArtifactId}_test.properties",
@@ -46,7 +46,7 @@ password=
 *NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. as dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
 [[:Rdbms:Connection:Properties]]
-===== :Rdbms:Connection:Properties
+=== :Rdbms:Connection:Properties
 Represents a file containing the connection properties described above which have been used to read the schema metadata. It provides the same
 properties and relations as <<:File:Properties>>.
 
@@ -58,7 +58,7 @@ properties and relations as <<:File:Properties>>.
 |====
 
 [[:Rdbms:Schema]]
-===== :Rdbms:Schema
+=== :Rdbms:Schema
 Describes a database schema.
 
 .Properties of :Rdbms:Schema
@@ -78,7 +78,7 @@ Describes a database schema.
 |====
 
 [[:Rdbms:Table]]
-===== :Rdbms:Table
+=== :Rdbms:Table
 Describes a database table.
 
 .Properties of :Rdbms:Table
@@ -99,7 +99,7 @@ Describes a database table.
 
 
 [[:Rdbms:View]]
-===== :Rdbms:View
+=== :Rdbms:View
 Describes a database view.
 
 .Properties of :Rdbms:View
@@ -117,7 +117,7 @@ Describes a database view.
 |====
 
 [[:Rdbms:Column]]
-===== :Rdbms:Column
+=== :Rdbms:Column
 Describes a column of a table.
 
 .Properties of :Rdbms:Column
@@ -143,7 +143,7 @@ Describes a column of a table.
 |====
 
 [[:Rdbms:ColumnType]]
-===== :Rdbms:ColumnType
+=== :Rdbms:ColumnType
 Describes a column data type, e.g. VARCHAR.
 
 .Properties of :Rdbms:ColumnType
@@ -164,7 +164,7 @@ Describes a column data type, e.g. VARCHAR.
 
 
 [[:Rdbms:PrimaryKey]]
-===== :Rdbms:PrimaryKey
+=== :Rdbms:PrimaryKey
 Describes a primary key of a table.
 
 .Properties of :Rdbms:PrimaryKey
@@ -183,7 +183,7 @@ Describes a primary key of a table.
 
 
 [[ON_PRIMARY_KEY_COLUMN]]
-===== ON_PRIMARY_KEY_COLUMN
+=== ON_PRIMARY_KEY_COLUMN
 Describes the properties of a column in a primary key.
 
 .Properties of ON_PRIMARY_KEY_COLUMN
@@ -196,7 +196,7 @@ Describes the properties of a column in a primary key.
 
 
 [[:Rdbms:Index]]
-===== :Rdbms:Index
+=== :Rdbms:Index
 Describes an index defined for table.
 
 .Properties of :Rdbms:Index
@@ -219,7 +219,7 @@ Describes an index defined for table.
 
 
 [[ON_INDEX_COLUMN]]
-===== ON_INDEX_COLUMN
+=== ON_INDEX_COLUMN
 Describes the properties of a column used by an index.
 
 .Properties of ON_INDEX_COLUMN
@@ -232,7 +232,7 @@ Describes the properties of a column used by an index.
 
 
 [[:Rdbms:ForeignKey]]
-===== :Rdbms:ForeignKey
+=== :Rdbms:ForeignKey
 Describes a foreign key.
 
 .Properties of :Rdbms:ForeignKey
@@ -254,7 +254,7 @@ Describes a foreign key.
 
 
 [[:Rdbms:ForeignKeyReference]]
-===== :Rdbms:ForeignKeyReference
+=== :Rdbms:ForeignKeyReference
 Describes a foreign key reference, i.e. a pair consisting of a foreign key referencing a primary key.
 
 .Relations of :Rdbms:ForeignKeyReference
@@ -267,7 +267,7 @@ Describes a foreign key reference, i.e. a pair consisting of a foreign key refer
 
 
 [[:Rdbms:Sequence]]
-===== :Rdbms:Sequence
+=== :Rdbms:Sequence
 Describes a database sequence.
 
 .Properties of :Rdbms:Sequence

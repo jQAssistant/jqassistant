@@ -2,6 +2,8 @@
 
 This section provides detailed descriptions of all distributed plugins.
 
+:leveloffset: 2
+
 include::{docRoot}/jqassistant.plugin.cdi/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.ejb3/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.facelet/plugin.adoc[]
@@ -18,3 +20,5 @@ include::{docRoot}/jqassistant.plugin.osgi/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.tycho/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.rdbms/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.xml/plugin.adoc[]
+
+:leveloffset: 0
