@@ -21,11 +21,11 @@ public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPl
     }
 
     @Override
-    protected void enterContainer(TestReportDirectoryDescriptor testReportDirectoryDescriptor, ScannerContext scannerContext) {
+    protected void enterContainer(File directory, TestReportDirectoryDescriptor testReportDirectoryDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
-    protected void leaveContainer(ScannerContext scannerContext) {
+    protected void leaveContainer(File directory, TestReportDirectoryDescriptor testReportDirectoryDescriptor, ScannerContext scannerContext) {
     }
 
 }
