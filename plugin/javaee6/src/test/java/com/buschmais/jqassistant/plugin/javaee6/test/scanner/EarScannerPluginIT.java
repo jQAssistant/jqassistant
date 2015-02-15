@@ -22,6 +22,8 @@ public class EarScannerPluginIT extends AbstractPluginIT {
         getScanner().scan(earFile, earFile.getAbsolutePath(), null);
         List<Object> earDescriptors = query("match (ear:Enterprise:Application:Archive) return ear").getColumn("ear");
         assertThat(earDescriptors, hasSize(1));
+        List<Object> applicationXml = query("match (application:Application:Xml) return application").getColumn("application");
+        assertThat(applicationXml, hasSize(1));
         store.commitTransaction();
     }
 

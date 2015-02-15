@@ -21,11 +21,11 @@ public class DirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<Direc
     }
 
     @Override
-    protected void enterContainer(DirectoryDescriptor directoryDescriptor, ScannerContext scannerContext) {
+    protected void enterContainer(File directory, DirectoryDescriptor directoryDescriptor, ScannerContext scannerContext) {
     }
 
     @Override
-    protected void leaveContainer(ScannerContext scannerContext) {
+    protected void leaveContainer(File directory, DirectoryDescriptor directoryDescriptor, ScannerContext scannerContext) {
     }
 
 }
