@@ -2,13 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -21,32 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
-import com.buschmais.jqassistant.core.analysis.api.rule.QueryTemplate;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.QueryTemplateType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader}
@@ -84,22 +55,14 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private void readXmlSource(List<JqassistantRules> rules, RuleSource ruleSource) {
-        InputStream inputStream;
-        try {
-            inputStream = ruleSource.getInputStream();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("An unexpected problem detected while opening stream for reading rules from '" + ruleSource.getId() +"'", e);
-        }
-        try {
+        try (InputStream inputStream = ruleSource.getInputStream()) {
             Unmarshaller unmarshaller = JAXB_CONTEXT.createUnmarshaller();
             unmarshaller.setSchema(SCHEMA);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Reading rules from '{}'.", ruleSource.getId());
-            }
+            LOGGER.debug("Reading rules from '{}'.", ruleSource.getId());
             StreamSource streamSource = new StreamSource(inputStream);
             JAXBElement<JqassistantRules> jaxbElement = unmarshaller.unmarshal(streamSource, JqassistantRules.class);
             rules.add(jaxbElement.getValue());
-        } catch (JAXBException e) {
+        } catch (IOException | JAXBException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
         }
     }

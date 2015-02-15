@@ -46,15 +46,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     public void readDocument(RuleSource source, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
         InputStream stream;
         try {
             stream = source.getInputStream();
         } catch (IOException e) {
-            LOGGER.warn("Cannot read rules from " + source.getId());
-            return;
+            throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
         StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
         extractRules(doc, concepts, constraints);
