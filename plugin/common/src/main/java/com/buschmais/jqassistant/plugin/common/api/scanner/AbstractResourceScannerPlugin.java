@@ -72,7 +72,6 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> ext
      *             If a resource of an unknown type is provided.
      */
     private FileDescriptor createFileDescriptor(Resource resource, ScannerContext context) throws IOException {
-        FileDescriptor fileDescriptor;
         Class<? extends FileDescriptor> type;
         if (resource instanceof DirectoryResource) {
             type = DirectoryDescriptor.class;

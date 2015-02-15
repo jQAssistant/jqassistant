@@ -16,10 +16,12 @@ public abstract class AbstractFileResource implements FileResource {
 
     @Override
     public File getFile() throws IOException {
-        this.file = File.createTempFile(TMP_FILE_PREFIX, TMP_FILE_SUFFIX);
-        try (InputStream input = createStream()) {
-            try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
-                IOUtils.copy(input, output);
+        if (this.file == null) {
+            this.file = File.createTempFile(TMP_FILE_PREFIX, TMP_FILE_SUFFIX);
+            try (InputStream input = createStream()) {
+                try (BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(file))) {
+                    IOUtils.copy(input, output);
+                }
             }
         }
         return file;

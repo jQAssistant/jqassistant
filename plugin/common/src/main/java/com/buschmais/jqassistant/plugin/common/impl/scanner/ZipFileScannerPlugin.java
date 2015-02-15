@@ -76,11 +76,12 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected void enterContainer(ArchiveDescriptor archiveDescriptor, ScannerContext context) {
+    protected void enterContainer(ZipFile zipFile, ArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
     }
 
     @Override
-    protected void leaveContainer(ScannerContext scannerContext) {
+    protected void leaveContainer(ZipFile zipFile, ArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) throws IOException {
+        zipFile.close();
     }
 
     @Override
