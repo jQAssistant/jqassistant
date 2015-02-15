@@ -199,7 +199,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         if (file.exists()) {
             scanPath(projectDescriptor, file, path, scope, scanner);
         } else {
-            LOGGER.info(file.getAbsolutePath() + " does not exist, skipping.");
+            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
         }
     }
 
