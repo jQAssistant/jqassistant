@@ -69,14 +69,14 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         LOGGER.info("Resetting store.");
         GlobalGraphOperations graphOperations = GlobalGraphOperations.at(getDatabaseService());
         beginTransaction();
-        LOGGER.info("Deleting relations...");
+        LOGGER.debug("Deleting relations...");
         run(graphOperations.getAllRelationships(), new Operation<Relationship>() {
             @Override
             public void execute(Relationship value) {
                 value.delete();
             }
         });
-        LOGGER.info("Deleting nodes...");
+        LOGGER.debug("Deleting nodes...");
         run(graphOperations.getAllNodes(), new Operation<Node>() {
             @Override
             public void execute(Node value) {
