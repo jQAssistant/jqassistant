@@ -41,7 +41,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                 Resource resource = getEntry(container, e);
                 try {
                     String relativePath = getRelativePath(container, e);
-                    LOGGER.info("Scanning {}", relativePath);
+                    LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
                     descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
                     files.put(relativePath, descriptor);
