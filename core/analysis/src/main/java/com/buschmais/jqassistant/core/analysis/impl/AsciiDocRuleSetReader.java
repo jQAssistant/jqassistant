@@ -23,7 +23,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSetReader.class);
 
-    private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+    /**
+     *
+     */
+    private Asciidoctor cachedAsciidoctor;
 
     @Override
     public RuleSet read(List<? extends RuleSource> sources) {
@@ -43,6 +46,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     public void readDocument(RuleSource source, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
+
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
         InputStream stream;
@@ -52,8 +56,24 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             LOGGER.warn("Cannot read rules from " + source.getId());
             return;
         }
-        StructuredDocument doc = asciidoctor.readDocumentStructure(new InputStreamReader(stream), parameters);
+        StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
         extractRules(doc, concepts, constraints);
+    }
+
+    /**
+     * Return an ascii doctor instance.
+     * <p>
+     * Initialization is quite expensive, therefore doing it lazy.
+     * </p>
+     * 
+     * @return The ascii doctor instance.
+     */
+    private Asciidoctor getAsciidoctor() {
+        if (cachedAsciidoctor == null) {
+            LOGGER.debug("Creating Asciidoctor instance.");
+            cachedAsciidoctor = Asciidoctor.Factory.create();
+        }
+        return cachedAsciidoctor;
     }
 
     private void extractRules(StructuredDocument doc, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
