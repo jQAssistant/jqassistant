@@ -13,6 +13,7 @@ Represents an XML file.
 | version                 | The XML version
 | standalone              | The "standalone" attribute of the XML declaration.
 | characterEncodingScheme | The encoding of the XML file.
+| wellFormed              | Indicates if the document is well-formed, i.e. could be parsed.
 |====
 
 .Relations of :File:Xml

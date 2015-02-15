@@ -23,4 +23,8 @@ public interface XmlFileDescriptor extends XmlDescriptor, FileDescriptor {
     boolean isStandalone();
 
     void setStandalone(boolean standalone);
+
+    boolean isWellFormed();
+
+    void setWellFormed(boolean wellFormed);
 }
