@@ -20,13 +20,13 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
     }
 
     @Override
-    protected void enterContainer(JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
+    protected void enterContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
         context.push(JavaArtifactDescriptor.class, javaClassesDirectoryDescriptor);
         context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
     }
 
     @Override
-    protected void leaveContainer(ScannerContext context) {
+    protected void leaveContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
         context.pop(TypeResolver.class);
         context.pop(JavaArtifactDescriptor.class);
     }
