@@ -30,7 +30,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     @Override
     public RuleSet read(List<? extends RuleSource> sources) {
-        Map<String, QueryTemplate> queryTemplates = Collections.emptyMap();
+        Map<String, Template> queryTemplates = Collections.emptyMap();
         Map<String, MetricGroup> metricGroups = Collections.emptyMap();
         Map<String, Group> groups = Collections.emptyMap();
 
@@ -82,10 +82,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             String cypher = unescapeHtml(part.getContent());
             Set<String> requiresConcepts = getDependencies(attributes);
             if ("concept".equals(part.getRole())) {
-                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, null, Collections.<String, Object> emptyMap(), requiresConcepts);
+                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, null, null, Collections.<String, Object> emptyMap(),
+                        requiresConcepts);
                 concepts.put(concept.getId(), concept);
             } else if ("constraint".equals(part.getRole())) {
-                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, null, Collections.<String, Object> emptyMap(),
+                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, null, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
                 constraints.put(concept.getId(), concept);
             }

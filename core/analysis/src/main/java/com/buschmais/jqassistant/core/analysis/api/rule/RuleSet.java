@@ -4,7 +4,7 @@ import java.util.Map;
 
 public interface RuleSet {
 
-    Map<String, QueryTemplate> getQueryTemplates();
+    Map<String, Template> getQueryTemplates();
 
     Map<String, Concept> getConcepts();
 

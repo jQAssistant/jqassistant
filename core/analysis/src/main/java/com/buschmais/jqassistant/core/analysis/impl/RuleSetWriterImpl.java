@@ -90,7 +90,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), DEFAULT_CONSTRAINT_SEVERITY));
                 groupType.getIncludeConstraint().add(constraintReferenceType);
             }
-            rules.getQueryTemplateOrConceptOrConstraint().add(groupType);
+            rules.getTemplateOrConceptOrConstraint().add(groupType);
         }
     }
 
@@ -106,7 +106,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(requiresConceptId);
                 conceptType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getQueryTemplateOrConceptOrConstraint().add(conceptType);
+            rules.getTemplateOrConceptOrConstraint().add(conceptType);
         }
     }
 
@@ -122,7 +122,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
                 conceptReferenceType.setRefId(requiresConceptId);
                 constraintType.getRequiresConcept().add(conceptReferenceType);
             }
-            rules.getQueryTemplateOrConceptOrConstraint().add(constraintType);
+            rules.getTemplateOrConceptOrConstraint().add(constraintType);
         }
     }
 

@@ -5,13 +5,13 @@ import java.util.Map;
 /**
  * Represents a query template
  */
-public class QueryTemplate {
+public class Template {
 
     private String cypher;
 
     private Map<String, Class<?>> parameterTypes;
 
-    public QueryTemplate(String cypher, Map<String, Class<?>> parameterTypes) {
+    public Template(String cypher, Map<String, Class<?>> parameterTypes) {
         this.cypher = cypher;
         this.parameterTypes = parameterTypes;
     }

@@ -94,14 +94,14 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      */
     private <T extends AbstractRule> Result<T> execute(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
         List<Map<String, Object>> rows = new ArrayList<>();
-        String queryTemplateId = executable.getQueryTemplateId();
+        String queryTemplateId = executable.getTemplateId();
         String cypher;
         if (queryTemplateId != null) {
-            QueryTemplate queryTemplate = ruleSet.getQueryTemplates().get(queryTemplateId);
-            if (queryTemplate == null) {
+            Template template = ruleSet.getQueryTemplates().get(queryTemplateId);
+            if (template == null) {
                 throw new AnalysisException("Cannot find query template " + queryTemplateId);
             }
-            cypher = queryTemplate.getCypher();
+            cypher = template.getCypher();
         } else {
             cypher = executable.getCypher();
         }

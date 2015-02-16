@@ -22,15 +22,17 @@ public class Concept extends AbstractRule {
      *            The deprecated message.
      * @param cypher
      *            The cypher query.
-     * @param queryTemplateId
+     * @param script
+     *            The script.
+     * @param templateId
      *            The query template.
      * @param parameters
      *            The parametes.
      * @param requiresConcepts
      *            The required concept ids.
      */
-    public Concept(String id, String description, Severity severity, String deprecated, String cypher, String queryTemplateId, Map<String, Object> parameters,
-            Set<String> requiresConcepts) {
-        super(id, description, severity, deprecated, cypher, queryTemplateId, parameters, requiresConcepts);
+    public Concept(String id, String description, Severity severity, String deprecated, String cypher, Script script, String templateId,
+            Map<String, Object> parameters, Set<String> requiresConcepts) {
+        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
     }
 }
