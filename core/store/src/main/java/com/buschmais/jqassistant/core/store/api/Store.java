@@ -6,6 +6,8 @@ import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import java.util.Collection;
 import java.util.Map;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 
@@ -220,5 +222,12 @@ public interface Store {
      * @return The {@link Result}.
      */
     <Q> Result<Q> executeQuery(Class<Q> query, Map<String, Object> parameters);
+
+    /**
+     * Return the underlying graph database service instance.
+     * 
+     * @return The graph data base service.
+     */
+    GraphDatabaseService getGraphDatabaseService();
 
 }

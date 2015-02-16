@@ -2,14 +2,14 @@
 
     <concept id="test:JavaScriptConcept">
         <description>A test concept based on JavaScript.</description>
-        <script type="JavaScript">
+        <script language="JavaScript">
 
         </script>
     </concept>
 
     <constraint id="test:JavaScriptConstraint">
         <description>A test constraint based on JavaScript.</description>
-        <script type="JavaSscript">
+        <script language="JavaSscript">
 
         </script>
     </constraint>

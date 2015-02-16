@@ -35,7 +35,7 @@ public class GraphDbStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseAPI getDatabaseAPI(XOManager xoManager) {
+    protected GraphDatabaseAPI getGraphDatabaseService(XOManager xoManager) {
         return (GraphDatabaseAPI) graphDatabaseService;
     }
 

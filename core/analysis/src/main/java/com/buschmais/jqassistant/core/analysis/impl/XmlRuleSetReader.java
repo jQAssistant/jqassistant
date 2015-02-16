@@ -187,7 +187,7 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     private Script getScript(ScriptType scriptType) {
         if (scriptType != null) {
-            return new Script(scriptType.getType(), scriptType.getValue());
+            return new Script(scriptType.getLanguage(), scriptType.getValue());
         }
         return null;
     }
