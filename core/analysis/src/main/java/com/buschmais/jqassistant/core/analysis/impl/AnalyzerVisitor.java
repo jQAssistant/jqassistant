@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.Console;
@@ -21,12 +25,14 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private Store store;
     private AnalysisListener reportWriter;
     private Console console;
+    private ScriptEngineManager scriptEngineManager;
 
     public AnalyzerVisitor(RuleSet ruleSet, Store store, AnalysisListener reportWriter, Console console) {
         this.ruleSet = ruleSet;
         this.store = store;
         this.reportWriter = reportWriter;
         this.console = console;
+        this.scriptEngineManager = new ScriptEngineManager();
     }
 
     @Override
@@ -93,11 +99,19 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      *             If query execution fails.
      */
     private <T extends AbstractRule> Result<T> execute(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
-        List<Map<String, Object>> rows = new ArrayList<>();
+        Script script = executable.getScript();
+        if (script != null) {
+            return executeScript(script);
+        } else {
+            return executeCypher(ruleSet, executable, severity);
+        }
+    }
+
+    private <T extends AbstractRule> Result<T> executeCypher(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
         String queryTemplateId = executable.getTemplateId();
         String cypher;
         if (queryTemplateId != null) {
-            Template template = ruleSet.getQueryTemplates().get(queryTemplateId);
+            Template template = ruleSet.getTemplates().get(queryTemplateId);
             if (template == null) {
                 throw new AnalysisException("Cannot find query template " + queryTemplateId);
             }
@@ -105,7 +119,8 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
         } else {
             cypher = executable.getCypher();
         }
-        try (com.buschmais.xo.api.Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = executeQuery(cypher, executable.getParameters())) {
+        List<Map<String, Object>> rows = new ArrayList<>();
+        try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = executeQuery(cypher, executable.getParameters())) {
             List<String> columns = null;
             for (Query.Result.CompositeRowObject rowObject : compositeRowObjects) {
                 if (columns == null) {
@@ -121,6 +136,21 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
         } catch (Exception e) {
             throw new AnalysisException("Cannot execute query.", e);
         }
+    }
+
+    private <T extends AbstractRule> Result<T> executeScript(Script script) throws AnalysisException {
+        String type = script.getType();
+        ScriptEngine scriptEngine = scriptEngineManager.getEngineByName(type);
+        Object scriptResult;
+        try {
+            scriptResult = scriptEngine.eval(script.getSource());
+        } catch (ScriptException e) {
+            throw new AnalysisException("Cannot execute script.", e);
+        }
+        if (!(scriptResult instanceof Result)) {
+            throw new AnalysisException("Script returned an invalid result type, expected " + Result.class.getName() + " but got " + scriptResult);
+        }
+        return Result.class.cast(scriptResult);
     }
 
     /**

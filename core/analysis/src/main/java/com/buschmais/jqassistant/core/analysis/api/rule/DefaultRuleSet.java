@@ -36,7 +36,7 @@ public class DefaultRuleSet extends AbstractRuleSet {
     }
 
     @Override
-    public Map<String, Template> getQueryTemplates() {
+    public Map<String, Template> getTemplates() {
         return templates;
     }
 

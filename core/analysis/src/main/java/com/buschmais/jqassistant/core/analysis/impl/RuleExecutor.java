@@ -119,8 +119,8 @@ public class RuleExecutor {
         }
     }
 
-    public Template resolveQueryTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
-        Template template = ruleSet.getQueryTemplates().get(queryTemplateId);
+    public Template resolveTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
+        Template template = ruleSet.getTemplates().get(queryTemplateId);
         if (template == null) {
             throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.");
         }
