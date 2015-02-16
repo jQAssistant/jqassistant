@@ -20,18 +20,18 @@ public interface RepositoryArtifactDescriptor extends MavenDescriptor, ArtifactD
      * @return the containing repository.
      */
     @Incoming
-    ContainsArtifactDescriptor getContainingRepository();
+    MavenRepositoryDescriptor getContainingRepository();
     
-    void setContainingRepository(ContainsArtifactDescriptor containsArtifactDescriptor);
+    void setContainingRepository(MavenRepositoryDescriptor containsArtifactDescriptor);
     /**
      * The last modified date as String.
      * 
      * @return the last modified date as String.
      */
     @Property("lastModified")
-    String getLastModified();
+    long getLastModified();
     
-    void setLastModified(String lastModified);
+    void setLastModified(long lastModified);
     
     /**
      * The last version of that SNAPSHOT artifact, if existing.

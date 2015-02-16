@@ -1,13 +1,15 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.maven.index.ArtifactInfo;
@@ -26,7 +28,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.ContainsArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactResolver;
@@ -75,14 +76,9 @@ public class MavenRepositoryScannerTest {
 
     @Test
     public void testMockMavenRepoScanner() throws Exception {
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-
         MavenIndex mavenIndex = mock(MavenIndex.class);
-        when(mavenIndex.getLastUpdateLocalRepo()).thenReturn(cal.getTime());
-
         Iterable<ArtifactInfo> testArtifactInfos = getTestArtifactInfos();
-        when(mavenIndex.getArtifactsSince(cal.getTime())).thenReturn(testArtifactInfos);
+        when(mavenIndex.getArtifactsSince(new Date(0))).thenReturn(testArtifactInfos);
 
         ArtifactResolver artifactResolver = mock(ArtifactResolver.class);
 
@@ -103,8 +99,6 @@ public class MavenRepositoryScannerTest {
         Descriptor descriptor = mock(Descriptor.class);
         RepositoryArtifactDescriptor artifactDescriptor = mock(RepositoryArtifactDescriptor.class);
         when(store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class)).thenReturn(artifactDescriptor);
-        ContainsArtifactDescriptor containsArtifactDescriptor = mock(ContainsArtifactDescriptor.class);
-        when(store.create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor)).thenReturn(containsArtifactDescriptor);
 
         Result<CompositeRowObject> queryResult = mock(Result.class);
         when(queryResult.hasResult()).thenReturn(false);
@@ -120,6 +114,5 @@ public class MavenRepositoryScannerTest {
         verify(mavenIndex).updateIndex(anyString(), anyString());
         verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
         verify(store, new Times(3)).addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
-        verify(store, new Times(3)).create(repoDescriptor, ContainsArtifactDescriptor.class, artifactDescriptor);
     }
 }
