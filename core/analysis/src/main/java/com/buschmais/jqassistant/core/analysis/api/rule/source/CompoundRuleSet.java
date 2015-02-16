@@ -15,7 +15,7 @@ public class CompoundRuleSet extends AbstractRuleSet {
 
     public CompoundRuleSet(RuleSet... ruleSets) {
         for (RuleSet ruleSet : ruleSets) {
-            templates.putAll(ruleSet.getQueryTemplates());
+            templates.putAll(ruleSet.getTemplates());
             concepts.putAll(ruleSet.getConcepts());
             constraints.putAll(ruleSet.getConstraints());
             groups.putAll(ruleSet.getGroups());
@@ -24,7 +24,7 @@ public class CompoundRuleSet extends AbstractRuleSet {
     }
 
     @Override
-    public Map<String, Template> getQueryTemplates() {
+    public Map<String, Template> getTemplates() {
         return templates;
     }
 
