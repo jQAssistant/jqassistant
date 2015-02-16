@@ -36,8 +36,8 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, "match...", null, Collections.<String, Object> emptyMap(),
-                Collections.<String> emptySet());
+        Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, "match...", null, null,
+                Collections.<String, Object> emptyMap(), Collections.<String> emptySet());
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
         Group group = new Group("default", "My group", concepts, Collections.<String, Severity> emptyMap(), Collections.<String> emptySet());
@@ -73,7 +73,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
 
-        Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, "match...", null,
+        Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, "match...", null, null,
                 Collections.<String, Object> emptyMap(), Collections.<String> emptySet());
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
