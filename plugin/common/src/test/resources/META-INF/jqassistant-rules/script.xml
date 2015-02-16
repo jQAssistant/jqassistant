@@ -16,6 +16,26 @@
        </script>
     </concept>
 
+    <concept id="javascript:TestConceptUsingGDS" severity="minor">
+        <description>JavaScript test concept (using GDS).</description>
+        <script language="JavaScript">
+            // create a node labeled "Test" using the GraphDatabaseService API
+            var gds = store.getGraphDatabaseService();
+            var node = gds.createNode();
+            var label = org.neo4j.graphdb.DynamicLabel.label("Test");
+            node.addLabel(label);
+            node.setProperty("name", "test");
+            // query for the node
+            var columnNames = java.util.Arrays.asList("test");
+            var queryResult = store.executeQuery("match (t:Test) return t");
+            var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+            var row = new java.util.HashMap();
+            row.put("test", testDescriptor);
+            var rows = java.util.Arrays.asList(row);
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+        </script>
+    </concept>
+
     <constraint id="javascript:TestConstraint" severity="blocker">
         <requiresConcept refId="javascript:TestConcept"/>
         <description>JavaScript test constraint.</description>
@@ -80,7 +100,6 @@
         <requiresConcept refId="ruby:TestConcept"/>
         <description>Ruby test constraint.</description>
         <script language="ruby">
-            puts $store.getGraphDatabaseService
             columnNames = java.util.Arrays.asList "test"
             queryResult = $store.executeQuery "match (t:Test) return t"
             testDescriptor = queryResult.getSingleResult.get("t",com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.java_class)
