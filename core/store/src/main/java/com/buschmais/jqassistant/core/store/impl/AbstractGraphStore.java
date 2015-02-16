@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.GraphDatabaseAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,16 +146,19 @@ public abstract class AbstractGraphStore implements Store {
         xoManager.currentTransaction().rollback();
     }
 
-    public GraphDatabaseAPI getDatabaseService() {
-        beginTransaction();
-        try {
-            return getDatabaseAPI(xoManager);
-        } finally {
-            commitTransaction();
-        }
+    @Override
+    public GraphDatabaseService getGraphDatabaseService() {
+        return getGraphDatabaseService(xoManager);
     }
 
-    protected abstract GraphDatabaseAPI getDatabaseAPI(XOManager cdoManager);
+    /**
+     * Return the graph database service wrapped by the given XOManager.
+     * 
+     * @param xoManager
+     *            The XOManager.
+     * @return The graph database service instance.
+     */
+    protected abstract GraphDatabaseService getGraphDatabaseService(XOManager xoManager);
 
     /**
      * Delegates to the sub class to start the database.
@@ -166,11 +168,11 @@ public abstract class AbstractGraphStore implements Store {
     protected abstract XOManagerFactory createXOManagerFactory(Collection<Class<?>> types);
 
     /**
-     * Delegates to the sub class to stop the database.
+     * Delegates to the sub class to stop the factory.
      * 
-     * @param database
+     * @param factory
      *            The used {@link GraphDatabaseService} instance.
      */
-    protected abstract void closeXOManagerFactory(XOManagerFactory database);
+    protected abstract void closeXOManagerFactory(XOManagerFactory factory);
 
 }

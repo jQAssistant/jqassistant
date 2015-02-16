@@ -31,6 +31,9 @@
 ==== Maven Repository
 - added Maven 2 Repository plugin containing a scanner for incremental scans of remote repositories
 
+=== Rules
+- added support for rules as script (e.g. Ruby, Groovy, JavaScript etc.) using the Java Scripting API
+
 === Plugin API
 - added annotation @Requires for scanner plugins to build dependency chains
 - added mandatory "name" attribute to jqassistant-plugin element of jqassistant-plugin.xml descriptors

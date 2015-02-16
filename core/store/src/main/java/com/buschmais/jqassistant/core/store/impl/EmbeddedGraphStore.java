@@ -46,7 +46,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseAPI getDatabaseAPI(XOManager xoManager) {
+    protected GraphDatabaseAPI getGraphDatabaseService(XOManager xoManager) {
         return (GraphDatabaseAPI) xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
@@ -67,7 +67,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     public void reset() {
         LOGGER.info("Resetting store.");
-        GlobalGraphOperations graphOperations = GlobalGraphOperations.at(getDatabaseService());
+        GlobalGraphOperations graphOperations = GlobalGraphOperations.at(getGraphDatabaseService());
         beginTransaction();
         LOGGER.debug("Deleting relations...");
         run(graphOperations.getAllRelationships(), new Operation<Relationship>() {

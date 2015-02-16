@@ -2,9 +2,13 @@
                                name="Common Test">
     <description>Provides test types.</description>
     <model>
-        <class>com.buschmais.jqassistant.plugin.common.test.scanner.DependentDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirectoryDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.test.scanner.DependentDirectoryScannerPlugin</class>
     </scanner>
+    <rules>
+        <resource>script.xml</resource>
+    </rules>
 </jqa-plugin:jqassistant-plugin>
