@@ -27,6 +27,12 @@ public class ScriptIT extends AbstractPluginIT {
     }
 
     @Test
+    public void javaScriptConceptUsingGDS() throws AnalysisException {
+        applyConcept("javascript:TestConceptUsingGDS");
+        verifyResults(reportWriter.getConceptResults(), "javascript:TestConceptUsingGDS", Severity.MINOR);
+    }
+
+    @Test
     public void javaScriptConstraint() throws AnalysisException {
         validateConstraint("javascript:TestConstraint");
         verifyResults(reportWriter.getConstraintViolations(), "javascript:TestConstraint", Severity.BLOCKER);
@@ -58,18 +64,18 @@ public class ScriptIT extends AbstractPluginIT {
 
     private <R extends Rule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {
         store.beginTransaction();
-        assertThat(results.size(), equalTo(1));
+        assertThat("Expecting one analysis result.", results.size(), equalTo(1));
         Result<?> result = results.get(ruleName);
-        assertThat(result, notNullValue());
-        assertThat(result.getSeverity(), equalTo(severity));
+        assertThat("Expecting a result for " + ruleName, result, notNullValue());
+        assertThat("Expecting severity " + severity, result.getSeverity(), equalTo(severity));
         List<Map<String, Object>> rows = result.getRows();
-        assertThat(rows.size(), equalTo(1));
+        assertThat("Expecting one row for rule " + ruleName, rows.size(), equalTo(1));
         Map<String, Object> row = rows.get(0);
         Object value = row.get("test");
-        assertThat(value, notNullValue());
-        assertThat(value, instanceOf(TestDescriptor.class));
+        assertThat("Expecting a column test", value, notNullValue());
+        assertThat("Expecting a value of type " + TestDescriptor.class.getName(), value, instanceOf(TestDescriptor.class));
         TestDescriptor testDescriptor = (TestDescriptor) value;
-        assertThat(testDescriptor.getName(), equalTo("test"));
+        assertThat("Expecting property with value 'test'", testDescriptor.getName(), equalTo("test"));
         store.commitTransaction();
     }
 }
