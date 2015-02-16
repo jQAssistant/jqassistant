@@ -6,12 +6,7 @@ import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.QueryTemplate;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 /**
  * Implementation of the
@@ -124,12 +119,12 @@ public class RuleExecutor {
         }
     }
 
-    public QueryTemplate resolveQueryTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
-        QueryTemplate queryTemplate = ruleSet.getQueryTemplates().get(queryTemplateId);
-        if (queryTemplate == null) {
+    public Template resolveQueryTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
+        Template template = ruleSet.getQueryTemplates().get(queryTemplateId);
+        if (template == null) {
             throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.");
         }
-        return queryTemplate;
+        return template;
     }
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {

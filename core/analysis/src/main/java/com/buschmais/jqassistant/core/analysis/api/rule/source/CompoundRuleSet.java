@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 public class CompoundRuleSet extends AbstractRuleSet {
 
-    private Map<String, QueryTemplate> templates = new TreeMap<>();
+    private Map<String, Template> templates = new TreeMap<>();
     private Map<String, Concept> concepts = new TreeMap<>();
     private Map<String, Constraint> constraints = new TreeMap<>();
     private Map<String, Group> groups = new TreeMap<>();
@@ -24,7 +24,7 @@ public class CompoundRuleSet extends AbstractRuleSet {
     }
 
     @Override
-    public Map<String, QueryTemplate> getQueryTemplates() {
+    public Map<String, Template> getQueryTemplates() {
         return templates;
     }
 

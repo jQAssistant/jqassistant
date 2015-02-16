@@ -79,86 +79,117 @@ public class XmlRuleSetReader implements RuleSetReader {
      *         .
      */
     private RuleSet convert(List<JqassistantRules> rules) {
-        Map<String, QueryTemplate> queryTemplates = new HashMap<>();
+        Map<String, Template> templates = new HashMap<>();
         Map<String, Concept> concepts = new HashMap<>();
         Map<String, Constraint> constraints = new HashMap<>();
         Map<String, Group> groups = new HashMap<>();
         Map<String, MetricGroup> metricGroups = new HashMap<>();
         for (JqassistantRules rule : rules) {
-            List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getQueryTemplateOrConceptOrConstraint();
+            List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getTemplateOrConceptOrConstraint();
             for (ReferenceableType referenceableType : queryDefinitionOrConceptOrConstraint) {
                 String id = referenceableType.getId();
-                if (referenceableType instanceof QueryTemplateType) {
-                    QueryTemplateType queryTemplateType = (QueryTemplateType) referenceableType;
-                    Map<String, Class<?>> parameterTypes = new HashMap<>();
-                    for (ParameterDefinitionType parameterDefinitionType : queryTemplateType.getParameterDefinition()) {
-                        Class<?> parameterType;
-                        switch (parameterDefinitionType.getType()) {
-                        case INT:
-                            parameterType = Integer.class;
-                            break;
-                        case STRING:
-                            parameterType = String.class;
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Unsupported parameter parameterDefinitionType " + parameterDefinitionType.getType());
-                        }
-                        parameterTypes.put(parameterDefinitionType.getName(), parameterType);
+                if (referenceableType instanceof TemplateType) {
+                    Template template = createTemplate((TemplateType) referenceableType);
+                    templates.put(id, template);
+                } else {
+                    if (referenceableType instanceof ConceptType) {
+                        Concept concept = createConcept(id, (ConceptType) referenceableType);
+                        concepts.put(id, concept);
+                    } else if (referenceableType instanceof ConstraintType) {
+                        Constraint constraint = createConstraint(id, (ConstraintType) referenceableType);
+                        constraints.put(id, constraint);
+                    } else if (referenceableType instanceof GroupType) {
+                        Group group = createGroup(id, (GroupType) referenceableType);
+                        groups.put(id, group);
+                    } else if (referenceableType instanceof MetricGroupType) {
+                        MetricGroup metricGroup = createMetricGroup(id, (MetricGroupType) referenceableType);
+                        metricGroups.put(id, metricGroup);
                     }
-                    QueryTemplate queryTemplate = new QueryTemplate(queryTemplateType.getCypher(), parameterTypes);
-                    queryTemplates.put(id, queryTemplate);
-                } else if (referenceableType instanceof ConceptType) {
-                    ConceptType conceptType = (ConceptType) referenceableType;
-                    String cypher = conceptType.getCypher();
-                    ReferenceType useQueryTemplate = conceptType.getUseQueryTemplate();
-                    String queryTemplateId = useQueryTemplate != null ? useQueryTemplate.getRefId() : null;
-                    String description = conceptType.getDescription();
-                    Map<String, Object> parameters = getParameterValues(conceptType.getParameter());
-                    SeverityEnumType severityType = conceptType.getSeverity();
-                    Severity severity = getSeverity(severityType, AbstractRule.DEFAULT_CONCEPT_SEVERITY);
-                    List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
-                    Set<String> requiresConcepts = getReferences(requiresConcept);
-                    String deprecated = conceptType.getDeprecated();
-                    Concept concept = new Concept(id, description, severity, deprecated, cypher, queryTemplateId, parameters, requiresConcepts);
-                    concepts.put(id, concept);
-                } else if (referenceableType instanceof ConstraintType) {
-                    ConstraintType constraintType = (ConstraintType) referenceableType;
-                    String cypher = constraintType.getCypher();
-                    ReferenceType useQueryTemplate = constraintType.getUseQueryTemplate();
-                    String queryTemplateId = useQueryTemplate != null ? useQueryTemplate.getRefId() : null;
-                    String description = constraintType.getDescription();
-                    Map<String, Object> parameters = getParameterValues(constraintType.getParameter());
-                    SeverityEnumType severityType = constraintType.getSeverity();
-                    Severity severity = getSeverity(severityType, AbstractRule.DEFAULT_CONSTRAINT_SEVERITY);
-                    List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
-                    Set<String> requiresConcepts = getReferences(requiresConcept);
-                    String deprecated = constraintType.getDeprecated();
-                    Constraint constraint = new Constraint(id, description, severity, deprecated, cypher, queryTemplateId, parameters, requiresConcepts);
-                    constraints.put(id, constraint);
-                } else if (referenceableType instanceof GroupType) {
-                    GroupType groupType = (GroupType) referenceableType;
-                    Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), AbstractRule.DEFAULT_CONCEPT_SEVERITY);
-                    Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), AbstractRule.DEFAULT_CONSTRAINT_SEVERITY);
-                    Set<String> includeGroups = getReferences(groupType.getIncludeGroup());
-                    Group group = new Group(id, null, includeConcepts, includeConstraints, includeGroups);
-                    groups.put(id, group);
-                } else if (referenceableType instanceof MetricGroupType) {
-                    MetricGroupType metricGroupType = (MetricGroupType) referenceableType;
-                    Map<String, Metric> metrics = new LinkedHashMap<>();
-                    for (MetricType metricType : metricGroupType.getMetric()) {
-                        String cypher = metricType.getCypher();
-                        String description = metricType.getDescription();
-                        Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
-                        Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept());
-                        Metric metric = new Metric(metricType.getId(), description, cypher, parameterTypes, requiresConcepts);
-                        metrics.put(metricType.getId(), metric);
-                    }
-                    MetricGroup metricGroup = new MetricGroup(id, metricGroupType.getDescription(), metrics);
-                    metricGroups.put(id, metricGroup);
                 }
             }
         }
-        return new DefaultRuleSet(queryTemplates, concepts, constraints, groups, metricGroups);
+        return new DefaultRuleSet(templates, concepts, constraints, groups, metricGroups);
+    }
+
+    private Template createTemplate(TemplateType referenceableType) {
+        TemplateType templateType = referenceableType;
+        Map<String, Class<?>> parameterTypes = new HashMap<>();
+        for (ParameterDefinitionType parameterDefinitionType : templateType.getParameterDefinition()) {
+            Class<?> parameterType;
+            switch (parameterDefinitionType.getType()) {
+            case INT:
+                parameterType = Integer.class;
+                break;
+            case STRING:
+                parameterType = String.class;
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported parameter parameterDefinitionType " + parameterDefinitionType.getType());
+            }
+            parameterTypes.put(parameterDefinitionType.getName(), parameterType);
+        }
+        return new Template(templateType.getCypher(), parameterTypes);
+    }
+
+    private MetricGroup createMetricGroup(String id, MetricGroupType referenceableType) {
+        MetricGroupType metricGroupType = referenceableType;
+        Map<String, Metric> metrics = new LinkedHashMap<>();
+        for (MetricType metricType : metricGroupType.getMetric()) {
+            String cypher = metricType.getCypher();
+            String description = metricType.getDescription();
+            Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
+            Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept());
+            Metric metric = new Metric(metricType.getId(), description, cypher, parameterTypes, requiresConcepts);
+            metrics.put(metricType.getId(), metric);
+        }
+        return new MetricGroup(id, metricGroupType.getDescription(), metrics);
+    }
+
+    private Group createGroup(String id, GroupType referenceableType) {
+        GroupType groupType = referenceableType;
+        Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), AbstractRule.DEFAULT_CONCEPT_SEVERITY);
+        Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), AbstractRule.DEFAULT_CONSTRAINT_SEVERITY);
+        Set<String> includeGroups = getReferences(groupType.getIncludeGroup());
+        return new Group(id, null, includeConcepts, includeConstraints, includeGroups);
+    }
+
+    private Concept createConcept(String id, ConceptType referenceableType) {
+        ConceptType conceptType = referenceableType;
+        String cypher = conceptType.getCypher();
+        Script script = getScript(conceptType.getScript());
+        ReferenceType useTemplate = conceptType.getUseTemplate();
+        String templateId = useTemplate != null ? useTemplate.getRefId() : null;
+        String description = conceptType.getDescription();
+        Map<String, Object> parameters = getParameterValues(conceptType.getParameter());
+        SeverityEnumType severityType = conceptType.getSeverity();
+        Severity severity = getSeverity(severityType, AbstractRule.DEFAULT_CONCEPT_SEVERITY);
+        List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
+        Set<String> requiresConcepts = getReferences(requiresConcept);
+        String deprecated = conceptType.getDeprecated();
+        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+    }
+
+    private Constraint createConstraint(String id, ConstraintType referenceableType) {
+        ConstraintType constraintType = referenceableType;
+        String cypher = constraintType.getCypher();
+        Script script = getScript(constraintType.getScript());
+        ReferenceType useTemplate = constraintType.getUseTemplate();
+        String templateId = useTemplate != null ? useTemplate.getRefId() : null;
+        String description = constraintType.getDescription();
+        Map<String, Object> parameters = getParameterValues(constraintType.getParameter());
+        SeverityEnumType severityType = constraintType.getSeverity();
+        Severity severity = getSeverity(severityType, AbstractRule.DEFAULT_CONSTRAINT_SEVERITY);
+        List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
+        Set<String> requiresConcepts = getReferences(requiresConcept);
+        String deprecated = constraintType.getDeprecated();
+        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+    }
+
+    private Script getScript(ScriptType scriptType) {
+        if (scriptType != null) {
+            return new Script(scriptType.getType(), scriptType.getValue());
+        }
+        return null;
     }
 
     private Set<String> getReferences(List<? extends ReferenceType> referenceTypes) {

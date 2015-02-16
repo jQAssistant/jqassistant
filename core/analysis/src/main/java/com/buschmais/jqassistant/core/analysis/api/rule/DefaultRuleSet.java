@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public class DefaultRuleSet extends AbstractRuleSet {
 
-    private Map<String, QueryTemplate> templates;
+    private Map<String, Template> templates;
     private Map<String, Concept> concepts;
     private Map<String, Constraint> constraints;
     private Map<String, Group> groups;
@@ -26,7 +26,7 @@ public class DefaultRuleSet extends AbstractRuleSet {
      * @param metricGroups
      *            The metric groups.
      */
-    public DefaultRuleSet(Map<String, QueryTemplate> templates, Map<String, Concept> concepts, Map<String, Constraint> constraints, Map<String, Group> groups,
+    public DefaultRuleSet(Map<String, Template> templates, Map<String, Concept> concepts, Map<String, Constraint> constraints, Map<String, Group> groups,
             Map<String, MetricGroup> metricGroups) {
         this.templates = templates;
         this.concepts = concepts;
@@ -36,7 +36,7 @@ public class DefaultRuleSet extends AbstractRuleSet {
     }
 
     @Override
-    public Map<String, QueryTemplate> getQueryTemplates() {
+    public Map<String, Template> getQueryTemplates() {
         return templates;
     }
 
