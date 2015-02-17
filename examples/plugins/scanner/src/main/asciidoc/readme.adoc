@@ -9,7 +9,7 @@ project needs to declare the following dependencies:
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/pom.xml[lines=11..28]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/pom.xml[lines=11..28,indent=0]
 ----
 
 The artifact 'jqassistant.core.scanner' provides the scanner plugin API, 'jqassistant.plugin.common' contains common
