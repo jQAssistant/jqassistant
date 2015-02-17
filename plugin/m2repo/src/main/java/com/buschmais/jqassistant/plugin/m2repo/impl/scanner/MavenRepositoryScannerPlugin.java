@@ -84,17 +84,22 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      * 
      * @param artifact
      *            the artifact
+     * @param version the version to use
      * @return a string with the artifact coords
      *         (groupId:artifactId:[classifier:]version).
      */
-    private String getFqn(Artifact artifact) {
+    private String getFqn(Artifact artifact, String version) {
         StringBuilder builder = new StringBuilder(artifact.getGroupId()).append(":");
         builder.append(artifact.getArtifactId()).append(":");
         builder.append(artifact.getExtension()).append(":");
         if (StringUtils.isNotBlank(artifact.getClassifier())) {
             builder.append(artifact.getClassifier()).append(":");
         }
-        builder.append(artifact.getVersion());
+        if(version==null){
+        	builder.append(artifact.getVersion());
+        }else{
+        	builder.append(version);
+        }
 
         return builder.toString();
     }
@@ -157,7 +162,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     	}else{
     		artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);    		
     	}
-//    	artifactDescriptor = store.addDescriptorType(artifactDescriptor, RepositoryArtifactDescriptor.class);
         artifactDescriptor.setLastModified(lastModified);
         repoDescriptor.getContainedArtifacts().add(artifactDescriptor);
         return artifactDescriptor;
@@ -202,9 +206,9 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                         artifactDescriptor.setGroup(resolvedArtifact.getGroupId());
                         artifactDescriptor.setName(resolvedArtifact.getArtifactId());
                         artifactDescriptor.setType(resolvedArtifact.getExtension());
-                        artifactDescriptor.setVersion(resolvedArtifact.getVersion());
+                        artifactDescriptor.setVersion(version);
                         
-                        String fqn = getFqn(resolvedArtifact);
+                        String fqn = getFqn(resolvedArtifact, version);
 						artifactDescriptor.setFullQualifiedName(fqn);
 
                         Map<String, Object> queryParams = new HashMap<>();
@@ -212,7 +216,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                         queryParams.put("lastModified", lastModified);
                         Result<CompositeRowObject> queryResult = store.executeQuery("MATCH (n:Artifact:Maven)<-[CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.fqn={fqn} AND n.lastModified<>{lastModified} RETURN n", queryParams);
                         if(queryResult.hasResult()){
-                        	LOGGER.info("Artifact "+fqn+" has predecessor.");
                         	RepositoryArtifactDescriptor predecessorArtifactDescriptor = queryResult.getSingleResult().get("n", RepositoryArtifactDescriptor.class);
                         	artifactDescriptor.setPredecessorArtifact(predecessorArtifactDescriptor);
 //                        	predecessorArtifactDescriptor.setContainingRepository(null);
