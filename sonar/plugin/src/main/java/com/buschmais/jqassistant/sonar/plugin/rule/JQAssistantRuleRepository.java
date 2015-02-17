@@ -5,16 +5,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleParam;
-import org.sonar.api.rules.RulePriority;
-import org.sonar.api.rules.RuleRepository;
+import org.sonar.api.rules.*;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -88,7 +84,7 @@ public final class JQAssistantRuleRepository extends RuleRepository {
      *            The rule type.
      * @return The rule.
      */
-    private Rule createRule(AbstractRule executable, RuleType ruleType) {
+    private Rule createRule(AbstractExecutableRule executable, RuleType ruleType) {
         Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
         rule.setDescription(executable.getDescription());
         // set priority based on severity value

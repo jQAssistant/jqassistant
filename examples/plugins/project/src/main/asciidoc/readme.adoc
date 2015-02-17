@@ -1,4 +1,4 @@
-==== Maven Project Using Custom Plugins
+==== Using Custom Plugins
 
 Custom plugins containing rules, scanners or reporters must be specified as dependency of the Maven plugin. It is also possible to specify plugin
 specific properties:

@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.common.report;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -67,7 +65,7 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) {
-        return verifyConstraintResults(DEFAULT_CONSTRAINT_SEVERITY, inMemoryReportWriter);
+        return verifyConstraintResults(Constraint.DEFAULT_SEVERITY, inMemoryReportWriter);
     }
 
     /**

@@ -125,7 +125,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If query execution fails.
      */
-    private <T extends AbstractRule> Result<T> execute(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
+    private <T extends AbstractExecutableRule> Result<T> execute(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
         Script script = executable.getScript();
         if (script != null) {
             return executeScript(script, executable, severity);
@@ -149,7 +149,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @throws AnalysisException
      *             If execution fails.
      */
-    private <T extends AbstractRule> Result<T> executeCypher(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
+    private <T extends AbstractExecutableRule> Result<T> executeCypher(RuleSet ruleSet, T executable, Severity severity) throws AnalysisException {
         String queryTemplateId = executable.getTemplateId();
         String cypher;
         if (queryTemplateId != null) {
@@ -193,7 +193,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @throws AnalysisException
      *             If script execution fails.
      */
-    private <T extends AbstractRule> Result<T> executeScript(Script script, T executable, Severity severity) throws AnalysisException {
+    private <T extends AbstractExecutableRule> Result<T> executeScript(Script script, T executable, Severity severity) throws AnalysisException {
         String language = script.getLanguage();
         ScriptEngine scriptEngine = scriptEngineManager.getEngineByName(language);
         if (scriptEngine == null) {

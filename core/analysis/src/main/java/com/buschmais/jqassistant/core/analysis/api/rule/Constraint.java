@@ -6,7 +6,10 @@ import java.util.Set;
 /**
  * Defines a constraint to be validated.
  */
-public class Constraint extends AbstractRule {
+public class Constraint extends AbstractExecutableRule {
+
+    /** Default severity level for constraints. */
+    public static Severity DEFAULT_SEVERITY = Severity.INFO;
 
     /**
      * Constructor.

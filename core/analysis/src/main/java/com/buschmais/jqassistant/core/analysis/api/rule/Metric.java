@@ -6,7 +6,7 @@ import java.util.Set;
 /**
  * Defines a metric that can be executed.
  */
-public class Metric extends AbstractRule {
+public class Metric extends AbstractExecutableRule {
 
     private Map<String, Class<?>> parameterTypes;
 

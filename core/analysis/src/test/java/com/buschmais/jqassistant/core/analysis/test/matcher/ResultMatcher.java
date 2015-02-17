@@ -7,14 +7,15 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 
 /**
  * A matcher for {@link Result}s.
  */
-public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Result<E>> {
+public class ResultMatcher<E extends AbstractExecutableRule> extends TypeSafeMatcher<Result<E>> {
 
-    private Matcher<? extends AbstractRule> executableMatcher;
+    private Matcher<? extends ExecutableRule> executableMatcher;
     private Matcher<? super Iterable<? super Map<?, ?>>> rowsMatcher;
 
     /**
@@ -23,7 +24,7 @@ public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Resul
      * @param executableMatcher
      *            The expected executable type.
      */
-    protected ResultMatcher(Matcher<? extends AbstractRule> executableMatcher, Matcher<? super Iterable<? super Map<?, ?>>> rowsMatcher) {
+    protected ResultMatcher(Matcher<? extends ExecutableRule> executableMatcher, Matcher<? super Iterable<? super Map<?, ?>>> rowsMatcher) {
         this.executableMatcher = executableMatcher;
         this.rowsMatcher = rowsMatcher;
     }
@@ -34,7 +35,7 @@ public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Resul
      * @param executableMatcher
      *            The expected executable type.
      */
-    protected ResultMatcher(Matcher<? extends AbstractRule> executableMatcher) {
+    protected ResultMatcher(Matcher<? extends ExecutableRule> executableMatcher) {
         this(executableMatcher, null);
     }
 
@@ -74,7 +75,7 @@ public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Resul
      *            The matcher for the expected constraint.
      * @return The {@link ResultMatcher}.
      */
-    public static <E extends AbstractRule> Matcher<? super Result<E>> result(Matcher<E> constraintMatcher) {
+    public static <E extends AbstractExecutableRule> Matcher<? super Result<E>> result(Matcher<E> constraintMatcher) {
         return new ResultMatcher<E>(constraintMatcher);
     }
 
@@ -85,7 +86,7 @@ public class ResultMatcher<E extends AbstractRule> extends TypeSafeMatcher<Resul
      *            The matcher for the expected constraint.
      * @return The {@link ResultMatcher}.
      */
-    public static <E extends AbstractRule> Matcher<? super Result<E>> result(Matcher<E> constraintMatcher,
+    public static <E extends AbstractExecutableRule> Matcher<? super Result<E>> result(Matcher<E> constraintMatcher,
             Matcher<? super Iterable<? super Map<?, ?>>> rowsMatcher) {
         return new ResultMatcher<E>(constraintMatcher, rowsMatcher);
     }

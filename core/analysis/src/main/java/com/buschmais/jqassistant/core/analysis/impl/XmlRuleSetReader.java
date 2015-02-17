@@ -147,8 +147,8 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     private Group createGroup(String id, GroupType referenceableType) {
         GroupType groupType = referenceableType;
-        Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), AbstractRule.DEFAULT_CONCEPT_SEVERITY);
-        Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), AbstractRule.DEFAULT_CONSTRAINT_SEVERITY);
+        Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), Concept.DEFAULT_SEVERITY);
+        Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), Constraint.DEFAULT_SEVERITY);
         Set<String> includeGroups = getReferences(groupType.getIncludeGroup());
         return new Group(id, null, includeConcepts, includeConstraints, includeGroups);
     }
@@ -162,7 +162,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         String description = conceptType.getDescription();
         Map<String, Object> parameters = getParameterValues(conceptType.getParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
-        Severity severity = getSeverity(severityType, AbstractRule.DEFAULT_CONCEPT_SEVERITY);
+        Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = conceptType.getDeprecated();
@@ -178,7 +178,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         String description = constraintType.getDescription();
         Map<String, Object> parameters = getParameterValues(constraintType.getParameter());
         SeverityEnumType severityType = constraintType.getSeverity();
-        Severity severity = getSeverity(severityType, AbstractRule.DEFAULT_CONSTRAINT_SEVERITY);
+        Severity severity = getSeverity(severityType, Constraint.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = constraintType.getDeprecated();

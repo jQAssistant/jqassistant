@@ -54,10 +54,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Map<String, Severity> conceptsOfGroup = new HashMap<>();
         Map<String, Severity> constraintsOfGroup = new HashMap<>();
         Map<String, Constraint> constraints = new HashMap<>();
-        Map<AbstractRule, Set<String>> executables = new HashMap<>();
+        Map<ExecutableRule, Set<String>> executables = new HashMap<>();
         for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
             AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
-            AbstractRule executable;
+            AbstractExecutableRule executable;
             if (check == null) {
                 executable = createExecutableFromActiveRule(activeRule);
             } else {
@@ -145,7 +145,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
      *            The active rule.
      * @return The executable.
      */
-    private AbstractRule createExecutableFromActiveRule(ActiveRule activeRule) {
+    private AbstractExecutableRule createExecutableFromActiveRule(ActiveRule activeRule) {
         return createExecutableFromRule(activeRule.getRule());
     }
 
@@ -156,7 +156,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
      *            The rule.
      * @return The executable.
      */
-    private AbstractRule createExecutableFromRule(Rule rule) {
+    private AbstractExecutableRule createExecutableFromRule(Rule rule) {
         RuleParam cypherParam = rule.getParam(RuleParameter.Cypher.getName());
         if (cypherParam == null) {
             throw new SonarException("Cannot determine cypher for " + rule);
@@ -177,12 +177,12 @@ public class JQAssistantProfileExporter extends ProfileExporter {
      *            The cypher expression.
      * @return The executable.
      */
-    private AbstractRule createExecutableFromRule(Rule rule, String cypher, Set<String> requiresConcepts) {
+    private AbstractExecutableRule createExecutableFromRule(Rule rule, String cypher, Set<String> requiresConcepts) {
         RuleParam typeParam = rule.getParam(RuleParameter.Type.getName());
         if (typeParam == null) {
             throw new SonarException("Cannot determine type of rule for " + rule);
         }
-        AbstractRule executable;
+        AbstractExecutableRule executable;
         String type = typeParam.getDefaultValue();
         RuleType ruleType = RuleType.valueOf(type);
         String id = rule.getName();
@@ -210,8 +210,8 @@ public class JQAssistantProfileExporter extends ProfileExporter {
      *            The check.
      * @return The executable.
      */
-    private AbstractRule createExecutableFromTemplate(ActiveRule activeRule, AbstractTemplateRule check) {
-        AbstractRule executable;
+    private AbstractExecutableRule createExecutableFromTemplate(ActiveRule activeRule, AbstractTemplateRule check) {
+        AbstractExecutableRule executable;
         String id = activeRule.getRule().getName();
         String description = activeRule.getRule().getDescription();
         Severity severity = Severity.valueOf(activeRule.getSeverity().name());
