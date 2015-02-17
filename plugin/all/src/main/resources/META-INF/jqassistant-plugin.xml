@@ -1,3 +1,3 @@
-<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="All Plugins">
     <description>Aggregator for all plugins.</description>
 </v1:jqassistant-plugin>

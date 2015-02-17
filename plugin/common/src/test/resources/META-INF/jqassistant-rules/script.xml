@@ -1,0 +1,113 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="javascript:TestConcept" severity="minor">
+        <description>JavaScript test concept.</description>
+       <script language="JavaScript">
+           // create a test descriptor
+           var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+           testDescriptor.setName("test");
+           // prepare the result
+           var columnNames = java.util.Arrays.asList("test");
+           var row = new java.util.HashMap();
+           row.put("test", testDescriptor);
+           var rows = java.util.Arrays.asList(row);
+           // return the result
+           new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+       </script>
+    </concept>
+
+    <concept id="javascript:TestConceptUsingGDS" severity="minor">
+        <description>JavaScript test concept (using GDS).</description>
+        <script language="JavaScript">
+            // create a node labeled "Test" using the GraphDatabaseService API
+            var gds = store.getGraphDatabaseService();
+            var node = gds.createNode();
+            var label = org.neo4j.graphdb.DynamicLabel.label("Test");
+            node.addLabel(label);
+            node.setProperty("name", "test");
+            // query for the node
+            var columnNames = java.util.Arrays.asList("test");
+            var queryResult = store.executeQuery("match (t:Test) return t");
+            var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+            var row = new java.util.HashMap();
+            row.put("test", testDescriptor);
+            var rows = java.util.Arrays.asList(row);
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+        </script>
+    </concept>
+
+    <constraint id="javascript:TestConstraint" severity="blocker">
+        <requiresConcept refId="javascript:TestConcept"/>
+        <description>JavaScript test constraint.</description>
+        <script language="JavaScript">
+            var columnNames = java.util.Arrays.asList("test");
+            var queryResult = store.executeQuery("match (t:Test) return t");
+            var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+            var row = new java.util.HashMap();
+            row.put("test", testDescriptor);
+            var rows = java.util.Arrays.asList(row);
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+        </script>
+    </constraint>
+
+    <concept id="groovy:TestConcept" severity="minor">
+        <description>Groovy test concept.</description>
+        <script language="Groovy">
+            // create a test descriptor
+            def testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+            testDescriptor.setName("test");
+            // prepare the result
+            def columnNames = java.util.Arrays.asList("test");
+            def row = new java.util.HashMap();
+            row.put("test", testDescriptor);
+            def rows = java.util.Arrays.asList(row);
+            // return the result
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+        </script>
+    </concept>
+
+    <constraint id="groovy:TestConstraint" severity="blocker">
+        <requiresConcept refId="groovy:TestConcept"/>
+        <description>Groovy test constraint.</description>
+        <script language="Groovy">
+            def columnNames = java.util.Arrays.asList("test");
+            def queryResult = store.executeQuery("match (t:Test) return t");
+            def testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+            def row = new java.util.HashMap();
+            row.put("test", testDescriptor);
+            def rows = java.util.Arrays.asList(row);
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+        </script>
+    </constraint>
+
+    <concept id="ruby:TestConcept" severity="minor">
+        <description>Ruby test concept.</description>
+        <script language="ruby">
+            # create a test descriptor
+            testDescriptor = $store.create com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.java_class
+            testDescriptor.setName "test"
+            # prepare the result
+            columnNames = java.util.Arrays.asList "test"
+            row = java.util.HashMap.new
+            row.put "test", testDescriptor
+            rows = java.util.Arrays.asList row
+            # return the result
+            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,$severity,columnNames,rows
+        </script>
+    </concept>
+
+    <constraint id="ruby:TestConstraint" severity="blocker">
+        <requiresConcept refId="ruby:TestConcept"/>
+        <description>Ruby test constraint.</description>
+        <script language="ruby">
+            columnNames = java.util.Arrays.asList "test"
+            queryResult = $store.executeQuery "match (t:Test) return t"
+            testDescriptor = queryResult.getSingleResult.get("t",com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.java_class)
+            row = java.util.HashMap.new
+            row.put "test",testDescriptor
+            rows = java.util.Arrays.asList row
+            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,$severity,columnNames,rows
+        </script>
+    </constraint>
+
+</jqa:jqassistant-rules>

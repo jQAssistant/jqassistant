@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.test.language;
 
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.*;
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement.Package;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.*;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement.Package;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

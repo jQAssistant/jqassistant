@@ -89,11 +89,6 @@
                 <artifactId>asm-util</artifactId>
                 <version>${org.ow2.asm_version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-util</artifactId>
-                <version>${org.ow2.asm_version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 

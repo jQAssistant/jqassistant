@@ -1,9 +1,9 @@
 <<EarArchiveScanner>> <<ApplicationXmlScanner>> <<WarArchiveScanner>> <<WebXmlScanner>>
 [[EarArchiveScanner]]
-==== Scanner for EAR files
+== Scanner for EAR files
 Imports EAR (Enterprise ARchive) files.
 
-===== :File:Enterprise:Application:Archive
+=== :File:Enterprise:Application:Archive
 A file representing an EAR file.
 
 .Properties of :File:Enterprise:Application:Archive
@@ -21,10 +21,10 @@ A file representing an EAR file.
 |====
 
 [[WarArchiveScanner]]
-==== Scanner for WAR files
+== Scanner for WAR files
 Imports WAR (Web Application Archive) files.
 
-===== :File:Web:Application:Archive
+=== :File:Web:Application:Archive
 A file representing WAR file.
 
 .Properties of :File:Web:Application:Archive
@@ -42,7 +42,7 @@ A file representing WAR file.
 |====
 
 [[ApplicationXmlScanner]]
-===== :File:Enterprise:Application:Xml
+=== :File:Enterprise:Application:Xml
 Represents a Java EE application.xml descriptor.
 
 .Properties of :File:Enterprise:Application:Xml
@@ -66,7 +66,7 @@ Represents a Java EE application.xml descriptor.
 |====
 
 [[:Enterprise:Application:Module]]
-===== :Enterprise:Application:Module
+=== :Enterprise:Application:Module
 Represents a declared module of a Java EE Java application. Can be qualified by either :Ejb, :Web, :Connector or :JavaClient.
 
 .Properties of :Enterprise:Application:Module
@@ -77,7 +77,7 @@ Represents a declared module of a Java EE Java application. Can be qualified by 
 |====
 
 [[:Enterprise:Application:Module:Web]]
-===== :Enterprise:Application:Module:Web
+=== :Enterprise:Application:Module:Web
 Represents a declared web module of a Java EE Java application.
 
 .Properties of :Enterprise:Application:Module:Web
@@ -89,7 +89,7 @@ Represents a declared web module of a Java EE Java application.
 
 
 [[WeXmlScanner]]
-===== :File:Web:Xml
+=== :File:Web:Xml
 Represents a web application descriptor.
 
 .Relations of :File:Web:Xml
@@ -111,7 +111,7 @@ Represents a web application descriptor.
 
 
 [[:SessionConfig]]
-===== :SessionConfig
+=== :SessionConfig
 Represents a session configuration.
 
 .Properties of :SessionConfig
@@ -123,7 +123,7 @@ Represents a session configuration.
 
 
 [[:Servlet]]
-===== :Servlet
+=== :Servlet
 Represents a servlet declaration.
 
 .Properties of :Servlet

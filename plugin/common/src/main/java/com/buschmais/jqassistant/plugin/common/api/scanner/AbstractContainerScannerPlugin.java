@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 /**
@@ -34,21 +34,24 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         containerDescriptor.setFileName(path);
         LOGGER.info("Entering {}", path);
         Map<String, FileDescriptor> files = new HashMap<>();
-        Scope entryScope = createScope(scope, scanner.getContext());
+        enterContainer(container, containerDescriptor, scanner.getContext());
         try {
             Iterable<? extends E> entries = getEntries(container);
             for (E e : entries) {
-                try (Resource resource = getEntry(container, e)) {
+                Resource resource = getEntry(container, e);
+                try {
                     String relativePath = getRelativePath(container, e);
-                    LOGGER.info("Scanning {}", relativePath);
-                    FileDescriptor descriptor = scanner.scan(resource, relativePath, entryScope);
+                    LOGGER.debug("Scanning {}", relativePath);
+                    FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
                     descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
                     files.put(relativePath, descriptor);
                     containerDescriptor.getContains().add(descriptor);
+                } finally {
+                    resource.close();
                 }
             }
         } finally {
-            destroyScope(scanner.getContext());
+            leaveContainer(container, containerDescriptor, scanner.getContext());
             LOGGER.info("Leaving {}", path);
         }
         for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
@@ -115,21 +118,26 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      * Create a scope depending on the container type, e.g. a JAR file should
      * return classpath scope.
      * 
-     * @param currentScope
-     *            The current scope.
+     * @param container
+     *            The container.
+     * @param containerDescriptor
+     *            The container descriptor.
      * @param scannerContext
      *            The scanner context.
-     * @return The scope.
      */
-    protected abstract Scope createScope(Scope currentScope, ScannerContext scannerContext);
+    protected abstract void enterContainer(I container, D containerDescriptor, ScannerContext scannerContext) throws IOException;
 
     /**
      * Destroy the container dependent scope.
      * 
+     * @param container
+     *            The container.
+     * @param containerDescriptor
+     *            The container descriptor
      * @param scannerContext
      *            The scanner context.
      */
-    protected abstract void destroyScope(ScannerContext scannerContext);
+    protected abstract void leaveContainer(I container, D containerDescriptor, ScannerContext scannerContext) throws IOException;
 
     /**
      * Return a {@link Resource} representing an entry.

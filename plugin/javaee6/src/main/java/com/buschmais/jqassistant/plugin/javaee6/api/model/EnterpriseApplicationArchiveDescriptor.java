@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.javaee6.api.model;
 
-import com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ApplicationDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
 
 /**
  * Describes an EAR archive.

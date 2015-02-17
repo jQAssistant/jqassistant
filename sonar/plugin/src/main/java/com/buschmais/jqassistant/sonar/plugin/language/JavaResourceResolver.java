@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.sonar.plugin.language;
 
-import static com.buschmais.jqassistant.plugin.java.api.model.Java.JavaLanguageElement;
+import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement;
 
 import org.sonar.api.BatchExtension;
 import org.sonar.api.resources.JavaFile;

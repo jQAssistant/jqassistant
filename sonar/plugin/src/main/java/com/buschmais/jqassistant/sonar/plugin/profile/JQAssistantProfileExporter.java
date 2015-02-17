@@ -1,12 +1,7 @@
 package com.buschmais.jqassistant.sonar.plugin.profile;
 
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -23,23 +18,10 @@ import org.sonar.api.utils.SonarException;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
-import com.buschmais.jqassistant.core.analysis.api.rule.QueryTemplate;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
-import com.buschmais.jqassistant.sonar.plugin.rule.AbstractTemplateRule;
-import com.buschmais.jqassistant.sonar.plugin.rule.ConceptTemplateRule;
-import com.buschmais.jqassistant.sonar.plugin.rule.ConstraintTemplateRule;
-import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
-import com.buschmais.jqassistant.sonar.plugin.rule.RuleParameter;
-import com.buschmais.jqassistant.sonar.plugin.rule.RuleType;
+import com.buschmais.jqassistant.sonar.plugin.rule.*;
 
 /**
  * A {@link ProfileExporter} implementation which provides rules as permalink
@@ -97,7 +79,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Group group = new Group(profile.getName(), null, conceptsOfGroup, constraintsOfGroup, Collections.<String> emptySet());
         Map<String, Group> groups = new HashMap<>();
         groups.put(group.getId(), group);
-        RuleSet ruleSet = new DefaultRuleSet(Collections.<String, QueryTemplate> emptyMap(), concepts, constraints, groups,
+        RuleSet ruleSet = new DefaultRuleSet(Collections.<String, Template> emptyMap(), concepts, constraints, groups,
                 Collections.<String, MetricGroup> emptyMap());
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
         LOGGER.debug("Exporting rule set " + ruleSet.toString());
@@ -208,10 +190,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Severity severity = Severity.valueOf(rule.getSeverity().name());
         switch (ruleType) {
         case Concept:
-            executable = new Concept(id, description, severity, null, cypher, null, null, requiresConcepts);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts);
             break;
         case Constraint:
-            executable = new Constraint(id, description, severity, null, cypher, null, null, requiresConcepts);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts);
             break;
         default:
             throw new SonarException("Rule type is not supported " + ruleType);
@@ -236,9 +218,9 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         String cypher = check.getCypher();
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, severity, null, cypher, null, null, requiresConcepts);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts);
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, severity, null, cypher, null, null, requiresConcepts);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts);
         } else {
             throw new SonarException("Unknown type " + check.getClass());
         }

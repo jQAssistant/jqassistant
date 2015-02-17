@@ -1,4 +1,4 @@
 <<TychoProjectScanner>>
 [[TychoProjectScanner]]
-==== Scanner for Tycho projects
+== Scanner for Tycho projects
 Adds Tycho specific resources to be scanned to the file system scanner.

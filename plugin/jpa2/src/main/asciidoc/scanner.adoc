@@ -1,9 +1,9 @@
 <<PersistenceScanner>>
 [[PersistenceScanner]]
-==== Scanner for persistence.xml files
+== Scanner for persistence.xml files
 Imports persistence descriptors from META-INF/persistence.xml or WEB-INF/persistence.xml files.
 
-===== :File:Jpa:Persistence
+=== :File:Jpa:Persistence
 A persistence.xml file containing persistence units.
 
 .Properties of :File:Jpa:Persistence
@@ -22,7 +22,7 @@ A persistence.xml file containing persistence units.
 |====
 
 [[:Jpa:PersistenceUnit]]
-===== :Jpa:PersistenceUnit
+=== :Jpa:PersistenceUnit
 A persistence unit.
 
 .Properties of :Jpa:PersistenceUnit

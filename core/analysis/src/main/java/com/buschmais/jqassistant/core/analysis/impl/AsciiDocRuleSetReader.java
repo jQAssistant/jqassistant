@@ -23,11 +23,14 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSetReader.class);
 
-    private final Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+    /**
+     *
+     */
+    private Asciidoctor cachedAsciidoctor;
 
     @Override
     public RuleSet read(List<? extends RuleSource> sources) {
-        Map<String, QueryTemplate> queryTemplates = Collections.emptyMap();
+        Map<String, Template> queryTemplates = Collections.emptyMap();
         Map<String, MetricGroup> metricGroups = Collections.emptyMap();
         Map<String, Group> groups = Collections.emptyMap();
 
@@ -49,11 +52,26 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         try {
             stream = source.getInputStream();
         } catch (IOException e) {
-            LOGGER.warn("Cannot read rules from " + source.getId());
-            return;
+            throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
-        StructuredDocument doc = asciidoctor.readDocumentStructure(new InputStreamReader(stream), parameters);
+        StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
         extractRules(doc, concepts, constraints);
+    }
+
+    /**
+     * Return an ascii doctor instance.
+     * <p>
+     * Initialization is quite expensive, therefore doing it lazy.
+     * </p>
+     * 
+     * @return The ascii doctor instance.
+     */
+    private Asciidoctor getAsciidoctor() {
+        if (cachedAsciidoctor == null) {
+            LOGGER.debug("Creating Asciidoctor instance.");
+            cachedAsciidoctor = Asciidoctor.Factory.create();
+        }
+        return cachedAsciidoctor;
     }
 
     private void extractRules(StructuredDocument doc, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
@@ -64,10 +82,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             String cypher = unescapeHtml(part.getContent());
             Set<String> requiresConcepts = getDependencies(attributes);
             if ("concept".equals(part.getRole())) {
-                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, null, Collections.<String, Object> emptyMap(), requiresConcepts);
+                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, null, null, Collections.<String, Object> emptyMap(),
+                        requiresConcepts);
                 concepts.put(concept.getId(), concept);
             } else if ("constraint".equals(part.getRole())) {
-                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, null, Collections.<String, Object> emptyMap(),
+                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, null, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
                 constraints.put(concept.getId(), concept);
             }

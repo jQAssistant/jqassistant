@@ -1,5 +1,5 @@
 [[:Description]]
-===== :Description
+=== :Description
 Represents an internationalized description.
 
 .Properties of :Description
@@ -12,7 +12,7 @@ Represents an internationalized description.
 
 
 [[:DisplayName]]
-===== :DisplayName
+=== :DisplayName
 Represents an internationalized display name.
 
 .Properties of :DisplayName
@@ -25,7 +25,7 @@ Represents an internationalized display name.
 
 
 [[:Icon]]
-===== :Icon
+=== :Icon
 Represents an icon.
 
 .Properties of :Icon
@@ -38,7 +38,7 @@ Represents an icon.
 
 
 [[:SecurityRole]]
-===== :SecurityRole
+=== :SecurityRole
 Represents a security role.
 
 .Relations of :SecurityRole
@@ -51,7 +51,7 @@ Represents a security role.
 
 
 [[:RoleName]]
-===== :RoleName
+=== :RoleName
 Represents a role name.
 
 .Properties of :RoleName

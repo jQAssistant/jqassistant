@@ -4,9 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -76,18 +74,12 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
      * @return The {@link JqassistantPlugin}.
      */
     private JqassistantPlugin readPlugin(URL pluginUrl) {
-        InputStream inputStream;
-        try {
-            inputStream = new BufferedInputStream(pluginUrl.openStream());
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot open plugin stream.", e);
-        }
-        try {
+        try (InputStream inputStream = new BufferedInputStream(pluginUrl.openStream())) {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             unmarshaller.setSchema(schema);
             return unmarshaller.unmarshal(new StreamSource(inputStream), JqassistantPlugin.class).getValue();
-        } catch (JAXBException e) {
-            throw new IllegalArgumentException("Cannot read plugin from " + pluginUrl.toString(), e);
+        } catch (IOException | JAXBException e) {
+            throw new IllegalStateException("Cannot read plugin from " + pluginUrl.toString(), e);
         }
     }
 
@@ -109,11 +101,14 @@ public class PluginConfigurationReaderImpl implements PluginConfigurationReader 
             this.plugins = new ArrayList<>();
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Reading plugin descriptor from '{}'.", url);
-                }
+                LOGGER.debug("Reading plugin descriptor from '{}'.", url);
                 this.plugins.add(readPlugin(url));
             }
+            SortedSet<String> pluginNames = new TreeSet<>();
+            for (JqassistantPlugin plugin : plugins) {
+                pluginNames.add(plugin.getName());
+            }
+            LOGGER.info("Loaded jQAssistant plugins {}.", pluginNames);
         }
         return this.plugins;
     }

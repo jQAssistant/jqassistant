@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.javastack.httpd.HttpServer;
@@ -13,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -23,7 +25,6 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
     private static final String REPO_SERVER_BASE_DIR = "./src/test/resources/maven-repository";
 
     private static final String TEST_REPOSITORY_URL = "http://localhost:" + REPO_SERVER_PORT;
-
     private HttpServer httpServer;
 
     /**
@@ -38,6 +39,11 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
         }
 
         return httpServer;
+    }
+
+    @Override
+    protected Map<String, Object> getScannerProperties() {
+        return MapBuilder.<String, Object> create("m2repo.directory", "target/m2repo/data").get();
     }
 
     /**

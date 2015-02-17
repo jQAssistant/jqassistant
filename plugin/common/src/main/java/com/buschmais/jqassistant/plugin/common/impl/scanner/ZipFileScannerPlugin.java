@@ -9,8 +9,7 @@ import java.util.zip.ZipFile;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.ArchiveDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileContainerDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
@@ -77,12 +76,12 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected Scope createScope(Scope currentScope, ScannerContext context) {
-        return currentScope;
+    protected void enterContainer(ZipFile zipFile, ArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
     }
 
     @Override
-    protected void destroyScope(ScannerContext scannerContext) {
+    protected void leaveContainer(ZipFile zipFile, ArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) throws IOException {
+        zipFile.close();
     }
 
     @Override

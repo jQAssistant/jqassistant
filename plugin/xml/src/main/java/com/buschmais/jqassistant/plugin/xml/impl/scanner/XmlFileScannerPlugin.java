@@ -1,12 +1,17 @@
 package com.buschmais.jqassistant.plugin.xml.impl.scanner;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.*;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -17,6 +22,8 @@ import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.google.common.base.Strings;
 
 public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, XmlFileDescriptor> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlFileScannerPlugin.class);
 
     private XMLInputFactory inputFactory;
 
@@ -62,8 +69,10 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
                 }
                 streamReader.next();
             }
+            documentDescriptor.setWellFormed(true);
         } catch (XMLStreamException e) {
-            throw new IOException("Cannot read document.", e);
+            LOGGER.warn("Cannot parse document '" + path + "': " + e.getMessage());
+            documentDescriptor.setWellFormed(false);
         }
         return documentDescriptor;
     }
@@ -123,13 +132,15 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
     }
 
     private void characters(XMLStreamReader streamReader, Class<? extends XmlTextDescriptor> type, XmlElementDescriptor parentElement, Store store) {
-        int start = streamReader.getTextStart();
-        int length = streamReader.getTextLength();
-        String text = new String(streamReader.getTextCharacters(), start, length).trim();
-        if (!Strings.isNullOrEmpty(text)) {
-            XmlTextDescriptor charactersDescriptor = store.create(type);
-            charactersDescriptor.setValue(text);
-            parentElement.getCharacters().add(charactersDescriptor);
+        if (streamReader.hasText()) {
+            int start = streamReader.getTextStart();
+            int length = streamReader.getTextLength();
+            String text = new String(streamReader.getTextCharacters(), start, length).trim();
+            if (!Strings.isNullOrEmpty(text)) {
+                XmlTextDescriptor charactersDescriptor = store.create(type);
+                charactersDescriptor.setValue(text);
+                parentElement.getCharacters().add(charactersDescriptor);
+            }
         }
     }
 

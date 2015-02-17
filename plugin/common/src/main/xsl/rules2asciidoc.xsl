@@ -9,13 +9,13 @@
     <xsl:template match="/">
 <xsl:value-of select="$newline"/>
         <xsl:if test="//concept">
-===== Concepts
+=== Concepts
             <xsl:apply-templates select="//concept">
                 <xsl:sort select="@id" order="ascending"/>
             </xsl:apply-templates>
         </xsl:if>
         <xsl:if test="//constraint">
-===== Constraints
+=== Constraints
             <xsl:apply-templates select="//constraint">
                 <xsl:sort select="@id" order="ascending"/>
             </xsl:apply-templates>
@@ -24,7 +24,7 @@
 
     <xsl:template match="constraint | concept">
 [id="<xsl:value-of select="@id"/>"]
-====== <xsl:value-of select="@id"/>
+==== <xsl:value-of select="@id"/>
 <xsl:value-of select="$newline"/>
 
         <xsl:if test="deprecated">

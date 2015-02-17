@@ -20,9 +20,16 @@ is required. Neo4j has been chosen because:
 - it allows easy modelling of structural elements of a software and their relations
 - it comes with a very expressive and easy to learn query language (Cypher)
 
-=== Rules
+=== Scanner
+Scanners are used to import software structures into the database. They are provided by plugins and may support several types of artifacts, e.g.
+Java classes, XML files, database structures and much more.
+The jQAssistant framework (including the command line or Maven plugin) only provides the infrastructure to trigger a scan operation on a set
+of items, e.g. files, directories or URLs. Every active plugin decides itself if it accepts and imports a given item by checking several conditions,
+e.g. by file name extension or a provided scope. The latter is an extra information which provides more specific context information like
+"java:classpath" for a directory containing Java classes or "maven:repository" for URLs.
 
-Rules are expressed as Cypher queries and are specified either in XML or AsciiDoc files.
+=== Rules
+Rules are expressed as Cypher queries and are specified either in XML or AsciiDoc files:
 
 ==== XML example
 
@@ -156,3 +163,24 @@ A constraint can depend on one or more concepts and usually is referenced by one
 *NOTE* If a constraint returns a result jQAssistant will report an error including the provided description and information about the returned elements. This
 information shall help the developer to understand and fix the problem.
 
+
+==== Using Scripting Languages
+
+Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
+
+[source,xml]
+.my-scripting-rules.xml
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <constraint id="my-scripting-rules:MyConcept">
+        <description>A JavaScript based concept.</description>
+        <script language="JavaScript">
+          ...
+        </script>
+    </constraint>
+
+</jqa:jqassistant-rules>
+----
+
+Refer to the examples section for a detailed explanation.

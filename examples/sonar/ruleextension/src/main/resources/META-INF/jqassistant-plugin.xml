@@ -1,4 +1,5 @@
-<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0">
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+                       name="Sonar Rule Extension">
     <description>An example plugin.</description>
     <rules>
         <resource>example.xml</resource>

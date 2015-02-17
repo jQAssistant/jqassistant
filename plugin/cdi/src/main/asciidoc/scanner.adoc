@@ -1,9 +1,9 @@
 <<BeansScanner>>
 [[BeansScanner]]
-==== Scanner for beans.xml files
+== Scanner for beans.xml files
 Imports beans descriptors from META-INF/beans.xml or WEB-INF/beans.xml files.
 
-===== :File:Cdi:Beans
+=== :File:Cdi:Beans
 Represents a beans.xml file.
 
 .Properties of :File:Cdi:Beans

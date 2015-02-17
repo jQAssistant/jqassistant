@@ -42,9 +42,14 @@ public abstract class AbstractRule implements Rule {
     private String cypher;
 
     /**
+     * The scropt which represents this rule;
+     */
+    private Script script;
+
+    /**
      * The query template to use.
      */
-    private String queryTemplateId;
+    private String templateId;
 
     /**
      * The parameters to use.
@@ -69,22 +74,22 @@ public abstract class AbstractRule implements Rule {
      *            The deprecated message.
      * @param cypher
      *            The cypher query.
-     * @param queryTemplateId
+     * @param templateId
      *            The query template.
      * @param parameters
      *            The parametes.
      * @param requiresConcepts
      *            The required concept ids.
      */
-    protected AbstractRule(String id, String description, Severity severity, String deprecated, String cypher, String queryTemplateId,
+    protected AbstractRule(String id, String description, Severity severity, String deprecated, String cypher, Script script, String templateId,
             Map<String, Object> parameters, Set<String> requiresConcepts) {
         this.id = id;
         this.description = description;
         this.severity = severity;
         this.deprecated = deprecated;
         this.cypher = cypher;
-
-        this.queryTemplateId = queryTemplateId;
+        this.script = script;
+        this.templateId = templateId;
         this.parameters = parameters;
         this.requiresConcepts = requiresConcepts;
     }
@@ -118,8 +123,12 @@ public abstract class AbstractRule implements Rule {
         return cypher;
     }
 
-    public String getQueryTemplateId() {
-        return queryTemplateId;
+    public Script getScript() {
+        return script;
+    }
+
+    public String getTemplateId() {
+        return templateId;
     }
 
     public Map<String, Object> getParameters() {

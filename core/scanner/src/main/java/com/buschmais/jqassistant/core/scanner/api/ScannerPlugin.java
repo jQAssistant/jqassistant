@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 
 /**
  * Defines the interface for a scanner plugin.
@@ -81,8 +80,7 @@ public interface ScannerPlugin<I, D extends Descriptor> {
      * @param scanner
      *            The scanner instance to delegate items this plugin resolves
      *            from the given item.
-     * @return The {@link FileDescriptor} instance representing the scanned
-     *         item.
+     * @return The {@link Descriptor} instance representing the scanned item.
      * @throws IOException
      *             If a problem occurs.
      */

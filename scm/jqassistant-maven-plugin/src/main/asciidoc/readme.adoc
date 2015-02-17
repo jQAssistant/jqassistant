@@ -92,6 +92,10 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 <scanInclude>
                                     <path>config</path>
                                 </scanInclude>
+                                <scanInclude>
+                                    <path>target/extra-classes</path>
+                                    <scope>java:classpath</scope>
+                                </scanInclude>
                             </scanIncludes>
                             <scanProperties>
                                 <customScanner.property>value</customScanner.property>
@@ -202,6 +206,7 @@ mvn jqassistant:available-rules
 === Goals
 
 * <<scan>>
+* <<available-scopes>>
 * <<reset>>
 * <<server>>
 * <<analyze>>
@@ -223,6 +228,11 @@ Scans the directories of compiled classes and test classes and stores the gather
 ** wildcards are not supported
 * scanProperties
 ** allows passing properties to scanner plugins.
+
+[[available-scopes]]
+==== jqassistant:available-scopes
+===== Description
+List all available scopes which may be specified for scanInclude properties.
 
 [[reset]]
 ==== jqassistant:reset

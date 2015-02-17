@@ -5,11 +5,7 @@ import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TEST
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -19,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
@@ -58,13 +54,13 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         }
         Artifact artifact = project.getArtifact();
         // main artifact
-        JavaArtifactDescriptor mainArtifactDescriptor = resolveArtifact(artifact, JavaClassesDirectoryDescriptor.class, false, scanner.getContext());
+        JavaClassesDirectoryDescriptor mainArtifactDescriptor = resolveArtifact(artifact, JavaClassesDirectoryDescriptor.class, false, scanner.getContext());
         addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
         scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, false, project.getBuild().getOutputDirectory(), scanner);
         // test artifact
         String testOutputDirectory = project.getBuild().getTestOutputDirectory();
         if (testOutputDirectory != null) {
-            JavaArtifactDescriptor testArtifactDescriptor = resolveArtifact(artifact, JavaClassesDirectoryDescriptor.class, true, scanner.getContext());
+            JavaClassesDirectoryDescriptor testArtifactDescriptor = resolveArtifact(artifact, JavaClassesDirectoryDescriptor.class, true, scanner.getContext());
             testArtifactDependencies.put(mainArtifactDescriptor, artifact);
             addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
             scanClassesDirectory(projectDescriptor, testArtifactDescriptor, true, testOutputDirectory, scanner);
@@ -172,16 +168,16 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      * @param scanner
      *            The scanner.
      */
-    private void scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, JavaArtifactDescriptor artifactDescriptor, boolean testJar,
+    private void scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, JavaClassesDirectoryDescriptor artifactDescriptor, boolean testJar,
             final String directoryName, Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
             projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
-            scanner.getContext().push(JavaArtifactDescriptor.class, artifactDescriptor);
+            scanner.getContext().push(JavaClassesDirectoryDescriptor.class, artifactDescriptor);
             try {
                 scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
             } finally {
-                scanner.getContext().pop(JavaArtifactDescriptor.class);
+                scanner.getContext().pop(JavaClassesDirectoryDescriptor.class);
             }
         }
     }
@@ -203,7 +199,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         if (file.exists()) {
             scanPath(projectDescriptor, file, path, scope, scanner);
         } else {
-            LOGGER.info(file.getAbsolutePath() + " does not exist, skipping.");
+            LOGGER.debug(file.getAbsolutePath() + " does not exist, skipping.");
         }
     }
 

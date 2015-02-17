@@ -29,9 +29,15 @@
                 <include>src/main/java/**</include>
                 <include>src/main/resources/**</include>
                 <include>jqassistant/**</include>
-                <include>pom.xml</include>
             </includes>
             <filtered>true</filtered>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <outputDirectory>src</outputDirectory>
+            <source>pom.xml</source>
+            <filtered>true</filtered>
+        </file>
+    </files>
 </assembly>

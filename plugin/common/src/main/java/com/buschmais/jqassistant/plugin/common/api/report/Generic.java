@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.api.model;
+package com.buschmais.jqassistant.plugin.common.api.report;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.report.api.Language;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 
 /**
  * Defines generic language elements.
@@ -33,8 +33,8 @@ public @interface Generic {
                     }
 
                     @Override
-                    public FileDescriptor getSourceFile(ArtifactFileDescriptor descriptor) {
-                        return descriptor;
+                    public String getSourceFile(ArtifactFileDescriptor descriptor) {
+                        return descriptor.getFileName();
                     }
 
                     @Override
