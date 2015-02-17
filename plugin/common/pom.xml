@@ -10,10 +10,6 @@
 
     <artifactId>jqassistant.plugin.common</artifactId>
 
-    <properties>
-        <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
