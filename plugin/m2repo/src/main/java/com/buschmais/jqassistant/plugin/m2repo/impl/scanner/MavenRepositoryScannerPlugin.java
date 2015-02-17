@@ -215,7 +215,9 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                         	LOGGER.info("Artifact "+fqn+" has predecessor.");
                         	RepositoryArtifactDescriptor predecessorArtifactDescriptor = queryResult.getSingleResult().get("n", RepositoryArtifactDescriptor.class);
                         	artifactDescriptor.setPredecessorArtifact(predecessorArtifactDescriptor);
-                        	predecessorArtifactDescriptor.setContainingRepository(null);
+//                        	predecessorArtifactDescriptor.setContainingRepository(null);
+                        	
+                        	store.executeQuery("MATCH (n:Artifact:Maven)<-[r:CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.fqn={fqn} AND n.lastModified<>{lastModified} DELETE r", queryParams);
                         }
                     } else {
                         LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
