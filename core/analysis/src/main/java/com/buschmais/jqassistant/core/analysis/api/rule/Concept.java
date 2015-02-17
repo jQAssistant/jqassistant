@@ -8,7 +8,11 @@ import java.util.Set;
  * 
  * Used to add information to the database.
  */
-public class Concept extends AbstractRule {
+public class Concept extends AbstractExecutableRule {
+
+    /** Default severity level for concept. */
+    public static Severity DEFAULT_SEVERITY = Severity.MINOR;
+
     /**
      * Constructor.
      *

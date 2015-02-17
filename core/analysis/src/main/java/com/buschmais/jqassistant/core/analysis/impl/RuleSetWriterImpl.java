@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONCEPT_SEVERITY;
-import static com.buschmais.jqassistant.core.analysis.api.rule.AbstractRule.DEFAULT_CONSTRAINT_SEVERITY;
-
 import java.io.Writer;
 import java.util.Collection;
 import java.util.Map;
@@ -81,13 +78,13 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts().entrySet()) {
                 IncludedReferenceType conceptReferenceType = new IncludedReferenceType();
                 conceptReferenceType.setRefId(conceptEntry.getKey());
-                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue(), DEFAULT_CONCEPT_SEVERITY));
+                conceptReferenceType.setSeverity(getSeverity(conceptEntry.getValue(), Concept.DEFAULT_SEVERITY));
                 groupType.getIncludeConcept().add(conceptReferenceType);
             }
             for (Map.Entry<String, Severity> constraintEntry : group.getConstraints().entrySet()) {
                 IncludedReferenceType constraintReferenceType = new IncludedReferenceType();
                 constraintReferenceType.setRefId(constraintEntry.getKey());
-                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), DEFAULT_CONSTRAINT_SEVERITY));
+                constraintReferenceType.setSeverity(getSeverity(constraintEntry.getValue(), Constraint.DEFAULT_SEVERITY));
                 groupType.getIncludeConstraint().add(constraintReferenceType);
             }
             rules.getTemplateOrConceptOrConstraint().add(groupType);
@@ -99,7 +96,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
-            conceptType.setSeverity(getSeverity(concept.getSeverity(), DEFAULT_CONCEPT_SEVERITY));
+            conceptType.setSeverity(getSeverity(concept.getSeverity(), Concept.DEFAULT_SEVERITY));
             conceptType.setCypher(concept.getCypher());
             for (String requiresConceptId : concept.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
@@ -115,7 +112,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
-            constraintType.setSeverity(getSeverity(constraint.getSeverity(), DEFAULT_CONSTRAINT_SEVERITY));
+            constraintType.setSeverity(getSeverity(constraint.getSeverity(), Constraint.DEFAULT_SEVERITY));
             constraintType.setCypher(constraint.getCypher());
             for (String requiresConceptId : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
