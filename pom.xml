@@ -57,6 +57,7 @@
         <org.jruby_version>1.7.18</org.jruby_version>
         <org.ow2.asm_version>5.0.3</org.ow2.asm_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
+        <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
         <github.global.server>github</github.global.server>
     </properties>
 

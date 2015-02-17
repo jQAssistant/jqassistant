@@ -14,5 +14,6 @@
         <module>asciidoc</module>
         <module>naming</module>
         <module>forbiddenmethod</module>
+        <module>scripting</module>
     </modules>
 </project>

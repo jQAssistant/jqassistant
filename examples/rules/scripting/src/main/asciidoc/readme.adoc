@@ -1,0 +1,18 @@
+==== Scripting
+
+Demonstrates a constraint implemented using JavaScript.
+
+[source,xml]
+.jqassistant/default.xml
+----
+include::{docRoot}/jqassistant.examples.rules.scripting/src/jqassistant/default.xml[]
+----
+
+All scripting languages may be used which support the Java Scripting API (JSR-223), e.g. Groovy or JRuby. The
+corresponding libraries must be available on the classpath of jQAssistant, e.g.
+
+[source,xml]
+.pom.xml
+----
+include::{docRoot}/jqassistant.examples.rules.scripting/src/pom.xml[lines=12..32,indent=0]
+----

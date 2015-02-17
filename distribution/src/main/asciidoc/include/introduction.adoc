@@ -164,7 +164,7 @@ A constraint can depend on one or more concepts and usually is referenced by one
 information shall help the developer to understand and fix the problem.
 
 
-==== Using Scripting Languages
+==== Script Languages
 
 Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
 
