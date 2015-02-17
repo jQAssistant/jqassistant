@@ -13,7 +13,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 @Label("Element")
-public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescriptor {
+public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescriptor, SiblingDescriptor {
 
     @Outgoing
     @HasElement
