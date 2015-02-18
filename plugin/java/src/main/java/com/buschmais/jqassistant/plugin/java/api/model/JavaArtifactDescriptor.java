@@ -14,16 +14,28 @@ import com.buschmais.xo.neo4j.api.annotation.Cypher;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
+/**
+ * Defines a Java artifact.
+ */
 public interface JavaArtifactDescriptor extends JavaDescriptor, ArtifactFileDescriptor {
 
     @ResultOf
     @Cypher("match (type:Type)<-[:CONTAINS]-(a:Artifact) where type.fqn={fqn} and id(a) in {dependencies} return type")
     Query.Result<TypeDescriptor> resolveRequiredType(@Parameter("fqn") String fqn, @Parameter("dependencies") List<? extends ArtifactDescriptor> dependencies);
 
+    /**
+     * Return the list of Java types required by this artifact (i.e. which are
+     * referenced from it).
+     * 
+     * @return The list of required java types.
+     */
     @Outgoing
     @RequiresType
     List<TypeDescriptor> getRequiresTypes();
 
+    /**
+     * Defines the REQUIRES relation.
+     */
     @Relation("REQUIRES")
     @Retention(RUNTIME)
     public @interface RequiresType {
