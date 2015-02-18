@@ -6,4 +6,9 @@
     <ExtraElement xmlns:extra="http://jqassistant.org/plugin/xml/test/extra">
         <extra:ExtraChildElement extra:attribute2="attribute2"><![CDATA[Extra Child Text]]></extra:ExtraChildElement>
     </ExtraElement>
+    <MixedParentElement>
+        <MixedChildElement1/>
+        Mixed Parent Text
+        <MixedChildElement2/>
+    </MixedParentElement>
 </RootElement>

@@ -45,6 +45,7 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
         XmlElementDescriptor parentElement = null;
         XmlFileDescriptor documentDescriptor = null;
         Map<String, XmlNamespaceDescriptor> namespaceMappings = new HashMap<>();
+        Map<XmlElementDescriptor, SiblingDescriptor> siblings = new HashMap<>();
         try (InputStream stream = item.createStream()) {
             XMLStreamReader streamReader = inputFactory.createXMLStreamReader(stream);
             while (streamReader.hasNext()) {
@@ -54,17 +55,22 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
                     documentDescriptor = startDocument(streamReader, store);
                     break;
                 case XMLStreamConstants.START_ELEMENT:
-                    parentElement = startElement(streamReader, documentDescriptor, parentElement, namespaceMappings, store);
+                    XmlElementDescriptor childElement = startElement(streamReader, documentDescriptor, parentElement, namespaceMappings, store);
+                    addSibling(parentElement, childElement, siblings);
+                    parentElement = childElement;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
+                    parentElement.setLastChild((XmlDescriptor) siblings.remove(parentElement));
                     parentElement = endElement(streamReader, parentElement, namespaceMappings);
                     break;
                 case XMLStreamConstants.SPACE:
                 case XMLStreamConstants.CHARACTERS:
-                    characters(streamReader, XmlTextDescriptor.class, parentElement, store);
+                    XmlTextDescriptor textDescriptor = characters(streamReader, XmlTextDescriptor.class, parentElement, store);
+                    addSibling(parentElement, textDescriptor, siblings);
                     break;
                 case XMLStreamConstants.CDATA:
-                    characters(streamReader, XmlCDataDescriptor.class, parentElement, store);
+                    XmlCDataDescriptor cDataDescriptor = characters(streamReader, XmlCDataDescriptor.class, parentElement, store);
+                    addSibling(parentElement, cDataDescriptor, siblings);
                     break;
                 }
                 streamReader.next();
@@ -75,6 +81,21 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
             documentDescriptor.setWellFormed(false);
         }
         return documentDescriptor;
+    }
+
+    private <X extends SiblingDescriptor & XmlDescriptor> void addSibling(XmlElementDescriptor parentElement, X child,
+            Map<XmlElementDescriptor, SiblingDescriptor> siblings) {
+        if (child != null) {
+            SiblingDescriptor lastSibling = siblings.get(parentElement);
+            if (lastSibling == null) {
+                if (parentElement != null) {
+                    parentElement.setFirstChild(child);
+                }
+            } else {
+                lastSibling.setNextSibling(child);
+            }
+            siblings.put(parentElement, child);
+        }
     }
 
     private XmlFileDescriptor startDocument(XMLStreamReader streamReader, Store store) {
@@ -131,17 +152,19 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
         return parentElement;
     }
 
-    private void characters(XMLStreamReader streamReader, Class<? extends XmlTextDescriptor> type, XmlElementDescriptor parentElement, Store store) {
+    private <T extends XmlTextDescriptor> T characters(XMLStreamReader streamReader, Class<T> type, XmlElementDescriptor parentElement, Store store) {
         if (streamReader.hasText()) {
             int start = streamReader.getTextStart();
             int length = streamReader.getTextLength();
             String text = new String(streamReader.getTextCharacters(), start, length).trim();
             if (!Strings.isNullOrEmpty(text)) {
-                XmlTextDescriptor charactersDescriptor = store.create(type);
-                charactersDescriptor.setValue(text);
-                parentElement.getCharacters().add(charactersDescriptor);
+                T textDescriptor = store.create(type);
+                textDescriptor.setValue(text);
+                parentElement.getCharacters().add(textDescriptor);
+                return textDescriptor;
             }
         }
+        return null;
     }
 
     private void setName(OfNamespaceDescriptor ofNamespaceDescriptor, String localName, String prefix, Map<String, XmlNamespaceDescriptor> namespaceMappings) {

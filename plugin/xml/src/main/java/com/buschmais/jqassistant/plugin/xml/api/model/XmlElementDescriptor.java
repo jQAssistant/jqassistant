@@ -32,6 +32,16 @@ public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescript
     @Relation("DECLARES_NAMESPACE")
     List<XmlNamespaceDescriptor> getDeclaredNamespaces();
 
+    @Relation("HAS_FIRST_CHILD")
+    XmlDescriptor getFirstChild();
+
+    void setFirstChild(XmlDescriptor firstChild);
+
+    @Relation("HAS_LAST_CHILD")
+    XmlDescriptor getLastChild();
+
+    void setLastChild(XmlDescriptor lastChild);
+
     @Relation("HAS_ELEMENT")
     @Retention(RUNTIME)
     @Target(METHOD)

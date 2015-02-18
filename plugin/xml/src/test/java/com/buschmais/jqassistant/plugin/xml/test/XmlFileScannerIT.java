@@ -42,44 +42,70 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         assertThat(rootNS.getUri(), equalTo("http://jqassistant.org/plugin/xml/test/root"));
         assertThat(rootNS.getPrefix(), nullValue());
         List<XmlElementDescriptor> childElements = rootElement.getElements();
-        assertThat(childElements.size(), equalTo(2));
+        assertThat(childElements.size(), equalTo(3));
         for (XmlElementDescriptor childElement : childElements) {
             if ("ChildElement".equals(childElement.getName())) {
-                assertThat(childElement.getDeclaredNamespaces().size(), equalTo(0));
-                List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
-                assertThat(childElementAttributes.size(), equalTo(1));
-                XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
-                assertThat(childElementAttribute.getName(), equalTo("attribute1"));
-                List<XmlTextDescriptor> childElementTexts = childElement.getCharacters();
-                assertThat(childElementTexts.size(), equalTo(1));
-                XmlTextDescriptor childElementText = childElementTexts.get(0);
-                assertThat(childElementText.getValue(), equalTo("Child Text"));
+                verifyChildElement(childElement);
             } else if ("ExtraElement".equals(childElement.getName())) {
-                assertThat(childElement.getDeclaredNamespaces().size(), equalTo(1));
-                XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces().get(0);
-                assertThat(extraNamespace.getUri(), equalTo("http://jqassistant.org/plugin/xml/test/extra"));
-                assertThat(extraNamespace.getPrefix(), equalTo("extra"));
-                List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
-                assertThat(childElementAttributes.size(), equalTo(0));
-                List<XmlElementDescriptor> extraChildElements = childElement.getElements();
-                assertThat(extraChildElements.size(), equalTo(1));
-                XmlElementDescriptor extraChildElement = extraChildElements.get(0);
-                assertThat(extraChildElement.getName(), equalTo("ExtraChildElement"));
-                assertThat(extraChildElement.getNamespaceDeclaration(), equalTo(extraNamespace));
-                List<XmlTextDescriptor> extraChildElementTexts = extraChildElement.getCharacters();
-                assertThat(extraChildElementTexts.size(), equalTo(1));
-                XmlTextDescriptor extraChildElementText = extraChildElementTexts.get(0);
-                assertThat(extraChildElementText.getValue(), equalTo("Extra Child Text"));
-                List<XmlAttributeDescriptor> extraChildElementAttributes = extraChildElement.getAttributes();
-                assertThat(extraChildElementAttributes.size(), equalTo(1));
-                XmlAttributeDescriptor extraChildElementAttribute = extraChildElementAttributes.get(0);
-                assertThat(extraChildElementAttribute.getName(), equalTo("attribute2"));
-                assertThat(extraChildElementAttribute.getNamespaceDeclaration(), equalTo(extraNamespace));
+                verifyExtraElement(childElement);
+            } else if ("MixedParentElement".equals(childElement.getName())) {
+                verifyMixedParentElement(childElement);
             } else {
                 fail("Found unexpected child element: " + childElement.getName());
             }
         }
         store.commitTransaction();
+    }
+
+    private void verifyChildElement(XmlElementDescriptor childElement) {
+        assertThat(childElement.getDeclaredNamespaces().size(), equalTo(0));
+        List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
+        assertThat(childElementAttributes.size(), equalTo(1));
+        XmlAttributeDescriptor childElementAttribute = childElementAttributes.get(0);
+        assertThat(childElementAttribute.getName(), equalTo("attribute1"));
+        List<XmlTextDescriptor> childElementTexts = childElement.getCharacters();
+        assertThat(childElementTexts.size(), equalTo(1));
+        XmlTextDescriptor childElementText = childElementTexts.get(0);
+        assertThat(childElementText.getValue(), equalTo("Child Text"));
+    }
+
+    private void verifyExtraElement(XmlElementDescriptor childElement) {
+        assertThat(childElement.getDeclaredNamespaces().size(), equalTo(1));
+        XmlNamespaceDescriptor extraNamespace = childElement.getDeclaredNamespaces().get(0);
+        assertThat(extraNamespace.getUri(), equalTo("http://jqassistant.org/plugin/xml/test/extra"));
+        assertThat(extraNamespace.getPrefix(), equalTo("extra"));
+        List<XmlAttributeDescriptor> childElementAttributes = childElement.getAttributes();
+        assertThat(childElementAttributes.size(), equalTo(0));
+        List<XmlElementDescriptor> extraChildElements = childElement.getElements();
+        assertThat(extraChildElements.size(), equalTo(1));
+        XmlElementDescriptor extraChildElement = extraChildElements.get(0);
+        assertThat(extraChildElement.getName(), equalTo("ExtraChildElement"));
+        assertThat(extraChildElement.getNamespaceDeclaration(), equalTo(extraNamespace));
+        List<XmlTextDescriptor> extraChildElementTexts = extraChildElement.getCharacters();
+        assertThat(extraChildElementTexts.size(), equalTo(1));
+        XmlTextDescriptor extraChildElementText = extraChildElementTexts.get(0);
+        assertThat(extraChildElementText.getValue(), equalTo("Extra Child Text"));
+        List<XmlAttributeDescriptor> extraChildElementAttributes = extraChildElement.getAttributes();
+        assertThat(extraChildElementAttributes.size(), equalTo(1));
+        XmlAttributeDescriptor extraChildElementAttribute = extraChildElementAttributes.get(0);
+        assertThat(extraChildElementAttribute.getName(), equalTo("attribute2"));
+        assertThat(extraChildElementAttribute.getNamespaceDeclaration(), equalTo(extraNamespace));
+    }
+
+    private void verifyMixedParentElement(XmlElementDescriptor childElement) {
+        XmlDescriptor mixedChildElement1 = childElement.getFirstChild();
+        assertThat(mixedChildElement1, notNullValue());
+        assertThat(mixedChildElement1, instanceOf(XmlElementDescriptor.class));
+        assertThat(((XmlElementDescriptor) mixedChildElement1).getName(), equalTo("MixedChildElement1"));
+        XmlDescriptor mixedChildText = ((XmlElementDescriptor) mixedChildElement1).getNextSibling();
+        assertThat(mixedChildText, notNullValue());
+        assertThat(mixedChildText, instanceOf(XmlTextDescriptor.class));
+        assertThat(((XmlTextDescriptor) mixedChildText).getValue(), equalTo("Mixed Parent Text"));
+        XmlDescriptor mixedChildElement2 = ((XmlTextDescriptor) mixedChildText).getNextSibling();
+        assertThat(mixedChildElement2, notNullValue());
+        assertThat(mixedChildElement2, instanceOf(XmlElementDescriptor.class));
+        assertThat(((XmlElementDescriptor) mixedChildElement2).getName(), equalTo("MixedChildElement2"));
+        assertThat(childElement.getLastChild(), equalTo(mixedChildElement2));
     }
 
     @Test
