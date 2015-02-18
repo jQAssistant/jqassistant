@@ -3,11 +3,7 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -218,9 +214,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                         if(queryResult.hasResult()){
                         	RepositoryArtifactDescriptor predecessorArtifactDescriptor = queryResult.getSingleResult().get("n", RepositoryArtifactDescriptor.class);
                         	artifactDescriptor.setPredecessorArtifact(predecessorArtifactDescriptor);
-//                        	predecessorArtifactDescriptor.setContainingRepository(null);
-                        	
-                        	store.executeQuery("MATCH (n:Artifact:Maven)<-[r:CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.fqn={fqn} AND n.lastModified<>{lastModified} DELETE r", queryParams);
+                        	predecessorArtifactDescriptor.setContainingRepository(null);
                         }
                     } else {
                         LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());

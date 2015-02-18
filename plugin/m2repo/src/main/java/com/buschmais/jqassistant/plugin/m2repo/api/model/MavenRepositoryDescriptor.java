@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.m2repo.api.model;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -21,8 +23,8 @@ public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
     /**
      * A list of contained artifacts.
      */
-    @Relation("CONTAINS_ARTIFACT")
     @Outgoing
+    @ContainsArtifact
     List<RepositoryArtifactDescriptor> getContainedArtifacts();
 
     /**
@@ -40,7 +42,7 @@ public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
      *            the repository url.
      */
     void setUrl(String url);
-    
+
     /**
      * The last scan date.
      * 
@@ -57,4 +59,8 @@ public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
      */
     void setLastScanDate(long scanDate);
 
+    @Relation("CONTAINS_ARTIFACT")
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface ContainsArtifact {
+    }
 }
