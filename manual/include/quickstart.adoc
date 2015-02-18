@@ -65,16 +65,13 @@ Add the following lines to the parent pom.xml file of your project:
             <artifactId>jqassistant-maven-plugin</artifactId>
             <executions>
                 <execution>
-                    <id>scan</id>
                     <goals>
                         <goal>scan</goal>
-                    </goals>
-                </execution>
-                <execution>
-                    <id>analyze</id>
-                    <goals>
                         <goal>analyze</goal>
                     </goals>
+                    <configuration>
+                        <failOnViolations>true</failOnViolations>
+                    </configuration>
                 </execution>
             </executions>
         </plugin>
@@ -100,15 +97,12 @@ Add the following lines to the parent pom.xml file of your project:
 
 ==== Add a rule
 
-Within your parent module create a directory "jqassistant" and a rules file in it:
+Within your parent module create a directory "jqassistant" and a rules file "my-rules.xml" in it:
 
 [source,xml]
+.jqassistant/my-rules.xml
 ----
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
-
-    <group id="default">
-        <includeConstraint refId="my-rules:TestClassName" />
-    </group>
 
     <constraint id="my-rules:TestClassName">
         <requiresConcept refId="junit4:TestClass" />
@@ -123,8 +117,11 @@ Within your parent module create a directory "jqassistant" and a rules file in i
         ]]></cypher>
     </constraint>
 
-</jqa:jqassistant-rules>
+    <group id="default">
+        <includeConstraint refId="my-rules:TestClassName" />
+    </group>
 
+</jqa:jqassistant-rules>
 ----
 
 ==== Run the build
