@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.*;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.index.ArtifactInfo;
@@ -152,12 +151,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      */
     private RepositoryArtifactDescriptor migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, long lastModified,
             Descriptor descriptor) {
-    	RepositoryArtifactDescriptor artifactDescriptor = null;
-    	if(ArrayUtils.contains(descriptor.getClass().getInterfaces(), RepositoryArtifactDescriptor.class)){
-    		artifactDescriptor = (RepositoryArtifactDescriptor) descriptor;
-    	}else{
-    		artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);    		
-    	}
+    	RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);    		
         artifactDescriptor.setLastModified(lastModified);
         repoDescriptor.getContainedArtifacts().add(artifactDescriptor);
         return artifactDescriptor;

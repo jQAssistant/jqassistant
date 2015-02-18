@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.buschmais.jqassistant.core</groupId>
+  <artifactId>jqassistant.core.analysis</artifactId>
+  <version>1.0.0-RC-20150218.083721-1</version>
+  <versioning>
+    <snapshot>
+      <timestamp>20150218.084048</timestamp>
+      <buildNumber>2</buildNumber>
+    </snapshot>
+    <lastUpdated>20150218084048</lastUpdated>
+    <snapshotVersions>
+      <snapshotVersion>
+        <extension>pom</extension>
+        <value>1.0.0-RC-20150218.084048-2</value>
+        <updated>20150218084048</updated>
+      </snapshotVersion>
+      <snapshotVersion>
+        <extension>jar</extension>
+        <value>1.0.0-RC-20150218.084048-2</value>
+        <updated>20150218084048</updated>
+      </snapshotVersion>
+    </snapshotVersions>
+  </versioning>
+</metadata>
