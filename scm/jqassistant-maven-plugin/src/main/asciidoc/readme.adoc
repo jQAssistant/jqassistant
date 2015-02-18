@@ -311,7 +311,7 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 ==== Execution
 
 [[skip]]
-===== skip
+===== skip (-Djqassistant.skip)
 * skip execution of the plugin
 * default: 'false'
 
