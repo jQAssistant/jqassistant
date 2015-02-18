@@ -388,7 +388,12 @@
                 <configuration>
                     <detectLinks>false</detectLinks>
                     <additionalparam>-Xdoclint:none</additionalparam>
-                    <excludePackageNames>*.schema.*</excludePackageNames>
+                    <groups>
+                        <group>
+                            <title>API</title>
+                            <packages>com.buschmais.${artifactId}.api.*</packages>
+                        </group>
+                    </groups>
                 </configuration>
             </plugin>
             <plugin>
