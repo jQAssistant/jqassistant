@@ -1,6 +1,6 @@
 language: java
 jdk: oraclejdk8
-script: mvn install -DskipTests=true -B -V
+install: mvn install -DskipTests=true -B -V
 notifications:
   webhooks:
     urls:
