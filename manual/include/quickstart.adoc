@@ -37,7 +37,7 @@ bin/jqassistant.sh server
 ----
 
 * Open a browser and navigate to http://localhost:7474[http://localhost:7474]
-* Enter the follwoing query in the top level area and hit Ctrl-Enter:
+* Enter the following query in the top level area and hit Ctrl-Enter:
 
 [source]
 ----
