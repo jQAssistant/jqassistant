@@ -22,7 +22,7 @@
                 <executions>
                     <execution>
                         <id>index</id>
-                        <phase>generate-resources</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
@@ -65,7 +65,7 @@
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
-                        <phase>process-resources</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <outputDirectory>${distribution.directory}</outputDirectory>
                             <includeTypes>zip</includeTypes>
@@ -78,12 +78,26 @@
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
-                        <phase>initialize</phase>
+                        <phase>generate-resources</phase>
                         <configuration>
                             <outputDirectory>${project.build.directory}/generated-sources/asciidoc</outputDirectory>
                             <includeTypes>zip</includeTypes>
                             <includeClassifiers>asciidoc</includeClassifiers>
                             <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-javadoc</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-sources/javadoc</outputDirectory>
+                            <includeClassifiers>javadoc</includeClassifiers>
+                            <useSubDirectoryPerArtifact>true</useSubDirectoryPerArtifact>
+                            <stripVersion>true</stripVersion>
+                            <useSubDirectoryPerArtifact>true</useSubDirectoryPerArtifact>
                         </configuration>
                     </execution>
                 </executions>
@@ -154,6 +168,13 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java8</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
@@ -166,6 +187,13 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.cdi</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -185,6 +213,13 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.facelet</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.jaxrs</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
@@ -201,7 +236,29 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.jpa2</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.javaee6</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.javaee6</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.junit</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
@@ -211,8 +268,7 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.junit</artifactId>
             <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
+            <classifier>javadoc</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -233,10 +289,24 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.m2repo</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.maven3</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.maven3</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -257,6 +327,13 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.tycho</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.rdbms</artifactId>
             <version>${project.version}</version>
             <type>zip</type>
@@ -269,6 +346,13 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.xml</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
             <scope>provided</scope>
         </dependency>
         <!-- Examples -->

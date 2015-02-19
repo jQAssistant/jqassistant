@@ -12,12 +12,13 @@
     <xsl:template match="plugin:jqassistant-plugin">
 = <xsl:value-of select="@name"/>
 <xsl:value-of select="$newline"/>
-<xsl:apply-templates select="//description"/>
+        <xsl:apply-templates select="//description"/>
 <xsl:value-of select="$newline"/>
 <xsl:value-of select="$newline"/>
 <xsl:for-each select="//resource">&lt;&lt;<xsl:value-of select="text()"/>&gt;&gt; </xsl:for-each>
-<xsl:apply-templates select="//scanner"/>
-<xsl:apply-templates select="//resource"/>
+        <xsl:apply-templates select="//scanner"/>
+        <xsl:apply-templates select="//model"/>
+        <xsl:apply-templates select="//resource"/>
     </xsl:template>
 
     <xsl:template match="description">
@@ -28,6 +29,12 @@
     <xsl:template match="scanner">
         <xsl:value-of select="$newline"/>
 include::{docRoot}/<xsl:value-of select="$pluginName"/>/scanner.adoc[]
+    </xsl:template>
+
+    <xsl:template match="model">
+        <xsl:value-of select="$newline"/>
+Refer to the link:javadoc/<xsl:value-of select="$pluginName"/>/index.html[plugin Javadoc] for details
+about the model.
     </xsl:template>
 
     <xsl:template match="resource">

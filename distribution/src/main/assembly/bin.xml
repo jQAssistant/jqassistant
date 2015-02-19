@@ -6,6 +6,16 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>true</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>doc/javadoc/${artifact.artifactId}</outputDirectory>
+            <includes>
+                <include>*:*:jar:javadoc:${project.version}</include>
+            </includes>
+            <scope>provided</scope>
+            <unpack>true</unpack>
+        </dependencySet>
+    </dependencySets>
     <fileSets>
         <fileSet>
             <!-- shell scripts provided from other modules -->
