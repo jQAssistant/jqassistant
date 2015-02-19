@@ -1,5 +1,5 @@
 = Manual
-jQAssistant Team <info@jqassistant.org>
+jQAssistant <info@jqassistant.org> @jqassistant
 
 image::jQA_logo.png[]
 
