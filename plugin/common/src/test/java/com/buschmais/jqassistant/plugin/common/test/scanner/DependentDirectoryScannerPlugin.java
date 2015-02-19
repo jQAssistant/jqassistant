@@ -20,7 +20,7 @@ public class DependentDirectoryScannerPlugin extends AbstractScannerPlugin<File,
 
     @Override
     public boolean accepts(File item, String path, Scope scope) throws IOException {
-        return DefaultScope.NONE.equals(scope);
+        return DefaultScope.NONE.equals(scope) && item.isDirectory();
     }
 
     @Override
