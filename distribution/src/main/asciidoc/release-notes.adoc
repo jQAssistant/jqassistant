@@ -2,4 +2,5 @@
 
 :numbered!:
 include::include/1.0.0-RC.adoc[]
+
 include::include/1.0.0-M4.adoc[]

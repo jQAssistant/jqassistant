@@ -1,11 +1,16 @@
 == 1.0.0-RC
 
-=== Command line
-- added command line support for scopes, e.g. scan -f java:classpath::/My/ClassPath/
+=== Core
+
+==== Rules
+- added support for rules as script (e.g. Ruby, Groovy, JavaScript etc.) using the Java Scripting API
 
 === Maven plugin
 - minimum requirement has been changed to Apache Maven 3.2.x
 - added support for scopes: scope element in scanIncludes and a new goal available-scopes
+
+=== Command line
+- added command line support for scopes, e.g. scan -f java:classpath::/My/ClassPath/
 
 === Plugins
 
@@ -31,9 +36,7 @@
 ==== Maven Repository
 - added Maven 2 Repository plugin containing a scanner for incremental scans of remote repositories
 
-=== Rules
-- added support for rules as script (e.g. Ruby, Groovy, JavaScript etc.) using the Java Scripting API
-
 === Plugin API
 - added annotation @Requires for scanner plugins to build dependency chains
 - added mandatory "name" attribute to jqassistant-plugin element of jqassistant-plugin.xml descriptors
+- moved file related model classes from package 'c.b.j.core.store.api.model' to 'c.b.j.plugin.common.api.model'
