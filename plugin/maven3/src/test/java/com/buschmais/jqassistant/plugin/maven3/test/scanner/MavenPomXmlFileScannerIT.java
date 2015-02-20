@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 
-public class PomIT extends AbstractJavaPluginIT {
+public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
     /**
      * Scans and tests pom.xml files.
@@ -26,7 +26,7 @@ public class PomIT extends AbstractJavaPluginIT {
      */
     @Test
     public void testPoms() throws IOException {
-        scanClassPathDirectory(getClassesDirectory(PomIT.class));
+        scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
         store.beginTransaction();
 
         validateParentPom();

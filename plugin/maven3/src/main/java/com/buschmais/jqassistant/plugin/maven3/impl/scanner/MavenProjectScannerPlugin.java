@@ -20,13 +20,15 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 /**
- * A project scanner plugin for maven projects.
+ * A scanner plugin for maven projects.
  */
 public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
@@ -41,7 +43,6 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
-        projectDescriptor.setPackaging(project.getPackaging());
         // resolve dependencies
         Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
         Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
@@ -66,9 +67,11 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
             scanClassesDirectory(projectDescriptor, testArtifactDescriptor, true, testOutputDirectory, scanner);
         }
         // project information
-        addProjectDetails(project, projectDescriptor, context);
+        addProjectDetails(project, projectDescriptor, scanner);
+        // add test reports
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
         scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
+        // add additional includes
         List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
         if (scanIncludes != null) {
             for (ScanInclude scanInclude : scanIncludes) {
@@ -88,9 +91,27 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      * @param projectDescriptor
      *            The project descriptor.
      */
-    private void addProjectDetails(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, ScannerContext scannerContext) {
+    private void addProjectDetails(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
+        ScannerContext scannerContext = scanner.getContext();
         addParent(project, projectDescriptor, scannerContext);
         addModules(project, projectDescriptor, scannerContext);
+        addModel(project, projectDescriptor, scanner);
+    }
+
+    /**
+     * Scan the pom.xml file and add it as model.
+     * 
+     * @param project
+     *            The Maven project
+     * @param projectDescriptor
+     *            The project descriptor.
+     * @param scanner
+     *            The scanner.
+     */
+    private void addModel(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
+        File pomXmlFile = project.getFile();
+        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        projectDescriptor.setModel(mavenPomXmlDescriptor);
     }
 
     /**

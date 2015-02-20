@@ -18,8 +18,17 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 public interface ScannerPlugin<I, D extends Descriptor> {
 
     /**
-     * Defines an annotation for specifying dependencies between scanner
-     * plugins.
+     * Defines the annotation for specifying a dependency to another plugin to
+     * provide an instance of the given descriptor value.
+     * <pre>
+     *     @Requires(XmlDescriptor.class)
+     *     public class MyPlugin implements ScannerPlugin<FileResource, MyDescriptor> {
+     *
+     *       public MyDescriptor scan(FileResource item, String path, Scope scope) {
+     *
+     *       }
+     *     }
+     * </pre>
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)

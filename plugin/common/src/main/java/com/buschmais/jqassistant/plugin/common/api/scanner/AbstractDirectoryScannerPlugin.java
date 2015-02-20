@@ -65,6 +65,11 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     protected abstract Scope getRequiredScope();
 
     @Override
+    protected String getContainerPath(File container, String path) {
+        return container.toURI().getPath();
+    }
+
+    @Override
     protected String getRelativePath(File container, File entry) {
         return getDirectoryPath(container, entry);
     }

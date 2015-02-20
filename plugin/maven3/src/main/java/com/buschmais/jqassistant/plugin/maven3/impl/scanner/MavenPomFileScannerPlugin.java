@@ -8,9 +8,9 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 
 /**
- * Scanner plugin for .pom files (as they can be found in M2 repositories)
+ * Scanner plugin for .pom files (as they can be found in M2 repositories).
  */
-public class MavenPomScannerPlugin extends AbstractMavenPomScannerPlugin {
+public class MavenPomFileScannerPlugin extends AbstractMavenPomScannerPlugin {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {

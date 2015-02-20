@@ -26,8 +26,10 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
 
 public class MavenProjectScannerPluginTest {
@@ -46,6 +48,8 @@ public class MavenProjectScannerPluginTest {
 
         // Mock project
         MavenProject project = mock(MavenProject.class);
+        File pomXml = new File("pom.xml");
+        when(project.getFile()).thenReturn(pomXml);
         when(project.getName()).thenReturn("project");
         Artifact artifact = new DefaultArtifact("group", "artifact", VersionRange.createFromVersion("1.0.0"), null, "jar", "main", null);
         when(project.getGroupId()).thenReturn("group");
@@ -73,18 +77,25 @@ public class MavenProjectScannerPluginTest {
 
         Scanner scanner = mock(Scanner.class);
 
+        // pom.xml
+        MavenPomXmlDescriptor pomXmlDescriptor = mock(MavenPomXmlDescriptor.class);
+        when(scanner.scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
+
+        // classes directory
         FileDescriptor classesDirectory = mock(FileDescriptor.class);
         JavaClassesDirectoryDescriptor mainArtifact = mock(JavaClassesDirectoryDescriptor.class);
         when(scanner.scan(Mockito.any(File.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH))).thenReturn(classesDirectory);
         when(store.find(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(null, mainArtifact);
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(mainArtifact);
 
+        // test classes directory
         FileDescriptor testClassesDirectory = mock(FileDescriptor.class);
         JavaClassesDirectoryDescriptor testArtifact = mock(JavaClassesDirectoryDescriptor.class);
         when(scanner.scan(Mockito.any(File.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH))).thenReturn(testClassesDirectory);
         when(store.find(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(null, testArtifact);
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
 
+        // dependencies
         JavaArtifactDescriptor dependencyArtifact = mock(JavaArtifactDescriptor.class);
         when(store.find(ArtifactDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
 
@@ -105,9 +116,11 @@ public class MavenProjectScannerPluginTest {
         when(scannerContext.getStore()).thenReturn(store);
         when(scanner.getContext()).thenReturn(scannerContext);
 
+        // scan
         scannerPlugin.initialize(properties);
         scannerPlugin.scan(project, null, null, scanner);
 
+        // verify
         verify(scanner).scan(Mockito.any(File.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH));
         verify(scanner).scan(Mockito.any(File.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH));
         verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
@@ -116,6 +129,8 @@ public class MavenProjectScannerPluginTest {
         verify(projectDescriptor).setArtifactId("artifact");
         verify(projectDescriptor).setVersion("1.0.0");
         verify(projectDescriptor).setPackaging("jar");
+        verify(scanner).scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT);
+        verify(projectDescriptor).setModel(pomXmlDescriptor);
         verify(store).create(JavaClassesDirectoryDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(store).create(JavaClassesDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0");
         verify(mainArtifact).setGroup("group");

@@ -37,7 +37,7 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> ext
      * @param descriptor
      *            The descriptor returned by the scanner.
      * @param relativePath
-     *            The relativ path to be used for the file name attribute.
+     *            The relative path to be used for the file name attribute.
      * @param context
      *            The scanner context.
      * @param <F>

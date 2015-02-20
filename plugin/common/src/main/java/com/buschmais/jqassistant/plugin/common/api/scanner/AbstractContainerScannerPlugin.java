@@ -31,8 +31,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
     public final D scan(I container, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         D containerDescriptor = getContainerDescriptor(container, context);
-        containerDescriptor.setFileName(path);
-        LOGGER.info("Entering {}", path);
+        String containerPath = getContainerPath(container, path);
+        containerDescriptor.setFileName(containerPath);
+        LOGGER.info("Entering {}", containerPath);
         Map<String, FileDescriptor> files = new HashMap<>();
         enterContainer(container, containerDescriptor, scanner.getContext());
         try {
@@ -52,7 +53,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
-            LOGGER.info("Leaving {}", path);
+            LOGGER.info("Leaving {}", containerPath);
         }
         for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
             String relativePath = entry.getKey();
@@ -93,6 +94,15 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
      *             If the entries cannot be determined.
      */
     protected abstract Iterable<? extends E> getEntries(I container) throws IOException;
+
+    /**
+     * Return the normalized path to the container.
+     * 
+     * @param container
+     *            The container.
+     * @return The normalized path.
+     */
+    protected abstract String getContainerPath(I container, String path);
 
     /**
      * Return the relative path of an element within the container.
