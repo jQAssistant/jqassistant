@@ -25,7 +25,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
 
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
-        String normalizedPath = new File("pom.xml").toURI().getPath();
+        String normalizedPath = slashify(path);
         LOGGER.info("Scanning '{}'.", normalizedPath);
         FileDescriptor fileDescriptor;
         try (FileResource fileResource = new FileResource() {

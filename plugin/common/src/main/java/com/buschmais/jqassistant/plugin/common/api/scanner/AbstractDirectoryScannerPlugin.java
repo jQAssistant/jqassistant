@@ -66,7 +66,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
 
     @Override
     protected String getContainerPath(File container, String path) {
-        return container.toURI().getPath();
+        return slashify(path);
     }
 
     @Override
