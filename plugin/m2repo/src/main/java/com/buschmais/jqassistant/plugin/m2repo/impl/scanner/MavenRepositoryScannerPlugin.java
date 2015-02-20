@@ -51,6 +51,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private File localDirectory;
 
     private boolean deleteArtifactsAfterScan = false;
+    private Store store;
 
     /**
      * Creates a new Object.
@@ -88,7 +89,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      * @return a string with the artifact coords
      *         (groupId:artifactId:[classifier:]version).
      */
-    private String getFqn(Artifact artifact, String version) {
+    private String getCoords(Artifact artifact, String version) {
         StringBuilder builder = new StringBuilder(artifact.getGroupId()).append(":");
         builder.append(artifact.getArtifactId()).append(":");
         builder.append(artifact.getExtension()).append(":");
@@ -113,7 +114,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            the repository url
      * @return a {@link MavenRepositoryDescriptor} for the given url.
      */
-    private MavenRepositoryDescriptor getRepositoryDescriptor(Store store, String url) {
+    private MavenRepositoryDescriptor getRepositoryDescriptor(String url) {
         MavenRepositoryDescriptor repositoryDescriptor = store.find(MavenRepositoryDescriptor.class, url);
         if (repositoryDescriptor == null) {
             repositoryDescriptor = store.create(MavenRepositoryDescriptor.class);
@@ -154,9 +155,10 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            the artifact descriptor
      * @return
      */
-    private RepositoryArtifactDescriptor migrateToArtifactAndSetRelation(Store store, MavenRepositoryDescriptor repoDescriptor, long lastModified,
-            Descriptor descriptor) {
+    private RepositoryArtifactDescriptor migrateToArtifactAndSetRelation(MavenRepositoryDescriptor repoDescriptor, long lastModified, Descriptor descriptor) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
+        store.commitTransaction();
+        store.beginTransaction();
         artifactDescriptor.setLastModified(lastModified);
         repoDescriptor.getContainedArtifacts().add(artifactDescriptor);
         return artifactDescriptor;
@@ -188,7 +190,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, packaging, version);
 
             artifactResults = artifactResolver.downloadArtifact(artifact);
-            Store store = scanner.getContext().getStore();
             for (ArtifactResult artifactResult : artifactResults) {
                 final Artifact resolvedArtifact = artifactResult.getArtifact();
                 final File artifactFile = resolvedArtifact.getFile();
@@ -196,22 +197,26 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
                     if (descriptor != null) {
                         long lastModified = artifactInfo.lastModified;
-                        RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
+                        if (isArtifactInDb(artifact, lastModified)) {
+                            continue;
+                        }
+
+                        RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(repoDescriptor, lastModified, descriptor);
                         artifactDescriptor.setClassifier(resolvedArtifact.getClassifier());
                         artifactDescriptor.setGroup(resolvedArtifact.getGroupId());
                         artifactDescriptor.setName(resolvedArtifact.getArtifactId());
                         artifactDescriptor.setType(resolvedArtifact.getExtension());
                         artifactDescriptor.setVersion(version);
 
-                        String fqn = getFqn(resolvedArtifact, version);
-                        artifactDescriptor.setFullQualifiedName(fqn);
+                        String coords = getCoords(resolvedArtifact, version);
+                        artifactDescriptor.setMavenCoordinates(coords);
 
                         Map<String, Object> queryParams = new HashMap<>();
-                        queryParams.put("fqn", fqn);
+                        queryParams.put("coords", coords);
                         queryParams.put("lastModified", lastModified);
                         Result<CompositeRowObject> queryResult = store
                                 .executeQuery(
-                                        "MATCH (n:Artifact:Maven)<-[CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.fqn={fqn} AND n.lastModified<>{lastModified} RETURN n",
+                                        "MATCH (n:Artifact:Maven)<-[CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.mavenCoordinates={coords} AND n.lastModified<>{lastModified} RETURN n",
                                         queryParams);
                         if (queryResult.hasResult()) {
                             RepositoryArtifactDescriptor predecessorArtifactDescriptor = queryResult.getSingleResult().get("n",
@@ -233,6 +238,18 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         }
     }
 
+    private boolean isArtifactInDb(Artifact artifact, long lastModified) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("coords", getCoords(artifact, null));
+        params.put("lastModified", lastModified);
+
+        Result<CompositeRowObject> queryResult = store.executeQuery(
+                "MATCH (n:RepositoryArtifact) WHERE n.mavenCoordinates={coords} and n.lastModified={lastModified} RETURN count(n) as nodeCount;", params);
+        CompositeRowObject rowObject = queryResult.getSingleResult();
+        Long nodeCount = rowObject.get("nodeCount", Long.class);
+        return nodeCount > 0;
+    }
+
     /** {@inheritDoc} */
     @Override
     public MavenRepositoryDescriptor scan(URL item, String path, Scope scope, Scanner scanner) throws IOException {
@@ -242,13 +259,13 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
         File localRepoDir = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
 
-        Store store = scanner.getContext().getStore();
+        store = scanner.getContext().getStore();
         // handles the remote maven index
         if (mavenIndex == null) {
             mavenIndex = new MavenIndex(item, localRepoDir);
         }
         // the MavenRepositoryDescriptor
-        MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(store, item.toString());
+        MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(item.toString());
         // used to resolve (remote) artifacts
         if (artifactResolver == null) {
             artifactResolver = new ArtifactResolver(item, localRepoDir, username, password);
@@ -262,11 +279,14 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
         mavenIndex.updateIndex(username, password);
 
+        long artifactCount = 0L;
         // Search artifacts
         Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
         for (ArtifactInfo ai : searchResponse) {
             resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
+            artifactCount++;
         }
+        LOGGER.error("Scanned artifacts: " + artifactCount);
         mavenIndex.closeCurrentIndexingContext();
         mavenIndex = null;
         repoDescriptor.setLastScanDate(System.currentTimeMillis());

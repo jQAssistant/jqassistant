@@ -2,14 +2,14 @@
 [[MavenRepositoryScanner]]
 == Scanner for remote maven repositories
 Downloads the repository index and all new artifacts. After that the plugin delegates all new artifacts to other plugins. This plugin should be triggered
-on the command line interface. You have to use a scope if you trigger this plugin. 
+on the command line interface. You have to use a scope to trigger this plugin. 
 
-Example: 
+Examples: 
 [source,bash]
 >jqassistant.cmd scan -u maven:repository::http://[<user>:<password>@]<repository url>
 >jqassistant.cmd scan -u maven:repository::http://foo:bar@example.com/m2repo
 
-TIP: The plugin supports incremental runs on a maven repository. In this case only new artifacts where downloaded and scanned. Old snapshot artifacts where 
+TIP: The plugin supports incremental runs on a maven repository. In this case, only new artifacts where downloaded and scanned. Old snapshot artifacts where 
 handled as predecessors (see below). Predecessor artifacts have no relationship to the :Maven:Repository node!
 
 === Configuration
@@ -46,12 +46,13 @@ A Maven artifact (e.g. *.pom, *.jar).
 .Properties of :RepositoryArtifact:Maven
 [options="header"]
 |====
-| Name       | Description
-| group      | The group id
-| name 		 | The artifact id
-| type       | The type, e.g. "jar"
-| classifier | The classifier
-| version    | The version
+| Name       		| Description
+| mavenCoordinates  | The maven coordinates <groupId>:<artifactId>:<type>:(<classifier>:)<version>.
+| group      		| The group id
+| name 		 		| The artifact id
+| type       		| The type, e.g. "jar"
+| classifier 		| The classifier
+| version    		| The version
 |====
 
 .Relations of :RepositoryArtifact:Maven

@@ -87,7 +87,18 @@ public class MavenRepositoryScannerTest {
         }
         final String repoUrl = "http://example.com/m2repo";
 
+        CompositeRowObject rowObject = mock(CompositeRowObject.class);
+        when(rowObject.get("nodeCount", Long.class)).thenReturn(0L);
+
+        Result<CompositeRowObject> inDbQueryResult = mock(Result.class);
+        when(inDbQueryResult.getSingleResult()).thenReturn(rowObject);
+
         Store store = mock(Store.class);
+        when(
+                store.executeQuery(Matchers
+                        .eq("MATCH (n:RepositoryArtifact) WHERE n.mavenCoordinates={coords} and n.lastModified={lastModified} RETURN count(n) as nodeCount;"),
+                        Matchers.anyMap())).thenReturn(inDbQueryResult);
+
         ScannerContext context = mock(ScannerContext.class);
         when(context.getStore()).thenReturn(store);
         MavenRepositoryDescriptor repoDescriptor = mock(MavenRepositoryDescriptor.class);
@@ -102,7 +113,10 @@ public class MavenRepositoryScannerTest {
 
         Result<CompositeRowObject> queryResult = mock(Result.class);
         when(queryResult.hasResult()).thenReturn(false);
-        when(store.executeQuery(anyString(), Matchers.anyMap())).thenReturn(queryResult);
+        when(
+                store.executeQuery(
+                        Matchers.eq("MATCH (n:Artifact:Maven)<-[CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.mavenCoordinates={coords} AND n.lastModified<>{lastModified} RETURN n"),
+                        Matchers.anyMap())).thenReturn(queryResult);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
             File artifactFile = newFile(artifactInfo);

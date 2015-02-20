@@ -24,8 +24,9 @@ public interface RepositoryArtifactDescriptor extends MavenDescriptor, ArtifactD
     @Incoming
     @ContainsArtifact
     MavenRepositoryDescriptor getContainingRepository();
-    
+
     void setContainingRepository(MavenRepositoryDescriptor containsArtifactDescriptor);
+
     /**
      * The last modified date as String.
      * 
@@ -33,9 +34,20 @@ public interface RepositoryArtifactDescriptor extends MavenDescriptor, ArtifactD
      */
     @Property("lastModified")
     long getLastModified();
-    
+
     void setLastModified(long lastModified);
-    
+
+    /**
+     * The maven coordinates
+     * <groupId>:<artifactId>:<type>:(<classifier>:)<version>.
+     * 
+     * @return the maven coordinates.
+     */
+    @Property("mavenCoordinates")
+    String getMavenCoordinates();
+
+    void setMavenCoordinates(String mavenCoordinates);
+
     /**
      * The last version of that SNAPSHOT artifact, if existing.
      * 
