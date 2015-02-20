@@ -25,7 +25,8 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
 
     @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
-        LOGGER.info("Scanning '{}'.", file.getAbsolutePath());
+        String normalizedPath = new File("pom.xml").toURI().getPath();
+        LOGGER.info("Scanning '{}'.", normalizedPath);
         FileDescriptor fileDescriptor;
         try (FileResource fileResource = new FileResource() {
 
@@ -43,8 +44,8 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
             public void close() {
             }
         };) {
-            fileDescriptor = scanner.scan(fileResource, path, scope);
-            return toFileDescriptor(fileResource, fileDescriptor, path, scanner.getContext());
+            fileDescriptor = scanner.scan(fileResource, normalizedPath, scope);
+            return toFileDescriptor(fileResource, fileDescriptor, normalizedPath, scanner.getContext());
         }
     }
 }
