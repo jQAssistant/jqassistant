@@ -41,6 +41,7 @@ public abstract class AbstractMavenProjectScannerPlugin extends AbstractScannerP
             projectDescriptor.setGroupId(project.getGroupId());
             projectDescriptor.setArtifactId(project.getArtifactId());
             projectDescriptor.setVersion(project.getVersion());
+            projectDescriptor.setPackaging(project.getPackaging());
         } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
             projectDescriptor = store.migrate(projectDescriptor, expectedType);
         }

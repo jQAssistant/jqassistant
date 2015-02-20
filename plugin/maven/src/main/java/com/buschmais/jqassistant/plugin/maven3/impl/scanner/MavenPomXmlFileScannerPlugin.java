@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 
 @Requires(XmlFileDescriptor.class)
-public class MavenPomXmlScannerPlugin extends AbstractMavenPomScannerPlugin {
+public class MavenPomXmlFileScannerPlugin extends AbstractMavenPomScannerPlugin {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
