@@ -39,6 +39,7 @@
 ==== JUnit
 - renamed JUnit4 plugin to JUnit as it also contains rules for JUnit3
 - added a concept 'junit4:SuiteClass'
+- added a group 'junit4:Default' including all defined constraints for JUnit4
 
 ==== Maven
 - added a plugin for scanning pom.xml files providing access to dependency management, plugins, profiles, etc.
