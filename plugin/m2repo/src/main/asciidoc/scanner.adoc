@@ -1,16 +1,22 @@
 <<MavenRepositoryScanner>>
 [[MavenRepositoryScanner]]
 == Scanner for remote maven repositories
-Downloads the repository index and all new artifacts. After that the plugin delegates all new artifacts to other plugins. This plugin should be triggered
-on the command line interface. You have to use a scope to trigger this plugin. 
+Downloads the repository index and retrieves all available new artifacts for scanning.
+
+This plugin should be triggered on the command line by providing an URL and a specific scope:
 
 Examples: 
 [source,bash]
+----
 >jqassistant.cmd scan -u maven:repository::http://[<user>:<password>@]<repository url>
 >jqassistant.cmd scan -u maven:repository::http://foo:bar@example.com/m2repo
+----
 
-TIP: The plugin supports incremental runs on a maven repository. In this case, only new artifacts where downloaded and scanned. Old snapshot artifacts where 
-handled as predecessors (see below). Predecessor artifacts have no relationship to the :Maven:Repository node!
+TIP: The plugin supports incremental runs on a maven repository. In this case only new artifacts will be downloaded and
+scanned. Old snapshot artifacts will be handled as predecessors (see below). Note that such predecessor artifacts will
+have no direct relationship to the :Maven:Repository node.
+
+TIP: For incremental scanning it is necessary that the exactly the same URL is provided on sub-sequent scans.
 
 === Configuration
 
