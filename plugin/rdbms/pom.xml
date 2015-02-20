@@ -60,6 +60,7 @@
 				</executions>
 				<configuration>
 					<shadedArtifactAttached>false</shadedArtifactAttached>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
 					<artifactSet>
 						<includes>
 							<include>us.fatehi:schemacrawler*</include>

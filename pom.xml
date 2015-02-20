@@ -391,7 +391,7 @@
                     <groups>
                         <group>
                             <title>API</title>
-                            <packages>com.buschmais.${artifactId}.api.*</packages>
+                            <packages>com.buschmais.${project.artifactId}.api.*</packages>
                         </group>
                     </groups>
                 </configuration>

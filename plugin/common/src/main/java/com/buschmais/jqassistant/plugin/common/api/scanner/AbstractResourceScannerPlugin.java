@@ -31,6 +31,10 @@ public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> ext
         return getTypeParameter(AbstractResourceScannerPlugin.class, 1);
     }
 
+    protected String slashify(String path) {
+        return path.replace('\\', '/');
+    }
+
     /**
      * Ensures that a file descriptor is returned.
      * 
