@@ -449,6 +449,7 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
         pomDescriptor.setName(model.getArtifactId());
         pomDescriptor.setVersion(model.getVersion());
         pomDescriptor.setType(model.getPackaging());
+        pomDescriptor.setFileName(item.getFile().getAbsolutePath());
 
         addParent(pomDescriptor, model, store);
         addProfiles(pomDescriptor, model, store);
