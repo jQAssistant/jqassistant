@@ -119,6 +119,10 @@ public class MavenIndex {
                 repoUrl.toString(), null, true, true, indexers);
     }
 
+    public void closeCurrentIndexingContext() throws IOException {
+        indexer.closeIndexingContext(indexingContext, false);
+    }
+
     public Iterable<ArtifactInfo> getArtifactsSince(final Date startDate) throws IOException {
         final long startDateMillis = startDate.getTime();
         // find only maven artifact documents

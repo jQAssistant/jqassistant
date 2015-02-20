@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.buschmais.jqassistant.core</groupId>
+  <artifactId>jqassistant.core.analysis</artifactId>
+  <version>1.0.0-RC-20150218.083721-1</version>
+  <versioning>
+    <latest>1.0.0-RC-SNAPSHOT</latest>
+    <versions>
+      <version>1.0.0-RC-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20150218083721</lastUpdated>
+  </versioning>
+</metadata>
