@@ -360,6 +360,20 @@ public class Junit4IT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the group "junit4:default".
+     * 
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void defaultGroup() throws AnalysisException {
+        executeGroup("junit4:Default");
+        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        assertThat(constraintViolations.keySet(),
+                hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion", "junit4:IgnoreWithoutMessage"));
+    }
+
+    /**
      * Verifies if a IMPLEMENTED_BY relation exists between a test case and and
      * test method.
      * 
