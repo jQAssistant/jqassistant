@@ -1,7 +1,7 @@
 language: java
 jdk: oraclejdk8
-install: mvn verify -PIT
 script: mvn install -DskipTests=true -B -V
+install: mvn verify
 notifications:
   webhooks:
     urls:
