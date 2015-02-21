@@ -8,7 +8,7 @@
         <description>The manifest file must contain the symbolic name.</description>
         <cypher><![CDATA[
           MATCH
-            (a:Artifact)
+            (a:Java:Artifact{type:"eclipse-plugin"})
           WHERE NOT
             (a)-[:CONTAINS]->(:Manifest)-[:DECLARES]->(:ManifestSection)-[:HAS]->(:ManifestEntry{name:'Bundle-SymbolicName'})
           RETURN
