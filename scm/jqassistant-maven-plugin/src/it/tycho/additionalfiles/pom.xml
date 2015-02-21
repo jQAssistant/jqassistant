@@ -26,6 +26,9 @@
                         <id>analyze</id>
                     </execution>
                 </executions>
+                <configuration>
+                    <failOnViolations>true</failOnViolations>
+                </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant.plugin</groupId>
