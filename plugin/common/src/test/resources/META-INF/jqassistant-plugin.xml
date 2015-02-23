@@ -10,5 +10,6 @@
     </scanner>
     <rules>
         <resource>script.xml</resource>
+        <resource>script.adoc</resource>
     </rules>
 </jqa-plugin:jqassistant-plugin>
