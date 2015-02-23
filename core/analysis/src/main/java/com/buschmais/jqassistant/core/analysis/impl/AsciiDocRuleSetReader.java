@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,6 +22,8 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
  * @since 12.10.14
  */
 public class AsciiDocRuleSetReader implements RuleSetReader {
+
+    private static final Set<String> RULETYPES = new HashSet<>(asList("concept", "constraint"));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSetReader.class);
 
@@ -79,14 +83,22 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Map<String, Object> attributes = part.getAttributes();
             String id = part.getId();
             String description = attributes.get("title").toString();
-            String cypher = unescapeHtml(part.getContent());
             Set<String> requiresConcepts = getDependencies(attributes);
+            String cypher = null;
+            Script script = null;
+            Object language = part.getAttributes().get("language");
+            String source = unescapeHtml(part.getContent());
+            if ("cypher".equals(language)) {
+                cypher = source;
+            } else {
+                script = new Script(language.toString(), source);
+            }
             if ("concept".equals(part.getRole())) {
-                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, null, null, Collections.<String, Object> emptyMap(),
+                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, script, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
                 concepts.put(concept.getId(), concept);
             } else if ("constraint".equals(part.getRole())) {
-                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, null, null, Collections.<String, Object> emptyMap(),
+                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, script, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
                 constraints.put(concept.getId(), concept);
             }
@@ -103,7 +115,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         String depends = (String) attributes.get("depends");
         Set<String> dependencies = new HashSet<>();
         if (depends != null && !depends.trim().isEmpty()) {
-            dependencies.addAll(Arrays.asList(depends.split("\\s*,\\s*")));
+            dependencies.addAll(asList(depends.split("\\s*,\\s*")));
         }
         return dependencies;
     }
@@ -118,7 +130,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         Set<ContentPart> result = new LinkedHashSet<ContentPart>();
         if (parts != null) {
             for (ContentPart part : parts) {
-                if ("listing".equals(part.getContext()) && "source".equals(part.getStyle()) && "cypher".equals(part.getAttributes().get("language"))) {
+                if ("listing".equals(part.getContext()) && "source".equals(part.getStyle()) && RULETYPES.contains(part.getRole())) {
                     result.add(part);
                 }
                 result.addAll(findListings(part.getParts()));
