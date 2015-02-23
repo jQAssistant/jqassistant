@@ -58,7 +58,7 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
         ]]></cypher>
     </constraint>
 
-    <constraint id="my-rules:MyConstraint">
+    <constraint id="my-rules:MyConstraint" severity="blocker">
         <requiresConcept refId="my-rules:MyConcept" />
         <description>A human readable description of the constraint.</description>
         <cypher><![CDATA[
@@ -98,7 +98,7 @@ RETURN
 
 [[my-rules:MyConstraint]]
 .A human readable description of the constraint.
-[source,cypher,role=constraint,depends="my-rules:MyConcept"]
+[source,cypher,role=constraint,depends="my-rules:MyConcept",severity=blocker]
 ----
 MATCH
   ...
@@ -182,5 +182,19 @@ Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be use
 
 </jqa:jqassistant-rules>
 ----
+
+
+[source,asciidoc]
+.my-scripting-rules.adoc
+....
+
+[[my-scripting-rules:MyConcept]]
+.A JavaScript based concept.
+[source,javascript,role=constraint]
+----
+  ...
+----
+
+....
 
 Refer to the examples section for a detailed explanation.

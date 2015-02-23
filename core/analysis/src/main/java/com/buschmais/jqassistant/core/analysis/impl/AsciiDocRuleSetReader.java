@@ -78,6 +78,16 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return cachedAsciidoctor;
     }
 
+    /**
+     * Extract the rules from the given document.
+     * 
+     * @param doc
+     *            The document.
+     * @param concepts
+     *            The map of concepts to fill.
+     * @param constraints
+     *            The map of constraints to fill.
+     */
     private void extractRules(StructuredDocument doc, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
         for (ContentPart part : findListings(doc)) {
             Map<String, Object> attributes = part.getAttributes();
@@ -94,23 +104,53 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
                 script = new Script(language.toString(), source);
             }
             if ("concept".equals(part.getRole())) {
-                Concept concept = new Concept(id, description, Severity.INFO, null, cypher, script, null, Collections.<String, Object> emptyMap(),
-                        requiresConcepts);
+                Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
+                Concept concept = new Concept(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(), requiresConcepts);
                 concepts.put(concept.getId(), concept);
             } else if ("constraint".equals(part.getRole())) {
-                Constraint concept = new Constraint(id, description, Severity.INFO, null, cypher, script, null, Collections.<String, Object> emptyMap(),
+                Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
+                Constraint concept = new Constraint(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
                 constraints.put(concept.getId(), concept);
             }
         }
     }
 
-    // todo do better, or even better add a part.get(Original|Raw)Content() to
-    // asciidoctor
+    /**
+     * Extract the optional severity of a rule.
+     * 
+     * @param part
+     *            The part representing a rule.
+     * @param defaultSeverity
+     *            The default severity to use if no severity is specified.
+     * @return The severity.
+     */
+    private Severity getSeverity(ContentPart part, Severity defaultSeverity) {
+        Object severity = part.getAttributes().get("severity");
+        return severity == null ? defaultSeverity : Severity.fromValue(severity.toString().toLowerCase());
+    }
+
+    /**
+     * Unescapes the content of a rule.
+     *
+     * TODO do better, or even better add a part.get(Original|Raw)Content() to
+     * asciidoctor
+     * 
+     * @param content
+     *            The content of a rule.
+     * @return The unescaped rule
+     */
     private String unescapeHtml(String content) {
         return content.replace("&lt;", "<").replace("&gt;", ">");
     }
 
+    /**
+     * Get the dependencies declared for a rule.
+     * 
+     * @param attributes
+     *            The attributes of the rule.
+     * @return The set of dependencies.
+     */
     private Set<String> getDependencies(Map<String, Object> attributes) {
         String depends = (String) attributes.get("depends");
         Set<String> dependencies = new HashSet<>();
@@ -120,12 +160,28 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return dependencies;
     }
 
+    /**
+     * Find all content parts representing source code listings with a role that
+     * represents a rule.
+     * 
+     * @param doc
+     *            The document.
+     * @return A collection of content parts representing rules.
+     */
     private static Collection<ContentPart> findListings(StructuredDocument doc) {
         Set<ContentPart> result = new LinkedHashSet<ContentPart>();
         result.addAll(findListings(doc.getParts()));
         return result;
     }
 
+    /**
+     * Find all content parts representing source code listings with a role that
+     * represents a rule.
+     * 
+     * @param parts
+     *            The content parts of the document.
+     * @return A collection of content parts representing rules.
+     */
     private static Collection<ContentPart> findListings(Collection<ContentPart> parts) {
         Set<ContentPart> result = new LinkedHashSet<ContentPart>();
         if (parts != null) {

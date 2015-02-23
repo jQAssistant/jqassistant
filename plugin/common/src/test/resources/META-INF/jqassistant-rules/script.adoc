@@ -3,9 +3,9 @@
 :author: Dirk Mahler
 :version: 1.0.0-RC+
 
-[[concept:JavaScript]]
+[[javascript:AsciiDocTestConcept]]
 .Demonstrates a concept using JavaScript.
-[source,javascript,role=concept]
+[source,javascript,role=concept,severity=major]
 ----
 // create a test descriptor
 var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
@@ -19,9 +19,9 @@ var rows = java.util.Arrays.asList(row);
 new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
 ----
 
-[[concept:JavaScript]]
-.Demonstrates a concept using JavaScript.
-[source,javascript,role=concept,depends="concept:JavaScript"]
+[[javascript:AsciiDocTestConstraint]]
+.Demonstrates a constraint using JavaScript.
+[source,javascript,role=constraint,depends="javascript:AsciiDocTestConcept",severity=blocker]
 ----
 var columnNames = java.util.Arrays.asList("test");
 var queryResult = store.executeQuery("match (t:Test) return t");
