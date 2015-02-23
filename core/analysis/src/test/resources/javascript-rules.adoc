@@ -1,0 +1,28 @@
+== Using script languages as rules
+
+:author: Dirk Mahler
+:version: 1.0.0-RC+
+
+[[concept:JavaScript]]
+.Demonstrates a concept using JavaScript.
+[source,javascript,role=concept]
+----
+// prepare the result
+var columnNames = java.util.Arrays.asList("test");
+var row = new java.util.HashMap();
+var rows = java.util.Arrays.asList(row);
+// return the result
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+----
+
+[[concept:JavaScript]]
+.Demonstrates a constraint using JavaScript.
+[source,javascript,role=constraint]
+----
+// prepare the result
+var columnNames = java.util.Arrays.asList("test");
+var row = new java.util.HashMap();
+var rows = java.util.Arrays.asList(row);
+// return the result
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+----
