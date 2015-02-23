@@ -56,6 +56,10 @@ public class MavenIndex {
 
     private Indexer indexer;
 
+    private String password;
+
+    private String username;
+
     /**
      * Constructs a new object.
      * 
@@ -66,7 +70,9 @@ public class MavenIndex {
      * @throws IOException
      *             error during index creation/update
      */
-    public MavenIndex(URL repoUrl, File indexDirectory) throws IOException {
+    public MavenIndex(URL repoUrl, File indexDirectory, String username, String password) throws IOException {
+        this.username = username;
+        this.password = password;
         try {
             createIndexingContext(repoUrl, indexDirectory);
         } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
@@ -175,7 +181,7 @@ public class MavenIndex {
      * @throws ComponentLookupException
      * @throws IOException
      */
-    public void updateIndex(String username, String password) throws IOException {
+    public void updateIndex() throws IOException {
         IndexUpdater indexUpdater;
         Wagon httpWagon;
         try {
