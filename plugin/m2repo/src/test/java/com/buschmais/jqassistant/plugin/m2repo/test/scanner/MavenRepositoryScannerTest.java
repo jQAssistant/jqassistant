@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,7 +33,6 @@ import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.DefaultFileResource;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
@@ -95,8 +93,8 @@ public class MavenRepositoryScannerTest {
 
         Store store = mock(Store.class);
         when(
-                store.executeQuery(Matchers
-                        .eq("MATCH (n:RepositoryArtifact) WHERE n.mavenCoordinates={coords} and n.lastModified={lastModified} RETURN count(n) as nodeCount;"),
+                store.executeQuery(
+                        Matchers.eq("MATCH (n:RepositoryArtifact)<-[:CONTAINS_ARTIFACT]-(m:Maven:Repository) WHERE n.mavenCoordinates={coords} and n.lastModified={lastModified} and m.url={url} RETURN count(n) as nodeCount;"),
                         Matchers.anyMap())).thenReturn(inDbQueryResult);
 
         ScannerContext context = mock(ScannerContext.class);
@@ -115,7 +113,7 @@ public class MavenRepositoryScannerTest {
         when(queryResult.hasResult()).thenReturn(false);
         when(
                 store.executeQuery(
-                        Matchers.eq("MATCH (n:Artifact:Maven)<-[CONTAINS_ARTIFACT]-(:Maven:Repository) WHERE n.mavenCoordinates={coords} AND n.lastModified<>{lastModified} RETURN n"),
+                        Matchers.eq("MATCH (n:RepositoryArtifact)<-[:CONTAINS_ARTIFACT]-(m:Maven:Repository) WHERE n.mavenCoordinates={coords} AND n.lastModified<>{lastModified} and m.url={url} RETURN n"),
                         Matchers.anyMap())).thenReturn(queryResult);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
@@ -123,9 +121,9 @@ public class MavenRepositoryScannerTest {
             when(scanner.scan(new DefaultFileResource(artifactFile), artifactFile.getAbsolutePath(), null)).thenReturn(descriptor);
         }
 
-        MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin(mavenIndex, artifactResolver);
-        plugin.scan(new URL(repoUrl), repoUrl, MavenScope.REPOSITORY, scanner);
-        verify(mavenIndex).updateIndex(anyString(), anyString());
+        MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin();
+        plugin.scanRepository(new URL(repoUrl), scanner, mavenIndex, artifactResolver);
+        verify(mavenIndex).updateIndex();
         verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
         verify(store, new Times(3)).addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
     }
