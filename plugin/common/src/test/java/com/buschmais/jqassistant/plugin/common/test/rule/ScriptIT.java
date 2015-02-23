@@ -21,45 +21,57 @@ import com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor;
 public class ScriptIT extends AbstractPluginIT {
 
     @Test
-    public void javaScriptConcept() throws AnalysisException {
-        applyConcept("javascript:TestConcept");
-        verifyResults(reportWriter.getConceptResults(), "javascript:TestConcept", Severity.MINOR);
+    public void javaScriptXmlConcept() throws AnalysisException {
+        applyConcept("javascript:XmlTestConcept");
+        verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
-    public void javaScriptConceptUsingGDS() throws AnalysisException {
-        applyConcept("javascript:TestConceptUsingGDS");
-        verifyResults(reportWriter.getConceptResults(), "javascript:TestConceptUsingGDS", Severity.MINOR);
+    public void JavaScriptAsciiDocConcept() throws AnalysisException {
+        applyConcept("javascript:AsciiDocTestConcept");
+        verifyResults(reportWriter.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
     }
 
     @Test
-    public void javaScriptConstraint() throws AnalysisException {
-        validateConstraint("javascript:TestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "javascript:TestConstraint", Severity.BLOCKER);
+    public void javaScriptXmlConceptUsingGDS() throws AnalysisException {
+        applyConcept("javascript:XmlTestConceptUsingGDS");
+        verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
     }
 
     @Test
-    public void groovyConcept() throws AnalysisException {
-        applyConcept("groovy:TestConcept");
-        verifyResults(reportWriter.getConceptResults(), "groovy:TestConcept", Severity.MINOR);
+    public void javaScriptXmlConstraint() throws AnalysisException {
+        validateConstraint("javascript:XmlTestConstraint");
+        verifyResults(reportWriter.getConstraintViolations(), "javascript:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
-    public void groovyConstraint() throws AnalysisException {
-        validateConstraint("groovy:TestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "groovy:TestConstraint", Severity.BLOCKER);
+    public void JavaScriptAsciiDocConstraint() throws AnalysisException {
+        validateConstraint("javascript:AsciiDocTestConstraint");
+        verifyResults(reportWriter.getConstraintViolations(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
     }
 
     @Test
-    public void rubyConcept() throws AnalysisException {
-        applyConcept("ruby:TestConcept");
-        verifyResults(reportWriter.getConceptResults(), "ruby:TestConcept", Severity.MINOR);
+    public void groovyXmlConcept() throws AnalysisException {
+        applyConcept("groovy:XmlTestConcept");
+        verifyResults(reportWriter.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
-    public void rubyConstraint() throws AnalysisException {
-        validateConstraint("ruby:TestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "ruby:TestConstraint", Severity.BLOCKER);
+    public void groovyXmlConstraint() throws AnalysisException {
+        validateConstraint("groovy:XmlTestConstraint");
+        verifyResults(reportWriter.getConstraintViolations(), "groovy:XmlTestConstraint", Severity.BLOCKER);
+    }
+
+    @Test
+    public void rubyXmlConcept() throws AnalysisException {
+        applyConcept("ruby:XmlTestConcept");
+        verifyResults(reportWriter.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
+    }
+
+    @Test
+    public void rubyXmlConstraint() throws AnalysisException {
+        validateConstraint("ruby:XmlTestConstraint");
+        verifyResults(reportWriter.getConstraintViolations(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
     private <R extends Rule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {
