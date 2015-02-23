@@ -1,0 +1,33 @@
+== Using script languages as rules
+
+:author: Dirk Mahler
+:version: 1.0.0-RC+
+
+[[concept:JavaScript]]
+.Demonstrates a concept using JavaScript.
+[source,javascript,role=concept]
+----
+// create a test descriptor
+var testDescriptor = store.create(com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+testDescriptor.setName("test");
+// prepare the result
+var columnNames = java.util.Arrays.asList("test");
+var row = new java.util.HashMap();
+row.put("test", testDescriptor);
+var rows = java.util.Arrays.asList(row);
+// return the result
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+----
+
+[[concept:JavaScript]]
+.Demonstrates a concept using JavaScript.
+[source,javascript,role=concept,depends="concept:JavaScript"]
+----
+var columnNames = java.util.Arrays.asList("test");
+var queryResult = store.executeQuery("match (t:Test) return t");
+var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor.class);
+var row = new java.util.HashMap();
+row.put("test", testDescriptor);
+var rows = java.util.Arrays.asList(row);
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+----
