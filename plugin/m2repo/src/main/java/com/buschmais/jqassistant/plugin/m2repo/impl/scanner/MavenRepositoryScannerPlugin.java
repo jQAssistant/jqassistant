@@ -157,8 +157,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      */
     private RepositoryArtifactDescriptor migrateToArtifactAndSetRelation(MavenRepositoryDescriptor repoDescriptor, long lastModified, Descriptor descriptor) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
-        store.commitTransaction();
-        store.beginTransaction();
         artifactDescriptor.setLastModified(lastModified);
         repoDescriptor.getContainedArtifacts().add(artifactDescriptor);
         return artifactDescriptor;
@@ -197,7 +195,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
                     if (descriptor != null) {
                         long lastModified = artifactInfo.lastModified;
-                        if (isArtifactInDb(artifact, lastModified)) {
+                        if (isArtifactInDb(resolvedArtifact, lastModified)) {
                             continue;
                         }
 
@@ -279,14 +277,11 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
         mavenIndex.updateIndex(username, password);
 
-        long artifactCount = 0L;
         // Search artifacts
         Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
         for (ArtifactInfo ai : searchResponse) {
             resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
-            artifactCount++;
         }
-        LOGGER.error("Scanned artifacts: " + artifactCount);
         mavenIndex.closeCurrentIndexingContext();
         mavenIndex = null;
         repoDescriptor.setLastScanDate(System.currentTimeMillis());
