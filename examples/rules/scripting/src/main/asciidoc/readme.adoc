@@ -44,6 +44,6 @@ TIP: The rule can also be specified in an AsciiDoc document:
 
 [source,asciidoc]
 .jqassistant/default.adoc
-----
+....
 include::{docRoot}/jqassistant.examples.rules.scripting/src/jqassistant/default.adoc[]
-----
+....

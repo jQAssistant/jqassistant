@@ -1,10 +1,11 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <group id="default">
-        <includeConstraint refId="example:JavaScriptConstraint"/>
+        <includeConstraint refId="xmlExample:JavaScriptConstraint"/>
+        <includeConstraint refId="asciiDocExample:JavaScriptConstraint"/>
     </group>
 
-    <constraint id="example:JavaScriptConstraint">
+    <constraint id="xmlExample:JavaScriptConstraint">
         <description>JavaScript example constraint: returns a result containing the number
             of declared methods for each class.</description>
         <script language="JavaScript">
