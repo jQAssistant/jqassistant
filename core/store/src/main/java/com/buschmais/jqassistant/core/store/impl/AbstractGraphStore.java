@@ -27,7 +27,7 @@ import com.buschmais.xo.api.XOManagerFactory;
 public abstract class AbstractGraphStore implements Store {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractGraphStore.class);
-    private static final int AUTOCOMMIT_THRESHOLD = 8192;
+    private static final int AUTOCOMMIT_THRESHOLD = 32678;
     private XOManagerFactory xoManagerFactory;
     private XOManager xoManager;
     private int created;
