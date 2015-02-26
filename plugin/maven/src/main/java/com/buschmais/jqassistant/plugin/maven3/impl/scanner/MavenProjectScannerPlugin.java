@@ -24,8 +24,8 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 /**
  * A scanner plugin for maven projects.
@@ -110,7 +110,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      */
     private void addModel(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
         File pomXmlFile = project.getFile();
-        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
     }
 

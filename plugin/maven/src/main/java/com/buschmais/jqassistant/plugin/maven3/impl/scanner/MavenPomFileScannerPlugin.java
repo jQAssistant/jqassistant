@@ -18,7 +18,7 @@ public class MavenPomFileScannerPlugin extends AbstractMavenPomScannerPlugin {
     }
 
     @Override
-    protected MavenPomXmlDescriptor createDescriptor(Scanner scanner) {
+    protected MavenPomXmlDescriptor createDescriptor(FileResource item, String path, Scanner scanner) {
         return scanner.getContext().getStore().create(MavenPomXmlDescriptor.class);
     }
 
