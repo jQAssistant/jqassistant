@@ -17,20 +17,23 @@ import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 public class MavenProjectScannerPluginTest {
 
@@ -83,21 +86,24 @@ public class MavenProjectScannerPluginTest {
 
         // classes directory
         FileDescriptor classesDirectory = mock(FileDescriptor.class);
-        JavaClassesDirectoryDescriptor mainArtifact = mock(JavaClassesDirectoryDescriptor.class);
+        final JavaClassesDirectoryDescriptor mainArtifact = mock(JavaClassesDirectoryDescriptor.class);
+        final JavaClassesDirectoryDescriptor testArtifact = mock(JavaClassesDirectoryDescriptor.class);
+        final JavaArtifactFileDescriptor dependencyArtifact = mock(JavaArtifactFileDescriptor.class);
         when(scanner.scan(Mockito.any(File.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH))).thenReturn(classesDirectory);
-        when(store.find(ArtifactDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(null, mainArtifact);
+        when(store.executeQuery(Mockito.anyString(), Mockito.anyMap())).thenAnswer(new Answer<Query.Result<CompositeRowObject>>() {
+            @Override
+            public Query.Result<CompositeRowObject> answer(InvocationOnMock invocation) throws Throwable {
+                Query.Result<CompositeRowObject> result = mock(Query.Result.class);
+                when(result.hasResult()).thenReturn(false);
+                return result;
+            }
+        });
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(mainArtifact);
-
         // test classes directory
         FileDescriptor testClassesDirectory = mock(FileDescriptor.class);
-        JavaClassesDirectoryDescriptor testArtifact = mock(JavaClassesDirectoryDescriptor.class);
         when(scanner.scan(Mockito.any(File.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH))).thenReturn(testClassesDirectory);
-        when(store.find(ArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(null, testArtifact);
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
-
-        // dependencies
-        JavaArtifactDescriptor dependencyArtifact = mock(JavaArtifactDescriptor.class);
-        when(store.find(ArtifactDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
+        when(store.create(JavaArtifactFileDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
 
         DependsOnDescriptor testDependsOnMainDescriptor = mock(DependsOnDescriptor.class);
         when(store.create(testArtifact, DependsOnDescriptor.class, mainArtifact)).thenReturn(testDependsOnMainDescriptor);
@@ -133,6 +139,7 @@ public class MavenProjectScannerPluginTest {
         verify(projectDescriptor).setModel(pomXmlDescriptor);
         verify(store).create(JavaClassesDirectoryDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(store).create(JavaClassesDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0");
+        verify(store).create(JavaArtifactFileDescriptor.class, "group:dependency:jar:main:2.0.0");
         verify(mainArtifact).setGroup("group");
         verify(mainArtifact).setName("artifact");
         verify(mainArtifact).setType("jar");
@@ -148,4 +155,5 @@ public class MavenProjectScannerPluginTest {
         verify(store).create(mainArtifact, DependsOnDescriptor.class, dependencyArtifact);
         verify(store).create(testArtifact, DependsOnDescriptor.class, dependencyArtifact);
     }
+
 }
