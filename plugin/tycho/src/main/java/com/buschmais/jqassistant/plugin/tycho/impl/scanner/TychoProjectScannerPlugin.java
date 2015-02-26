@@ -30,16 +30,18 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectS
 @Requires(MavenProjectDirectoryDescriptor.class)
 public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
 
+    private static final String PACKAGING_ECLIPSE_PLUGIN = "eclipse-plugin";
+
     @Override
     public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
-        return true;
+        return PACKAGING_ECLIPSE_PLUGIN.equals(item.getPackaging());
     }
 
     @Override
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         MavenProjectDirectoryDescriptor mavenProjectDirectoryDescriptor = scanner.getContext().peek(MavenProjectDirectoryDescriptor.class);
         for (ArtifactFileDescriptor artifact : mavenProjectDirectoryDescriptor.getCreatesArtifacts()) {
-            if (artifact instanceof JavaArtifactFileDescriptor && artifact.getType().equals("jar")) {
+            if (artifact instanceof JavaArtifactFileDescriptor && artifact.getType().equals(PACKAGING_ECLIPSE_PLUGIN)) {
                 scanner.getContext().push(JavaArtifactFileDescriptor.class, (JavaArtifactFileDescriptor) artifact);
                 try {
                     for (File file : getPdeFiles(project)) {

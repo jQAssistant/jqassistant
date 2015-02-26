@@ -82,7 +82,7 @@ public class TychoProjectScannerPluginTest {
         when(project.getArtifact()).thenReturn(artifact);
 
         JavaClassesDirectoryDescriptor artifactDescriptor = mock(JavaClassesDirectoryDescriptor.class);
-        when(artifactDescriptor.getType()).thenReturn("jar");
+        when(artifactDescriptor.getType()).thenReturn("eclipse-plugin");
         List<ArtifactFileDescriptor> artifacts = new ArrayList<>();
         artifacts.add(artifactDescriptor);
         MavenProjectDirectoryDescriptor mavenProjectDirectoryDescriptor = mock(MavenProjectDirectoryDescriptor.class);
