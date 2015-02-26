@@ -7,5 +7,5 @@ import com.buschmais.jqassistant.plugin.common.api.report.Generic;
  * Defines a directory containing java classes.
  */
 @Generic(Generic.GenericLanguageElement.ArtifactFile)
-public interface JavaClassesDirectoryDescriptor extends JavaArtifactDescriptor, DirectoryDescriptor {
+public interface JavaClassesDirectoryDescriptor extends JavaArtifactFileDescriptor, DirectoryDescriptor {
 }

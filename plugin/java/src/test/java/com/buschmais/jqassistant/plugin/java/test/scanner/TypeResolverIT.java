@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.resolver.A;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.resolver.B;
@@ -72,8 +72,8 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     @Test
     public void dependentArtifacts() throws IOException {
         store.beginTransaction();
-        JavaArtifactDescriptor a1 = getArtifactDescriptor("a1");
-        JavaArtifactDescriptor a2 = getArtifactDescriptor("a2");
+        JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
+        JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
         store.create(a2, DependsOnDescriptor.class, a1);
         store.commitTransaction();
         scanClasses("a1", A.class);
@@ -153,9 +153,9 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     @Test
     public void ambiguousDependencies() throws IOException {
         store.beginTransaction();
-        JavaArtifactDescriptor a1 = getArtifactDescriptor("a1");
-        JavaArtifactDescriptor a2 = getArtifactDescriptor("a2");
-        JavaArtifactDescriptor a3 = getArtifactDescriptor("a3");
+        JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
+        JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
+        JavaArtifactFileDescriptor a3 = getArtifactDescriptor("a3");
         store.create(a3, DependsOnDescriptor.class, a1);
         store.create(a3, DependsOnDescriptor.class, a2);
         store.commitTransaction();
@@ -170,7 +170,7 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
                 "match (artifact3:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)-[:CONTAINS]-(otherArtifact:Artifact) where b.fqn={b} return otherArtifact",
                 MapBuilder.<String, Object> create("a", A.class.getName()).put("b", B.class.getName()).get());
         assertThat(testResult.getRows().size(), equalTo(1));
-        JavaArtifactDescriptor otherArtifact = (JavaArtifactDescriptor) testResult.getColumn("otherArtifact").get(0);
+        JavaArtifactFileDescriptor otherArtifact = (JavaArtifactFileDescriptor) testResult.getColumn("otherArtifact").get(0);
         assertThat(otherArtifact, anyOf(equalTo(a1), equalTo(a2)));
         store.commitTransaction();
     }

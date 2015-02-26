@@ -17,7 +17,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 /**
  * Defines a Java artifact.
  */
-public interface JavaArtifactDescriptor extends JavaDescriptor, ArtifactFileDescriptor {
+public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFileDescriptor {
 
     @ResultOf
     @Cypher("match (type:Type)<-[:CONTAINS]-(a:Artifact) where type.fqn={fqn} and id(a) in {dependencies} return type")

@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
@@ -90,15 +90,15 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      */
     protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
         store.beginTransaction();
-        JavaArtifactDescriptor artifact = getArtifactDescriptor(artifactId);
+        JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         Scanner scanner = getScanner();
         ScannerContext context = scanner.getContext();
-        context.push(JavaArtifactDescriptor.class, artifact);
+        context.push(JavaArtifactFileDescriptor.class, artifact);
         for (Class<?> item : classes) {
             FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
             artifact.getContains().add(fileDescriptor);
         }
-        context.pop(JavaArtifactDescriptor.class);
+        context.pop(JavaArtifactFileDescriptor.class);
         store.commitTransaction();
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClassPathResources(Scope scope, String artifactId, String... resources) throws IOException {
         File directory = getClassesDirectory(this.getClass());
         store.beginTransaction();
-        JavaArtifactDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
+        JavaArtifactFileDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
         Scanner scanner = getScanner();
         for (String resource : resources) {
             File file = new File(directory, resource);
