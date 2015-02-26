@@ -172,18 +172,18 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                 final Artifact resolvedArtifact = artifactResult.getArtifact();
                 final File artifactFile = resolvedArtifact.getFile();
                 try (FileResource fileResource = new DefaultFileResource(artifactFile)) {
+                    long lastModified = artifactInfo.lastModified;
+                    String coords = getCoords(resolvedArtifact, version);
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("coords", coords);
+                    params.put("lastModified", lastModified);
+                    params.put("url", repoDescriptor.getUrl());
+                    // skip scan if artifact is already in db
+                    if (isArtifactInDb(store, params)) {
+                        continue;
+                    }
                     Descriptor descriptor = scanner.scan(fileResource, artifactFile.getAbsolutePath(), null);
                     if (descriptor != null) {
-                        long lastModified = artifactInfo.lastModified;
-                        String coords = getCoords(resolvedArtifact, version);
-                        Map<String, Object> params = new HashMap<>();
-                        params.put("coords", coords);
-                        params.put("lastModified", lastModified);
-                        params.put("url", repoDescriptor.getUrl());
-
-                        if (isArtifactInDb(store, params)) {
-                            continue;
-                        }
 
                         RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
                         artifactDescriptor.setClassifier(resolvedArtifact.getClassifier());
