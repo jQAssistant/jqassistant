@@ -6,7 +6,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
@@ -21,14 +21,14 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
 
     @Override
     protected void enterContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
-        context.push(JavaArtifactDescriptor.class, javaClassesDirectoryDescriptor);
+        context.push(JavaArtifactFileDescriptor.class, javaClassesDirectoryDescriptor);
         context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
     }
 
     @Override
     protected void leaveContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
         context.pop(TypeResolver.class);
-        context.pop(JavaArtifactDescriptor.class);
+        context.pop(JavaArtifactFileDescriptor.class);
     }
 
     @Override

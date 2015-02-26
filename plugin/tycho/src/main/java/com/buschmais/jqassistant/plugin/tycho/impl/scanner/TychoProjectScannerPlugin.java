@@ -18,9 +18,9 @@ import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 
@@ -37,20 +37,24 @@ public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
 
     @Override
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
-        final JavaArtifactDescriptor artifact = resolveArtifact(project.getArtifact(), JavaClassesDirectoryDescriptor.class, false, scanner.getContext());
-        scanner.getContext().push(JavaArtifactDescriptor.class, artifact);
-        try {
-            for (File file : getPdeFiles(project)) {
-                String filePath = getDirectoryPath(project.getBasedir(), file);
-                FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
-                if (fileDescriptor != null) {
-                    artifact.getContains().add(fileDescriptor);
+        MavenProjectDirectoryDescriptor mavenProjectDirectoryDescriptor = scanner.getContext().peek(MavenProjectDirectoryDescriptor.class);
+        for (ArtifactFileDescriptor artifact : mavenProjectDirectoryDescriptor.getCreatesArtifacts()) {
+            if (artifact instanceof JavaArtifactFileDescriptor && artifact.getType().equals("jar")) {
+                scanner.getContext().push(JavaArtifactFileDescriptor.class, (JavaArtifactFileDescriptor) artifact);
+                try {
+                    for (File file : getPdeFiles(project)) {
+                        String filePath = getDirectoryPath(project.getBasedir(), file);
+                        FileDescriptor fileDescriptor = scanner.scan(file, filePath, CLASSPATH);
+                        if (fileDescriptor != null) {
+                            artifact.getContains().add(fileDescriptor);
+                        }
+                    }
+                } finally {
+                    scanner.getContext().pop(JavaArtifactFileDescriptor.class);
                 }
             }
-        } finally {
-            scanner.getContext().pop(JavaArtifactDescriptor.class);
         }
-        return resolveProject(project, MavenProjectDirectoryDescriptor.class, scanner.getContext());
+        return mavenProjectDirectoryDescriptor;
     }
 
     private List<File> getPdeFiles(MavenProject project) throws IOException {

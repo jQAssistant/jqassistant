@@ -20,11 +20,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 
@@ -82,11 +82,12 @@ public class TychoProjectScannerPluginTest {
         when(project.getArtifact()).thenReturn(artifact);
 
         JavaClassesDirectoryDescriptor artifactDescriptor = mock(JavaClassesDirectoryDescriptor.class);
-        when(store.create(Mockito.any(Class.class), Mockito.anyString())).thenReturn(artifactDescriptor);
-
-        MavenProjectDirectoryDescriptor projectDirectoryDescriptor = mock(MavenProjectDirectoryDescriptor.class);
-        when(store.create(Mockito.any(Class.class), Mockito.eq("group:artifact:1.0.0"))).thenReturn(projectDirectoryDescriptor);
-
+        when(artifactDescriptor.getType()).thenReturn("jar");
+        List<ArtifactFileDescriptor> artifacts = new ArrayList<>();
+        artifacts.add(artifactDescriptor);
+        MavenProjectDirectoryDescriptor mavenProjectDirectoryDescriptor = mock(MavenProjectDirectoryDescriptor.class);
+        when(mavenProjectDirectoryDescriptor.getCreatesArtifacts()).thenReturn(artifacts);
+        when(scannerContext.peek(MavenProjectDirectoryDescriptor.class)).thenReturn(mavenProjectDirectoryDescriptor);
     }
 
     @Test

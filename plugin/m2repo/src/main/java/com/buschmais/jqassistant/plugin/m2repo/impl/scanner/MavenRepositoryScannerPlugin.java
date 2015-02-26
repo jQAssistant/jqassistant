@@ -3,11 +3,7 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -109,10 +105,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         if (getProperties().containsKey(PROPERTY_NAME_DIRECTORY)) {
             localDirectory = new File(getProperties().get(PROPERTY_NAME_DIRECTORY).toString());
         }
-        if (!localDirectory.exists()) {
-            localDirectory.mkdirs();
-        }
-
         if (getProperties().containsKey(PROPERTY_NAME_DELETE_ARTIFACTS)) {
             deleteArtifactsAfterScan = BooleanUtils.toBoolean(Objects.toString(getProperties().get(PROPERTY_NAME_DELETE_ARTIFACTS)));
         }
@@ -244,7 +236,10 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         String userInfo = item.getUserInfo();
         String username = StringUtils.substringBefore(userInfo, ":");
         String password = StringUtils.substringAfter(userInfo, ":");
-
+        if (!localDirectory.exists()) {
+            LOGGER.info("Creating local maven repository directory {}", localDirectory.getAbsolutePath());
+            localDirectory.mkdirs();
+        }
         File localRepoDir = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
         // handles the remote maven index
         MavenIndex mavenIndex = new MavenIndex(item, localRepoDir, username, password);

@@ -53,8 +53,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
-            LOGGER.info("Leaving {}", containerPath);
+            LOGGER.info("Leaving {} ({} entries)", containerPath, files.size());
         }
+        // Create contains relation between all found sub-containers (e.g. directories) and their entries
         for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
             String relativePath = entry.getKey();
             int separatorIndex = relativePath.lastIndexOf('/');
@@ -66,7 +67,6 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                 }
             }
         }
-
         return containerDescriptor;
     }
 

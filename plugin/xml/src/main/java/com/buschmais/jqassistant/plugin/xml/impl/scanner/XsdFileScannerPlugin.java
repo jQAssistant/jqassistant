@@ -16,7 +16,7 @@ public class XsdFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return path.toLowerCase().endsWith(".xsd");
+        return !XmlScope.DOCUMENT.equals(scope) && path.toLowerCase().endsWith(".xsd");
     }
 
     @Override

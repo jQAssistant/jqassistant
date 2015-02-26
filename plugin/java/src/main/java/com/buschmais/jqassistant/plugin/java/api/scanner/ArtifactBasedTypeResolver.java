@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
@@ -20,9 +20,9 @@ import com.buschmais.xo.api.ResultIterator;
  */
 class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
-    private JavaArtifactDescriptor artifact;
+    private JavaArtifactFileDescriptor artifact;
 
-    private List<ArtifactFileDescriptor> dependencies;
+    private List<ArtifactDescriptor> dependencies;
 
     private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
@@ -32,7 +32,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
      * @param artifact
      *            The artifact which defines the scope for resolving types.
      */
-    ArtifactBasedTypeResolver(JavaArtifactDescriptor artifact) {
+    ArtifactBasedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
         for (FileDescriptor fileDescriptor : artifact.getContains()) {
             if (fileDescriptor instanceof TypeDescriptor) {
@@ -45,7 +45,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
         }
         this.dependencies = new ArrayList<>();
         for (DependsOnDescriptor dependsOnDescriptor : artifact.getDependencies()) {
-            dependencies.add((ArtifactFileDescriptor) dependsOnDescriptor.getDependency());
+            dependencies.add(dependsOnDescriptor.getDependency());
         }
     }
 

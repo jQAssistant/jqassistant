@@ -78,7 +78,9 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
             documentDescriptor.setWellFormed(true);
         } catch (XMLStreamException e) {
             LOGGER.warn("Cannot parse document '" + path + "': " + e.getMessage());
-            documentDescriptor.setWellFormed(false);
+            if (documentDescriptor != null) {
+                documentDescriptor.setWellFormed(false);
+            }
         }
         return documentDescriptor;
     }

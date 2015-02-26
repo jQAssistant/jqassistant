@@ -18,14 +18,14 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 /**
  * A scanner plugin for maven projects.
@@ -47,7 +47,8 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
         Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
         for (Artifact dependency : project.getDependencyArtifacts()) {
-            ArtifactFileDescriptor dependencyDescriptor = resolveArtifact(dependency, JavaArtifactDescriptor.class, scanner.getContext());
+            ArtifactFileDescriptor dependencyDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(dependency, false),
+                    JavaArtifactFileDescriptor.class, scanner.getContext());
             if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                 mainArtifactDependencies.put(dependencyDescriptor, dependency);
             }
@@ -55,13 +56,15 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
         }
         Artifact artifact = project.getArtifact();
         // main artifact
-        JavaClassesDirectoryDescriptor mainArtifactDescriptor = resolveArtifact(artifact, JavaClassesDirectoryDescriptor.class, false, scanner.getContext());
+        JavaClassesDirectoryDescriptor mainArtifactDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(artifact, false),
+                JavaClassesDirectoryDescriptor.class, scanner.getContext());
         addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
         scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, false, project.getBuild().getOutputDirectory(), scanner);
         // test artifact
         String testOutputDirectory = project.getBuild().getTestOutputDirectory();
         if (testOutputDirectory != null) {
-            JavaClassesDirectoryDescriptor testArtifactDescriptor = resolveArtifact(artifact, JavaClassesDirectoryDescriptor.class, true, scanner.getContext());
+            JavaClassesDirectoryDescriptor testArtifactDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(artifact, true),
+                    JavaClassesDirectoryDescriptor.class, scanner.getContext());
             testArtifactDependencies.put(mainArtifactDescriptor, artifact);
             addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
             scanClassesDirectory(projectDescriptor, testArtifactDescriptor, true, testOutputDirectory, scanner);
@@ -110,7 +113,7 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
      */
     private void addModel(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
         File pomXmlFile = project.getFile();
-        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
+        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
     }
 
