@@ -19,6 +19,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.google.common.base.Strings;
 
 public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, XmlFileDescriptor> {
@@ -35,8 +36,7 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        String lowerCase = path.toLowerCase();
-        return lowerCase.endsWith(".xml") || lowerCase.endsWith(".xsd");
+        return XmlScope.DOCUMENT.equals(scope);
     }
 
     @Override
