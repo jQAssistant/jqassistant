@@ -442,7 +442,7 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
         } catch (XmlPullParserException e) {
             throw new IOException("Cannot read POM descriptor.", e);
         }
-        MavenPomXmlDescriptor pomDescriptor = createDescriptor(scanner);
+        MavenPomXmlDescriptor pomDescriptor = createDescriptor(item, path, scanner);
         Store store = scanner.getContext().getStore();
         pomDescriptor.setFullQualifiedName(model.getId());
         pomDescriptor.setGroup(model.getGroupId());
@@ -463,6 +463,6 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
         return pomDescriptor;
     }
 
-    protected abstract MavenPomXmlDescriptor createDescriptor(Scanner scanner);
+    protected abstract MavenPomXmlDescriptor createDescriptor(FileResource item, String path, Scanner scanner);
 
 }

@@ -11,7 +11,11 @@
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlTextDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.xml.api.model.XmlCDataDescriptor</class>
     </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope</class>
+    </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XsdFileScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

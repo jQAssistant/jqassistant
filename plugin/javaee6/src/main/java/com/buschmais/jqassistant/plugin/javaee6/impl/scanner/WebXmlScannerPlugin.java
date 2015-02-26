@@ -15,7 +15,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
@@ -27,13 +26,13 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.sun.java.xml.ns.javaee.*;
 
 /**
  * Scanner plugin for the content of web application XML descriptors (i.e.
  * WEB-INF/web.xml)
  */
-@Requires(XmlFileDescriptor.class)
 public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileResource, WebXmlDescriptor> {
 
     private JAXBContext jaxbContext;
@@ -62,7 +61,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
             throw new IOException("Cannot read " + path, e);
         }
         Store store = scanner.getContext().getStore();
-        XmlFileDescriptor xmlFileDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
+        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         WebXmlDescriptor webXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, WebXmlDescriptor.class);
         webXmlDescriptor.setVersion(webAppType.getVersion());
         Map<String, ServletDescriptor> servlets = new HashMap<>();

@@ -13,6 +13,7 @@ import org.junit.Test;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 /**
  * Tests the generic XML scanner.
@@ -27,7 +28,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     public void validDocument() throws IOException, AnalysisException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
-        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), null);
+        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         assertThat(xmlFileDescriptor, notNullValue());
         assertThat(xmlFileDescriptor.isWellFormed(), equalTo(true));
         assertThat(xmlFileDescriptor.getVersion(), equalTo("1.0"));
@@ -112,7 +113,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
     public void invalidDocument() throws IOException, AnalysisException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/invalidDocument.xml");
-        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), null);
+        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         assertThat(xmlFileDescriptor, notNullValue());
         assertThat(xmlFileDescriptor.isWellFormed(), equalTo(false));
         store.commitTransaction();

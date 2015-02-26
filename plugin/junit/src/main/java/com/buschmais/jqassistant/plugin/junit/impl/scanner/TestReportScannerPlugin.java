@@ -17,19 +17,24 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
-@Requires(XmlFileDescriptor.class)
 public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource, TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
+
+    private XMLInputFactory inputFactory;
+
+    @Override
+    protected void initialize() {
+        inputFactory = XMLInputFactory.newInstance();
+    }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
@@ -38,7 +43,6 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
 
     @Override
     public TestSuiteDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader;
         try (InputStream stream = item.createStream()) {
             reader = inputFactory.createXMLEventReader(stream);
@@ -53,7 +57,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
                     Iterator<Attribute> attributes = element.getAttributes();
                     switch (elementName) {
                     case "testsuite":
-                        XmlFileDescriptor xmlFileDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
+                        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
                         testSuiteDescriptor = scanner.getContext().getStore().addDescriptorType(xmlFileDescriptor, TestSuiteDescriptor.class);
                         while (attributes.hasNext()) {
                             Attribute attribute = attributes.next();
