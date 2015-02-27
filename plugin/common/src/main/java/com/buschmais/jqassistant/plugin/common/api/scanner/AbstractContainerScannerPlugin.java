@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,34 +40,32 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         enterContainer(container, containerDescriptor, scanner.getContext());
         try {
             Iterable<? extends E> entries = getEntries(container);
+            SortedMap<String, E> sortedEntries = new TreeMap<>();
             for (E e : entries) {
-                Resource resource = getEntry(container, e);
-                try {
-                    String relativePath = getRelativePath(container, e);
+                String relativePath = getRelativePath(container, e);
+                sortedEntries.put(relativePath, e);
+            }
+            for (Map.Entry<String, E> entry : sortedEntries.entrySet()) {
+                String relativePath = entry.getKey();
+                try (Resource resource = getEntry(container, entry.getValue())) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
                     descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
                     files.put(relativePath, descriptor);
                     containerDescriptor.getContains().add(descriptor);
-                } finally {
-                    resource.close();
+                    int separatorIndex = relativePath.lastIndexOf('/');
+                    if (separatorIndex != -1) {
+                        String parentName = relativePath.substring(0, separatorIndex);
+                        FileDescriptor fileDescriptor = files.get(parentName);
+                        if (fileDescriptor instanceof FileContainerDescriptor) {
+                            ((FileContainerDescriptor) fileDescriptor).getContains().add(descriptor);
+                        }
+                    }
                 }
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
             LOGGER.info("Leaving {} ({} entries)", containerPath, files.size());
-        }
-        // Create contains relation between all found sub-containers (e.g. directories) and their entries
-        for (Map.Entry<String, FileDescriptor> entry : files.entrySet()) {
-            String relativePath = entry.getKey();
-            int separatorIndex = relativePath.lastIndexOf('/');
-            if (separatorIndex != -1) {
-                String parentName = relativePath.substring(0, separatorIndex);
-                FileDescriptor fileDescriptor = files.get(parentName);
-                if (fileDescriptor instanceof FileContainerDescriptor) {
-                    ((FileContainerDescriptor) fileDescriptor).getContains().add(entry.getValue());
-                }
-            }
         }
         return containerDescriptor;
     }
