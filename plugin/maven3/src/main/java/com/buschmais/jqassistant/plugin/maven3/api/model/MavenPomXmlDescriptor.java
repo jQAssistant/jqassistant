@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.apache.maven.model.Model;
 
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
@@ -15,7 +14,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  * @see Model
  * @author ronald.kunzmann@buschmais.com
  */
-public interface MavenPomXmlDescriptor extends BaseProfileDescriptor, MavenPomDescriptor, FileDescriptor, XmlDescriptor {
+public interface MavenPomXmlDescriptor extends BaseProfileDescriptor, MavenPomDescriptor, XmlFileDescriptor {
 
     /**
      * Get the location of the parent project, if one exists. Values from the

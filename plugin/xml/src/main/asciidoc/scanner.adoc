@@ -10,10 +10,10 @@ Represents an XML file.
 [options="header"]
 |====
 | Name                    | Description
-| version                 | The XML version
+| xmlVersion              | The XML version
 | standalone              | The "standalone" attribute of the XML declaration.
 | characterEncodingScheme | The encoding of the XML file.
-| wellFormed              | Indicates if the document is well-formed, i.e. could be parsed.
+| xmlWellFormed           | Indicates if the document is well-formed, i.e. could be parsed.
 |====
 
 .Relations of :File:Xml

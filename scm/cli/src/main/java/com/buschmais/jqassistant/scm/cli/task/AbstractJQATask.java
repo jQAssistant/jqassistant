@@ -10,18 +10,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
@@ -53,7 +43,7 @@ public abstract class AbstractJQATask implements JQATask {
     protected ReportPluginRepository reportPluginRepository;
 
     @Override
-    public void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) {
+    public void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) throws CliExecutionException {
         this.properties = properties;
         try {
             classLoader = pluginConfigurationReader.getClassLoader();
@@ -63,7 +53,7 @@ public abstract class AbstractJQATask implements JQATask {
             rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
             reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
         } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannpt create plugin repositories.", e);
+            throw new CliExecutionException("Cannot create plugin repositories.", e);
         }
         this.ruleHelper = new RuleHelper(Log.getLog());
         this.reportHelper = new ReportHelper(Log.getLog());

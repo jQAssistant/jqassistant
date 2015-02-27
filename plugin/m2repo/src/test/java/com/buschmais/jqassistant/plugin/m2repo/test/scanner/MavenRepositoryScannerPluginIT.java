@@ -104,21 +104,22 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             getScanner().scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
 
             countArtifactNodes = store.executeQuery("MATCH (n:RepositoryArtifact) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
-            Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(4), countArtifactNodes);
+            Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(3), countArtifactNodes); // 2 JARs, 1 POM
             // Check relations
             MavenRepositoryDescriptor repositoryDescriptor = store.executeQuery("MATCH (n:Maven:Repository) RETURN n").getSingleResult()
                     .get("n", MavenRepositoryDescriptor.class);
             Assert.assertEquals("Unexpected count of contained Artifacts", 2, repositoryDescriptor.getContainedArtifacts().size());
             for (RepositoryArtifactDescriptor artifact : repositoryDescriptor.getContainedArtifacts()) {
-                RepositoryArtifactDescriptor predecessorArtifact = artifact.getPredecessorArtifact();
-                Assert.assertNotNull("Predecessor expected.", predecessorArtifact);
-                Assert.assertEquals("Equal fqn for artifact and predecessor expected.", artifact.getFullQualifiedName(),
-                        predecessorArtifact.getFullQualifiedName());
-                Assert.assertTrue(
-                        "lastModified date from predecessor not smaller than current artifact modified date (" + predecessorArtifact.getLastModified() + "!<"
-                                + artifact.getLastModified() + ")", predecessorArtifact.getLastModified() < artifact.getLastModified());
+                if (!artifact.getType().equals("pom")) {  //Scanned pom files are handled as artifacts and matched to the same node if the artifact fqn matches
+                    RepositoryArtifactDescriptor predecessorArtifact = artifact.getPredecessorArtifact();
+                    Assert.assertNotNull("Predecessor expected.", predecessorArtifact);
+                    Assert.assertEquals("Equal fqn for artifact and predecessor expected.", artifact.getFullQualifiedName(),
+                            predecessorArtifact.getFullQualifiedName());
+                    Assert.assertTrue(
+                            "lastModified date from predecessor not smaller than current artifact modified date (" + predecessorArtifact.getLastModified() + "!<"
+                                    + artifact.getLastModified() + ")", predecessorArtifact.getLastModified() < artifact.getLastModified());
+                }
             }
-
         } finally {
             store.commitTransaction();
             stopServer();

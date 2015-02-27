@@ -129,7 +129,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             Descriptor descriptor) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
         artifactDescriptor.setLastModified(lastModified);
-        repoDescriptor.getContainedArtifacts().add(artifactDescriptor);
+        artifactDescriptor.setContainingRepository(repoDescriptor);
         return artifactDescriptor;
     }
 

@@ -8,7 +8,6 @@ import org.apache.maven.model.Dependency;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.xo.api.Query;
 
 public class ArtifactResolver {
@@ -24,6 +23,8 @@ public class ArtifactResolver {
         String getType();
 
         String getVersion();
+
+        String getId();
     }
 
     static class ArtifactCoordinates implements Coordinates {
@@ -65,6 +66,11 @@ public class ArtifactResolver {
         public String getVersion() {
             return artifact.getVersion();
         }
+
+        @Override
+        public String getId() {
+            return ArtifactResolver.createId(this);
+        }
     }
 
     static class DependencyCoordinates implements Coordinates {
@@ -99,19 +105,24 @@ public class ArtifactResolver {
         public String getVersion() {
             return dependency.getVersion();
         }
+
+        @Override
+        public String getId() {
+            return ArtifactResolver.createId(this);
+        }
     }
 
-    static <A extends ArtifactFileDescriptor> A resolve(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
+    static <A extends ArtifactDescriptor> A resolve(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
-        String id = createId(coordinates);
+        String id = coordinates.getId();
         Map<String, Object> params = new HashMap<>();
         params.put("fqn", id);
-        Query.Result<Query.Result.CompositeRowObject> result = store.executeQuery("MATCH (a:Artifact:File) WHERE a.fqn={fqn} RETURN a", params);
-        ArtifactFileDescriptor artifactDescriptor;
+        Query.Result<Query.Result.CompositeRowObject> result = store.executeQuery("MATCH (a:Artifact) WHERE a.fqn={fqn} RETURN a", params);
+        ArtifactDescriptor artifactDescriptor;
         if (!result.hasResult()) {
             artifactDescriptor = createArtifactDescriptor(coordinates, descriptorType, scannerContext);
         } else {
-            artifactDescriptor = result.getSingleResult().get("a", ArtifactFileDescriptor.class);
+            artifactDescriptor = result.getSingleResult().get("a", ArtifactDescriptor.class);
             if (!(descriptorType.isAssignableFrom(artifactDescriptor.getClass()))) {
                 return store.migrate(artifactDescriptor, descriptorType);
             }
@@ -119,14 +130,14 @@ public class ArtifactResolver {
         return descriptorType.cast(artifactDescriptor);
     }
 
-    private static <A extends ArtifactDescriptor> A createArtifactDescriptor(Coordinates coordinates, Class<A> descriptorType,
-            ScannerContext scannerContext) {
-        String id = createId(coordinates);
-        A artifactDescriptor;
-        artifactDescriptor = scannerContext.getStore().create(descriptorType, id);
-        artifactDescriptor.setFullQualifiedName(id);
+    private static <A extends ArtifactDescriptor> A createArtifactDescriptor(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
+        String id = coordinates.getId();
+        A artifactDescriptor = scannerContext.getStore().create(descriptorType, id);
         artifactDescriptor.setGroup(coordinates.getGroupId());
         artifactDescriptor.setName(coordinates.getArtifactId());
+        if (coordinates.getVersion() == null) {
+            artifactDescriptor.setVersion(coordinates.getVersion());
+        }
         artifactDescriptor.setVersion(coordinates.getVersion());
         artifactDescriptor.setClassifier(coordinates.getClassifier());
         artifactDescriptor.setType(coordinates.getType());
@@ -142,7 +153,9 @@ public class ArtifactResolver {
      */
     private static String createId(Coordinates coordinates) {
         StringBuffer id = new StringBuffer();
-        id.append(coordinates.getGroupId());
+        if (coordinates.getGroupId() != null) {
+            id.append(coordinates.getGroupId());
+        }
         id.append(':');
         id.append(coordinates.getArtifactId());
         id.append(':');
@@ -153,7 +166,9 @@ public class ArtifactResolver {
             id.append(classifier);
         }
         id.append(':');
-        id.append(coordinates.getVersion());
+        if (coordinates.getVersion() != null) {
+            id.append(coordinates.getVersion());
+        }
         return id.toString();
     }
 }
