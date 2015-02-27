@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +17,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
+import com.google.common.base.Stopwatch;
 
 /**
  * Abstract base implementation for scanner plugins that handle containers of
@@ -38,6 +41,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         LOGGER.info("Entering {}", containerPath);
         Map<String, FileDescriptor> files = new HashMap<>();
         enterContainer(container, containerDescriptor, scanner.getContext());
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             Iterable<? extends E> entries = getEntries(container);
             SortedMap<String, E> sortedEntries = new TreeMap<>();
@@ -65,7 +69,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
-            LOGGER.info("Leaving {} ({} entries)", containerPath, files.size());
+            LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, files.size(), stopwatch.elapsed(MILLISECONDS));
         }
         return containerDescriptor;
     }
