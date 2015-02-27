@@ -12,9 +12,9 @@ public interface XmlFileDescriptor extends XmlDescriptor, FileDescriptor {
 
     void setRootElement(XmlElementDescriptor rootElement);
 
-    String getVersion();
+    String getXmlVersion();
 
-    void setVersion(String version);
+    void setXmlVersion(String version);
 
     String getCharacterEncodingScheme();
 
@@ -24,7 +24,7 @@ public interface XmlFileDescriptor extends XmlDescriptor, FileDescriptor {
 
     void setStandalone(boolean standalone);
 
-    boolean isWellFormed();
+    boolean isXmlWellFormed();
 
-    void setWellFormed(boolean wellFormed);
+    void setXmlWellFormed(boolean wellFormed);
 }

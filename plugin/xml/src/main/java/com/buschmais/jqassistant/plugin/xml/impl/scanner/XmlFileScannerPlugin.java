@@ -43,7 +43,10 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
     public XmlFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = scanner.getContext().getStore();
         XmlElementDescriptor parentElement = null;
-        XmlFileDescriptor documentDescriptor = null;
+        XmlFileDescriptor documentDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
+        if (documentDescriptor == null) {
+            documentDescriptor = store.create(XmlFileDescriptor.class);
+        }
         Map<String, XmlNamespaceDescriptor> namespaceMappings = new HashMap<>();
         Map<XmlElementDescriptor, SiblingDescriptor> siblings = new HashMap<>();
         try (InputStream stream = item.createStream()) {
@@ -52,7 +55,7 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
                 int eventType = streamReader.getEventType();
                 switch (eventType) {
                 case XMLStreamConstants.START_DOCUMENT:
-                    documentDescriptor = startDocument(streamReader, store);
+                    documentDescriptor = startDocument(streamReader, documentDescriptor, store);
                     break;
                 case XMLStreamConstants.START_ELEMENT:
                     XmlElementDescriptor childElement = startElement(streamReader, documentDescriptor, parentElement, namespaceMappings, store);
@@ -75,11 +78,11 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
                 }
                 streamReader.next();
             }
-            documentDescriptor.setWellFormed(true);
+            documentDescriptor.setXmlWellFormed(true);
         } catch (XMLStreamException e) {
             LOGGER.warn("Cannot parse document '" + path + "': " + e.getMessage());
             if (documentDescriptor != null) {
-                documentDescriptor.setWellFormed(false);
+                documentDescriptor.setXmlWellFormed(false);
             }
         }
         return documentDescriptor;
@@ -100,10 +103,8 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
         }
     }
 
-    private XmlFileDescriptor startDocument(XMLStreamReader streamReader, Store store) {
-        XmlFileDescriptor documentDescriptor;
-        documentDescriptor = store.create(XmlFileDescriptor.class);
-        documentDescriptor.setVersion(streamReader.getVersion());
+    private XmlFileDescriptor startDocument(XMLStreamReader streamReader, XmlFileDescriptor documentDescriptor, Store store) {
+        documentDescriptor.setXmlVersion(streamReader.getVersion());
         documentDescriptor.setCharacterEncodingScheme(streamReader.getCharacterEncodingScheme());
         documentDescriptor.setStandalone(streamReader.isStandalone());
         return documentDescriptor;

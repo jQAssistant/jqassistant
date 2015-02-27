@@ -30,8 +30,8 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         assertThat(xmlFileDescriptor, notNullValue());
-        assertThat(xmlFileDescriptor.isWellFormed(), equalTo(true));
-        assertThat(xmlFileDescriptor.getVersion(), equalTo("1.0"));
+        assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(true));
+        assertThat(xmlFileDescriptor.getXmlVersion(), equalTo("1.0"));
         assertThat(xmlFileDescriptor.getCharacterEncodingScheme(), equalTo("UTF-8"));
         assertThat(xmlFileDescriptor.isStandalone(), equalTo(false));
         XmlElementDescriptor rootElement = xmlFileDescriptor.getRootElement();
@@ -115,7 +115,7 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/invalidDocument.xml");
         XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         assertThat(xmlFileDescriptor, notNullValue());
-        assertThat(xmlFileDescriptor.isWellFormed(), equalTo(false));
+        assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(false));
         store.commitTransaction();
     }
 }
