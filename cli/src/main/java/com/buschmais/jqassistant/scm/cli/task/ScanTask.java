@@ -104,7 +104,7 @@ public class ScanTask extends AbstractJQATask {
         Scope scope = scanner.resolveScope(scopeName);
         try {
             scanner.scan(element, path, scope);
-        } finally {
+        }finally {
             store.commitTransaction();
         }
     }

@@ -17,7 +17,7 @@ public interface JQATask extends OptionsProvider, OptionsConsumer {
 
     public static final String REPORT_FILE_XML = "jqassistant-report.xml";
 
-    void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties);
+    void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) throws CliExecutionException;
 
     void withStandardOptions(CommandLine commandLine);
 
