@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 
-import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
-import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 import static java.util.Arrays.asList;
 
 import java.io.IOException;
@@ -21,114 +18,57 @@ import schemacrawler.schemacrawler.SchemaInfoLevel;
 import schemacrawler.tools.options.InfoLevel;
 import schemacrawler.utility.SchemaCrawlerUtility;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 
 /**
- * Scans a database schema, the connection properties are taken from a property
- * file following which contains the plugin name.
+ * Abstract base class for database schema scanners.
  */
-@Requires(PropertyFileDescriptor.class)
-public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, ConnectionPropertiesDescriptor> {
+public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescriptor> extends AbstractScannerPlugin<I, D> {
 
-    public static final String PLUGIN_NAME = "jqassistant.plugin.rdbms";
-    public static final String PROPERTIES_SUFFIX = ".properties";
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSchemaScannerPlugin.class);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SchemaScannerPlugin.class);
-
-    /**
-     * The supported JDBC properties.
-     */
-    private enum PluginProperty {
-        Driver, Url, User, Password, InfoLevel, BundledDriver;
-
-        /**
-         * Check if the property name matches this property.
-         * 
-         * @param name
-         *            The property.
-         * @return <code>true</code> if the name matches.
-         */
-        boolean matches(String name) {
-            return this.name().equals(LOWER_UNDERSCORE.to(UPPER_CAMEL, name));
-        }
+    @Override
+    public Class<? extends I> getType() {
+        return getTypeParameter(AbstractSchemaScannerPlugin.class, 0);
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        String lowerCase = path.toLowerCase();
-        return lowerCase.contains(PLUGIN_NAME) && lowerCase.endsWith(PROPERTIES_SUFFIX);
-    }
-
-    @Override
-    public ConnectionPropertiesDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        PropertyFileDescriptor propertyFileDescriptor = scanner.getContext().peek(PropertyFileDescriptor.class);
-        Store store = scanner.getContext().getStore();
-        ConnectionPropertiesDescriptor connectionPropertiesDescriptor = store.migrate(propertyFileDescriptor, ConnectionPropertiesDescriptor.class);
-        String driver = null;
-        String url = null;
-        String user = null;
-        String password = null;
-        String infoLevel = InfoLevel.standard.name();
-        String bundledDriver = null;
-        Properties properties = new Properties();
-        for (PropertyDescriptor propertyDescriptor : connectionPropertiesDescriptor.getProperties()) {
-            String name = propertyDescriptor.getName();
-            String value = propertyDescriptor.getValue();
-            if (PluginProperty.Driver.matches(name)) {
-                driver = value;
-            } else if (PluginProperty.Url.matches(name)) {
-                url = value;
-            } else if (PluginProperty.User.matches(name)) {
-                user = value;
-            } else if (PluginProperty.Password.matches(name)) {
-                password = value;
-            } else if (PluginProperty.InfoLevel.matches(name)) {
-                infoLevel = value;
-            } else if (PluginProperty.BundledDriver.matches(name)) {
-                bundledDriver = value;
-            } else {
-                properties.setProperty(name, value);
-            }
-        }
-        if (url == null) {
-            LOGGER.warn(path + " does not contain a driver or url, skipping scan of schema.");
-            return connectionPropertiesDescriptor;
-        }
-        loadDriver(driver);
-        Catalog catalog = getCatalog(driver, url, user, password, infoLevel, bundledDriver, properties);
-        List<SchemaDescriptor> schemaDescriptors = store(catalog, store);
-        connectionPropertiesDescriptor.getSchemas().addAll(schemaDescriptors);
-        return connectionPropertiesDescriptor;
+    public Class<? extends D> getDescriptorType() {
+        return getTypeParameter(AbstractSchemaScannerPlugin.class, 1);
     }
 
     /**
-     * Load a class, e.g. the JDBC driver.
-     * 
-     * @param driver
-     *            The class name.
+     * Scans the connection identified by the given parameters.
+     *
+     * @param url
+     *            The url.
+     * @param user
+     *            The user.
+     * @param password
+     *            The password.
+     * @param properties
+     *            The properties to pass to schema crawler.
+     * @param infoLevelName
+     *            The name of the info level to use.
+     * @param bundledDriverName
+     *            The name of the bundled driver as provided by schema crawler.
+     * @param store
+     *            The store.
+     * @return The list of created schema descriptors.
+     * @throws java.io.IOException
+     *             If retrieval fails.
      */
-    private void loadDriver(String driver) throws IOException {
-        if (driver != null) {
-            try {
-                Class.forName(driver);
-            } catch (ClassNotFoundException e) {
-                throw new IOException(driver + " cannot be loaded, skipping scan of schema.", e);
-            }
-        }
+    protected List<SchemaDescriptor> scanConnection(String url, String user, String password, String infoLevelName, String bundledDriverName,
+            Properties properties, Store store) throws IOException {
+        Catalog catalog = getCatalog(url, user, password, infoLevelName, bundledDriverName, properties);
+        return createSchemas(catalog, store);
     }
 
     /**
      * Retrieves the catalog metadata using schema crawler.
-     * 
-     * @param driver
-     *            The driver name.
+     *
      * @param url
      *            The url.
      * @param user
@@ -142,10 +82,10 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      * @param bundledDriverName
      *            The name of the bundled driver as provided by schema crawler.
      * @return The catalog.
-     * @throws IOException
+     * @throws java.io.IOException
      *             If retrieval fails.
      */
-    private Catalog getCatalog(String driver, String url, String user, String password, String infoLevelName, String bundledDriverName, Properties properties)
+    protected Catalog getCatalog(String url, String user, String password, String infoLevelName, String bundledDriverName, Properties properties)
             throws IOException {
         // Determine info level
         InfoLevel level = InfoLevel.valueOf(infoLevelName.toLowerCase());
@@ -165,25 +105,25 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
             options = new SchemaCrawlerOptions();
         }
         options.setSchemaInfoLevel(schemaInfoLevel);
+        LOGGER.info("Scanning database schemas on '" + url + "' (user='" + user + "', info level='" + level.name() + "')");
         Catalog catalog;
-        LOGGER.info("Scanning database schemas on '" + url + "' (driver='" + driver + "', user='" + user + "', info level='" + level.name() + "')");
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
         } catch (SQLException | SchemaCrawlerException e) {
-            throw new IOException(String.format("Cannot scan schema (driver='%s', url='%s', user='%s'", driver, url, user), e);
+            throw new IOException(String.format("Cannot scan schema (url='%s', user='%s'", url, user), e);
         }
         return catalog;
     }
 
     /**
      * Loads the bundled driver options
-     * 
+     *
      * @param bundledDriverName
      *            The driver name.
      * @param level
      *            The info level.
      * @return The options or <code>null</code>.
-     * @throws IOException
+     * @throws java.io.IOException
      *             If loading fails.
      */
     private SchemaCrawlerOptions getOptions(String bundledDriverName, InfoLevel level) throws IOException {
@@ -197,7 +137,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Stores the data.
-     * 
+     *
      * @param catalog
      *            The catalog.
      * @param store
@@ -206,7 +146,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      * @throws java.io.IOException
      *             If an error occurs.
      */
-    private List<SchemaDescriptor> store(Catalog catalog, Store store) throws IOException {
+    private List<SchemaDescriptor> createSchemas(Catalog catalog, Store store) throws IOException {
         List<SchemaDescriptor> schemaDescriptors = new ArrayList<>();
         Map<String, ColumnTypeDescriptor> columnTypes = new HashMap<>();
         Map<Column, ColumnDescriptor> allColumns = new HashMap<>();
@@ -229,7 +169,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Create the table descriptors.
-     * 
+     *
      * @param catalog
      *            The catalog.
      * @param schema
@@ -292,7 +232,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Create a column descriptor.
-     * 
+     *
      * @param column
      *            The column.
      * @param descriptorType
@@ -318,7 +258,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Create the foreign key descriptors.
-     * 
+     *
      * @param allForeignKeys
      *            All collected foreign keys.
      * @param allColumns
@@ -351,7 +291,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Create routines, i.e. functions and procedures.
-     * 
+     *
      * @param routines
      *            The routines.
      * @param schemaDescriptor
@@ -360,7 +300,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      *            The column types.
      * @param store
      *            The store.
-     * @throws IOException
+     * @throws java.io.IOException
      *             If an unsupported routine type has been found.
      */
     private void createRoutines(Collection<Routine> routines, SchemaDescriptor schemaDescriptor, Map<String, ColumnTypeDescriptor> columnTypes, Store store)
@@ -410,7 +350,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Add the sequences of a schema to the schema descriptor.
-     * 
+     *
      * @param sequences
      *            The sequences.
      * @param schemaDescriptor
@@ -432,7 +372,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Create a table descriptor for the given table.
-     * 
+     *
      * @param store
      *            The store
      * @param table
@@ -461,7 +401,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Stores index data.
-     * 
+     *
      * @param index
      *            The index.
      * @param tableDescriptor
@@ -495,7 +435,7 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
 
     /**
      * Return the column type descriptor for the given data type.
-     * 
+     *
      * @param columnDataType
      *            The data type.
      * @param columnTypes
@@ -527,4 +467,5 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
         }
         return columnTypeDescriptor;
     }
+
 }

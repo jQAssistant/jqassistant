@@ -2,7 +2,7 @@
     <description>Provides a scanner for importing the metadata of a relational database schema.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.RdbmsDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor</class>
@@ -21,7 +21,11 @@
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.ProcedureDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineColumnDescriptor</class>
     </model>
+    <scope>
+        <class>com.buschmais.jqassistant.plugin.rdbms.api.RdbmsScope</class>
+    </scope>
     <scanner>
-        <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.ConnectionPropertyFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.rdbms.impl.scanner.ConnectionUriScannerPlugin</class>
     </scanner>
 </v1:jqassistant-plugin>

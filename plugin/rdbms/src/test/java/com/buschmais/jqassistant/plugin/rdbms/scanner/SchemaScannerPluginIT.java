@@ -1,19 +1,15 @@
 package com.buschmais.jqassistant.plugin.rdbms.scanner;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,24 +25,9 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ColumnTypeDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionPropertiesDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ForeignKeyReferenceDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.FunctionDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.IndexDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.OnColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.PrimaryKeyDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ProcedureDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineColumnDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.RoutineDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.SequenceDesriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TableDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.TriggerDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.ViewDescriptor;
-import com.buschmais.jqassistant.plugin.rdbms.impl.scanner.SchemaScannerPlugin;
+import com.buschmais.jqassistant.plugin.rdbms.api.RdbmsScope;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
+import com.buschmais.jqassistant.plugin.rdbms.impl.scanner.ConnectionPropertyFileScannerPlugin;
 
 public class SchemaScannerPluginIT extends AbstractPluginIT {
 
@@ -95,7 +76,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void view() {
-        SchemaDescriptor schemaDescriptor = scan(PROPERTIES_DEFAULT);
+        SchemaDescriptor schemaDescriptor = scanFile(PROPERTIES_DEFAULT);
         store.beginTransaction();
         ViewDescriptor view = getTableOrView(VIEW_PERSON);
         assertThat(schemaDescriptor.getViews(), hasItem(view));
@@ -112,7 +93,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void trigger() {
-        scan(PROPERTIES_MAXIMUM);
+        scanFile(PROPERTIES_MAXIMUM);
         store.beginTransaction();
         TableDescriptor table = getTableOrView(TABLE_PERSON);
         assertThat(table, notNullValue());
@@ -134,7 +115,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void routines() {
-        scan(PROPERTIES_MAXIMUM);
+        scanFile(PROPERTIES_MAXIMUM);
         store.beginTransaction();
         // Function
         RoutineDescriptor anHourBefore = getRoutine(ROUTINE_AN_HOUR_BEFORE);
@@ -178,7 +159,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void minimum() {
-        scan("minimum");
+        scanFile("minimum");
         store.beginTransaction();
         assertThat(getTableOrView(TABLE_PERSON), notNullValue());
         assertThat(getColumn(TABLE_PERSON, COLUMN_A), nullValue());
@@ -190,7 +171,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void noTables() {
-        scan("notables");
+        scanFile("notables");
         store.beginTransaction();
         assertThat(getTableOrView(TABLE_PERSON), nullValue());
         store.commitTransaction();
@@ -198,7 +179,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void tablesAndColumns() {
-        SchemaDescriptor schemaDescriptor = scan(PROPERTIES_DEFAULT);
+        SchemaDescriptor schemaDescriptor = scanFile(PROPERTIES_DEFAULT);
         store.beginTransaction();
         // Verify person
         TableDescriptor person = getTableOrView(TABLE_PERSON);
@@ -300,7 +281,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void foreignKey() {
-        scan(PROPERTIES_DEFAULT);
+        scanFile(PROPERTIES_DEFAULT);
         store.beginTransaction();
         TableDescriptor person = getTableOrView(TABLE_PERSON);
         assertThat(person, notNullValue());
@@ -340,7 +321,7 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
     @Test
     @Ignore("Need to investigate how schema crawler needs to be configured to retrieve sequence information from hsqldb")
     public void sequences() throws IOException {
-        scan(PROPERTIES_MAXIMUM);
+        scanFile(PROPERTIES_MAXIMUM);
         store.beginTransaction();
         SequenceDesriptor sequenceDesriptor = getSequence(SEQUENCE_PERSON_SEQ);
         assertThat(sequenceDesriptor, notNullValue());
@@ -352,17 +333,32 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    public void scanUrl() throws URISyntaxException {
+        store.beginTransaction();
+        URI uri = new URI("jdbc:hsqldb:file:target/testdb;username=SA&password=");
+        Descriptor descriptor = getScanner().scan(uri, uri.toString(), RdbmsScope.CONNECTION);
+        verifyConnectionDescriptor(descriptor);
+        store.commitTransaction();
+    }
+
     /**
      * Scans the test tablesAndColumns.
      */
-    private SchemaDescriptor scan(String name) {
+    private SchemaDescriptor scanFile(String name) {
         store.beginTransaction();
-        String fileName = SchemaScannerPlugin.PLUGIN_NAME + "-" + name + SchemaScannerPlugin.PROPERTIES_SUFFIX;
+        String fileName = ConnectionPropertyFileScannerPlugin.PLUGIN_NAME + "-" + name + ConnectionPropertyFileScannerPlugin.PROPERTIES_SUFFIX;
         File propertyFile = new File(getClassesDirectory(SchemaScannerPluginIT.class), fileName);
         Descriptor descriptor = getScanner().scan(propertyFile, propertyFile.getAbsolutePath(), JavaScope.CLASSPATH);
+        SchemaDescriptor publicSchema = verifyConnectionDescriptor(descriptor);
+        store.commitTransaction();
+        return publicSchema;
+    }
+
+    private SchemaDescriptor verifyConnectionDescriptor(Descriptor descriptor) {
         assertThat(descriptor, notNullValue());
-        assertThat(descriptor, instanceOf(ConnectionPropertiesDescriptor.class));
-        List<SchemaDescriptor> schemas = ((ConnectionPropertiesDescriptor) descriptor).getSchemas();
+        assertThat(descriptor, instanceOf(ConnectionDescriptor.class));
+        List<SchemaDescriptor> schemas = ((ConnectionDescriptor) descriptor).getSchemas();
         assertThat(schemas, hasSize(greaterThan(0)));
         SchemaDescriptor publicSchema = null;
         for (SchemaDescriptor schema : schemas) {
@@ -372,7 +368,6 @@ public class SchemaScannerPluginIT extends AbstractPluginIT {
             }
         }
         assertThat(publicSchema, notNullValue());
-        store.commitTransaction();
         return publicSchema;
     }
 
