@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.Properties;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
@@ -25,15 +29,35 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *             error during scan
      */
     @Test
-    public void testPoms() throws IOException {
+    public void pomModel() throws IOException {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
         store.beginTransaction();
-
         validateParentPom();
         validateChildPom();
+        store.commitTransaction();
+    }
 
-        store.rollbackTransaction();
-
+    /**
+     * Verifies that dependencies between two artifacts defined by pom.xml files
+     * are resolved to one node.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     */
+    @Test
+    public void pomDependencies() throws IOException {
+        scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
+        scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
+        store.beginTransaction();
+        ArtifactDescriptor test1 = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
+        assertThat(test1, notNullValue());
+        ArtifactDescriptor test2 = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test2:jar:1.0.0-SNAPSHOT");
+        assertThat(test2, notNullValue());
+        List<DependsOnDescriptor> dependencies = test2.getDependencies();
+        assertThat(dependencies.size(), equalTo(1));
+        DependsOnDescriptor dependsOnDescriptor = dependencies.get(0);
+        assertThat(dependsOnDescriptor.getDependency(), is(test1));
+        store.commitTransaction();
     }
 
     /**
@@ -76,8 +100,6 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *            Descriptors containing all dependencies.
      * @param dependency
      *            expected dependency informations.
-     * @param errorMsgPrefix
-     *            Prefix for errorMsgs containing context information.
      */
     private void checkDependency(List<DependsOnDescriptor> dependencyDescriptors, Dependency dependency) {
         for (DependsOnDescriptor dependsOnDescriptor : dependencyDescriptors) {
@@ -102,8 +124,6 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *            Descriptors containing all dependencies.
      * @param dependency
      *            expected dependency informations.
-     * @param errorMsgPrefix
-     *            Prefix for errorMsgs containing context information.
      */
     private void checkManagedDependency(List<PomManagesDependencyDescriptor> dependencyDescriptors, Dependency dependency) {
         for (PomManagesDependencyDescriptor dependencyRelationDescriptor : dependencyDescriptors) {
@@ -207,8 +227,6 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      *            Descriptors containing all dependencies.
      * @param dependency
      *            expected dependency informations.
-     * @param errorMsgPrefix
-     *            Prefix for errorMsgs containing context information.
      */
     private void checkProfileDependency(List<ProfileDependsOnDescriptor> dependencyDescriptors, Dependency dependency) {
         for (ProfileDependsOnDescriptor dependsOnDescriptor : dependencyDescriptors) {
