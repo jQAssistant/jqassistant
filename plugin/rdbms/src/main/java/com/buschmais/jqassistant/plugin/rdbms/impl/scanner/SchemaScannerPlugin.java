@@ -97,13 +97,14 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
                 properties.setProperty(name, value);
             }
         }
-        if (driver == null && url == null) {
+        if (url == null) {
             LOGGER.warn(path + " does not contain a driver or url, skipping scan of schema.");
             return connectionPropertiesDescriptor;
         }
         loadDriver(driver);
         Catalog catalog = getCatalog(driver, url, user, password, infoLevel, bundledDriver, properties);
-        store(catalog, connectionPropertiesDescriptor, store);
+        List<SchemaDescriptor> schemaDescriptors = store(catalog, store);
+        connectionPropertiesDescriptor.getSchemas().addAll(schemaDescriptors);
         return connectionPropertiesDescriptor;
     }
 
@@ -112,13 +113,14 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      * 
      * @param driver
      *            The class name.
-     * @return <code>true</code> if the class could be loaded.
      */
-    private <T> Class<T> loadDriver(String driver) throws IOException {
-        try {
-            return (Class<T>) Class.forName(driver);
-        } catch (ClassNotFoundException e) {
-            throw new IOException(driver + " cannot be loaded, skipping scan of schema.", e);
+    private void loadDriver(String driver) throws IOException {
+        if (driver != null) {
+            try {
+                Class.forName(driver);
+            } catch (ClassNotFoundException e) {
+                throw new IOException(driver + " cannot be loaded, skipping scan of schema.", e);
+            }
         }
     }
 
@@ -198,29 +200,31 @@ public class SchemaScannerPlugin extends AbstractScannerPlugin<FileResource, Con
      * 
      * @param catalog
      *            The catalog.
-     * @param connectionPropertiesDescriptor
-     *            The properties descriptor.
      * @param store
      *            The store.
+     * @return The list of created schema descriptors.
      * @throws java.io.IOException
      *             If an error occurs.
      */
-    private void store(Catalog catalog, ConnectionPropertiesDescriptor connectionPropertiesDescriptor, Store store) throws IOException {
+    private List<SchemaDescriptor> store(Catalog catalog, Store store) throws IOException {
+        List<SchemaDescriptor> schemaDescriptors = new ArrayList<>();
         Map<String, ColumnTypeDescriptor> columnTypes = new HashMap<>();
         Map<Column, ColumnDescriptor> allColumns = new HashMap<>();
         Set<ForeignKey> allForeignKeys = new HashSet<>();
         for (Schema schema : catalog.getSchemas()) {
             SchemaDescriptor schemaDescriptor = store.create(SchemaDescriptor.class);
             schemaDescriptor.setName(schema.getName());
-            connectionPropertiesDescriptor.getSchemas().add(schemaDescriptor);
             // Tables
             createTables(catalog, schema, schemaDescriptor, columnTypes, allColumns, allForeignKeys, store);
             // Sequences
             createSequences(catalog.getSequences(schema), schemaDescriptor, store);
+            // Procedures and Functions
             createRoutines(catalog.getRoutines(schema), schemaDescriptor, columnTypes, store);
+            schemaDescriptors.add(schemaDescriptor);
         }
+        // Foreign keys
         createForeignKeys(allForeignKeys, allColumns, store);
-
+        return schemaDescriptors;
     }
 
     /**
