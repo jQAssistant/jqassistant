@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.examples</groupId>
         <artifactId>jqassistant.examples.plugins</artifactId>
-        <version>1.0.0-RC-SNAPSHOT</version>
+        <version>1.0.0-RC1</version>
     </parent>
     <artifactId>jqassistant.examples.plugins.scanner</artifactId>
 
