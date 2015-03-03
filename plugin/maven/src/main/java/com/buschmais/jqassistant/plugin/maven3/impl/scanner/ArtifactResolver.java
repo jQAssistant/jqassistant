@@ -1,14 +1,10 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.maven.model.Dependency;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.xo.api.Query;
 
 public class ArtifactResolver {
 
@@ -115,17 +111,11 @@ public class ArtifactResolver {
     static <A extends ArtifactDescriptor> A resolve(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
         Store store = scannerContext.getStore();
         String id = coordinates.getId();
-        Map<String, Object> params = new HashMap<>();
-        params.put("fqn", id);
-        Query.Result<Query.Result.CompositeRowObject> result = store.executeQuery("MATCH (a:Artifact) WHERE a.fqn={fqn} RETURN a", params);
-        ArtifactDescriptor artifactDescriptor;
-        if (!result.hasResult()) {
+        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
+        if (artifactDescriptor == null) {
             artifactDescriptor = createArtifactDescriptor(coordinates, descriptorType, scannerContext);
-        } else {
-            artifactDescriptor = result.getSingleResult().get("a", ArtifactDescriptor.class);
-            if (!(descriptorType.isAssignableFrom(artifactDescriptor.getClass()))) {
-                return store.migrate(artifactDescriptor, descriptorType);
-            }
+        } else if (!(descriptorType.isAssignableFrom(artifactDescriptor.getClass()))) {
+            return store.migrate(artifactDescriptor, descriptorType);
         }
         return descriptorType.cast(artifactDescriptor);
     }
