@@ -4,7 +4,11 @@ import java.util.List;
 
 import org.apache.maven.model.Model;
 
+import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
@@ -14,7 +18,14 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  * @see Model
  * @author ronald.kunzmann@buschmais.com
  */
-public interface MavenPomXmlDescriptor extends BaseProfileDescriptor, MavenPomDescriptor, XmlFileDescriptor {
+@Label(value = "Pom", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
+public interface MavenPomXmlDescriptor extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor,
+        FullQualifiedNameDescriptor, NamedDescriptor, XmlFileDescriptor {
+
+    @Relation("DESCRIBES")
+    MavenArtifactDescriptor getDescribes();
+
+    void setDescribes(MavenArtifactDescriptor artifact);
 
     /**
      * Get the location of the parent project, if one exists. Values from the
@@ -26,7 +37,7 @@ public interface MavenPomXmlDescriptor extends BaseProfileDescriptor, MavenPomDe
      * @return The parent POM.
      */
     @Relation("HAS_PARENT")
-    MavenPomDescriptor getParent();
+    ArtifactDescriptor getParent();
 
     /**
      * Set the parent POM.
@@ -34,7 +45,7 @@ public interface MavenPomXmlDescriptor extends BaseProfileDescriptor, MavenPomDe
      * @param parent
      *            The parent POM.
      */
-    void setParent(MavenPomDescriptor parent);
+    void setParent(ArtifactDescriptor parent);
 
     /**
      * Get referenced licenses.
@@ -51,6 +62,9 @@ public interface MavenPomXmlDescriptor extends BaseProfileDescriptor, MavenPomDe
      */
     @Relation("HAS_PROFILE")
     List<MavenProfileDescriptor> getProfiles();
+
+    @Outgoing
+    List<PomDependsOnDescriptor> getDependencies();
 
     /**
      * Get default dependency information for projects that inherit from this

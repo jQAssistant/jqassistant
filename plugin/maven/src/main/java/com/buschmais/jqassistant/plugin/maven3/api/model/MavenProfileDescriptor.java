@@ -13,7 +13,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  * @author ronald.kunzmann@buschmais.com
  */
 @Label("Profile")
-public interface MavenProfileDescriptor extends MavenDescriptor, BaseProfileDescriptor {
+public interface MavenProfileDescriptor extends MavenDescriptor, MavenDependentDescriptor, BaseProfileDescriptor {
 
     @Property("id")
     String getId();

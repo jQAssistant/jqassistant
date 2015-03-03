@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -49,14 +48,15 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
         scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
         store.beginTransaction();
-        ArtifactDescriptor test1 = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
+        MavenPomXmlDescriptor test1 = store.find(MavenPomXmlDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
         assertThat(test1, notNullValue());
-        ArtifactDescriptor test2 = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test2:jar:1.0.0-SNAPSHOT");
+        MavenPomXmlDescriptor test2 = store.find(MavenPomXmlDescriptor.class, "com.buschmais.jqassistant:test2:jar:1.0.0-SNAPSHOT");
         assertThat(test2, notNullValue());
-        List<DependsOnDescriptor> dependencies = test2.getDependencies();
+        List<PomDependsOnDescriptor> dependencies = test2.getDependencies();
         assertThat(dependencies.size(), equalTo(1));
-        DependsOnDescriptor dependsOnDescriptor = dependencies.get(0);
-        assertThat(dependsOnDescriptor.getDependency(), is(test1));
+        PomDependsOnDescriptor dependsOnDescriptor = dependencies.get(0);
+        ArtifactDescriptor test1Artifact = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
+        assertThat(dependsOnDescriptor.getDependency(), is(test1Artifact));
         store.commitTransaction();
     }
 
@@ -68,17 +68,17 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         Assert.assertEquals(1, pomDescriptors.size());
 
         MavenPomXmlDescriptor pomDescriptor = pomDescriptors.get(0);
-        Assert.assertNull(pomDescriptor.getGroup());
-        Assert.assertEquals("jqassistant.child", pomDescriptor.getName());
+        Assert.assertNull(pomDescriptor.getGroupId());
+        Assert.assertEquals("jqassistant.child", pomDescriptor.getArtifactId());
         Assert.assertNull(pomDescriptor.getVersion());
 
-        MavenPomDescriptor parentDescriptor = pomDescriptor.getParent();
+        ArtifactDescriptor parentDescriptor = pomDescriptor.getParent();
         Assert.assertEquals("com.buschmais.jqassistant", parentDescriptor.getGroup());
         Assert.assertEquals("jqassistant.parent", parentDescriptor.getName());
         Assert.assertEquals("1.0.0-RC-SNAPSHOT", parentDescriptor.getVersion());
 
         // validate dependencies
-        List<DependsOnDescriptor> dependencyDescriptors = pomDescriptor.getDependencies();
+        List<PomDependsOnDescriptor> dependencyDescriptors = pomDescriptor.getDependencies();
         Assert.assertEquals(4, dependencyDescriptors.size());
         List<Dependency> dependencyList = createChildDependencies();
         for (Dependency dependency : dependencyList) {
@@ -101,8 +101,8 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      * @param dependency
      *            expected dependency informations.
      */
-    private void checkDependency(List<DependsOnDescriptor> dependencyDescriptors, Dependency dependency) {
-        for (DependsOnDescriptor dependsOnDescriptor : dependencyDescriptors) {
+    private void checkDependency(List<? extends MavenDependencyDescriptor> dependencyDescriptors, Dependency dependency) {
+        for (MavenDependencyDescriptor dependsOnDescriptor : dependencyDescriptors) {
             ArtifactDescriptor dependencyDescriptor = dependsOnDescriptor.getDependency();
             if (Objects.equals(dependencyDescriptor.getGroup(), dependency.group) && //
                     Objects.equals(dependencyDescriptor.getName(), dependency.name) && //
@@ -148,11 +148,11 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         Assert.assertEquals(1, mavenPomDescriptors.size());
 
         MavenPomXmlDescriptor pomDescriptor = mavenPomDescriptors.iterator().next();
-        Assert.assertEquals("com.buschmais.jqassistant", pomDescriptor.getGroup());
-        Assert.assertEquals("jqassistant.parent", pomDescriptor.getName());
+        Assert.assertEquals("com.buschmais.jqassistant", pomDescriptor.getGroupId());
+        Assert.assertEquals("jqassistant.parent", pomDescriptor.getArtifactId());
         Assert.assertEquals("1.0.0-RC-SNAPSHOT", pomDescriptor.getVersion());
 
-        MavenPomDescriptor parentDescriptor = pomDescriptor.getParent();
+        ArtifactDescriptor parentDescriptor = pomDescriptor.getParent();
         Assert.assertNull(parentDescriptor);
 
         List<MavenLicenseDescriptor> licenseDescriptors = pomDescriptor.getLicenses();
@@ -348,14 +348,16 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     private MavenPluginDescriptor validatePlugin(List<MavenPluginDescriptor> pluginDescriptors, Plugin plugin) {
-        for (MavenPluginDescriptor mavenPluginDescriptor : pluginDescriptors) {
-            if (Objects.equals(mavenPluginDescriptor.getClassifier(), plugin.classifier) && //
-                    Objects.equals(mavenPluginDescriptor.getGroup(), plugin.group) && //
-                    Objects.equals(mavenPluginDescriptor.getName(), plugin.name) && //
-                    Objects.equals(mavenPluginDescriptor.getType(), plugin.type) && //
-                    Objects.equals(mavenPluginDescriptor.getVersion(), plugin.version) && //
-                    Objects.equals(mavenPluginDescriptor.isInherited(), plugin.inherited)) {
-                return mavenPluginDescriptor;
+        for (MavenPluginDescriptor pluginDescriptor : pluginDescriptors) {
+            MavenArtifactDescriptor artifact = pluginDescriptor.getArtifact();
+            assertThat(artifact, notNullValue());
+            if (Objects.equals(artifact.getClassifier(), plugin.classifier) && //
+                    Objects.equals(artifact.getGroup(), plugin.group) && //
+                    Objects.equals(artifact.getName(), plugin.name) && //
+                    Objects.equals(artifact.getType(), plugin.type) && //
+                    Objects.equals(artifact.getVersion(), plugin.version) && //
+                    Objects.equals(pluginDescriptor.isInherited(), plugin.inherited)) {
+                return pluginDescriptor;
             }
         }
         Assert.fail("Plugin not found: " + plugin.toString());
