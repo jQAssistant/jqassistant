@@ -7,6 +7,7 @@ import org.apache.maven.model.Plugin;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
+import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
  * Descriptor for references build plugins.
@@ -16,7 +17,12 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  *
  */
 @Label("Plugin")
-public interface MavenPluginDescriptor extends MavenArtifactDescriptor, ConfigurableDescriptor {
+public interface MavenPluginDescriptor extends MavenDependentDescriptor, ConfigurableDescriptor {
+
+    @Relation("IS_ARTIFACT")
+    MavenArtifactDescriptor getArtifact();
+
+    void setArtifact(MavenArtifactDescriptor artifact);
 
     /**
      * Get whether any configuration should be propagated to child POMs.
@@ -42,5 +48,8 @@ public interface MavenPluginDescriptor extends MavenArtifactDescriptor, Configur
      */
     @Relation("HAS_EXECUTION")
     List<MavenPluginExecutionDescriptor> getExecutions();
+
+    @Outgoing
+    List<PluginDependsOnDescriptor> getDependencies();
 
 }

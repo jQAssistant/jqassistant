@@ -13,6 +13,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 public interface MavenArtifactDescriptor extends MavenDescriptor, ArtifactDescriptor {
 
     @Incoming
+    List<PomDependsOnDescriptor> getPomDependents();
+
+    @Incoming
     List<PomManagesDependencyDescriptor> getPomManagedDependents();
 
     @Incoming
@@ -20,5 +23,9 @@ public interface MavenArtifactDescriptor extends MavenDescriptor, ArtifactDescri
 
     @Incoming
     List<ProfileDependsOnDescriptor> getProfileDependents();
+
+    @Incoming
+    List<PluginDependsOnDescriptor> getPluginDependents();
+
 
 }

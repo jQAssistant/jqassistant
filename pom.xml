@@ -49,7 +49,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <com.buschmais.xo_version>0.4.6</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
         <org.neo4j_version>2.1.7</org.neo4j_version>
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
@@ -505,13 +505,13 @@
                 <artifactId>neo4j</artifactId>
                 <version>${org.neo4j_version}</version>
             </dependency>
+            <!-- Test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.11</version>
+                <version>4.12</version>
                 <scope>test</scope>
             </dependency>
-            <!-- External dependencies -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>

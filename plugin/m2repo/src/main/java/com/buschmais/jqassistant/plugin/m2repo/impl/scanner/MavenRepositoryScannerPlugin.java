@@ -178,10 +178,10 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     if (descriptor != null) {
 
                         RepositoryArtifactDescriptor artifactDescriptor = migrateToArtifactAndSetRelation(store, repoDescriptor, lastModified, descriptor);
+                        artifactDescriptor.setGroupId(resolvedArtifact.getGroupId());
+                        artifactDescriptor.setArtifactId(resolvedArtifact.getArtifactId());
                         artifactDescriptor.setClassifier(resolvedArtifact.getClassifier());
-                        artifactDescriptor.setGroup(resolvedArtifact.getGroupId());
-                        artifactDescriptor.setName(resolvedArtifact.getArtifactId());
-                        artifactDescriptor.setType(resolvedArtifact.getExtension());
+                        artifactDescriptor.setPackaging(resolvedArtifact.getExtension());
                         artifactDescriptor.setVersion(version);
 
                         artifactDescriptor.setMavenCoordinates(coords);

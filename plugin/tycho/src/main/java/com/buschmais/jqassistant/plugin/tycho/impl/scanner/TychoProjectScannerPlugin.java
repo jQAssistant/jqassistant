@@ -20,15 +20,15 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 
 /**
  * Implementation of a {@link ScannerPlugin} for tycho projects
  */
 @Requires(MavenProjectDirectoryDescriptor.class)
-public class TychoProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
+public class TychoProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
 
     private static final String PACKAGING_ECLIPSE_PLUGIN = "eclipse-plugin";
 

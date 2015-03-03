@@ -15,22 +15,23 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.AbstractMavenProjectScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 
 /**
  * A scanner plugin for maven projects.
  */
-public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin {
+public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
@@ -84,6 +85,37 @@ public class MavenProjectScannerPlugin extends AbstractMavenProjectScannerPlugin
             }
         }
         return projectDescriptor;
+    }
+
+    /**
+     * Resolves a maven project.
+     * 
+     * @param project
+     *            The project
+     * @param expectedType
+     *            The expected descriptor type.
+     * @param scannerContext
+     *            The scanner context.
+     * @param <T>
+     *            The expected descriptor type.
+     * @return The maven project descriptor.
+     */
+    protected <T extends MavenProjectDescriptor> T resolveProject(MavenProject project, Class<T> expectedType, ScannerContext scannerContext) {
+        Store store = scannerContext.getStore();
+        String id = project.getGroupId() + ":" + project.getArtifactId() + ":" + project.getVersion();
+        MavenProjectDescriptor projectDescriptor = store.find(MavenProjectDescriptor.class, id);
+        if (projectDescriptor == null) {
+            projectDescriptor = store.create(expectedType, id);
+            projectDescriptor.setName(project.getName());
+            projectDescriptor.setGroupId(project.getGroupId());
+            projectDescriptor.setArtifactId(project.getArtifactId());
+            projectDescriptor.setVersion(project.getVersion());
+            projectDescriptor.setPackaging(project.getPackaging());
+            projectDescriptor.setFullQualifiedName(id);
+        } else if (!expectedType.isAssignableFrom(projectDescriptor.getClass())) {
+            projectDescriptor = store.migrate(projectDescriptor, expectedType);
+        }
+        return expectedType.cast(projectDescriptor);
     }
 
     /**

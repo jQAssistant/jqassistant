@@ -3,9 +3,7 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 
-import com.buschmais.jqassistant.plugin.common.api.model.BaseDependencyDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
@@ -16,7 +14,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  * @author ronald.kunzmann@buschmais.com
  */
 @Relation("MANAGES_DEPENDENCY")
-public interface ProfileManagesDependencyDescriptor extends BaseDependencyDescriptor {
+public interface ProfileManagesDependencyDescriptor extends MavenDependencyDescriptor {
 
     /**
      * Get the dependent POM.
@@ -25,13 +23,5 @@ public interface ProfileManagesDependencyDescriptor extends BaseDependencyDescri
      */
     @Outgoing
     MavenProfileDescriptor getDependent();
-
-    /**
-     * Get the artifact dependency.
-     * 
-     * @return The artifact dependency.
-     */
-    @Incoming
-    MavenArtifactDescriptor getDependency();
 
 }
