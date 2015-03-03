@@ -793,53 +793,84 @@ p a > code:hover {
 }
 
 @media only screen and (min-width: 1280px) {
-    body.toc2 {
-        padding-left: 20em;
+
+	body.toc {
+        padding-left: 15em;
+        padding-right: 0;
     }
 
-    #toc.toc2 {
+    #toc.toc {  
+        margin-top: 0!important;
         position: fixed;
-        width: 20em;
+        width: 15em;
         left: 0;
         top: 0;
-        border-right: 1px solid #ebebeb;
-        border-bottom: 0;
+        border-right: 1px solid #efefed;
+        border-top-width: 0!important;
+        border-bottom-width: 0!important;
         z-index: 1000;
-        padding: 1em;
+        padding: 1.25em 1em;
         height: 100%;
         overflow: auto;
     }
 
-    #toc.toc2 #toctitle {
+    #toc.toc #toctitle {
         margin-top: 0;
     }
 
-    #toc.toc2 > ul {
+    #toc.toc > ul {
         font-size: .95em;
+        margin-bottom: 0;
     }
 
-    #toc.toc2 ul ul {
+    #toc.toc ul ul {
         margin-left: 0;
         padding-left: 1.25em;
     }
 
-    #toc.toc2 ul.sectlevel0 ul.sectlevel1 {
+    #toc.toc ul.sectlevel0 ul.sectlevel1 {
         padding-left: 0;
         margin-top: 0.5em;
         margin-bottom: 0.5em;
     }
 
-    body.toc2.toc-right {
+    body.toc.toc-right {
         padding-left: 0;
         padding-right: 20em;
     }
 
-    body.toc2.toc-right #toc.toc2 {
+    body.toc.toc-right #toc.toc {
         border-right: 0;
         border-left: 1px solid #ebebeb;
         left: auto;
         right: 0;
     }
+    
+    #content, #footnotes, #footer {
+    width: 100%;
+    max-width: 62.5em;
+    margin-left: 16.25em;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0em;
+    *zoom: 1;
+    position: relative;
+    padding-left: 0.9375em;
+    padding-right: 0.9375em;
+	}
+
+	#header {
+    width: 100%;
+    max-width: 62.5em;
+    margin-left: 16.25em;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 4em;
+    *zoom: 1;
+    position: relative;
+    padding-left: 0.9375em;
+    padding-right: 0.9375em;
+	}
 }
 
 #content #toc {
@@ -874,7 +905,8 @@ p a > code:hover {
 }
 
 #footer {
-    max-width: 100%;
+    width: 100%;
+    max-width: 62.5em;
     background-color: #747270;
     padding: 1.25em;
 }
