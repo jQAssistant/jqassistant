@@ -105,7 +105,7 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
             options = new SchemaCrawlerOptions();
         }
         options.setSchemaInfoLevel(schemaInfoLevel);
-        LOGGER.info("Scanning database schemas on '" + url + "' (user='" + user + "', info level='" + level.name() + "')");
+        LOGGER.debug("Scanning database schemas on '" + url + "' (user='" + user + "', info level='" + level.name() + "')");
         Catalog catalog;
         try (Connection connection = DriverManager.getConnection(url, user, password)) {
             catalog = SchemaCrawlerUtility.getCatalog(connection, options);
