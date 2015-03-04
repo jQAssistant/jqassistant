@@ -5,24 +5,20 @@ import java.util.Map;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.component.annotations.Component;
 
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
-@Component(role = PluginConfigurationProvider.class, instantiationStrategy = "singleton")
-public class PluginConfigurationProvider {
+@Component(role = PluginRepositoryProvider.class, instantiationStrategy = "singleton")
+public class PluginRepositoryProvider {
 
     private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
+
+    private PluginRepository pluginRepository;
+
+    PluginRepositoryProvider() throws MojoExecutionException {
+        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+    }
 
     /**
      * Return the model plugin repository.
@@ -33,7 +29,7 @@ public class PluginConfigurationProvider {
      */
     public ModelPluginRepository getModelPluginRepository() throws MojoExecutionException {
         try {
-            return new ModelPluginRepositoryImpl(pluginConfigurationReader);
+            return pluginRepository.getModelPluginRepository();
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -50,7 +46,7 @@ public class PluginConfigurationProvider {
      */
     public ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
         try {
-            return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
+            return pluginRepository.getScannerPluginRepository(properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -65,7 +61,7 @@ public class PluginConfigurationProvider {
      */
     public ScopePluginRepository getScopePluginRepository() throws MojoExecutionException {
         try {
-            return new ScopePluginRepositoryImpl(pluginConfigurationReader);
+            return pluginRepository.getScopePluginRepository();
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create scope plugin repository.", e);
         }
@@ -80,7 +76,7 @@ public class PluginConfigurationProvider {
      */
     public RulePluginRepository getRulePluginRepository() throws MojoExecutionException {
         try {
-            return new RulePluginRepositoryImpl(pluginConfigurationReader);
+            return pluginRepository.getRulePluginRepository();
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -95,7 +91,7 @@ public class PluginConfigurationProvider {
      */
     public ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
         try {
-            return new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
+            return pluginRepository.getReportPluginRepository(properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
