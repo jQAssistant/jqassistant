@@ -17,13 +17,13 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
+import com.buschmais.jqassistant.scm.cli.Task;
 
 /**
  * Abstract base class for all tasks working with rules.
  */
-public abstract class AbstractAnalyzeTask extends AbstractJQATask {
+public abstract class AbstractAnalyzeTask extends AbstractTask {
 
     private static final String CMDLINE_OPTION_RULEDIR = "r";
     private static final String CMDLINE_OPTION_GROUPS = "groups";
@@ -97,7 +97,7 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
 
     @Override
     public void withOptions(CommandLine options) {
-        ruleDirectory = getOptionValue(options, CMDLINE_OPTION_RULEDIR, JQATask.DEFAULT_RULE_DIRECTORY);
+        ruleDirectory = getOptionValue(options, CMDLINE_OPTION_RULEDIR, Task.DEFAULT_RULE_DIRECTORY);
         groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Arrays.asList("default"));
         constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());

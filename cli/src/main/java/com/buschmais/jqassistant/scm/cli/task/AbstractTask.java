@@ -14,15 +14,15 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
+import com.buschmais.jqassistant.scm.cli.Task;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
-public abstract class AbstractJQATask implements JQATask {
+public abstract class AbstractTask implements Task {
 
     protected static final String CMDLINE_OPTION_S = "s";
 
@@ -37,7 +37,8 @@ public abstract class AbstractJQATask implements JQATask {
     protected Map<String, Object> pluginProperties;
 
     @Override
-    public void initialize(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException {
+    public void initialize(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> pluginProperties)
+            throws CliExecutionException {
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(Log.getLog());

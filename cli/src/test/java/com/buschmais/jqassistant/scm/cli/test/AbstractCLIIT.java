@@ -10,7 +10,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.Before;
 
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.cli.JQATask;
+import com.buschmais.jqassistant.scm.cli.Task;
 
 /**
  * Abstract base implementation for CLI tests.
@@ -145,7 +145,7 @@ public abstract class AbstractCLIIT {
      * @return The default store directory.
      */
     protected File getDefaultStoreDirectory() {
-        return new File(getWorkingDirectory(), JQATask.DEFAULT_STORE_DIRECTORY);
+        return new File(getWorkingDirectory(), Task.DEFAULT_STORE_DIRECTORY);
     }
 
     /**
@@ -154,7 +154,7 @@ public abstract class AbstractCLIIT {
      * @return The default report directory.
      */
     protected File getDefaultReportDirectory() {
-        return new File(getWorkingDirectory(), JQATask.DEFAULT_REPORT_DIRECTORY);
+        return new File(getWorkingDirectory(), Task.DEFAULT_REPORT_DIRECTORY);
     }
 
     /**

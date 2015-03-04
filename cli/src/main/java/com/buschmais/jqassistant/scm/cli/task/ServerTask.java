@@ -16,7 +16,7 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ServerTask extends AbstractJQATask {
+public class ServerTask extends AbstractTask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
