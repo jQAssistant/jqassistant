@@ -4,4 +4,10 @@
     <scope>
         <class>com.buschmais.jqassistant.plugin.impl.TestScope</class>
     </scope>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin</class>
+    </scanner>
+    <report>
+        <class>com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin</class>
+    </report>
 </jqa-plugin:jqassistant-plugin>
