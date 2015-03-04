@@ -18,12 +18,11 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.Log;
 
-public class ReportTask extends AbstractJQATask {
+public class ReportTask extends AbstractTask {
 
     public static final String REPORT_FILE_HTML = "jqassistant-report.html";
 
     private String reportDirectory;
-
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {

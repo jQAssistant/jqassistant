@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
  */
-public class ResetTask extends AbstractJQATask {
+public class ResetTask extends AbstractTask {
 
 
     @Override

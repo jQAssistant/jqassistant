@@ -12,8 +12,10 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.scm.cli.task.DefaultTaskFactoryImpl;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -23,6 +25,12 @@ public class Main {
 
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
+
+    private final TaskFactory taskFactory;
+
+    public Main(TaskFactory taskFactory) {
+        this.taskFactory = taskFactory;
+    }
 
     /**
      * The main method.
@@ -34,13 +42,18 @@ public class Main {
      */
     public static void main(String[] args) {
         try {
-            Options options = gatherOptions();
-            CommandLine commandLine = getCommandLine(args, options);
-            interpretCommandLine(commandLine, options);
+            DefaultTaskFactoryImpl taskFactory = new DefaultTaskFactoryImpl();
+            new Main(taskFactory).run(args);
         } catch (CliExecutionException e) {
             Log.getLog().error(e.getMessage());
             System.exit(e.getExitCode());
         }
+    }
+
+    public void run(String[] args) throws CliExecutionException {
+        Options options = gatherOptions(taskFactory);
+        CommandLine commandLine = getCommandLine(args, options);
+        interpretCommandLine(commandLine, options, taskFactory);
     }
 
     /**
@@ -50,7 +63,7 @@ public class Main {
      * @throws CliExecutionException
      *             If initialization fails.
      */
-    private static com.buschmais.jqassistant.core.plugin.api.PluginRepository getPluginRepository() throws CliExecutionException {
+    private PluginRepository getPluginRepository() throws CliExecutionException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
         return new PluginRepositoryImpl(pluginConfigurationReader);
     }
@@ -61,9 +74,9 @@ public class Main {
      * 
      * @return The options.
      */
-    private static Options gatherOptions() {
+    private Options gatherOptions(TaskFactory taskFactory) {
         final Options options = new Options();
-        gatherTasksOptions(options);
+        gatherTasksOptions(taskFactory, options);
         gatherStandardOptions(options);
         return options;
     }
@@ -75,7 +88,7 @@ public class Main {
      *            The standard options.
      */
     @SuppressWarnings("static-access")
-    private static void gatherStandardOptions(final Options options) {
+    private void gatherStandardOptions(final Options options) {
         options.addOption(OptionBuilder.withArgName("p").withDescription("Path to property file; default is jqassistant.properties in the class path")
                 .withLongOpt("properties").hasArg().create("p"));
         options.addOption(new Option("help", "print this message"));
@@ -87,9 +100,9 @@ public class Main {
      * @param options
      *            The task specific options.
      */
-    private static void gatherTasksOptions(final Options options) {
-        for (Task task : com.buschmais.jqassistant.scm.cli.Task.values()) {
-            for (Option option : task.getTask().getOptions()) {
+    private void gatherTasksOptions(TaskFactory taskFactory, Options options) {
+        for (Task task : taskFactory.getTasks()) {
+            for (Option option : task.getOptions()) {
                 options.addOption(option);
             }
         }
@@ -97,13 +110,13 @@ public class Main {
 
     /**
      * Returns a string containing the names of all supported tasks.
-     * 
+     *
      * @return The names of all supported tasks.
      */
-    private static String gatherTaskNames() {
+    private String gatherTaskNames(TaskFactory taskFactory) {
         final StringBuilder builder = new StringBuilder();
-        for (Task task : com.buschmais.jqassistant.scm.cli.Task.values()) {
-            builder.append("'").append(task.name().toLowerCase()).append("' ");
+        for (String taskName : taskFactory.getTaskNames()) {
+            builder.append("'").append(taskName).append("' ");
         }
         return builder.toString().trim();
     }
@@ -115,19 +128,24 @@ public class Main {
      *            The command line.
      * @param options
      *            The known options.
-     * @throws IOException
+     * @throws CliExecutionException
      *             If an error occurs.
      */
-    static void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
-        List<String> requestedTasks = commandLine.getArgList();
-        if (requestedTasks.isEmpty()) {
-            printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames());
+    private void interpretCommandLine(CommandLine commandLine, Options options, TaskFactory taskFactory) throws CliExecutionException {
+        List<String> taskNames = commandLine.getArgList();
+        if (taskNames.isEmpty()) {
+            printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames(taskFactory));
             System.exit(1);
         }
-        com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository = getPluginRepository();
+        PluginRepository pluginRepository = getPluginRepository();
         Map<String, Object> properties = readProperties(commandLine);
-        for (String requestedTask : requestedTasks) {
-            executeTask(requestedTask, options, commandLine, pluginRepository, properties);
+        for (String taskName : taskNames) {
+            Task task = taskFactory.fromName(taskName);
+            if (task == null) {
+                printUsage(options, "Unknown task " + taskName);
+                System.exit(1);
+            }
+            executeTask(task, options, commandLine, pluginRepository, properties);
         }
     }
 
@@ -140,7 +158,7 @@ public class Main {
      *            The known options.
      * @return The command line.
      */
-    private static CommandLine getCommandLine(String[] args, Options options) {
+    private CommandLine getCommandLine(String[] args, Options options) {
         final CommandLineParser parser = new BasicParser();
         CommandLine commandLine = null;
         try {
@@ -155,8 +173,8 @@ public class Main {
     /**
      * Executes a task.
      * 
-     * @param taskName
-     *            The task name.
+     * @param task
+     *            The task.
      * @param option
      *            The option.
      * @param commandLine
@@ -165,13 +183,8 @@ public class Main {
      *            The plugin properties
      * @throws IOException
      */
-    private static void executeTask(String taskName, Options option, CommandLine commandLine, com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> properties)
+    private void executeTask(Task task, Options option, CommandLine commandLine, PluginRepository pluginRepository, Map<String, Object> properties)
             throws CliExecutionException {
-        final JQATask task = Task.fromName(taskName);
-        if (task == null) {
-            printUsage(option, "Unknown task " + taskName);
-            System.exit(1);
-        }
         try {
             task.withStandardOptions(commandLine);
             task.withOptions(commandLine);
@@ -193,7 +206,7 @@ public class Main {
      * @throws CliConfigurationException
      *             If an error occurs.
      */
-    private static Map<String, Object> readProperties(CommandLine commandLine) throws CliConfigurationException {
+    private Map<String, Object> readProperties(CommandLine commandLine) throws CliConfigurationException {
         final Properties properties = new Properties();
         InputStream propertiesStream;
         if (commandLine.hasOption("p")) {
@@ -231,7 +244,7 @@ public class Main {
      * @param errorMessage
      *            The error message to append.
      */
-    private static void printUsage(final Options options, final String errorMessage) {
+    private void printUsage(final Options options, final String errorMessage) {
         System.out.println(errorMessage);
         final HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp(Main.class.getCanonicalName(), options);
@@ -243,7 +256,7 @@ public class Main {
      *
      * @return The directory or <code>null</code>.
      */
-    private static File getHomeDirectory() {
+    private File getHomeDirectory() {
         String dirName = System.getenv(ENV_JQASSISTANT_HOME);
         if (dirName != null) {
             File dir = new File(dirName);
@@ -266,8 +279,8 @@ public class Main {
      * @throws com.buschmais.jqassistant.scm.cli.CliExecutionException
      *             If the plugins cannot be loaded.
      */
-    private static ClassLoader createPluginClassLoader() throws CliExecutionException {
-        ClassLoader parentClassLoader = JQATask.class.getClassLoader();
+    private ClassLoader createPluginClassLoader() throws CliExecutionException {
+        ClassLoader parentClassLoader = Task.class.getClassLoader();
         File homeDirectory = getHomeDirectory();
         if (homeDirectory != null) {
             File pluginDirectory = new File(homeDirectory, DIRECTORY_PLUGINS);

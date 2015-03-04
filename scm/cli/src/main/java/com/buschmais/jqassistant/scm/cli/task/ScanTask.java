@@ -26,7 +26,7 @@ import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
-public class ScanTask extends AbstractJQATask {
+public class ScanTask extends AbstractTask {
 
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URLS = "u";
