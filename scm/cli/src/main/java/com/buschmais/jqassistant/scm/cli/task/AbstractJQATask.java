@@ -3,20 +3,19 @@ package com.buschmais.jqassistant.scm.cli.task;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
-import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
+import com.buschmais.jqassistant.scm.cli.PluginRepository;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 
@@ -31,30 +30,14 @@ public abstract class AbstractJQATask implements JQATask {
 
     private static final Console LOG = Log.getLog();
 
-    protected Map<String, Object> properties;
     protected String storeDirectory;
+    protected PluginRepository pluginRepository;
     protected RuleHelper ruleHelper;
     protected ReportHelper reportHelper;
-    protected ClassLoader classLoader;
-    protected ModelPluginRepository modelPluginRepository;
-    protected ScannerPluginRepository scannerPluginRepository;
-    protected ScopePluginRepository scopePluginRepository;
-    protected RulePluginRepository rulePluginRepository;
-    protected ReportPluginRepository reportPluginRepository;
 
     @Override
-    public void initialize(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) throws CliExecutionException {
-        this.properties = properties;
-        try {
-            classLoader = pluginConfigurationReader.getClassLoader();
-            modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
-            scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
-            scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
-            rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
-            reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot create plugin repositories.", e);
-        }
+    public void initialize(PluginRepository pluginRepository) throws CliExecutionException {
+        this.pluginRepository = pluginRepository;
         this.ruleHelper = new RuleHelper(Log.getLog());
         this.reportHelper = new ReportHelper(Log.getLog());
     }
@@ -64,12 +47,12 @@ public abstract class AbstractJQATask implements JQATask {
         List<Class<?>> descriptorTypes;
         final Store store = getStore();
         try {
-            descriptorTypes = modelPluginRepository.getDescriptorTypes();
+            descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
         } catch (PluginRepositoryException e) {
             throw new RuntimeException("Cannot get model.", e);
         }
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(classLoader);
+        Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
         try {
             store.start(descriptorTypes);
             executeTask(store);

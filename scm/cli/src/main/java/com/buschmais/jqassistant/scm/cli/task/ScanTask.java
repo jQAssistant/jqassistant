@@ -52,7 +52,7 @@ public class ScanTask extends AbstractJQATask {
     protected void executeTask(final Store store) throws CliExecutionException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
-            scannerPlugins = scannerPluginRepository.getScannerPlugins();
+            scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins();
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scanner plugins.", e);
         }
@@ -100,7 +100,7 @@ public class ScanTask extends AbstractJQATask {
 
     private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) {
         store.beginTransaction();
-        Scanner scanner = new ScannerImpl(store, scannerPlugins, scopePluginRepository.getScopes());
+        Scanner scanner = new ScannerImpl(store, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
         Scope scope = scanner.resolveScope(scopeName);
         try {
             scanner.scan(element, path, scope);

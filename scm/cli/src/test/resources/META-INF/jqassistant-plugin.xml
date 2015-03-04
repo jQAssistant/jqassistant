@@ -1,0 +1,10 @@
+<jqa-plugin:jqassistant-plugin
+        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="Core Analysis">
+    <description>Provides elements for storing analysis results.</description>
+    <scanner>
+        <class>com.buschmais.jqassistant.scm.cli.test.plugin.TestScannerPlugin</class>
+    </scanner>
+    <report>
+        <class>com.buschmais.jqassistant.scm.cli.test.plugin.TestReportPlugin</class>
+    </report>
+</jqa-plugin:jqassistant-plugin>
