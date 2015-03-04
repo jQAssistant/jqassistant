@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
@@ -19,7 +20,13 @@ public class ServerTask extends AbstractJQATask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
-        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(), pluginRepository.getRulePluginRepository());
+        Server server;
+        try {
+            server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(pluginProperties),
+                    pluginRepository.getRulePluginRepository());
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot get plugins.", e);
+        }
         server.start();
         getLog().info("Running server");
         getLog().info("Press <Enter> to finish.");

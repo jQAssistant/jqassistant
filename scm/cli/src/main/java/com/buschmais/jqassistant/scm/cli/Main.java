@@ -12,8 +12,8 @@ import java.util.*;
 import org.apache.commons.cli.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -36,9 +36,7 @@ public class Main {
         try {
             Options options = gatherOptions();
             CommandLine commandLine = getCommandLine(args, options);
-            final Map<String, Object> properties = readProperties(commandLine);
-            PluginRepository pluginRepository = getPluginRepository(properties);
-            interpretCommandLine(commandLine, options, pluginRepository);
+            interpretCommandLine(commandLine, options);
         } catch (CliExecutionException e) {
             Log.getLog().error(e.getMessage());
             System.exit(e.getExitCode());
@@ -48,21 +46,13 @@ public class Main {
     /**
      * Initialize the plugin repository.
      * 
-     * @param properties
-     *            The plugin properties.
      * @return The repository.
      * @throws CliExecutionException
      *             If initialization fails.
      */
-    private static PluginRepository getPluginRepository(Map<String, Object> properties) throws CliExecutionException {
+    private static com.buschmais.jqassistant.core.plugin.api.PluginRepository getPluginRepository() throws CliExecutionException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
-        PluginRepository pluginRepository;
-        try {
-            pluginRepository = new PluginRepository(pluginConfigurationReader, properties);
-        } catch (PluginRepositoryException e) {
-            throw new CliExecutionException("Cannot create plugin repositories.", e);
-        }
-        return pluginRepository;
+        return new PluginRepositoryImpl(pluginConfigurationReader);
     }
 
     /**
@@ -128,14 +118,16 @@ public class Main {
      * @throws IOException
      *             If an error occurs.
      */
-    static void interpretCommandLine(CommandLine commandLine, Options options, PluginRepository pluginRepository) throws CliExecutionException {
+    static void interpretCommandLine(CommandLine commandLine, Options options) throws CliExecutionException {
         List<String> requestedTasks = commandLine.getArgList();
         if (requestedTasks.isEmpty()) {
             printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames());
             System.exit(1);
         }
+        com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository = getPluginRepository();
+        Map<String, Object> properties = readProperties(commandLine);
         for (String requestedTask : requestedTasks) {
-            executeTask(requestedTask, options, commandLine, pluginRepository);
+            executeTask(requestedTask, options, commandLine, pluginRepository, properties);
         }
     }
 
@@ -169,9 +161,12 @@ public class Main {
      *            The option.
      * @param commandLine
      *            The command line.
+     * @param properties
+     *            The plugin properties
      * @throws IOException
      */
-    private static void executeTask(String taskName, Options option, CommandLine commandLine, PluginRepository pluginRepository) throws CliExecutionException {
+    private static void executeTask(String taskName, Options option, CommandLine commandLine, com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> properties)
+            throws CliExecutionException {
         final JQATask task = Task.fromName(taskName);
         if (task == null) {
             printUsage(option, "Unknown task " + taskName);
@@ -184,7 +179,7 @@ public class Main {
             printUsage(option, e.getMessage());
             System.exit(1);
         }
-        task.initialize(pluginRepository);
+        task.initialize(pluginRepository, properties);
         task.run();
     }
 

@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.scm.cli.task;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -15,7 +16,6 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
-import com.buschmais.jqassistant.scm.cli.PluginRepository;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 
@@ -31,13 +31,15 @@ public abstract class AbstractJQATask implements JQATask {
     private static final Console LOG = Log.getLog();
 
     protected String storeDirectory;
-    protected PluginRepository pluginRepository;
+    protected com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository;
     protected RuleHelper ruleHelper;
     protected ReportHelper reportHelper;
+    protected Map<String, Object> pluginProperties;
 
     @Override
-    public void initialize(PluginRepository pluginRepository) throws CliExecutionException {
+    public void initialize(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException {
         this.pluginRepository = pluginRepository;
+        this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(Log.getLog());
         this.reportHelper = new ReportHelper(Log.getLog());
     }

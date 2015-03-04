@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.cli.test.plugin;
+package com.buschmais.jqassistant.plugin.impl.plugin;
 
 import java.util.Map;
 

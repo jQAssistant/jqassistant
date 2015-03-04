@@ -22,7 +22,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.maven.provider.PluginConfigurationProvider;
+import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
 
 /**
@@ -106,7 +106,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected MavenProject currentProject;
 
     @Component
-    protected PluginConfigurationProvider pluginRepositoryProvider;
+    protected PluginRepositoryProvider pluginRepositoryProvider;
 
     /**
      * The store repository.
