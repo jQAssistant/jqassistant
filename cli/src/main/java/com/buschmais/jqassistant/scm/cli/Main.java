@@ -1,32 +1,18 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
-import org.apache.commons.cli.BasicParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 
 /**
@@ -46,14 +32,37 @@ public class Main {
      * @throws IOException
      *             If an error occurs.
      */
-    public static void main(String[] args) throws IOException {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
+    public static void main(String[] args) {
         try {
-            interpretCommandLine(args, pluginConfigurationReader);
+            Options options = gatherOptions();
+            CommandLine commandLine = getCommandLine(args, options);
+            final Map<String, Object> properties = readProperties(commandLine);
+            PluginRepository pluginRepository = getPluginRepository(properties);
+            interpretCommandLine(commandLine, options, pluginRepository);
         } catch (CliExecutionException e) {
             Log.getLog().error(e.getMessage());
             System.exit(e.getExitCode());
         }
+    }
+
+    /**
+     * Initialize the plugin repository.
+     * 
+     * @param properties
+     *            The plugin properties.
+     * @return The repository.
+     * @throws CliExecutionException
+     *             If initialization fails.
+     */
+    private static PluginRepository getPluginRepository(Map<String, Object> properties) throws CliExecutionException {
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
+        PluginRepository pluginRepository;
+        try {
+            pluginRepository = new PluginRepository(pluginConfigurationReader, properties);
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot create plugin repositories.", e);
+        }
+        return pluginRepository;
     }
 
     /**
@@ -112,29 +121,43 @@ public class Main {
     /**
      * Parse the command line and execute the requested task.
      * 
-     * @param arg
+     * @param commandLine
      *            The command line.
+     * @param options
+     *            The known options.
      * @throws IOException
      *             If an error occurs.
      */
-    private static void interpretCommandLine(final String[] arg, PluginConfigurationReader pluginConfigurationReader) throws CliExecutionException {
-        final CommandLineParser parser = new BasicParser();
-        Options option = gatherOptions();
-        CommandLine commandLine = null;
-        try {
-            commandLine = parser.parse(option, arg);
-        } catch (ParseException e) {
-            printUsage(option, e.getMessage());
-            System.exit(1);
-        }
+    static void interpretCommandLine(CommandLine commandLine, Options options, PluginRepository pluginRepository) throws CliExecutionException {
         List<String> requestedTasks = commandLine.getArgList();
         if (requestedTasks.isEmpty()) {
-            printUsage(option, "A task must be specified, i.e. one  of " + gatherTaskNames());
+            printUsage(options, "A task must be specified, i.e. one  of " + gatherTaskNames());
             System.exit(1);
         }
         for (String requestedTask : requestedTasks) {
-            executeTask(requestedTask, option, commandLine, pluginConfigurationReader);
+            executeTask(requestedTask, options, commandLine, pluginRepository);
         }
+    }
+
+    /**
+     * Parse the command line
+     * 
+     * @param args
+     *            The arguments.
+     * @param options
+     *            The known options.
+     * @return The command line.
+     */
+    private static CommandLine getCommandLine(String[] args, Options options) {
+        final CommandLineParser parser = new BasicParser();
+        CommandLine commandLine = null;
+        try {
+            commandLine = parser.parse(options, args);
+        } catch (ParseException e) {
+            printUsage(options, e.getMessage());
+            System.exit(1);
+        }
+        return commandLine;
     }
 
     /**
@@ -148,8 +171,7 @@ public class Main {
      *            The command line.
      * @throws IOException
      */
-    private static void executeTask(String taskName, Options option, CommandLine commandLine, PluginConfigurationReader pluginConfigurationReader)
-            throws CliExecutionException {
+    private static void executeTask(String taskName, Options option, CommandLine commandLine, PluginRepository pluginRepository) throws CliExecutionException {
         final JQATask task = Task.fromName(taskName);
         if (task == null) {
             printUsage(option, "Unknown task " + taskName);
@@ -162,11 +184,20 @@ public class Main {
             printUsage(option, e.getMessage());
             System.exit(1);
         }
-        final Map<String, Object> properties = readProperties(commandLine);
-        task.initialize(pluginConfigurationReader, properties);
+        task.initialize(pluginRepository);
         task.run();
     }
 
+    /**
+     * Read the plugin properties file if specified on the command line or if it
+     * exists on the class path.
+     * 
+     * @param commandLine
+     *            The command line.
+     * @return The plugin properties.
+     * @throws CliConfigurationException
+     *             If an error occurs.
+     */
     private static Map<String, Object> readProperties(CommandLine commandLine) throws CliConfigurationException {
         final Properties properties = new Properties();
         InputStream propertiesStream;
@@ -197,11 +228,19 @@ public class Main {
         return result;
     }
 
-    private static void printUsage(final Options option, final String errorMessage) {
+    /**
+     * Print usage information.
+     * 
+     * @param options
+     *            The known options.
+     * @param errorMessage
+     *            The error message to append.
+     */
+    private static void printUsage(final Options options, final String errorMessage) {
         System.out.println(errorMessage);
         final HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp(Main.class.getCanonicalName(), option);
-        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -d target/classes,target/test-classes");
+        formatter.printHelp(Main.class.getCanonicalName(), options);
+        System.out.println("Example: " + Main.class.getCanonicalName() + " scan -f target/classes,target/test-classes");
     }
 
     /**
@@ -214,7 +253,7 @@ public class Main {
         if (dirName != null) {
             File dir = new File(dirName);
             if (dir.exists()) {
-                Log.getLog().info("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
+                Log.getLog().debug("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
                 return dir;
             } else {
                 Log.getLog().warn("JQASSISTANT_HOME '" + dir.getAbsolutePath() + "' points to a non-existing directory.");
@@ -229,8 +268,10 @@ public class Main {
      * Create the class loader to be used for detecting and loading plugins.
      *
      * @return The plugin class loader.
+     * @throws com.buschmais.jqassistant.scm.cli.CliExecutionException
+     *             If the plugins cannot be loaded.
      */
-    private static ClassLoader createPluginClassLoader() {
+    private static ClassLoader createPluginClassLoader() throws CliExecutionException {
         ClassLoader parentClassLoader = JQATask.class.getClassLoader();
         File homeDirectory = getHomeDirectory();
         if (homeDirectory != null) {
@@ -251,7 +292,7 @@ public class Main {
                 try {
                     Files.walkFileTree(pluginDirectoryPath, visitor);
                 } catch (IOException e) {
-                    throw new IllegalStateException("Cannot read plugin directory.", e);
+                    throw new CliExecutionException("Cannot read plugin directory.", e);
                 }
                 return new PluginClassLoader(urls, parentClassLoader);
             }

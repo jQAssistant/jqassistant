@@ -19,7 +19,7 @@ public class ServerTask extends AbstractJQATask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
-        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, scannerPluginRepository, rulePluginRepository);
+        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(), pluginRepository.getRulePluginRepository());
         server.start();
         getLog().info("Running server");
         getLog().info("Press <Enter> to finish.");

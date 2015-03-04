@@ -2,11 +2,7 @@ package com.buschmais.jqassistant.scm.cli.task;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -51,7 +47,7 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new FileRuleSource(ruleFile));
         }
-        List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
+        List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }

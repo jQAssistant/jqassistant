@@ -13,6 +13,6 @@ public class AvailableScopesTask extends AbstractAnalyzeTask {
     @Override
     protected void executeTask(Store store) throws CliExecutionException {
         ScopeHelper scopeHelper = new ScopeHelper(Log.getLog());
-        scopeHelper.printScopes(scopePluginRepository.getScopes());
+        scopeHelper.printScopes(pluginRepository.getScopePluginRepository().getScopes());
     }
 }
