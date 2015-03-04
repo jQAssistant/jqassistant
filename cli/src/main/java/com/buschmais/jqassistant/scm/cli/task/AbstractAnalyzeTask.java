@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.JQATask;
 import com.buschmais.jqassistant.scm.cli.Log;
@@ -47,7 +48,12 @@ public abstract class AbstractAnalyzeTask extends AbstractJQATask {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new FileRuleSource(ruleFile));
         }
-        List<RuleSource> ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
+        List<RuleSource> ruleSources = null;
+        try {
+            ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot get rule plugin repository.", e);
+        }
         sources.addAll(ruleSources);
         return ruleSetReader.read(sources);
     }

@@ -52,7 +52,7 @@ public class ScanTask extends AbstractJQATask {
     protected void executeTask(final Store store) throws CliExecutionException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
-            scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins();
+            scannerPlugins = pluginRepository.getScannerPluginRepository(pluginProperties).getScannerPlugins();
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scanner plugins.", e);
         }
@@ -81,11 +81,22 @@ public class ScanTask extends AbstractJQATask {
         }
     }
 
+    /**
+     * Parses the given list of option values into a map of resources and their
+     * associated (optional) scopes.
+     *
+     * Example: "maven:repository::http://my-host/repo" will be an entry with
+     * key "maven:repository" and value "http://my-host/repo".
+     *
+     * @param optionValues
+     *            The value.
+     * @return The map of resources and scopes.
+     */
     private Map<String, String> parseResources(List<String> optionValues) {
         Map<String, String> resources = new HashMap<>();
         for (String file : optionValues) {
             String[] parts = file.split("::");
-            String fileName = null;
+            String fileName;
             String scopeName = null;
             if (parts.length == 2) {
                 scopeName = parts[0];
@@ -98,13 +109,18 @@ public class ScanTask extends AbstractJQATask {
         return resources;
     }
 
-    private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) {
+    private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) throws CliExecutionException {
         store.beginTransaction();
-        Scanner scanner = new ScannerImpl(store, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
+        Scanner scanner = null;
+        try {
+            scanner = new ScannerImpl(store, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot get scope plugins.", e);
+        }
         Scope scope = scanner.resolveScope(scopeName);
         try {
             scanner.scan(element, path, scope);
-        }finally {
+        } finally {
             store.commitTransaction();
         }
     }

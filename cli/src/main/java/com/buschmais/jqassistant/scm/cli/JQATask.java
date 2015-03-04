@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import java.util.Map;
+
 import org.apache.commons.cli.CommandLine;
 
 /**
@@ -13,7 +15,7 @@ public interface JQATask extends OptionsProvider, OptionsConsumer {
 
     public static final String REPORT_FILE_XML = "jqassistant-report.xml";
 
-    void initialize(PluginRepository pluginRepository) throws CliExecutionException;
+    void initialize(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException;
 
     void withStandardOptions(CommandLine commandLine);
 
