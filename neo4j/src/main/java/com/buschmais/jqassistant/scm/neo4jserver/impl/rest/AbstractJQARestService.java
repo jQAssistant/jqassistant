@@ -2,10 +2,7 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -28,7 +25,7 @@ public abstract class AbstractJQARestService {
 
     private Store store = null;
 
-    protected AbstractJQARestService(Store store) throws PluginRepositoryException {
+    protected AbstractJQARestService(Store store) throws PluginRepositoryException, RuleException {
         this.store = store;
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();
         RulePluginRepository rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);

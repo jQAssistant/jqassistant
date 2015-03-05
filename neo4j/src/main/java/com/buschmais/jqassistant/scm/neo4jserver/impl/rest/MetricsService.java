@@ -15,6 +15,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
 import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -61,7 +62,7 @@ public class MetricsService extends AbstractJQARestService {
      *            the database store
      * @throws PluginRepositoryException
      */
-    public MetricsService(@Context Store store) throws PluginRepositoryException {
+    public MetricsService(@Context Store store) throws PluginRepositoryException, RuleException {
         super(store);
     }
 
