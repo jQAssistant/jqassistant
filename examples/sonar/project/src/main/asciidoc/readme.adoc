@@ -20,7 +20,9 @@ Next the following settings must be applied to the jQAssistant Maven plugin in t
 include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[lines=14..43]
 ----
 
-* Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI. Note that special characters must be replaced by XML entities.
+* Rules are retrieved from the SonarQube server using the URL specified in 'rulesUrl'. The value is the jQAssistant permalink available within the quality profile from the SonarQube UI.
+* Special characters in the URL must be replaced by XML entities
+* Using the URL will deactivate all local rules (i.e. from a rule directory or plugins).
 * The specified 'group' must be the name of the quality profile used to analyze the project.
 * The build shall break if a violation is detected, therefore 'failOnViolations' is set to 'true'.
 * The build shall break only if violation is detected with severity equal to or higher than _critical_, therefore severity is set to _critical_

@@ -31,14 +31,10 @@ public final class RuleHelper {
     }
 
     /**
-     * Logs the given
-     * {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
-     * on level info.
+     * Logs the given rule set on level info.
      *
      * @param ruleSet
-     *            The
-     *            {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
-     *            .
+     *            The rule set.
      */
     public void printRuleSet(RuleSet ruleSet) throws AnalysisException {
         RuleSelection ruleSelection = RuleSelection.Builder.allOf(ruleSet);

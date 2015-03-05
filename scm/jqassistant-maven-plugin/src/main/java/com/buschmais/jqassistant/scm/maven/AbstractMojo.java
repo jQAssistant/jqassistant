@@ -149,27 +149,27 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
-     * @return A
-     *         {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
+     * @return A rule set.
      *         .
      * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
     protected RuleSet readRules(MavenProject rootModule) throws MojoExecutionException {
         List<RuleSource> sources = new ArrayList<>();
-        // read rules from rules directory
-        addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, rulesDirectory));
-        if (rulesDirectories != null) {
-            for (String directory : rulesDirectories) {
-                addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
-            }
-        }
         if (rulesUrl != null) {
-            getLog().debug("Adding rules from URL " + rulesUrl.toString());
+            getLog().debug("Retrieving rules from URL " + rulesUrl.toString());
             sources.add(new UrlRuleSource(rulesUrl));
+        } else {
+            // read rules from rules directory
+            addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, rulesDirectory));
+            if (rulesDirectories != null) {
+                for (String directory : rulesDirectories) {
+                    addRuleFiles(sources, ProjectResolver.getRulesDirectory(rootModule, directory));
+                }
+            }
+            List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
+            sources.addAll(ruleSources);
         }
-        List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
-        sources.addAll(ruleSources);
         try {
             return ruleSetReader.read(sources);
         } catch (RuleException e) {
