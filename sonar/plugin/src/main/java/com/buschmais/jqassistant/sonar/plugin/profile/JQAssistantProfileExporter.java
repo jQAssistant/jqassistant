@@ -51,9 +51,9 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         CheckFactory<AbstractTemplateRule> annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY,
                 JQAssistantRuleRepository.RULE_CLASSES);
         Map<String, Concept> concepts = new HashMap<>();
-        Map<String, Severity> conceptsOfGroup = new HashMap<>();
-        Map<String, Severity> constraintsOfGroup = new HashMap<>();
-        Map<String, Constraint> constraints = new HashMap<>();
+        Map<String, Severity> conceptSeverities = new HashMap<>();
+        Map<String, Severity> constraintSeverities = new HashMap<>();
+        DefaultRuleSet.Builder builder = DefaultRuleSet.Builder.newInstance();
         Map<ExecutableRule, Set<String>> executables = new HashMap<>();
         for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
             AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
@@ -66,21 +66,20 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             Set<String> requiresConcepts = executable.getRequiresConcepts();
             executables.put(executable, requiresConcepts);
             if (executable instanceof Concept) {
+                builder.addConcept(executable.getId(), (Concept) executable);
                 concepts.put(executable.getId(), (Concept) executable);
-                conceptsOfGroup.put(executable.getId(), executable.getSeverity());
+                conceptSeverities.put(executable.getId(), executable.getSeverity());
             } else if (executable instanceof Constraint) {
-                constraints.put(executable.getId(), (Constraint) executable);
-                constraintsOfGroup.put(executable.getId(), executable.getSeverity());
+                builder.addConstraint(executable.getId(), (Constraint) executable);
+                constraintSeverities.put(executable.getId(), executable.getSeverity());
             }
         }
         for (Set<String> requiredConcepts : executables.values()) {
             resolveRequiredConcepts(requiredConcepts, concepts);
         }
-        Group group = new Group(profile.getName(), null, conceptsOfGroup, constraintsOfGroup, Collections.<String> emptySet());
-        Map<String, Group> groups = new HashMap<>();
-        groups.put(group.getId(), group);
-        RuleSet ruleSet = new DefaultRuleSet(Collections.<String, Template> emptyMap(), concepts, constraints, groups,
-                Collections.<String, MetricGroup> emptyMap());
+        Group group = new Group(profile.getName(), null, conceptSeverities, constraintSeverities, Collections.<String> emptySet());
+        builder.addGroup(group.getId(), group);
+        RuleSet ruleSet = builder.getRuleSet();
         RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
         LOGGER.debug("Exporting rule set " + ruleSet.toString());
         try {

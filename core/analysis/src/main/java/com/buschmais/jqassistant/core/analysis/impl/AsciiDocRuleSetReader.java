@@ -34,22 +34,16 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
 
     @Override
     public RuleSet read(List<? extends RuleSource> sources) {
-        Map<String, Template> queryTemplates = Collections.emptyMap();
-        Map<String, MetricGroup> metricGroups = Collections.emptyMap();
-        Map<String, Group> groups = Collections.emptyMap();
-
-        Map<String, Concept> concepts = new LinkedHashMap<>();
-        Map<String, Constraint> constraints = new LinkedHashMap<>();
-
+        DefaultRuleSet.Builder builder = DefaultRuleSet.Builder.newInstance();
         for (RuleSource source : sources) {
             if (source.isType(RuleSource.Type.AsciiDoc)) {
-                readDocument(source, concepts, constraints);
+                readDocument(source, builder);
             }
         }
-        return new DefaultRuleSet(queryTemplates, concepts, constraints, groups, metricGroups);
+        return builder.getRuleSet();
     }
 
-    public void readDocument(RuleSource source, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
+    public void readDocument(RuleSource source, DefaultRuleSet.Builder builder) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
         InputStream stream;
@@ -59,7 +53,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
         StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
-        extractRules(doc, concepts, constraints);
+        extractRules(doc, builder);
     }
 
     /**
@@ -83,12 +77,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * 
      * @param doc
      *            The document.
-     * @param concepts
-     *            The map of concepts to fill.
-     * @param constraints
-     *            The map of constraints to fill.
+     * @param builder
+     *            The ruleset builder
      */
-    private void extractRules(StructuredDocument doc, Map<String, Concept> concepts, Map<String, Constraint> constraints) {
+    private void extractRules(StructuredDocument doc, DefaultRuleSet.Builder builder) {
         for (ContentPart part : findListings(doc)) {
             Map<String, Object> attributes = part.getAttributes();
             String id = part.getId();
@@ -106,12 +98,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = new Concept(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(), requiresConcepts);
-                concepts.put(concept.getId(), concept);
+                builder.addConcept(concept.getId(), concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
                 Constraint concept = new Constraint(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
-                constraints.put(concept.getId(), concept);
+                builder.addConstraint(concept.getId(), concept);
             }
         }
     }

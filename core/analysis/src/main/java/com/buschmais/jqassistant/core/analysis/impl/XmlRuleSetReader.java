@@ -79,36 +79,32 @@ public class XmlRuleSetReader implements RuleSetReader {
      *         .
      */
     private RuleSet convert(List<JqassistantRules> rules) {
-        Map<String, Template> templates = new HashMap<>();
-        Map<String, Concept> concepts = new HashMap<>();
-        Map<String, Constraint> constraints = new HashMap<>();
-        Map<String, Group> groups = new HashMap<>();
-        Map<String, MetricGroup> metricGroups = new HashMap<>();
+        DefaultRuleSet.Builder builder = DefaultRuleSet.Builder.newInstance();
         for (JqassistantRules rule : rules) {
             List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getTemplateOrConceptOrConstraint();
             for (ReferenceableType referenceableType : queryDefinitionOrConceptOrConstraint) {
                 String id = referenceableType.getId();
                 if (referenceableType instanceof TemplateType) {
                     Template template = createTemplate((TemplateType) referenceableType);
-                    templates.put(id, template);
+                    builder.addTemplate(id, template);
                 } else {
                     if (referenceableType instanceof ConceptType) {
                         Concept concept = createConcept(id, (ConceptType) referenceableType);
-                        concepts.put(id, concept);
+                        builder.addConcept(id, concept);
                     } else if (referenceableType instanceof ConstraintType) {
                         Constraint constraint = createConstraint(id, (ConstraintType) referenceableType);
-                        constraints.put(id, constraint);
+                        builder.addConstraint(id, constraint);
                     } else if (referenceableType instanceof GroupType) {
                         Group group = createGroup(id, (GroupType) referenceableType);
-                        groups.put(id, group);
+                        builder.addGroup(id, group);
                     } else if (referenceableType instanceof MetricGroupType) {
                         MetricGroup metricGroup = createMetricGroup(id, (MetricGroupType) referenceableType);
-                        metricGroups.put(id, metricGroup);
+                        builder.addMetricGroup(id, metricGroup);
                     }
                 }
             }
         }
-        return new DefaultRuleSet(templates, concepts, constraints, groups, metricGroups);
+        return builder.getRuleSet();
     }
 
     private Template createTemplate(TemplateType referenceableType) {
