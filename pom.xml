@@ -385,6 +385,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <quiet>true</quiet>
                     <detectLinks>false</detectLinks>
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <additionalparam>-Xdoclint:none</additionalparam>
@@ -450,6 +451,7 @@
                     </reportSet>
                 </reportSets>
                 <configuration>
+                    <quiet>true</quiet>
                     <detectLinks>false</detectLinks>
                     <detectOfflineLinks>false</detectOfflineLinks>
                     <additionalparam>-Xdoclint:none</additionalparam>
