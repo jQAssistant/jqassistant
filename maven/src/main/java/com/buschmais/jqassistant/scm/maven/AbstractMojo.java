@@ -15,6 +15,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
@@ -169,7 +170,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         }
         List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
         sources.addAll(ruleSources);
-        return ruleSetReader.read(sources);
+        try {
+            return ruleSetReader.read(sources);
+        } catch (RuleException e) {
+            throw new MojoExecutionException("Cannot read rules.", e);
+        }
     }
 
     /**

@@ -10,7 +10,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
@@ -41,7 +41,7 @@ public class ExportRulesMojo extends AbstractProjectMojo {
         }
         try {
             ruleSetWriter.write(ruleSet, writer);
-        } catch (AnalysisException e) {
+        } catch (RuleException e) {
             throw new MojoExecutionException("Cannot write rules.", e);
         }
     }
