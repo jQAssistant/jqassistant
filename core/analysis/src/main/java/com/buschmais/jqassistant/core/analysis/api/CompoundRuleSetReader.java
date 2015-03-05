@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 public class CompoundRuleSetReader implements RuleSetReader {
 
     @Override
-    public RuleSet read(List<? extends RuleSource> sources) {
+    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
         RuleSetReader xmlReader = new XmlRuleSetReader();
         RuleSet xmlRuleSet = xmlReader.read(sources);
         RuleSetReader adocReader = new AsciiDocRuleSetReader();

@@ -13,6 +13,7 @@ import org.asciidoctor.ast.StructuredDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
@@ -33,8 +34,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     private Asciidoctor cachedAsciidoctor;
 
     @Override
-    public RuleSet read(List<? extends RuleSource> sources) {
-        DefaultRuleSet.Builder builder = DefaultRuleSet.Builder.newInstance();
+    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
+        RuleSetBuilder builder = RuleSetBuilder.newInstance();
         for (RuleSource source : sources) {
             if (source.isType(RuleSource.Type.AsciiDoc)) {
                 readDocument(source, builder);
@@ -43,7 +44,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return builder.getRuleSet();
     }
 
-    public void readDocument(RuleSource source, DefaultRuleSet.Builder builder) {
+    public void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
         InputStream stream;
@@ -79,8 +80,10 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The document.
      * @param builder
      *            The ruleset builder
+     * @throws com.buschmais.jqassistant.core.analysis.api.RuleException
+     *             If the rules are not consistent
      */
-    private void extractRules(StructuredDocument doc, DefaultRuleSet.Builder builder) {
+    private void extractRules(StructuredDocument doc, RuleSetBuilder builder) throws RuleException {
         for (ContentPart part : findListings(doc)) {
             Map<String, Object> attributes = part.getAttributes();
             String id = part.getId();
@@ -98,12 +101,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = new Concept(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(), requiresConcepts);
-                builder.addConcept(concept.getId(), concept);
+                builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
                 Constraint concept = new Constraint(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(),
                         requiresConcepts);
-                builder.addConstraint(concept.getId(), concept);
+                builder.addConstraint(concept);
             }
         }
     }

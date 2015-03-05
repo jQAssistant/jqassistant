@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Defines a group of {@link Metric}s.
  */
-public class MetricGroup {
+public class MetricGroup implements Rule {
 
     /**
      * The list of metrics.
