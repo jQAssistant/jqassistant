@@ -14,6 +14,7 @@ import javax.xml.validation.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
@@ -44,7 +45,7 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     @Override
-    public RuleSet read(List<? extends RuleSource> sources) {
+    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
         List<JqassistantRules> rules = new ArrayList<>();
         for (RuleSource ruleSource : sources) {
             if (ruleSource.isType(RuleSource.Type.XML)) {
@@ -68,38 +69,38 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Converts a list of {@link JqassistantRules} to a
-     * {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}.
+     * Converts a list of {@link JqassistantRules} to a rule set.
      *
      * @param rules
      *            The {@link JqassistantRules}.
      *
-     * @return The corresponding
-     *         {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}
-     *         .
+     * @return The corresponding rule set.
+     * @throws com.buschmais.jqassistant.core.analysis.api.RuleException
+     *             If rules are not consistent.
+     * 
      */
-    private RuleSet convert(List<JqassistantRules> rules) {
-        DefaultRuleSet.Builder builder = DefaultRuleSet.Builder.newInstance();
+    private RuleSet convert(List<JqassistantRules> rules) throws RuleException {
+        RuleSetBuilder builder = RuleSetBuilder.newInstance();
         for (JqassistantRules rule : rules) {
             List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getTemplateOrConceptOrConstraint();
             for (ReferenceableType referenceableType : queryDefinitionOrConceptOrConstraint) {
                 String id = referenceableType.getId();
                 if (referenceableType instanceof TemplateType) {
                     Template template = createTemplate((TemplateType) referenceableType);
-                    builder.addTemplate(id, template);
+                    builder.addTemplate(template);
                 } else {
                     if (referenceableType instanceof ConceptType) {
                         Concept concept = createConcept(id, (ConceptType) referenceableType);
-                        builder.addConcept(id, concept);
+                        builder.addConcept(concept);
                     } else if (referenceableType instanceof ConstraintType) {
                         Constraint constraint = createConstraint(id, (ConstraintType) referenceableType);
-                        builder.addConstraint(id, constraint);
+                        builder.addConstraint(constraint);
                     } else if (referenceableType instanceof GroupType) {
                         Group group = createGroup(id, (GroupType) referenceableType);
-                        builder.addGroup(id, group);
+                        builder.addGroup(group);
                     } else if (referenceableType instanceof MetricGroupType) {
                         MetricGroup metricGroup = createMetricGroup(id, (MetricGroupType) referenceableType);
-                        builder.addMetricGroup(id, metricGroup);
+                        builder.addMetricGroup(metricGroup);
                     }
                 }
             }
@@ -124,7 +125,7 @@ public class XmlRuleSetReader implements RuleSetReader {
             }
             parameterTypes.put(parameterDefinitionType.getName(), parameterType);
         }
-        return new Template(templateType.getCypher(), parameterTypes);
+        return new Template(templateType.getId(), templateType.getCypher(), templateType.getDescription(), parameterTypes);
     }
 
     private MetricGroup createMetricGroup(String id, MetricGroupType referenceableType) {

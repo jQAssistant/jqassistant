@@ -12,6 +12,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
@@ -35,16 +36,19 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     }
 
     @Override
-    public void write(RuleSet ruleSet, Writer writer) throws AnalysisException {
+    public void write(RuleSet ruleSet, Writer writer) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroups().keySet())
                 .addConstraintIds(ruleSet.getConstraints().keySet()).addConceptIds(ruleSet.getConcepts().keySet()).get();
-        new RuleExecutor(visitor).execute(ruleSet, ruleSelection);
+        try {
+            new RuleExecutor(visitor).execute(ruleSet, ruleSelection);
+        } catch (AnalysisException e) {
+            throw new RuleException("Cannot create rule set", e);
+        }
         JqassistantRules rules = new JqassistantRules();
         writeGroups(visitor.getGroups(), rules);
         writeConcepts(visitor.getConcepts().keySet(), rules);
         writeConstraints(visitor.getConstraints().keySet(), rules);
-
         marshal(writer, rules);
     }
 
@@ -91,7 +95,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) throws AnalysisException {
+    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) {
         for (Concept concept : concepts) {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());

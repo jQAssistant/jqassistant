@@ -14,6 +14,7 @@ import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
@@ -38,7 +39,7 @@ public class AnalysisService extends AbstractJQARestService {
     /** The JSON object key for {@value} . */
     private static final String JSON_OBJECT_KEY_GROUPS = "groups";
 
-    public AnalysisService(@Context Store store) throws PluginRepositoryException {
+    public AnalysisService(@Context Store store) throws PluginRepositoryException, RuleException {
         super(store);
     }
 

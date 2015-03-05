@@ -123,7 +123,7 @@ public abstract class AbstractPluginIT {
     private ScopePluginRepository scopePluginRepository;
 
     @Before
-    public void readRules() throws PluginRepositoryException {
+    public void readRules() throws PluginRepositoryException, RuleException {
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, getScannerProperties());
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);

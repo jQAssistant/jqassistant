@@ -10,6 +10,7 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.DirectoryWalker;
 
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -48,14 +49,18 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
             LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
             sources.add(new FileRuleSource(ruleFile));
         }
-        List<RuleSource> ruleSources = null;
+        List<RuleSource> ruleSources;
         try {
             ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get rule plugin repository.", e);
         }
         sources.addAll(ruleSources);
-        return ruleSetReader.read(sources);
+        try {
+            return ruleSetReader.read(sources);
+        } catch (RuleException e) {
+            throw new CliExecutionException("Cannot read rules.", e);
+        }
     }
 
     /**

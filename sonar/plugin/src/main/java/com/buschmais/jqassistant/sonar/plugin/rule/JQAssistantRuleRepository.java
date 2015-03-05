@@ -9,6 +9,7 @@ import org.sonar.api.rules.*;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -63,7 +64,12 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         }
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new XmlRuleSetReader();
-        RuleSet ruleSet = ruleSetReader.read(ruleSources);
+        RuleSet ruleSet = null;
+        try {
+            ruleSet = ruleSetReader.read(ruleSources);
+        } catch (RuleException e) {
+            throw new SonarException("Cannot read rules", e);
+        }
         List<Rule> rules = new ArrayList<>();
         for (Concept concept : ruleSet.getConcepts().values()) {
             rules.add(createRule(concept, RuleType.Concept));

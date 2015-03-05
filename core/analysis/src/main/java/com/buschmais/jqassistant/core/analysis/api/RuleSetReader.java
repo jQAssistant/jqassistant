@@ -20,6 +20,6 @@ public interface RuleSetReader {
      *            The sources to be read.
      * @return The map of constraint groups.
      */
-    public RuleSet read(List<? extends RuleSource> sources);
+    public RuleSet read(List<? extends RuleSource> sources) throws RuleException;
 
 }

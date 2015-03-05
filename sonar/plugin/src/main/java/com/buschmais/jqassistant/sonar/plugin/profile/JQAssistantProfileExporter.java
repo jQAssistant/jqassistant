@@ -16,7 +16,7 @@ import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.RuleParam;
 import org.sonar.api.utils.SonarException;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
@@ -53,39 +53,41 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Map<String, Concept> concepts = new HashMap<>();
         Map<String, Severity> conceptSeverities = new HashMap<>();
         Map<String, Severity> constraintSeverities = new HashMap<>();
-        DefaultRuleSet.Builder builder = DefaultRuleSet.Builder.newInstance();
+        RuleSetBuilder builder = RuleSetBuilder.newInstance();
         Map<ExecutableRule, Set<String>> executables = new HashMap<>();
-        for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
-            AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
-            AbstractExecutableRule executable;
-            if (check == null) {
-                executable = createExecutableFromActiveRule(activeRule);
-            } else {
-                executable = createExecutableFromTemplate(activeRule, check);
-            }
-            Set<String> requiresConcepts = executable.getRequiresConcepts();
-            executables.put(executable, requiresConcepts);
-            if (executable instanceof Concept) {
-                builder.addConcept(executable.getId(), (Concept) executable);
-                concepts.put(executable.getId(), (Concept) executable);
-                conceptSeverities.put(executable.getId(), executable.getSeverity());
-            } else if (executable instanceof Constraint) {
-                builder.addConstraint(executable.getId(), (Constraint) executable);
-                constraintSeverities.put(executable.getId(), executable.getSeverity());
-            }
-        }
-        for (Set<String> requiredConcepts : executables.values()) {
-            resolveRequiredConcepts(requiredConcepts, concepts);
-        }
-        Group group = new Group(profile.getName(), null, conceptSeverities, constraintSeverities, Collections.<String> emptySet());
-        builder.addGroup(group.getId(), group);
-        RuleSet ruleSet = builder.getRuleSet();
-        RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
-        LOGGER.debug("Exporting rule set " + ruleSet.toString());
         try {
+
+            for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
+                AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
+                AbstractExecutableRule executable;
+                if (check == null) {
+                    executable = createExecutableFromActiveRule(activeRule);
+                } else {
+                    executable = createExecutableFromTemplate(activeRule, check);
+                }
+                Set<String> requiresConcepts = executable.getRequiresConcepts();
+                executables.put(executable, requiresConcepts);
+                if (executable instanceof Concept) {
+                    builder.addConcept((Concept) executable);
+                    concepts.put(executable.getId(), (Concept) executable);
+                    conceptSeverities.put(executable.getId(), executable.getSeverity());
+                } else if (executable instanceof Constraint) {
+                    builder.addConstraint((Constraint) executable);
+                    constraintSeverities.put(executable.getId(), executable.getSeverity());
+                }
+
+            }
+            for (Set<String> requiredConcepts : executables.values()) {
+                resolveRequiredConcepts(requiredConcepts, concepts);
+            }
+            Group group = new Group(profile.getName(), null, conceptSeverities, constraintSeverities, Collections.<String> emptySet());
+            builder.addGroup(group);
+            RuleSet ruleSet = builder.getRuleSet();
+            RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
+            LOGGER.debug("Exporting rule set " + ruleSet.toString());
             ruleSetWriter.write(ruleSet, writer);
-        } catch (AnalysisException e) {
-            throw new SonarException("Cannot export rule set.", e);
+        } catch (RuleException e) {
+            throw new SonarException("Cannot export rules.", e);
         }
     }
 

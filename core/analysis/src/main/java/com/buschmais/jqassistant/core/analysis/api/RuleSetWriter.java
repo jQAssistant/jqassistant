@@ -21,5 +21,5 @@ public interface RuleSetWriter {
      * @param writer
      *            The {@link Writer}.
      */
-    void write(RuleSet ruleSet, Writer writer) throws AnalysisException;
+    void write(RuleSet ruleSet, Writer writer) throws RuleException;
 }
