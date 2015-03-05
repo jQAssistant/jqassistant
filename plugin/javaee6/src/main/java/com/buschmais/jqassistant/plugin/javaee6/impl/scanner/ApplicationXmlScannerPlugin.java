@@ -1,13 +1,7 @@
 package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.String;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -17,6 +11,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.sun.java.xml.ns.javaee.*;
 
@@ -26,15 +21,11 @@ import com.sun.java.xml.ns.javaee.*;
  */
 public class ApplicationXmlScannerPlugin extends AbstractResourceScannerPlugin<FileResource, ApplicationXmlDescriptor> {
 
-    private JAXBContext jaxbContext;
+    private JAXBUnmarshaller<FileResource, ApplicationType> unmarshaller;
 
     @Override
     protected void initialize() {
-        try {
-            jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Cannot create JAXB context.", e);
-        }
+        unmarshaller = new JAXBUnmarshaller<>(ApplicationType.class);
     }
 
     @Override
@@ -44,13 +35,7 @@ public class ApplicationXmlScannerPlugin extends AbstractResourceScannerPlugin<F
 
     @Override
     public ApplicationXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        ApplicationType applicationType;
-        try (InputStream stream = item.createStream()) {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            applicationType = unmarshaller.unmarshal(new StreamSource(stream), ApplicationType.class).getValue();
-        } catch (JAXBException e) {
-            throw new IOException("Cannot read " + path, e);
-        }
+        ApplicationType applicationType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         ApplicationXmlDescriptor applicationXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, ApplicationXmlDescriptor.class);

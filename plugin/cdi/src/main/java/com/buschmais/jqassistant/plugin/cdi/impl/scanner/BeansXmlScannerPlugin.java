@@ -1,16 +1,14 @@
 package com.buschmais.jqassistant.plugin.cdi.impl.scanner;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
-import org.jcp.xmlns.xml.ns.javaee.*;
+import org.jcp.xmlns.xml.ns.javaee.Alternatives;
+import org.jcp.xmlns.xml.ns.javaee.Beans;
+import org.jcp.xmlns.xml.ns.javaee.Decorators;
+import org.jcp.xmlns.xml.ns.javaee.Interceptors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,25 +22,23 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeansXmlScannerPlugin.class);
 
-    private static final JAXBContext jaxbContext;
+    private JAXBUnmarshaller<FileResource, Beans> unmarshaller;
 
-    static {
-        try {
-            jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Cannot create JAXB context.", e);
-        }
+    @Override
+    protected void initialize() {
+        unmarshaller = new JAXBUnmarshaller<>(Beans.class);
     }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return JavaScope.CLASSPATH.equals(scope) && "/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path);
+        return JavaScope.CLASSPATH.equals(scope) && ("/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path));
     }
 
     @Override
@@ -50,26 +46,21 @@ public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, B
         ScannerContext context = scanner.getContext();
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         BeansXmlDescriptor beansXmlDescriptor = context.getStore().addDescriptorType(xmlFileDescriptor, BeansXmlDescriptor.class);
-        try (InputStream stream = item.createStream()) {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            Beans beans = unmarshaller.unmarshal(new StreamSource(stream), Beans.class).getValue();
-            beansXmlDescriptor.setVersion(beans.getVersion());
-            beansXmlDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());
-            for (Object o : beans.getInterceptorsOrDecoratorsOrAlternatives()) {
-                if (o instanceof Interceptors) {
-                    addTypes(((Interceptors) o).getClazz(), beansXmlDescriptor.getInterceptors(), context);
-                } else if (o instanceof Decorators) {
-                    addTypes(((Decorators) o).getClazz(), beansXmlDescriptor.getDecorators(), context);
-                } else if (o instanceof Alternatives) {
-                    List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
-                    for (JAXBElement<String> element : clazzOrStereotype) {
-                        TypeDescriptor alternative = scanner.getContext().peek(TypeResolver.class).resolve(element.getValue(), context).getTypeDescriptor();
-                        beansXmlDescriptor.getAlternatives().add(alternative);
-                    }
+        Beans beans = unmarshaller.unmarshal(item);
+        beansXmlDescriptor.setVersion(beans.getVersion());
+        beansXmlDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());
+        for (Object o : beans.getInterceptorsOrDecoratorsOrAlternatives()) {
+            if (o instanceof Interceptors) {
+                addTypes(((Interceptors) o).getClazz(), beansXmlDescriptor.getInterceptors(), context);
+            } else if (o instanceof Decorators) {
+                addTypes(((Decorators) o).getClazz(), beansXmlDescriptor.getDecorators(), context);
+            } else if (o instanceof Alternatives) {
+                List<JAXBElement<String>> clazzOrStereotype = ((Alternatives) o).getClazzOrStereotype();
+                for (JAXBElement<String> element : clazzOrStereotype) {
+                    TypeDescriptor alternative = scanner.getContext().peek(TypeResolver.class).resolve(element.getValue(), context).getTypeDescriptor();
+                    beansXmlDescriptor.getAlternatives().add(alternative);
                 }
             }
-        } catch (JAXBException e) {
-            LOGGER.warn("Cannot read CDI beans descriptor '{}'.", path, e);
         }
         return beansXmlDescriptor;
     }

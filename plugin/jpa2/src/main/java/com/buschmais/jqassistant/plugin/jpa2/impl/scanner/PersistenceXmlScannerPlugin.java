@@ -4,12 +4,6 @@ import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit;
 import static com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -23,23 +17,20 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
-import com.sun.java.xml.ns.persistence.*;
+import com.sun.java.xml.ns.persistence.Persistence;
+import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitTransactionType;
+import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
 
 /**
  * A scanner for JPA model units.
  */
 public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceXmlDescriptor> {
 
-    private static final JAXBContext jaxbContext;
 
-    static {
-        try {
-            jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Cannot create JAXB context.", e);
-        }
-    }
+    private JAXBUnmarshaller<FileResource, Persistence> unmarshaller;
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
@@ -48,13 +39,7 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
 
     @Override
     public PersistenceXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        Persistence persistence;
-        try (InputStream stream = item.createStream()) {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            persistence = unmarshaller.unmarshal(new StreamSource(stream), Persistence.class).getValue();
-        } catch (JAXBException e) {
-            throw new IOException("Cannot read model descriptor.", e);
-        }
+        Persistence persistence = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         PersistenceXmlDescriptor persistenceXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);

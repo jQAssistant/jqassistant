@@ -1,17 +1,12 @@
 package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.String;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -26,6 +21,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.sun.java.xml.ns.javaee.*;
 
@@ -35,15 +31,11 @@ import com.sun.java.xml.ns.javaee.*;
  */
 public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileResource, WebXmlDescriptor> {
 
-    private JAXBContext jaxbContext;
+    private JAXBUnmarshaller<FileResource, WebAppType> unmarshaller;
 
     @Override
     protected void initialize() {
-        try {
-            jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Cannot create JAXB context.", e);
-        }
+        unmarshaller = new JAXBUnmarshaller<>(WebAppType.class);
     }
 
     @Override
@@ -53,13 +45,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
 
     @Override
     public WebXmlDescriptor scan(FileResource item, String path, JavaClassesDirectoryDescriptor classesDirectory, Scanner scanner) throws IOException {
-        WebAppType webAppType;
-        try (InputStream stream = item.createStream()) {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            webAppType = unmarshaller.unmarshal(new StreamSource(stream), WebAppType.class).getValue();
-        } catch (JAXBException e) {
-            throw new IOException("Cannot read " + path, e);
-        }
+        WebAppType webAppType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         WebXmlDescriptor webXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, WebXmlDescriptor.class);
