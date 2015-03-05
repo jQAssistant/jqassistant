@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
-public class CompoundRuleSet extends AbstractRuleSet {
+public class CompoundRuleSet implements RuleSet {
 
     private Map<String, Template> templates = new TreeMap<>();
     private Map<String, Concept> concepts = new TreeMap<>();
