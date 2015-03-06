@@ -163,7 +163,20 @@ public class XmlRuleSetReader implements RuleSetReader {
         List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = conceptType.getDeprecated();
-        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+        ResultVerification resultVerification = getResultVerification(conceptType.getVerification());
+        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, resultVerification);
+    }
+
+    private ResultVerification getResultVerification(VerificationType verificationType) {
+        if (verificationType != null) {
+            DefaultVerificationType defaultVerificationType = verificationType.getDefault();
+            if (defaultVerificationType != null) {
+                String primaryColumn = defaultVerificationType.getPrimaryColumn();
+                boolean aggregatedResult = defaultVerificationType.isAggregation();
+                return new DefaultResultVerification(aggregatedResult, primaryColumn);
+            }
+        }
+        return new DefaultResultVerification(false, null);
     }
 
     private Constraint createConstraint(String id, ConstraintType referenceableType) {
@@ -179,7 +192,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = constraintType.getDeprecated();
-        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+        ResultVerification resultVerification = getResultVerification(constraintType.getVerification());
+        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, resultVerification);
     }
 
     private Script getScript(ScriptType scriptType) {

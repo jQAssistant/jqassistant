@@ -55,6 +55,11 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
     private Set<String> requiresConcepts;
 
     /**
+     * Describes the verification of the result of an executable rule.
+     */
+    private ResultVerification resultVerification;
+
+    /**
      * Constructor.
      *
      * @param id
@@ -73,9 +78,11 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      *            The parametes.
      * @param requiresConcepts
      *            The required concept ids.
+     * @param resultVerification
+     *            The result verification.
      */
     protected AbstractExecutableRule(String id, String description, Severity severity, String deprecation, String cypher, Script script, String templateId,
-            Map<String, Object> parameters, Set<String> requiresConcepts) {
+            Map<String, Object> parameters, Set<String> requiresConcepts, ResultVerification resultVerification) {
         this.id = id;
         this.description = description;
         this.severity = severity;
@@ -85,6 +92,7 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
         this.templateId = templateId;
         this.parameters = parameters;
         this.requiresConcepts = requiresConcepts;
+        this.resultVerification = resultVerification;
     }
 
     public String getId() {

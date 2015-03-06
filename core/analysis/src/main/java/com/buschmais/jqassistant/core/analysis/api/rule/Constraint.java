@@ -29,11 +29,14 @@ public class Constraint extends AbstractExecutableRule {
      * @param templateId
      *            The query template.
      * @param parameters
-     *            The parametes.
+     *            The parameters.
      * @param requiresConcepts
+     *            The required concepts.
+     * @param resultVerification
+     *            The result verification.
      */
     public Constraint(String id, String description, Severity severity, String deprecated, String cypher, Script script, String templateId,
-            Map<String, Object> parameters, Set<String> requiresConcepts) {
-        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+            Map<String, Object> parameters, Set<String> requiresConcepts, ResultVerification resultVerification) {
+        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, resultVerification);
     }
 }

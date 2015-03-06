@@ -34,9 +34,11 @@ public class Concept extends AbstractExecutableRule {
      *            The parametes.
      * @param requiresConcepts
      *            The required concept ids.
+     * @param resultVerification
+     *            The result verification.
      */
     public Concept(String id, String description, Severity severity, String deprecated, String cypher, Script script, String templateId,
-            Map<String, Object> parameters, Set<String> requiresConcepts) {
-        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+            Map<String, Object> parameters, Set<String> requiresConcepts, ResultVerification resultVerification) {
+        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, resultVerification);
     }
 }

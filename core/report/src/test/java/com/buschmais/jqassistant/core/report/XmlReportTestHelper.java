@@ -5,10 +5,7 @@ import java.util.*;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 
 /**
@@ -37,7 +34,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, "match...", null, null,
-                Collections.<String, Object> emptyMap(), Collections.<String> emptySet());
+                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new DefaultResultVerification(false, null));
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
         Group group = new Group("default", "My group", concepts, Collections.<String, Severity> emptyMap(), Collections.<String> emptySet());
@@ -74,7 +71,7 @@ public final class XmlReportTestHelper {
         xmlReportWriter.begin();
 
         Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, "match...", null, null,
-                Collections.<String, Object> emptyMap(), Collections.<String> emptySet());
+                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new DefaultResultVerification(false, null));
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
         Group group = new Group("default", "My group", Collections.<String, Severity> emptyMap(), constraints, Collections.<String> emptySet());
