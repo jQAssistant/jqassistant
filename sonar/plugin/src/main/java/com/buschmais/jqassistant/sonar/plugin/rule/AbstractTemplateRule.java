@@ -10,6 +10,12 @@ public abstract class AbstractTemplateRule {
     @RuleProperty(key = "Requires Concepts", description = "A list of concepts which are required to be executed prior to this rule.")
     private String requiresConcepts;
 
+    @RuleProperty(key = "Aggregated Result", description = "If set the result will be interpreted as an aggregation.")
+    private boolean aggregation;
+
+    @RuleProperty(key = "Primary Column", description = "The primary column of the result.")
+    private String primaryColumn;
+
     public void setCypher(String cypher) {
         this.cypher = cypher;
     }
@@ -24,5 +30,21 @@ public abstract class AbstractTemplateRule {
 
     public String getRequiresConcepts() {
         return requiresConcepts;
+    }
+
+    public boolean isAggregation() {
+        return aggregation;
+    }
+
+    public void setAggregation(boolean aggregation) {
+        this.aggregation = aggregation;
+    }
+
+    public String getPrimaryColumn() {
+        return primaryColumn;
+    }
+
+    public void setPrimaryColumn(String primaryColumn) {
+        this.primaryColumn = primaryColumn;
     }
 }

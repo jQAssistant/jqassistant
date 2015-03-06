@@ -23,7 +23,7 @@ public class Metric extends AbstractExecutableRule {
      *            The required concepts.
      */
     public Metric(String id, String description, String cypher, Map<String, Class<?>> parameterTypes, Set<String> requiresConcepts) {
-        super(id, description, null, null, cypher, null, null, null, requiresConcepts);
+        super(id, description, null, null, cypher, null, null, null, requiresConcepts, null);
         this.parameterTypes = parameterTypes;
     }
 

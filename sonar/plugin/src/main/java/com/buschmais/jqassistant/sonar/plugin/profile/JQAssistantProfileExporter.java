@@ -191,10 +191,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Severity severity = Severity.valueOf(rule.getSeverity().name());
         switch (ruleType) {
         case Concept:
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, new DefaultResultVerification(false, null));
             break;
         case Constraint:
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, new DefaultResultVerification(false, null));
             break;
         default:
             throw new SonarException("Rule type is not supported " + ruleType);
@@ -218,10 +218,11 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Severity severity = Severity.valueOf(activeRule.getSeverity().name());
         String cypher = check.getCypher();
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
+        ResultVerification resultVerification = new DefaultResultVerification(check.isAggregation(), check.getPrimaryColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, resultVerification);
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, resultVerification);
         } else {
             throw new SonarException("Unknown type " + check.getClass());
         }

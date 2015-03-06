@@ -58,19 +58,6 @@
         </xs:sequence>
     </xs:group>
 
-    <xs:group name="ruleGroup">
-        <xs:sequence>
-            <xs:element name="description" type="xs:string" minOccurs="0"/>
-            <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
-            <xs:choice>
-                <xs:element name="cypher" type="xs:string"/>
-                <xs:element name="useTemplate" type="jqassistant-rules:referenceType"/>
-                <xs:element name="script" type="jqassistant-rules:scriptType"/>
-            </xs:choice>
-            <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:group>
-
     <xs:complexType name="scriptType">
         <xs:simpleContent>
             <xs:extension base="xs:string">
@@ -103,13 +90,38 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="verificationType">
+        <xs:choice>
+            <xs:element name="default" type="jqassistant-rules:defaultVerificationType" maxOccurs="1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="defaultVerificationType">
+        <xs:attribute name="aggregation" type="xs:boolean" use="optional" default="false"/>
+        <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:group name="executableRuleGroup">
+        <xs:sequence>
+            <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
+                        maxOccurs="unbounded"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
+            <xs:choice>
+                <xs:element name="cypher" type="xs:string"/>
+                <xs:element name="useTemplate" type="jqassistant-rules:referenceType"/>
+                <xs:element name="script" type="jqassistant-rules:scriptType"/>
+            </xs:choice>
+            <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="verification" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:group>
+
     <xs:complexType name="conceptType">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
-                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                    <xs:group ref="jqassistant-rules:ruleGroup"/>
+                    <xs:group ref="jqassistant-rules:executableRuleGroup"/>
                 </xs:sequence>
                 <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
             </xs:extension>
@@ -120,9 +132,7 @@
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
-                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                    <xs:group ref="jqassistant-rules:ruleGroup"/>
+                    <xs:group ref="jqassistant-rules:executableRuleGroup"/>
                 </xs:sequence>
                 <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
             </xs:extension>

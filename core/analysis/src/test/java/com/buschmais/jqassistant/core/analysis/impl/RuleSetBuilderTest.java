@@ -14,8 +14,8 @@ public class RuleSetBuilderTest {
     @Test
     public void duplicateRules() throws RuleException {
         // Concepts
-        Concept concept1 = new Concept("test", null, null, null, null, null, null, null, null);
-        Concept concept2 = new Concept("test", null, null, null, null, null, null, null, null);
+        Concept concept1 = new Concept("test", null, null, null, null, null, null, null, null, null);
+        Concept concept2 = new Concept("test", null, null, null, null, null, null, null, null, null);
         RuleSetBuilder builder = RuleSetBuilder.newInstance();
         builder.addConcept(concept1);
         try {
@@ -24,8 +24,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Constraints
-        Constraint constraint1 = new Constraint("test", null, null, null, null, null, null, null, null);
-        Constraint constraint2 = new Constraint("test", null, null, null, null, null, null, null, null);
+        Constraint constraint1 = new Constraint("test", null, null, null, null, null, null, null, null, null);
+        Constraint constraint2 = new Constraint("test", null, null, null, null, null, null, null, null, null);
         builder.addConstraint(constraint1);
         try {
             builder.addConstraint(constraint2);
@@ -51,8 +51,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Metric Groups
-        MetricGroup metricGroup1 = new MetricGroup("test", null,null);
-        MetricGroup metricGroup2 = new MetricGroup("test",null,null);
+        MetricGroup metricGroup1 = new MetricGroup("test", null, null);
+        MetricGroup metricGroup2 = new MetricGroup("test", null, null);
         builder.addMetricGroup(metricGroup1);
         try {
             builder.addMetricGroup(metricGroup2);
