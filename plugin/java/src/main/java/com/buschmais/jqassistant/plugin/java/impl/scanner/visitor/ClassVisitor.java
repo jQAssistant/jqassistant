@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
-    private TypeCache.CachedType<ClassFileDescriptor> cachedType;
+    private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
     private VisitorHelper visitorHelper;
 
     public ClassVisitor(VisitorHelper visitorHelper) {

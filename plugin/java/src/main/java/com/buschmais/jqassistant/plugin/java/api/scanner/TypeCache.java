@@ -3,10 +3,8 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.google.common.cache.*;
 
 /**
@@ -71,8 +69,8 @@ public class TypeCache {
      */
     public static class CachedType<T extends TypeDescriptor> {
         private T typeDescriptor;
-        private Map<String, MemberDescriptor> members = new HashMap<>();
-        private Map<String, TypeDescriptor> dependencies = new HashMap<>();
+        private Map<String, MemberDescriptor> members = null;
+        private Map<String, TypeDescriptor> dependencies = null;
 
         /**
          * Constructor.
@@ -93,23 +91,48 @@ public class TypeCache {
         }
 
         public FieldDescriptor getField(String signature) {
-            return (FieldDescriptor) members.get(signature);
+            return (FieldDescriptor) getMembers().get(signature);
         }
 
         public MethodDescriptor getMethod(String signature) {
-            return (MethodDescriptor) members.get(signature);
+            return (MethodDescriptor)  getMembers().get(signature);
         }
 
         public void addMember(String signature, MemberDescriptor member) {
-            members.put(signature, member);
+            getMembers().put(signature, member);
         }
 
         public TypeDescriptor getDependency(String fullQualifiedName) {
-            return dependencies.get(fullQualifiedName);
+            return getDependencies().get(fullQualifiedName);
         }
 
         public void addDependency(String fullQualifiedName, TypeDescriptor dependency) {
-            dependencies.put(fullQualifiedName, dependency);
+            getDependencies().put(fullQualifiedName, dependency);
+        }
+
+        private  Map<String, MemberDescriptor> getMembers() {
+            if (members == null) {
+                members=new HashMap<>();
+                for (Descriptor descriptor : typeDescriptor.getDeclaredMembers()) {
+                    if (descriptor instanceof MemberDescriptor) {
+                        MemberDescriptor memberDescriptor = (MemberDescriptor) descriptor;
+                        members.put(memberDescriptor.getSignature(), memberDescriptor);
+                    }
+                }
+            }
+            return members;
+        }
+
+        private Map<String, TypeDescriptor> getDependencies() {
+            if (dependencies == null) {
+                dependencies=new HashMap<>();
+                if (typeDescriptor instanceof DependentDescriptor) {
+                    for (TypeDescriptor descriptor : ((DependentDescriptor)typeDescriptor).getDependencies()) {
+                        dependencies.put(descriptor.getFullQualifiedName(), typeDescriptor);
+                    }
+                }
+            }
+            return dependencies;
         }
 
         @Override
