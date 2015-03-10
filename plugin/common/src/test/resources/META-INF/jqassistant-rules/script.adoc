@@ -16,7 +16,8 @@ var row = new java.util.HashMap();
 row.put("test", testDescriptor);
 var rows = java.util.Arrays.asList(row);
 // return the result
-new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
 ----
 
 [[javascript:AsciiDocTestConstraint]]
@@ -29,5 +30,6 @@ var testDescriptor = queryResult.getSingleResult().get("t", com.buschmais.jqassi
 var row = new java.util.HashMap();
 row.put("test", testDescriptor);
 var rows = java.util.Arrays.asList(row);
-new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
 ----

@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import static com.buschmais.xo.api.Query.Result;
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -38,6 +37,7 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
+import com.buschmais.xo.api.Query;
 
 /**
  * Abstract base class for analysis tests.
@@ -244,7 +244,7 @@ public abstract class AbstractPluginIT {
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
-        Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
+        Query.Result<CompositeRowObject> compositeRowObjects = store.executeQuery(query, parameters);
         List<Map<String, Object>> rows = new ArrayList<>();
         Map<String, List<Object>> columns = new HashMap<>();
         for (CompositeRowObject rowObject : compositeRowObjects) {
@@ -270,14 +270,16 @@ public abstract class AbstractPluginIT {
      * 
      * @param id
      *            The id.
+     * @return The result.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void applyConcept(String id) throws AnalysisException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws AnalysisException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
         Concept concept = ruleSet.getConcepts().get(id);
         assertNotNull("The requested concept cannot be resolved.", concept);
         analyzer.execute(ruleSet, ruleSelection);
+        return reportWriter.getConceptResults().get(id);
     }
 
     /**
@@ -285,14 +287,16 @@ public abstract class AbstractPluginIT {
      * 
      * @param id
      *            The id.
+     * @return The result.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void validateConstraint(String id) throws AnalysisException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws AnalysisException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
         Constraint constraint = ruleSet.getConstraints().get(id);
         assertNotNull("The constraint must not be null", constraint);
         analyzer.execute(ruleSet, ruleSelection);
+        return reportWriter.getConstraintResults().get(id);
     }
 
     /**
@@ -314,7 +318,7 @@ public abstract class AbstractPluginIT {
         try {
             return modelPluginRepository.getDescriptorTypes();
         } catch (PluginRepositoryException e) {
-            throw new IllegalStateException("Cannot get descriptor mappers.", e);
+            throw new IllegalStateException("Cannot get descriptor types.", e);
         }
     }
 
