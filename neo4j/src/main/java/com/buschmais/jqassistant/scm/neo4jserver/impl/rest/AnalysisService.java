@@ -98,7 +98,7 @@ public class AnalysisService extends AbstractJQARestService {
         try {
             report = analyze(Collections.<String> emptyList(), Arrays.asList(constraintId), Collections.<String> emptyList());
 
-            int effectedRows = report.getConstraintViolations().get(constraintId).getRows().size();
+            int effectedRows = report.getConstraintResults().get(constraintId).getRows().size();
             return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
 
         } catch (Exception e) {
@@ -123,7 +123,7 @@ public class AnalysisService extends AbstractJQARestService {
                 effectedRows += conceptResult.getRows().size();
             }
 
-            for (Result<Constraint> constraintResult : report.getConstraintViolations().values()) {
+            for (Result<Constraint> constraintResult : report.getConstraintResults().values()) {
                 effectedRows += constraintResult.getRows().size();
             }
             return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
