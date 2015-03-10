@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
-    private TypeCache.CachedType<ClassFileDescriptor> cachedType;
+    private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
     private VisitorHelper visitorHelper;
 
     public ClassVisitor(VisitorHelper visitorHelper) {
@@ -32,18 +32,20 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
         cachedType = visitorHelper.createType(SignatureHelper.getObjectType(name), javaType);
+        ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
+        classFileDescriptor.setByteCodeVersion(version);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {
-            cachedType.getTypeDescriptor().setAbstract(Boolean.TRUE);
+            classFileDescriptor.setAbstract(Boolean.TRUE);
         }
-        setModifiers(access, cachedType.getTypeDescriptor());
+        setModifiers(access, classFileDescriptor);
         if (signature == null) {
             if (superName != null) {
                 TypeDescriptor superClassType = visitorHelper.resolveType(SignatureHelper.getObjectType(superName), cachedType).getTypeDescriptor();
-                cachedType.getTypeDescriptor().setSuperClass(superClassType);
+                classFileDescriptor.setSuperClass(superClassType);
             }
             for (int i = 0; interfaces != null && i < interfaces.length; i++) {
                 TypeDescriptor interfaceType = visitorHelper.resolveType(SignatureHelper.getObjectType(interfaces[i]), cachedType).getTypeDescriptor();
-                cachedType.getTypeDescriptor().getInterfaces().add(interfaceType);
+                classFileDescriptor.getInterfaces().add(interfaceType);
             }
         } else {
             new SignatureReader(signature).accept(new ClassSignatureVisitor(cachedType, visitorHelper));

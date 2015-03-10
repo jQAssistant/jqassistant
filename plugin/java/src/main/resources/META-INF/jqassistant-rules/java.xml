@@ -169,4 +169,26 @@
         ]]></cypher>
     </concept>
 
+    <concept id="java:JavaVersion">
+        <description>Set a human readable property "javaVersion" on a class file based on its byte code version.</description>
+        <cypher><![CDATA[
+            MATCH
+              (type:Type:File)
+            SET
+              type.javaVersion=
+              CASE type.byteCodeVersion
+                WHEN 52 THEN "Java 8"
+                WHEN 51 THEN "Java 7"
+                WHEN 50 THEN "Java 6"
+                WHEN 49 THEN "Java 5"
+                WHEN 48 THEN "Java 1.4"
+                WHEN 47 THEN "Java 1.3"
+                WHEN 46 THEN "Java 1.2"
+                WHEN 45 THEN "Java 1.1/1.0"
+              END
+            RETURN
+              count(type) as Types
+        ]]></cypher>
+    </concept>
+
 </jqa:jqassistant-rules>
