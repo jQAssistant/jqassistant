@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
@@ -36,9 +37,10 @@ public class ByteCodeVersionIT extends AbstractJavaPluginIT {
         scanClasses(Pojo.class);
         applyConcept("java:JavaVersion");
         store.beginTransaction();
-        List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion='Java SE 7' RETURN t").getColumn("t");
+        List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion='Java 7' RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         ClassFileDescriptor pojo = types.get(0);
+        assertThat(pojo, typeDescriptor(Pojo.class));
         store.commitTransaction();
     }
 }
