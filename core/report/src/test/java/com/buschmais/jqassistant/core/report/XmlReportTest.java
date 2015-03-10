@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.core.report;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.StringReader;
@@ -22,16 +18,7 @@ import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
-import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
-import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
-import com.buschmais.jqassistant.core.report.schema.v1.RowType;
-import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
-import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
+import com.buschmais.jqassistant.core.report.schema.v1.*;
 
 public class XmlReportTest {
 
@@ -53,6 +40,7 @@ public class XmlReportTest {
         assertThat(groupType.getId(), equalTo("default"));
         assertThat(groupType.getConceptOrConstraint().size(), equalTo(1));
         RuleType ruleType = groupType.getConceptOrConstraint().get(0);
+        assertThat(ruleType.getStatus(), equalTo(StatusEnumType.SUCCESS));
         assertThat(ruleType, instanceOf(ConceptType.class));
         assertThat(ruleType.getId(), equalTo("my:concept"));
         assertThat(ruleType.getDescription(), equalTo("My concept description"));
@@ -99,6 +87,7 @@ public class XmlReportTest {
         RuleType ruleType = groupType.getConceptOrConstraint().get(0);
         assertThat(ruleType, instanceOf(ConstraintType.class));
         assertThat(ruleType.getId(), equalTo("my:Constraint"));
-        assertThat(((ConstraintType)ruleType).getSeverity().getValue(), equalTo("critical"));
+        assertThat((ruleType).getSeverity().getValue(), equalTo("critical"));
+        assertThat(ruleType.getStatus(), equalTo(StatusEnumType.FAILURE));
     }
 }

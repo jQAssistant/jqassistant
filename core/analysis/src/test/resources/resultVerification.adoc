@@ -1,0 +1,11 @@
+= Result Verification
+
+[[test:AggregatedResult]]
+.A test concept.
+[source,cypher,role=concept,verify=aggregation,aggregationColumn=TestMethods,primaryReportColumn=TestType]]
+----
+match
+  (testType:Type)-[:DECLARES]->(testMethod:Test:Method)
+return
+  testType as TestType, count(testMethod) as TestMethods
+----

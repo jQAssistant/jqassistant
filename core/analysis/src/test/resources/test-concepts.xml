@@ -12,7 +12,11 @@
             return
               count(throwable) AS Throwables
         ]]></cypher>
+        <verify>
+            <aggregation column="Throwables"/>
+        </verify>
     </concept>
+
     <constraint id="example:ConstructorOfDateMustNotBeUsed">
         <description>Constructors of java.util.Date must not be used.</description>
         <cypher><![CDATA[

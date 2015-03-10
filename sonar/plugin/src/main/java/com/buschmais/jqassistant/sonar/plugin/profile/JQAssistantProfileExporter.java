@@ -189,12 +189,21 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         String id = rule.getName();
         String description = rule.getDescription();
         Severity severity = Severity.valueOf(rule.getSeverity().name());
+        RuleParam aggregationParam = rule.getParam(RuleParameter.Aggregation.getName());
+        Boolean aggregation = aggregationParam.getDefaultValueAsBoolean();
+        Verification verification;
+        if (aggregation) {
+            RuleParam aggregationColumnParam = rule.getParam(RuleParameter.AggregationColumn.getName());
+            verification = new AggregationVerification(aggregationColumnParam.getDefaultValue());
+        } else {
+            verification = new RowCountVerification();
+        }
         switch (ruleType) {
         case Concept:
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, new DefaultResultVerification(false, null));
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
             break;
         case Constraint:
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, new DefaultResultVerification(false, null));
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
             break;
         default:
             throw new SonarException("Rule type is not supported " + ruleType);
@@ -217,12 +226,17 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         String description = activeRule.getRule().getDescription();
         Severity severity = Severity.valueOf(activeRule.getSeverity().name());
         String cypher = check.getCypher();
+        Verification verification;
+        if (check.isAggregation()) {
+            verification = new AggregationVerification(check.getAggregationColumn());
+        } else {
+            verification = new RowCountVerification();
+        }
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
-        ResultVerification resultVerification = new DefaultResultVerification(check.isAggregation(), check.getPrimaryColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, resultVerification);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, resultVerification);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
         } else {
             throw new SonarException("Unknown type " + check.getClass());
         }

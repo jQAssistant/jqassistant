@@ -182,12 +182,25 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                         xmlStreamWriter.writeEndElement(); // rows
                         xmlStreamWriter.writeEndElement(); // result
                     }
-                    writeDuration(ruleBeginTime);
+                    writeStatus(result.getStatus()); // status
                     writeSeverity(result.getSeverity()); // severity
+                    writeDuration(ruleBeginTime);
                     xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
             });
         }
+    }
+
+    /**
+     * Write the status of the current result.
+     * 
+     * @throws XMLStreamException
+     *             If a problem occurs.
+     */
+    private void writeStatus(Result.Status status) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement("status");
+        xmlStreamWriter.writeCharacters(status.name().toLowerCase());
+        xmlStreamWriter.writeEndElement();
     }
 
     /**

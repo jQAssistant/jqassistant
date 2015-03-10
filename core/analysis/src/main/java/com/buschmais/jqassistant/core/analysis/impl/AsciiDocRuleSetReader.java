@@ -98,18 +98,23 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             } else {
                 script = new Script(language.toString(), source);
             }
-            boolean aggregatedResult = "true".equals(part.getAttributes().get("aggregation"));
-            Object primaryColumn = part.getAttributes().get("primaryColumn");
-            ResultVerification resultVerification = new DefaultResultVerification(aggregatedResult, primaryColumn != null ? primaryColumn.toString() : null);
+            Verification verification;
+            boolean aggregation = "aggregation".equals(part.getAttributes().get("verify"));
+            if (aggregation) {
+                Object aggregationColumn = part.getAttributes().get("aggregationColumn");
+                verification = new AggregationVerification(aggregationColumn != null ? aggregationColumn.toString() : null);
+            } else {
+                verification = new RowCountVerification();
+            }
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = new Concept(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(), requiresConcepts,
-                        resultVerification);
+                        verification);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
                 Constraint concept = new Constraint(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(),
-                        requiresConcepts, resultVerification);
+                        requiresConcepts, verification);
                 builder.addConstraint(concept);
             }
         }

@@ -13,8 +13,8 @@ public abstract class AbstractTemplateRule {
     @RuleProperty(key = "Aggregated Result", description = "If set the result will be interpreted as an aggregation.")
     private boolean aggregation;
 
-    @RuleProperty(key = "Primary Column", description = "The primary column of the result.")
-    private String primaryColumn;
+    @RuleProperty(key = "Aggregation Column", description = "The column to use for verifying an aggregated result.")
+    private String aggregationColumn;
 
     public void setCypher(String cypher) {
         this.cypher = cypher;
@@ -40,11 +40,11 @@ public abstract class AbstractTemplateRule {
         this.aggregation = aggregation;
     }
 
-    public String getPrimaryColumn() {
-        return primaryColumn;
+    public String getAggregationColumn() {
+        return aggregationColumn;
     }
 
-    public void setPrimaryColumn(String primaryColumn) {
-        this.primaryColumn = primaryColumn;
+    public void setAggregationColumn(String aggregationColumn) {
+        this.aggregationColumn = aggregationColumn;
     }
 }

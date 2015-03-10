@@ -44,6 +44,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         }
     }
 
+    public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
+
     @Override
     public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
         List<JqassistantRules> rules = new ArrayList<>();
@@ -150,7 +152,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         return new Group(id, null, includeConcepts, includeConstraints, includeGroups);
     }
 
-    private Concept createConcept(String id, ConceptType referenceableType) {
+    private Concept createConcept(String id, ConceptType referenceableType) throws RuleException {
         ConceptType conceptType = referenceableType;
         String cypher = conceptType.getCypher();
         Script script = getScript(conceptType.getScript());
@@ -163,23 +165,27 @@ public class XmlRuleSetReader implements RuleSetReader {
         List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = conceptType.getDeprecated();
-        ResultVerification resultVerification = getResultVerification(conceptType.getVerification());
-        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, resultVerification);
+        Verification verification = getVerification(conceptType.getVerify());
+        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification);
     }
 
-    private ResultVerification getResultVerification(VerificationType verificationType) {
+    private Verification getVerification(VerificationType verificationType) throws RuleException {
         if (verificationType != null) {
-            DefaultVerificationType defaultVerificationType = verificationType.getDefault();
-            if (defaultVerificationType != null) {
-                String primaryColumn = defaultVerificationType.getPrimaryColumn();
-                boolean aggregatedResult = defaultVerificationType.isAggregation();
-                return new DefaultResultVerification(aggregatedResult, primaryColumn);
+            RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
+            AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
+            if (rowCountVerificationType != null) {
+                return new RowCountVerification();
+            } else if (aggregationVerificationType != null) {
+                String column = aggregationVerificationType.getColumn();
+                return new AggregationVerification(column);
+            } else {
+                throw new RuleException("Unsupported verification " + verificationType);
             }
         }
-        return new DefaultResultVerification(false, null);
+        return DEFAULT_VERIFICATION;
     }
 
-    private Constraint createConstraint(String id, ConstraintType referenceableType) {
+    private Constraint createConstraint(String id, ConstraintType referenceableType) throws RuleException {
         ConstraintType constraintType = referenceableType;
         String cypher = constraintType.getCypher();
         Script script = getScript(constraintType.getScript());
@@ -192,8 +198,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = constraintType.getDeprecated();
-        ResultVerification resultVerification = getResultVerification(constraintType.getVerification());
-        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, resultVerification);
+        Verification verification = getVerification(constraintType.getVerify());
+        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification);
     }
 
     private Script getScript(ScriptType scriptType) {

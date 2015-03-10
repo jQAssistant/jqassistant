@@ -7,8 +7,7 @@
     <xs:element name="jqassistant-report">
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="group" type="jqassistant-report:GroupType"
-                            minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="group" type="jqassistant-report:GroupType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -16,13 +15,10 @@
     <xs:complexType name="GroupType">
         <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-                <xs:element name="concept" type="jqassistant-report:ConceptType"
-                            minOccurs="0"/>
-                <xs:element name="constraint" type="jqassistant-report:ConstraintType"
-                            minOccurs="0"/>
+                <xs:element name="concept" type="jqassistant-report:ConceptType" minOccurs="0"/>
+                <xs:element name="constraint" type="jqassistant-report:ConstraintType" minOccurs="0"/>
             </xs:choice>
-            <xs:element name="duration" type="xs:int" minOccurs="1"
-                        maxOccurs="1"/>
+            <xs:element name="duration" type="xs:int"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
         <xs:attribute name="date" type="xs:dateTime" use="required"/>
@@ -30,13 +26,11 @@
 
     <xs:complexType name="RuleType" abstract="true">
         <xs:sequence>
-            <xs:element name="description" type="xs:string" minOccurs="1"
-                        maxOccurs="1"/>
-            <xs:element name="result" type="jqassistant-report:ResultType"
-                        minOccurs="0" maxOccurs="1"/>
-            <xs:element name="duration" type="xs:int" minOccurs="1"
-                        maxOccurs="1"/>
-           	<xs:element name="severity" type="jqassistant-report:SeverityType" minOccurs="0"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="result" type="jqassistant-report:ResultType" minOccurs="0"/>
+            <xs:element name="status" type="jqassistant-report:StatusEnumType"/>
+            <xs:element name="severity" type="jqassistant-report:SeverityType"/>
+            <xs:element name="duration" type="xs:int"/>
         </xs:sequence>
         <xs:attribute name="id" type="xs:string" use="required"/>
     </xs:complexType>
@@ -47,14 +41,21 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:simpleType name="StatusEnumType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="success"/>
+            <xs:enumeration value="failure"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="SeverityType">
-		<xs:simpleContent>
-			<xs:extension base="xs:string">
-				<xs:attribute name="level" type="xs:int" use="required"/>
-			</xs:extension>
-		</xs:simpleContent>
-   </xs:complexType>
-       
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="level" type="xs:int" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
     <xs:complexType name="ConstraintType">
         <xs:complexContent>
             <xs:extension base="jqassistant-report:RuleType"/>
@@ -63,25 +64,21 @@
 
     <xs:complexType name="ResultType">
         <xs:sequence>
-            <xs:element name="columns" type="jqassistant-report:ColumnsHeaderType"
-                        minOccurs="1" maxOccurs="1"/>
-            <xs:element name="rows" type="jqassistant-report:RowsType"
-                        minOccurs="0" maxOccurs="1"/>
+            <xs:element name="columns" type="jqassistant-report:ColumnsHeaderType"/>
+            <xs:element name="rows" type="jqassistant-report:RowsType" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="ColumnsHeaderType">
         <xs:sequence>
-            <xs:element name="column" type="xs:string" minOccurs="1"
-                        maxOccurs="unbounded"/>
+            <xs:element name="column" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="count" type="xs:int" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="RowsType">
         <xs:sequence>
-            <xs:element name="row" type="jqassistant-report:RowType"
-                        minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="row" type="jqassistant-report:RowType" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="count" type="xs:int" use="required"/>
     </xs:complexType>

@@ -24,6 +24,8 @@
                     </row>
                 </rows>
             </result>
+            <status>failure</status>
+            <severity level="0">blocker</severity>
             <duration>19</duration>
         </constraint>
         <duration>116</duration>

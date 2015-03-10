@@ -153,7 +153,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         validateConstraint("osgi-bundle:UnusedInternalType");
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:UnusedInternalType");
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class)))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
@@ -179,7 +179,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:InternalTypeMustNotBePublic");
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class))))));
         assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));

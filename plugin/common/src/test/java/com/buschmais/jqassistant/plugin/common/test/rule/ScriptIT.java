@@ -41,13 +41,13 @@ public class ScriptIT extends AbstractPluginIT {
     @Test
     public void javaScriptXmlConstraint() throws AnalysisException {
         validateConstraint("javascript:XmlTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "javascript:XmlTestConstraint", Severity.BLOCKER);
+        verifyResults(reportWriter.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void JavaScriptAsciiDocConstraint() throws AnalysisException {
         validateConstraint("javascript:AsciiDocTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
+        verifyResults(reportWriter.getConstraintResults(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class ScriptIT extends AbstractPluginIT {
     @Test
     public void groovyXmlConstraint() throws AnalysisException {
         validateConstraint("groovy:XmlTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "groovy:XmlTestConstraint", Severity.BLOCKER);
+        verifyResults(reportWriter.getConstraintResults(), "groovy:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ScriptIT extends AbstractPluginIT {
     @Test
     public void rubyXmlConstraint() throws AnalysisException {
         validateConstraint("ruby:XmlTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "ruby:XmlTestConstraint", Severity.BLOCKER);
+        verifyResults(reportWriter.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
     private <R extends Rule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {

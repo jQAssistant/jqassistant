@@ -142,7 +142,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(B.class);
         validateConstraint("dependency:PackageCycles");
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:PackageCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
@@ -162,7 +162,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses(B.class);
         validateConstraint("dependency:TypeCycles");
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:TypeCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
@@ -182,7 +182,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
         scanClasses("b", B.class);
         validateConstraint("dependency:ArtifactCycles");
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();

@@ -15,9 +15,18 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 public class Result<T extends Rule> {
 
     /**
+     * The defined status for the result of a rule.
+     */
+    public enum Status {
+        SUCCESS, FAILURE;
+    }
+
+    /**
      * The executed rule.
      */
     private T rule;
+
+    private Status status;
 
     /**
      * The effective severity.
@@ -39,6 +48,8 @@ public class Result<T extends Rule> {
      * 
      * @param rule
      *            The executed rule.
+     * @param status
+     *            The status of the result verification.
      * @param severity
      *            The effective severity.
      * @param columnNames
@@ -46,8 +57,9 @@ public class Result<T extends Rule> {
      * @param rows
      *            The rows.
      */
-    public Result(T rule, Severity severity, List<String> columnNames, List<Map<String, Object>> rows) {
+    public Result(T rule, Status status, Severity severity, List<String> columnNames, List<Map<String, Object>> rows) {
         this.rule = rule;
+        this.status = status;
         this.severity = severity;
         this.columnNames = columnNames;
         this.rows = rows;
@@ -55,6 +67,10 @@ public class Result<T extends Rule> {
 
     public T getRule() {
         return rule;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     public Severity getSeverity() {

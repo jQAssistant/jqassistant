@@ -56,4 +56,11 @@ public interface ExecutableRule extends Rule {
      * @return The parameters.
      */
     Map<String, Object> getParameters();
+
+    /**
+     * Return the result verification for this rule.
+     * 
+     * @return The result verification.
+     */
+    Verification getVerification();
 }

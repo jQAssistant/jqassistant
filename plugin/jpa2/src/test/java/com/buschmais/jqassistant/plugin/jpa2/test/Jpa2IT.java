@@ -217,8 +217,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations =
-                new ArrayList<>(reportWriter.getConstraintViolations().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
@@ -241,8 +240,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations =
-                new ArrayList<>(reportWriter.getConstraintViolations().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
         assertThat(constraintViolations, matcher);
         assertThat(constraintViolations.size(), equalTo(1));
@@ -265,8 +263,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
         validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations =
-                new ArrayList<>(reportWriter.getConstraintViolations().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> constraintResult = constraintViolations.get(0);
         assertThat(constraintResult.isEmpty(), equalTo(true));

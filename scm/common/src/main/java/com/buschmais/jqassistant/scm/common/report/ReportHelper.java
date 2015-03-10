@@ -49,8 +49,8 @@ public final class ReportHelper {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
         int violations = 0;
         for (Result<Concept> conceptResult : conceptResults) {
-            if (conceptResult.getRows().isEmpty()) {
-                console.error("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
+            if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
+                console.error("Concept '" + conceptResult.getRule().getId() + "' could not be applied.");
                 violations++;
             }
         }
@@ -79,15 +79,15 @@ public final class ReportHelper {
      *            The {@link InMemoryReportWriter}.
      */
     public int verifyConstraintResults(Severity severity, InMemoryReportWriter inMemoryReportWriter) {
-        Collection<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
         int violations = 0;
-        for (Result<Constraint> constraintViolation : constraintViolations) {
-            if (!constraintViolation.isEmpty()) {
-                Constraint constraint = constraintViolation.getRule();
+        for (Result<Constraint> constraintResult : constraintResults) {
+            if (Result.Status.FAILURE.equals(constraintResult.getStatus())) {
+                Constraint constraint = constraintResult.getRule();
                 // severity level check
                 if (constraint.getSeverity().getLevel() <= severity.getLevel()) {
                     console.error(constraint.getId() + ": " + constraint.getDescription());
-                    for (Map<String, Object> columns : constraintViolation.getRows()) {
+                    for (Map<String, Object> columns : constraintResult.getRows()) {
                         StringBuilder message = new StringBuilder();
                         for (Map.Entry<String, Object> entry : columns.entrySet()) {
                             if (message.length() > 0) {

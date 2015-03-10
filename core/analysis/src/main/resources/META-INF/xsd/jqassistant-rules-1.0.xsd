@@ -91,14 +91,16 @@
     </xs:complexType>
 
     <xs:complexType name="verificationType">
-        <xs:choice>
-            <xs:element name="default" type="jqassistant-rules:defaultVerificationType" maxOccurs="1"/>
+        <xs:choice maxOccurs="1">
+            <xs:element name="rowCount" type="jqassistant-rules:rowCountVerificationType" maxOccurs="1"/>
+            <xs:element name="aggregation" type="jqassistant-rules:aggregationVerificationType" maxOccurs="1"/>
         </xs:choice>
     </xs:complexType>
 
-    <xs:complexType name="defaultVerificationType">
-        <xs:attribute name="aggregation" type="xs:boolean" use="optional" default="false"/>
-        <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
+    <xs:complexType name="rowCountVerificationType"/>
+
+    <xs:complexType name="aggregationVerificationType">
+        <xs:attribute name="column" type="xs:string" use="optional"/>
     </xs:complexType>
 
     <xs:group name="executableRuleGroup">
@@ -113,7 +115,8 @@
                 <xs:element name="script" type="jqassistant-rules:scriptType"/>
             </xs:choice>
             <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="verification" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
     </xs:group>
 
@@ -184,6 +187,10 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="reportType">
+        <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
     </xs:complexType>
 
 </xs:schema>
