@@ -95,10 +95,11 @@ public class TypeCache {
         }
 
         public MethodDescriptor getMethod(String signature) {
-            return (MethodDescriptor)  getMembers().get(signature);
+            return (MethodDescriptor) getMembers().get(signature);
         }
 
         public void addMember(String signature, MemberDescriptor member) {
+            typeDescriptor.getDeclaredMembers().add(member);
             getMembers().put(signature, member);
         }
 
@@ -107,12 +108,13 @@ public class TypeCache {
         }
 
         public void addDependency(String fullQualifiedName, TypeDescriptor dependency) {
+            ((DependentDescriptor) typeDescriptor).getDependencies().add(dependency);
             getDependencies().put(fullQualifiedName, dependency);
         }
 
-        private  Map<String, MemberDescriptor> getMembers() {
+        private Map<String, MemberDescriptor> getMembers() {
             if (members == null) {
-                members=new HashMap<>();
+                members = new HashMap<>();
                 for (Descriptor descriptor : typeDescriptor.getDeclaredMembers()) {
                     if (descriptor instanceof MemberDescriptor) {
                         MemberDescriptor memberDescriptor = (MemberDescriptor) descriptor;
@@ -125,10 +127,10 @@ public class TypeCache {
 
         private Map<String, TypeDescriptor> getDependencies() {
             if (dependencies == null) {
-                dependencies=new HashMap<>();
+                dependencies = new HashMap<>();
                 if (typeDescriptor instanceof DependentDescriptor) {
-                    for (TypeDescriptor descriptor : ((DependentDescriptor)typeDescriptor).getDependencies()) {
-                        dependencies.put(descriptor.getFullQualifiedName(), typeDescriptor);
+                    for (TypeDescriptor dependency : ((DependentDescriptor) typeDescriptor).getDependencies()) {
+                        dependencies.put(dependency.getFullQualifiedName(), dependency);
                     }
                 }
             }
