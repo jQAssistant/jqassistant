@@ -1,0 +1,7 @@
+== 1.0.0-RC2
+
+=== Plugins
+
+==== Java
+- Scanner adds a property "byteCodeVersion" to each scanned class
+- Added a new concept "java:JavaVersion": Set a human readable property "javaVersion" on a class file based on its byte code version.
