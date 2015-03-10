@@ -8,7 +8,7 @@
     <artifactId>jqassistant.scm.neo4jserver</artifactId>
 
     <properties>
-        <org.seleniumhq_version>2.43.1</org.seleniumhq_version>
+        <org.seleniumhq_version>2.45.0</org.seleniumhq_version>
     </properties>
 
     <dependencies>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-json</artifactId>
-            <version>1.9</version>
+            <version>1.18.1</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

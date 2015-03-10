@@ -51,7 +51,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
-        <org.neo4j_version>2.1.7</org.neo4j_version>
+        <org.neo4j_version>2.2.0-RC01</org.neo4j_version>
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
         <org.jruby_version>1.7.18</org.jruby_version>
         <org.ow2.asm_version>5.0.3</org.ow2.asm_version>
