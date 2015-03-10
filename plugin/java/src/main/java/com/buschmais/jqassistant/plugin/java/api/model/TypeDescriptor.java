@@ -21,6 +21,9 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
         AbstractDescriptor {
 
+    /**
+     * Defines the declares relation used for fields, methods and inner classes.
+     */
     @Relation("DECLARES")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
@@ -83,12 +86,25 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor,
      * 
      * @return The declared inner classes.
      */
-    @Relation("DECLARES")
+    @Outgoing
+    @Declares
     List<TypeDescriptor> getDeclaredInnerClasses();
 
+    /**
+     * Return the artifact which requires this type.
+     * 
+     * @return The artifact which requires this type.
+     */
     @Incoming
     @RequiresType
     JavaArtifactFileDescriptor getRequiredBy();
 
+    /**
+     * Set the artifact which requires this type.
+     * 
+     * @param javaArtifact
+     *            The artifact which requires this type.
+     */
     void setRequiredBy(JavaArtifactFileDescriptor javaArtifact);
+
 }
