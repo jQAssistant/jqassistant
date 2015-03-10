@@ -18,8 +18,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
  * Describes a Java type.
  */
 @Label(value = "Type", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
-        AbstractDescriptor {
+public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor {
 
     /**
      * Defines the declares relation used for fields, methods and inner classes.
@@ -30,29 +29,6 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor,
     @interface Declares {
     }
 
-    /**
-     * Return the super class.
-     * 
-     * @return The super class.
-     */
-    @Relation("EXTENDS")
-    TypeDescriptor getSuperClass();
-
-    /**
-     * Set the super class.
-     * 
-     * @param superClass
-     *            The super class.
-     */
-    void setSuperClass(TypeDescriptor superClass);
-
-    /**
-     * Return the implemented interfaces.
-     * 
-     * @return The implemented interfaces.
-     */
-    @Relation("IMPLEMENTS")
-    List<TypeDescriptor> getInterfaces();
 
     /**
      * Return the declared methods.

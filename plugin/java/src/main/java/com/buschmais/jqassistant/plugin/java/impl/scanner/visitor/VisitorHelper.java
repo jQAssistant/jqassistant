@@ -34,7 +34,7 @@ public class VisitorHelper {
      * @param typeName The full qualified name of the type (e.g.
      * java.lang.Object).
      */
-    TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType dependentType) {
+    TypeCache.CachedType resolveType(String fullQualifiedName, TypeCache.CachedType<? extends ClassFileDescriptor> dependentType) {
         TypeCache.CachedType cachedType = getTypeResolver().resolve(fullQualifiedName, scannerContext);
         if (!dependentType.equals(cachedType)) {
             TypeDescriptor dependency = dependentType.getDependency(fullQualifiedName);
@@ -55,7 +55,7 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends TypeDescriptor> TypeCache.CachedType createType(String fullQualifiedName, Class<T> descriptorType) {
+    <T extends ClassFileDescriptor> TypeCache.CachedType<T> createType(String fullQualifiedName, Class<T> descriptorType) {
         return getTypeResolver().create(fullQualifiedName, descriptorType, scannerContext);
     }
 

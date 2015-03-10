@@ -3,16 +3,17 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureVisitor;
 
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class ClassSignatureVisitor extends SignatureVisitor {
 
-    private TypeCache.CachedType cachedType;
+    private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
 
     private VisitorHelper visitorHelper;
 
-    protected ClassSignatureVisitor(TypeCache.CachedType cachedType, VisitorHelper visitorHelper) {
+    protected ClassSignatureVisitor(TypeCache.CachedType<? extends ClassFileDescriptor> cachedType, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);
         this.cachedType = cachedType;
         this.visitorHelper = visitorHelper;

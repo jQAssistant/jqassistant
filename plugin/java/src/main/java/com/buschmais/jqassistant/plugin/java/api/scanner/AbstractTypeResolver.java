@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
@@ -23,7 +22,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
     }
 
     @Override
-    public <T extends TypeDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext context) {
+    public <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext context) {
         TypeCache.CachedType cachedType = typeCache.get(fullQualifiedName);
         if (cachedType == null) {
             T typeDescriptor;
@@ -95,17 +94,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
      * @return The cached type.
      */
     private TypeCache.CachedType toCachedType(TypeDescriptor typeDescriptor) {
-        TypeCache.CachedType cachedType;
-        cachedType = new TypeCache.CachedType(typeDescriptor);
-        for (Descriptor descriptor : typeDescriptor.getDeclaredMembers()) {
-            if (descriptor instanceof MemberDescriptor) {
-                MemberDescriptor memberDescriptor = (MemberDescriptor) descriptor;
-                cachedType.addMember(memberDescriptor.getSignature(), memberDescriptor);
-            }
-        }
-        for (TypeDescriptor descriptor : typeDescriptor.getDependencies()) {
-            cachedType.addDependency(descriptor.getFullQualifiedName(), typeDescriptor);
-        }
+        TypeCache.CachedType cachedType = new TypeCache.CachedType(typeDescriptor);
         return cachedType;
     }
 
