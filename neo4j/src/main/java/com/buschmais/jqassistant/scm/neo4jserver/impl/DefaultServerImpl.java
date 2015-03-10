@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
 import static java.util.Collections.emptyList;
 
-import org.neo4j.server.configuration.Configurator;
+import org.neo4j.server.configuration.ServerSettings;
 
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
@@ -52,7 +52,8 @@ public class DefaultServerImpl extends AbstractServer {
         super(graphStore);
         this.scannerPluginRepository = scannerPluginRepository;
         this.rulePluginRepository = rulePluginRepository;
-        getConfigurator().configuration().setProperty(Configurator.WEBSERVER_PORT_PROPERTY_KEY, Integer.toString(port));
+        getConfigurator().configuration().setProperty(ServerSettings.webserver_port.name(), Integer.toString(port));
+        getConfigurator().configuration().setProperty(ServerSettings.auth_enabled.name(), Boolean.FALSE.toString());
     }
 
     @Override
