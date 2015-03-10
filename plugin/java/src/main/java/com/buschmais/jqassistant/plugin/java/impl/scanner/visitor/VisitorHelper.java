@@ -41,7 +41,6 @@ public class VisitorHelper {
             if (dependency == null) {
                 dependency = cachedType.getTypeDescriptor();
                 dependentType.addDependency(fullQualifiedName, dependency);
-                dependentType.getTypeDescriptor().getDependencies().add(dependency);
             }
         }
         return cachedType;
@@ -94,7 +93,6 @@ public class VisitorHelper {
                 methodDescriptor = scannerContext.getStore().create(MethodDescriptor.class);
             }
             methodDescriptor.setSignature(signature);
-            cachedType.getTypeDescriptor().getDeclaredMethods().add(methodDescriptor);
             cachedType.addMember(signature, methodDescriptor);
         }
         return methodDescriptor;
@@ -175,7 +173,6 @@ public class VisitorHelper {
         if (fieldDescriptor == null) {
             fieldDescriptor = scannerContext.getStore().create(FieldDescriptor.class);
             fieldDescriptor.setSignature(signature);
-            cachedType.getTypeDescriptor().getDeclaredFields().add(fieldDescriptor);
             cachedType.addMember(signature, fieldDescriptor);
         }
         return fieldDescriptor;
