@@ -150,7 +150,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
         validateConstraint("junit4:IgnoreWithoutMessage");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintViolations().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:IgnoreWithoutMessage")));
@@ -234,7 +234,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         scanClasses(Assertions.class);
         validateConstraint("junit4:AssertionMustProvideMessage");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintViolations().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:AssertionMustProvideMessage")));
@@ -261,7 +261,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
         scanClasses(Assertions.class);
         validateConstraint("junit4:TestMethodWithoutAssertion");
         store.beginTransaction();
-        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintViolations().values());
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat(result, result(constraint("junit4:TestMethodWithoutAssertion")));
@@ -368,7 +368,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void defaultGroup() throws AnalysisException {
         executeGroup("junit4:Default");
-        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations();
+        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
         assertThat(constraintViolations.keySet(),
                 hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion", "junit4:IgnoreWithoutMessage"));
     }
