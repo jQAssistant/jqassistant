@@ -23,7 +23,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
 
     @Override
     public <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext context) {
-        TypeCache.CachedType cachedType = typeCache.get(fullQualifiedName);
+        TypeCache.CachedType<T> cachedType = typeCache.get(fullQualifiedName);
         if (cachedType == null) {
             T typeDescriptor;
             TypeDescriptor resolvedType = findInArtifact(fullQualifiedName, context);
@@ -50,7 +50,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
 
     @Override
     public TypeCache.CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context) {
-        TypeCache.CachedType cachedType = typeCache.get(fullQualifiedName);
+        TypeCache.CachedType<TypeDescriptor> cachedType = typeCache.get(fullQualifiedName);
         if (cachedType == null) {
             TypeDescriptor typeDescriptor = findInArtifact(fullQualifiedName, context);
             if (typeDescriptor == null) {
@@ -93,8 +93,8 @@ public abstract class AbstractTypeResolver implements TypeResolver {
      *            The type descriptor.
      * @return The cached type.
      */
-    private TypeCache.CachedType toCachedType(TypeDescriptor typeDescriptor) {
-        TypeCache.CachedType cachedType = new TypeCache.CachedType(typeDescriptor);
+    private <T extends TypeDescriptor> TypeCache.CachedType<T> toCachedType(TypeDescriptor typeDescriptor) {
+        TypeCache.CachedType<T> cachedType = new TypeCache.CachedType(typeDescriptor);
         return cachedType;
     }
 
