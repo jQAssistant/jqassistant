@@ -95,6 +95,39 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies scanning dependent types located in artifacts which are transitively dependent.
+     *
+     * @throws IOException
+     *             If the test fails.
+     */
+    @Test
+    public void transitiveDependentArtifacts() throws IOException {
+        store.beginTransaction();
+        JavaArtifactFileDescriptor a1 = getArtifactDescriptor("a1");
+        JavaArtifactFileDescriptor a2 = getArtifactDescriptor("a2");
+        JavaArtifactFileDescriptor a3 = getArtifactDescriptor("a3");
+        store.create(a2, DependsOnDescriptor.class, a1);
+        store.create(a3, DependsOnDescriptor.class, a2);
+        store.commitTransaction();
+        scanClasses("a1", A.class);
+        scanClasses("a3", B.class);
+        store.beginTransaction();
+        TestResult testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn={artifact} return t", MapBuilder
+                .<String, Object> create("artifact", "a1").get());
+        assertThat(testResult.getRows().size(), equalTo(1));
+        assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(A.class)));
+        testResult = query("match (artifact:Artifact)-[:CONTAINS]->(t:Type) where artifact.fqn={artifact} return t",
+                MapBuilder.<String, Object> create("artifact", "a3").get());
+        assertThat(testResult.getRows().size(), equalTo(1));
+        assertThat(testResult.getColumn("t"), hasItem(typeDescriptor(B.class)));
+        testResult = query(
+                "match (artifact3:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)<-[:CONTAINS]-(artifact1:Artifact) where artifact1.fqn={a1} and artifact3.fqn={a3} and b.fqn={b} return a",
+                MapBuilder.<String, Object> create("b", B.class.getName()).put("a1", "a1").put("a3", "a3").get());
+        assertThat(testResult.getColumn("a"), hasItem(typeDescriptor(A.class)));
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies scanning dependent types located in independent artifacts.
      *
      * @throws IOException
