@@ -22,19 +22,19 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void javaScriptXmlConcept() throws AnalysisException {
-        applyConcept("javascript:XmlTestConcept");
+        assertThat(applyConcept("javascript:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void JavaScriptAsciiDocConcept() throws AnalysisException {
-        applyConcept("javascript:AsciiDocTestConcept");
+        assertThat(applyConcept("javascript:AsciiDocTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConceptUsingGDS() throws AnalysisException {
-        applyConcept("javascript:XmlTestConceptUsingGDS");
+        assertThat(applyConcept("javascript:XmlTestConceptUsingGDS").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
     }
 
@@ -52,7 +52,7 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void groovyXmlConcept() throws AnalysisException {
-        applyConcept("groovy:XmlTestConcept");
+        assertThat(applyConcept("groovy:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
     }
 
@@ -64,7 +64,7 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void rubyXmlConcept() throws AnalysisException {
-        applyConcept("ruby:XmlTestConcept");
+        assertThat(applyConcept("ruby:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
     }
 

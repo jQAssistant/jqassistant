@@ -113,7 +113,7 @@
             row.put "test",testDescriptor
             rows = java.util.Arrays.asList row
             status = com.buschmais.jqassistant.core.analysis.api.Result::Status::SUCCESS
-            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,$status,$severity,columnNames,rows
+            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,status,$severity,columnNames,rows
         </script>
     </constraint>
 

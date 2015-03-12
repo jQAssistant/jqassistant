@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.cdi.test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -10,6 +11,7 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.event.CustomEventConsumer;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.event.CustomEventProducer;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -32,7 +34,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	@Test
 	public void test_EventProducer_Concept() throws IOException, AnalysisException {
 		scanClasses(CustomEventProducer.class);
-		applyConcept("cdi:EventProducer");
+        assertThat(applyConcept("cdi:EventProducer").getStatus(), equalTo(Result.Status.SUCCESS));
 		store.beginTransaction();
 		assertThat("Expected EventProducer", query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventProducer.class)));
 		store.commitTransaction();
@@ -49,7 +51,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	@Test
 	public void testInvalid_EventProducer_Concept() throws IOException, AnalysisException {
 		scanClasses(CdiEventIT.class);
-		applyConcept("cdi:EventProducer");
+        assertThat(applyConcept("cdi:EventProducer").getStatus(), equalTo(Result.Status.FAILURE));
 		store.beginTransaction();
 		assertThat("Unexpected EventProducer", query("MATCH (e:Type:Cdi:EventProducer) RETURN e").getColumn("e"), nullValue());
 		store.commitTransaction();
@@ -66,7 +68,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	@Test
 	public void test_EventConsumer_Concept() throws IOException, AnalysisException {
 		scanClasses(CustomEventConsumer.class);
-		applyConcept("cdi:EventConsumer");
+		assertThat(applyConcept("cdi:EventConsumer").getStatus(), equalTo(Result.Status.SUCCESS));
 		store.beginTransaction();
 		assertThat("Expected EventConsumer", query("MATCH (e:Type:Cdi:EventConsumer) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomEventConsumer.class)));
 		store.commitTransaction();
@@ -83,7 +85,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	@Test
 	public void testInvalid_EventConsumer_Concept() throws IOException, AnalysisException {
 		scanClasses(CdiEventIT.class);
-		applyConcept("cdi:EventConsumer");
+        assertThat(applyConcept("cdi:EventConsumer").getStatus(), equalTo(Result.Status.FAILURE));
 		store.beginTransaction();
 		assertThat("Unexpected EventConsumer", query("MATCH (e:Type:Cdi:EventConsumer) RETURN e").getColumn("e"), nullValue());
 		store.commitTransaction();
