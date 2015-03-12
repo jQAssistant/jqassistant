@@ -42,7 +42,7 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
         <includeConstraint refId="my-rules:MyConstraint"/>
     </group>
 
-    <constraint id="my-rules:MyConcept">
+    <concept id="my-rules:MyConcept">
         <description>A human readable description of the concept.</description>
         <cypher><![CDATA[
             MATCH
@@ -56,7 +56,7 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
             RETURN
               ...
         ]]></cypher>
-    </constraint>
+    </concept>
 
     <constraint id="my-rules:MyConstraint" severity="blocker">
         <requiresConcept refId="my-rules:MyConcept" />
