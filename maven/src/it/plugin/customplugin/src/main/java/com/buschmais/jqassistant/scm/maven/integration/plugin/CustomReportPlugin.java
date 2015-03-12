@@ -10,7 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -61,7 +61,7 @@ public class CustomReportPlugin implements ReportPlugin {
     }
 
     @Override
-    public void setResult(Result<? extends Rule> result) throws ReportException {
+    public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         try {
             Writer writer = new FileWriter(fileName);
             writer.write("CustomReport");
