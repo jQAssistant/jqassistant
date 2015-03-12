@@ -5,7 +5,7 @@
             <description>A test constraint.</description>
             <result>
                 <columns count="1">
-                    <column>WriteAccess</column>
+                    <column primary="true">WriteAccess</column>
                 </columns>
                 <rows count="2">
                     <row>

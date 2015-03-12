@@ -16,6 +16,9 @@ public abstract class AbstractTemplateRule {
     @RuleProperty(key = "Aggregation Column", description = "The column to use for verifying an aggregated result.")
     private String aggregationColumn;
 
+    @RuleProperty(key = "Primary Report Column", description = "The primary column of the result, e.g. for creating issues.")
+    private String primaryReportColumn;
+
     public void setCypher(String cypher) {
         this.cypher = cypher;
     }
@@ -46,5 +49,13 @@ public abstract class AbstractTemplateRule {
 
     public void setAggregationColumn(String aggregationColumn) {
         this.aggregationColumn = aggregationColumn;
+    }
+
+    public String getPrimaryReportColumn() {
+        return primaryReportColumn;
+    }
+
+    public void setPrimaryReportColumn(String primaryReportColumn) {
+        this.primaryReportColumn = primaryReportColumn;
     }
 }

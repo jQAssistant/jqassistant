@@ -34,9 +34,11 @@ public class Constraint extends AbstractExecutableRule {
      *            The required concepts.
      * @param verification
      *            The result verification.
+     * @param report
+     *            The report settings.
      */
     public Constraint(String id, String description, Severity severity, String deprecated, String cypher, Script script, String templateId,
-            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification) {
-        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification);
+            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
+        super(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification, report);
     }
 }

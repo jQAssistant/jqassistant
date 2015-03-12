@@ -106,15 +106,17 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             } else {
                 verification = new RowCountVerification();
             }
+            Object primaryReportColum = part.getAttributes().get("primaryReportColum");
+            Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = new Concept(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(), requiresConcepts,
-                        verification);
+                        verification, report);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
                 Constraint concept = new Constraint(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(),
-                        requiresConcepts, verification);
+                        requiresConcepts, verification, report);
                 builder.addConstraint(concept);
             }
         }

@@ -47,7 +47,10 @@ public class XmlReportTest {
         assertThat(ruleType.getResult(), notNullValue());
         ResultType result = ruleType.getResult();
         assertThat(result.getColumns().getCount(), equalTo(2));
-        assertThat(result.getColumns().getColumn(), hasItems("c1", "c2"));
+        List<ColumnHeaderType> columnHeaders = result.getColumns().getColumn();
+        assertThat(columnHeaders.size(), equalTo(2));
+        verifyColumnHeader(columnHeaders.get(0), "c1", false);
+        verifyColumnHeader(columnHeaders.get(1), "c2", true);
         assertThat(result.getRows().getCount(), equalTo(1));
         List<RowType> rows = result.getRows().getRow();
         assertThat(rows.size(), equalTo(1));
@@ -66,6 +69,11 @@ public class XmlReportTest {
                 assertThat(source.getLine(), equalTo(1));
             }
         }
+    }
+
+    private void verifyColumnHeader(ColumnHeaderType columnHeaderC1, String expectedName, boolean isPrimary) {
+        assertThat(columnHeaderC1.getValue(), equalTo(expectedName));
+        assertThat(columnHeaderC1.isPrimary(), equalTo(isPrimary));
     }
 
     @Test
@@ -87,7 +95,13 @@ public class XmlReportTest {
         RuleType ruleType = groupType.getConceptOrConstraint().get(0);
         assertThat(ruleType, instanceOf(ConstraintType.class));
         assertThat(ruleType.getId(), equalTo("my:Constraint"));
-        assertThat((ruleType).getSeverity().getValue(), equalTo("critical"));
+        assertThat(ruleType.getSeverity().getValue(), equalTo("critical"));
         assertThat(ruleType.getStatus(), equalTo(StatusEnumType.FAILURE));
+        ResultType result = ruleType.getResult();
+        assertThat(result, notNullValue());
+        ColumnsHeaderType columnsHeader = result.getColumns();
+        List<ColumnHeaderType> columnHeaders = columnsHeader.getColumn();
+        verifyColumnHeader(columnHeaders.get(0), "c1", true);
+        verifyColumnHeader(columnHeaders.get(1), "c2", false);
     }
 }

@@ -12,15 +12,9 @@ import javax.xml.bind.Marshaller;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.plugin.junit.impl.schema.*;
 import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.Failure;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.ObjectFactory;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.Testcase;
-import com.buschmais.jqassistant.plugin.junit.impl.schema.Testsuite;
 
 /**
  * {@link AnalysisListener} implementation to write JUnit style reports.
@@ -36,7 +30,7 @@ public class JUnitReportWriter implements AnalysisListener<AnalysisListenerExcep
     private Group group;
     private long ruleBeginTimestamp;
     private long groupBeginTimestamp;
-    private Map<Result<? extends Rule>, Long> results = new LinkedHashMap<>();
+    private Map<Result<? extends ExecutableRule>, Long> results = new LinkedHashMap<>();
 
     public JUnitReportWriter(File directory) throws AnalysisListenerException {
         this.directory = directory;
@@ -68,7 +62,7 @@ public class JUnitReportWriter implements AnalysisListener<AnalysisListenerExcep
         int tests = 0;
         int failures = 0;
         int errors = 0;
-        for (Map.Entry<Result<? extends Rule>, Long> entry : results.entrySet()) {
+        for (Map.Entry<Result<? extends ExecutableRule>, Long> entry : results.entrySet()) {
             // TestCase
             Result<? extends Rule> result = entry.getKey();
             long time = entry.getValue().longValue();
@@ -141,7 +135,7 @@ public class JUnitReportWriter implements AnalysisListener<AnalysisListenerExcep
     }
 
     @Override
-    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends ExecutableRule> result) throws AnalysisListenerException {
         long ruleEndTimestamp = System.currentTimeMillis();
         long time = ruleEndTimestamp - ruleBeginTimestamp;
         this.results.put(result, Long.valueOf(time));

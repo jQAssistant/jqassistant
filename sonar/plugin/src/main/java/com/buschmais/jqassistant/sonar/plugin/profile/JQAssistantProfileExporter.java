@@ -56,7 +56,6 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         RuleSetBuilder builder = RuleSetBuilder.newInstance();
         Map<ExecutableRule, Set<String>> executables = new HashMap<>();
         try {
-
             for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
                 AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
                 AbstractExecutableRule executable;
@@ -75,7 +74,6 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                     builder.addConstraint((Constraint) executable);
                     constraintSeverities.put(executable.getId(), executable.getSeverity());
                 }
-
             }
             for (Set<String> requiredConcepts : executables.values()) {
                 resolveRequiredConcepts(requiredConcepts, concepts);
@@ -198,12 +196,15 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         } else {
             verification = new RowCountVerification();
         }
+        RuleParam primaryReportColumnParam = rule.getParam(RuleParameter.PrimaryReportColumn.getName());
+        String primaryReportColumn = primaryReportColumnParam.getDefaultValue();
+        Report report = new Report(primaryReportColumn);
         switch (ruleType) {
         case Concept:
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
             break;
         case Constraint:
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
             break;
         default:
             throw new SonarException("Rule type is not supported " + ruleType);
@@ -233,14 +234,14 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             verification = new RowCountVerification();
         }
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
+        Report report = new Report(check.getPrimaryReportColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
+            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification);
+            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
         } else {
             throw new SonarException("Unknown type " + check.getClass());
         }
         return executable;
     }
-
 }
