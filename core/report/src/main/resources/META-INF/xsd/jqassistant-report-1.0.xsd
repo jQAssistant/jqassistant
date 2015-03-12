@@ -71,9 +71,17 @@
 
     <xs:complexType name="ColumnsHeaderType">
         <xs:sequence>
-            <xs:element name="column" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="column" type="jqassistant-report:ColumnHeaderType" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="count" type="xs:int" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ColumnHeaderType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="primary" type="xs:boolean" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
     <xs:complexType name="RowsType">

@@ -21,10 +21,10 @@ public class XmlRuleSetReaderTest {
         assertEquals(1, ruleSet.getConcepts().size());
         assertEquals(1, ruleSet.getConstraints().size());
         for (String id : ruleSet.getConcepts().keySet()) {
-            assertEquals(true, asList("test:JavaScriptConcept").contains(id));
+            assertEquals(true, "test:JavaScriptConcept".equals(id));
         }
         for (String id : ruleSet.getConstraints().keySet()) {
-            assertEquals(true, asList("test:JavaScriptConstraint").contains(id));
+            assertEquals(true, "test:JavaScriptConstraint".equals(id));
         }
     }
 

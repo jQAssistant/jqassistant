@@ -63,4 +63,11 @@ public interface ExecutableRule extends Rule {
      * @return The result verification.
      */
     Verification getVerification();
+
+    /**
+     * Return the report settings for this rule.
+     * 
+     * @return The report settings.
+     */
+    Report getReport();
 }

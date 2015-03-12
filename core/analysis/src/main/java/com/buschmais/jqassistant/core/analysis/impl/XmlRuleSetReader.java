@@ -166,9 +166,28 @@ public class XmlRuleSetReader implements RuleSetReader {
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
-        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification);
+        Report report = getReport(conceptType.getReport());
+        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification, report);
     }
 
+    /**
+     * Read the report definition.
+     * 
+     * @param reportType
+     *            The report type.
+     * @return The report definition.
+     */
+    private Report getReport(ReportType reportType) {
+        String primaryColumn = null;
+        if (reportType != null) {
+            primaryColumn = reportType.getPrimaryColumn();
+        }
+        return new Report(primaryColumn);
+    }
+
+    /**
+     * Read the verification definition.
+     */
     private Verification getVerification(VerificationType verificationType) throws RuleException {
         if (verificationType != null) {
             RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
@@ -199,7 +218,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = constraintType.getDeprecated();
         Verification verification = getVerification(constraintType.getVerify());
-        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification);
+        Report report = getReport(constraintType.getReport());
+        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts, verification, report);
     }
 
     private Script getScript(ScriptType scriptType) {

@@ -6,10 +6,7 @@ import java.util.TreeMap;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
@@ -59,7 +56,7 @@ public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerEx
     }
 
     @Override
-    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends ExecutableRule> result) throws AnalysisListenerException {
         this.currentResult = result;
     }
 

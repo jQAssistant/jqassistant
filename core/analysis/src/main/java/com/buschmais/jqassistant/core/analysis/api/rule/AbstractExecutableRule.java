@@ -59,6 +59,8 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      */
     private Verification verification;
 
+    private Report report;
+
     /**
      * Constructor.
      *
@@ -82,7 +84,7 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      *            The result verification.
      */
     protected AbstractExecutableRule(String id, String description, Severity severity, String deprecation, String cypher, Script script, String templateId,
-            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification) {
+            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
         this.id = id;
         this.description = description;
         this.severity = severity;
@@ -93,6 +95,7 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
         this.parameters = parameters;
         this.requiresConcepts = requiresConcepts;
         this.verification = verification;
+        this.report = report;
     }
 
     public String getId() {
@@ -146,6 +149,11 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
     @Override
     public Verification getVerification() {
         return verification;
+    }
+
+    @Override
+    public Report getReport() {
+        return report;
     }
 
     @Override

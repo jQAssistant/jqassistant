@@ -34,7 +34,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, "match...", null, null,
-                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification());
+                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification(), new Report("c2"));
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
         Group group = new Group("default", "My group", concepts, Collections.<String, Severity> emptyMap(), Collections.<String> emptySet());
@@ -50,18 +50,6 @@ public final class XmlReportTestHelper {
         return writer.toString();
     }
 
-    private static Map<String, Object> createRow() {
-        Map<String, Object> row = new HashMap<>();
-        row.put(C1, "simpleValue");
-        row.put(C2, new TestDescriptor() {
-            @Override
-            public String getValue() {
-                return "descriptorValue";
-            }
-        });
-        return row;
-    }
-
     /**
      * Creates a test report with {@link Constraint}.
      * 
@@ -75,7 +63,7 @@ public final class XmlReportTestHelper {
         xmlReportWriter.begin();
 
         Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, "match...", null, null,
-                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification());
+                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification(), new Report(null));
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
         Group group = new Group("default", "My group", Collections.<String, Severity> emptyMap(), constraints, Collections.<String> emptySet());
@@ -89,5 +77,17 @@ public final class XmlReportTestHelper {
         xmlReportWriter.endGroup();
         xmlReportWriter.end();
         return writer.toString();
+    }
+
+    private static Map<String, Object> createRow() {
+        Map<String, Object> row = new HashMap<>();
+        row.put(C1, "simpleValue");
+        row.put(C2, new TestDescriptor() {
+            @Override
+            public String getValue() {
+                return "descriptorValue";
+            }
+        });
+        return row;
     }
 }

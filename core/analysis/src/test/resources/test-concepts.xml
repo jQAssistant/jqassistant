@@ -29,6 +29,7 @@
             return
                 method as Method
         ]]></cypher>
+        <report primaryColumn="Method"/>
     </constraint>
 
     <group id="default">
