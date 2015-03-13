@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.test.rule;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -40,13 +42,13 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void javaScriptXmlConstraint() throws AnalysisException {
-        validateConstraint("javascript:XmlTestConstraint");
+        assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void JavaScriptAsciiDocConstraint() throws AnalysisException {
-        validateConstraint("javascript:AsciiDocTestConstraint");
+        assertThat(validateConstraint("javascript:AsciiDocTestConstraint").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConstraintResults(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
     }
 
@@ -58,7 +60,7 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void groovyXmlConstraint() throws AnalysisException {
-        validateConstraint("groovy:XmlTestConstraint");
+        assertThat(validateConstraint("groovy:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
         verifyResults(reportWriter.getConstraintResults(), "groovy:XmlTestConstraint", Severity.BLOCKER);
     }
 
@@ -70,7 +72,7 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void rubyXmlConstraint() throws AnalysisException {
-        validateConstraint("ruby:XmlTestConstraint");
+        assertThat(validateConstraint("ruby:XmlTestConstraint").getStatus(), equalTo(FAILURE));
         verifyResults(reportWriter.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
