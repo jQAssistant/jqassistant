@@ -189,6 +189,9 @@
             RETURN
               count(type) as Types
         ]]></cypher>
+        <verify>
+            <aggregation column="Types" />
+        </verify>
     </concept>
 
 </jqa:jqassistant-rules>

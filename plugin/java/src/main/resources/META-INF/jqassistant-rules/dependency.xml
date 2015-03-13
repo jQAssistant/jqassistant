@@ -11,8 +11,11 @@
             CREATE UNIQUE
                 (p1)-[:DEPENDS_ON]->(p2)
             RETURN
-                p1 AS package, COUNT(DISTINCT p2) AS PackageDependencyCount
+                p1 AS package, COUNT(DISTINCT p2) AS PackageDependencies
         ]]></cypher>
+        <verify>
+            <aggregation column="PackageDependencies" />
+        </verify>
     </concept>
 
     <concept id="dependency:Artifact">
