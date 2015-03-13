@@ -164,7 +164,9 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                         xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
                         for (String column : columnNames) {
                             xmlStreamWriter.writeStartElement("column");
-                            xmlStreamWriter.writeAttribute("primary", Boolean.valueOf(primaryColumn.equals(column)).toString());
+                            if (primaryColumn.equals(column)) {
+                                xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
+                            }
                             xmlStreamWriter.writeCharacters(column);
                             xmlStreamWriter.writeEndElement(); // column
                         }
