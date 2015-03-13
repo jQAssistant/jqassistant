@@ -28,7 +28,7 @@ public class AggregationVerificationStrategy implements VerificationStrategy<Agg
         for (Map<String, Object> row : rows) {
             Object value = row.get(column);
             if (value == null || !Number.class.isAssignableFrom(value.getClass())) {
-                throw new AnalysisException("The value in column '" + column + "' must be a non-null numeric value");
+                throw new AnalysisException("The value in column '" + column + "' must be a non-null numeric value but was '" + value + "'");
             }
             int aggregationValue = ((Number) value).intValue();
             if (executable instanceof Concept) {
