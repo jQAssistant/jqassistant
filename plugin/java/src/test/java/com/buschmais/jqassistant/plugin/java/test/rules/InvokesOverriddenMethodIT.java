@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -37,7 +37,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
     @Test
     public void invokeInterfaceMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
-        applyConcept("java:InvokesOverriddenMethod");
+        assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> classes = query(
                 "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='InvokeClient' and clientMethod.name='invokeInterfaceTypeMethod' RETURN type")
@@ -59,7 +59,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
     @Test
     public void invokeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, SubClassType.class, InvokeClient.class);
-        applyConcept("java:InvokesOverriddenMethod");
+        assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> classes = query(
                 "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) WHERE client.name='InvokeClient' and clientMethod.name='invokeClassTypeMethod' RETURN type")
@@ -81,7 +81,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
     @Test
     public void lineNumbers() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
-        applyConcept("java:InvokesOverriddenMethod");
+        assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<InvokesDescriptor> interfaceInvocations = query(
                 "MATCH (client:Type)-[:DECLARES]->(clientMethod:Method)-[invocation:INVOKES]->(invokedMethod:Method)<-[:DECLARES]-(type:Type) "

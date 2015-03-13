@@ -52,29 +52,6 @@
         ]]></cypher>
     </constraint>
 
-    <constraint id="dependency:TypeCycles">
-        <requiresConcept refId="dependency:Package"/>
-        <description>There must be no cyclic type dependencies.</description>
-        <cypher><![CDATA[
-            MATCH
-                (p1:Package)-[:DEPENDS_ON*0..1]->(p2:Package),
-                shortestPath((p2)-[:DEPENDS_ON*]->(p1))
-            WITH
-                p1, p2
-            MATCH
-                (p1)-[:CONTAINS]->(t1:Type),
-                (p2)-[:CONTAINS]->(t2:Type),
-                (t1)-[:DEPENDS_ON]->(t2),
-                path=shortestPath((t2)-[:DEPENDS_ON*]->(t1))
-            WHERE
-                NOT (
-                  t1 = t2 OR (t1)-[:DECLARES]-(t2)
-                )
-            RETURN
-                LENGTH(path) AS Length, EXTRACT(p IN nodes (path) | p.fqn) AS Cycle
-        ]]></cypher>
-    </constraint>
-
     <constraint id="dependency:ArtifactCycles">
         <requiresConcept refId="dependency:Artifact"/>
         <description>There must be no cyclic artifact dependencies.</description>

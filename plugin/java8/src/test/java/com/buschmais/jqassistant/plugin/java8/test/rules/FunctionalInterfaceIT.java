@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.java8.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -28,7 +30,7 @@ public class FunctionalInterfaceIT extends AbstractJavaPluginIT {
     @Test
     public void functionalInterface() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(com.buschmais.jqassistant.plugin.java8.test.set.rules.FunctionalInterface.class);
-        applyConcept("java8:FunctionalInterface");
+        assertThat(applyConcept("java8:FunctionalInterface").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query("MATCH (fi:Type:FunctionalInterface) RETURN fi");
         assertThat(result.getColumn("fi"), hasItem(typeDescriptor(FunctionalInterface.class)));

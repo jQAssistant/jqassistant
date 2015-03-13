@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
@@ -48,7 +50,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:TestMethod");
+        assertThat(applyConcept("junit4:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
         store.commitTransaction();
@@ -67,7 +69,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:TestClass");
+        assertThat(applyConcept("junit4:TestClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
         store.commitTransaction();
@@ -86,7 +88,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void testClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:TestClassOrMethod");
+        assertThat(applyConcept("junit4:TestClassOrMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit4:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
         assertThat(query("MATCH (c:Type:Class:Junit4:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
@@ -106,7 +108,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void suiteClass() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestSuite.class, TestClass.class);
-        applyConcept("junit4:SuiteClass");
+        assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("testClass", TestClass.class.getName()).get();
         List<Object> suites = query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn={testClass} RETURN s", params)
@@ -128,7 +130,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void ignoreTestClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(IgnoredTest.class);
-        applyConcept("junit4:IgnoreTestClassOrMethod");
+        assertThat(applyConcept("junit4:IgnoreTestClassOrMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (c:Type:Class:Junit4:Ignore) RETURN c").getColumn("c"), hasItem(typeDescriptor(IgnoredTest.class)));
         assertThat(query("MATCH (m:Method:Junit4:Ignore) RETURN m").getColumn("m"), hasItem(methodDescriptor(IgnoredTest.class, "ignoredTest")));
@@ -148,7 +150,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void ignoreWithoutMessage() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
-        validateConstraint("junit4:IgnoreWithoutMessage");
+        assertThat(validateConstraint("junit4:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
@@ -183,7 +185,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     public void testCaseImplementedByMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Example.class);
         scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
-        applyConcept("junit4:TestCaseImplementedByMethod");
+        assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         verifyTestCaseImplementedByMethod("success");
         verifyTestCaseImplementedByMethod("failure");
@@ -207,7 +209,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void assertMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Assertions.class);
-        applyConcept("junit4:AssertMethod");
+        assertThat(applyConcept("junit4:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
         assertThat(
@@ -232,7 +234,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void assertionMustProvideMessage() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Assertions.class);
-        validateConstraint("junit4:AssertionMustProvideMessage");
+        assertThat(validateConstraint("junit4:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
@@ -259,7 +261,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void testMethodWithoutAssertion() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Assertions.class);
-        validateConstraint("junit4:TestMethodWithoutAssertion");
+        assertThat(validateConstraint("junit4:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
@@ -286,7 +288,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void beforeMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:BeforeMethod");
+        assertThat(applyConcept("junit4:BeforeMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:Before:Junit4:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "before")));
@@ -308,7 +310,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void afterMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:AfterMethod");
+        assertThat(applyConcept("junit4:AfterMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:After:Junit4:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "after")));
@@ -330,7 +332,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void beforeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:BeforeClassMethod");
+        assertThat(applyConcept("junit4:BeforeClassMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:BeforeClass:Junit4:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "beforeClass")));
@@ -352,7 +354,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
     @Test
     public void afterClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("junit4:AfterClassMethod");
+        assertThat(applyConcept("junit4:AfterClassMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:AfterClass:Junit4:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "afterClass")));

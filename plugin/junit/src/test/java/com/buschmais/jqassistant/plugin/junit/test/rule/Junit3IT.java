@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.plugin.junit.test.rule;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -31,7 +33,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
     @Test
     public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Junit3Test.class);
-        applyConcept("junit3:TestClass");
+        assertThat(applyConcept("junit3:TestClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (t:Class:Junit3:Test) RETURN t").getColumn("t"), hasItem(typeDescriptor(Junit3Test.class)));
         store.commitTransaction();
@@ -50,7 +52,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
     @Test
     public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Junit3Test.class);
-        applyConcept("junit3:TestMethod");
+        assertThat(applyConcept("junit3:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit3:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(Junit3Test.class, "testSomething")));
         store.commitTransaction();
@@ -69,7 +71,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
     @Test
     public void setUpMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Junit3Test.class);
-        applyConcept("junit3:SetUpMethod");
+        assertThat(applyConcept("junit3:SetUpMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit3:SetUp) RETURN m").getColumn("m"), hasItem(methodDescriptor(Junit3Test.class, "setUp")));
         store.commitTransaction();
@@ -88,7 +90,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
     @Test
     public void tearDownMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Junit3Test.class);
-        applyConcept("junit3:TearDownMethod");
+        assertThat(applyConcept("junit3:TearDownMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:Junit3:TearDown) RETURN m").getColumn("m"), hasItem(methodDescriptor(Junit3Test.class, "tearDown")));
         store.commitTransaction();

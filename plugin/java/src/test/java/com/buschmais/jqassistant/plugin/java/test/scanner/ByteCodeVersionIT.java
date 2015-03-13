@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -7,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.List;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -28,14 +30,13 @@ public class ByteCodeVersionIT extends AbstractJavaPluginIT {
         ClassFileDescriptor pojo = types.get(0);
         assertThat(pojo.getByteCodeVersion(), equalTo(51)); // Java 7
         store.commitTransaction();
-        applyConcept("java:JavaVersion");
 
     }
 
     @Test
     public void javaVersion() throws IOException, AnalysisException {
         scanClasses(Pojo.class);
-        applyConcept("java:JavaVersion");
+        assertThat(applyConcept("java:JavaVersion").getStatus(), CoreMatchers.equalTo(SUCCESS));
         store.beginTransaction();
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion='Java 7' RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));

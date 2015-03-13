@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.plugin.testng.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -32,7 +34,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:TestMethod");
+        assertThat(applyConcept("testng:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (m:Method:TestNG:Test) RETURN m").getColumn("m"), hasItem(methodDescriptor(TestClass.class, "activeTestMethod")));
         store.commitTransaction();
@@ -51,7 +53,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:TestClass");
+        assertThat(applyConcept("testng:TestClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (c:Type:Class:TestNG:Test) RETURN c").getColumn("c"), hasItem(typeDescriptor(TestClass.class)));
         store.commitTransaction();
@@ -72,7 +74,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void beforeMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:BeforeMethod");
+        assertThat(applyConcept("testng:BeforeMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:BeforeMethod:TestNG:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "before")));
@@ -94,7 +96,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void afterMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:AfterMethod");
+        assertThat(applyConcept("testng:AfterMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:AfterMethod:TestNG:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "after")));
@@ -116,7 +118,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void beforeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:BeforeClassMethod");
+        assertThat(applyConcept("testng:BeforeClassMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:BeforeClassMethod:TestNG:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "beforeClass")));
@@ -138,7 +140,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void afterClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:AfterClassMethod");
+        assertThat(applyConcept("testng:AfterClassMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:AfterClassMethod:TestNG:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "afterClass")));
@@ -160,7 +162,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void beforeTestMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:BeforeTestMethod");
+        assertThat(applyConcept("testng:BeforeTestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:BeforeTestMethod:TestNG:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "beforeTest")));
@@ -182,7 +184,7 @@ public class TestNGIT extends AbstractJavaPluginIT {
     @Test
     public void afterTestMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(TestClass.class);
-        applyConcept("testng:AfterTestMethod");
+        assertThat(applyConcept("testng:AfterTestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:AfterTestMethod:TestNG:Method) return m").getColumn("m");
         assertThat(methods, hasItem(methodDescriptor(TestClass.class, "afterTest")));

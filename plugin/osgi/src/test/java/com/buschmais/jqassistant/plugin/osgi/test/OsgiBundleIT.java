@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.osgi.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
@@ -49,7 +51,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     @Test
     public void bundle() throws IOException, AnalysisException {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
-        applyConcept("osgi-bundle:Bundle");
+        assertThat(applyConcept("osgi-bundle:Bundle").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(
                 query(
@@ -69,7 +71,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     @Test
     public void exportedPackages() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
-        applyConcept("osgi-bundle:ExportPackage");
+        assertThat(applyConcept("osgi-bundle:ExportPackage").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:EXPORTS]->(p:Package) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(2));
@@ -89,7 +91,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     public void importedPackages() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         query("create (:File:Directory:Package{fqn:'org.junit'})");
-        applyConcept("osgi-bundle:ImportPackage");
+        assertThat(applyConcept("osgi-bundle:ImportPackage").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Package) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(1));
@@ -108,7 +110,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     @Test
     public void activator() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
-        applyConcept("osgi-bundle:Activator");
+        assertThat(applyConcept("osgi-bundle:Activator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<TypeDescriptor> activators = query("MATCH (a:Class)-[:ACTIVATES]->(b:Osgi:Bundle) RETURN a").getColumn("a");
         assertThat(activators.size(), equalTo(1));
@@ -128,7 +130,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     public void internalType() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
-        applyConcept("osgi-bundle:InternalType");
+        assertThat(applyConcept("osgi-bundle:InternalType").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<TypeDescriptor> internalTypes = query("MATCH (t:Type:Internal) RETURN t").getColumn("t");
         assertThat(
@@ -150,7 +152,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     public void unusedInternalType() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
-        validateConstraint("osgi-bundle:UnusedInternalType");
+        assertThat(validateConstraint("osgi-bundle:UnusedInternalType").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:UnusedInternalType");
         Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
@@ -176,7 +178,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     public void internalTypeMustNotBePublic() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
-        validateConstraint("osgi-bundle:InternalTypeMustNotBePublic");
+        assertThat(validateConstraint("osgi-bundle:InternalTypeMustNotBePublic").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:InternalTypeMustNotBePublic");
         Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();

@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.jpa2.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
@@ -46,7 +48,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void entity() throws IOException, AnalysisException {
         scanClasses(JpaEntity.class);
-        applyConcept("jpa2:Entity");
+        assertThat(applyConcept("jpa2:Entity").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (e:Type:Jpa:Entity) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEntity.class)));
         store.commitTransaction();
@@ -63,7 +65,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void embeddable() throws IOException, AnalysisException {
         scanClasses(JpaEmbeddable.class);
-        applyConcept("jpa2:Embeddable");
+        assertThat(applyConcept("jpa2:Embeddable").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (e:Type:Jpa:Embeddable) RETURN e").getColumn("e"), hasItem(typeDescriptor(JpaEmbeddable.class)));
         store.commitTransaction();
@@ -80,7 +82,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void embedded() throws IOException, AnalysisException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(JpaEntity.class);
-        applyConcept("jpa2:Embedded");
+        assertThat(applyConcept("jpa2:Embedded").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> members = query("MATCH (e:Jpa:Embedded) RETURN e").getColumn("e");
         assertThat(members, hasItem(fieldDescriptor(JpaEntity.class, "embedded")));
@@ -99,7 +101,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void embeddedId() throws IOException, AnalysisException, NoSuchFieldException, NoSuchMethodException {
         scanClasses(JpaEntity.class);
-        applyConcept("jpa2:EmbeddedId");
+        assertThat(applyConcept("jpa2:EmbeddedId").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> members = query("MATCH (e:Jpa:EmbeddedId) RETURN e").getColumn("e");
         assertThat(members, hasItem(fieldDescriptor(JpaEntity.class, "id")));
@@ -118,7 +120,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void namedQuery() throws IOException, AnalysisException {
         scanClasses(JpaEntity.class);
-        applyConcept("jpa2:NamedQuery");
+        assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult query = query("MATCH (e:Entity)-[:DEFINES]->(n:Jpa:NamedQuery) RETURN n.name as name, n.query as query");
         List<Map<String, Object>> rows = query.getRows();
@@ -215,7 +217,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void validationModeNotSpecified() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
-        validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
@@ -238,7 +240,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void validationModeAuto() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
-        validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
@@ -261,7 +263,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void validationModeSpecified() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
-        validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified");
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));

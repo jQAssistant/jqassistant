@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.jaxrs.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -37,7 +39,7 @@ public class EntityProviderIT extends AbstractJavaPluginIT {
     @Test
     public void test_EntityProvider_Writer_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(BookWriter.class);
-        applyConcept("jaxrs:EntityProvider");
+        assertThat(applyConcept("jaxrs:EntityProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat("Expected entityProvider", query("MATCH (entityProvider:JaxRS:EntityProvider) RETURN entityProvider").getColumn("entityProvider"),
                 hasItem(typeDescriptor(BookWriter.class)));
@@ -58,7 +60,7 @@ public class EntityProviderIT extends AbstractJavaPluginIT {
     @Test
     public void test_EntityProvider_Reader_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(BookReader.class);
-        applyConcept("jaxrs:EntityProvider");
+        assertThat(applyConcept("jaxrs:EntityProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat("Expected entityProvider", query("MATCH (entityProvider:JaxRS:EntityProvider) RETURN entityProvider").getColumn("entityProvider"),
                 hasItem(typeDescriptor(BookReader.class)));
