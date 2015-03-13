@@ -11,5 +11,6 @@
     <rules>
         <resource>script.xml</resource>
         <resource>script.adoc</resource>
+        <resource>aggregation.xml</resource>
     </rules>
 </jqa-plugin:jqassistant-plugin>
