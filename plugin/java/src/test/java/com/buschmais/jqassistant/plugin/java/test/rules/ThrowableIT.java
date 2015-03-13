@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -13,14 +15,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelError;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelRuntimeException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.FirstLevelThrowable;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelError;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelRuntimeException;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.SecondLevelThrowable;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.exception.*;
 
 /**
  * Tests for the concepts java:Throwable, java:Error, java:Exception and
@@ -44,7 +39,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     public void throwable() throws IOException, AnalysisException {
-        applyConcept("java:Throwable");
+        assertThat(applyConcept("java:Throwable").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Throwable) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));
@@ -63,7 +58,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     public void error() throws IOException, AnalysisException {
-        applyConcept("java:Error");
+        assertThat(applyConcept("java:Error").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Error) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));
@@ -82,7 +77,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     public void exception() throws IOException, AnalysisException {
-        applyConcept("java:Exception");
+        assertThat(applyConcept("java:Exception").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Exception) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));
@@ -101,7 +96,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      */
     @Test
     public void runtimeException() throws IOException, AnalysisException {
-        applyConcept("java:RuntimeException");
+        assertThat(applyConcept("java:RuntimeException").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:RuntimeException) RETURN element").getColumn("element");
         assertThat(elements, hasSize(2));

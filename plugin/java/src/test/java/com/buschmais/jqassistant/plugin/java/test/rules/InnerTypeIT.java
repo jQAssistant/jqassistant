@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.List;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -29,7 +31,7 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
     public void innerType() throws IOException, AnalysisException, ClassNotFoundException {
         scanClasses(OuterType.class, OuterType.InnerClass.class, OuterType.InnerEnum.class, OuterType.InnerInterface.class, OuterType.InnerAnnotation.class);
         scanInnerClass(OuterType.class, "1");
-        applyConcept("java:InnerType");
+        assertThat(applyConcept("java:InnerType").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(
                 query("match (t:Inner:Type) return t").getColumn("t"),
@@ -51,7 +53,7 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
     public void anonymousInnerTypes() throws IOException, AnalysisException, ClassNotFoundException {
         scanClasses(OuterType.class, OuterType.InnerClass.class, OuterType.InnerEnum.class, OuterType.InnerInterface.class, OuterType.InnerAnnotation.class);
         scanInnerClass(OuterType.class, "1");
-        applyConcept("java:AnonymousInnerType");
+        assertThat(applyConcept("java:AnonymousInnerType").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> result = query("match (t:Anonymous:Inner:Type) return t").getColumn("t");
         assertThat(result.size(), equalTo(1));

@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
     @Test
     public void assignableFrom() throws IOException, AnalysisException {
         scanClasses(ClassType.class);
-        applyConcept("java:TypeAssignableFrom");
+        assertThat(applyConcept("java:TypeAssignableFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (types:Type)<-[:ASSIGNABLE_FROM]-(assignableType) RETURN assignableType").getColumn("assignableType"),
                 allOf(hasItem(typeDescriptor(ClassType.class)), hasItem(typeDescriptor(InterfaceType.class)), hasItem(typeDescriptor(Object.class))));
