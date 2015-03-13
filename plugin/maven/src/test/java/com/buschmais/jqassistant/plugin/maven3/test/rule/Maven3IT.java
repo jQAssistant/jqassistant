@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.maven3.test.rule;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -29,7 +30,7 @@ public class Maven3IT extends AbstractPluginIT {
         parent.getModules().add(module2);
         module1.setParent(parent);
         store.commitTransaction();
-        validateConstraint("maven3:HierarchicalParentModuleRelation");
+        assertThat(validateConstraint("maven3:HierarchicalParentModuleRelation").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
