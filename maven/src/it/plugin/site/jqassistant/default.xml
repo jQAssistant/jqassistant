@@ -2,7 +2,7 @@
 
     <group id="default">
         <includeConcept refId="customplugin:testValue"/>
-        <includeConstraint refId="dependency:TypeCycles"/>
+        <includeConstraint refId="dependency:PackageCycles"/>
         <includeConstraint refId="dependency:ArtifactCycles"/>
     </group>
 
