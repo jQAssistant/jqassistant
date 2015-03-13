@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.jaxrs.test;
 
-import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.*;
@@ -178,7 +177,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
     @Test
     public void test_invalid_SubResourceLocator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
-        assertThat(applyConcept("jaxrs:SubResourceLocator").getStatus(), equalTo(FAILURE));
+        assertThat(applyConcept("jaxrs:SubResourceLocator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat("Expected SubResourceLocator", query("MATCH (resourceMethod:JaxRS:SubResourceLocator) RETURN resourceMethod").getColumn("resourceMethod"),
                 not(hasItem(methodDescriptor(MyRestResource.class, "getMyInvalidSubResource", String.class))));

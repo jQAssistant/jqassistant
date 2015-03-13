@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.cdi.test.rule;
 
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -68,7 +69,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
     public void test_ConstructorInjection_No_Violation() throws IOException, AnalysisException {
         scanClasses(BeanWithConstructorInjection.class);
         String ruleName = "cdi:BeansMustUseConstructorInjection";
-        assertThat(validateConstraint(ruleName).getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint(ruleName).getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
 
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
@@ -95,7 +96,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
         scanClasses(BeanWithConstructorInjection.class);
         scanClasses(BeanWithSetterInjection.class);
         String ruleName = "cdi:BeansMustNotUseFieldInjection";
-        assertThat(validateConstraint(ruleName).getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint(ruleName).getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
 
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());

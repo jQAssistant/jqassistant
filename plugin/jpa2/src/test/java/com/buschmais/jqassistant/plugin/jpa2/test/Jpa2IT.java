@@ -263,7 +263,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     @Test
     public void validationModeSpecified() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
-        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat(constraintViolations.size(), equalTo(1));
