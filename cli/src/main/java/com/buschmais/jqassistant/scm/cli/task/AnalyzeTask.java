@@ -13,11 +13,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.io.IOUtils;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.Console;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -77,7 +73,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         Log.getLog().info("Verifying results, severity=" + severity);
         try {
             final ReportHelper reportHelper = new ReportHelper(getLog());
-            final int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
+            final int conceptViolations = reportHelper.verifyConceptResults(severity, inMemoryReportWriter);
             if (conceptViolations > 0) {
                 throw new CliRuleViolationException(conceptViolations + " concept(s) returned empty results!");
             }
