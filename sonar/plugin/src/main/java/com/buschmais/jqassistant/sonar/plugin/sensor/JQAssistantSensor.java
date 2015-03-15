@@ -100,31 +100,31 @@ public class JQAssistantSensor implements Sensor {
                     LOGGER.warn("Cannot resolve activeRule for id '{}'.", id);
                 } else {
                     ResultType result = ruleType.getResult();
+                    String primaryColumn = getPrimaryColumn(result);
                     StatusEnumType status = ruleType.getStatus();
                     if (StatusEnumType.FAILURE.equals(status)) {
                         if (ruleType instanceof ConceptType) {
                             createIssue(project, null, "The concept could not be applied.", activeRule, sensorContext);
                         } else if (ruleType instanceof ConstraintType) {
                             for (RowType rowType : result.getRows().getRow()) {
-                                StringBuilder message = new StringBuilder();
                                 Resource<?> resource = null;
                                 Integer lineNumber = null;
+                                StringBuilder message = new StringBuilder();
                                 for (ColumnType column : rowType.getColumn()) {
                                     String name = column.getName();
                                     String value = column.getValue();
-                                    // if a language element element is found
-                                    // use it
-                                    // as a resource for creating an issue
-                                    ElementType languageElement = column.getElement();
-                                    if (languageElement != null) {
-                                        LanguageResourceResolver resourceResolver = languageResourceResolvers.get(languageElement.getLanguage());
-                                        if (resourceResolver != null) {
-                                            String element = languageElement.getValue();
-                                            resource = resourceResolver.resolve(element, value);
+                                    if (name.equals(primaryColumn)) {
+                                        ElementType languageElement = column.getElement();
+                                        if (languageElement != null) {
+                                            LanguageResourceResolver resourceResolver = languageResourceResolvers.get(languageElement.getLanguage());
+                                            if (resourceResolver != null) {
+                                                String element = languageElement.getValue();
+                                                resource = resourceResolver.resolve(element, value);
+                                            }
                                         }
+                                        SourceType source = column.getSource();
+                                        lineNumber = source.getLine();
                                     }
-                                    SourceType source = column.getSource();
-                                    lineNumber = source.getLine();
                                     if (message.length() > 0) {
                                         message.append(", ");
                                     }
@@ -132,11 +132,8 @@ public class JQAssistantSensor implements Sensor {
                                     message.append('=');
                                     message.append(value);
                                 }
-                                if (resource == null) {
-                                    resource = project;
-                                }
                                 String issueDescription = ruleType.getDescription() + "\n" + message.toString();
-                                createIssue(resource, lineNumber, issueDescription, activeRule, sensorContext);
+                                createIssue(resource != null ? resource : project, lineNumber, issueDescription, activeRule, sensorContext);
                             }
                         }
                     }
@@ -146,10 +143,30 @@ public class JQAssistantSensor implements Sensor {
     }
 
     /**
+     * Determine the primary column from the result, i.e. the column which
+     * contains the resource to create an issue for.
+     * 
+     * @param result
+     *            The result.
+     * @return The name of the primary column or <code>null</code>.
+     */
+    private String getPrimaryColumn(ResultType result) {
+        if (result != null) {
+            ColumnsHeaderType columns = result.getColumns();
+            for (ColumnHeaderType columnHeaderType : columns.getColumn()) {
+                if (columnHeaderType.isPrimary()) {
+                    return columnHeaderType.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Creates an issue.
      * 
      * @param resource
-     *            The project to create the issue for.
+     *            The resource to create the issue for.
      * @param message
      *            The message to use.
      * @param rule

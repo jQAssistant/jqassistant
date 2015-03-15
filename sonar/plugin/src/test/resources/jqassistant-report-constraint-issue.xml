@@ -5,10 +5,14 @@
             <description>A test constraint.</description>
             <result>
                 <columns count="1">
+                    <column>SomeOtherValue</column>
                     <column primary="true">WriteAccess</column>
                 </columns>
                 <rows count="2">
                     <row>
+                        <column name="SomeOtherValue">
+                            <value>test</value>
+                        </column>
                         <column name="WriteAccess">
                             <element language="Java">WriteField</element>
                             <source name="com/buschmais/jqassistant/examples/sonar/project/Bar.class" line="16"/>
@@ -16,6 +20,9 @@
                         </column>
                     </row>
                     <row>
+                        <column name="SomeOtherValue">
+                            <value>test</value>
+                        </column>
                         <column name="WriteAccess">
                             <element language="Java">WriteField</element>
                             <source name="com/buschmais/jqassistant/examples/sonar/project/Foo.class" line="16"/>
