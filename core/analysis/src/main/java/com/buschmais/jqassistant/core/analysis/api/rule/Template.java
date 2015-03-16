@@ -11,14 +11,14 @@ public class Template implements Rule {
 
     private String description;
 
-    private String cypher;
+    private Executable executable;
 
     private Map<String, Class<?>> parameterTypes;
 
-    public Template(String id, String cypher, String description, Map<String, Class<?>> parameterTypes) {
+    public Template(String id, String description, Executable executable, Map<String, Class<?>> parameterTypes) {
         this.id = id;
         this.description = description;
-        this.cypher = cypher;
+        this.executable = executable;
         this.parameterTypes = parameterTypes;
     }
 
@@ -32,8 +32,8 @@ public class Template implements Rule {
         return description;
     }
 
-    public String getCypher() {
-        return cypher;
+    public Executable getExecutable() {
+        return executable;
     }
 
     public Map<String, Class<?>> getParameterTypes() {

@@ -30,19 +30,9 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
     private String deprecation;
 
     /**
-     * The cypher query which represents this rule.
+     * The executable.
      */
-    private String cypher;
-
-    /**
-     * The scropt which represents this rule;
-     */
-    private Script script;
-
-    /**
-     * The query template to use.
-     */
-    private String templateId;
+    private Executable executable;
 
     /**
      * The parameters to use.
@@ -72,10 +62,8 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      *            The severity.
      * @param deprecation
      *            The deprecation message.
-     * @param cypher
-     *            The cypher query.
-     * @param templateId
-     *            The query template.
+     * @param executable
+     *            The executable.
      * @param parameters
      *            The parametes.
      * @param requiresConcepts
@@ -83,15 +71,13 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      * @param verification
      *            The result verification.
      */
-    protected AbstractExecutableRule(String id, String description, Severity severity, String deprecation, String cypher, Script script, String templateId,
+    protected AbstractExecutableRule(String id, String description, Severity severity, String deprecation, Executable executable,
             Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
         this.id = id;
         this.description = description;
         this.severity = severity;
         this.deprecation = deprecation;
-        this.cypher = cypher;
-        this.script = script;
-        this.templateId = templateId;
+        this.executable = executable;
         this.parameters = parameters;
         this.requiresConcepts = requiresConcepts;
         this.verification = verification;
@@ -127,18 +113,8 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
     }
 
     @Override
-    public String getCypher() {
-        return cypher;
-    }
-
-    @Override
-    public Script getScript() {
-        return script;
-    }
-
-    @Override
-    public String getTemplateId() {
-        return templateId;
+    public Executable getExecutable() {
+        return executable;
     }
 
     @Override
@@ -175,7 +151,7 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
 
     @Override
     public String toString() {
-        return "AbstractExecutableRule [id=" + id + ", description=" + description + ", cypher=" + cypher + ", requiresConcepts=" + requiresConcepts
+        return "AbstractExecutableRule [id=" + id + ", description=" + description + ", executable=" + executable + ", requiresConcepts=" + requiresConcepts
                 + ", severity=" + severity + "]";
     }
 

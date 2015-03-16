@@ -17,13 +17,13 @@ public class Metric extends AbstractExecutableRule {
      *            The id.
      * @param description
      *            The human readable description.
-     * @param cypher
-     *            The cypher query.
+     * @param cypherExecutable
+     *            The cypher executable.
      * @param requiresConcepts
      *            The required concepts.
      */
-    public Metric(String id, String description, String cypher, Map<String, Class<?>> parameterTypes, Set<String> requiresConcepts) {
-        super(id, description, null, null, cypher, null, null, null, requiresConcepts, null, null);
+    public Metric(String id, String description, CypherExecutable cypherExecutable, Map<String, Class<?>> parameterTypes, Set<String> requiresConcepts) {
+        super(id, description, null, null, cypherExecutable, null, requiresConcepts, null, null);
         this.parameterTypes = parameterTypes;
     }
 

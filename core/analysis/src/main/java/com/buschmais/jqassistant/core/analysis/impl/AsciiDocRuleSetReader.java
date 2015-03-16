@@ -89,14 +89,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             String id = part.getId();
             String description = attributes.get("title").toString();
             Set<String> requiresConcepts = getDependencies(attributes);
-            String cypher = null;
-            Script script = null;
+            Executable executable = null;
             Object language = part.getAttributes().get("language");
             String source = unescapeHtml(part.getContent());
             if ("cypher".equals(language)) {
-                cypher = source;
+                executable = new CypherExecutable(source);
             } else {
-                script = new Script(language.toString(), source);
+                executable = new ScriptExecutable(language.toString(), source);
             }
             Verification verification;
             boolean aggregation = "aggregation".equals(part.getAttributes().get("verify"));
@@ -110,12 +109,12 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = new Concept(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(), requiresConcepts,
+                Concept concept = new Concept(id, description, severity, null, executable, Collections.<String, Object> emptyMap(), requiresConcepts,
                         verification, report);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint concept = new Constraint(id, description, severity, null, cypher, script, null, Collections.<String, Object> emptyMap(),
+                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object> emptyMap(),
                         requiresConcepts, verification, report);
                 builder.addConstraint(concept);
             }
