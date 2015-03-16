@@ -30,25 +30,11 @@ public interface ExecutableRule extends Rule {
     Set<String> getRequiresConcepts();
 
     /**
-     * Return the cypher query.
+     * Return the executable.
      * 
-     * @return The cypher query.
+     * @return The executable.
      */
-    String getCypher();
-
-    /**
-     * Return the executable script
-     * 
-     * @return The executable script.
-     */
-    Script getScript();
-
-    /**
-     * Return the id of the template.
-     * 
-     * @return The template.
-     */
-    String getTemplateId();
+    Executable getExecutable();
 
     /**
      * Return the map of parameters.

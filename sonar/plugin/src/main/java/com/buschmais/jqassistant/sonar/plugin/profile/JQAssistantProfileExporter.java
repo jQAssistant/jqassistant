@@ -201,10 +201,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Report report = new Report(primaryReportColumn);
         switch (ruleType) {
         case Concept:
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
+            executable = new Concept(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
             break;
         case Constraint:
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
+            executable = new Constraint(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
             break;
         default:
             throw new SonarException("Rule type is not supported " + ruleType);
@@ -236,9 +236,9 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
         Report report = new Report(check.getPrimaryReportColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
+            executable = new Concept(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts, verification, report);
+            executable = new Constraint(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
         } else {
             throw new SonarException("Unknown type " + check.getClass());
         }

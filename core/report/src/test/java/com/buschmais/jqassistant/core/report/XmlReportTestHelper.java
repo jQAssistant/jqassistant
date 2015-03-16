@@ -33,7 +33,7 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, "match...", null, null,
+        Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, new CypherExecutable("match..."),
                 Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification(), new Report("c2"));
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
@@ -62,7 +62,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
 
-        Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, "match...", null, null,
+        Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, new CypherExecutable("match..."),
                 Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification(), new Report(null));
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
