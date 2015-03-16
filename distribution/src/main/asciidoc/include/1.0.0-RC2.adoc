@@ -5,9 +5,12 @@
 === Plugins
 
 ==== Java
-- Scanner adds a property "byteCodeVersion" to each scanned class
-- Added a new concept "java:JavaVersion": Set a human readable property "javaVersion" on a class file based on its byte code version.
-- Resolve referenced types also using the transitive dependencies of the containing artifact
+- Scanner adds a property "byteCodeVersion" to each scanned class and "cyclomaticComplexity" to each scanned method
+- Added a new concept "java:JavaVersion": Set a human readable property "javaVersion" on a class file based on its byte code version
+- Referenced types are now also resolved using the transitive dependencies of the containing artifact
+
+==== RDBMS
+- Database schemas may be scanned from the command line without creating a specific property file
 
 ==== Plugin API
 - ReportPlugin#setResult now takes a 'Result<? extends ExecutableRule>' as parameter (instead of 'Result<? extends Rule>')
