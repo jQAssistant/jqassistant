@@ -3,8 +3,8 @@ package com.buschmais.jqassistant.scm.cli.task;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +29,7 @@ import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 public class ScanTask extends AbstractTask {
 
     public static final String CMDLINE_OPTION_FILES = "f";
-    public static final String CMDLINE_OPTION_URLS = "u";
+    public static final String CMDLINE_OPTION_URIS = "u";
     public static final String CMDLINE_OPTION_RESET = "reset";
     private Map<String, String> files = Collections.emptyMap();
     private Map<String, String> urls = Collections.emptyMap();
@@ -41,9 +41,9 @@ public class ScanTask extends AbstractTask {
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_FILES).withLongOpt("files")
                 .withDescription("The files or directories to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
                 .create(CMDLINE_OPTION_FILES));
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URLS).withLongOpt("urls")
-                .withDescription("The URLs to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
-                .create(CMDLINE_OPTION_URLS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_URIS).withLongOpt("uris")
+                .withDescription("The URIs to be scanned, comma separated, each with optional scope prefix.").withValueSeparator(',').hasArgs()
+                .create(CMDLINE_OPTION_URIS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).")
                 .create(CMDLINE_OPTION_RESET));
     }
@@ -71,12 +71,12 @@ public class ScanTask extends AbstractTask {
             }
         }
         for (Map.Entry<String, String> entry : urls.entrySet()) {
-            String url = entry.getKey();
+            String uri = entry.getKey();
             String scopeName = entry.getValue();
             try {
-                scan(store, new URL(url), url, scopeName, scannerPlugins);
-            } catch (MalformedURLException e) {
-                throw new CliConfigurationException("Cannot parse URL " + url, e);
+                scan(store, new URI(uri), uri, scopeName, scannerPlugins);
+            } catch (URISyntaxException e) {
+                throw new CliConfigurationException("Cannot parse URI " + uri, e);
             }
         }
     }
@@ -128,7 +128,7 @@ public class ScanTask extends AbstractTask {
     @Override
     public void withOptions(final CommandLine options) throws CliConfigurationException {
         files = parseResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList()));
-        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URLS, Collections.<String> emptyList()));
+        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URIS, Collections.<String> emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }
