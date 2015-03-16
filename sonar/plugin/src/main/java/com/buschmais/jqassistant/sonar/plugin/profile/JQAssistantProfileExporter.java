@@ -188,16 +188,16 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         String description = rule.getDescription();
         Severity severity = Severity.valueOf(rule.getSeverity().name());
         RuleParam aggregationParam = rule.getParam(RuleParameter.Aggregation.getName());
-        Boolean aggregation = aggregationParam.getDefaultValueAsBoolean();
+        boolean aggregation = aggregationParam != null ? aggregationParam.getDefaultValueAsBoolean() : false;
         Verification verification;
         if (aggregation) {
             RuleParam aggregationColumnParam = rule.getParam(RuleParameter.AggregationColumn.getName());
-            verification = new AggregationVerification(aggregationColumnParam.getDefaultValue());
+            verification = new AggregationVerification(aggregationColumnParam != null ? aggregationColumnParam.getDefaultValue() : null);
         } else {
             verification = new RowCountVerification();
         }
         RuleParam primaryReportColumnParam = rule.getParam(RuleParameter.PrimaryReportColumn.getName());
-        String primaryReportColumn = primaryReportColumnParam.getDefaultValue();
+        String primaryReportColumn = primaryReportColumnParam != null ? primaryReportColumnParam.getDefaultValue() : null;
         Report report = new Report(primaryReportColumn);
         switch (ruleType) {
         case Concept:
