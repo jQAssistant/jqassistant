@@ -5,19 +5,27 @@ import static com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Property;
 
 /**
- * Defines a descriptor having a signature.
+ * Defines a member of Java type.
  */
 @Label("Member")
 public interface MemberDescriptor extends JavaDescriptor, Descriptor {
 
+    /**
+     * Return the declaring type.
+     * 
+     * @return The declaring type.
+     */
     @Incoming
     @Declares
     TypeDescriptor getDeclaringType();
 
-    @Property("signature")
+    /**
+     * Return the signature.
+     * 
+     * @return The signature.
+     */
     String getSignature();
 
     void setSignature(String signature);
