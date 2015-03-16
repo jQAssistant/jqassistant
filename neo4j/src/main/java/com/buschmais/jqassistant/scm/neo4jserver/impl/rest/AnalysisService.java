@@ -15,10 +15,7 @@ import org.codehaus.jettison.json.JSONObject;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -148,9 +145,10 @@ public class AnalysisService extends AbstractJQARestService {
         response.put(JSON_OBJECT_KEY_CONCEPTS, concepts);
         for (Map.Entry<String, Concept> concept : ruleSet.getConcepts().entrySet()) {
             JSONObject conceptObject = new JSONObject();
-            conceptObject.put(JSON_OBJECT_KEY_ID, concept.getValue().getId());
-            conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, concept.getValue().getDescription());
-            conceptObject.put(JSON_OBJECT_KEY_CYPHER, concept.getValue().getCypher());
+            Concept value = concept.getValue();
+            conceptObject.put(JSON_OBJECT_KEY_ID, value.getId());
+            conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, value.getDescription());
+            conceptObject.put(JSON_OBJECT_KEY_CYPHER, getCypher(value));
             concepts.put(conceptObject);
         }
 
@@ -158,9 +156,10 @@ public class AnalysisService extends AbstractJQARestService {
         response.put(JSON_OBJECT_KEY_CONSTRAINTS, constraints);
         for (Map.Entry<String, Constraint> constraint : ruleSet.getConstraints().entrySet()) {
             JSONObject constraintObject = new JSONObject();
-            constraintObject.put(JSON_OBJECT_KEY_ID, constraint.getValue().getId());
-            constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, constraint.getValue().getDescription());
-            constraintObject.put(JSON_OBJECT_KEY_CYPHER, constraint.getValue().getCypher());
+            Constraint value = constraint.getValue();
+            constraintObject.put(JSON_OBJECT_KEY_ID, value.getId());
+            constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, value.getDescription());
+            constraintObject.put(JSON_OBJECT_KEY_CYPHER, getCypher(value));
             constraints.put(constraintObject);
         }
 
@@ -174,5 +173,13 @@ public class AnalysisService extends AbstractJQARestService {
         }
 
         return response;
+    }
+
+    private String getCypher(ExecutableRule executableRule) {
+        Executable executable = executableRule.getExecutable();
+        if (executable instanceof CypherExecutable) {
+            return ((CypherExecutable) executable).getStatement();
+        }
+        return null;
     }
 }
