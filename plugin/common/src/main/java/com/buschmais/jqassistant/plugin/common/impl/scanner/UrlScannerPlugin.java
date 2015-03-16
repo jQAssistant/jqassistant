@@ -29,7 +29,6 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
 
     @Override
     public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
-        LOGGER.debug("Scanning url '{}'.", item.toString());
         Descriptor descriptor;
         try (AbstractFileResource fileResource = new AbstractFileResource() {
             @Override
