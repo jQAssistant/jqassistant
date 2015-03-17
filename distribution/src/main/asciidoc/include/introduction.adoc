@@ -165,8 +165,8 @@ A constraint can depend on one or more concepts and usually is referenced by one
 *NOTE* If a constraint returns a result jQAssistant will report an error including the provided description and information about the returned elements. This
 information shall help the developer to understand and fix the problem.
 
-==== Verification of concepts and constraints
-The default strategy verifies a result of a rule by counting the returned rows, i.e.
+==== Result verification
+The default strategy verifies a result of a concept or constraint by counting the number returned rows, i.e.
 
 - a concept is valid if it returns at least one row
 - a constraint is valid if it returns no row
@@ -210,8 +210,45 @@ RETURN
   n as Element, count(n) as Count
 ----
 
+....
+
 For each returned row the value in column "Count" will be verified following the same principles as described above. The
 rule will fail if at least one row does not match the expected result.
+
+==== Script Languages
+
+Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
+
+[source,xml]
+.my-scripting-rules.xml
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <constraint id="my-scripting-rules:MyConcept">
+        <description>A JavaScript based concept.</description>
+        <script language="JavaScript">
+          ...
+        </script>
+    </constraint>
+
+</jqa:jqassistant-rules>
+----
+
+
+[source,asciidoc]
+.my-scripting-rules.adoc
+....
+
+[[my-scripting-rules:MyConcept]]
+.A JavaScript based concept.
+[source,javascript,role=constraint]
+----
+  ...
+----
+
+....
+
+Refer to the examples section for a detailed explanation.
 
 ==== Report
 
@@ -248,39 +285,6 @@ in SonarQube:
       m, n
 ----
 
+....
+
 *NOTE* The first column will be used automatically if no primary column is explicitly specified.
-
-==== Script Languages
-
-Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be used for writing concepts or constraints:
-
-[source,xml]
-.my-scripting-rules.xml
-----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
-
-    <constraint id="my-scripting-rules:MyConcept">
-        <description>A JavaScript based concept.</description>
-        <script language="JavaScript">
-          ...
-        </script>
-    </constraint>
-
-</jqa:jqassistant-rules>
-----
-
-
-[source,asciidoc]
-.my-scripting-rules.adoc
-....
-
-[[my-scripting-rules:MyConcept]]
-.A JavaScript based concept.
-[source,javascript,role=constraint]
-----
-  ...
-----
-
-....
-
-Refer to the examples section for a detailed explanation.
