@@ -543,6 +543,7 @@
         <module>sonar</module>
         <module>examples</module>
         <module>distribution</module>
+        <module>archetype</module>
     </modules>
 
 </project>
