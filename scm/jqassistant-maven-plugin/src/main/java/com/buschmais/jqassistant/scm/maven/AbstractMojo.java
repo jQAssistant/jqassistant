@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
@@ -106,13 +107,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter(property = "project")
     protected MavenProject currentProject;
 
-    @Component
+    @Inject
     protected PluginRepositoryProvider pluginRepositoryProvider;
 
     /**
      * The store repository.
      */
-    @Component
+    @Inject
     private StoreFactory storeFactory;
 
     /**
