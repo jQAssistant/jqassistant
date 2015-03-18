@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache.CachedType;
 
 /**
  * Abstract base implementation of a type resolver.
@@ -22,8 +23,8 @@ public abstract class AbstractTypeResolver implements TypeResolver {
     }
 
     @Override
-    public <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext context) {
-        TypeCache.CachedType<T> cachedType = typeCache.get(fullQualifiedName);
+    public <T extends ClassFileDescriptor> CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext context) {
+        CachedType<T> cachedType = typeCache.get(fullQualifiedName);
         if (cachedType == null) {
             T typeDescriptor;
             TypeDescriptor resolvedType = findInArtifact(fullQualifiedName, context);
@@ -34,8 +35,7 @@ public abstract class AbstractTypeResolver implements TypeResolver {
             } else {
                 typeDescriptor = descriptorType.cast(resolvedType);
             }
-            cachedType = toCachedType(typeDescriptor);
-            typeCache.put(fullQualifiedName, cachedType);
+            cachedType =getCachedType(fullQualifiedName, typeDescriptor);
         } else {
             T typeDescriptor;
             TypeDescriptor resolvedType = cachedType.getTypeDescriptor();
@@ -49,8 +49,8 @@ public abstract class AbstractTypeResolver implements TypeResolver {
     }
 
     @Override
-    public TypeCache.CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context) {
-        TypeCache.CachedType<TypeDescriptor> cachedType = typeCache.get(fullQualifiedName);
+    public CachedType<TypeDescriptor> resolve(String fullQualifiedName, ScannerContext context) {
+        CachedType<TypeDescriptor> cachedType = typeCache.get(fullQualifiedName);
         if (cachedType == null) {
             TypeDescriptor typeDescriptor = findInArtifact(fullQualifiedName, context);
             if (typeDescriptor == null) {
@@ -60,9 +60,14 @@ public abstract class AbstractTypeResolver implements TypeResolver {
                 typeDescriptor = createDescriptor(fullQualifiedName, TypeDescriptor.class, context);
                 addRequiredType(fullQualifiedName, typeDescriptor);
             }
-            cachedType = toCachedType(typeDescriptor);
-            typeCache.put(fullQualifiedName, cachedType);
+            cachedType = getCachedType(fullQualifiedName, typeDescriptor);
         }
+        return cachedType;
+    }
+
+    private <T extends TypeDescriptor> CachedType<T> getCachedType(String fullQualifiedName, TypeDescriptor typeDescriptor) {
+        CachedType<T> cachedType = new CachedType(typeDescriptor);
+        typeCache.put(fullQualifiedName, cachedType);
         return cachedType;
     }
 
@@ -86,17 +91,6 @@ public abstract class AbstractTypeResolver implements TypeResolver {
         return typeDescriptor;
     }
 
-    /**
-     * Wraps a descriptor in a cached type containing members and dependencies.
-     * 
-     * @param typeDescriptor
-     *            The type descriptor.
-     * @return The cached type.
-     */
-    private <T extends TypeDescriptor> TypeCache.CachedType<T> toCachedType(TypeDescriptor typeDescriptor) {
-        TypeCache.CachedType<T> cachedType = new TypeCache.CachedType(typeDescriptor);
-        return cachedType;
-    }
 
     /**
      * Find a type descriptor in the current scope (e.g. the containing
