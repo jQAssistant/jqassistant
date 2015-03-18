@@ -16,14 +16,14 @@ import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.metric.CyclomaticComplexityType;
 
-public class CyclomaticComplexityTest extends AbstractJavaPluginIT {
+public class CyclomaticComplexityIT extends AbstractJavaPluginIT {
 
     @Test
     public void cyclomaticComplexity() throws IOException {
         Map<String, Integer> expectedComplexities = new HashMap<>();
-        expectedComplexities.put("<init>", valueOf(0));
-        expectedComplexities.put("ifStatement", valueOf(1));
-        expectedComplexities.put("caseStatement", valueOf(2));
+        expectedComplexities.put("<init>", valueOf(1));
+        expectedComplexities.put("ifStatement", valueOf(2));
+        expectedComplexities.put("caseStatement", valueOf(3));
         scanClasses(CyclomaticComplexityType.class);
         store.beginTransaction();
         List<MethodDescriptor> methods = query("match (:Class)-[:DECLARES]->(m:Method) return m").getColumn("m");

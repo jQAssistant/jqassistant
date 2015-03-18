@@ -18,7 +18,7 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
     private int syntheticParameters = 0;
-    private int cyclomaticComplexity = 0;
+    private int cyclomaticComplexity = 1;
     private int line;
 
     protected MethodVisitor(TypeCache.CachedType containingType, MethodDescriptor methodDescriptor, VisitorHelper visitorHelper) {
