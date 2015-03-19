@@ -27,7 +27,6 @@ import org.xml.sax.SAXException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.facelet.api.model.JsfFaceletDescriptor;
@@ -270,19 +269,14 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
             return null;
         }
 
-        FileDescriptor jspxDescriptor = store.find(FileDescriptor.class, fullFilePath);
+        JsfFaceletDescriptor jspxDescriptor = store.find(JsfFaceletDescriptor.class, fullFilePath);
 
         if (jspxDescriptor == null) {
             jspxDescriptor = store.create(JsfFaceletDescriptor.class);
             jspxDescriptor.setFileName(fullFilePath);
-        } else {
-
-            if (!(jspxDescriptor instanceof JsfFaceletDescriptor)) {
-                jspxDescriptor = store.migrate(jspxDescriptor, JsfFaceletDescriptor.class);
-            }
         }
 
-        return (JsfFaceletDescriptor) jspxDescriptor;
+        return jspxDescriptor;
     }
 
     /**
