@@ -3,6 +3,7 @@
 === Plugins
 
 ==== Java
+- Scanner adds a property "md5" containing the hash sum to each scanned class.
 - Scanner adds a property "byteCodeVersion" to each scanned class and "cyclomaticComplexity" to each scanned method
 - Added a new concept "java:JavaVersion": Set a human readable property "javaVersion" on a class file based on its byte code version
 - Referenced types are now also resolved using the transitive dependencies of the containing artifact
