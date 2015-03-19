@@ -18,6 +18,15 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFileDescriptor {
 
     /**
+     * Determine the number of dependencies of this artifact.
+     *
+     * @return The number of dependencies.
+     */
+    @ResultOf
+    @Cypher("MATCH (artifact:Artifact)-[d:DEPENDS_ON]->(:Artifact) WHERE id(artifact)={this} RETURN count(d)")
+    long getNumberOfDependencies();
+
+    /**
      * Resolves a required type with a given name from a dependency (direct or
      * transitive).
      * 
