@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
 
             @Override
             public InputStream createStream() throws IOException {
-                return new BufferedInputStream(new FileInputStream(file));
+                return new FileInputStream(file);
             }
 
             @Override
@@ -45,7 +48,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
             }
         };) {
             fileDescriptor = scanner.scan(fileResource, normalizedPath, scope);
-            return toFileDescriptor(fileResource, fileDescriptor, normalizedPath, scanner.getContext());
+            return toFileDescriptor(new BufferedFileResource(fileResource), fileDescriptor, normalizedPath, scanner.getContext());
         }
     }
 }
