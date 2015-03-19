@@ -11,6 +11,7 @@ import org.objectweb.asm.ClassReader;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.MD5Reader;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.ClassVisitor;
@@ -36,13 +37,17 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     }
 
     @Override
-    public ClassFileDescriptor scan(FileResource file, String path, Scope scope, Scanner scanner) throws IOException {
-        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
-        ClassVisitor visitor = new ClassVisitor(visitorHelper);
+    public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
         try (InputStream stream = file.createStream()) {
-            new ClassReader(stream).accept(visitor, 0);
-            return visitor.getTypeDescriptor();
+            return MD5Reader.getInstance().digest(stream, new MD5Reader.DigestOperation<ClassFileDescriptor>() {
+                @Override
+                public ClassFileDescriptor execute(InputStream inputStream) throws IOException {
+                    VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
+                    ClassVisitor visitor = new ClassVisitor(visitorHelper);
+                    new ClassReader(inputStream).accept(visitor, 0);
+                    return visitor.getTypeDescriptor();
+                }
+            });
         }
     }
-
 }
