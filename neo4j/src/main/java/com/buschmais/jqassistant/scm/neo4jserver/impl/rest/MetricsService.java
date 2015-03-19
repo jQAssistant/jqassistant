@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
 import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
@@ -120,7 +122,8 @@ public class MetricsService extends AbstractJQARestService {
             Store store = getStore();
 
             // run the metric query
-            Result<CompositeRowObject> queryResult = store.executeQuery(metric.getCypher(), queryParameters);
+            Executable executable = metric.getExecutable();
+            Result<CompositeRowObject> queryResult = store.executeQuery(((CypherExecutable) executable).getStatement(), queryParameters);
 
             // return the result
             try {
@@ -245,7 +248,7 @@ public class MetricsService extends AbstractJQARestService {
             JSONObject metricObject = new JSONObject();
             metricObject.put(JSON_OBJECT_KEY_ID, metric.getId());
             metricObject.put(JSON_OBJECT_KEY_DESCRIPTION, metric.getDescription());
-            metricObject.put(JSON_OBJECT_KEY_CYPHER, metric.getCypher());
+            metricObject.put(JSON_OBJECT_KEY_CYPHER, ((CypherExecutable) metric.getExecutable()).getStatement());
 
             JSONArray parameterArray = new JSONArray();
             for (String parameterKey : metric.getParameterTypes().keySet()) {
