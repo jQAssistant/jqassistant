@@ -6,15 +6,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.sonar.api.rules.*;
+import org.sonar.api.rules.Rule;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AbstractExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -82,21 +80,21 @@ public final class JQAssistantRuleRepository extends RuleRepository {
     }
 
     /**
-     * Create a rule from an executable.
+     * Create a rule from an executableRule.
      * 
-     * @param executable
-     *            The executable.
+     * @param executableRule
+     *            The executableRule.
      * @param ruleType
      *            The rule type.
      * @return The rule.
      */
-    private Rule createRule(AbstractExecutableRule executable, RuleType ruleType) {
-        Rule rule = Rule.create(JQAssistant.KEY, executable.getId(), executable.getId());
-        rule.setDescription(executable.getDescription());
+    private Rule createRule(ExecutableRule executableRule, RuleType ruleType) {
+        Rule rule = Rule.create(JQAssistant.KEY, executableRule.getId(), executableRule.getId());
+        rule.setDescription(executableRule.getDescription());
         // set priority based on severity value
-        rule.setSeverity(RulePriority.valueOf(executable.getSeverity().name()));
+        rule.setSeverity(RulePriority.valueOf(executableRule.getSeverity().name()));
         StringBuilder requiresConcepts = new StringBuilder();
-        for (String requiredConcept : executable.getRequiresConcepts()) {
+        for (String requiredConcept : executableRule.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {
                 requiresConcepts.append(",");
             }
@@ -104,7 +102,15 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         }
         createRuleParameter(rule, RuleParameter.Type, ruleType.name());
         createRuleParameter(rule, RuleParameter.RequiresConcepts, requiresConcepts.toString());
-        createRuleParameter(rule, RuleParameter.Cypher, executable.getCypher());
+        Executable executable = executableRule.getExecutable();
+        String cypher = executable instanceof CypherExecutable ? ((CypherExecutable) executable).getStatement() : null;
+        createRuleParameter(rule, RuleParameter.Cypher, cypher);
+        Verification verification = executableRule.getVerification();
+        if (verification instanceof AggregationVerification) {
+            String aggregationColumn = ((AggregationVerification) verification).getColumn();
+            createRuleParameter(rule, RuleParameter.Aggregation, Boolean.TRUE.toString());
+            createRuleParameter(rule, RuleParameter.AggregationColumn, aggregationColumn);
+        }
         return rule;
     }
 

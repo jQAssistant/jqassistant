@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -50,8 +52,8 @@ public abstract class AbstractJQARestService {
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         analyzer.execute(getAvailableRules(), ruleSelection);
         ReportHelper reportHelper = new ReportHelper(console);
-        reportHelper.verifyConceptResults(reportWriter);
-        reportHelper.verifyConstraintViolations(reportWriter);
+        reportHelper.verifyConceptResults(Concept.DEFAULT_SEVERITY, reportWriter);
+        reportHelper.verifyConstraintResults(Constraint.DEFAULT_SEVERITY, reportWriter);
         return reportWriter;
     }
 }

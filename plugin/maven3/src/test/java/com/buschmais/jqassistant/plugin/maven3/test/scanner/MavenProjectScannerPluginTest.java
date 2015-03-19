@@ -154,6 +154,10 @@ public class MavenProjectScannerPluginTest {
         verify(store).create(testArtifact, DependsOnDescriptor.class, mainArtifact);
         verify(store).create(mainArtifact, DependsOnDescriptor.class, dependencyArtifact);
         verify(store).create(testArtifact, DependsOnDescriptor.class, dependencyArtifact);
+
+        verify(scannerContext).push(JavaClassesDirectoryDescriptor.class, mainArtifact);
+        verify(scannerContext).push(JavaClassesDirectoryDescriptor.class, testArtifact);
+        verify(scannerContext, times(2)).pop(JavaClassesDirectoryDescriptor.class);
     }
 
 }

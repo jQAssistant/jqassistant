@@ -95,13 +95,13 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) {
+    private void writeConcepts(Collection<Concept> concepts, JqassistantRules rules) throws RuleException {
         for (Concept concept : concepts) {
             ConceptType conceptType = new ConceptType();
             conceptType.setId(concept.getId());
             conceptType.setDescription(concept.getDescription());
             conceptType.setSeverity(getSeverity(concept.getSeverity(), Concept.DEFAULT_SEVERITY));
-            conceptType.setCypher(concept.getCypher());
+            writeExecutable(conceptType, concept);
             for (String requiresConceptId : concept.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
                 conceptReferenceType.setRefId(requiresConceptId);
@@ -111,19 +111,39 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         }
     }
 
-    private void writeConstraints(Collection<Constraint> constraints, JqassistantRules rules) {
+    private void writeConstraints(Collection<Constraint> constraints, JqassistantRules rules) throws RuleException {
         for (Constraint constraint : constraints) {
             ConstraintType constraintType = new ConstraintType();
             constraintType.setId(constraint.getId());
             constraintType.setDescription(constraint.getDescription());
             constraintType.setSeverity(getSeverity(constraint.getSeverity(), Constraint.DEFAULT_SEVERITY));
-            constraintType.setCypher(constraint.getCypher());
+            writeExecutable(constraintType, constraint);
             for (String requiresConceptId : constraint.getRequiresConcepts()) {
                 ReferenceType conceptReferenceType = new ReferenceType();
                 conceptReferenceType.setRefId(requiresConceptId);
                 constraintType.getRequiresConcept().add(conceptReferenceType);
             }
             rules.getTemplateOrConceptOrConstraint().add(constraintType);
+        }
+    }
+
+    private void writeExecutable(ExecutableRuleType executableRuleType, ExecutableRule executableRule) throws RuleException {
+        Executable executable = executableRule.getExecutable();
+        if (executable instanceof CypherExecutable) {
+            CypherExecutable cypherExecutable = (CypherExecutable) executable;
+            executableRuleType.setCypher(cypherExecutable.getStatement());
+        } else if (executable instanceof ScriptExecutable) {
+            ScriptExecutable scriptExecutable = (ScriptExecutable) executable;
+            ScriptType scriptType = new ScriptType();
+            scriptType.setLanguage(scriptExecutable.getLanguage());
+            scriptType.setValue(scriptExecutable.getSource());
+            executableRuleType.setScript(scriptType);
+        } else if (executable instanceof TemplateExecutable) {
+            ReferenceType template = new ReferenceType();
+            template.setRefId(((TemplateExecutable) executable).getTemplateId());
+            executableRuleType.setUseTemplate(template);
+        } else {
+            throw new RuleException("Unsupport executable type " + executable);
         }
     }
 

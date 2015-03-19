@@ -79,14 +79,15 @@ A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Ann
 .Properties of :Java:Type
 [options="header"]
 |====
-| Name       | Description
-| fqn        | Fully qualified name, e.g. 'java.lang.Object'
-| name       | The local name, e.g. 'Object'
-| visibility | optional, the visibility of the type, can be either 'public', 'protected', 'default' or 'private'
-| abstract   | optional, 'true' indicates that the type is abstract, e.g. 'public abstract class ...'
-| static     | optional, 'true' indicates that the type has the static modifier, e.g. 'private static class ...'
-| final      | optional, 'true' indicates that the type is final, e.g. 'public final class...'
-| synthetic  | optional, 'true' indicates that the type is synthetic, i.e. it has been generated
+| Name            | Description
+| fqn             | Fully qualified name, e.g. 'java.lang.Object'
+| name            | The local name, e.g. 'Object'
+| visibility      | optional, the visibility of the type, can be either 'public', 'protected', 'default' or 'private'
+| abstract        | optional, 'true' indicates that the type is abstract, e.g. 'public abstract class ...'
+| static          | optional, 'true' indicates that the type has the static modifier, e.g. 'private static class ...'
+| final           | optional, 'true' indicates that the type is final, e.g. 'public final class...'
+| synthetic       | optional, 'true' indicates that the type is synthetic, i.e. it has been generated
+| byteCodeVersion | The byte code version of the class file, e.g. 52 for "Java SE 8"
 |====
 
 .Relations of :Java:Type
@@ -155,14 +156,15 @@ A method declared in a Java type.
 .Properties of :Java:Method
 [options="header"]
 |====
-| Name       | Description
-| name       | The method name, e.g. 'getId'
-| signature  | The raw signature of the method, e.g. 'int getId()', 'java.lang.String concat(java.lang.String,java.lang.String)'
-| visibility | optional, The visibility of the method, can be either 'public', 'protected', 'default' or 'private'
-| static     | optional, 'true' indicates that the method has the static modifier, e.g. 'static int getId();'
-| final      | optional, 'true' indicates that the method is final, e.g. 'final int getId();'
-| native     | optional, 'true' indicates that the method is native, e.g. 'native int getId();'
-| synthetic  | optional, 'true' indicates that the method is synthetic, i.e. it has been generated
+| Name                 | Description
+| name                 | The method name, e.g. 'getId'
+| signature            | The raw signature of the method, e.g. 'int getId()', 'java.lang.String concat(java.lang.String,java.lang.String)'
+| visibility           | optional, The visibility of the method, can be either 'public', 'protected', 'default' or 'private'
+| static               | optional, 'true' indicates that the method has the static modifier, e.g. 'static int getId();'
+| final                | optional, 'true' indicates that the method is final, e.g. 'final int getId();'
+| native               | optional, 'true' indicates that the method is native, e.g. 'native int getId();'
+| synthetic            | optional, 'true' indicates that the method is synthetic, i.e. it has been generated
+| cyclomaticComplexity | The cyclomatic complexity of the method
 |====
 
 .Relations of :Java:Method

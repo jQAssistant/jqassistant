@@ -12,7 +12,8 @@
            row.put("test", testDescriptor);
            var rows = java.util.Arrays.asList(row);
            // return the result
-           new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+           var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+           new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
        </script>
     </concept>
 
@@ -32,7 +33,8 @@
             var row = new java.util.HashMap();
             row.put("test", testDescriptor);
             var rows = java.util.Arrays.asList(row);
-            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+            var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
         </script>
     </concept>
 
@@ -46,7 +48,8 @@
             var row = new java.util.HashMap();
             row.put("test", testDescriptor);
             var rows = java.util.Arrays.asList(row);
-            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+            var status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
         </script>
     </constraint>
 
@@ -62,7 +65,8 @@
             row.put("test", testDescriptor);
             def rows = java.util.Arrays.asList(row);
             // return the result
-            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+            def status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
         </script>
     </concept>
 
@@ -76,7 +80,8 @@
             def row = new java.util.HashMap();
             row.put("test", testDescriptor);
             def rows = java.util.Arrays.asList(row);
-            new com.buschmais.jqassistant.core.analysis.api.Result(rule, severity, columnNames, rows);
+            def status = com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
+            new com.buschmais.jqassistant.core.analysis.api.Result(rule, status, severity, columnNames, rows);
         </script>
     </constraint>
 
@@ -92,7 +97,8 @@
             row.put "test", testDescriptor
             rows = java.util.Arrays.asList row
             # return the result
-            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,$severity,columnNames,rows
+            status = com.buschmais.jqassistant.core.analysis.api.Result::Status::SUCCESS
+            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,status,$severity,columnNames,rows
         </script>
     </concept>
 
@@ -106,7 +112,8 @@
             row = java.util.HashMap.new
             row.put "test",testDescriptor
             rows = java.util.Arrays.asList row
-            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,$severity,columnNames,rows
+            status = com.buschmais.jqassistant.core.analysis.api.Result::Status::FAILURE
+            com.buschmais.jqassistant.core.analysis.api.Result.new $rule,status,$severity,columnNames,rows
         </script>
     </constraint>
 

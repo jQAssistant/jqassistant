@@ -3,11 +3,7 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -16,11 +12,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -121,11 +113,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         ReportHelper reportHelper = new ReportHelper(console);
         store.beginTransaction();
         try {
-            int conceptViolations = reportHelper.verifyConceptResults(inMemoryReportWriter);
+            Severity effectiveSeverity = Severity.fromValue(severity);
+            int conceptViolations = reportHelper.verifyConceptResults(effectiveSeverity, inMemoryReportWriter);
             if (failOnViolations && conceptViolations > 0) {
                 throw new MojoFailureException(conceptViolations + " concept(s) returned empty results!");
             }
-            int constraintViolations = reportHelper.verifyConstraintResults(Severity.fromValue(severity), inMemoryReportWriter);
+            int constraintViolations = reportHelper.verifyConstraintResults(effectiveSeverity, inMemoryReportWriter);
             if (failOnViolations && constraintViolations > 0) {
                 throw new MojoFailureException(constraintViolations + " constraint(s) have been violated!");
             }

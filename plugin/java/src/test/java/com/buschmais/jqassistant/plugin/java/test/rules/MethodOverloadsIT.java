@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -31,7 +32,7 @@ public class MethodOverloadsIT extends AbstractJavaPluginIT {
     @Test
     public void methodOverloads() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(InterfaceType.class);
-        applyConcept("java:MethodOverloads");
+        assertThat(applyConcept("java:MethodOverloads").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query("MATCH (method:Method)-[:OVERLOADS]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();

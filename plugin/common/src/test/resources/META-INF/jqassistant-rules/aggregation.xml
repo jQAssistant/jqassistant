@@ -1,0 +1,123 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <!-- RowCount -->
+
+    <concept id="concept:ValidRowCount">
+        <description>Test concept.</description>
+        <cypher>create (n:Test) return n</cypher>
+    </concept>
+
+    <concept id="concept:InvalidRowCount">
+        <description>Test concept.</description>
+        <cypher>match (n:Test) return n</cypher>
+    </concept>
+
+    <concept id="concept:ValidExplicitRowCount">
+        <description>Test concept.</description>
+        <cypher>create (n:Test) return n</cypher>
+        <verify>
+            <rowCount/>
+        </verify>
+    </concept>
+
+    <concept id="concept:InvalidExplicitRowCount">
+        <description>Test concept.</description>
+        <cypher>match (n:Test) return n</cypher>
+        <verify>
+            <rowCount/>
+        </verify>
+    </concept>
+
+    <constraint id="constraint:ValidRowCount">
+        <description>Test concept.</description>
+        <cypher>match (n:Test) return n</cypher>
+    </constraint>
+
+    <constraint id="constraint:InvalidRowCount">
+        <description>Test concept.</description>
+        <cypher>create (n:Test) return n</cypher>
+    </constraint>
+
+    <constraint id="constraint:ValidExplicitRowCount">
+        <description>Test concept.</description>
+        <cypher>match (n:Test) return n</cypher>
+        <verify>
+            <rowCount/>
+        </verify>
+    </constraint>
+
+    <constraint id="constraint:InvalidExplicitRowCount">
+        <description>Test concept.</description>
+        <cypher>create (n:Test) return n</cypher>
+        <verify>
+            <rowCount/>
+        </verify>
+    </constraint>
+
+    <!-- Aggregation -->
+
+    <concept id="concept:ValidAggregation">
+        <description>Test concept.</description>
+        <cypher>return 1</cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="concept:InvalidAggregation">
+        <description>Test concept.</description>
+        <cypher>return 0</cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="concept:ValidAggregationWithColumn">
+        <description>Test concept.</description>
+        <cypher>return "Test" as Value, 1 as Aggregation</cypher>
+        <verify>
+            <aggregation column="Aggregation"/>
+        </verify>
+    </concept>
+
+    <concept id="concept:InvalidAggregationWithColumn">
+        <description>Test concept.</description>
+        <cypher>return "Test" as Value, 0 as Aggregation</cypher>
+        <verify>
+            <aggregation column="Aggregation"/>
+        </verify>
+    </concept>
+
+    <constraint id="constraint:ValidAggregation">
+        <description>Test constraint.</description>
+        <cypher>return 0</cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </constraint>
+
+    <constraint id="constraint:InvalidAggregation">
+        <description>Test constraint.</description>
+        <cypher>return 1</cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </constraint>
+
+    <constraint id="constraint:ValidAggregationWithColumn">
+        <description>Test constraint.</description>
+        <cypher>return "Test" as Value, 0 as Aggregation</cypher>
+        <verify>
+            <aggregation column="Aggregation"/>
+        </verify>
+    </constraint>
+
+    <constraint id="constraint:InvalidAggregationWithColumn">
+        <description>Test constraint.</description>
+        <cypher>return "Test" as Value, 1 as Aggregation</cypher>
+        <verify>
+            <aggregation column="Aggregation"/>
+        </verify>
+    </constraint>
+
+</jqa:jqassistant-rules>

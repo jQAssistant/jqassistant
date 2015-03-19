@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java8.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -29,7 +30,7 @@ public class DefaultMethodIT extends AbstractJavaPluginIT {
     @Test
     public void defaultMethod() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(DefaultMethod.class);
-        applyConcept("java8:DefaultMethod");
+        assertThat(applyConcept("java8:DefaultMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query("MATCH (m:Method:Default) RETURN m");
         assertThat(result.getRows().size(), equalTo(1));

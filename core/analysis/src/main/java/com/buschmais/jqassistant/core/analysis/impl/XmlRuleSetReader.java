@@ -44,6 +44,8 @@ public class XmlRuleSetReader implements RuleSetReader {
         }
     }
 
+    public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
+
     @Override
     public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
         List<JqassistantRules> rules = new ArrayList<>();
@@ -108,8 +110,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         return builder.getRuleSet();
     }
 
-    private Template createTemplate(TemplateType referenceableType) {
-        TemplateType templateType = referenceableType;
+    private Template createTemplate(TemplateType templateType) throws RuleException {
         Map<String, Class<?>> parameterTypes = new HashMap<>();
         for (ParameterDefinitionType parameterDefinitionType : templateType.getParameterDefinition()) {
             Class<?> parameterType;
@@ -125,7 +126,8 @@ public class XmlRuleSetReader implements RuleSetReader {
             }
             parameterTypes.put(parameterDefinitionType.getName(), parameterType);
         }
-        return new Template(templateType.getId(), templateType.getCypher(), templateType.getDescription(), parameterTypes);
+        Executable executable = createExecutable(templateType);
+        return new Template(templateType.getId(), templateType.getDescription(), executable, parameterTypes);
     }
 
     private MetricGroup createMetricGroup(String id, MetricGroupType referenceableType) {
@@ -136,7 +138,7 @@ public class XmlRuleSetReader implements RuleSetReader {
             String description = metricType.getDescription();
             Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
             Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept());
-            Metric metric = new Metric(metricType.getId(), description, cypher, parameterTypes, requiresConcepts);
+            Metric metric = new Metric(metricType.getId(), description, new CypherExecutable(cypher), parameterTypes, requiresConcepts);
             metrics.put(metricType.getId(), metric);
         }
         return new MetricGroup(id, metricGroupType.getDescription(), metrics);
@@ -150,28 +152,39 @@ public class XmlRuleSetReader implements RuleSetReader {
         return new Group(id, null, includeConcepts, includeConstraints, includeGroups);
     }
 
-    private Concept createConcept(String id, ConceptType referenceableType) {
+    private Concept createConcept(String id, ConceptType referenceableType) throws RuleException {
         ConceptType conceptType = referenceableType;
-        String cypher = conceptType.getCypher();
-        Script script = getScript(conceptType.getScript());
-        ReferenceType useTemplate = conceptType.getUseTemplate();
-        String templateId = useTemplate != null ? useTemplate.getRefId() : null;
         String description = conceptType.getDescription();
+        Executable executable = createExecutable(referenceableType);
         Map<String, Object> parameters = getParameterValues(conceptType.getParameter());
         SeverityEnumType severityType = conceptType.getSeverity();
         Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = conceptType.getDeprecated();
-        return new Concept(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+        Verification verification = getVerification(conceptType.getVerify());
+        Report report = getReport(conceptType.getReport());
+        return new Concept(id, description, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
     }
 
-    private Constraint createConstraint(String id, ConstraintType referenceableType) {
+    /**
+     * Read the report definition.
+     * 
+     * @param reportType
+     *            The report type.
+     * @return The report definition.
+     */
+    private Report getReport(ReportType reportType) {
+        String primaryColumn = null;
+        if (reportType != null) {
+            primaryColumn = reportType.getPrimaryColumn();
+        }
+        return new Report(primaryColumn);
+    }
+
+    private Constraint createConstraint(String id, ConstraintType referenceableType) throws RuleException {
         ConstraintType constraintType = referenceableType;
-        String cypher = constraintType.getCypher();
-        Script script = getScript(constraintType.getScript());
-        ReferenceType useTemplate = constraintType.getUseTemplate();
-        String templateId = useTemplate != null ? useTemplate.getRefId() : null;
+        Executable executable = createExecutable(constraintType);
         String description = constraintType.getDescription();
         Map<String, Object> parameters = getParameterValues(constraintType.getParameter());
         SeverityEnumType severityType = constraintType.getSeverity();
@@ -179,14 +192,42 @@ public class XmlRuleSetReader implements RuleSetReader {
         List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept);
         String deprecated = constraintType.getDeprecated();
-        return new Constraint(id, description, severity, deprecated, cypher, script, templateId, parameters, requiresConcepts);
+        Verification verification = getVerification(constraintType.getVerify());
+        Report report = getReport(constraintType.getReport());
+        return new Constraint(id, description, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
     }
 
-    private Script getScript(ScriptType scriptType) {
-        if (scriptType != null) {
-            return new Script(scriptType.getLanguage(), scriptType.getValue());
+    private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
+        String cypher = executableRuleType.getCypher();
+        ScriptType scriptType = executableRuleType.getScript();
+        ReferenceType useTemplate = executableRuleType.getUseTemplate();
+        if (cypher != null) {
+            return new CypherExecutable(cypher);
+        } else if (scriptType != null) {
+            return new ScriptExecutable(scriptType.getLanguage(), scriptType.getValue());
+        } else if (useTemplate != null) {
+            return new TemplateExecutable(useTemplate.getRefId());
         }
-        return null;
+        throw new RuleException("Cannot determine executable for " + executableRuleType.getId());
+    }
+
+    /**
+     * Read the verification definition.
+     */
+    private Verification getVerification(VerificationType verificationType) throws RuleException {
+        if (verificationType != null) {
+            RowCountVerificationType rowCountVerificationType = verificationType.getRowCount();
+            AggregationVerificationType aggregationVerificationType = verificationType.getAggregation();
+            if (rowCountVerificationType != null) {
+                return new RowCountVerification();
+            } else if (aggregationVerificationType != null) {
+                String column = aggregationVerificationType.getColumn();
+                return new AggregationVerification(column);
+            } else {
+                throw new RuleException("Unsupported verification " + verificationType);
+            }
+        }
+        return DEFAULT_VERIFICATION;
     }
 
     private Set<String> getReferences(List<? extends ReferenceType> referenceTypes) {

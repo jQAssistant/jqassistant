@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.constructorDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -35,7 +36,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
     @Test
     public void methodOverrides() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, InterfaceType.class);
-        applyConcept("java:MethodOverrides");
+        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query("MATCH (method:Method)-[:OVERRIDES]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();
@@ -61,7 +62,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
     @Test
     public void methodOverridesSubClass() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ClassType.class, SubClassType.class);
-        applyConcept("java:MethodOverrides");
+        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         TestResult result = query("MATCH (method:Method)-[:OVERRIDES]->(otherMethod:Method) RETURN method, otherMethod ORDER BY method.signature");
         List<Map<String, Object>> rows = result.getRows();

@@ -5,7 +5,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Singleton;
+
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 /**
  * Manages the life cycle of {@link Store} instance.
  */
-@Component(role = StoreFactory.class, instantiationStrategy = "singleton")
+@Singleton
 public class StoreFactory implements Disposable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StoreFactory.class);

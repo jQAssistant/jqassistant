@@ -1,24 +1,31 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.common.test.matcher.ArtifactDescriptorMatcher.artifactDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescriptorMatcher.packageDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
@@ -92,7 +99,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
     @Test
     public void packages() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
-        applyConcept("dependency:Package");
+        assertThat(applyConcept("dependency:Package").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
@@ -116,14 +123,14 @@ public class DependencyIT extends AbstractJavaPluginIT {
     public void artifacts() throws IOException, AnalysisException {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        applyConcept("dependency:Artifact");
+        assertThat(applyConcept("dependency:Artifact").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("artifact", "a");
-        assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
+        assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
                 hasItem(artifactDescriptor("b")));
         parameters.put("artifact", "b");
-        assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
+        assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
                 hasItem(artifactDescriptor("a")));
         store.commitTransaction();
     }
@@ -138,33 +145,19 @@ public class DependencyIT extends AbstractJavaPluginIT {
      */
     @Test
     public void packageCycles() throws IOException, AnalysisException {
-        scanClasses(A.class);
-        scanClasses(B.class);
-        validateConstraint("dependency:PackageCycles");
+        scanClassPathDirectory(getClassesDirectory(A.class));
+        assertThat(validateConstraint("dependency:PackageCycles").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:PackageCycles")));
-        assertThat(constraintViolations, matcher);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the constraint "dependency:TypeCycles".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void typeCycles() throws IOException, AnalysisException {
-        scanClasses(A.class);
-        scanClasses(B.class);
-        validateConstraint("dependency:TypeCycles");
-        store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
-        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:TypeCycles")));
-        assertThat(constraintViolations, matcher);
+        assertThat(constraintViolations.values(), matcher);
+        Result<Constraint> result = constraintViolations.get("dependency:PackageCycles");
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(2));
+        for (Map<String, Object> row : rows) {
+            PackageDescriptor p = (PackageDescriptor) row.get("Package");
+            assertThat(p.getFullQualifiedName(), anyOf(equalTo(A.class.getPackage().getName()), equalTo(B.class.getPackage().getName())));
+        }
         store.commitTransaction();
     }
 
@@ -180,9 +173,9 @@ public class DependencyIT extends AbstractJavaPluginIT {
     public void artifactCycles() throws IOException, AnalysisException {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
-        validateConstraint("dependency:ArtifactCycles");
+        assertThat(validateConstraint("dependency:ArtifactCycles").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
-        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintViolations().values();
+        Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();

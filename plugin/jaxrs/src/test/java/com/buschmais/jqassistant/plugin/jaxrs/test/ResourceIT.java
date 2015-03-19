@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.jaxrs.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
@@ -33,7 +36,7 @@ public class ResourceIT extends AbstractJavaPluginIT {
     @Test
     public void test_Resource_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(MyRestResource.class);
-        applyConcept("jaxrs:Resource");
+        assertThat(applyConcept("jaxrs:Resource").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat("Expected RestResource", query("MATCH (getResource:JaxRS:Resource) RETURN getResource").getColumn("getResource"),
                 hasItem(typeDescriptor(MyRestResource.class)));
@@ -54,7 +57,7 @@ public class ResourceIT extends AbstractJavaPluginIT {
     @Test
     public void testInvalid_Resource_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(ResourceIT.class);
-        applyConcept("jaxrs:Resource");
+        assertThat(applyConcept("jaxrs:Resource").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         assertThat("Unexpected RestResource", query("MATCH (getResource:JaxRS:Resource) RETURN getResource").getColumn("getResource"), nullValue());
         store.commitTransaction();

@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.jaxrs.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -35,7 +37,7 @@ public class ContextProviderIT extends AbstractJavaPluginIT {
     @Test
     public void test_ContextProvider_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(BookResolver.class);
-        applyConcept("jaxrs:ContextProvider");
+        assertThat(applyConcept("jaxrs:ContextProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat("Expected contextProvider", query("MATCH (contextProvider:JaxRS:ContextProvider) RETURN contextProvider").getColumn("contextProvider"),
                 hasItem(typeDescriptor(BookResolver.class)));

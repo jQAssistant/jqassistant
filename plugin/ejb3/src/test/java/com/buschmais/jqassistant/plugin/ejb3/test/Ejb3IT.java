@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.ejb3.test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -10,11 +9,8 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.MessageDrivenBean;
-import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.SingletonBean;
-import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.StatefulBean;
-import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.StatelessLocalBean;
-import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.StatelessRemoteBean;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.plugin.ejb3.test.set.beans.*;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 
 /**
@@ -33,7 +29,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
     @Test
     public void statelessSessionBean() throws IOException, AnalysisException {
         scanClasses(StatelessLocalBean.class);
-        applyConcept("ejb3:StatelessSessionBean");
+        assertThat(applyConcept("ejb3:StatelessSessionBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (ejb:Type:Stateless:Ejb) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatelessLocalBean.class)));
         store.commitTransaction();
@@ -50,7 +46,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
     @Test
     public void statefulSessionBean() throws IOException, AnalysisException {
         scanClasses(StatefulBean.class);
-        applyConcept("ejb3:StatefulSessionBean");
+        assertThat(applyConcept("ejb3:StatefulSessionBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (ejb:Type:Stateful:Ejb) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatefulBean.class)));
         store.commitTransaction();
@@ -67,7 +63,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
     @Test
     public void singletonBean() throws IOException, AnalysisException {
         scanClasses(SingletonBean.class);
-        applyConcept("ejb3:SingletonBean");
+        assertThat(applyConcept("ejb3:SingletonBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (ejb:Type:Singleton:Ejb) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(SingletonBean.class)));
         store.commitTransaction();
@@ -84,7 +80,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
     @Test
     public void messageDrivenBean() throws IOException, AnalysisException {
         scanClasses(MessageDrivenBean.class);
-        applyConcept("ejb3:MessageDrivenBean");
+        assertThat(applyConcept("ejb3:MessageDrivenBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (ejb:Type:MessageDriven:Ejb) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(MessageDrivenBean.class)));
         store.commitTransaction();
@@ -101,7 +97,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
     @Test
     public void localSessionBean() throws IOException, AnalysisException {
         scanClasses(StatelessLocalBean.class);
-        applyConcept("ejb3:Local");
+        assertThat(applyConcept("ejb3:Local").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (ejb:Type:Local:Ejb) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatelessLocalBean.class)));
         store.commitTransaction();
@@ -118,7 +114,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
     @Test
     public void remoteSessionBean() throws IOException, AnalysisException {
         scanClasses(StatelessRemoteBean.class);
-        applyConcept("ejb3:Remote");
+        assertThat(applyConcept("ejb3:Remote").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (ejb:Type:Remote:Ejb) RETURN ejb").getColumn("ejb"), hasItem(typeDescriptor(StatelessRemoteBean.class)));
         store.commitTransaction();

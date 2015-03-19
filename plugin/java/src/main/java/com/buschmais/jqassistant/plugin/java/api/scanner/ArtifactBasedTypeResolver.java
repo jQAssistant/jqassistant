@@ -1,18 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.xo.api.Query;
-import com.buschmais.xo.api.ResultIterator;
 
 /**
  * A type resolver considering an artifact and its optional dependencies as
@@ -22,9 +16,9 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     private JavaArtifactFileDescriptor artifact;
 
-    private List<ArtifactDescriptor> dependencies;
-
     private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
+
+    private boolean hasDependencies;
 
     /**
      * Constructor.
@@ -34,6 +28,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
      */
     ArtifactBasedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
+        hasDependencies = artifact.getNumberOfDependencies() > 0;
         for (FileDescriptor fileDescriptor : artifact.getContains()) {
             if (fileDescriptor instanceof TypeDescriptor) {
                 TypeDescriptor typeDescriptor = (TypeDescriptor) fileDescriptor;
@@ -42,10 +37,6 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
         }
         for (TypeDescriptor typeDescriptor : artifact.getRequiresTypes()) {
             this.artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
-        }
-        this.dependencies = new ArrayList<>();
-        for (DependsOnDescriptor dependsOnDescriptor : artifact.getDependencies()) {
-            dependencies.add(dependsOnDescriptor.getDependency());
         }
     }
 
@@ -56,15 +47,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     @Override
     protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
-        TypeDescriptor typeDescriptor = null;
-        if (!dependencies.isEmpty()) {
-            Query.Result<TypeDescriptor> typeDescriptors = artifact.resolveRequiredType(fullQualifiedName, dependencies);
-            ResultIterator<TypeDescriptor> iterator = typeDescriptors.iterator();
-            if (iterator.hasNext()) {
-                typeDescriptor = iterator.next();
-            }
-        }
-        return typeDescriptor;
+        return hasDependencies ? artifact.resolveRequiredType(fullQualifiedName) : null;
     }
 
     @Override

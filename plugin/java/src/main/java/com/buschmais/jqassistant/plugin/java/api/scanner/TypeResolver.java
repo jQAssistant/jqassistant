@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
 /**
@@ -25,7 +26,7 @@ public interface TypeResolver {
      *            The expected type of the descriptor.
      * @return The type descriptor.
      */
-    <T extends TypeDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext scannerContext);
+    <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext scannerContext);
 
     /**
      * Resolve or create the descriptor for Java type name to be used as

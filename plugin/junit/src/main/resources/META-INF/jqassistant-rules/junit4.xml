@@ -228,7 +228,6 @@
         ]]></cypher>
     </constraint>
 
-
     <metricGroup id="junit4:TypesAndTestClassesPerArtifact">
         <description>Types and test classes per artifact</description>
         <metric id="junit4:TypesAndTestClassesPerArtifact">

@@ -11,23 +11,31 @@
             CREATE UNIQUE
                 (p1)-[:DEPENDS_ON]->(p2)
             RETURN
-                p1 AS package, COUNT(DISTINCT p2) AS PackageDependencyCount
+                p1 AS package, COUNT(DISTINCT p2) AS PackageDependencies
         ]]></cypher>
+        <verify>
+            <aggregation column="PackageDependencies" />
+        </verify>
     </concept>
 
     <concept id="dependency:Artifact">
-        <description>Creates a DEPENDS_ON relationship between artifacts if there are type dependencies between them.
+        <description>Creates a DEPENDS_ON relationship with a 'used' property between artifacts if there are type dependencies between them, i.e.
+            artifact a2 contains a type which a type from an artifact a1 depends on (using the fully qualified name).
         </description>
         <cypher><![CDATA[
             MATCH
-                (a1:Artifact)-[:REQUIRES]->(t1:Type),
-                (a2:Artifact)-[:CONTAINS]-(t2:Type)
+              (a1:Artifact)-[:CONTAINS]->(:Type)-[:DEPENDS_ON]->(type:Type)
+            WITH
+              a1,type.fqn as fqn
+            MATCH
+              (t2:Type)<-[:CONTAINS]-(a2:Artifact)
             WHERE
-                t1.fqn=t2.fqn
-            CREATE UNIQUE
-                (a1)-[:DEPENDS_ON]->(a2)
+              t2.fqn=fqn
+              and a1<>a2
+            MERGE
+              (a1)-[:DEPENDS_ON{used:true}]->(a2)
             RETURN
-                a1 AS Artifact, COLLECT(DISTINCT a2.name) AS Dependencies
+              a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies
         ]]></cypher>
     </concept>
 
@@ -44,29 +52,6 @@
                 p1 AS Package, EXTRACT(p IN nodes(path) | p.fqn) AS Cycle
             ORDER BY
                 Package.fqn
-        ]]></cypher>
-    </constraint>
-
-    <constraint id="dependency:TypeCycles">
-        <requiresConcept refId="dependency:Package"/>
-        <description>There must be no cyclic type dependencies.</description>
-        <cypher><![CDATA[
-            MATCH
-                (p1:Package)-[:DEPENDS_ON*0..1]->(p2:Package),
-                shortestPath((p2)-[:DEPENDS_ON*]->(p1))
-            WITH
-                p1, p2
-            MATCH
-                (p1)-[:CONTAINS]->(t1:Type),
-                (p2)-[:CONTAINS]->(t2:Type),
-                (t1)-[:DEPENDS_ON]->(t2),
-                path=shortestPath((t2)-[:DEPENDS_ON*]->(t1))
-            WHERE
-                NOT (
-                  t1 = t2 OR (t1)-[:DECLARES]-(t2)
-                )
-            RETURN
-                LENGTH(path) AS Length, EXTRACT(p IN nodes (path) | p.fqn) AS Cycle
         ]]></cypher>
     </constraint>
 

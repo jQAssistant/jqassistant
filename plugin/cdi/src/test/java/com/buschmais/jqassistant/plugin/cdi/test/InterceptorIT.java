@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.cdi.test;
 
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
@@ -10,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomBinding;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -30,7 +32,7 @@ public class InterceptorIT extends AbstractJavaPluginIT {
     @Test
     public void interceptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(CustomInterceptor.class);
-        applyConcept("interceptor:Interceptor");
+        assertThat(applyConcept("interceptor:Interceptor").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (i:Interceptor) RETURN i").getColumn("i");
         assertThat(column, hasItem(typeDescriptor(CustomInterceptor.class)));
@@ -48,7 +50,7 @@ public class InterceptorIT extends AbstractJavaPluginIT {
     @Test
     public void interceptorBinding() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(CustomBinding.class);
-        applyConcept("interceptor:Binding");
+        assertThat(applyConcept("interceptor:Binding").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (b:Interceptor:Binding) RETURN b").getColumn("b");
         assertThat(column, hasItem(typeDescriptor(CustomBinding.class)));

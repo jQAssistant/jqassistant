@@ -4,9 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.Arrays;
@@ -17,6 +15,7 @@ import javax.xml.bind.JAXBException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.component.ResourcePerspectives;
@@ -61,6 +60,29 @@ public class SensorTest {
     private SensorContext sensorContext;
 
     @Test
+    public void noIssue() throws JAXBException {
+        String conceptId = "example:TestConcept";
+        String constraintId = "example:TestConstraint";
+        Rule concept = Rule.create(JQAssistant.KEY, conceptId, conceptId);
+        Rule constraint = Rule.create(JQAssistant.KEY, constraintId, constraintId);
+        ActiveRule activeConceptRule = mock(ActiveRule.class);
+        ActiveRule activeConstraintRule = mock(ActiveRule.class);
+        when(activeConceptRule.getRule()).thenReturn(concept);
+        when(activeConstraintRule.getRule()).thenReturn(constraint);
+        when(rulesProfile.getActiveRulesByRepository(JQAssistant.KEY)).thenReturn(Arrays.asList(activeConceptRule, activeConstraintRule));
+        when(componentContainer.getComponentsByType(LanguageResourceResolver.class)).thenReturn(Collections.<LanguageResourceResolver> emptyList());
+        sensor = new JQAssistantSensor(rulesProfile, resourcePerspectives, componentContainer, settings, moduleFileSystem);
+        String reportFile = SensorTest.class.getResource("/jqassistant-report-no-issue.xml").getFile();
+        when(settings.getString(JQAssistant.SETTINGS_KEY_REPORT_PATH)).thenReturn(reportFile);
+        when(moduleFileSystem.buildDir()).thenReturn(new File(reportFile));
+        Issuable issuable = mock(Issuable.class);
+
+        sensor.analyse(project, sensorContext);
+
+        verify(issuable, never()).addIssue(Mockito.any(Issue.class));
+    }
+
+    @Test
     public void createConceptIssue() throws JAXBException {
         String ruleId = "example:TestConcept";
         Rule rule = Rule.create(JQAssistant.KEY, ruleId, ruleId);
@@ -86,7 +108,7 @@ public class SensorTest {
         sensor.analyse(project, sensorContext);
 
         verify(issuable).addIssue(issue);
-        verify(issueBuilder).message(contains("The concept did not return a result."));
+        verify(issueBuilder).message(contains("The concept could not be applied."));
         verify(issueBuilder).ruleKey(rule.ruleKey());
     }
 

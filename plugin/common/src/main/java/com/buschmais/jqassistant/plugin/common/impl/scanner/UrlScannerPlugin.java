@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -14,6 +13,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * Scanner plugin which handles URLs as input.
@@ -29,14 +29,13 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
 
     @Override
     public FileDescriptor scan(final URL item, String path, Scope scope, Scanner scanner) throws IOException {
-        LOGGER.debug("Scanning url '{}'.", item.toString());
         Descriptor descriptor;
-        try (AbstractFileResource fileResource = new AbstractFileResource() {
+        try (FileResource fileResource = new BufferedFileResource(new AbstractFileResource() {
             @Override
             public InputStream createStream() throws IOException {
-                return new BufferedInputStream(item.openStream());
+                return item.openStream();
             }
-        }) {
+        })) {
             descriptor = scanner.scan(fileResource, path, scope);
             return toFileDescriptor(fileResource, descriptor, path, scanner.getContext());
         }

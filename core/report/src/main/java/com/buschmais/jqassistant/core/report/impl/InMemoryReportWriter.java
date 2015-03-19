@@ -1,15 +1,12 @@
 package com.buschmais.jqassistant.core.report.impl;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-
-import java.util.Map;
-import java.util.TreeMap;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
@@ -20,7 +17,7 @@ public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerEx
 
     private Map<String, Result<Concept>> conceptResults = new TreeMap<>();
 
-    private Map<String, Result<Constraint>> constraintViolations = new TreeMap<>();
+    private Map<String, Result<Constraint>> constraintResults = new TreeMap<>();
 
     private Result<? extends Rule> currentResult;
 
@@ -55,11 +52,11 @@ public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerEx
 
     @Override
     public void endConstraint() throws AnalysisListenerException {
-        addResult(this.constraintViolations);
+        addResult(this.constraintResults);
     }
 
     @Override
-    public void setResult(Result<? extends Rule> result) throws AnalysisListenerException {
+    public void setResult(Result<? extends ExecutableRule> result) throws AnalysisListenerException {
         this.currentResult = result;
     }
 
@@ -67,8 +64,8 @@ public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerEx
         return this.conceptResults;
     }
 
-    public Map<String, Result<Constraint>> getConstraintViolations() {
-        return this.constraintViolations;
+    public Map<String, Result<Constraint>> getConstraintResults() {
+        return this.constraintResults;
     }
 
     @SuppressWarnings("unchecked")

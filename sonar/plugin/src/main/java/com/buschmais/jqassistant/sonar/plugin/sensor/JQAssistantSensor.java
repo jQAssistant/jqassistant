@@ -24,17 +24,7 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.scan.filesystem.ModuleFileSystem;
 import org.sonar.api.utils.SonarException;
 
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
-import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.report.schema.v1.ElementType;
-import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
-import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
-import com.buschmais.jqassistant.core.report.schema.v1.RowType;
-import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
-import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
+import com.buschmais.jqassistant.core.report.schema.v1.*;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 
 /**
@@ -101,7 +91,6 @@ public class JQAssistantSensor implements Sensor {
     }
 
     private void evaluateReport(Project project, SensorContext sensorContext, JqassistantReport report) {
-        boolean createEmptyConceptIssue = isCreateEmptyConceptIssue();
         for (GroupType groupType : report.getGroup()) {
             LOGGER.info("Processing group '{}'", groupType.getId());
             for (RuleType ruleType : groupType.getConceptOrConstraint()) {
@@ -111,54 +100,73 @@ public class JQAssistantSensor implements Sensor {
                     LOGGER.warn("Cannot resolve activeRule for id '{}'.", id);
                 } else {
                     ResultType result = ruleType.getResult();
-                    boolean hasRows = result != null && result.getRows().getCount() > 0;
-                    if (ruleType instanceof ConceptType && createEmptyConceptIssue && !hasRows) {
-                        createIssue(project, null, "The concept did not return a result.", activeRule, sensorContext);
-                    } else if (ruleType instanceof ConstraintType && hasRows) {
-                        for (RowType rowType : result.getRows().getRow()) {
-                            StringBuilder message = new StringBuilder();
-                            Resource<?> resource = null;
-                            Integer lineNumber = null;
-                            for (ColumnType column : rowType.getColumn()) {
-                                String name = column.getName();
-                                String value = column.getValue();
-                                // if a language element element is found use it
-                                // as a resource for creating an issue
-                                ElementType languageElement = column.getElement();
-                                if (languageElement != null) {
-                                    LanguageResourceResolver resourceResolver = languageResourceResolvers.get(languageElement.getLanguage());
-                                    if (resourceResolver != null) {
-                                        String element = languageElement.getValue();
-                                        resource = resourceResolver.resolve(element, value);
+                    String primaryColumn = getPrimaryColumn(result);
+                    StatusEnumType status = ruleType.getStatus();
+                    if (StatusEnumType.FAILURE.equals(status)) {
+                        if (ruleType instanceof ConceptType) {
+                            createIssue(project, null, "The concept could not be applied.", activeRule, sensorContext);
+                        } else if (ruleType instanceof ConstraintType) {
+                            for (RowType rowType : result.getRows().getRow()) {
+                                Resource<?> resource = null;
+                                Integer lineNumber = null;
+                                StringBuilder message = new StringBuilder();
+                                for (ColumnType column : rowType.getColumn()) {
+                                    String name = column.getName();
+                                    String value = column.getValue();
+                                    if (name.equals(primaryColumn)) {
+                                        ElementType languageElement = column.getElement();
+                                        if (languageElement != null) {
+                                            LanguageResourceResolver resourceResolver = languageResourceResolvers.get(languageElement.getLanguage());
+                                            if (resourceResolver != null) {
+                                                String element = languageElement.getValue();
+                                                resource = resourceResolver.resolve(element, value);
+                                            }
+                                        }
+                                        SourceType source = column.getSource();
+                                        lineNumber = source.getLine();
                                     }
+                                    if (message.length() > 0) {
+                                        message.append(", ");
+                                    }
+                                    message.append(name);
+                                    message.append('=');
+                                    message.append(value);
                                 }
-                                SourceType source = column.getSource();
-                                lineNumber = source.getLine();
-                                if (message.length() > 0) {
-                                    message.append(", ");
-                                }
-                                message.append(name);
-                                message.append('=');
-                                message.append(value);
+                                String issueDescription = ruleType.getDescription() + "\n" + message.toString();
+                                createIssue(resource != null ? resource : project, lineNumber, issueDescription, activeRule, sensorContext);
                             }
-                            if (resource == null) {
-                                resource = project;
-                            }
-                            String issueDescription = ruleType.getDescription() + "\n" + message.toString();
-                            createIssue(resource, lineNumber, issueDescription, activeRule, sensorContext);
                         }
                     }
                 }
             }
         }
+    }
 
+    /**
+     * Determine the primary column from the result, i.e. the column which
+     * contains the resource to create an issue for.
+     * 
+     * @param result
+     *            The result.
+     * @return The name of the primary column or <code>null</code>.
+     */
+    private String getPrimaryColumn(ResultType result) {
+        if (result != null) {
+            ColumnsHeaderType columns = result.getColumns();
+            for (ColumnHeaderType columnHeaderType : columns.getColumn()) {
+                if (columnHeaderType.isPrimary()) {
+                    return columnHeaderType.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     /**
      * Creates an issue.
      * 
      * @param resource
-     *            The project to create the issue for.
+     *            The resource to create the issue for.
      * @param message
      *            The message to use.
      * @param rule
@@ -207,20 +215,6 @@ public class JQAssistantSensor implements Sensor {
         } else {
             LOGGER.info("No report found at '{}'.", reportFile.getAbsolutePath());
             return null;
-        }
-    }
-
-    /**
-     * Check settings whether to create issues for empty concepts or not. True
-     * is default.
-     * 
-     * @return true to create issues for empty concepts.
-     */
-    private boolean isCreateEmptyConceptIssue() {
-        if (!settings.hasKey(JQAssistant.SETTINGS_KEY_CREATE_EMPTY_CONCEPT_ISSUE)) {
-            return true;
-        } else {
-            return settings.getBoolean(JQAssistant.SETTINGS_KEY_CREATE_EMPTY_CONCEPT_ISSUE);
         }
     }
 }

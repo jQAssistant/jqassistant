@@ -25,21 +25,21 @@ public class GZIPFileScannerPlugin extends AbstractResourceScannerPlugin<FileRes
 
     @Override
     public FileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        try (FileResource fileResource = new AbstractFileResource() {
+        try (FileResource fileResource = new BufferedFileResource(new AbstractFileResource() {
 
             @Override
             public InputStream createStream() throws IOException {
                 return new GZIPInputStream(item.createStream());
             }
-        }) {
+        })) {
             Store store = scanner.getContext().getStore();
             String uncompressedPath = path.substring(0, path.toLowerCase().indexOf(".gz"));
             FileDescriptor fileDescriptor = scanner.scan(fileResource, uncompressedPath, scope);
             GZipFileDescriptor archiveFileDescriptor;
             if (fileDescriptor != null) {
-                 archiveFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
+                archiveFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
             } else {
-                archiveFileDescriptor =  store.create(GZipFileDescriptor.class);
+                archiveFileDescriptor = store.create(GZipFileDescriptor.class);
             }
             return toFileDescriptor(fileResource, archiveFileDescriptor, path, scanner.getContext());
         }

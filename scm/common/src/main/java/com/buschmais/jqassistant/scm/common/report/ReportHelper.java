@@ -31,7 +31,6 @@ public final class ReportHelper {
         this.console = console;
     }
 
-
     /**
      * Verifies the concept results returned by the
      * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
@@ -45,13 +44,16 @@ public final class ReportHelper {
      *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
      *            .
      */
-    public int verifyConceptResults(InMemoryReportWriter inMemoryReportWriter) {
+    public int verifyConceptResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
         int violations = 0;
         for (Result<Concept> conceptResult : conceptResults) {
-            if (conceptResult.getRows().isEmpty()) {
-                console.error("Concept '" + conceptResult.getRule().getId() + "' returned an empty result.");
-                violations++;
+            if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
+                console.error("Concept '" + conceptResult.getRule().getId() + "' could not be applied.");
+                // severity level check
+                if (conceptResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
+                    violations++;
+                }
             }
         }
         return violations;
@@ -59,47 +61,36 @@ public final class ReportHelper {
 
     /**
      * Verifies the constraint violations returned by the
-     * {@link InMemoryReportWriter}.
-     *
-     * @param inMemoryReportWriter
-     *            The {@link InMemoryReportWriter}.
-     */
-    public int verifyConstraintViolations(InMemoryReportWriter inMemoryReportWriter) {
-        return verifyConstraintResults(Constraint.DEFAULT_SEVERITY, inMemoryReportWriter);
-    }
-
-    /**
-     * Verifies the constraint violations returned by the
      * {@link InMemoryReportWriter}. Returns the count of constraints having
      * severity higher than the provided severity level.
      *
-     * @param severity
+     * @param violationSeverity
      *            severity level to use for verification
      * @param inMemoryReportWriter
      *            The {@link InMemoryReportWriter}.
      */
-    public int verifyConstraintResults(Severity severity, InMemoryReportWriter inMemoryReportWriter) {
-        Collection<Result<Constraint>> constraintViolations = inMemoryReportWriter.getConstraintViolations().values();
+    public int verifyConstraintResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
+        Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
         int violations = 0;
-        for (Result<Constraint> constraintViolation : constraintViolations) {
-            if (!constraintViolation.isEmpty()) {
-                Constraint constraint = constraintViolation.getRule();
-                // severity level check
-                if (constraint.getSeverity().getLevel() <= severity.getLevel()) {
-                    console.error(constraint.getId() + ": " + constraint.getDescription());
-                    for (Map<String, Object> columns : constraintViolation.getRows()) {
-                        StringBuilder message = new StringBuilder();
-                        for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                            if (message.length() > 0) {
-                                message.append(", ");
-                            }
-                            message.append(entry.getKey());
-                            message.append('=');
-                            String stringValue = getStringValue(entry.getValue());
-                            message.append(stringValue);
+        for (Result<Constraint> constraintResult : constraintResults) {
+            if (Result.Status.FAILURE.equals(constraintResult.getStatus())) {
+                Constraint constraint = constraintResult.getRule();
+                console.error(constraint.getId() + ": " + constraint.getDescription());
+                for (Map<String, Object> columns : constraintResult.getRows()) {
+                    StringBuilder message = new StringBuilder();
+                    for (Map.Entry<String, Object> entry : columns.entrySet()) {
+                        if (message.length() > 0) {
+                            message.append(", ");
                         }
-                        console.error("  " + message.toString());
+                        message.append(entry.getKey());
+                        message.append('=');
+                        String stringValue = getStringValue(entry.getValue());
+                        message.append(stringValue);
                     }
+                    console.error("  " + message.toString());
+                }
+                // severity level check
+                if (constraintResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;
                 }
             }

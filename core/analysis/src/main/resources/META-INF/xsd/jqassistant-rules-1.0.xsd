@@ -29,9 +29,8 @@
 
     <xs:complexType name="templateType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceableType">
+            <xs:extension base="jqassistant-rules:executableRuleType">
                 <xs:sequence>
-                    <xs:group ref="jqassistant-rules:templateGroup"/>
                     <xs:element name="parameterDefinition" type="jqassistant-rules:parameterDefinitionType"
                                 minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
@@ -50,26 +49,6 @@
             <xs:enumeration value="string"/>
         </xs:restriction>
     </xs:simpleType>
-
-    <xs:group name="templateGroup">
-        <xs:sequence>
-            <xs:element name="description" type="xs:string"/>
-            <xs:element name="cypher" type="xs:string"/>
-        </xs:sequence>
-    </xs:group>
-
-    <xs:group name="ruleGroup">
-        <xs:sequence>
-            <xs:element name="description" type="xs:string" minOccurs="0"/>
-            <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
-            <xs:choice>
-                <xs:element name="cypher" type="xs:string"/>
-                <xs:element name="useTemplate" type="jqassistant-rules:referenceType"/>
-                <xs:element name="script" type="jqassistant-rules:scriptType"/>
-            </xs:choice>
-            <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:group>
 
     <xs:complexType name="scriptType">
         <xs:simpleContent>
@@ -103,29 +82,51 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="conceptType">
+    <xs:complexType name="verificationType">
+        <xs:choice maxOccurs="1">
+            <xs:element name="rowCount" type="jqassistant-rules:rowCountVerificationType" maxOccurs="1"/>
+            <xs:element name="aggregation" type="jqassistant-rules:aggregationVerificationType" maxOccurs="1"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="rowCountVerificationType"/>
+
+    <xs:complexType name="aggregationVerificationType">
+        <xs:attribute name="column" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="executableRuleType" abstract="true">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                    <xs:group ref="jqassistant-rules:ruleGroup"/>
+                    <xs:element name="description" type="xs:string" minOccurs="0"/>
+                    <xs:element name="deprecated" type="xs:string" minOccurs="0"/>
+                    <xs:choice>
+                        <xs:element name="cypher" type="xs:string"/>
+                        <xs:element name="useTemplate" type="jqassistant-rules:referenceType"/>
+                        <xs:element name="script" type="jqassistant-rules:scriptType"/>
+                    </xs:choice>
+                    <xs:element name="parameter" type="jqassistant-rules:parameterType" minOccurs="0"
+                                maxOccurs="unbounded"/>
+                    <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
                 <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="conceptType">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:executableRuleType"/>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="constraintType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceableType">
-                <xs:sequence>
-                    <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
-                                maxOccurs="unbounded"/>
-                    <xs:group ref="jqassistant-rules:ruleGroup"/>
-                </xs:sequence>
-                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
-            </xs:extension>
+            <xs:extension base="jqassistant-rules:executableRuleType"/>
         </xs:complexContent>
     </xs:complexType>
 
@@ -174,6 +175,10 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="reportType">
+        <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
     </xs:complexType>
 
 </xs:schema>

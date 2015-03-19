@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.test.rule;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -22,56 +24,56 @@ public class ScriptIT extends AbstractPluginIT {
 
     @Test
     public void javaScriptXmlConcept() throws AnalysisException {
-        applyConcept("javascript:XmlTestConcept");
+        assertThat(applyConcept("javascript:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void JavaScriptAsciiDocConcept() throws AnalysisException {
-        applyConcept("javascript:AsciiDocTestConcept");
+        assertThat(applyConcept("javascript:AsciiDocTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:AsciiDocTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConceptUsingGDS() throws AnalysisException {
-        applyConcept("javascript:XmlTestConceptUsingGDS");
+        assertThat(applyConcept("javascript:XmlTestConceptUsingGDS").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "javascript:XmlTestConceptUsingGDS", Severity.MAJOR);
     }
 
     @Test
     public void javaScriptXmlConstraint() throws AnalysisException {
-        validateConstraint("javascript:XmlTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "javascript:XmlTestConstraint", Severity.BLOCKER);
+        assertThat(validateConstraint("javascript:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
+        verifyResults(reportWriter.getConstraintResults(), "javascript:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void JavaScriptAsciiDocConstraint() throws AnalysisException {
-        validateConstraint("javascript:AsciiDocTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
+        assertThat(validateConstraint("javascript:AsciiDocTestConstraint").getStatus(), equalTo(SUCCESS));
+        verifyResults(reportWriter.getConstraintResults(), "javascript:AsciiDocTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void groovyXmlConcept() throws AnalysisException {
-        applyConcept("groovy:XmlTestConcept");
+        assertThat(applyConcept("groovy:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "groovy:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void groovyXmlConstraint() throws AnalysisException {
-        validateConstraint("groovy:XmlTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "groovy:XmlTestConstraint", Severity.BLOCKER);
+        assertThat(validateConstraint("groovy:XmlTestConstraint").getStatus(), equalTo(SUCCESS));
+        verifyResults(reportWriter.getConstraintResults(), "groovy:XmlTestConstraint", Severity.BLOCKER);
     }
 
     @Test
     public void rubyXmlConcept() throws AnalysisException {
-        applyConcept("ruby:XmlTestConcept");
+        assertThat(applyConcept("ruby:XmlTestConcept").getStatus(), equalTo(Result.Status.SUCCESS));
         verifyResults(reportWriter.getConceptResults(), "ruby:XmlTestConcept", Severity.MAJOR);
     }
 
     @Test
     public void rubyXmlConstraint() throws AnalysisException {
-        validateConstraint("ruby:XmlTestConstraint");
-        verifyResults(reportWriter.getConstraintViolations(), "ruby:XmlTestConstraint", Severity.BLOCKER);
+        assertThat(validateConstraint("ruby:XmlTestConstraint").getStatus(), equalTo(FAILURE));
+        verifyResults(reportWriter.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
     private <R extends Rule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {

@@ -56,7 +56,6 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         RuleSetBuilder builder = RuleSetBuilder.newInstance();
         Map<ExecutableRule, Set<String>> executables = new HashMap<>();
         try {
-
             for (ActiveRule activeRule : profile.getActiveRulesByRepository(JQAssistant.KEY)) {
                 AbstractTemplateRule check = annotationCheckFactory.getCheck(activeRule);
                 AbstractExecutableRule executable;
@@ -75,7 +74,6 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                     builder.addConstraint((Constraint) executable);
                     constraintSeverities.put(executable.getId(), executable.getSeverity());
                 }
-
             }
             for (Set<String> requiredConcepts : executables.values()) {
                 resolveRequiredConcepts(requiredConcepts, concepts);
@@ -189,12 +187,24 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         String id = rule.getName();
         String description = rule.getDescription();
         Severity severity = Severity.valueOf(rule.getSeverity().name());
+        RuleParam aggregationParam = rule.getParam(RuleParameter.Aggregation.getName());
+        boolean aggregation = aggregationParam != null ? aggregationParam.getDefaultValueAsBoolean() : false;
+        Verification verification;
+        if (aggregation) {
+            RuleParam aggregationColumnParam = rule.getParam(RuleParameter.AggregationColumn.getName());
+            verification = new AggregationVerification(aggregationColumnParam != null ? aggregationColumnParam.getDefaultValue() : null);
+        } else {
+            verification = new RowCountVerification();
+        }
+        RuleParam primaryReportColumnParam = rule.getParam(RuleParameter.PrimaryReportColumn.getName());
+        String primaryReportColumn = primaryReportColumnParam != null ? primaryReportColumnParam.getDefaultValue() : null;
+        Report report = new Report(primaryReportColumn);
         switch (ruleType) {
         case Concept:
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Concept(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
             break;
         case Constraint:
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Constraint(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
             break;
         default:
             throw new SonarException("Rule type is not supported " + ruleType);
@@ -217,15 +227,21 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         String description = activeRule.getRule().getDescription();
         Severity severity = Severity.valueOf(activeRule.getSeverity().name());
         String cypher = check.getCypher();
+        Verification verification;
+        if (check.isAggregation()) {
+            verification = new AggregationVerification(check.getAggregationColumn());
+        } else {
+            verification = new RowCountVerification();
+        }
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
+        Report report = new Report(check.getPrimaryReportColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Concept(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, severity, null, cypher, null, null, null, requiresConcepts);
+            executable = new Constraint(id, description, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification, report);
         } else {
             throw new SonarException("Unknown type " + check.getClass());
         }
         return executable;
     }
-
 }

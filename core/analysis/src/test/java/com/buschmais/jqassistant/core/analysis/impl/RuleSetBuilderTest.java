@@ -51,8 +51,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Metric Groups
-        MetricGroup metricGroup1 = new MetricGroup("test", null,null);
-        MetricGroup metricGroup2 = new MetricGroup("test",null,null);
+        MetricGroup metricGroup1 = new MetricGroup("test", null, null);
+        MetricGroup metricGroup2 = new MetricGroup("test", null, null);
         builder.addMetricGroup(metricGroup1);
         try {
             builder.addMetricGroup(metricGroup2);

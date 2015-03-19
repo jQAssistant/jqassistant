@@ -37,7 +37,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     private XMLStreamWriter xmlStreamWriter;
 
-    private Result<? extends Rule> result;
+    private Result<? extends ExecutableRule> result;
 
     private long groupBeginTime;
 
@@ -129,7 +129,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     }
 
     @Override
-    public void setResult(final Result<? extends Rule> result) throws AnalysisListenerException {
+    public void setResult(final Result<? extends ExecutableRule> result) throws AnalysisListenerException {
         this.result = result;
     }
 
@@ -139,7 +139,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     private void endRule() throws AnalysisListenerException {
         if (result != null) {
-            final Rule rule = result.getRule();
+            final ExecutableRule rule = result.getRule();
             final String elementName;
             if (rule instanceof Concept) {
                 elementName = "concept";
@@ -149,6 +149,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                 throw new AnalysisListenerException("Cannot write report for unsupported rule " + rule);
             }
             final List<String> columnNames = result.getColumnNames();
+            final String primaryColumn = getPrimaryColumn(rule, columnNames);
             run(new XmlOperation() {
                 @Override
                 public void run() throws XMLStreamException, AnalysisListenerException {
@@ -163,6 +164,9 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                         xmlStreamWriter.writeAttribute("count", Integer.toString(columnNames.size()));
                         for (String column : columnNames) {
                             xmlStreamWriter.writeStartElement("column");
+                            if (primaryColumn.equals(column)) {
+                                xmlStreamWriter.writeAttribute("primary", Boolean.TRUE.toString());
+                            }
                             xmlStreamWriter.writeCharacters(column);
                             xmlStreamWriter.writeEndElement(); // column
                         }
@@ -182,12 +186,33 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                         xmlStreamWriter.writeEndElement(); // rows
                         xmlStreamWriter.writeEndElement(); // result
                     }
-                    writeDuration(ruleBeginTime);
+                    writeStatus(result.getStatus()); // status
                     writeSeverity(result.getSeverity()); // severity
+                    writeDuration(ruleBeginTime);
                     xmlStreamWriter.writeEndElement(); // concept|constraint
                 }
             });
         }
+    }
+
+    private String getPrimaryColumn(ExecutableRule rule, List<String> columnNames) {
+        String primaryColumn = rule.getReport().getPrimaryColumn();
+        if (primaryColumn == null && columnNames != null && !columnNames.isEmpty()) {
+            primaryColumn = columnNames.get(0);
+        }
+        return primaryColumn;
+    }
+
+    /**
+     * Write the status of the current result.
+     * 
+     * @throws XMLStreamException
+     *             If a problem occurs.
+     */
+    private void writeStatus(Result.Status status) throws XMLStreamException {
+        xmlStreamWriter.writeStartElement("status");
+        xmlStreamWriter.writeCharacters(status.name().toLowerCase());
+        xmlStreamWriter.writeEndElement();
     }
 
     /**

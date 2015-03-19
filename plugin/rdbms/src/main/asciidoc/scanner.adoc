@@ -3,8 +3,20 @@
 == Scanner for metadata of a relational database schema
 Imports the metadata of a relational database schema, i.e. schemas, tables and columns.
 
-The connection properties are taken from property files containing ${project.ArtifactId}, e.g. "${project.ArtifactId}_test.properties",
-and which contains at least the properties "driver", "url", "user" and "password", e.g.
+*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. as dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
+
+=== Connection URI scanner
+
+The connection information may be specified as URI using scope "rdbms:connection", e.g. on the command line
+
+----
+jqassistant.sh scan -u rdbms:connection::jdbc:oracle:thin:username/password@host:1521:sid
+----
+
+=== Connection property file scanner
+
+The connection properties can also be read from property files having a file name with prefix ${project.ArtifactId},
+ e.g. "${project.ArtifactId}_test.properties". Each of them must contain at least the properties "driver", "url", "user" and "password", e.g.
 
 [source]
 .${project.ArtifactId}_test.properties
@@ -43,7 +55,6 @@ password=
 # retrieve_view_information=true
 ----
 
-*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. as dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
 [[:Rdbms:Connection:Properties]]
 === :Rdbms:Connection:Properties

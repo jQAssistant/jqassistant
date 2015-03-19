@@ -1,18 +1,16 @@
 package com.buschmais.jqassistant.plugin.jaxrs.test;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
+import javax.ws.rs.*;
 
 import org.junit.Test;
 
@@ -39,7 +37,7 @@ public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
     @Test
     public void test_RequestMethodDesignator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(GET.class, PUT.class, POST.class, DELETE.class, HEAD.class, OPTIONS.class);
-        applyConcept("jaxrs:RequestMethodDesignator");
+        assertThat(applyConcept("jaxrs:RequestMethodDesignator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         assertThat("Expected RequestMethodDesignator",
                 query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"),
@@ -76,7 +74,7 @@ public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
     @Test
     public void testInvalid_RequestMethodDesignator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(Test.class);
-        applyConcept("jaxrs:RequestMethodDesignator");
+        assertThat(applyConcept("jaxrs:RequestMethodDesignator").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         assertThat("Unexpected RequestMethodDesignator",
                 query("MATCH (methodDesignator:JaxRS:RequestMethodDesignator) RETURN methodDesignator").getColumn("methodDesignator"), nullValue());

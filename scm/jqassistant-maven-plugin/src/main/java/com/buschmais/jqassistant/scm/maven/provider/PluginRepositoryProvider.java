@@ -2,14 +2,15 @@ package com.buschmais.jqassistant.scm.maven.provider;
 
 import java.util.Map;
 
+import javax.inject.Singleton;
+
 import org.apache.maven.plugin.MojoExecutionException;
-import org.codehaus.plexus.component.annotations.Component;
 
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 
-@Component(role = PluginRepositoryProvider.class, instantiationStrategy = "singleton")
+@Singleton
 public class PluginRepositoryProvider {
 
     private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl();

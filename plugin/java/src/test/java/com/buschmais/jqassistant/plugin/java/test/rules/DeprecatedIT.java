@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test.rules;
 
+import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -35,7 +37,7 @@ public class DeprecatedIT extends AbstractJavaPluginIT {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
         scanClassPathResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");
-        applyConcept("java:Deprecated");
+        assertThat(applyConcept("java:Deprecated").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (element:Type:Class:Deprecated) RETURN element").getColumn("element"), hasItem(typeDescriptor(DeprecatedType.class)));
         assertThat(query("MATCH (element:Type:Interface:Deprecated) RETURN element as element").getColumn("element"), hasItem(typeDescriptor(packageInfoName)));

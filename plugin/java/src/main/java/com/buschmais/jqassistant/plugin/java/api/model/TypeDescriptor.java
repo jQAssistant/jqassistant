@@ -18,38 +18,17 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
  * Describes a Java type.
  */
 @Label(value = "Type", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor, DependentDescriptor, AnnotatedDescriptor, AccessModifierDescriptor,
-        AbstractDescriptor {
+public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor {
 
+    /**
+     * Defines the declares relation used for fields, methods and inner classes.
+     */
     @Relation("DECLARES")
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     @interface Declares {
     }
 
-    /**
-     * Return the super class.
-     * 
-     * @return The super class.
-     */
-    @Relation("EXTENDS")
-    TypeDescriptor getSuperClass();
-
-    /**
-     * Set the super class.
-     * 
-     * @param superClass
-     *            The super class.
-     */
-    void setSuperClass(TypeDescriptor superClass);
-
-    /**
-     * Return the implemented interfaces.
-     * 
-     * @return The implemented interfaces.
-     */
-    @Relation("IMPLEMENTS")
-    List<TypeDescriptor> getInterfaces();
 
     /**
      * Return the declared methods.
@@ -83,12 +62,25 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor,
      * 
      * @return The declared inner classes.
      */
-    @Relation("DECLARES")
+    @Outgoing
+    @Declares
     List<TypeDescriptor> getDeclaredInnerClasses();
 
+    /**
+     * Return the artifact which requires this type.
+     * 
+     * @return The artifact which requires this type.
+     */
     @Incoming
     @RequiresType
     JavaArtifactFileDescriptor getRequiredBy();
 
+    /**
+     * Set the artifact which requires this type.
+     * 
+     * @param javaArtifact
+     *            The artifact which requires this type.
+     */
     void setRequiredBy(JavaArtifactFileDescriptor javaArtifact);
+
 }

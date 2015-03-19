@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype;
@@ -42,7 +43,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void dependent() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DependentBean.class);
-        applyConcept("cdi:Dependent");
+        assertThat(applyConcept("cdi:Dependent").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:Dependent) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(DependentBean.class)));
@@ -62,7 +63,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void requestScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(RequestScopedBean.class);
-        applyConcept("cdi:RequestScoped");
+        assertThat(applyConcept("cdi:RequestScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:RequestScoped) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(RequestScopedBean.class)));
@@ -82,7 +83,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void sessionScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(SessionScopedBean.class);
-        applyConcept("cdi:SessionScoped");
+        assertThat(applyConcept("cdi:SessionScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:SessionScoped) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(SessionScopedBean.class)));
@@ -102,7 +103,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void conversationScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(ConversationScopedBean.class);
-        applyConcept("cdi:ConversationScoped");
+        assertThat(applyConcept("cdi:ConversationScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:ConversationScoped) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(ConversationScopedBean.class)));
@@ -122,7 +123,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void applicationScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(ApplicationScopedBean.class);
-        applyConcept("cdi:ApplicationScoped");
+        assertThat(applyConcept("cdi:ApplicationScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:ApplicationScoped) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(ApplicationScopedBean.class)));
@@ -142,7 +143,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void singletonScoped() throws IOException, AnalysisException {
         scanClasses(SingletonScopedBean.class);
-        applyConcept("cdi:SingletonScoped");
+        assertThat(applyConcept("cdi:SingletonScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:SingletonScoped) RETURN e").getColumn("e");
         assertThat("Expected SingletonScoped bean", column, hasItem(typeDescriptor(SingletonScopedBean.class)));
@@ -160,7 +161,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void stereotype() throws IOException, AnalysisException {
         scanClasses(CustomStereotype.class);
-        applyConcept("cdi:Stereotype");
+        assertThat(applyConcept("cdi:Stereotype").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (s:Cdi:Stereotype) RETURN s").getColumn("s");
         assertThat(column, hasItem(typeDescriptor(CustomStereotype.class)));
@@ -178,7 +179,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void alternative() throws IOException, AnalysisException {
         scanClasses(AlternativeBean.class);
-        applyConcept("cdi:Alternative");
+        assertThat(applyConcept("cdi:Alternative").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (a:Cdi:Alternative) RETURN a").getColumn("a");
         assertThat(column, hasItem(typeDescriptor(AlternativeBean.class)));
@@ -196,7 +197,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void specializes() throws IOException, AnalysisException, NoSuchMethodException {
         scanClasses(SpecializesBean.class);
-        applyConcept("cdi:Specializes");
+        assertThat(applyConcept("cdi:Specializes").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:Specializes) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(SpecializesBean.class)));
@@ -215,7 +216,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void qualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(CustomQualifier.class);
-        applyConcept("cdi:Qualifier");
+        assertThat(applyConcept("cdi:Qualifier").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (e:Type:Cdi:Qualifier) RETURN e").getColumn("e"), hasItem(typeDescriptor(CustomQualifier.class)));
         assertThat(query("MATCH (q:Qualifier)-[:DECLARES]->(a:Cdi:Method:Nonbinding) RETURN a").getColumn("a"),
@@ -234,7 +235,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void produces() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(ApplicationScopedBean.class, ConversationScopedBean.class, DependentBean.class, RequestScopedBean.class, SessionScopedBean.class);
-        applyConcept("cdi:Produces");
+        assertThat(applyConcept("cdi:Produces").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (p)-[:PRODUCES]->({fqn:'java.lang.String'}) RETURN p").getColumn("p");
         assertThat(column, hasItem(methodDescriptor(ApplicationScopedBean.class, "producerMethod")));
@@ -261,7 +262,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void disposes() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DisposesBean.class);
-        applyConcept("cdi:Disposes");
+        assertThat(applyConcept("cdi:Disposes").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         assertThat(query("MATCH (p:Parameter)-[:DISPOSES]->(disposedType:Type) RETURN disposedType").getColumn("disposedType"),
                 hasItem(typeDescriptor(String.class)));
@@ -279,7 +280,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void named() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(NamedBean.class);
-        applyConcept("cdi:Named");
+        assertThat(applyConcept("cdi:Named").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:Named) RETURN e").getColumn("e");
         assertThat(column, hasItem(typeDescriptor(NamedBean.class)));
@@ -298,7 +299,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void any() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DecoratorBean.class);
-        applyConcept("cdi:Any");
+        assertThat(applyConcept("cdi:Any").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:Any) RETURN e").getColumn("e");
         assertThat(column, hasItem(fieldDescriptor(DecoratorBean.class, "delegate")));
@@ -316,7 +317,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void newQualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(NewBean.class);
-        applyConcept("cdi:New");
+        assertThat(applyConcept("cdi:New").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:New) RETURN e").getColumn("e");
         assertThat(column, hasItem(fieldDescriptor(NewBean.class, "bean")));
@@ -334,7 +335,7 @@ public class CdiIT extends AbstractJavaPluginIT {
     @Test
     public void defaultQualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
         scanClasses(DefaultBean.class);
-        applyConcept("cdi:Default");
+        assertThat(applyConcept("cdi:Default").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:Default) RETURN e").getColumn("e");
         assertThat(column, hasItem(fieldDescriptor(DefaultBean.class, "bean")));
