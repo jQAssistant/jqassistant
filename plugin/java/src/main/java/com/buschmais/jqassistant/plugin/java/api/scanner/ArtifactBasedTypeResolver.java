@@ -18,6 +18,8 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
+    private boolean hasDependencies;
+
     /**
      * Constructor.
      * 
@@ -26,6 +28,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
      */
     ArtifactBasedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
+        hasDependencies = artifact.getNumberOfDependencies() > 0;
         for (FileDescriptor fileDescriptor : artifact.getContains()) {
             if (fileDescriptor instanceof TypeDescriptor) {
                 TypeDescriptor typeDescriptor = (TypeDescriptor) fileDescriptor;
@@ -44,7 +47,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     @Override
     protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
-        return artifact.resolveRequiredType(fullQualifiedName);
+        return hasDependencies ? artifact.resolveRequiredType(fullQualifiedName) : null;
     }
 
     @Override
