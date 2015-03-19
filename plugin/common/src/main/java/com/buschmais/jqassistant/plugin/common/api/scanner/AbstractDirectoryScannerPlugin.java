@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,6 +16,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
+import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource;
 
 /**
  * Abstract base implementation for directory scanners.
@@ -79,7 +83,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
         if (entry.isDirectory()) {
             return new DirectoryResource();
         } else {
-            return new FileResource(entry);
+            return new BufferedFileResource(new FileResource(entry));
         }
     }
 
@@ -101,7 +105,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
 
         @Override
         public InputStream createStream() throws IOException {
-            return new BufferedInputStream(new FileInputStream(entry));
+            return new FileInputStream(entry);
         }
 
         @Override
