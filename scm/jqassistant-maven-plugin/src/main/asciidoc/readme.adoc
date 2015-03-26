@@ -268,6 +268,7 @@ Executes an analysis.
 * <<groups>>
 * <<rulesDirectory>>
 * <<rulesDirectories>>
+* <<rulesUrl>>
 * <<xmlReportFile>>
 * failOnViolations
 ** determines if jQAssistant shall break the build if violations are detected (see also _severity_)
@@ -288,6 +289,7 @@ List the rules which would be executed for an analysis and the given concepts, c
 * <<groups>>
 * <<rulesDirectory>>
 * <<rulesDirectories>>
+* <<rulesUrl>>
 
 [[available-rules]]
 ==== jqassistant:available-rules
@@ -298,6 +300,7 @@ List all available rules.
 * <<skip>>
 * <<rulesDirectory>>
 * <<rulesDirectories>>
+* <<rulesUrl>>
 
 [[report]]
 ==== jqassistant:report
@@ -353,6 +356,11 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 [[rulesDirectories]]
 ===== rulesDirectories (-Djqassistant.rules.directories)
 * specifies a list of directory names relative to the root module containing additional rules
+
+[[rulesUrl]]
+===== rulesUrl <url> (-Djqassistant.rules.url)
+* specifies the URL of a file containing rules
+* this option is exclusive, i.e. it will disable loading rules from plugins or rule directories
 
 [[xmlReportFile]]
 ===== xmlReportFile (-Djqassistant.report.xml)

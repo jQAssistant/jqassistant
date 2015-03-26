@@ -73,6 +73,7 @@ Executes an analysis.
 * <<cli:groups>>
 * <<cli:storeDirectory>>
 * <<cli:ruleDirectory>>
+* <<cli:rulesUrl>>
 * <<cli:reportDirectory>>
 
 * -severity <severity>
@@ -87,6 +88,7 @@ List all available rules.
 
 ===== Options
 * <<cli:ruleDirectory>>
+* <<cli:rulesUrl>>
 
 [[cli:effective-rules]]
 ==== effective-rules
@@ -98,6 +100,7 @@ List the rules which would be executed for an analysis and the given concepts, c
 * <<cli:constraints>>
 * <<cli:groups>>
 * <<cli:ruleDirectory>>
+* <<cli:rulesUrl>>
 
 [[cli:report]]
 ==== report
@@ -139,6 +142,11 @@ Starts the integrated Neo4j web server (http://localhost:7474).
 ===== -r, --ruleDirectory <directory>
 * specifies the directory where rule files are located
 * default: './jqassistant/rules'
+
+[[cli:rulesUrl]]
+===== -rulesUrl <url>
+* specifies the URL of a file containing rules
+* this option is exclusive, i.e. it will disable loading rules from plugins or rule directories
 
 [[cli:reportDirectory]]
 ===== -reportDirectory
