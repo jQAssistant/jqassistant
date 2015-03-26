@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
+// tag::class[]
 public class CustomReportPlugin implements ReportPlugin {
 
     private static final String PROPERTY_FILENAME = "customReport.fileName";
@@ -77,3 +78,4 @@ public class CustomReportPlugin implements ReportPlugin {
         }
     }
 }
+// end::class[]

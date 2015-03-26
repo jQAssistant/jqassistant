@@ -11,6 +11,7 @@
     <profiles>
         <profile>
             <id>sonar</id>
+            <!-- tag::build[] -->
             <build>
                 <plugins>
                     <plugin>
@@ -41,6 +42,7 @@
                     </plugin>
                 </plugins>
             </build>
+            <!-- end::build[] -->
         </profile>
     </profiles>
 

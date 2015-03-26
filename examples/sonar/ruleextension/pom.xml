@@ -9,6 +9,7 @@
     <artifactId>jqassistant.examples.sonar.ruleextension</artifactId>
     <packaging>sonar-plugin</packaging>
 
+    <!-- tag::projectBody[] -->
     <properties>
         <org.codehaus.sonar_version>3.7.4</org.codehaus.sonar_version>
     </properties>
@@ -57,5 +58,7 @@
             <version>${org.codehaus.sonar_version}</version>
         </dependency>
     </dependencies>
+
+    <!-- end::projectBody[] -->
 
 </project>

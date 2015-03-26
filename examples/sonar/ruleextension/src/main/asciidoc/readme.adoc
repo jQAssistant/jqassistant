@@ -8,7 +8,7 @@ Maven project which declares packaging 'sonar-plugin':
 <project ...>
 ...
 
-include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/pom.xml[lines=11..60,indent=0]
+include::{docRoot}/jqassistant.examples.sonar.ruleextension/src/pom.xml[tags=projectBody,indent=0]
 
 ...
 </project>

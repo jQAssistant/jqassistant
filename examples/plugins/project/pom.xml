@@ -8,6 +8,7 @@
     </parent>
     <artifactId>jqassistant.examples.plugins.project</artifactId>
 
+    <!-- tag::build[] -->
     <build>
         <plugins>
             <plugin>
@@ -39,5 +40,6 @@
             </plugin>
         </plugins>
     </build>
+    <!-- end::build[] -->
 
 </project>

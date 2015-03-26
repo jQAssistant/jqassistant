@@ -5,6 +5,7 @@ import java.util.List;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
+// tag::class[]
 /**
  * Represents a row of a CSV file.
  */
@@ -17,4 +18,6 @@ public interface CSVRowDescriptor extends CSVDescriptor {
 
     @Relation("HAS_COLUMN")
     List<CSVColumnDescriptor> getColumns();
+
 }
+// end::class[]
