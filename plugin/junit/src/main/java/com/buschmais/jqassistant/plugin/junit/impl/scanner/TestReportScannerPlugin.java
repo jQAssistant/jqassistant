@@ -32,7 +32,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
     private XMLInputFactory inputFactory;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         inputFactory = XMLInputFactory.newInstance();
     }
 
