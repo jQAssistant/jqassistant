@@ -11,7 +11,7 @@ public enum JavaScope implements Scope {
     CLASSPATH {
         @Override
         public void create(ScannerContext context) {
-            context.push(TypeResolver.class, TypeResolverBuilder.createTypeResolver(context));
+            context.push(TypeResolver.class, TypeResolverFactory.createTypeResolver(context));
         }
 
         @Override
