@@ -15,7 +15,11 @@ public class TestReportPlugin implements ReportPlugin {
     private Map<String, Object> properties;
 
     @Override
-    public void initialize(Map<String, Object> properties) throws ReportException {
+    public void initialize() throws ReportException {
+    }
+
+    @Override
+    public void configure(Map<String, Object> properties) throws ReportException {
         this.properties = properties;
     }
 

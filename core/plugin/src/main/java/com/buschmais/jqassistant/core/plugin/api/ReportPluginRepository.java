@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.plugin.api;
 
 import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 
@@ -16,6 +17,6 @@ public interface ReportPluginRepository {
      * @throws PluginRepositoryException
      *             If the instances cannot be created.
      */
-    List<ReportPlugin> getReportPlugins();
+    List<ReportPlugin> getReportPlugins(Map<String, Object> properties) throws PluginRepositoryException;
 
 }

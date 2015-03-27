@@ -20,14 +20,15 @@ public interface ScannerPlugin<I, D extends Descriptor> {
     /**
      * Defines the annotation for specifying a dependency to another plugin to
      * provide an instance of the given descriptor value.
+     * 
      * <pre>
-     *     @Requires(XmlDescriptor.class)
-     *     public class MyPlugin implements ScannerPlugin<FileResource, MyDescriptor> {
-     *
-     *       public MyDescriptor scan(FileResource item, String path, Scope scope) {
-     *
-     *       }
+     * &#064;Requires(XmlDescriptor.class)
+     * public class MyPlugin implements ScannerPlugin&lt;FileResource, MyDescriptor&gt; {
+     * 
+     *     public MyDescriptor scan(FileResource item, String path, Scope scope) {
+     * 
      *     }
+     * }
      * </pre>
      */
     @Retention(RetentionPolicy.RUNTIME)
@@ -43,10 +44,22 @@ public interface ScannerPlugin<I, D extends Descriptor> {
     /**
      * Initialize the plugin.
      * 
+     * Life cycle callback for a plugin to do static initialization. Will be
+     * exactly once after the plugin has been instantiated.
+     */
+    void initialize();
+
+    /**
+     * Configure the plugin.
+     *
+     * This method is always called at least once after {@link #initialize()}
+     * and allows re-configuring a plugin instance at runtime (e.g. in a Maven
+     * multi-module build process).
+     * 
      * @param properties
      *            The plugin properties.
      */
-    void initialize(Map<String, Object> properties);
+    void configure(Map<String, Object> properties);
 
     /**
      * Return the item type accepted by the plugin.

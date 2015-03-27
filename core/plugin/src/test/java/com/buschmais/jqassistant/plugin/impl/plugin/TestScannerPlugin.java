@@ -14,7 +14,11 @@ public class TestScannerPlugin implements ScannerPlugin<File, Descriptor> {
     private Map<String, Object> properties;
 
     @Override
-    public void initialize(Map<String, Object> properties) {
+    public void initialize() {
+    }
+
+    @Override
+    public void configure(Map<String, Object> properties) {
         this.properties = properties;
     }
 
