@@ -52,7 +52,7 @@ public class ScanTask extends AbstractTask {
     protected void executeTask(final Store store) throws CliExecutionException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
-            scannerPlugins = pluginRepository.getScannerPluginRepository(pluginProperties).getScannerPlugins();
+            scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(pluginProperties);
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scanner plugins.", e);
         }

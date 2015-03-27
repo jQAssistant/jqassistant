@@ -50,15 +50,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
 
     /** {@inheritDoc} */
     @Override
-    protected void initialize() {
-
-        // set the file pattern
-        if (getProperties().containsKey(PROPERTY_NAME_FILE_PATTERN)) {
-            filePattern = Pattern.compile(getProperties().get(PROPERTY_NAME_FILE_PATTERN).toString());
-        } else {
-            filePattern = Pattern.compile(DEFAULT_FILE_PATTERN);
-        }
-
+    public void initialize() {
         // initialize xpath
         XPathFactory xPathfactory = XPathFactory.newInstance();
         xPath = xPathfactory.newXPath();
@@ -109,6 +101,15 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
         }
 
     } // end method initialize
+
+    @Override
+    public void configure() {
+        if (getProperties().containsKey(PROPERTY_NAME_FILE_PATTERN)) {
+            filePattern = Pattern.compile(getProperties().get(PROPERTY_NAME_FILE_PATTERN).toString());
+        } else {
+            filePattern = Pattern.compile(DEFAULT_FILE_PATTERN);
+        }
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.plugin.api.*;
 
 /**
@@ -9,7 +7,11 @@ import com.buschmais.jqassistant.core.plugin.api.*;
  */
 public class PluginRepositoryImpl implements PluginRepository {
 
-    private PluginConfigurationReader pluginConfigurationReader;
+    private ModelPluginRepository modelPluginRepository;
+    private ScannerPluginRepository scannerPluginRepository;
+    private ScopePluginRepository scopePluginRepository;
+    private RulePluginRepository rulePluginRepository;
+    private ReportPluginRepository reportPluginRepository;
 
     private ClassLoader classLoader;
 
@@ -19,34 +21,38 @@ public class PluginRepositoryImpl implements PluginRepository {
      * @param pluginConfigurationReader
      *            The plugin configuration reader.
      */
-    public PluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) {
-        this.pluginConfigurationReader = pluginConfigurationReader;
+    public PluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
+        this.modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
+        this.scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
+        this.scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
+        this.rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
+        this.reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
         classLoader = pluginConfigurationReader.getClassLoader();
     }
 
     @Override
     public ModelPluginRepository getModelPluginRepository() throws PluginRepositoryException {
-        return new ModelPluginRepositoryImpl(pluginConfigurationReader);
+        return modelPluginRepository;
     }
 
     @Override
-    public ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) throws PluginRepositoryException {
-        return new ScannerPluginRepositoryImpl(pluginConfigurationReader, properties);
+    public ScannerPluginRepository getScannerPluginRepository() throws PluginRepositoryException {
+        return scannerPluginRepository;
     }
 
     @Override
     public ScopePluginRepository getScopePluginRepository() throws PluginRepositoryException {
-        return new ScopePluginRepositoryImpl(pluginConfigurationReader);
+        return scopePluginRepository;
     }
 
     @Override
     public RulePluginRepository getRulePluginRepository() throws PluginRepositoryException {
-        return new RulePluginRepositoryImpl(pluginConfigurationReader);
+        return rulePluginRepository;
     }
 
     @Override
-    public ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws PluginRepositoryException {
-        return new ReportPluginRepositoryImpl(pluginConfigurationReader, properties);
+    public ReportPluginRepository getReportPluginRepository() throws PluginRepositoryException {
+        return reportPluginRepository;
     }
 
     @Override

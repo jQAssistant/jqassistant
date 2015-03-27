@@ -22,7 +22,7 @@ public class ServerTask extends AbstractTask {
     protected void executeTask(final Store store) throws CliExecutionException {
         Server server;
         try {
-            server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(pluginProperties),
+            server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(),
                     pluginRepository.getRulePluginRepository());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get plugins.", e);

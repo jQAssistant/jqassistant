@@ -51,8 +51,8 @@ public class PluginRepositoryTest {
     }
 
     private Map<String, Object> getScannerPluginProperties(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
-        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository(properties);
-        List<ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins();
+        ScannerPluginRepository scannerPluginRepository = pluginRepository.getScannerPluginRepository();
+        List<ScannerPlugin<?, ?>> scannerPlugins = scannerPluginRepository.getScannerPlugins(properties);
         assertThat(scannerPlugins.size(), greaterThan(0));
         for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
             if (scannerPlugin instanceof TestScannerPlugin) {
@@ -63,8 +63,8 @@ public class PluginRepositoryTest {
     }
 
     private Map<String, Object> getReportPluginProperties(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> properties) throws PluginRepositoryException {
-        ReportPluginRepository reportPluginRepository = pluginRepository.getReportPluginRepository(properties);
-        List<ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins();
+        ReportPluginRepository reportPluginRepository = pluginRepository.getReportPluginRepository();
+        List<ReportPlugin> reportPlugins = reportPluginRepository.getReportPlugins(properties);
         assertThat(reportPlugins.size(), greaterThan(0));
         for (ReportPlugin reportPlugin : reportPlugins) {
             if (reportPlugin instanceof TestReportPlugin) {

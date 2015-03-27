@@ -266,7 +266,8 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(store.create(FormLoginConfigDescriptor.class)).thenReturn(formLoginConfigDescriptor);
 
         WebXmlScannerPlugin scannerPlugin = new WebXmlScannerPlugin();
-        scannerPlugin.initialize(Collections.<String, Object> emptyMap());
+        scannerPlugin.initialize();
+        scannerPlugin.configure(Collections.<String, Object>emptyMap());
         scannerPlugin.scan(fileResource, "/WEB-INF/web.xml", WebApplicationScope.WAR, scanner);
 
         verify(scanner).scan(fileResource, "/WEB-INF/web.xml", XmlScope.DOCUMENT);

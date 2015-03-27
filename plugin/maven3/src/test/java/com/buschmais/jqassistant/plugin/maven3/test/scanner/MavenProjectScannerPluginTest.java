@@ -123,7 +123,7 @@ public class MavenProjectScannerPluginTest {
         when(scanner.getContext()).thenReturn(scannerContext);
 
         // scan
-        scannerPlugin.initialize(properties);
+        scannerPlugin.configure(properties);
         scannerPlugin.scan(project, null, null, scanner);
 
         // verify
@@ -155,9 +155,9 @@ public class MavenProjectScannerPluginTest {
         verify(store).create(mainArtifact, DependsOnDescriptor.class, dependencyArtifact);
         verify(store).create(testArtifact, DependsOnDescriptor.class, dependencyArtifact);
 
-        verify(scannerContext).push(JavaClassesDirectoryDescriptor.class, mainArtifact);
-        verify(scannerContext).push(JavaClassesDirectoryDescriptor.class, testArtifact);
-        verify(scannerContext, times(2)).pop(JavaClassesDirectoryDescriptor.class);
+        verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainArtifact);
+        verify(scannerContext).push(JavaArtifactFileDescriptor.class, testArtifact);
+        verify(scannerContext, times(2)).pop(JavaArtifactFileDescriptor.class);
     }
 
 }

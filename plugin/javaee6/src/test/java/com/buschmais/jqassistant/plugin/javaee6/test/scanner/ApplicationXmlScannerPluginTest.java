@@ -83,7 +83,8 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(store.create(RoleNameDescriptor.class)).thenReturn(roleNameDescriptor, null);
 
         ApplicationXmlScannerPlugin scannerPlugin = new ApplicationXmlScannerPlugin();
-        scannerPlugin.initialize(Collections.<String, Object> emptyMap());
+        scannerPlugin.initialize();
+        scannerPlugin.configure(Collections.<String, Object>emptyMap());
         scannerPlugin.scan(fileResource, "/META-INF/application.xml", EnterpriseApplicationScope.EAR, scanner);
 
         verify(scanner).scan(fileResource, "/META-INF/application.xml", XmlScope.DOCUMENT);

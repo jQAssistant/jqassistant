@@ -60,7 +60,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         JavaClassesDirectoryDescriptor mainArtifactDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(artifact, false),
                 JavaClassesDirectoryDescriptor.class, scanner.getContext());
         addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
-        scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, false, project.getBuild().getOutputDirectory(), scanner);
+        scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
         // test artifact
         String testOutputDirectory = project.getBuild().getTestOutputDirectory();
         if (testOutputDirectory != null) {
@@ -68,7 +68,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
                     JavaClassesDirectoryDescriptor.class, scanner.getContext());
             testArtifactDependencies.put(mainArtifactDescriptor, artifact);
             addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
-            scanClassesDirectory(projectDescriptor, testArtifactDescriptor, true, testOutputDirectory, scanner);
+            scanClassesDirectory(projectDescriptor, testArtifactDescriptor, testOutputDirectory, scanner);
         }
         // project information
         addProjectDetails(project, projectDescriptor, scanner);
@@ -217,23 +217,21 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *            The maven project.
      * @param artifactDescriptor
      *            The artifact.
-     * @param testJar
-     *            <code>true</code> indicates a test jar.
      * @param directoryName
      *            The name of the directory.
      * @param scanner
      *            The scanner.
      */
-    private void scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, JavaClassesDirectoryDescriptor artifactDescriptor, boolean testJar,
+    private void scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, JavaClassesDirectoryDescriptor artifactDescriptor,
             final String directoryName, Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
             projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
-            scanner.getContext().push(JavaClassesDirectoryDescriptor.class, artifactDescriptor);
+            scanner.getContext().push(JavaArtifactFileDescriptor.class, artifactDescriptor);
             try {
                 scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
             } finally {
-                scanner.getContext().pop(JavaClassesDirectoryDescriptor.class);
+                scanner.getContext().pop(JavaArtifactFileDescriptor.class);
             }
         }
     }

@@ -34,7 +34,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
     private JAXBUnmarshaller<FileResource, WebAppType> unmarshaller;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         unmarshaller = new JAXBUnmarshaller<>(WebAppType.class);
     }
 

@@ -16,6 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
@@ -100,7 +101,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             }
         }
         Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object> emptyMap();
-        List<ReportPlugin> reportPlugins = pluginRepositoryProvider.getReportPluginRepository(properties).getReportPlugins();
+        List<ReportPlugin> reportPlugins = null;
+        try {
+            reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot get report plugins.", e);
+        }
         reportWriters.addAll(reportPlugins);
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
         MavenConsole console = new MavenConsole(getLog());
