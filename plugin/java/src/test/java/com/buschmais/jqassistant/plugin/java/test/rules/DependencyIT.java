@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -29,6 +31,9 @@ import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.b.B;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a.AnnotationType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a.ClassType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a.ExceptionType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.types.*;
 
 /**
@@ -132,6 +137,24 @@ public class DependencyIT extends AbstractJavaPluginIT {
         parameters.put("artifact", "b");
         assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
                 hasItem(artifactDescriptor("a")));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "dependency:resolve".
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    @Ignore
+    public void resolve() throws IOException, AnalysisException {
+        scanClasses("a", ClassType.class, AnnotationType.class, ExceptionType.class);
+        scanClasses("b", DependentType.class);
+        assertThat(applyConcept("dependency:resolve").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
         store.commitTransaction();
     }
 
