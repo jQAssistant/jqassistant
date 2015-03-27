@@ -29,7 +29,7 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
     private XMLInputFactory inputFactory;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
     }
