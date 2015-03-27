@@ -1,6 +1,5 @@
-package com.buschmais.jqassistant.scm.maven.provider;
 
-import java.util.Map;
+package com.buschmais.jqassistant.scm.maven.provider;
 
 import javax.inject.Singleton;
 
@@ -18,7 +17,11 @@ public class PluginRepositoryProvider {
     private PluginRepository pluginRepository;
 
     PluginRepositoryProvider() throws MojoExecutionException {
-        pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        try {
+            pluginRepository = new PluginRepositoryImpl(pluginConfigurationReader);
+        } catch (PluginRepositoryException e) {
+            throw new MojoExecutionException("Cannot create plugin repository.", e);
+        }
     }
 
     /**
@@ -39,15 +42,13 @@ public class PluginRepositoryProvider {
     /**
      * Return the scanner plugin repository.
      *
-     * @param properties
-     *            The properties.
      * @return The scanner plugin repository.
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the repository cannot be created.
      */
-    public ScannerPluginRepository getScannerPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
+    public ScannerPluginRepository getScannerPluginRepository() throws MojoExecutionException {
         try {
-            return pluginRepository.getScannerPluginRepository(properties);
+            return pluginRepository.getScannerPluginRepository();
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
@@ -90,9 +91,9 @@ public class PluginRepositoryProvider {
      * @throws org.apache.maven.plugin.MojoExecutionException
      *             If the repository cannot be created.
      */
-    public ReportPluginRepository getReportPluginRepository(Map<String, Object> properties) throws MojoExecutionException {
+    public ReportPluginRepository getReportPluginRepository() throws MojoExecutionException {
         try {
-            return pluginRepository.getReportPluginRepository(properties);
+            return pluginRepository.getReportPluginRepository();
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot create rule plugin repository.", e);
         }
