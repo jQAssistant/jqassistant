@@ -3,11 +3,24 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 
-public class TypeResolverBuilder {
+/**
+ * Factory to provide {@link TypeResolver} instances.
+ */
+public class TypeResolverFactory {
 
-    private TypeResolverBuilder() {
+    /**
+     * Private constructor.
+     */
+    private TypeResolverFactory() {
     }
 
+    /**
+     * Get a type resolver.
+     * 
+     * @param context
+     *            The current scanner context.
+     * @return The type resolver.
+     */
     public static TypeResolver createTypeResolver(ScannerContext context) {
         JavaArtifactFileDescriptor artifactDescriptor = context.peek(JavaArtifactFileDescriptor.class);
         if (artifactDescriptor != null) {
