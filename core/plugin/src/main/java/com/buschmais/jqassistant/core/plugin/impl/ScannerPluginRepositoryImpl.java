@@ -22,18 +22,22 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
     /**
      * Constructor.
      */
-    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader, Map<String, Object> properties) throws PluginRepositoryException {
+    public ScannerPluginRepositoryImpl(PluginConfigurationReader pluginConfigurationReader) throws PluginRepositoryException {
         super(pluginConfigurationReader);
         List<JqassistantPlugin> plugins = pluginConfigurationReader.getPlugins();
-        this.scannerPlugins = getScannerPlugins(plugins, properties);
+        this.scannerPlugins = getScannerPlugins(plugins);
     }
 
     @Override
-    public List<ScannerPlugin<?, ?>> getScannerPlugins() throws PluginRepositoryException {
+    public List<ScannerPlugin<?, ?>> getScannerPlugins(Map<String, Object> properties) throws PluginRepositoryException {
+        for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
+            scannerPlugin.configure(new HashMap<>(properties));
+        }
+
         return scannerPlugins;
     }
 
-    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins, Map<String, Object> properties)
+    private <T extends ScannerPlugin> List<T> getScannerPlugins(List<JqassistantPlugin> plugins)
             throws PluginRepositoryException {
         List<T> scannerPlugins = new ArrayList<>();
         for (JqassistantPlugin plugin : plugins) {
@@ -44,7 +48,7 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
                     if (scannerPlugin != null) {
                         // properties is mutable, so every plugin should get its
                         // own copy
-                        scannerPlugin.initialize(new HashMap<>(properties));
+                        scannerPlugin.initialize();
                         scannerPlugins.add(scannerPlugin);
                     }
                 }

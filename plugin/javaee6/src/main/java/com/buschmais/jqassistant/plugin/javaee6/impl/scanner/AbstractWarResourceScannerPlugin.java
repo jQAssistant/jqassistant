@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverBuilder;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverFactory;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
 
 public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D extends Descriptor> extends AbstractResourceScannerPlugin<R, D> {
@@ -36,7 +36,7 @@ public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D ext
             archiveDescriptor.setClassesDirectory(classesDirectory);
         }
         context.push(JavaArtifactFileDescriptor.class, classesDirectory);
-        TypeResolver typeResolver = TypeResolverBuilder.createTypeResolver(context);
+        TypeResolver typeResolver = TypeResolverFactory.createTypeResolver(context);
         context.push(TypeResolver.class, typeResolver);
         D fileDescriptor;
         try {

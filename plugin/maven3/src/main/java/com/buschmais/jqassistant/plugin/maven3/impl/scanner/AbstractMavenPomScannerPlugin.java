@@ -31,6 +31,13 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
  */
 public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugin<FileResource, MavenPomXmlDescriptor> {
 
+    private MavenXpp3Reader mavenXpp3Reader;
+
+    @Override
+    public void initialize() {
+        mavenXpp3Reader = new MavenXpp3Reader();
+    }
+
     @Override
     public Class<? extends FileResource> getType() {
         return FileResource.class;
@@ -432,7 +439,6 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
     public MavenPomXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         Model model;
         try (InputStream stream = item.createStream()) {
-            MavenXpp3Reader mavenXpp3Reader = new MavenXpp3Reader();
             model = mavenXpp3Reader.read(stream);
         } catch (XmlPullParserException e) {
             throw new IOException("Cannot read POM descriptor.", e);

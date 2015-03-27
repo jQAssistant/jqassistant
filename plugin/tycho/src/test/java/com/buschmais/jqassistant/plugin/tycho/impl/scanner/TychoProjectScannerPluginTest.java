@@ -93,7 +93,7 @@ public class TychoProjectScannerPluginTest {
     @Test
     public void testGetAdditionalFiles() throws Exception {
         TychoProjectScannerPlugin plugin = new TychoProjectScannerPlugin();
-        plugin.initialize(Collections.<String, Object> emptyMap());
+        plugin.configure(Collections.<String, Object>emptyMap());
         plugin.scan(project, null, null, scanner);
         // FIXME: add assertions
     }

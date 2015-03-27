@@ -24,7 +24,7 @@ public class ApplicationXmlScannerPlugin extends AbstractResourceScannerPlugin<F
     private JAXBUnmarshaller<FileResource, ApplicationType> unmarshaller;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         unmarshaller = new JAXBUnmarshaller<>(ApplicationType.class);
     }
 

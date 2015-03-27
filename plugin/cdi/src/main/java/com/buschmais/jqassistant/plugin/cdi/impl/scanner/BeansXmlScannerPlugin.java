@@ -32,7 +32,7 @@ public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, B
     private JAXBUnmarshaller<FileResource, Beans> unmarshaller;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         unmarshaller = new JAXBUnmarshaller<>(Beans.class);
     }
 

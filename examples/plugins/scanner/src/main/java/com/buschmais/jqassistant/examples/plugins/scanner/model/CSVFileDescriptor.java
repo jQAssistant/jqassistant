@@ -5,12 +5,10 @@ import java.util.List;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
+// tag::class[]
 /**
- * Represents a CSV file.
- * <p>
- * The labels are inherited from {@link CSVDescriptor} and
- * {@link FileDescriptor}.
- * </p>
+ * Represents a CSV file. The labels are inherited from {@link CSVDescriptor}
+ * and {@link FileDescriptor}.
  */
 public interface CSVFileDescriptor extends CSVDescriptor, FileDescriptor {
 
@@ -18,3 +16,4 @@ public interface CSVFileDescriptor extends CSVDescriptor, FileDescriptor {
     List<CSVRowDescriptor> getRows();
 
 }
+// end::class[]

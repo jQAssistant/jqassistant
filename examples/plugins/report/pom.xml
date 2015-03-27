@@ -8,6 +8,7 @@
     </parent>
     <artifactId>jqassistant.examples.plugins.report</artifactId>
 
+    <!-- tag::dependencies[] -->
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
@@ -20,5 +21,6 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    <!-- end::dependencies[] -->
 
 </project>

@@ -2,7 +2,8 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
 import static java.util.Collections.emptyList;
 
-import org.neo4j.server.configuration.Configurator;
+import org.apache.commons.configuration.Configuration;
+import org.neo4j.server.configuration.ServerSettings;
 
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
@@ -32,8 +33,7 @@ public class DefaultServerImpl extends AbstractServer {
      */
     public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository) {
         super(graphStore);
-        this.scannerPluginRepository = scannerPluginRepository;
-        this.rulePluginRepository = rulePluginRepository;
+        init(scannerPluginRepository, rulePluginRepository, 7474);
     }
 
     /**
@@ -50,9 +50,25 @@ public class DefaultServerImpl extends AbstractServer {
      */
     public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository, int port) {
         super(graphStore);
+        init(scannerPluginRepository, rulePluginRepository, port);
+    }
+
+    /**
+     * Initialize the server.
+     * 
+     * @param scannerPluginRepository
+     *            The scanner plugin repository.
+     * @param rulePluginRepository
+     *            The rule plugin repository.
+     * @param port
+     *            The HTTP port to use.
+     */
+    private void init(ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository, int port) {
         this.scannerPluginRepository = scannerPluginRepository;
         this.rulePluginRepository = rulePluginRepository;
-        getConfigurator().configuration().setProperty(Configurator.WEBSERVER_PORT_PROPERTY_KEY, Integer.toString(port));
+        Configuration configuration = getConfigurator().configuration();
+        configuration.setProperty(ServerSettings.webserver_port.name(), Integer.toString(port));
+        configuration.setProperty(ServerSettings.auth_enabled.name(), Boolean.FALSE.toString());
     }
 
     @Override

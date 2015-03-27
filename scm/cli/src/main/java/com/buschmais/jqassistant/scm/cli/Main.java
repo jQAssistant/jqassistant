@@ -13,6 +13,7 @@ import org.apache.commons.cli.*;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.scm.cli.task.DefaultTaskFactoryImpl;
@@ -65,7 +66,11 @@ public class Main {
      */
     private PluginRepository getPluginRepository() throws CliExecutionException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(createPluginClassLoader());
-        return new PluginRepositoryImpl(pluginConfigurationReader);
+        try {
+            return new PluginRepositoryImpl(pluginConfigurationReader);
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot create plugin repository.", e);
+        }
     }
 
     /**

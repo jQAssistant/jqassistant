@@ -33,7 +33,7 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
     private JAXBUnmarshaller<FileResource, Persistence> unmarshaller;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
         unmarshaller = new JAXBUnmarshaller<>(Persistence.class);
     }
 

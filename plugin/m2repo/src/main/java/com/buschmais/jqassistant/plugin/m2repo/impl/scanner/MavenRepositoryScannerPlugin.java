@@ -99,8 +99,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
     /** {@inheritDoc} */
     @Override
-    protected void initialize() {
-        super.initialize();
+    public void configure() {
         localDirectory = new File(DEFAULT_M2REPO_DIR);
         if (getProperties().containsKey(PROPERTY_NAME_DIRECTORY)) {
             localDirectory = new File(getProperties().get(PROPERTY_NAME_DIRECTORY).toString());

@@ -25,7 +25,7 @@ import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 public abstract class AbstractTask implements Task {
 
     protected static final String CMDLINE_OPTION_S = "s";
-
+    protected static final String CMDLINE_OPTION_STOREDIRECTORY = "storeDirectory";
     protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
 
     private static final Console LOG = Log.getLog();
@@ -73,7 +73,7 @@ public abstract class AbstractTask implements Task {
     @Override
     public List<Option> getOptions() {
         final List<Option> options = new ArrayList<>();
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S).withLongOpt("storeDirectory").withDescription("The location of the Neo4j database.").hasArgs()
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S).withLongOpt(CMDLINE_OPTION_STOREDIRECTORY).withDescription("The location of the Neo4j database.").hasArgs()
                 .create(CMDLINE_OPTION_S));
         addTaskOptions(options);
         return options;

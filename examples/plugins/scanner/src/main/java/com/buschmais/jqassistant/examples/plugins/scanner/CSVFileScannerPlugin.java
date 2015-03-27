@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.examples.plugins.scanner.model.CSVRowDescriptor
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
+// tag::class[]
 /**
  * A CSV file scanner plugin.
  */
@@ -56,3 +57,4 @@ public class CSVFileScannerPlugin extends AbstractScannerPlugin<FileResource, CS
         }
     }
 }
+// end::class[]

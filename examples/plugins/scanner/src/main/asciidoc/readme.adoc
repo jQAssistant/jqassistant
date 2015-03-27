@@ -9,7 +9,7 @@ project needs to declare the following dependencies:
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/pom.xml[lines=11..28,indent=0]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/pom.xml[tags=dependencies,indent=0]
 ----
 
 The artifact 'jqassistant.core.scanner' provides the scanner plugin API, 'jqassistant.plugin.common' contains common
@@ -23,7 +23,7 @@ First a label "CSV" is defined which is going to be used for all nodes created b
 [source,java]
 .com.buschmais.jqassistant.examples.plugins.scanner.model.CSVDescriptor
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVDescriptor.java[lines=9..11]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVDescriptor.java[tags=class]
 ----
 
 A CSV file is represented by _CSVFileDescriptor_ which inherits from _CSVDescriptor_ and _FileDescriptor_ (part of the
@@ -33,7 +33,7 @@ is defined by the property "rows".
 [source,java]
 .com.buschmais.jqassistant.examples.plugins.scanner.model.CSVFileDescriptor
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVFileDescriptor.java[lines=15..20]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVFileDescriptor.java[tags=class]
 ----
 
 A single row is a node defined by the type _CSVRowDescriptor_ which inherits the label "CSV" from _CSVDescriptor_ and provides
@@ -42,7 +42,7 @@ its own label "Row", a property "lineNumber" and a list of "HAS_COLUMN" relation
 [source,java]
 .com.buschmais.jqassistant.examples.plugins.scanner.model.CSVRowDescriptor
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVRowDescriptor.java[lines=11..20]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVRowDescriptor.java[tags=class]
 ----
 
 _CSVColumnDescriptor_ finally defines a column of a row following the principles explained above:
@@ -50,7 +50,7 @@ _CSVColumnDescriptor_ finally defines a column of a row following the principles
 [source,java]
 .com.buschmais.jqassistant.examples.plugins.scanner.model.CSVColumnDescriptor
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVColumnDescriptor.java[lines=8..19]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/model/CSVColumnDescriptor.java[tags=class]
 ----
 
 The implementation of the plugin itself inherits from _AbstractScannerPlugin_ which requires generic type parameters for
@@ -68,7 +68,7 @@ provided by the scanner context.
 [source,java]
 .com.buschmais.jqassistant.examples.plugins.scanner.CSVFileScannerPlugin
 ----
-include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/CSVFileScannerPlugin.java[lines=21..59]
+include::{docRoot}/jqassistant.examples.plugins.scanner/src/src/main/java/com/buschmais/jqassistant/examples/plugins/scanner/CSVFileScannerPlugin.java[tags=class]
 ----
 
 Finally the model and the plugin implementation must be declared in the jQAssistant plugin descriptor:

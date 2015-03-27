@@ -6,5 +6,5 @@ specific properties:
 [source,xml]
 .pom.xml
 ----
-include::{docRoot}/jqassistant.examples.plugins.project/src/pom.xml[lines=11..42,indent=0]
+include::{docRoot}/jqassistant.examples.plugins.project/src/pom.xml[tags=build,indent=0]
 ----

@@ -21,6 +21,7 @@ import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
 import com.buschmais.jqassistant.scm.cli.Log;
@@ -98,7 +99,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     }
 
     @Override
-    public void withOptions(final CommandLine options) {
+    public void withOptions(final CommandLine options) throws CliConfigurationException {
         super.withOptions(options);
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         severity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_SEVERITY, Severity.CRITICAL.name()).toUpperCase());

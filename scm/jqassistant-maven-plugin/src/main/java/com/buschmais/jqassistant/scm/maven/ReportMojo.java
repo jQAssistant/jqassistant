@@ -10,7 +10,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.maven.doxia.siterenderer.Renderer;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -28,12 +27,6 @@ import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
  */
 @Mojo(name = "report", defaultPhase = LifecyclePhase.SITE)
 public class ReportMojo extends AbstractMavenReport {
-
-    /**
-     * The directory to scan for rule descriptors.
-     */
-    @Parameter(property = "jqassistant.rules.directory", defaultValue = ProjectResolver.DEFAULT_RULES_DIRECTORY)
-    protected String rulesDirectory;
 
     /**
      * Directory where reports will go.
@@ -58,18 +51,13 @@ public class ReportMojo extends AbstractMavenReport {
 
     @Override
     protected void executeReport(Locale locale) throws MavenReportException {
-        MavenProject rootModule;
         File selectedXmlReportFile;
-        try {
-            rootModule = ProjectResolver.getRootModule(project, rulesDirectory);
-            selectedXmlReportFile = ProjectResolver.getOutputFile(rootModule, xmlReportFile, AbstractProjectMojo.REPORT_XML);
-        } catch (MojoExecutionException e) {
-            throw new MavenReportException("Cannot resolve XML report.", e);
+        if (xmlReportFile != null) {
+            selectedXmlReportFile = xmlReportFile;
+        } else {
+            selectedXmlReportFile = new File(project.getBuild().getDirectory() + "/" + ProjectResolver.OUTPUT_DIRECTORY + "/" + AbstractMojo.REPORT_XML);
         }
-        if (project.equals(rootModule)) {
-            if (!selectedXmlReportFile.exists() || selectedXmlReportFile.isDirectory()) {
-                throw new MavenReportException(selectedXmlReportFile.getAbsoluteFile() + " does not exist or is not a file.");
-            }
+        if (selectedXmlReportFile.exists()) {
             StringWriter writer = new StringWriter();
             // Transform
             Source xmlSource = new StreamSource(selectedXmlReportFile);

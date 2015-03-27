@@ -12,6 +12,11 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
  */
 public interface ReportPlugin extends AnalysisListener<ReportException> {
 
+    /*
+     * Initializes the plugin.
+     */
+    void initialize() throws ReportException;
+
     /**
      * Initializes the plugin with the given properties.
      * 
@@ -20,5 +25,5 @@ public interface ReportPlugin extends AnalysisListener<ReportException> {
      * @throws ReportException
      *             If the plugin cannot be initialized.
      */
-    void initialize(Map<String, Object> properties) throws ReportException;
+    void configure(Map<String, Object> properties) throws ReportException;
 }

@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.examples.plugins.scanner.model;
 
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
+// tag::class[]
 /**
  * Represents a column within a row of a CSV file.
  */
@@ -17,3 +18,4 @@ public interface CSVColumnDescriptor extends CSVDescriptor {
     void setIndex(int index);
 
 }
+// end::class[]
