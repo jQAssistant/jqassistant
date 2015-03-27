@@ -1,5 +1,8 @@
 == 1.0.0-RC2
 
+=== Core
+- Upgraded to Neo4j 2.2.0
+
 === Plugins
 
 ==== Java
