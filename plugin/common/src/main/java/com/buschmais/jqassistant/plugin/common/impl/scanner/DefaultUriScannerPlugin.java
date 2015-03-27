@@ -21,10 +21,11 @@ public class DefaultUriScannerPlugin extends AbstractResourceScannerPlugin<URI, 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUriScannerPlugin.class);
 
-    private Set<String> schemes = new HashSet<>();
+    private Set<String> schemes;
 
     @Override
-    protected void initialize() {
+    public void initialize() {
+        schemes = new HashSet<>();
         schemes.add("file");
         schemes.add("http");
         schemes.add("https");

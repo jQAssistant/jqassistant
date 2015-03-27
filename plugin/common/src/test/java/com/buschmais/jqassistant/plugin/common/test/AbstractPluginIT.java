@@ -125,7 +125,7 @@ public abstract class AbstractPluginIT {
     @Before
     public void readRules() throws PluginRepositoryException, RuleException {
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
-        scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader, getScannerProperties());
+        scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         List<RuleSource> sources = rulePluginRepository.getRuleSources();
@@ -324,7 +324,7 @@ public abstract class AbstractPluginIT {
 
     private List<ScannerPlugin<?, ?>> getScannerPlugins() {
         try {
-            return scannerPluginRepository.getScannerPlugins();
+            return scannerPluginRepository.getScannerPlugins(getScannerProperties());
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
