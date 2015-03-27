@@ -16,10 +16,22 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     private Map<String, Object> properties;
 
+    /**
+     * Initialize the plugin.
+     */
+    public void initialize() {
+    }
+
     @Override
-    public void initialize(Map<String, Object> properties) {
+    public void configure(Map<String, Object> properties) {
         this.properties = properties;
-        initialize();
+        configure();
+    }
+
+    /**
+     * Convenience method which might be overridden by sub-classes.
+     */
+    protected void configure() {
     }
 
     @Override
@@ -54,11 +66,6 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
         return (Class<T>) typeParameter;
     }
 
-    /**
-     * Initialize the plugin.
-     */
-    protected void initialize() {
-    }
 
     /**
      * Get all properties.
