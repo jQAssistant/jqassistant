@@ -60,10 +60,10 @@ A Java package, i.e. a directory containing '.class' files or other directories.
 Imports Java classes, i.e. all scanned files having a '.class' suffix. Nodes with following labels will be created:
 
 <<:Java:Type>>
-<<:Field>>
-<<:Method>>
-<<:Parameter>>
-<<:Value>>
+<<:Java:Field>>
+<<:Java:Method>>
+<<:Java:Parameter>>
+<<:Java:Value>>
 
 *NOTE* Some of these labels may be further qualified with other labels, see the description below.
 

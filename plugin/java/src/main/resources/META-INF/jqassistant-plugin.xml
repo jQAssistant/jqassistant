@@ -42,8 +42,9 @@
         <class>com.buschmais.jqassistant.plugin.java.impl.scanner.ServiceLoaderFileScannerPlugin</class>
     </scanner>
     <rules>
-        <resource>dependency.xml</resource>
         <resource>java.xml</resource>
+        <resource>dependency.xml</resource>
+        <resource>classpath.xml</resource>
         <resource>metric.xml</resource>
     </rules>
 </jqa-plugin:jqassistant-plugin>

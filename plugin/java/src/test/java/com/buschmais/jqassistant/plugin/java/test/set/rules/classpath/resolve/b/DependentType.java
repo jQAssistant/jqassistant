@@ -1,10 +1,8 @@
-package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.b;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b;
 
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a.AnnotationType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a.ClassType;
-import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a.ExceptionType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.*;
 
-@AnnotationType
+@AnnotationType(classValue = ValueType.class, enumValue = EnumType.B)
 public class DependentType {
 
     @AnnotationType

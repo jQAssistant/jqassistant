@@ -1,0 +1,262 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="classpath:ResolveType">
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (a1:Artifact)-[:REQUIRES]->(t1:Type)
+            WITH
+              a1, t1, t1.fqn as fqn
+            MATCH
+              (a2:Artifact)-[:CONTAINS]->(t2:Type)
+            WHERE
+              t2.fqn=t1.fqn
+            MERGE
+              (t1)-[:RESOLVES_TO]->(t2)
+            RETURN
+              count(t1) as ResolvedTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveMember">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (t1:Type)-[:RESOLVES_TO]->(t2:Type),
+              (t1)-[:DECLARES]->(m1),
+              (t2)-[:DECLARES]->(m2)
+            WHERE
+              (m1:Field or m1:Method)
+              and m1.signature = m2.signature
+            MERGE
+              (m1)-[:RESOLVES_TO{resolved:true}]->(m2)
+            RETURN
+              count(m1) as ResolvedMembers
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveDependency">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+            MERGE
+              (t)-[:DEPENDS_ON{resolved:true}]->(t2)
+            RETURN
+              count(t) as ResolvedDependencies
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveExtends">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:EXTENDS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+            MERGE
+              (t)-[:EXTENDS{resolved:true}]->(t2)
+            RETURN
+              count(t) as ResolvedSuperClass
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveImplements">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Type)-[:IMPLEMENTS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+            MERGE
+              (t)-[:IMPLEMENTS{resolved:true}]->(t2)
+            RETURN
+              count(t1) as ResolvedInterfaces
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveFieldType">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (f:Field)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+            MERGE
+              (f)-[:OF_TYPE{resolved:true}]->(t)
+            RETURN
+              count(t) as ResolvedFieldTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveThrows">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[:THROWS]->(:Type)-[:RESOLVES_TO]->(t:Type)
+            MERGE
+              (m)-[:THROWS{resolved:true}]->(t)
+            RETURN
+              count(t) as ResolvedExceptionTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveReturns">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[:RETURNS]->(Type)-[:RESOLVES_TO]->(t:Type)
+            MERGE
+              (m)-[:RETURNS{resolved:true}]->(t)
+            RETURN
+              count(t) as ResolvedReturnTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveParameterType">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Parameter)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+            MERGE
+              (m)-[:OF_TYPE{resolved:true}]->(t)
+            RETURN
+              count(t) as ResolvedParameterTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveAnnotationType">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (a:Annotation)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
+            MERGE
+              (a)-[:OF_TYPE{resolved:true}]->(t)
+            RETURN
+              count(t) as ResolvedAnnotationTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveValue">
+        <requiresConcept refId="classpath:ResolveType"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (v:VALUE)-[:IS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+            MERGE
+              (v)-[:IS{resolved:true}]->(t2)
+            RETURN
+              count(v) as ResolvedValueTypes
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveReads">
+        <requiresConcept refId="classpath:ResolveMember"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[r:READS]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
+            MERGE
+              (m)-[:READS{lineNumber:r.lineNumber,resolved:true}]->(f2)
+            RETURN
+              count(r) as ResolvedReads
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveWrites">
+        <requiresConcept refId="classpath:ResolveMember"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[w:WRITES]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
+            MERGE
+              (m)-[:WRITES{lineNumber:w.lineNumber,resolved:true}]->(f2)
+            RETURN
+              count(w) as ResolvedWrites
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:ResolveInvokes">
+        <requiresConcept refId="classpath:ResolveMember"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              (m:Method)-[i:INVOKES]->(m1:Method)-[:RESOLVES_TO]->(m2:Method)
+            MERGE
+              (m)-[:INVOKES{lineNumber:i.lineNumber,resolved:true}]->(m2)
+            RETURN
+              count(i) as ResolvedInvocations
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <concept id="classpath:Resolve">
+        <requiresConcept refId="classpath:ResolveDependency"/>
+        <requiresConcept refId="classpath:ResolveExtends"/>
+        <requiresConcept refId="classpath:ResolveImplements"/>
+        <requiresConcept refId="classpath:ResolveFieldType"/>
+        <requiresConcept refId="classpath:ResolveThrows"/>
+        <requiresConcept refId="classpath:ResolveReturns"/>
+        <requiresConcept refId="classpath:ResolveParameterType"/>
+        <requiresConcept refId="classpath:ResolveAnnotationType"/>
+        <requiresConcept refId="classpath:ResolveValue"/>
+        <requiresConcept refId="classpath:ResolveReads"/>
+        <requiresConcept refId="classpath:ResolveWrites"/>
+        <requiresConcept refId="classpath:ResolveInvokes"/>
+        <description></description>
+        <cypher><![CDATA[
+            MATCH
+              ()-[r:RESOLVES_TO]->()
+            RETURN
+              count(r) as ResolvedElements
+        ]]></cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+</jqa:jqassistant-rules>
