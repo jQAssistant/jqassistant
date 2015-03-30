@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.resolve.a;
+package com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a;
 
 public class ClassType {
 
