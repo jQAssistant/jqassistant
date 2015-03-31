@@ -18,6 +18,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 /**
+ * The main class, i.e. the entry point for the CLI.
+ * 
  * @author jn4, Kontext E GmbH, 23.01.14
  * @author Dirk Mahler
  */
@@ -27,10 +29,6 @@ public class Main {
     private static final String DIRECTORY_PLUGINS = "plugins";
 
     private final TaskFactory taskFactory;
-
-    public Main(TaskFactory taskFactory) {
-        this.taskFactory = taskFactory;
-    }
 
     /**
      * The main method.
@@ -51,6 +49,24 @@ public class Main {
         }
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param taskFactory
+     *            The task factory to use.
+     */
+    public Main(TaskFactory taskFactory) {
+        this.taskFactory = taskFactory;
+    }
+
+    /**
+     * Run tasks according to the given arguments.
+     * 
+     * @param args
+     *            The arguments.
+     * @throws CliExecutionException
+     *             If execution fails.
+     */
     public void run(String[] args) throws CliExecutionException {
         Options options = gatherOptions(taskFactory);
         CommandLine commandLine = getCommandLine(args, options);
@@ -71,7 +87,8 @@ public class Main {
             messageBuilder.append("-> ");
             messageBuilder.append(current.getMessage());
             current = current.getCause();
-        } while (current != null);
+        }
+        while (current != null);
         return messageBuilder.toString();
     }
 
@@ -92,8 +109,7 @@ public class Main {
     }
 
     /**
-     * Gather all options which are supported by the task (i.e. including
-     * standard and specific options).
+     * Gather all options which are supported by the task (i.e. including standard and specific options).
      * 
      * @return The options.
      */
@@ -112,8 +128,8 @@ public class Main {
      */
     @SuppressWarnings("static-access")
     private void gatherStandardOptions(final Options options) {
-        options.addOption(OptionBuilder.withArgName("p").withDescription("Path to property file; default is jqassistant.properties in the class path")
-                .withLongOpt("properties").hasArg().create("p"));
+        options.addOption(OptionBuilder.withArgName("p").withDescription(
+                "Path to property file; default is jqassistant.properties in the class path").withLongOpt("properties").hasArg().create("p"));
         options.addOption(new Option("help", "print this message"));
     }
 
@@ -206,8 +222,8 @@ public class Main {
      *            The plugin properties
      * @throws IOException
      */
-    private void executeTask(Task task, Options option, CommandLine commandLine, PluginRepository pluginRepository, Map<String, Object> properties)
-            throws CliExecutionException {
+    private void executeTask(Task task, Options option, CommandLine commandLine, PluginRepository pluginRepository,
+            Map<String, Object> properties) throws CliExecutionException {
         try {
             task.withStandardOptions(commandLine);
             task.withOptions(commandLine);
@@ -220,8 +236,7 @@ public class Main {
     }
 
     /**
-     * Read the plugin properties file if specified on the command line or if it
-     * exists on the class path.
+     * Read the plugin properties file if specified on the command line or if it exists on the class path.
      * 
      * @param commandLine
      *            The command line.
