@@ -175,9 +175,9 @@
         <description></description>
         <cypher><![CDATA[
             MATCH
-              (v:VALUE)-[:IS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
+              (v:Value)-[:IS]->(e)-[:RESOLVES_TO]->(e2)
             MERGE
-              (v)-[:IS{resolved:true}]->(t2)
+              (v)-[:IS{resolved:true}]->(e2)
             RETURN
               count(v) as ResolvedValueTypes
         ]]></cypher>
