@@ -1,18 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -26,6 +13,18 @@ import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
 import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -78,9 +77,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             if (conceptViolations > 0) {
                 throw new CliRuleViolationException(conceptViolations + " concept(s) returned empty results!");
             }
-            final int violations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
-            if (violations > 0) {
-                throw new CliRuleViolationException(violations + " constraint(s) violated!");
+            final int constraintViolations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
+            if (constraintViolations > 0) {
+                throw new CliRuleViolationException(constraintViolations + " constraint(s) violated!");
             }
         } finally {
             store.commitTransaction();

@@ -1,5 +1,13 @@
 package com.buschmais.jqassistant.scm.cli;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+import com.buschmais.jqassistant.scm.cli.task.DefaultTaskFactoryImpl;
+import org.apache.commons.cli.*;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.file.FileVisitResult;
@@ -8,15 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
-
-import org.apache.commons.cli.*;
-
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
-import com.buschmais.jqassistant.scm.cli.task.DefaultTaskFactoryImpl;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -46,7 +45,8 @@ public class Main {
             DefaultTaskFactoryImpl taskFactory = new DefaultTaskFactoryImpl();
             new Main(taskFactory).run(args);
         } catch (CliExecutionException e) {
-            Log.getLog().error(e.getMessage());
+            String message = getErrorMessage(e);
+            Log.getLog().error(message);
             System.exit(e.getExitCode());
         }
     }
@@ -55,6 +55,24 @@ public class Main {
         Options options = gatherOptions(taskFactory);
         CommandLine commandLine = getCommandLine(args, options);
         interpretCommandLine(commandLine, options, taskFactory);
+    }
+
+    /**
+     * Extract an error message from the given exception and its causes.
+     * 
+     * @param e
+     *            The exception.
+     * @return The error message.
+     */
+    private static String getErrorMessage(CliExecutionException e) {
+        StringBuffer messageBuilder = new StringBuffer();
+        Throwable current = e;
+        do {
+            messageBuilder.append("-> ");
+            messageBuilder.append(current.getMessage());
+            current = current.getCause();
+        } while (current != null);
+        return messageBuilder.toString();
     }
 
     /**

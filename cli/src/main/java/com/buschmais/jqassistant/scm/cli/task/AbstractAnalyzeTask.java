@@ -1,16 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.DirectoryWalker;
-
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
@@ -24,6 +13,19 @@ import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.cli.Task;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.DirectoryWalker;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -121,7 +123,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
             }
         }
         ruleDirectory = getOptionValue(options, CMDLINE_OPTION_R, Task.DEFAULT_RULE_DIRECTORY);
-        groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Arrays.asList("default"));
+        groupIds = getOptionValues(options, CMDLINE_OPTION_GROUPS, Collections.<String> emptyList());
         constraintIds = getOptionValues(options, CMDLINE_OPTION_CONSTRAINTS, Collections.<String> emptyList());
         conceptIds = getOptionValues(options, CMDLINE_OPTION_CONCEPTS, Collections.<String> emptyList());
     }
