@@ -6,13 +6,10 @@ import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.
 public class DependentType extends ClassType implements InterfaceType {
 
     @AnnotationType
-    private ClassType annotatedField;
+    private ClassType field;
 
     @AnnotationType
-    public void annotatedMethod() {
-    }
-
-    public ClassType signature(ClassType classType) throws ExceptionType {
+    public ClassType signature(@AnnotationType ClassType classType) throws ExceptionType {
         return null;
     }
 

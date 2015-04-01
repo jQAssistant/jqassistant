@@ -172,6 +172,7 @@
 
     <concept id="classpath:ResolveValue">
         <requiresConcept refId="classpath:ResolveType"/>
+        <requiresConcept refId="classpath:ResolveMember"/>
         <description></description>
         <cypher><![CDATA[
             MATCH
