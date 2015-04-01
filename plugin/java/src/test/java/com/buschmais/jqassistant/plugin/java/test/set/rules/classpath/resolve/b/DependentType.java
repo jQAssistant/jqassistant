@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b
 import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.*;
 
 @AnnotationType(classValue = ValueType.class, enumValue = EnumType.B)
-public class DependentType {
+public class DependentType extends ClassType implements InterfaceType {
 
     @AnnotationType
-    private int annotatedField;
+    private ClassType annotatedField;
 
     @AnnotationType
     public void annotatedMethod() {
