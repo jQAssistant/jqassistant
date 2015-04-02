@@ -21,7 +21,11 @@ public class CustomReportPlugin implements ReportPlugin {
     private String fileName;
 
     @Override
-    public void initialize(Map<String, Object> properties) throws ReportException {
+    public void initialize() throws ReportException {
+    }
+
+    @Override
+    public void configure(Map<String, Object> properties) throws ReportException {
         this.fileName = (String) properties.get(PROPERTY_FILENAME);
         if (this.fileName == null) {
             throw new ReportException("Property " + PROPERTY_FILENAME + " is not specified.");
