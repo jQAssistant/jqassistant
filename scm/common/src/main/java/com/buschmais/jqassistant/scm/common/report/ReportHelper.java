@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.scm.common.report;
 
-import java.util.Collection;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -13,6 +10,9 @@ import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Provides utility functionality for creating reports.
@@ -49,7 +49,8 @@ public final class ReportHelper {
         int violations = 0;
         for (Result<Concept> conceptResult : conceptResults) {
             if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
-                console.error("Concept '" + conceptResult.getRule().getId() + "' could not be applied.");
+                Concept concept = conceptResult.getRule();
+                console.error("Concept '" + concept.getId() + "' could not be applied: " + concept.getDescription());
                 // severity level check
                 if (conceptResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;
@@ -75,7 +76,7 @@ public final class ReportHelper {
         for (Result<Constraint> constraintResult : constraintResults) {
             if (Result.Status.FAILURE.equals(constraintResult.getStatus())) {
                 Constraint constraint = constraintResult.getRule();
-                console.error(constraint.getId() + ": " + constraint.getDescription());
+                console.error("Constraint '" + constraint.getId() + "' validation failed: " + constraint.getDescription());
                 for (Map<String, Object> columns : constraintResult.getRows()) {
                     StringBuilder message = new StringBuilder();
                     for (Map.Entry<String, Object> entry : columns.entrySet()) {

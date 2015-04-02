@@ -1,0 +1,28 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="default">
+        <includeConcept refId="severity:Major" severity="info"/>
+        <includeConstraint refId="severity:Blocker" severity="info"/>
+    </group>
+
+    <concept id="severity:Major" severity="major">
+        <description>A concept with severity major.</description>
+        <cypher>
+            RETURN 0
+        </cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </concept>
+
+    <constraint id="severity:Blocker" severity="blocker">
+        <description>A constraint with severity blocker.</description>
+        <cypher>
+            RETURN 1
+        </cypher>
+        <verify>
+            <aggregation/>
+        </verify>
+    </constraint>
+
+</jqa:jqassistant-rules>
