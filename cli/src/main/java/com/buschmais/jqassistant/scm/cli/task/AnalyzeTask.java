@@ -74,12 +74,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         try {
             final ReportHelper reportHelper = new ReportHelper(getLog());
             final int conceptViolations = reportHelper.verifyConceptResults(severity, inMemoryReportWriter);
-            if (conceptViolations > 0) {
-                throw new CliRuleViolationException(conceptViolations + " concept(s) returned empty results!");
-            }
             final int constraintViolations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
-            if (constraintViolations > 0) {
-                throw new CliRuleViolationException(constraintViolations + " constraint(s) violated!");
+            if (conceptViolations > 0 || constraintViolations > 0) {
+                throw new CliRuleViolationException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
             }
         } finally {
             store.commitTransaction();
