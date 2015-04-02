@@ -27,15 +27,12 @@
                             <postBuildHookScript>verify</postBuildHookScript>
                             <streamLogs>true</streamLogs>
                             <pomIncludes>
-                                <!--
                                 <pomInclude>singlemodule/site/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/junit-report/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/export-rules/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/skip/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/scanincludes/pom.xml</pomInclude>
-                                -->
                                 <pomInclude>singlemodule/severity/pom.xml</pomInclude>
-                                <!--
                                 <pomInclude>multimodule/singleparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/customruledir/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/multipleruledirs/pom.xml</pomInclude>
@@ -43,7 +40,6 @@
                                 <pomInclude>multimodule/multiparent/singlestore/pom.xml</pomInclude>
                                 <pomInclude>plugin/pom.xml</pomInclude>
                                 <pomInclude>tycho/additionalfiles/pom.xml</pomInclude>
-                                -->
                             </pomIncludes>
                         </configuration>
                         <executions>
