@@ -319,11 +319,11 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         scanAndApply("classpath:ResolveReads");
         store.beginTransaction();
         // type value
-        Map<String, Object> typeParams = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "fieldAccess")
-                .put("a", "a").get();
+        Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "fieldAccess").put("a", "a")
+                .get();
         List<ReadsDescriptor> reads = query(
                 "MATCH (dependentType:Type)-[:DECLARES]->(m:Method)-[r:READS{resolved:true}]->(:Field)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and m.name={m} and a.fqn={a} RETURN r",
-                typeParams).getColumn("r");
+                params).getColumn("r");
         assertThat(reads.size(), equalTo(1));
         ReadsDescriptor readsDescriptor = reads.get(0);
         assertThat(readsDescriptor.getLineNumber(), greaterThan(0));
@@ -343,11 +343,11 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         scanAndApply("classpath:ResolveWrites");
         store.beginTransaction();
         // type value
-        Map<String, Object> typeParams = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "fieldAccess")
-                .put("a", "a").get();
+        Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "fieldAccess").put("a", "a")
+                .get();
         List<WritesDescriptor> writes = query(
                 "MATCH (dependentType:Type)-[:DECLARES]->(m:Method)-[w:WRITES{resolved:true}]->(:Field)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and m.name={m} and a.fqn={a} RETURN w",
-                typeParams).getColumn("w");
+                params).getColumn("w");
         assertThat(writes.size(), equalTo(1));
         WritesDescriptor writesDescriptor = writes.get(0);
         assertThat(writesDescriptor.getLineNumber(), greaterThan(0));
@@ -367,14 +367,35 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         scanAndApply("classpath:ResolveInvokes");
         store.beginTransaction();
         // type value
-        Map<String, Object> typeParams = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "methodInvocation")
+        Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "methodInvocation")
                 .put("a", "a").get();
         List<InvokesDescriptor> invocations = query(
                 "MATCH (dependentType:Type)-[:DECLARES]->(m:Method)-[i:INVOKES{resolved:true}]->(:Method)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and m.name={m} and a.fqn={a} RETURN i",
-                typeParams).getColumn("i");
+                params).getColumn("i");
         assertThat(invocations.size(), equalTo(1));
         InvokesDescriptor invokesDescriptor = invocations.get(0);
         assertThat(invokesDescriptor.getLineNumber(), greaterThan(0));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "classpath:Resolve".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolve() throws IOException, AnalysisException {
+        scanAndApply("classpath:Resolve");
+        store.beginTransaction();
+        List<String> concepts = query("MATCH (c:Concept) RETURN c.id as id").getColumn("id");
+        assertThat(
+                concepts,
+                hasItems("classpath:ResolveDependency", "classpath:ResolveExtends", "classpath:ResolveImplements", "classpath:ResolveFieldType",
+                        "classpath:ResolveThrows", "classpath:ResolveReturns", "classpath:ResolveParameterType", "classpath:ResolveAnnotationType",
+                        "classpath:ResolveValue", "classpath:ResolveReads", "classpath:ResolveWrites", "classpath:ResolveInvokes"));
         store.commitTransaction();
     }
 
