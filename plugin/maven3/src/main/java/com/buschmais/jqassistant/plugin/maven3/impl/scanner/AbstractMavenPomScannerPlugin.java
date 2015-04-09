@@ -463,10 +463,10 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
     protected MavenPomXmlDescriptor createMavenPomXmlDescriptor(Model model, FileResource item, String path, Scanner scanner) {
         MavenPomXmlDescriptor pomXmlDescriptor = scanner.getContext().getStore().create(MavenPomXmlDescriptor.class);
         pomXmlDescriptor.setName(model.getName());
-        pomXmlDescriptor.setGroupId(model.getGroupId());
+        pomXmlDescriptor.setGroupId(model.getGroupId() != null ? model.getGroupId() : model.getParent() != null ? model.getParent().getGroupId() : null);
         pomXmlDescriptor.setArtifactId(model.getArtifactId());
         pomXmlDescriptor.setPackaging(model.getPackaging());
-        pomXmlDescriptor.setVersion(model.getVersion());
+        pomXmlDescriptor.setVersion(model.getVersion() != null ? model.getVersion() : model.getParent() != null ? model.getParent().getVersion() : null);
         pomXmlDescriptor.setFullQualifiedName(model.getId());
         MavenArtifactDescriptor artifact = ArtifactResolver.resolve(new ModelCoordinates(model), MavenArtifactDescriptor.class, scanner.getContext());
         pomXmlDescriptor.setDescribes(artifact);
