@@ -6,6 +6,7 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescripto
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
 
@@ -17,9 +18,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.*;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b.DependentType;
@@ -304,6 +303,78 @@ public class ClasspathIT extends AbstractJavaPluginIT {
                 enumParams).getColumn("f");
         assertThat(enumValues.size(), equalTo(1));
         assertThat(enumValues, hasItems(fieldDescriptor(EnumType.B)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "classpath:resolveReads".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveReads() throws IOException, AnalysisException {
+        scanAndApply("classpath:ResolveReads");
+        store.beginTransaction();
+        // type value
+        Map<String, Object> typeParams = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "fieldAccess")
+                .put("a", "a").get();
+        List<ReadsDescriptor> reads = query(
+                "MATCH (dependentType:Type)-[:DECLARES]->(m:Method)-[r:READS{resolved:true}]->(:Field)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and m.name={m} and a.fqn={a} RETURN r",
+                typeParams).getColumn("r");
+        assertThat(reads.size(), equalTo(1));
+        ReadsDescriptor readsDescriptor = reads.get(0);
+        assertThat(readsDescriptor.getLineNumber(), greaterThan(0));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "classpath:resolveWrites".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveWrites() throws IOException, AnalysisException {
+        scanAndApply("classpath:ResolveWrites");
+        store.beginTransaction();
+        // type value
+        Map<String, Object> typeParams = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "fieldAccess")
+                .put("a", "a").get();
+        List<WritesDescriptor> writes = query(
+                "MATCH (dependentType:Type)-[:DECLARES]->(m:Method)-[w:WRITES{resolved:true}]->(:Field)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and m.name={m} and a.fqn={a} RETURN w",
+                typeParams).getColumn("w");
+        assertThat(writes.size(), equalTo(1));
+        WritesDescriptor writesDescriptor = writes.get(0);
+        assertThat(writesDescriptor.getLineNumber(), greaterThan(0));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the concept "classpath:resolveInvokes".
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveInvokes() throws IOException, AnalysisException {
+        scanAndApply("classpath:ResolveInvokes");
+        store.beginTransaction();
+        // type value
+        Map<String, Object> typeParams = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "methodInvocation")
+                .put("a", "a").get();
+        List<InvokesDescriptor> invocations = query(
+                "MATCH (dependentType:Type)-[:DECLARES]->(m:Method)-[i:INVOKES{resolved:true}]->(:Method)<-[:DECLARES]-(:Type)<-[:CONTAINS]-(a) WHERE dependentType.fqn={dependentType} and m.name={m} and a.fqn={a} RETURN i",
+                typeParams).getColumn("i");
+        assertThat(invocations.size(), equalTo(1));
+        InvokesDescriptor invokesDescriptor = invocations.get(0);
+        assertThat(invokesDescriptor.getLineNumber(), greaterThan(0));
         store.commitTransaction();
     }
 
