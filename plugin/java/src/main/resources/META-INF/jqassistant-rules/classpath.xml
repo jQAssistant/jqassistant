@@ -1,7 +1,9 @@
 <jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
 
     <concept id="classpath:ResolveType">
-        <description></description>
+        <description>Adds a relation "RESOLVES_TO" from a type required by an artifact to a type contained in another
+            artifact if their fully qualified names match.
+        </description>
         <cypher><![CDATA[
             MATCH
               (a1:Artifact)-[:REQUIRES]->(t1:Type)
@@ -23,7 +25,9 @@
 
     <concept id="classpath:ResolveMember">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Adds a relation "RESOLVES_TO" from a member (i.e. field or method) of a type to a member of another
+            type if there is a relation "RESOLVES_TO" between the two types and the members have the same signature.
+        </description>
         <cypher><![CDATA[
             MATCH
               (t1:Type)-[:RESOLVES_TO]->(t2:Type),
@@ -44,7 +48,9 @@
 
     <concept id="classpath:ResolveDependency">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "DEPENDS_ON" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (t:Type)-[:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
@@ -60,7 +66,9 @@
 
     <concept id="classpath:ResolveExtends">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "EXTENDS" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (t:Type)-[:EXTENDS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
@@ -76,7 +84,9 @@
 
     <concept id="classpath:ResolveImplements">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "IMPLEMENTS" relations between types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (t:Type)-[:IMPLEMENTS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
@@ -92,7 +102,9 @@
 
     <concept id="classpath:ResolveFieldType">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "OF_TYPE" relations between fields and types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (f:Field)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
@@ -108,7 +120,9 @@
 
     <concept id="classpath:ResolveThrows">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "THROWS" relations between methods and types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (m:Method)-[:THROWS]->(:Type)-[:RESOLVES_TO]->(t:Type)
@@ -124,7 +138,9 @@
 
     <concept id="classpath:ResolveReturns">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "RETURNS" relations between methods and types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (m:Method)-[:RETURNS]->(Type)-[:RESOLVES_TO]->(t:Type)
@@ -140,7 +156,9 @@
 
     <concept id="classpath:ResolveParameterType">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "OF_TYPE" relations between method parameters and types to their resolved types with a
+            property "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (m:Parameter)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
@@ -156,7 +174,9 @@
 
     <concept id="classpath:ResolveAnnotationType">
         <requiresConcept refId="classpath:ResolveType"/>
-        <description></description>
+        <description>Propagates "OF_TYPE" relations between annotation and types to their resolved types with a
+            property "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (a:Annotation)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
@@ -173,7 +193,9 @@
     <concept id="classpath:ResolveValue">
         <requiresConcept refId="classpath:ResolveType"/>
         <requiresConcept refId="classpath:ResolveMember"/>
-        <description></description>
+        <description>Propagates "IS" relations between values and types to their resolved types with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (v:Value)-[:IS]->(e)-[:RESOLVES_TO]->(e2)
@@ -189,7 +211,9 @@
 
     <concept id="classpath:ResolveReads">
         <requiresConcept refId="classpath:ResolveMember"/>
-        <description></description>
+        <description>Propagates "READS" relations between methods and fields to their resolved fields with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (m:Method)-[r:READS]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
@@ -205,7 +229,9 @@
 
     <concept id="classpath:ResolveWrites">
         <requiresConcept refId="classpath:ResolveMember"/>
-        <description></description>
+        <description>Propagates "WRITES" relations between methods and fields to their resolved fields with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (m:Method)-[w:WRITES]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
@@ -221,7 +247,9 @@
 
     <concept id="classpath:ResolveInvokes">
         <requiresConcept refId="classpath:ResolveMember"/>
-        <description></description>
+        <description>Propagates "INVOKES" relations between methods to their resolved methods with a property
+            "resolved:true".
+        </description>
         <cypher><![CDATA[
             MATCH
               (m:Method)-[i:INVOKES]->(m1:Method)-[:RESOLVES_TO]->(m2:Method)
@@ -248,7 +276,8 @@
         <requiresConcept refId="classpath:ResolveReads"/>
         <requiresConcept refId="classpath:ResolveWrites"/>
         <requiresConcept refId="classpath:ResolveInvokes"/>
-        <description></description>
+        <description>Includes all concepts for resolving a Java classpath and returns the number of resolved elements.
+        </description>
         <cypher><![CDATA[
             MATCH
               ()-[r:RESOLVES_TO]->()
