@@ -5,8 +5,8 @@ package com.buschmais.jqassistant.plugin.common.api.model;
  */
 public interface MD5Descriptor {
 
-    String getMD5();
+    String getMd5();
 
-    void setMD5(String md5);
+    void setMd5(String md5);
 
 }

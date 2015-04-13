@@ -9,6 +9,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescr
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * A scanner plugin for directories containing java classes.
@@ -36,8 +37,11 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
         Store store = scannerContext.getStore();
         if (javaArtifactDescriptor == null) {
             return store.create(JavaClassesDirectoryDescriptor.class);
-        } else {
-            return store.addDescriptorType(javaArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
         }
+        if (JavaClassesDirectoryDescriptor.class.isAssignableFrom(javaArtifactDescriptor.getClass())) {
+            return JavaClassesDirectoryDescriptor.class.cast(javaArtifactDescriptor);
+        }
+        throw new IllegalStateException("Expected an instance of " + JavaClassesDirectoryDescriptor.class.getName() + " but got "
+                + Arrays.asList(javaArtifactDescriptor.getClass().getInterfaces()));
     }
 }

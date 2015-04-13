@@ -1,14 +1,13 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
+import com.buschmais.jqassistant.plugin.common.api.model.MD5Descriptor;
+
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import javax.xml.bind.DatatypeConverter;
-
-import com.buschmais.jqassistant.plugin.common.api.model.MD5Descriptor;
 
 /**
  * A delegate around reading input streams for calculating a MD5 hash sum.
@@ -78,7 +77,7 @@ public class MD5DigestDelegate {
         DigestInputStream digestInputStream = new DigestInputStream(stream, md5Digest);
         D md5Descriptor = digestOperation.execute(digestInputStream);
         String md5 = DatatypeConverter.printHexBinary(md5Digest.digest());
-        md5Descriptor.setMD5(md5);
+        md5Descriptor.setMd5(md5);
         return md5Descriptor;
     }
 }
