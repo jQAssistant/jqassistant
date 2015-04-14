@@ -1,7 +1,17 @@
 == 1.0.0-RC2
 
 === Core
+
+==== Store
 - Upgraded to Neo4j 2.2.0
+
+==== Analysis
+- added exlicit verification strategies for executable rules
+- clarified behavor of concepts and constraints regarding to configured severities
+
+=== Maven
+- Fixed problems of report goal in site lifecycle
+- Allow Maven plugin to be configured as build extension
 
 === Plugins
 
@@ -17,5 +27,6 @@
 ==== Plugin API
 - ReportPlugin#setResult now takes a 'Result<? extends ExecutableRule>' as parameter (instead of 'Result<? extends Rule>')
 
-=== Maven
-- Added a Maven archetype for setting up a project which uses jQAssistant
+==== XML
+- Prevent online schema lookups for DTDs while parsing documents
+
