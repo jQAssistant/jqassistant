@@ -49,7 +49,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <com.buschmais.xo_version>0.5.0-SNAPSHOT</com.buschmais.xo_version>
+        <com.buschmais.xo_version>0.5.0</com.buschmais.xo_version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
         <org.neo4j_version>2.2.0</org.neo4j_version>
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
