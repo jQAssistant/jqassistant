@@ -1,18 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.test.scanner;
 
-import static org.mockito.Mockito.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -20,6 +7,20 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescripto
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.impl.scanner.JavaClassesDirectoryScannerPlugin;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JavaClassesDirectoryScannerPluginTest {
@@ -63,11 +64,12 @@ public class JavaClassesDirectoryScannerPluginTest {
         when(context.peek(JavaArtifactFileDescriptor.class)).thenReturn(null);
         when(store.create(JavaClassesDirectoryDescriptor.class)).thenReturn(artifact);
 
-        plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
+        JavaClassesDirectoryDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
 
         verify(context).peek(JavaArtifactFileDescriptor.class);
-        verify(store, never()).addDescriptorType(artifact, JavaClassesDirectoryDescriptor.class);
         verify(store).create(JavaClassesDirectoryDescriptor.class);
+
+        assertThat(descriptor, is(artifact));
     }
 
     /**
@@ -81,14 +83,15 @@ public class JavaClassesDirectoryScannerPluginTest {
     public void useArtifactFromContext() throws IOException {
         JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
         File directory = Files.createTempDirectory("directory").toFile();
-        JavaArtifactFileDescriptor artifact = mock(JavaArtifactFileDescriptor.class);
+        JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peek(JavaArtifactFileDescriptor.class)).thenReturn(artifact);
         when(store.addDescriptorType(artifact, JavaClassesDirectoryDescriptor.class)).thenReturn(mock(JavaClassesDirectoryDescriptor.class));
 
-        plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
+        JavaClassesDirectoryDescriptor descriptor = plugin.scan(directory, "/", JavaScope.CLASSPATH, scanner);
 
         verify(context).peek(JavaArtifactFileDescriptor.class);
-        verify(store).addDescriptorType(artifact, JavaClassesDirectoryDescriptor.class);
         verify(store, never()).create(JavaClassesDirectoryDescriptor.class);
+
+        assertThat(descriptor, is(artifact));
     }
 }
