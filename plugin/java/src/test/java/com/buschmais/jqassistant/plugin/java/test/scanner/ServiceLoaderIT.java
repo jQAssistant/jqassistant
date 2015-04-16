@@ -14,6 +14,7 @@ import java.util.ServiceLoader;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.Service;
@@ -43,7 +44,9 @@ public class ServiceLoaderIT extends AbstractJavaPluginIT {
         ServiceLoaderDescriptor serviceLoaderDescriptor = serviceLoaderDescriptors.get(0);
         assertThat(serviceLoaderDescriptor.getFileName(), endsWith("/META-INF/services/" + Service.class.getName()));
         assertThat(serviceLoaderDescriptor.getType(), typeDescriptor(Service.class));
-        assertThat(serviceLoaderDescriptor.getContains(), hasItem(typeDescriptor(ServiceImpl.class)));
+        List<TypeDescriptor> serviceTypes = serviceLoaderDescriptor.getContains();
+        assertThat(serviceTypes.size(), equalTo(1));
+        assertThat(serviceTypes, hasItem(typeDescriptor(ServiceImpl.class)));
 
         store.commitTransaction();
     }
