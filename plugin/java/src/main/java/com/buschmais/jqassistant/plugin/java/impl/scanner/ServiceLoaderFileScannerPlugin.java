@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Implementation of the
@@ -42,15 +43,28 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
         ServiceLoaderDescriptor serviceLoaderDescriptor = scanner.getContext().getStore().create(ServiceLoaderDescriptor.class);
         TypeDescriptor interfaceTypeDescriptor = getTypeDescriptor(serviceInterface, scanner.getContext());
         serviceLoaderDescriptor.setType(interfaceTypeDescriptor);
+
         try (InputStream stream = item.createStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String serviceImplementation;
+
             while ((serviceImplementation = reader.readLine()) != null) {
+                if (isComment(serviceImplementation)) {
+                    continue;
+                }
+
                 TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation, scanner.getContext());
                 serviceLoaderDescriptor.getContains().add(implementationTypeDescriptor);
             }
         }
+
         return serviceLoaderDescriptor;
+    }
+
+    private boolean isComment(String line) {
+        boolean isComment = StringUtils.trimToEmpty(line).startsWith("#");
+
+        return isComment;
     }
 
     private TypeDescriptor getTypeDescriptor(String fqn, ScannerContext scannerContext) {
