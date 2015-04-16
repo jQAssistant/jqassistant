@@ -31,6 +31,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     private static final String PROPERTY_NEO4J_ALLOW_STORE_UPGRADE = "neo4j.allow_store_upgrade";
     private static final String PROPERTY_NEO4J_KEEP_LOGICAL_LOGS = "neo4j.keep_logical_logs";
     private static final String PROPERTY_NEO4J_LOCK_MANAGER = "neo4j.lock_manager";
+    private static final String PROPERTY_NEO4J_DBMS_PAGE_CACHE_MEMORY = "neo4j.dbms.pagecache.memory";
 
     /**
      * The directory of the database.
@@ -57,7 +58,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
         File database = new File(databaseDirectory);
         XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
                 .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_NONE).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString())
-                .property(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString()).property(PROPERTY_NEO4J_LOCK_MANAGER, NoOpLockFactory.KEY).create();
+                .property(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString()).property(PROPERTY_NEO4J_LOCK_MANAGER, NoOpLockFactory.KEY)
+                .property(PROPERTY_NEO4J_DBMS_PAGE_CACHE_MEMORY, "100M").create();
         return XO.createXOManagerFactory(xoUnit);
     }
 
