@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.scm</groupId>
         <artifactId>jqassistant.scm</artifactId>
-        <version>1.0.0-RC2-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>jqassistant.scm.neo4jserver</artifactId>
 
