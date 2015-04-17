@@ -11,7 +11,7 @@
 [source]
 .Windows
 ----
-bin/jqassistant.cmd scan -f lib
+bin\jqassistant.cmd scan -f lib
 ----
 
 [source]
@@ -27,7 +27,7 @@ bin/jqassistant.sh scan -f lib
 [source]
 .Windows
 ----
-bin/jqassistant.cmd server
+bin\jqassistant.cmd server
 ----
 
 [source]
@@ -42,9 +42,9 @@ bin/jqassistant.sh server
 [source]
 ----
 MATCH
-  (t:Type)-[:DECLARES]->(m:Method)
+  (a:Artifact)-[:CONTAINS]->(t:Type)-[:DECLARES]->(m:Method)
 RETURN
-  t.fqn AS Type, count(t) AS DeclaredMethods
+  a.fileName as Artifact, t.fqn AS Type, count(t) AS DeclaredMethods
 ORDER BY
   DeclaredMethods DESC
 LIMIT 20
