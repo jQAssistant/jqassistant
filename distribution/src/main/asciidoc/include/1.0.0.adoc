@@ -6,7 +6,7 @@
 - Upgraded to Neo4j 2.2.1
 
 ==== Analysis
-- added exlicit verification strategies for executable rules
+- added explicit verification strategies for executable rules
 - clarified behavor of concepts and constraints regarding to configured severities
 
 === Maven
