@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.examples</groupId>
         <artifactId>jqassistant.examples</artifactId>
-        <version>1.0.0-RC2-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
     <artifactId>jqassistant.examples.sonar</artifactId>
     <packaging>pom</packaging>
