@@ -1,9 +1,25 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
+import static com.buschmais.jqassistant.scm.cli.Log.getLog;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
+
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
@@ -13,18 +29,6 @@ import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
 import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -57,6 +61,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.add(inMemoryReportWriter);
         reportWriters.add(xmlReportWriter);
+        reportWriters.addAll(getReportPlugins());
         try {
             CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
             Analyzer analyzer = new AnalyzerImpl(store, reportWriter, getLog());
@@ -80,6 +85,23 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             }
         } finally {
             store.commitTransaction();
+        }
+    }
+
+    /**
+     * Get all configured report plugins.
+     * 
+     * @return The list of report plugins.
+     * @throws CliExecutionException
+     *             If the plugins cannot be loaded or configured.
+     */
+    private List<ReportPlugin> getReportPlugins() throws CliExecutionException {
+        ReportPluginRepository reportPluginRepository;
+        try {
+            reportPluginRepository = pluginRepository.getReportPluginRepository();
+            return reportPluginRepository.getReportPlugins(pluginProperties);
+        } catch (PluginRepositoryException e) {
+            throw new CliExecutionException("Cannot get report plugins.", e);
         }
     }
 
