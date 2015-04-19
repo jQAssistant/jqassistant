@@ -10,6 +10,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
@@ -31,14 +32,13 @@ public abstract class AbstractTask implements Task {
     private static final Console LOG = Log.getLog();
 
     protected String storeDirectory;
-    protected com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository;
+    protected PluginRepository pluginRepository;
     protected RuleHelper ruleHelper;
     protected ReportHelper reportHelper;
     protected Map<String, Object> pluginProperties;
 
     @Override
-    public void initialize(com.buschmais.jqassistant.core.plugin.api.PluginRepository pluginRepository, Map<String, Object> pluginProperties)
-            throws CliExecutionException {
+    public void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException {
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
         this.ruleHelper = new RuleHelper(Log.getLog());
@@ -52,7 +52,7 @@ public abstract class AbstractTask implements Task {
         try {
             descriptorTypes = pluginRepository.getModelPluginRepository().getDescriptorTypes();
         } catch (PluginRepositoryException e) {
-            throw new RuntimeException("Cannot get model.", e);
+            throw new CliExecutionException("Cannot get model.", e);
         }
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(pluginRepository.getClassLoader());
@@ -73,8 +73,8 @@ public abstract class AbstractTask implements Task {
     @Override
     public List<Option> getOptions() {
         final List<Option> options = new ArrayList<>();
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S).withLongOpt(CMDLINE_OPTION_STOREDIRECTORY).withDescription("The location of the Neo4j database.").hasArgs()
-                .create(CMDLINE_OPTION_S));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_S).withLongOpt(CMDLINE_OPTION_STOREDIRECTORY)
+                .withDescription("The location of the Neo4j database.").hasArgs().create(CMDLINE_OPTION_S));
         addTaskOptions(options);
         return options;
     }
