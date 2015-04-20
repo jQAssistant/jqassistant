@@ -45,6 +45,11 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.graphml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>jqassistant.plugin.jpa2</artifactId>
                 <version>${project.version}</version>
             </dependency>

@@ -1,0 +1,6 @@
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="GraphML_Test">
+    <description></description>
+    <rules>
+        <resource>graphml-test.xml</resource>
+    </rules>
+</v1:jqassistant-plugin>
