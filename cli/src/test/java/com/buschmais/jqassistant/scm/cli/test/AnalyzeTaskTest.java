@@ -44,13 +44,20 @@ public class AnalyzeTaskTest {
         HashMap<String, Object> pluginProperties = new HashMap<>();
         analyzeTask.initialize(pluginRepository, pluginProperties);
         CommandLine options = mock(CommandLine.class);
-        CommandLine standardOptions = mock(CommandLine.class);
+        stubOption(options, "reportDirectory", "target/jqassistant/test/report");
         analyzeTask.withOptions(options);
+        CommandLine standardOptions = mock(CommandLine.class);
+        stubOption(standardOptions, "s", "target/jqassistant/test/store");
         analyzeTask.withStandardOptions(standardOptions);
         analyzeTask.run();
 
         verify(reportPluginRepository).getReportPlugins(pluginProperties);
         verify(rulePluginRepository).getRuleSources();
         verify(modelPluginRepository).getDescriptorTypes();
+    }
+
+    private void stubOption(CommandLine standardOptions, String option, String value) {
+        when(standardOptions.hasOption(option)).thenReturn(true);
+        when(standardOptions.getOptionValue(option)).thenReturn(value);
     }
 }
