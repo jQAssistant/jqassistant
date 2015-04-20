@@ -16,15 +16,22 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+
 /**
  * @author mh
  * @since 21.01.14
  */
 public class XmlGraphMLWriter {
 
-    public void write(SubGraph graph, Writer writer) throws IOException, XMLStreamException {
-        XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
-        XMLStreamWriter xmlWriter = xmlOutputFactory.createXMLStreamWriter(writer);
+    private XMLOutputFactory xmlOutputFactory;
+
+    XmlGraphMLWriter() {
+        xmlOutputFactory = XMLOutputFactory.newInstance();
+    }
+
+    void write(SubGraph graph, Writer writer) throws IOException, XMLStreamException {
+        XMLStreamWriter xmlWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(writer));
         writeHeader(xmlWriter);
         writeKeyTypes(xmlWriter, graph);
         for (Node node : graph.getNodes()) {

@@ -4,9 +4,9 @@
         <description>A type and its declarations</description>
         <cypher><![CDATA[
             MATCH
-              p = (t)-[r]-(d)
+              (t:Class)-[r:DECLARES]->(m)
             RETURN
-              t,{type:type(r),start:startNode(r), end:endNode(r)} as rel,d
+              t,{type:type(r),start:startNode(r), end:endNode(r)} as rel,m
         ]]></cypher>
     </concept>
 </jqa:jqassistant-rules>

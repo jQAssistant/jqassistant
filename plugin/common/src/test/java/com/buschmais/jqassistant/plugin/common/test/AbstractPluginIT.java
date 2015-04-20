@@ -30,6 +30,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -116,18 +117,20 @@ public abstract class AbstractPluginIT {
 
     protected InMemoryReportWriter reportWriter;
 
-    private PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
     private RulePluginRepository rulePluginRepository;
     private ModelPluginRepository modelPluginRepository;
     private ScannerPluginRepository scannerPluginRepository;
     private ScopePluginRepository scopePluginRepository;
+    private ReportPluginRepository reportPluginRepository;
 
     @Before
     public void readRules() throws PluginRepositoryException, RuleException {
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
+        reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
         List<RuleSource> sources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new CompoundRuleSetReader();
         ruleSet = ruleSetReader.read(sources);
@@ -140,6 +143,16 @@ public abstract class AbstractPluginIT {
      * @return The scanner properties.
      */
     protected Map<String, Object> getScannerProperties() {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Provides the properties to be passed to report plugins. May be
+     * overwritten by test classes.
+     *
+     * @return The report properties.
+     */
+    protected Map<String, Object> getReportProperties() {
         return Collections.emptyMap();
     }
 
@@ -327,6 +340,14 @@ public abstract class AbstractPluginIT {
             return scannerPluginRepository.getScannerPlugins(getScannerProperties());
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
+        }
+    }
+
+    protected List<ReportPlugin> getReportPlugins() {
+        try {
+            return reportPluginRepository.getReportPlugins(getReportProperties());
+        } catch (PluginRepositoryException e) {
+            throw new IllegalStateException("Cannot get report plugins.", e);
         }
     }
 
