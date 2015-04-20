@@ -1,0 +1,16 @@
+== GraphML Report
+
+This plugin generates graphml xml files for result data of concepts. Those files can be used with several graph rendering
+and analytics tools like http://www.yworks.com/en/products/yfiles/yed/[yEd] and http://gephi.org[Gephi].
+
+By default all concepts ending in `.graphml` will be rendered (e.g. "module:modules.graphml").
+
+=== Configuration
+
+.Configuration properties
+[options="header"]
+|====
+| Property     			        | Description														                                 | Default
+| graphml.report.conceptPattern | Regular expression that describes the concept ids to use for rendering the result as GraphML file. | .*\.graphml$
+| graphml.report.directory      | The directory where the .graphml files will be created                                             | jqassistant/report
+|====

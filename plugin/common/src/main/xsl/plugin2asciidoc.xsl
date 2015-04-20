@@ -19,6 +19,7 @@
         <xsl:apply-templates select="//scanner"/>
         <xsl:apply-templates select="//model"/>
         <xsl:apply-templates select="//resource"/>
+        <xsl:apply-templates select="//report"/>
     </xsl:template>
 
     <xsl:template match="description">
@@ -43,4 +44,10 @@ about the model.
 include::{docRoot}/<xsl:value-of select="$pluginName"/>/<xsl:value-of select="text()"/>.adoc[]
 <xsl:value-of select="$newline"/>
     </xsl:template>
+
+    <xsl:template match="report">
+        <xsl:value-of select="$newline"/>
+        include::{docRoot}/<xsl:value-of select="$pluginName"/>/report.adoc[]
+    </xsl:template>
+
 </xsl:stylesheet>
