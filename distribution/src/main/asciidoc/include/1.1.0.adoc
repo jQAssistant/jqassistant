@@ -1,0 +1,7 @@
+== 1.1.0
+
+=== Plugins
+
+==== JUnit
+- Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
+
