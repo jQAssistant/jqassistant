@@ -2,6 +2,9 @@
 
 === Plugins
 
+==== GraphML
+- Added plugin which provides a GraphML export for the results of executed concepts
+
 ==== JUnit
 - Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
 
