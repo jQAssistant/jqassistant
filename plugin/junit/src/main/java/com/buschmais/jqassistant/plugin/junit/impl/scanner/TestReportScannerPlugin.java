@@ -43,13 +43,13 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
 
     @Override
     public TestSuiteDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        XMLEventReader reader;
+        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         try (InputStream stream = item.createStream()) {
-            reader = inputFactory.createXMLEventReader(stream);
+            XMLEventReader reader = inputFactory.createXMLEventReader(stream);
             TestSuiteDescriptor testSuiteDescriptor = null;
             TestCaseDescriptor testCaseDescriptor = null;
             while (reader.hasNext()) {
-                XMLEvent event = (XMLEvent) reader.next();
+                XMLEvent event = reader.nextEvent();
                 if (event.isStartElement()) {
                     StartElement element = event.asStartElement();
                     String elementName = element.getName().getLocalPart();
@@ -57,7 +57,6 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
                     Iterator<Attribute> attributes = element.getAttributes();
                     switch (elementName) {
                     case "testsuite":
-                        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
                         testSuiteDescriptor = scanner.getContext().getStore().addDescriptorType(xmlFileDescriptor, TestSuiteDescriptor.class);
                         while (attributes.hasNext()) {
                             Attribute attribute = attributes.next();
@@ -90,7 +89,7 @@ public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource,
                         testCaseDescriptor.setResult(TestCaseDescriptor.Result.SUCCESS);
                         testSuiteDescriptor.getTestCases().add(testCaseDescriptor);
                         while (attributes.hasNext()) {
-                            Attribute attribute = (Attribute) attributes.next();
+                            Attribute attribute = attributes.next();
                             String attributeName = attribute.getName().getLocalPart();
                             String value = attribute.getValue();
                             switch (attributeName) {
