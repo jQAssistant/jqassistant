@@ -14,3 +14,51 @@ By default all concepts ending in `.graphml` will be rendered (e.g. "module:modu
 | graphml.report.conceptPattern | Regular expression that describes the concept ids to use for rendering the result as GraphML file. | .*\.graphml$
 | graphml.report.directory      | The directory where the .graphml files will be created                                             | jqassistant/report
 |====
+
+=== Example
+
+The following concept will return package dependencies as GraphML document:
+
+[source,xml]
+.reports.xml
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="report:PackageDependencies.graphml">
+        <requiresConcept refId="dependency:Package" />
+        <description>Reports all package dependencies.</description>
+        <cypher><![CDATA[
+            MATCH
+              (p1:Package)-[d:DEPENDS_ON]->(p2:Package)
+            RETURN
+              p1, d, p2
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
+----
+
+The plugin also supports virtual relations, i.e. which are constructed in the return clause of the query. The following
+example virtually propagates the dependencies of Java types to the package level without creating a relationship in the
+store:
+
+[source,xml]
+.reports.xml
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="report:VirtualPackageDependencies.graphml">
+        <description>Reports all package dependencies.</description>
+        <cypher><![CDATA[
+            MATCH
+              (p1:Package)-[:CONTAINS]->(t1:Type),
+              (p2:Package)-[:CONTAINS]->(t2:Type),
+              (t1)-[:DEPENDS_ON]->(t2)
+            RETURN
+              p1, {type:"DEPENDS_ON", start:startNode(p1), end:endNode(p2)} , p2
+        ]]></cypher>
+    </concept>
+
+</jqa:jqassistant-rules>
+----
+

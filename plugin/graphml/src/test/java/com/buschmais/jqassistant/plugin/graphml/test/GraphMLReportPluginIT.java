@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.plugin.graphml.test;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-
-import java.io.File;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
+import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -16,22 +16,22 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
+import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
-import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
 /**
  * Verifies functionality of the GraphML report plugin.
  */
 public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
+
+    public static final String REPORT_DIR = "target/graphml";
 
     static class TestClass {
 
@@ -52,19 +52,28 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     @Override
     protected Map<String, Object> getReportProperties() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("graphml.report.directory", "target/graphml");
+        properties.put("graphml.report.directory", REPORT_DIR);
         return properties;
     }
 
     @Test
     public void renderGraphML() throws Exception {
+        reportAndVerify("test:DeclaredMembers.graphml");
+    }
+
+    @Test
+    public void renderGraphMLUsingVirtualRelation() throws Exception {
+        reportAndVerify("test:DeclaredMembersWithVirtualRelation.graphml");
+    }
+
+    private void reportAndVerify(String conceptName) throws Exception {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.addAll(getReportPlugins());
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
         this.analyzer = new AnalyzerImpl(this.store, compositeReportWriter, new TestConsole());
         scanClasses(TestClass.class);
-        applyConcept("test:Type.graphml");
-        File reportFile = new File("target/graphml/test_Type.graphml");
+        applyConcept(conceptName);
+        File reportFile = new File(REPORT_DIR, conceptName.replace(':', '_'));
         assertThat(reportFile.exists(), equalTo(true));
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
