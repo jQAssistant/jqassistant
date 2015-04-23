@@ -1,14 +1,5 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -18,6 +9,15 @@ import com.buschmais.jqassistant.plugin.java.api.model.ServiceLoaderDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import org.apache.commons.lang.StringUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
 /**
  * Implementation of the
@@ -47,24 +47,18 @@ public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileRe
         try (InputStream stream = item.createStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String serviceImplementation;
-
             while ((serviceImplementation = reader.readLine()) != null) {
-                if (isComment(serviceImplementation)) {
-                    continue;
+                if (!isEmptyOrComment(serviceImplementation)) {
+                    TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation, scanner.getContext());
+                    serviceLoaderDescriptor.getContains().add(implementationTypeDescriptor);
                 }
-
-                TypeDescriptor implementationTypeDescriptor = getTypeDescriptor(serviceImplementation, scanner.getContext());
-                serviceLoaderDescriptor.getContains().add(implementationTypeDescriptor);
             }
         }
-
         return serviceLoaderDescriptor;
     }
 
-    private boolean isComment(String line) {
-        boolean isComment = StringUtils.trimToEmpty(line).startsWith("#");
-
-        return isComment;
+    private boolean isEmptyOrComment(String line) {
+        return StringUtils.isEmpty(line) || StringUtils.trimToEmpty(line).startsWith("#");
     }
 
     private TypeDescriptor getTypeDescriptor(String fqn, ScannerContext scannerContext) {
