@@ -1,2 +1,5 @@
-# Just a comment
+# A comment that needs to be ignored
+ # Another comment that starts with a white space
+# The next line is just left empty
+
 com.buschmais.jqassistant.plugin.java.test.set.scanner.serviceloader.ServiceImpl
