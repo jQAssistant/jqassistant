@@ -55,7 +55,7 @@ store:
               (p2:Package)-[:CONTAINS]->(t2:Type),
               (t1)-[:DEPENDS_ON]->(t2)
             RETURN
-              p1, {type:"DEPENDS_ON", start:startNode(p1), end:endNode(p2)} , p2
+              p1, {type:"DEPENDS_ON", startNode:startNode(p1), endNode:endNode(p2)} , p2
         ]]></cypher>
     </concept>
 

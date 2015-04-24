@@ -168,22 +168,26 @@ public class GraphMLReportPlugin implements ReportPlugin {
     static class VirtualRelationship implements Relationship {
         static long REL_ID = -1;
 
-        private final long id = REL_ID--;
+        private final long id;
         private final Node start;
         private final Node end;
         private final RelationshipType type;
         private final Map<String, Object> props = new LinkedHashMap<>();
 
         public static boolean isRelationship(Map m) {
-            return m.containsKey("type") && m.containsKey("start") && m.containsKey("end");
+            return m.containsKey("type") && m.containsKey("startNode") && m.containsKey("endNode");
         }
 
         public VirtualRelationship(Map m) {
             if (!isRelationship(m))
                 throw new IllegalArgumentException("Not a relationship-map " + m);
-            this.start = (Node) m.get("start");
-            this.end = (Node) m.get("end");
+            this.start = (Node) m.get("startNode");
+            this.end = (Node) m.get("endNode");
             this.type = DynamicRelationshipType.withName((String) m.get("type"));
+            this.id = m.containsKey("id") ? ((Number)m.get("id")).longValue() : REL_ID--;
+            if (m.containsKey("properties")) {
+               this.props.putAll((Map)m.get("properties"));
+            }
         }
 
         @Override
