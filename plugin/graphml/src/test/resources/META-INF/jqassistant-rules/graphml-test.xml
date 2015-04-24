@@ -16,7 +16,7 @@
             MATCH
               (t:Class)-[r:DECLARES]->(m)
             RETURN
-              t, {type:"DECLARES", startNode:startNode(r), endNode:endNode(r), properties: { "name" : m.name }} as rel, m
+              t, {type:"DECLARES", startNode:startNode(r), endNode:endNode(r), properties: { name : m.name }} as rel, m
         ]]></cypher>
     </concept>
 </jqa:jqassistant-rules>
