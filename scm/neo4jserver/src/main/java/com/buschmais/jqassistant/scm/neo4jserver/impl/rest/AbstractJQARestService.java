@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
-import java.util.List;
-
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -17,6 +15,8 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.common.console.Slf4jConsole;
 import com.buschmais.jqassistant.scm.common.report.ReportHelper;
+
+import java.util.List;
 
 public abstract class AbstractJQARestService {
 
@@ -51,9 +51,11 @@ public abstract class AbstractJQARestService {
         Slf4jConsole console = new Slf4jConsole();
         Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
         analyzer.execute(getAvailableRules(), ruleSelection);
+        store.beginTransaction();
         ReportHelper reportHelper = new ReportHelper(console);
         reportHelper.verifyConceptResults(Concept.DEFAULT_SEVERITY, reportWriter);
         reportHelper.verifyConstraintResults(Constraint.DEFAULT_SEVERITY, reportWriter);
+        store.commitTransaction();
         return reportWriter;
     }
 }
