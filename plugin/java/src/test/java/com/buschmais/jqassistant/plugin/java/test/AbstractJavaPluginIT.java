@@ -11,7 +11,9 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactBasedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
@@ -93,12 +95,12 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         Scanner scanner = getScanner();
         ScannerContext context = scanner.getContext();
-        context.push(JavaArtifactFileDescriptor.class, artifact);
+        context.push(TypeResolver.class, new ArtifactBasedTypeResolver(artifact));
         for (Class<?> item : classes) {
             FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
             artifact.getContains().add(fileDescriptor);
         }
-        context.pop(JavaArtifactFileDescriptor.class);
+        context.pop(TypeResolver.class);
         store.commitTransaction();
     }
 
@@ -144,8 +146,10 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClassPathDirectory(String artifactId, File directory) throws IOException {
         store.beginTransaction();
         Scanner scanner = getScanner();
+        scanner.getContext().push(TypeResolver.class, new ArtifactBasedTypeResolver(getArtifactDescriptor(artifactId)));
         JavaClassesDirectoryDescriptor scan = scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
         scan.setFullQualifiedName(artifactId);
+        scanner.getContext().pop(TypeResolver.class);
         store.commitTransaction();
     }
 }

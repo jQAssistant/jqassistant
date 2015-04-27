@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
  * A type resolver considering an artifact and its optional dependencies as
  * scopes.
  */
-class ArtifactBasedTypeResolver extends AbstractTypeResolver {
+public class ArtifactBasedTypeResolver extends AbstractTypeResolver {
 
     private JavaArtifactFileDescriptor artifact;
 
@@ -26,7 +26,7 @@ class ArtifactBasedTypeResolver extends AbstractTypeResolver {
      * @param artifact
      *            The artifact which defines the scope for resolving types.
      */
-    ArtifactBasedTypeResolver(JavaArtifactFileDescriptor artifact) {
+    public ArtifactBasedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
         hasDependencies = artifact.getNumberOfDependencies() > 0;
         for (FileDescriptor fileDescriptor : artifact.getContains()) {

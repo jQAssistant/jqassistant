@@ -5,8 +5,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JarArchiveDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactBasedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
 public class JarScannerPlugin extends AbstractArchiveScannerPlugin<JarArchiveDescriptor> {
 
@@ -17,13 +18,13 @@ public class JarScannerPlugin extends AbstractArchiveScannerPlugin<JarArchiveDes
 
     @Override
     protected Scope createScope(Scope currentScope, JarArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
-        scannerContext.push(JavaArtifactFileDescriptor.class, archiveDescriptor);
+        scannerContext.push(TypeResolver.class, new ArtifactBasedTypeResolver(archiveDescriptor));
         return JavaScope.CLASSPATH;
     }
 
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
-        scannerContext.pop(JavaArtifactFileDescriptor.class);
+        scannerContext.pop(TypeResolver.class);
     }
 
     @Override
