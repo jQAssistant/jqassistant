@@ -1,18 +1,16 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
-import com.buschmais.xo.api.Query;
-import com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.versioning.VersionRange;
@@ -23,15 +21,20 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static org.mockito.Mockito.*;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 public class MavenProjectScannerPluginTest {
 
@@ -86,7 +89,7 @@ public class MavenProjectScannerPluginTest {
         final JavaClassesDirectoryDescriptor mainArtifact = mock(JavaClassesDirectoryDescriptor.class);
         final JavaClassesDirectoryDescriptor testArtifact = mock(JavaClassesDirectoryDescriptor.class);
         final JavaArtifactFileDescriptor dependencyArtifact = mock(JavaArtifactFileDescriptor.class);
-        when(scanner.scan(Mockito.any(File.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH))).thenReturn(mainArtifact);
+        when(scanner.scan(Mockito.any(File.class), eq("target/classes"), eq(CLASSPATH))).thenReturn(mainArtifact);
         when(store.executeQuery(Mockito.anyString(), Mockito.anyMap())).thenAnswer(new Answer<Query.Result<CompositeRowObject>>() {
             @Override
             public Query.Result<CompositeRowObject> answer(InvocationOnMock invocation) throws Throwable {
@@ -97,7 +100,7 @@ public class MavenProjectScannerPluginTest {
         });
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:jar:main:1.0.0")).thenReturn(mainArtifact);
         // test classes directory
-        when(scanner.scan(Mockito.any(File.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH))).thenReturn(testArtifact);
+        when(scanner.scan(Mockito.any(File.class), eq("target/test-classes"), eq(CLASSPATH))).thenReturn(testArtifact);
         when(store.create(JavaClassesDirectoryDescriptor.class, "group:artifact:test-jar:main:1.0.0")).thenReturn(testArtifact);
         when(store.create(JavaArtifactFileDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
 
@@ -123,8 +126,8 @@ public class MavenProjectScannerPluginTest {
         scannerPlugin.scan(project, null, null, scanner);
 
         // verify
-        verify(scanner).scan(Mockito.any(File.class), Mockito.eq("target/classes"), Mockito.eq(CLASSPATH));
-        verify(scanner).scan(Mockito.any(File.class), Mockito.eq("target/test-classes"), Mockito.eq(CLASSPATH));
+        verify(scanner).scan(Mockito.any(File.class), eq("target/classes"), eq(CLASSPATH));
+        verify(scanner).scan(Mockito.any(File.class), eq("target/test-classes"), eq(CLASSPATH));
         verify(store).create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0");
         verify(projectDescriptor).setName("project");
         verify(projectDescriptor).setGroupId("group");
@@ -150,6 +153,9 @@ public class MavenProjectScannerPluginTest {
         verify(store).create(testArtifact, DependsOnDescriptor.class, mainArtifact);
         verify(store).create(mainArtifact, DependsOnDescriptor.class, dependencyArtifact);
         verify(store).create(testArtifact, DependsOnDescriptor.class, dependencyArtifact);
+
+        verify(scannerContext, times(2)).push(eq(TypeResolver.class), Mockito.any(TypeResolver.class));
+        verify(scannerContext, times(2)).pop(TypeResolver.class);
 
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainArtifact);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testArtifact);

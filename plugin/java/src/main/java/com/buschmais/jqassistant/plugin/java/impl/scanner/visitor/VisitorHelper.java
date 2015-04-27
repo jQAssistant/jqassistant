@@ -70,7 +70,7 @@ public class VisitorHelper {
     private TypeResolver getTypeResolver() {
         TypeResolver typeResolver = scannerContext.peek(TypeResolver.class);
         if (typeResolver == null) {
-            throw new IllegalStateException("Cannot get type resolver.");
+            throw new IllegalStateException("Cannot find Java type resolver.");
         }
         return typeResolver;
     }

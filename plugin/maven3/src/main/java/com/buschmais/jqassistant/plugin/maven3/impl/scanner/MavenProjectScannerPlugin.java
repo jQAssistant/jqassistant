@@ -1,5 +1,17 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -10,22 +22,13 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactBasedTypeResolver;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 
 /**
  * A scanner plugin for maven projects.
@@ -231,11 +234,15 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         File directory = new File(directoryName);
         if (directory.exists()) {
             projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
-            scanner.getContext().push(JavaArtifactFileDescriptor.class, artifactDescriptor);
+            ScannerContext context = scanner.getContext();
+            context.push(JavaArtifactFileDescriptor.class, artifactDescriptor);
+            TypeResolver typeResolver = new ArtifactBasedTypeResolver(artifactDescriptor);
+            context.push(TypeResolver.class, typeResolver);
             try {
                 return scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
             } finally {
-                scanner.getContext().pop(JavaArtifactFileDescriptor.class);
+                context.pop(TypeResolver.class);
+                context.pop(JavaArtifactFileDescriptor.class);
             }
         }
         return artifactDescriptor;
