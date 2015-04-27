@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.test;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -15,18 +11,17 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactBasedTypeResolv
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
+import java.io.File;
+import java.io.IOException;
+
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
-     * Get or create an
-     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
-     * .
+     * Get or create an {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor} .
      *
      * @param artifactId
      *            The artifact id.
-     * @return The
-     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
-     *         .
+     * @return The {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor} .
      */
     protected JavaClassesDirectoryDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
@@ -90,35 +85,34 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * @throws IOException
      *             If scanning fails.
      */
-    protected void scanClasses(String artifactId, Class<?>... classes) throws IOException {
-        store.beginTransaction();
-        JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
-        Scanner scanner = getScanner();
-        ScannerContext context = scanner.getContext();
-        context.push(TypeResolver.class, new ArtifactBasedTypeResolver(artifact));
-        for (Class<?> item : classes) {
-            FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
-            artifact.getContains().add(fileDescriptor);
-        }
-        context.pop(TypeResolver.class);
-        store.commitTransaction();
+    protected void scanClasses(String artifactId, final Class<?>... classes) throws IOException {
+        execute(artifactId, new ScanClassPathOperation() {
+            @Override
+            public void scan(JavaArtifactFileDescriptor artifact,Scanner scanner) {
+                for (Class<?> item : classes) {
+                    FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
+                    artifact.getContains().add(fileDescriptor);
+                }
+            }
+        });
     }
 
     protected void scanClassPathResource(Scope scope, String resource) throws IOException {
         scanClassPathResources(scope, ARTIFACT_ID, resource);
     }
 
-    protected void scanClassPathResources(Scope scope, String artifactId, String... resources) throws IOException {
-        File directory = getClassesDirectory(this.getClass());
-        store.beginTransaction();
-        JavaArtifactFileDescriptor artifact = artifactId != null ? getArtifactDescriptor(artifactId) : null;
-        Scanner scanner = getScanner();
-        for (String resource : resources) {
-            File file = new File(directory, resource);
-            FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
-            artifact.getContains().add(fileDescriptor);
-        }
-        store.commitTransaction();
+    protected void scanClassPathResources(final Scope scope, String artifactId, final String... resources) throws IOException {
+        final File directory = getClassesDirectory(this.getClass());
+        execute(artifactId, new ScanClassPathOperation() {
+            @Override
+            public void scan(JavaArtifactFileDescriptor artifact,Scanner scanner) {
+                for (String resource : resources) {
+                    File file = new File(directory, resource);
+                    FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
+                    artifact.getContains().add(fileDescriptor);
+                }
+            }
+        });
     }
 
     /**
@@ -143,13 +137,29 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
      * @throws java.io.IOException
      *             If scanning fails.
      */
-    protected void scanClassPathDirectory(String artifactId, File directory) throws IOException {
+    protected void scanClassPathDirectory(String artifactId, final File directory) throws IOException {
+        execute(artifactId, new ScanClassPathOperation() {
+            @Override
+            public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
+                scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
+            }
+        });
+    }
+
+    private void execute(String artifactId, ScanClassPathOperation operation) {
         store.beginTransaction();
+        JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         Scanner scanner = getScanner();
-        scanner.getContext().push(TypeResolver.class, new ArtifactBasedTypeResolver(getArtifactDescriptor(artifactId)));
-        JavaClassesDirectoryDescriptor scan = scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
-        scan.setFullQualifiedName(artifactId);
+        scanner.getContext().push(JavaArtifactFileDescriptor.class, artifact);
+        scanner.getContext().push(TypeResolver.class, new ArtifactBasedTypeResolver(artifact));
+        operation.scan(artifact, scanner);
         scanner.getContext().pop(TypeResolver.class);
+        scanner.getContext().pop(JavaArtifactFileDescriptor.class);
+        artifact.setFullQualifiedName(artifactId);
         store.commitTransaction();
+    }
+
+    private interface ScanClassPathOperation {
+        void scan (JavaArtifactFileDescriptor artifact, Scanner scanner);
     }
 }

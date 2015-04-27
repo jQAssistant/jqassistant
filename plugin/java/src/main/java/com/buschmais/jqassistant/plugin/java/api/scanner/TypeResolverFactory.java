@@ -22,12 +22,15 @@ public class TypeResolverFactory {
      * @return The type resolver.
      */
     public static TypeResolver createTypeResolver(ScannerContext context) {
+        TypeResolver typeResolver = context.peek(TypeResolver.class);
+        if (typeResolver != null) {
+            return typeResolver;
+        }
         JavaArtifactFileDescriptor artifactDescriptor = context.peek(JavaArtifactFileDescriptor.class);
         if (artifactDescriptor != null) {
             return new ArtifactBasedTypeResolver(artifactDescriptor);
-        } else {
-            return new DefaultTypeResolver();
         }
+        return new DefaultTypeResolver();
     }
 
 }

@@ -11,10 +11,12 @@ public enum JavaScope implements Scope {
     CLASSPATH {
         @Override
         public void create(ScannerContext context) {
+            context.push(TypeResolver.class, TypeResolverFactory.createTypeResolver(context));
         }
 
         @Override
         public void destroy(ScannerContext context) {
+            context.pop(TypeResolver.class);
         }
     };
 
