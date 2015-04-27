@@ -8,27 +8,14 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
-/**
- * A type resolver considering an artifact and its optional dependencies as
- * scopes.
- */
-public class ArtifactBasedTypeResolver extends AbstractTypeResolver {
+public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeResolver {
 
     private JavaArtifactFileDescriptor artifact;
 
     private Map<String, TypeDescriptor> artifactTypes = new HashMap<>();
 
-    private boolean hasDependencies;
-
-    /**
-     * Constructor.
-     * 
-     * @param artifact
-     *            The artifact which defines the scope for resolving types.
-     */
-    public ArtifactBasedTypeResolver(JavaArtifactFileDescriptor artifact) {
+    protected AbstractArtifactScopedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
-        hasDependencies = artifact.getNumberOfDependencies() > 0;
         for (FileDescriptor fileDescriptor : artifact.getContains()) {
             if (fileDescriptor instanceof TypeDescriptor) {
                 TypeDescriptor typeDescriptor = (TypeDescriptor) fileDescriptor;
@@ -40,14 +27,13 @@ public class ArtifactBasedTypeResolver extends AbstractTypeResolver {
         }
     }
 
-    @Override
-    protected TypeDescriptor findInArtifact(String fullQualifiedName, ScannerContext context) {
-        return artifactTypes.get(fullQualifiedName);
+    protected JavaArtifactFileDescriptor getArtifact() {
+        return artifact;
     }
 
     @Override
-    protected TypeDescriptor findInDependencies(String fullQualifiedName, ScannerContext context) {
-        return hasDependencies ? artifact.resolveRequiredType(fullQualifiedName) : null;
+    protected TypeDescriptor findInArtifact(String fullQualifiedName, ScannerContext context) {
+        return artifactTypes.get(fullQualifiedName);
     }
 
     @Override

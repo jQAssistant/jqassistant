@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.test;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
@@ -7,12 +10,9 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactBasedTypeResolver;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ClasspathScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-
-import java.io.File;
-import java.io.IOException;
 
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
@@ -105,7 +105,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         final File directory = getClassesDirectory(this.getClass());
         execute(artifactId, new ScanClassPathOperation() {
             @Override
-            public void scan(JavaArtifactFileDescriptor artifact,Scanner scanner) {
+            public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
                 for (String resource : resources) {
                     File file = new File(directory, resource);
                     FileDescriptor fileDescriptor = scanner.scan(file, resource, scope);
@@ -151,7 +151,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         Scanner scanner = getScanner();
         scanner.getContext().push(JavaArtifactFileDescriptor.class, artifact);
-        scanner.getContext().push(TypeResolver.class, new ArtifactBasedTypeResolver(artifact));
+        scanner.getContext().push(TypeResolver.class, new ClasspathScopedTypeResolver(artifact));
         operation.scan(artifact, scanner);
         scanner.getContext().pop(TypeResolver.class);
         scanner.getContext().pop(JavaArtifactFileDescriptor.class);

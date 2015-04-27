@@ -7,7 +7,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
  * Default type resolver, does not consider any scopes, i.e. provides a global
  * resolution.
  */
-class DefaultTypeResolver extends AbstractTypeResolver {
+public class DefaultTypeResolver extends AbstractTypeResolver {
 
     @Override
     protected TypeDescriptor findInArtifact(String fullQualifiedName, ScannerContext context) {
