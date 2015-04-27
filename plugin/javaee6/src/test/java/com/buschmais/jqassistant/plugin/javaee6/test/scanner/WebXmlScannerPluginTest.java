@@ -13,6 +13,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
@@ -173,6 +174,7 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
     public void webXml() throws IOException {
         when(scannerContext.peek(WebApplicationArchiveDescriptor.class)).thenReturn(warDescriptor);
         when(scannerContext.peek(TypeResolver.class)).thenReturn(typeResolver);
+        when(scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class)).thenReturn(mock(JavaClassesDirectoryDescriptor.class));
 
         FileResource fileResource = mock(FileResource.class);
         when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/WEB-INF/web.xml"));
@@ -267,7 +269,7 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
 
         WebXmlScannerPlugin scannerPlugin = new WebXmlScannerPlugin();
         scannerPlugin.initialize();
-        scannerPlugin.configure(Collections.<String, Object>emptyMap());
+        scannerPlugin.configure(Collections.<String, Object> emptyMap());
         scannerPlugin.scan(fileResource, "/WEB-INF/web.xml", WebApplicationScope.WAR, scanner);
 
         verify(scanner).scan(fileResource, "/WEB-INF/web.xml", XmlScope.DOCUMENT);

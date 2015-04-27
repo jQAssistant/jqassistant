@@ -8,10 +8,9 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolverFactory;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
 
 public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D extends Descriptor> extends AbstractResourceScannerPlugin<R, D> {
@@ -35,15 +34,13 @@ public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D ext
             classesDirectory = context.getStore().create(JavaClassesDirectoryDescriptor.class);
             archiveDescriptor.setClassesDirectory(classesDirectory);
         }
-        context.push(JavaArtifactFileDescriptor.class, classesDirectory);
-        TypeResolver typeResolver = TypeResolverFactory.createTypeResolver(context);
+        TypeResolver typeResolver = new ArtifactScopedTypeResolver(classesDirectory);
         context.push(TypeResolver.class, typeResolver);
         D fileDescriptor;
         try {
             fileDescriptor = scan(item, path, classesDirectory, scanner);
         } finally {
             context.pop(TypeResolver.class);
-            context.pop(JavaArtifactFileDescriptor.class);
         }
         return fileDescriptor;
     }
