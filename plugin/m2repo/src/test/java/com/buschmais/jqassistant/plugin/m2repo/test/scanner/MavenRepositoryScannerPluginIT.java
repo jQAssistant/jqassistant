@@ -1,25 +1,24 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
-
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import org.apache.commons.io.FileUtils;
 import org.javastack.httpd.HttpServer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
 
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 
-    private static final int REPO_SERVER_PORT = 8080;
+    private static final int REPO_SERVER_PORT = 9090;
     private static final String REPO_SERVER_BASE_DIR = "./src/test/resources/maven-repository-";
 
     private static final String TEST_REPOSITORY_URL = "http://localhost:" + REPO_SERVER_PORT;

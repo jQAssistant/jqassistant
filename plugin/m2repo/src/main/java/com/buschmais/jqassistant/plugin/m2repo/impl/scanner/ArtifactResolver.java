@@ -1,12 +1,5 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -29,6 +22,13 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Transfers artifacts from a remote repository to a local repository.
@@ -87,9 +87,8 @@ public class ArtifactResolver {
     }
 
     /**
-     * Resolves an artifact with the given properties and transfers it in a
-     * local repository.
-     * 
+     * Resolves an artifact with the given properties and transfers it in a local repository.
+     *
      * @param artifact
      *            the artifact to resolve
      * @return the local file handle
@@ -102,11 +101,11 @@ public class ArtifactResolver {
     }
 
     /**
-     * Creates a new {@link ArtifactRequest} Object with the artifact GAV and
-     * the repository.
-     * 
-     * @param artifactGav
-     * @return
+     * Creates a new {@link ArtifactRequest} Object with the artifact GAV and the repository.
+     *
+     * @param artifact
+     *            The artifact.
+     * @return The list of artifacts to retrieve.
      */
     private Set<ArtifactRequest> newArtifactRequests(Artifact artifact) {
         ArtifactRequest artifactRequest = new ArtifactRequest();
@@ -117,12 +116,11 @@ public class ArtifactResolver {
         Set<ArtifactRequest> requests = new HashSet<>();
         requests.add(artifactRequest);
 
-        if ((artifact.getExtension() == null || "jar".equals(artifact.getExtension().toLowerCase())) && StringUtils.isBlank(artifact.getClassifier())) {
+        if (!("pom".equals(artifact.getExtension().toLowerCase()))) {
             ArtifactRequest pomRequest = new ArtifactRequest();
             Artifact pomArtifact = new DefaultArtifact(artifact.getGroupId(), artifact.getArtifactId(), null, "pom", artifact.getVersion());
             pomRequest.setArtifact(pomArtifact);
             pomRequest.setRepositories(repositories);
-
             requests.add(pomRequest);
         }
 
@@ -152,7 +150,6 @@ public class ArtifactResolver {
      */
     private DefaultRepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-
         LocalRepository localRepo = new LocalRepository(localDirectory + "/repository");
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
 

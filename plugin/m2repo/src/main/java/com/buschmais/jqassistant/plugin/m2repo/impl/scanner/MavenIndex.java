@@ -1,21 +1,8 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.ArtifactInfoFilter;
-import org.apache.maven.index.Field;
-import org.apache.maven.index.Indexer;
-import org.apache.maven.index.IteratorSearchRequest;
-import org.apache.maven.index.MAVEN;
+import org.apache.maven.index.*;
 import org.apache.maven.index.context.ExistingLuceneIndexMismatchException;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
@@ -24,11 +11,7 @@ import org.apache.maven.index.creator.MavenArchetypeArtifactInfoIndexCreator;
 import org.apache.maven.index.creator.MavenPluginArtifactInfoIndexCreator;
 import org.apache.maven.index.creator.MinimalArtifactInfoIndexCreator;
 import org.apache.maven.index.expr.SourcedSearchExpression;
-import org.apache.maven.index.updater.IndexUpdateRequest;
-import org.apache.maven.index.updater.IndexUpdateResult;
-import org.apache.maven.index.updater.IndexUpdater;
-import org.apache.maven.index.updater.ResourceFetcher;
-import org.apache.maven.index.updater.WagonHelper;
+import org.apache.maven.index.updater.*;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.events.TransferEvent;
@@ -40,6 +23,14 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This class downloads and updates the remote maven index.
@@ -155,7 +146,7 @@ public class MavenIndex {
     /**
      * Returns a timestamp of the last local repository index update.
      * 
-     * @returna timestamp of the last local repository index update.
+     * @return A timestamp of the last local repository index update.
      */
     public Date getLastUpdateLocalRepo() {
         return getIndexingContext().getTimestamp();
@@ -174,10 +165,6 @@ public class MavenIndex {
     /**
      * Update the local index.
      * 
-     * @param username
-     *            the username for authentication (optional)
-     * @param password
-     *            the password for authentication (optional)
      * @throws ComponentLookupException
      * @throws IOException
      */
