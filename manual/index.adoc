@@ -3,7 +3,7 @@ jQAssistant <info@jqassistant.org> @jqassistant
 
 image::jQA_logo.png[]
 
-The powerful Quality Assurance Tool for your Java application.
+Your Software. Your Structures. Your Rules.
 
 This document describes the concepts of jQAssistant and usage information.
 
@@ -12,6 +12,8 @@ This document describes the concepts of jQAssistant and usage information.
 include::include/overview.adoc[]
 
 include::include/license.adoc[]
+
+include::include/requirements.adoc[]
 
 include::include/quickstart.adoc[]
 
