@@ -30,6 +30,7 @@
     <scanner>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenPomXmlFileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenModelScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin</class>
     </scanner>
     <rules>
