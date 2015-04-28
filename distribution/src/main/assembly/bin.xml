@@ -15,6 +15,13 @@
             <scope>provided</scope>
             <unpack>true</unpack>
         </dependencySet>
+        <dependencySet>
+            <outputDirectory>sonar</outputDirectory>
+            <includes>
+                <include>com.buschmais.jqassistant.sonar:jqassistant.sonar.plugin:jar:${project.version}</include>
+            </includes>
+            <scope>provided</scope>
+        </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>

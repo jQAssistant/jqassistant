@@ -32,7 +32,7 @@
                     </execution>
                     <execution>
                         <id>release-notes</id>
-                        <phase>generate-resources</phase>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>process-asciidoc</goal>
                         </goals>
@@ -152,8 +152,6 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.sonar</groupId>
             <artifactId>jqassistant.sonar.plugin</artifactId>
-            <type>zip</type>
-            <classifier>distribution</classifier>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
