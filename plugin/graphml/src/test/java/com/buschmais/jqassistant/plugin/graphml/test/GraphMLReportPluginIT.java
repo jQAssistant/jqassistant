@@ -49,8 +49,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         }
     }
 
-    @Override
-    protected Map<String, Object> getReportProperties() {
+    private Map<String, Object> getReportProperties() {
         Map<String, Object> properties = new HashMap<>();
         properties.put("graphml.report.directory", REPORT_DIR);
         return properties;
@@ -68,7 +67,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
 
     private void reportAndVerify(String conceptName) throws Exception {
         List<AnalysisListener> reportWriters = new LinkedList<>();
-        reportWriters.addAll(getReportPlugins());
+        reportWriters.addAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
         this.analyzer = new AnalyzerImpl(this.store, compositeReportWriter, new TestConsole());
         scanClasses(TestClass.class);

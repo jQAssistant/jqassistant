@@ -1,28 +1,5 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.MAVEN;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.ArtifactResult;
-import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
-import org.mockito.internal.verification.Times;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -35,6 +12,23 @@ import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import org.apache.maven.index.ArtifactInfo;
+import org.apache.maven.index.MAVEN;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.junit.Test;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
+import org.mockito.internal.verification.Times;
+
+import java.io.File;
+import java.net.URL;
+import java.util.*;
+
+import static org.mockito.Mockito.*;
 
 public class MavenRepositoryScannerTest {
 
@@ -122,6 +116,7 @@ public class MavenRepositoryScannerTest {
         }
 
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin();
+        plugin.configure(new HashMap<String, Object>());
         plugin.scanRepository(new URL(repoUrl), scanner, mavenIndex, artifactResolver);
         verify(mavenIndex).updateIndex();
         verify(store).find(MavenRepositoryDescriptor.class, repoUrl);

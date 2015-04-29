@@ -23,10 +23,14 @@ TIP: For incremental scanning it is necessary that the exactly the same URL is p
 .Configuration properties
 [options="header"]
 |====
-| Property     			  | Description																			| Default
-| m2repo.directory 		  | A directory path. This directory is the target for Maven indices and artifacts. 	| ./jqassistant/data/m2repo
-| m2repo.delete.artifacts | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
+| Property     			 | Description																		   | Default
+| m2repo.directory 		 | A directory path. This directory is the target for Maven indices and artifacts. 	   | ./jqassistant/data/m2repo
+| m2repo.filter.includes | A comma separated list of artifact patterns to include in the scan                  | include all artifacts
+| m2repo.filter.excludes | A comma separated list of artifact patterns to exclude from the scan                | exclude no artifacts
+| m2repo.artifacts.keep  | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
 |====
+
+TIP: The artifact patterns follow the Maven syntax, i.e. "[groupId]:[artifactId]:[type]:[version]" or "[groupId]:[artifactId]:[type]:[classifier]:[version]" and allow using wildcards.
 
 === :Maven:Repository
 A remote Maven repository.

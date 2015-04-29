@@ -26,7 +26,6 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 
     private static final String M2REPO_DATA_DIR = "target/m2repo/data";
 
-    @Override
     protected Map<String, Object> getScannerProperties() {
         return MapBuilder.<String, Object> create("m2repo.directory", M2REPO_DATA_DIR).get();
     }
@@ -72,7 +71,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
         try {
             startServer("1");
             store.beginTransaction();
-            getScanner().scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
+            getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
 
             Long countJarNodes = store.executeQuery("MATCH (n:Maven:Artifact:Jar) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
             final int expectedJarNodes = 40;
@@ -95,12 +94,12 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
         try {
             startServer("2");
             store.beginTransaction();
-            getScanner().scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
+            getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
             Long countArtifactNodes = store.executeQuery("MATCH (n:RepositoryArtifact) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
             Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(2), countArtifactNodes);
 
             startServer("3");
-            getScanner().scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
+            getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
 
             countArtifactNodes = store.executeQuery("MATCH (n:RepositoryArtifact) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
             Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(4), countArtifactNodes); // 2 JARs. 2 POMs
@@ -124,5 +123,4 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             stopServer();
         }
     }
-
 }
