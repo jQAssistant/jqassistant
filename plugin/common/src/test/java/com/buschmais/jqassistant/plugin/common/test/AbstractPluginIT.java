@@ -1,26 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.*;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -39,6 +18,26 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 import com.buschmais.xo.api.Query;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.*;
+
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Abstract base class for analysis tests.
@@ -136,26 +135,6 @@ public abstract class AbstractPluginIT {
         ruleSet = ruleSetReader.read(sources);
     }
 
-    /**
-     * Provides the properties to be passed to scanner plugins. May be
-     * overwritten by test classes.
-     * 
-     * @return The scanner properties.
-     */
-    protected Map<String, Object> getScannerProperties() {
-        return Collections.emptyMap();
-    }
-
-    /**
-     * Provides the properties to be passed to report plugins. May be
-     * overwritten by test classes.
-     *
-     * @return The report properties.
-     */
-    protected Map<String, Object> getReportProperties() {
-        return Collections.emptyMap();
-    }
-
     @Before
     public void initializeAnalyzer() {
         reportWriter = new InMemoryReportWriter();
@@ -172,7 +151,8 @@ public abstract class AbstractPluginIT {
      */
     @Before
     public void startStore() throws PluginRepositoryException {
-        store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName());
+        store =
+                new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         boolean resetStore = true;
@@ -198,12 +178,22 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return new ScannerImpl(store, getScannerPlugins(), scopePluginRepository.getScopes());
+        return getScanner(Collections.<String, Object>emptyMap());
     }
 
     /**
-     * Determines the directory a class is located in (e.g.
-     * target/test-classes).
+     * Return an initialized scanner instance.
+     * 
+     * @param properties
+     *            The properties to be used to configure the plugins.
+     * @return The artifact scanner instance.
+     */
+    protected Scanner getScanner(Map<String, Object> properties) {
+        return new ScannerImpl(store, getScannerPlugins(properties), scopePluginRepository.getScopes());
+    }
+
+    /**
+     * Determines the directory a class is located in (e.g. target/test-classes).
      * 
      * @param rootClass
      *            The class.
@@ -219,8 +209,7 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Deletes the node representing the test class and all its relationships
-     * from the store.
+     * Deletes the node representing the test class and all its relationships from the store.
      * 
      * @throws IOException
      *             If an error occurs.
@@ -235,20 +224,18 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
-     * .
+     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      * 
      * @param query
      *            The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object> emptyMap());
+        return query(query, Collections.<String, Object>emptyMap());
     }
 
     /**
-     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
-     * .
+     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
      * 
      * @param query
      *            The query.
@@ -335,17 +322,17 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    private List<ScannerPlugin<?, ?>> getScannerPlugins() {
+    private List<ScannerPlugin<?, ?>> getScannerPlugins(Map<String, Object> properties) {
         try {
-            return scannerPluginRepository.getScannerPlugins(getScannerProperties());
+            return scannerPluginRepository.getScannerPlugins(properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }
     }
 
-    protected List<ReportPlugin> getReportPlugins() {
+    protected List<ReportPlugin> getReportPlugins(Map<String, Object> properties) {
         try {
-            return reportPluginRepository.getReportPlugins(getReportProperties());
+            return reportPluginRepository.getReportPlugins(properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get report plugins.", e);
         }
