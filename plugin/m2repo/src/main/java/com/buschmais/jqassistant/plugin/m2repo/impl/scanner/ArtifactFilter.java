@@ -44,4 +44,8 @@ public class ArtifactFilter {
         return (includesFilter == null || includesFilter.include(artifact)) && (excludesFilter == null || excludesFilter.include(artifact));
     }
 
+    @Override
+    public String toString() {
+        return "ArtifactFilter{" + "includesFilter=" + includesFilter + ", excludesFilter=" + excludesFilter + '}';
+    }
 }

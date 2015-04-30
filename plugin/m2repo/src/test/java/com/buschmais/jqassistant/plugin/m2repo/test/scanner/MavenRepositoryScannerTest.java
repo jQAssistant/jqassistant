@@ -6,10 +6,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactResolver;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.DefaultFileResource;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.*;
 import com.buschmais.xo.api.Query.Result;
 import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import org.apache.maven.index.ArtifactInfo;
@@ -28,6 +25,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.*;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class MavenRepositoryScannerTest {
@@ -39,8 +37,8 @@ public class MavenRepositoryScannerTest {
     private static final String CLASSIFIER = "jar";
     private static final String PACKAGING = "jar";
 
-    private void buildWhenThenReturn(ArtifactResolver artifactResolver, ArtifactInfo info) throws ArtifactResolutionException {
-        when(artifactResolver.downloadArtifact(Mockito.any(Artifact.class))).thenReturn(newArtifactResultList(info));
+    private void buildWhenThenReturn(ArtifactProvider artifactProvider, ArtifactInfo info) throws ArtifactResolutionException {
+        when(artifactProvider.downloadArtifact(any(Artifact.class))).thenReturn(newArtifactResultList(info));
     }
 
     private Iterable<ArtifactInfo> getTestArtifactInfos() {
@@ -72,10 +70,10 @@ public class MavenRepositoryScannerTest {
         Iterable<ArtifactInfo> testArtifactInfos = getTestArtifactInfos();
         when(mavenIndex.getArtifactsSince(new Date(0))).thenReturn(testArtifactInfos);
 
-        ArtifactResolver artifactResolver = mock(ArtifactResolver.class);
+        ArtifactProvider artifactProvider = mock(ArtifactProvider.class);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
-            buildWhenThenReturn(artifactResolver, artifactInfo);
+            buildWhenThenReturn(artifactProvider, artifactInfo);
         }
         final String repoUrl = "http://example.com/m2repo";
 
@@ -115,10 +113,14 @@ public class MavenRepositoryScannerTest {
             when(scanner.scan(new DefaultFileResource(artifactFile), artifactFile.getAbsolutePath(), null)).thenReturn(descriptor);
         }
 
+        ArtifactFilter artifactFilter = mock(ArtifactFilter.class);
+        when(artifactFilter.match(any(org.apache.maven.artifact.Artifact.class))).thenReturn(true);
+
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin();
         plugin.configure(new HashMap<String, Object>());
-        plugin.scanRepository(new URL(repoUrl), scanner, mavenIndex, artifactResolver);
+        plugin.scanRepository(new URL(repoUrl), scanner, mavenIndex, artifactProvider, artifactFilter);
         verify(mavenIndex).updateIndex();
+        verify(artifactFilter, Mockito.times(3)).match(any(org.apache.maven.artifact.Artifact.class));
         verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
         verify(store, new Times(3)).addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
     }

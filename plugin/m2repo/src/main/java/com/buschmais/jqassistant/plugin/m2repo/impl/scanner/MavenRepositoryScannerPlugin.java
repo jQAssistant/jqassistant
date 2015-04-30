@@ -50,7 +50,8 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
     private boolean keepArtifacts = true;
 
-    private ArtifactFilter artifactFilter;
+    private List<String> includeFilter;
+    private List<String> excludeFilter;
 
     /** {@inheritDoc} */
     @Override
@@ -108,9 +109,8 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         if (getProperties().containsKey(PROPERTY_NAME_ARTIFACTS_KEEP)) {
             keepArtifacts = BooleanUtils.toBoolean(Objects.toString(getProperties().get(PROPERTY_NAME_ARTIFACTS_KEEP)));
         }
-        List<String> includeFilter = getFilterPattern(PROPERTY_NAME_FILTER_INCLUDES);
-        List<String> excludeFilter = getFilterPattern(PROPERTY_NAME_FILTER_EXCLUDES);
-        artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
+        includeFilter = getFilterPattern(PROPERTY_NAME_FILTER_INCLUDES);
+        excludeFilter = getFilterPattern(PROPERTY_NAME_FILTER_EXCLUDES);
     }
 
     /**
@@ -122,16 +122,17 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      */
     private List<String> getFilterPattern(String propertyName) {
         String patterns = getStringProperty(propertyName, null);
-        if (patterns != null) {
-            List<String> result = new ArrayList<>();
-            for (String pattern : patterns.split(",")) {
-                String trimmed = pattern.trim();
-                if (!trimmed.isEmpty()) {
-                    result.add(trimmed);
-                }
+        if (patterns == null) {
+            return null;
+        }
+        List<String> result = new ArrayList<>();
+        for (String pattern : patterns.split(",")) {
+            String trimmed = pattern.trim();
+            if (!trimmed.isEmpty()) {
+                result.add(trimmed);
             }
         }
-        return null;
+        return result;
     }
 
     /**
@@ -162,18 +163,18 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            the {@link Scanner}
      * @param repoDescriptor
      *            the {@link MavenRepositoryDescriptor}
-     * @param artifactResolver
-     *            the {@link ArtifactResolver}
+     * @param artifactProvider
+     *            the {@link ArtifactProvider}
+     * @param artifactFilter
+     *            The {@link ArtifactFilter}.
      * @param artifactInfo
      *            informations about the searches artifact
      * @throws IOException
      */
-    private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactResolver artifactResolver,
-            ArtifactInfo artifactInfo) throws IOException {
-        PomModelBuilder pomModelBuilder = new PomModelBuilder(artifactResolver);
-        List<ArtifactResult> artifactResults;
+    private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactProvider artifactProvider,
+            ArtifactFilter artifactFilter, ArtifactInfo artifactInfo) throws IOException {
+        PomModelBuilder pomModelBuilder = new PomModelBuilder(artifactProvider);
         Store store = scanner.getContext().getStore();
-
         String groupId = artifactInfo.getFieldValue(MAVEN.GROUP_ID);
         String artifactId = artifactInfo.getFieldValue(MAVEN.ARTIFACT_ID);
         String classifier = artifactInfo.getFieldValue(MAVEN.CLASSIFIER);
@@ -183,7 +184,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
         if (artifactFilter.match(RepositoryUtils.toArtifact(artifact))) {
             try {
-                artifactResults = artifactResolver.downloadArtifact(artifact);
+                List<ArtifactResult> artifactResults = artifactProvider.downloadArtifact(artifact);
                 for (ArtifactResult artifactResult : artifactResults) {
                     final Artifact resolvedArtifact = artifactResult.getArtifact();
                     long lastModified = artifactInfo.lastModified;
@@ -281,9 +282,9 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         // handles the remote maven index
         MavenIndex mavenIndex = new MavenIndex(item, localRepoDir, username, password);
         // used to resolve (remote) artifacts
-        ArtifactResolver artifactResolver = new ArtifactResolver(item, localRepoDir, username, password);
-
-        return scanRepository(item, scanner, mavenIndex, artifactResolver);
+        ArtifactProvider artifactProvider = new ArtifactProvider(item, localRepoDir, username, password);
+        ArtifactFilter artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
+        return scanRepository(item, scanner, mavenIndex, artifactProvider, artifactFilter);
     }
 
     /**
@@ -295,13 +296,15 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            the Scanner
      * @param mavenIndex
      *            the MavenIndex
-     * @param artifactResolver
+     * @param artifactProvider
      *            the ArtifactResolver
+     * @param artifactFilter
+     *            The artifact filter to apply.
      * @return a MavenRepositoryDescriptor
      * @throws IOException
      */
-    public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactResolver artifactResolver)
-            throws IOException {
+    public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactProvider artifactProvider,
+            ArtifactFilter artifactFilter) throws IOException {
 
         Store store = scanner.getContext().getStore();
         // the MavenRepositoryDescriptor
@@ -319,7 +322,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         // Search artifacts
         Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
         for (ArtifactInfo ai : searchResponse) {
-            resolveAndScan(scanner, repoDescriptor, artifactResolver, ai);
+            resolveAndScan(scanner, repoDescriptor, artifactProvider, artifactFilter, ai);
         }
         mavenIndex.closeCurrentIndexingContext();
         mavenIndex = null;

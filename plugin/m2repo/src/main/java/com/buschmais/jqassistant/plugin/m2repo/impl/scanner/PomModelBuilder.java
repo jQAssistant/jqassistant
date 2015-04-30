@@ -26,8 +26,8 @@ public class PomModelBuilder {
 
     private ModelResolverImpl modelResolver;
 
-    public PomModelBuilder(ArtifactResolver artifactResolver) {
-        this.modelResolver = new ModelResolverImpl(artifactResolver);
+    public PomModelBuilder(ArtifactProvider artifactProvider) {
+        this.modelResolver = new ModelResolverImpl(artifactProvider);
     }
 
     public Model getEffectiveModel(final File pomFile) throws IOException {
@@ -46,45 +46,64 @@ public class PomModelBuilder {
         }
     }
 
+    /*
+     * A custom model validator
+     */
     private static class ModelValidatorImpl implements ModelValidator {
 
+        @Override
         public void validateRawModel(Model model, ModelBuildingRequest request, ModelProblemCollector problems) {
         }
 
+        @Override
         public void validateEffectiveModel(Model model, ModelBuildingRequest request, ModelProblemCollector problems) {
             if (problems instanceof ModelProblemCollectorExt) {
-                clearProblems(problems, "problems", "severities");
+                clearProblems(problems, "problems", true);
+                clearProblems(problems, "severities", false);
             }
         }
 
-        private void clearProblems(ModelProblemCollector problems, String... fields) {
-            for (String field : fields) {
-                try {
-                    Field problemsList = problems.getClass().getDeclaredField(field);
-                    problemsList.setAccessible(true);
-                    Collection<?> value = (Collection<?>) problemsList.get(problems);
-                    if (!value.isEmpty()) {
+        /**
+         * Clear a relevant fields contained in the {@link ModelProblemCollector} to suppress errors.
+         * 
+         * @param problems
+         *            The problems.
+         * @param field
+         *            The field to clear.
+         * @param logValue
+         *            <code>true</code> if the value shall be logged.
+         */
+        private void clearProblems(ModelProblemCollector problems, String field, boolean logValue) {
+            try {
+                Field problemsList = problems.getClass().getDeclaredField(field);
+                problemsList.setAccessible(true);
+                Collection<?> value = (Collection<?>) problemsList.get(problems);
+                if (!value.isEmpty()) {
+                    if (logValue) {
                         LOGGER.warn("Problems have been detected while validating POM model: {}.", value);
-                        value.clear();
                     }
-                } catch (NoSuchFieldException e) {
-                    LOGGER.warn("Cannot find field " + field, e);
-                } catch (IllegalAccessException e) {
-                    LOGGER.warn("Cannot access field " + field, e);
+                    value.clear();
                 }
+            } catch (NoSuchFieldException e) {
+                LOGGER.warn("Cannot find field " + field, e);
+            } catch (IllegalAccessException e) {
+                LOGGER.warn("Cannot access field " + field, e);
             }
         }
     }
 
+    /**
+     * A {@link ModelResolver} implementation.
+     */
     public class ModelResolverImpl implements ModelResolver {
 
-        private ArtifactResolver artifactResolver;
+        private ArtifactProvider artifactProvider;
 
         /**
          * Constructor.
          */
-        public ModelResolverImpl(ArtifactResolver artifactResolver) {
-            this.artifactResolver = artifactResolver;
+        public ModelResolverImpl(ArtifactProvider artifactProvider) {
+            this.artifactProvider = artifactProvider;
         }
 
         @Override
@@ -92,7 +111,7 @@ public class PomModelBuilder {
             Artifact artifact = new DefaultArtifact(groupId, artifactId, null, "pom", version);
             List<ArtifactResult> artifactResults;
             try {
-                artifactResults = artifactResolver.downloadArtifact(artifact);
+                artifactResults = artifactProvider.downloadArtifact(artifact);
             } catch (ArtifactResolutionException e) {
                 throw new UnresolvableModelException("Cannot resolve artifact.", groupId, artifactId, version, e);
             }
@@ -108,7 +127,7 @@ public class PomModelBuilder {
 
         @Override
         public ModelResolver newCopy() {
-            return new ModelResolverImpl(artifactResolver);
+            return new ModelResolverImpl(artifactProvider);
         }
     }
 }

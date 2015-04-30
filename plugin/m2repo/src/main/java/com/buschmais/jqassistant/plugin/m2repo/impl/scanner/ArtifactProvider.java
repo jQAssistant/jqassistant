@@ -35,9 +35,9 @@ import java.util.Set;
  * 
  * @author pherklotz
  */
-public class ArtifactResolver {
+public class ArtifactProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactProvider.class);
 
     private final RemoteRepository repository;
     private final RepositorySystem repositorySystem;
@@ -52,7 +52,7 @@ public class ArtifactResolver {
      * @param localDirectory
      *            the directory for resolved artifacts
      */
-    public ArtifactResolver(URL repositoryUrl, File localDirectory) {
+    public ArtifactProvider(URL repositoryUrl, File localDirectory) {
         this(repositoryUrl, localDirectory, null, null);
     }
 
@@ -68,7 +68,7 @@ public class ArtifactResolver {
      * @param password
      *            a password for authentication
      */
-    public ArtifactResolver(URL repositoryUrl, File localDirectory, String username, String password) {
+    public ArtifactProvider(URL repositoryUrl, File localDirectory, String username, String password) {
         String url = StringUtils.replace(repositoryUrl.toString(), repositoryUrl.getUserInfo() + "@", StringUtils.EMPTY);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + url);
@@ -96,18 +96,18 @@ public class ArtifactResolver {
      *             in case of a unresolvable artifacts
      */
     public List<ArtifactResult> downloadArtifact(Artifact artifact) throws ArtifactResolutionException {
-        Set<ArtifactRequest> artifactRequests = newArtifactRequests(artifact);
+        Set<ArtifactRequest> artifactRequests = createArtifactRequests(artifact);
         return repositorySystem.resolveArtifacts(session, artifactRequests);
     }
 
     /**
-     * Creates a new {@link ArtifactRequest} Object with the artifact GAV and the repository.
+     * Creates a list of {@link ArtifactRequest}s for each artifact. The result will always include the "pom" artifact for building the model.
      *
      * @param artifact
      *            The artifact.
      * @return The list of artifacts to retrieve.
      */
-    private Set<ArtifactRequest> newArtifactRequests(Artifact artifact) {
+    private Set<ArtifactRequest> createArtifactRequests(Artifact artifact) {
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(artifact);
         final List<RemoteRepository> repositories = Arrays.asList(repository);
@@ -137,7 +137,6 @@ public class ArtifactResolver {
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         locator.addService(TransporterFactory.class, FileTransporterFactory.class);
         locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-
         return locator.getService(RepositorySystem.class);
     }
 
@@ -152,7 +151,6 @@ public class ArtifactResolver {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         LocalRepository localRepo = new LocalRepository(localDirectory + "/repository");
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
-
         return session;
     }
 }
