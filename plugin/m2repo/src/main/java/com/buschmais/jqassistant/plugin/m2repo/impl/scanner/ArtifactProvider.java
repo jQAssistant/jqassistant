@@ -1,12 +1,16 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
+import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.repository.Authentication;
@@ -22,13 +26,6 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Transfers artifacts from a remote repository to a local repository.
@@ -87,7 +84,7 @@ public class ArtifactProvider {
     }
 
     /**
-     * Resolves an artifact with the given properties and transfers it in a local repository.
+     * Resolves the given artifact.
      *
      * @param artifact
      *            the artifact to resolve
@@ -95,36 +92,25 @@ public class ArtifactProvider {
      * @throws ArtifactResolutionException
      *             in case of a unresolvable artifacts
      */
-    public List<ArtifactResult> downloadArtifact(Artifact artifact) throws ArtifactResolutionException {
-        Set<ArtifactRequest> artifactRequests = createArtifactRequests(artifact);
-        return repositorySystem.resolveArtifacts(session, artifactRequests);
+    public ArtifactResult getArtifact(Artifact artifact) throws ArtifactResolutionException {
+        ArtifactRequest artifactRequest = createArtifactRequest(artifact);
+        return repositorySystem.resolveArtifact(session, artifactRequest);
     }
 
     /**
-     * Creates a list of {@link ArtifactRequest}s for each artifact. The result will always include the "pom" artifact for building the model.
+     * Creates a list of {@link ArtifactRequest}s for each artifact. The result
+     * will always include the "pom" artifact for building the model.
      *
      * @param artifact
      *            The artifact.
      * @return The list of artifacts to retrieve.
      */
-    private Set<ArtifactRequest> createArtifactRequests(Artifact artifact) {
+    private ArtifactRequest createArtifactRequest(Artifact artifact) {
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(artifact);
         final List<RemoteRepository> repositories = Arrays.asList(repository);
         artifactRequest.setRepositories(repositories);
-
-        Set<ArtifactRequest> requests = new HashSet<>();
-        requests.add(artifactRequest);
-
-        if (!("pom".equals(artifact.getExtension().toLowerCase()))) {
-            ArtifactRequest pomRequest = new ArtifactRequest();
-            Artifact pomArtifact = new DefaultArtifact(artifact.getGroupId(), artifact.getArtifactId(), null, "pom", artifact.getVersion());
-            pomRequest.setArtifact(pomArtifact);
-            pomRequest.setRepositories(repositories);
-            requests.add(pomRequest);
-        }
-
-        return requests;
+        return artifactRequest;
     }
 
     /**

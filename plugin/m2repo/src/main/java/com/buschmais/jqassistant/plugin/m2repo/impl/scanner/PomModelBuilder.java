@@ -1,5 +1,10 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Collection;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.building.*;
@@ -13,12 +18,6 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.List;
 
 public class PomModelBuilder {
 
@@ -37,6 +36,7 @@ public class PomModelBuilder {
         req.setPomFile(pomFile);
         req.setModelResolver(modelResolver);
         req.setValidationLevel(ModelBuildingRequest.VALIDATION_LEVEL_MINIMAL);
+        req.setSystemProperties(System.getProperties());
         builder.setModelValidator(new ModelValidatorImpl());
         try {
             return builder.build(req).getEffectiveModel();
@@ -109,13 +109,12 @@ public class PomModelBuilder {
         @Override
         public ModelSource resolveModel(String groupId, String artifactId, String version) throws UnresolvableModelException {
             Artifact artifact = new DefaultArtifact(groupId, artifactId, null, "pom", version);
-            List<ArtifactResult> artifactResults;
+            ArtifactResult artifactResult;
             try {
-                artifactResults = artifactProvider.downloadArtifact(artifact);
+                artifactResult = artifactProvider.getArtifact(artifact);
             } catch (ArtifactResolutionException e) {
                 throw new UnresolvableModelException("Cannot resolve artifact.", groupId, artifactId, version, e);
             }
-            ArtifactResult artifactResult = artifactResults.get(0);
             final File file = artifactResult.getArtifact().getFile();
             return new FileModelSource(file);
         }

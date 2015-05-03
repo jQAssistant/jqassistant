@@ -110,7 +110,9 @@ public abstract class AbstractTask implements Task {
     protected Store getStore() {
         File directory = new File(storeDirectory);
         LOG.info("Opening store in directory '" + directory.getAbsolutePath() + "'");
-        directory.getParentFile().mkdirs();
+        if (!directory.exists()) {
+            directory.getParentFile().mkdirs();
+        }
         return new EmbeddedGraphStore(directory.getAbsolutePath());
     }
 

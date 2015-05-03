@@ -6,10 +6,9 @@ import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor;
-import com.buschmais.xo.neo4j.api.annotation.Indexed;
-import com.buschmais.xo.neo4j.api.annotation.Label;
-import com.buschmais.xo.neo4j.api.annotation.Property;
-import com.buschmais.xo.neo4j.api.annotation.Relation;
+import com.buschmais.xo.api.annotation.ResultOf;
+import com.buschmais.xo.api.annotation.ResultOf.Parameter;
+import com.buschmais.xo.neo4j.api.annotation.*;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
@@ -58,6 +57,18 @@ public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
      *            the last scan date.
      */
     void setLastScanDate(long scanDate);
+
+    @ResultOf
+    @Cypher("MATCH (r:Maven:Repository)-[:CONTAINS_ARTIFACT]->(a:RepositoryArtifact) WHERE id(r)={this} and a.mavenCoordinates={coordinates} RETURN a")
+    RepositoryArtifactDescriptor getArtifact(@Parameter("coordinates") String coordinates);
+
+    @ResultOf
+    @Cypher("MATCH (r:Maven:Repository)-[:CONTAINS_ARTIFACT]->(a:RepositoryArtifact) WHERE id(r)={this} and a.mavenCoordinates={coordinates} and a.lastModified={lastModified} RETURN a")
+    RepositoryArtifactDescriptor getSnapshotArtifact(@Parameter("coordinates") String coordinates, @Parameter("lastModified") long lastModified);
+
+    @ResultOf
+    @Cypher("MATCH (r:Maven:Repository)-[:CONTAINS_ARTIFACT]->(a:RepositoryArtifact) WHERE id(r)={this} and a.mavenCoordinates={coordinates} AND a.lastModified<>{lastModified} RETURN a ORDER BY a.lastModified DESC LIMIT 1")
+    RepositoryArtifactDescriptor getLastSnapshot(@Parameter("coordinates") String coordinates, @Parameter("lastModified") long lastModified);
 
     @Relation("CONTAINS_ARTIFACT")
     @Retention(RetentionPolicy.RUNTIME)

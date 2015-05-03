@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -66,7 +65,6 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
         return (Class<T>) typeParameter;
     }
 
-
     /**
      * Get all properties.
      * 
@@ -99,34 +97,24 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
      * @param defaultValue
      *            The default value.
      * @return The value.
-     * @throws IOException
      */
     protected String getStringProperty(String name, String defaultValue) {
-        return getProperty(name, String.class, defaultValue);
+        Object value = properties.get(name);
+        return value != null ? value.toString() : defaultValue;
     }
 
     /**
-     * Get a property using a specified type.
-     * 
+     * Get a property as boolean.
+     *
      * @param name
      *            The name.
-     * @param type
-     *            The type.
      * @param defaultValue
      *            The default value.
-     * @param <T>
-     *            The type.
      * @return The value.
      */
-    private <T> T getProperty(String name, Class<T> type, T defaultValue) {
-        Object o = properties.get(name);
-        if (o == null) {
-            return defaultValue;
-        }
-        if (!type.isAssignableFrom(o.getClass())) {
-            throw new IllegalArgumentException("Found value of type " + o.getClass().getName() + "for property " + name + ", expected " + type.getName());
-        }
-        return type.cast(o);
+    protected Boolean getBooleanProperty(String name, Boolean defaultValue) {
+        Object value = properties.get(name);
+        return value != null ? Boolean.valueOf(value.toString()) : defaultValue;
     }
 
     /**

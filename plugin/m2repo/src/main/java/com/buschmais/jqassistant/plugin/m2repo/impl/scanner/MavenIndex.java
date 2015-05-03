@@ -1,5 +1,13 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.maven.index.*;
@@ -23,14 +31,6 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This class downloads and updates the remote maven index.
@@ -178,11 +178,11 @@ public class MavenIndex {
             throw new IOException(e);
         }
 
-        LOGGER.info("Updating maven index...");
+        LOGGER.info("Updating repository index...");
         TransferListener listener = new AbstractTransferListener() {
             @Override
             public void transferCompleted(TransferEvent transferEvent) {
-                LOGGER.debug("Downloading " + transferEvent.getResource().getName() + " successfull");
+                LOGGER.debug("Downloading " + transferEvent.getResource().getName() + " successful");
             }
 
             @Override
@@ -206,11 +206,11 @@ public class MavenIndex {
         IndexUpdateRequest updateRequest = new IndexUpdateRequest(indexingContext, resourceFetcher);
         IndexUpdateResult updateResult = indexUpdater.fetchAndUpdateIndex(updateRequest);
         if (updateResult.isFullUpdate()) {
-            LOGGER.debug("Full update happened!");
+            LOGGER.debug("Received a full update.");
         } else if (updateResult.getTimestamp() == null) {
             LOGGER.debug("No update needed, index is up to date!");
         } else {
-            LOGGER.debug("Incremental update happened, change covered " + lastUpdateLocalRepo + " - " + updateResult.getTimestamp() + " period.");
+            LOGGER.debug("Received an incremental update, change covered " + lastUpdateLocalRepo + " - " + updateResult.getTimestamp() + " period.");
         }
     }
 

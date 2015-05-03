@@ -1,20 +1,21 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.javastack.httpd.HttpServer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 
@@ -102,7 +103,13 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
 
             countArtifactNodes = store.executeQuery("MATCH (n:RepositoryArtifact) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
-            Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(4), countArtifactNodes); // 2 JARs. 2 POMs
+            Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(4), countArtifactNodes); // 2
+                                                                                                                    // JARs,
+                                                                                                                    // 2
+                                                                                                                    // POMs
+                                                                                                                    // (for
+                                                                                                                    // each
+                                                                                                                    // snapshot)
             // Check relations
             MavenRepositoryDescriptor repositoryDescriptor = store.executeQuery("MATCH (n:Maven:Repository) RETURN n").getSingleResult()
                     .get("n", MavenRepositoryDescriptor.class);
