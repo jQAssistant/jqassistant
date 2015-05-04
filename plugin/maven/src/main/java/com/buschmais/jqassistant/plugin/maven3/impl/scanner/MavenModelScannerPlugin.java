@@ -83,7 +83,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         pomXmlDescriptor.setFullQualifiedName(model.getId());
         MavenArtifactDescriptor artifact =
                 ArtifactResolver.resolve(new ModelCoordinates(model), MavenArtifactDescriptor.class, scanner.getContext());
-        pomXmlDescriptor.setDescribes(artifact);
+        pomXmlDescriptor.getDescribes().add(artifact);
         return pomXmlDescriptor;
     }
 

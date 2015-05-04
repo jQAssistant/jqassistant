@@ -1,10 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import org.apache.maven.model.Dependency;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import org.apache.maven.model.Dependency;
 
 public class ArtifactResolver {
 
@@ -23,7 +22,7 @@ public class ArtifactResolver {
         String getId();
     }
 
-    static class ArtifactCoordinates implements Coordinates {
+    public static class ArtifactCoordinates implements Coordinates {
 
         /**
          * The artifact type for test jars.
@@ -33,7 +32,7 @@ public class ArtifactResolver {
         private org.apache.maven.artifact.Artifact artifact;
         private boolean testJar;
 
-        ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact, boolean testJar) {
+        public ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact, boolean testJar) {
             this.artifact = artifact;
             this.testJar = testJar;
         }
@@ -69,7 +68,7 @@ public class ArtifactResolver {
         }
     }
 
-    static class DependencyCoordinates implements Coordinates {
+    public static class DependencyCoordinates implements Coordinates {
 
         private Dependency dependency;
 
@@ -141,7 +140,7 @@ public class ArtifactResolver {
      *            The maven coordinates.
      * @return The id.
      */
-    private static String createId(Coordinates coordinates) {
+    public static String createId(Coordinates coordinates) {
         StringBuffer id = new StringBuffer();
         if (coordinates.getGroupId() != null) {
             id.append(coordinates.getGroupId());
