@@ -1,17 +1,21 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.building.*;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.resolution.InvalidRepositoryException;
 import org.apache.maven.model.resolution.ModelResolver;
 import org.apache.maven.model.resolution.UnresolvableModelException;
 import org.apache.maven.model.validation.ModelValidator;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -24,12 +28,14 @@ public class PomModelBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(PomModelBuilder.class);
 
     private ModelResolverImpl modelResolver;
+    private MavenXpp3Reader mavenXpp3Reader;
 
     public PomModelBuilder(ArtifactProvider artifactProvider) {
         this.modelResolver = new ModelResolverImpl(artifactProvider);
+        this.mavenXpp3Reader = new MavenXpp3Reader();
     }
 
-    public Model getEffectiveModel(final File pomFile) throws IOException {
+    public Model getModel(final File pomFile) throws IOException {
         DefaultModelBuilder builder = new DefaultModelBuilderFactory().newInstance();
         ModelBuildingRequest req = new DefaultModelBuildingRequest();
         req.setProcessPlugins(false);
@@ -42,7 +48,15 @@ public class PomModelBuilder {
             return builder.build(req).getEffectiveModel();
         } catch (ModelBuildingException e) {
             LOGGER.warn("Cannot build effective model for " + pomFile.getAbsolutePath(), e);
-            return null;
+            return getRawModel(pomFile, e);
+        }
+    }
+
+    private Model getRawModel(File pomFile, ModelBuildingException e) throws IOException {
+        try (InputStream stream = new FileInputStream(pomFile)) {
+            return mavenXpp3Reader.read(stream);
+        } catch (XmlPullParserException e2) {
+            throw new IOException("Cannot read POM descriptor.", e);
         }
     }
 
