@@ -1,12 +1,16 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.ArtifactResolver;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.RepositoryUtils;
@@ -20,15 +24,12 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A scanner for (remote) maven repositories.
@@ -61,13 +62,11 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     }
 
     /**
-     * Returns a string with the artifact coordinates
-     * (groupId:artifactId:[classifier:]version).
+     * Returns a string with the artifact coordinates (groupId:artifactId:[classifier:]version).
      * 
      * @param artifact
      *            the artifact
-     * @return a string with the artifact coordinates
-     *         (groupId:artifactId:[classifier:]version).
+     * @return a string with the artifact coordinates (groupId:artifactId:[classifier:]version).
      */
     private String getCoordinates(Artifact artifact) {
         StringBuilder builder = new StringBuilder(artifact.getGroupId()).append(":");
@@ -131,8 +130,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     }
 
     /**
-     * Resolves, scans and add the artifact to the
-     * {@link MavenRepositoryDescriptor}.
+     * Resolves, scans and add the artifact to the {@link MavenRepositoryDescriptor}.
      * 
      * @param scanner
      *            the {@link Scanner}
@@ -148,8 +146,8 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            informations about the searches artifact
      * @throws IOException
      */
-    private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactProvider artifactProvider, PomModelBuilder pomModelBuilder,
-            ArtifactFilter artifactFilter, ArtifactInfo artifactInfo) throws IOException {
+    private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactProvider artifactProvider,
+            PomModelBuilder pomModelBuilder, ArtifactFilter artifactFilter, ArtifactInfo artifactInfo) throws IOException {
         Store store = scanner.getContext().getStore();
         String groupId = artifactInfo.getFieldValue(MAVEN.GROUP_ID);
         String artifactId = artifactInfo.getFieldValue(MAVEN.ARTIFACT_ID);
@@ -165,29 +163,35 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                 ArtifactResult modelArtifactResult = artifactProvider.getArtifact(modelArtifact);
                 File modelArtifactFile = modelArtifactResult.getArtifact().getFile();
                 Model model = pomModelBuilder.getModel(modelArtifactFile);
-                DefaultArtifact mainArtifact = new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getPackaging(), model.getVersion());
-                if (getArtifact(repoDescriptor, mainArtifact, lastModified) == null) {
+                DefaultArtifact mainArtifact =
+                        new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getPackaging(), model.getVersion());
+                MavenArtifactDescriptor mavenArtifactDescriptor = null;
+                if (scanArtifacts && !artifact.equals(modelArtifact)) {
+                    ArtifactResult artifactResult = artifactProvider.getArtifact(artifact);
+                    File artifactFile = artifactResult.getArtifact().getFile();
+                    Descriptor descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
+                    mavenArtifactDescriptor = store.addDescriptorType(descriptor, MavenArtifactDescriptor.class);
+                    mavenArtifactDescriptor.setGroup(groupId);
+                    mavenArtifactDescriptor.setName(artifactId);
+                    mavenArtifactDescriptor.setVersion(version);
+                    mavenArtifactDescriptor.setClassifier(classifier);
+                    mavenArtifactDescriptor.setType(packaging);
+                    mavenArtifactDescriptor.setFullQualifiedName(ArtifactResolver.createId(new ArtifactResolver.ArtifactCoordinates(
+                            RepositoryUtils.toArtifact(artifact), false)));
+                    if (!keepArtifacts) {
+                        artifactFile.delete();
+                    }
+                }
+                RepositoryArtifactDescriptor repositoryArtifactDescriptor = getModel(repoDescriptor, mainArtifact, lastModified);
+                if (repositoryArtifactDescriptor == null) {
                     MavenPomXmlDescriptor modelDescriptor = scanner.scan(model, modelArtifactFile.getAbsolutePath(), null);
-                    addRepositoryArtifact(repoDescriptor, modelDescriptor, mainArtifact, lastModified, store);
+                    repositoryArtifactDescriptor = addRepositoryArtifact(repoDescriptor, modelDescriptor, mainArtifact, lastModified, store);
                     if (!keepArtifacts) {
                         modelArtifactFile.delete();
                     }
                 }
-                if (scanArtifacts) {
-                    Descriptor descriptor = getArtifact(repoDescriptor, artifact, lastModified);
-                    if (descriptor == null) {
-                        ArtifactResult artifactResult = artifactProvider.getArtifact(artifact);
-                        File artifactFile = artifactResult.getArtifact().getFile();
-                        descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
-                        if (descriptor != null) {
-                            addRepositoryArtifact(repoDescriptor, descriptor, artifact, lastModified, store);
-                        } else {
-                            LOGGER.debug("Could not scan artifact: " + artifactFile.getAbsoluteFile());
-                        }
-                        if (!keepArtifacts) {
-                            artifactFile.delete();
-                        }
-                    }
+                if (mavenArtifactDescriptor != null) {
+                    repositoryArtifactDescriptor.getDescribes().add(mavenArtifactDescriptor);
                 }
             } catch (ArtifactResolutionException e) {
                 LOGGER.warn(e.getMessage());
@@ -195,7 +199,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         }
     }
 
-    private RepositoryArtifactDescriptor getArtifact(MavenRepositoryDescriptor repositoryDescriptor, Artifact artifact, long lastModified) {
+    private RepositoryArtifactDescriptor getModel(MavenRepositoryDescriptor repositoryDescriptor, Artifact artifact, long lastModified) {
         String coordinates = getCoordinates(artifact);
         if (artifact.isSnapshot()) {
             return repositoryDescriptor.getSnapshotArtifact(coordinates, lastModified);
@@ -204,15 +208,11 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         }
     }
 
-    private void addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, Descriptor descriptor, Artifact artifact, long lastModified, Store store) {
+    private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, MavenPomXmlDescriptor descriptor,
+            Artifact artifact, long lastModified, Store store) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
         artifactDescriptor.setLastModified(lastModified);
         artifactDescriptor.setContainingRepository(repoDescriptor);
-        artifactDescriptor.setGroupId(artifact.getGroupId());
-        artifactDescriptor.setArtifactId(artifact.getArtifactId());
-        artifactDescriptor.setClassifier(artifact.getClassifier());
-        artifactDescriptor.setPackaging(artifact.getExtension());
-        artifactDescriptor.setVersion(artifact.getVersion());
         String coordinates = getCoordinates(artifact);
         artifactDescriptor.setMavenCoordinates(coordinates);
         RepositoryArtifactDescriptor lastSnapshot = repoDescriptor.getLastSnapshot(coordinates, lastModified);
@@ -220,6 +220,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             artifactDescriptor.setPredecessorArtifact(lastSnapshot);
             lastSnapshot.setContainingRepository(null);
         }
+        return artifactDescriptor;
     }
 
     /** {@inheritDoc} */

@@ -1,8 +1,7 @@
 package com.buschmais.jqassistant.plugin.m2repo.api.model;
 
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor.ContainsArtifact;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenCoordinatesDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
@@ -14,7 +13,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
  * @author pherklotz
  */
 @Label("RepositoryArtifact")
-public interface RepositoryArtifactDescriptor extends MavenDescriptor, MavenCoordinatesDescriptor {
+public interface RepositoryArtifactDescriptor extends MavenPomXmlDescriptor {
 
     /**
      * The containing repository.

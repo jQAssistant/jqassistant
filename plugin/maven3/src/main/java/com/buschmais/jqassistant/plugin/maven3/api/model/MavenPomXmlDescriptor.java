@@ -1,9 +1,5 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import java.util.List;
-
-import org.apache.maven.model.Model;
-
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
@@ -11,6 +7,9 @@ import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+import org.apache.maven.model.Model;
+
+import java.util.List;
 
 /**
  * Descriptor for a pom.xml.
@@ -23,9 +22,7 @@ public interface MavenPomXmlDescriptor extends MavenDescriptor, BaseProfileDescr
         FullQualifiedNameDescriptor, NamedDescriptor, XmlFileDescriptor {
 
     @Relation("DESCRIBES")
-    MavenArtifactDescriptor getDescribes();
-
-    void setDescribes(MavenArtifactDescriptor artifact);
+    List<MavenArtifactDescriptor> getDescribes();
 
     /**
      * Get the location of the parent project, if one exists. Values from the
