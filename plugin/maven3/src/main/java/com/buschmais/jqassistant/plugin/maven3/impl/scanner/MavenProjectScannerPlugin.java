@@ -1,17 +1,5 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -20,6 +8,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ClasspathScopedTypeResolver;
@@ -29,6 +18,18 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ArtifactCoordinates;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 
 /**
  * A scanner plugin for maven projects.
@@ -50,7 +51,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
         Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
         for (Artifact dependency : project.getDependencyArtifacts()) {
-            ArtifactFileDescriptor dependencyDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(dependency, false),
+            ArtifactFileDescriptor dependencyDescriptor = ArtifactResolver.resolve(new ArtifactCoordinates(dependency, false),
                     JavaArtifactFileDescriptor.class, scanner.getContext());
             if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                 mainArtifactDependencies.put(dependencyDescriptor, dependency);
@@ -59,14 +60,14 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         }
         Artifact artifact = project.getArtifact();
         // main artifact
-        JavaClassesDirectoryDescriptor mainArtifactDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(artifact, false),
+        JavaClassesDirectoryDescriptor mainArtifactDescriptor = ArtifactResolver.resolve(new ArtifactCoordinates(artifact, false),
                 JavaClassesDirectoryDescriptor.class, scanner.getContext());
         addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
         mainArtifactDescriptor = scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
         // test artifact
         String testOutputDirectory = project.getBuild().getTestOutputDirectory();
         if (testOutputDirectory != null) {
-            JavaClassesDirectoryDescriptor testArtifactDescriptor = ArtifactResolver.resolve(new ArtifactResolver.ArtifactCoordinates(artifact, true),
+            JavaClassesDirectoryDescriptor testArtifactDescriptor = ArtifactResolver.resolve(new ArtifactCoordinates(artifact, true),
                     JavaClassesDirectoryDescriptor.class, scanner.getContext());
             testArtifactDependencies.put(mainArtifactDescriptor, artifact);
             addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());

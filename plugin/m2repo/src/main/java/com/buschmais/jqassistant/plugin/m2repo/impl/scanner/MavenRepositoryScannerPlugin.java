@@ -5,12 +5,13 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ArtifactCoordinates;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.RepositoryUtils;
@@ -176,8 +177,8 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     mavenArtifactDescriptor.setVersion(version);
                     mavenArtifactDescriptor.setClassifier(classifier);
                     mavenArtifactDescriptor.setType(packaging);
-                    mavenArtifactDescriptor.setFullQualifiedName(ArtifactResolver.createId(new ArtifactResolver.ArtifactCoordinates(
-                            RepositoryUtils.toArtifact(artifact), false)));
+                    ArtifactResolver.setCoordinates(mavenArtifactDescriptor,
+                            new ArtifactCoordinates(RepositoryUtils.toArtifact(artifact), false));
                     if (!keepArtifacts) {
                         artifactFile.delete();
                     }

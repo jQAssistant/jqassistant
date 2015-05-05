@@ -6,7 +6,12 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.*;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.DependencyCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ModelCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ParentCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.PluginCoordinates;
 import org.apache.maven.model.*;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 
@@ -23,7 +28,6 @@ import java.util.Set;
  * @author ronald.kunzmann@buschmais.com
  */
 public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomXmlDescriptor> {
-
 
     @Override
     public void initialize() {
@@ -445,7 +449,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      */
     private MavenArtifactDescriptor getMavenArtifactDescriptor(Dependency dependency, ScannerContext scannerContext) {
         MavenArtifactDescriptor artifactDescriptor =
-                ArtifactResolver.resolve(new ArtifactResolver.DependencyCoordinates(dependency), MavenArtifactDescriptor.class, scannerContext);
+                ArtifactResolver.resolve(new DependencyCoordinates(dependency), MavenArtifactDescriptor.class, scannerContext);
         return artifactDescriptor;
     }
 
@@ -474,119 +478,4 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         return childDescriptor;
     }
 
-    private static final class ModelCoordinates implements ArtifactResolver.Coordinates {
-
-        private Model model;
-
-        public ModelCoordinates(Model model) {
-            this.model = model;
-        }
-
-        @Override
-        public String getGroupId() {
-            return model.getGroupId();
-        }
-
-        @Override
-        public String getArtifactId() {
-            return model.getArtifactId();
-        }
-
-        @Override
-        public String getClassifier() {
-            return null;
-        }
-
-        @Override
-        public String getType() {
-            return model.getPackaging();
-        }
-
-        @Override
-        public String getVersion() {
-            return model.getVersion();
-        }
-
-        @Override
-        public String getId() {
-            return model.getId();
-        }
-    }
-
-    private static final class ParentCoordinates implements ArtifactResolver.Coordinates {
-        private Parent parent;
-
-        public ParentCoordinates(Parent parent) {
-            this.parent = parent;
-        }
-
-        @Override
-        public String getGroupId() {
-            return parent.getGroupId();
-        }
-
-        @Override
-        public String getArtifactId() {
-            return parent.getArtifactId();
-        }
-
-        @Override
-        public String getClassifier() {
-            return null;
-        }
-
-        @Override
-        public String getType() {
-            return "pom";
-        }
-
-        @Override
-        public String getVersion() {
-            return parent.getVersion();
-        }
-
-        @Override
-        public String getId() {
-            return parent.getId();
-        }
-    }
-
-    private static final class PluginCoordinates implements ArtifactResolver.Coordinates {
-
-        private Plugin plugin;
-
-        public PluginCoordinates(Plugin plugin) {
-            this.plugin = plugin;
-        }
-
-        @Override
-        public String getGroupId() {
-            return plugin.getGroupId();
-        }
-
-        @Override
-        public String getArtifactId() {
-            return plugin.getArtifactId();
-        }
-
-        @Override
-        public String getClassifier() {
-            return null;
-        }
-
-        @Override
-        public String getType() {
-            return null;
-        }
-
-        @Override
-        public String getVersion() {
-            return plugin.getVersion();
-        }
-
-        @Override
-        public String getId() {
-            return plugin.getId();
-        }
-    }
 }
