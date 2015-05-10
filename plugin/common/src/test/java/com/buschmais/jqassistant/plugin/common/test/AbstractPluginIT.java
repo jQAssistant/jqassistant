@@ -61,7 +61,15 @@ public abstract class AbstractPluginIT {
         protected void starting(Description description) {
             Class<?> testClass = description.getTestClass();
             try {
-                testMethod = testClass.getDeclaredMethod(description.getMethodName());
+                String methodName = description.getMethodName();
+
+                // Handles method names of parameterized JUnit tests
+                // They end with an index as "[0]"
+                if (methodName.matches(".*\\[\\d+\\]$")) {
+                    methodName = methodName.replaceAll("\\[\\d+\\]", "");
+                }
+
+                testMethod = testClass.getDeclaredMethod(methodName);
             } catch (NoSuchMethodException e) {
                 Assert.fail(e.getMessage());
             }
