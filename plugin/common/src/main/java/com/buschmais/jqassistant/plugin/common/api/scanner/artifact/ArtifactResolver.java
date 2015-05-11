@@ -42,8 +42,7 @@ public class ArtifactResolver {
      *            The artifact tpe.
      */
     public static <A extends ArtifactDescriptor> void setCoordinates(A artifactDescriptor, Coordinates coordinates) {
-        // String id = getArtifactId(coordinates);
-        // artifactDescriptor.setFullQualifiedName(id);
+        artifactDescriptor.setFullQualifiedName(getArtifactId(coordinates));
         artifactDescriptor.setGroup(coordinates.getGroup());
         artifactDescriptor.setName(coordinates.getName());
         artifactDescriptor.setVersion(coordinates.getVersion());
