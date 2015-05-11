@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.artifact;
+package com.buschmais.jqassistant.plugin.common.api.scanner.artifact;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -42,8 +42,8 @@ public class ArtifactResolver {
      *            The artifact tpe.
      */
     public static <A extends ArtifactDescriptor> void setCoordinates(A artifactDescriptor, Coordinates coordinates) {
-        String id = getArtifactId(coordinates);
-        artifactDescriptor.setFullQualifiedName(id);
+        // String id = getArtifactId(coordinates);
+        // artifactDescriptor.setFullQualifiedName(id);
         artifactDescriptor.setGroup(coordinates.getGroup());
         artifactDescriptor.setName(coordinates.getName());
         artifactDescriptor.setVersion(coordinates.getVersion());
@@ -69,6 +69,7 @@ public class ArtifactResolver {
         String id = getArtifactId(coordinates);
         A artifactDescriptor = scannerContext.getStore().create(descriptorType, id);
         setCoordinates(artifactDescriptor, coordinates);
+        artifactDescriptor.setFullQualifiedName(getArtifactId(coordinates));
         return artifactDescriptor;
     }
 
