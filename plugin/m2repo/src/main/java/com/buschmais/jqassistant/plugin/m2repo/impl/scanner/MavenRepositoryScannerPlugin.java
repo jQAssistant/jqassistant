@@ -1,13 +1,16 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.RepositoryUtils;
@@ -21,18 +24,12 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ArtifactCoordinates;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A scanner for (remote) maven repositories.
@@ -50,8 +47,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private static final String PROPERTY_NAME_ARTIFACTS_SCAN = "m2repo.artifacts.scan";
     private static final String PROPERTY_NAME_FILTER_INCLUDES = "m2repo.filter.includes";
     private static final String PROPERTY_NAME_FILTER_EXCLUDES = "m2repo.filter.excludes";
-
-    private static final String DATEFORMAT_TIMESTAMP_SNAPSHOT = "yyyyMMddHHmmss";
 
     private File localDirectory;
 
@@ -164,13 +159,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         String version = artifactInfo.getFieldValue(MAVEN.VERSION);
         long lastModified = artifactInfo.lastModified;
         Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, packaging, version);
-        String effectiveVersion;
-        if (artifact.isSnapshot()) {
-            String timeStamp = new SimpleDateFormat(DATEFORMAT_TIMESTAMP_SNAPSHOT).format(new Date(lastModified));
-            effectiveVersion = artifact.getBaseVersion() + "-" + timeStamp;
-        } else {
-            effectiveVersion = version;
-        }
 
         Artifact modelArtifact = new DefaultArtifact(groupId, artifactId, null, "pom", version);
 
@@ -194,8 +182,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     File artifactFile = artifactResult.getArtifact().getFile();
                     Descriptor descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
                     mavenArtifactDescriptor = store.addDescriptorType(descriptor, MavenArtifactDescriptor.class);
-
-                    ArtifactResolver.setCoordinates(mavenArtifactDescriptor, new ArtifactCoordinates(RepositoryUtils.toArtifact(artifact), false));
+                    ArtifactResolver.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
                     repositoryArtifactDescriptor.getDescribes().add(mavenArtifactDescriptor);
                     if (!keepArtifacts) {
                         artifactFile.delete();
