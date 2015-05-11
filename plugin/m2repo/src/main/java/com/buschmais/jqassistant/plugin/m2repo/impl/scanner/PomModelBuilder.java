@@ -1,5 +1,14 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.maven.model.*;
 import org.apache.maven.model.building.*;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -14,15 +23,6 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.List;
-import java.util.Properties;
 
 public class PomModelBuilder {
 
@@ -80,7 +80,8 @@ public class PomModelBuilder {
         }
 
         /**
-         * Clear a relevant fields contained in the {@link ModelProblemCollector} to suppress errors.
+         * Clear a relevant fields contained in the
+         * {@link ModelProblemCollector} to suppress errors.
          * 
          * @param problems
          *            The problems.
@@ -442,16 +443,6 @@ public class PomModelBuilder {
         @Override
         public File getProjectDirectory() {
             return delegate.getProjectDirectory();
-        }
-
-        @Override
-        public String getId() {
-            return delegate.getId();
-        }
-
-        @Override
-        public String toString() {
-            return delegate.toString();
         }
 
         @Override

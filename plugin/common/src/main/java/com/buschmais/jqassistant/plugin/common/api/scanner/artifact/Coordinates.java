@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.artifact;
+package com.buschmais.jqassistant.plugin.common.api.scanner.artifact;
 
 /**
  * Created by dimahler on 5/5/2015.
