@@ -1,4 +1,5 @@
 == Requirements
 
 - Java Runtime Environment 7 or later (it's still possible to analyze applications compiled with older Java versions).
+- at least 512MB of RAM
 
