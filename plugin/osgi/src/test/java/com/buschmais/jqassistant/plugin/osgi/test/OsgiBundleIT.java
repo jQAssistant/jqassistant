@@ -8,6 +8,7 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescript
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsMapContaining.hasValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
@@ -18,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -156,13 +158,17 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Matcher<Constraint> constraintMatcher = constraint("osgi-bundle:UnusedInternalType");
         Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
+
+        // The explicitly given type information for Matcher#not() is required to allow
+        // us to compile this class with JDK 8u31
+        // Oliver B. Fischer, 25th May 2015
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Response.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Service.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Response.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Service.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
         store.commitTransaction();
     }
 
@@ -184,11 +190,15 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         Collection<Result<Constraint>> constraintViolations = reportWriter.getConstraintResults().values();
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UnusedPublicClass.class))))));
         assertThat(constraintViolations, hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(ServiceImpl.class))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Response.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Service.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
-        assertThat(constraintViolations, not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
+
+        // The explicitly given type information for Matcher#not() is required to allow
+        // us to compile this class with JDK 8u31
+        // Oliver B. Fischer, 25th May 2015
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Request.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Response.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Service.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
+        assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
         store.commitTransaction();
     }
 }
