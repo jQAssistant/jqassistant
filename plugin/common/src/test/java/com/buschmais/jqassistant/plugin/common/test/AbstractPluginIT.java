@@ -34,6 +34,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
 import static org.junit.Assert.assertNotNull;
