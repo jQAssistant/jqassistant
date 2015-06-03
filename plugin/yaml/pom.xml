@@ -9,6 +9,9 @@
 
     <artifactId>jqassistant.plugin.yaml</artifactId>
 
+    <inceptionYear>2015</inceptionYear>
+    <description>A YAML file scanner for jQAssistant.</description>
+
     <build>
         <plugins>
             <plugin>
