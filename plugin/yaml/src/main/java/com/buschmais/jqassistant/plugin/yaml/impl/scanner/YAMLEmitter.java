@@ -141,65 +141,7 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 case SCALAR:
-                    if (processingContext.isContext(MAPPING_START)) {
-                        YAMLKeyDescriptor key4 = currentScanner.getContext().getStore()
-                                                              .create(YAMLKeyDescriptor.class);
-
-                        String name = ((ScalarEvent) event).getValue();
-                        String fqn = processingContext. buildNextFQN(name);
-
-                        key4.setName(trimToEmpty(name));
-                        key4.setFullQualifiedName(trimToEmpty(fqn));
-
-                        processingContext.push(key4);
-                        processingContext.pushContextEvent(typeOfEvent);
-
-                    } else if (processingContext.isContext(MAPPING_START, SCALAR)) {
-                        YAMLValueDescriptor valueDescriptor = currentScanner.getContext().getStore()
-                                                                            .create(YAMLValueDescriptor.class);
-
-                        String value = ((ScalarEvent)event).getValue();
-
-                        valueDescriptor.setValue(value);
-                        YAMLKeyDescriptor key__ = processingContext.peek();
-                        key__.getValues().add(valueDescriptor);
-
-                        processingContext.pushContextEvent(typeOfEvent);
-
-                    } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
-                        processingContext.popContextEvent(2);
-                        YAMLKeyDescriptor keyAA = processingContext.pop();
-
-                        YAMLKeyBucket bucketBB = processingContext.peek();
-                        bucketBB.getKeys().add(keyAA);
-
-                        YAMLKeyDescriptor nextKey = currentScanner.getContext().getStore()
-                                                                  .create(YAMLKeyDescriptor.class);
-
-                        String name = ((ScalarEvent) event).getValue();
-                        String fqn = processingContext.buildNextFQN(name);
-
-                        nextKey.setName(trimToEmpty(name));
-                        nextKey.setFullQualifiedName(trimToEmpty(fqn));
-
-                        processingContext.push(nextKey);
-                        processingContext.pushContextEvent(typeOfEvent);
-
-                    } else if (processingContext.isContext(SEQUENCE_START)) {
-                        YAMLValueDescriptor valueDescriptor = currentScanner.getContext()
-                                                                            .getStore()
-                                                                            .create(YAMLValueDescriptor.class);
-
-                        String value = ((ScalarEvent) event).getValue();
-
-                        valueDescriptor.setValue(trimToEmpty(value));
-
-                        YAMLValueBucket valueBucket = processingContext.peek();
-                        valueBucket.getValues().add(valueDescriptor);
-                    }
-
-//                    System.out.println(typeOfEvent);
-//                    System.out.println(((ScalarEvent) event).getValue());
+                    handleScalarEvent((ScalarEvent) event, typeOfEvent);
                     break;
 
                 default:
@@ -210,6 +152,65 @@ class YAMLEmitter implements Emitable {
         }
 
 
+    }
+
+    protected void handleScalarEvent(ScalarEvent event, EventType typeOfEvent) {
+        if (processingContext.isContext(MAPPING_START)) {
+            YAMLKeyDescriptor key = currentScanner.getContext().getStore()
+                                                  .create(YAMLKeyDescriptor.class);
+
+            String name = event.getValue();
+            String fqn = processingContext. buildNextFQN(name);
+
+            key.setName(trimToEmpty(name));
+            key.setFullQualifiedName(trimToEmpty(fqn));
+
+            processingContext.push(key);
+            processingContext.pushContextEvent(typeOfEvent);
+
+        } else if (processingContext.isContext(MAPPING_START, SCALAR)) {
+            YAMLValueDescriptor value = currentScanner.getContext().getStore()
+                                                      .create(YAMLValueDescriptor.class);
+
+            String rawValue = event.getValue();
+
+            value.setValue(rawValue);
+            YAMLKeyDescriptor key = processingContext.peek();
+            key.getValues().add(value);
+
+            processingContext.pushContextEvent(typeOfEvent);
+
+        } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
+            processingContext.popContextEvent(2);
+            YAMLKeyDescriptor key = processingContext.pop();
+
+            YAMLKeyBucket bucket = processingContext.peek();
+            bucket.getKeys().add(key);
+
+            YAMLKeyDescriptor nextKey = currentScanner.getContext().getStore()
+                                                      .create(YAMLKeyDescriptor.class);
+
+            String name = event.getValue();
+            String fqn = processingContext.buildNextFQN(name);
+
+            nextKey.setName(trimToEmpty(name));
+            nextKey.setFullQualifiedName(trimToEmpty(fqn));
+
+            processingContext.push(nextKey);
+            processingContext.pushContextEvent(typeOfEvent);
+
+        } else if (processingContext.isContext(SEQUENCE_START)) {
+            YAMLValueDescriptor value = currentScanner.getContext()
+                                                      .getStore()
+                                                      .create(YAMLValueDescriptor.class);
+
+            String rawValue = event.getValue();
+
+            value.setValue(trimToEmpty(rawValue));
+
+            YAMLValueBucket bucket = processingContext.peek();
+            bucket.getValues().add(value);
+        }
     }
 
     private EventType toEventType(Event event) {
