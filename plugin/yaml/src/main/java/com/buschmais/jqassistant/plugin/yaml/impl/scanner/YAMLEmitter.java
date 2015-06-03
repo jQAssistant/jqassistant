@@ -1,14 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyBucket;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLValueBucket;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLValueDescriptor;
-import org.apache.commons.lang.StringUtils;
 import org.yaml.snakeyaml.emitter.Emitable;
 import org.yaml.snakeyaml.events.DocumentEndEvent;
 import org.yaml.snakeyaml.events.DocumentStartEvent;
@@ -23,7 +21,6 @@ import org.yaml.snakeyaml.events.StreamStartEvent;
 
 import java.io.IOException;
 
-import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.DOCUMENT_END;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.DOCUMENT_START;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.MAPPING_START;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.SCALAR;
@@ -113,30 +110,11 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 case MAPPING_START:
-                    processingContext.pushContextEvent(typeOfEvent);
+                    handleMappingStartEvent(typeOfEvent);
                     break;
 
                 case MAPPING_END:
-                    if (processingContext.isContext(MAPPING_START)) {
-                        processingContext.popContextEvent(1);
-                    } else if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START, SCALAR, SCALAR)) {
-                        processingContext.popContextEvent(4);
-                        YAMLKeyDescriptor currentKey = processingContext.pop();
-                        YAMLKeyDescriptor parentKeyOfThis= processingContext.pop();
-                        parentKeyOfThis.getKeys().add(currentKey);
-                        YAMLKeyBucket parent = processingContext.peek();
-                        parent.getKeys().add(parentKeyOfThis);
-                    } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
-                        processingContext.popContextEvent(3);
-
-                        YAMLKeyDescriptor keyDescriptor = processingContext.pop();
-
-                        YAMLKeyBucket bucket2 = processingContext.peek();
-                        bucket2.getKeys().add(keyDescriptor);
-
-                    } else {
-                        throw new IllegalStateException("Unsupported YAML structure.");
-                    }
+                    handleMappingEndEvent();
 
                     break;
 
@@ -152,6 +130,33 @@ class YAMLEmitter implements Emitable {
         }
 
 
+    }
+
+    protected void handleMappingStartEvent(EventType typeOfEvent) {
+        processingContext.pushContextEvent(typeOfEvent);
+    }
+
+    protected void handleMappingEndEvent() {
+        if (processingContext.isContext(MAPPING_START)) {
+            processingContext.popContextEvent(1);
+        } else if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START, SCALAR, SCALAR)) {
+            processingContext.popContextEvent(4);
+            YAMLKeyDescriptor currentKey = processingContext.pop();
+            YAMLKeyDescriptor parentKeyOfThis= processingContext.pop();
+            parentKeyOfThis.getKeys().add(currentKey);
+            YAMLKeyBucket parent = processingContext.peek();
+            parent.getKeys().add(parentKeyOfThis);
+        } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
+            processingContext.popContextEvent(3);
+
+            YAMLKeyDescriptor keyDescriptor = processingContext.pop();
+
+            YAMLKeyBucket bucket2 = processingContext.peek();
+            bucket2.getKeys().add(keyDescriptor);
+
+        } else {
+            throw new IllegalStateException("Unsupported YAML structure.");
+        }
     }
 
     protected void handleScalarEvent(ScalarEvent event, EventType typeOfEvent) {
