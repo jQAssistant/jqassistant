@@ -49,14 +49,7 @@ class YAMLEmitter implements Emitable {
         if (typeOfEvent != null) {
             switch (typeOfEvent) {
                 case DOCUMENT_START:
-                    YAMLDocumentDescriptor doc = currentScanner.getContext()
-                                                               .getStore()
-                                                               .create(YAMLDocumentDescriptor.class);
-                    processingContext.pushContextEvent(typeOfEvent);
-                    processingContext.push(doc);
-
-
-
+                    handleDocumentStartEvent(typeOfEvent);
                     break;
 
                 case SEQUENCE_START:
@@ -98,15 +91,7 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 case DOCUMENT_END:
-                    if (!processingContext.isContext(DOCUMENT_START)) {
-                        throw new IllegalStateException("Not supported YAML structure.");
-                    } else {
-
-                        processingContext.popContextEvent(1);
-                        YAMLDocumentDescriptor doc2 = processingContext.pop();
-                        fileDescriptor.getDocuments().add(doc2);
-                    }
-
+                    handleDocumentEndEvent();
                     break;
 
                 case MAPPING_START:
@@ -130,6 +115,25 @@ class YAMLEmitter implements Emitable {
         }
 
 
+    }
+
+    protected void handleDocumentEndEvent() {
+        if (!processingContext.isContext(DOCUMENT_START)) {
+            throw new IllegalStateException("Not supported YAML structure.");
+        } else {
+
+            processingContext.popContextEvent(1);
+            YAMLDocumentDescriptor doc2 = processingContext.pop();
+            fileDescriptor.getDocuments().add(doc2);
+        }
+    }
+
+    protected void handleDocumentStartEvent(EventType typeOfEvent) {
+        YAMLDocumentDescriptor doc = currentScanner.getContext()
+                                                   .getStore()
+                                                   .create(YAMLDocumentDescriptor.class);
+        processingContext.pushContextEvent(typeOfEvent);
+        processingContext.push(doc);
     }
 
     protected void handleMappingStartEvent(EventType typeOfEvent) {
