@@ -5,7 +5,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import java.util.List;
 
-@Label("YAMLDocument")
+@Label("Document")
 public interface YAMLDocumentDescriptor extends YAMLDescriptor, YAMLKeyBucket,
                                                 YAMLValueBucket {
 
