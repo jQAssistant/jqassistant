@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 import java.util.List;
 
-@Label("YAMLValue")
+@Label("Value")
 public interface YAMLValueDescriptor extends YAMLDescriptor, YAMLValueBucket {
     @Indexed
     @Property("value")

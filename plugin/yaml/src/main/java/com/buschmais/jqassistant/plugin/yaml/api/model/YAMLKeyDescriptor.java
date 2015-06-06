@@ -10,7 +10,7 @@ import java.util.ArrayDeque;
 import java.util.LinkedList;
 import java.util.List;
 
-@Label("YAMLKey")
+@Label("Key")
 public interface YAMLKeyDescriptor extends YAMLDescriptor, NamedDescriptor,
                                            YAMLKeyBucket, YAMLValueBucket,
                                            FullQualifiedNameDescriptor {
