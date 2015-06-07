@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner.util;
 
-import com.buschmais.jqassistant.plugin.yaml.api.model.XXXX;
-import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLValueDescriptor;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
