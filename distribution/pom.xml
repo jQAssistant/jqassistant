@@ -360,6 +360,21 @@
             <classifier>javadoc</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.yaml</artifactId>
+            <version>${project.version}</version>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.yaml</artifactId>
+            <version>${project.version}</version>
+            <classifier>javadoc</classifier>
+            <scope>provided</scope>
+        </dependency>
         <!-- Examples -->
         <dependency>
             <groupId>com.buschmais.jqassistant.examples</groupId>
