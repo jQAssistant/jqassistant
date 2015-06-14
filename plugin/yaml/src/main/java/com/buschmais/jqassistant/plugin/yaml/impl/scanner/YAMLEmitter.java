@@ -53,41 +53,11 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 case SEQUENCE_START:
-
-                    if (processingContext.isContext(SEQUENCE_START)) {
-                        // Sequence of sequences...
-                        YAMLValueDescriptor valueDescriptor = currentScanner.getContext().getStore()
-                                                                            .create(YAMLValueDescriptor.class);
-
-                        processingContext.push(valueDescriptor);
-                        processingContext.pushContextEvent(typeOfEvent);
-
-                    } else {
-                        processingContext.pushContextEvent(typeOfEvent);
-                    }
-
+                    handleSequenceStart(typeOfEvent);
                     break;
 
                 case SEQUENCE_END:
-                    if (processingContext.isContext(MAPPING_START, SCALAR, SEQUENCE_START)) {
-                        processingContext.popContextEvent(2);
-                        YAMLKeyDescriptor keyForSequence = processingContext.pop();
-                        YAMLKeyBucket keyBucketForSequence = processingContext.peek();
-
-                        keyBucketForSequence.getKeys().add(keyForSequence);
-                    } else if (processingContext.isContext(DOCUMENT_START, SEQUENCE_START)) {
-                        processingContext.popContextEvent(1);
-                    } else if (processingContext.isContext(SEQUENCE_START, SEQUENCE_START)) {
-                        processingContext.popContextEvent(1);
-                        YAMLValueDescriptor vaDes1 = processingContext.pop();
-                        YAMLValueBucket bbb = processingContext.peek();
-
-                        bbb.getValues().add(vaDes1);
-                        System.out.println(typeOfEvent);
-                    } else {
-                        throw new IllegalStateException("Not supported YAML structure.");
-                    }
-
+                    handleSequenceEnd(typeOfEvent);
                     break;
 
                 case DOCUMENT_END:
@@ -115,6 +85,41 @@ class YAMLEmitter implements Emitable {
         }
 
 
+    }
+
+    protected void handleSequenceStart(EventType typeOfEvent) {
+        if (processingContext.isContext(SEQUENCE_START)) {
+            // Sequence of sequences...
+            YAMLValueDescriptor valueDescriptor = currentScanner.getContext().getStore()
+                                                                .create(YAMLValueDescriptor.class);
+
+            processingContext.push(valueDescriptor);
+            processingContext.pushContextEvent(typeOfEvent);
+
+        } else {
+            processingContext.pushContextEvent(typeOfEvent);
+        }
+    }
+
+    protected void handleSequenceEnd(EventType typeOfEvent) {
+        if (processingContext.isContext(MAPPING_START, SCALAR, SEQUENCE_START)) {
+            processingContext.popContextEvent(2);
+            YAMLKeyDescriptor keyForSequence = processingContext.pop();
+            YAMLKeyBucket keyBucketForSequence = processingContext.peek();
+
+            keyBucketForSequence.getKeys().add(keyForSequence);
+        } else if (processingContext.isContext(DOCUMENT_START, SEQUENCE_START)) {
+            processingContext.popContextEvent(1);
+        } else if (processingContext.isContext(SEQUENCE_START, SEQUENCE_START)) {
+            processingContext.popContextEvent(1);
+            YAMLValueDescriptor vaDes1 = processingContext.pop();
+            YAMLValueBucket bbb = processingContext.peek();
+
+            bbb.getValues().add(vaDes1);
+            System.out.println(typeOfEvent);
+        } else {
+            throw new IllegalStateException("Not supported YAML structure.");
+        }
     }
 
     protected void handleDocumentEndEvent() {
