@@ -6,8 +6,6 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
-import java.util.ArrayDeque;
-import java.util.LinkedList;
 import java.util.List;
 
 @Label("Key")
