@@ -70,7 +70,6 @@ class YAMLEmitter implements Emitable {
 
                 case MAPPING_END:
                     handleMappingEndEvent();
-
                     break;
 
                 case SCALAR:
@@ -78,13 +77,9 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 default:
-                    // @todo
-//                    System.out.println(typeOfEvent);
-
+                    unsupportedYAMLStructure();
             }
         }
-
-
     }
 
     protected void handleSequenceStart(EventType typeOfEvent) {
@@ -112,24 +107,23 @@ class YAMLEmitter implements Emitable {
             processingContext.popContextEvent(1);
         } else if (processingContext.isContext(SEQUENCE_START, SEQUENCE_START)) {
             processingContext.popContextEvent(1);
-            YAMLValueDescriptor vaDes1 = processingContext.pop();
+            YAMLValueDescriptor value = processingContext.pop();
             YAMLValueBucket bbb = processingContext.peek();
 
-            bbb.getValues().add(vaDes1);
-            System.out.println(typeOfEvent);
+            bbb.getValues().add(value);
         } else {
-            throw new IllegalStateException("Not supported YAML structure.");
+            unsupportedYAMLStructure();
         }
     }
 
     protected void handleDocumentEndEvent() {
         if (!processingContext.isContext(DOCUMENT_START)) {
-            throw new IllegalStateException("Not supported YAML structure.");
+            unsupportedYAMLStructure();
         } else {
 
             processingContext.popContextEvent(1);
-            YAMLDocumentDescriptor doc2 = processingContext.pop();
-            fileDescriptor.getDocuments().add(doc2);
+            YAMLDocumentDescriptor doc = processingContext.pop();
+            fileDescriptor.getDocuments().add(doc);
         }
     }
 
@@ -148,23 +142,26 @@ class YAMLEmitter implements Emitable {
     protected void handleMappingEndEvent() {
         if (processingContext.isContext(MAPPING_START)) {
             processingContext.popContextEvent(1);
+
         } else if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START, SCALAR, SCALAR)) {
             processingContext.popContextEvent(4);
             YAMLKeyDescriptor currentKey = processingContext.pop();
             YAMLKeyDescriptor parentKeyOfThis= processingContext.pop();
-            parentKeyOfThis.getKeys().add(currentKey);
             YAMLKeyBucket parent = processingContext.peek();
+
+            parentKeyOfThis.getKeys().add(currentKey);
             parent.getKeys().add(parentKeyOfThis);
+
         } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
             processingContext.popContextEvent(3);
 
             YAMLKeyDescriptor keyDescriptor = processingContext.pop();
 
-            YAMLKeyBucket bucket2 = processingContext.peek();
-            bucket2.getKeys().add(keyDescriptor);
+            YAMLKeyBucket bucket = processingContext.peek();
+            bucket.getKeys().add(keyDescriptor);
 
         } else {
-            throw new IllegalStateException("Unsupported YAML structure.");
+            unsupportedYAMLStructure();
         }
     }
 
@@ -174,7 +171,7 @@ class YAMLEmitter implements Emitable {
                                                   .create(YAMLKeyDescriptor.class);
 
             String name = event.getValue();
-            String fqn = processingContext. buildNextFQN(name);
+            String fqn = processingContext.buildNextFQN(name);
 
             key.setName(trimToEmpty(name));
             key.setFullQualifiedName(trimToEmpty(fqn));
@@ -249,14 +246,7 @@ class YAMLEmitter implements Emitable {
         } else if (event instanceof SequenceEndEvent) {
             result = EventType.SEQUENCE_END;
         } else {
-            System.out.println(event);
-
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.out.println();
-            System.exit(1);
-            throw new RuntimeException("Not implemented yet! " + event);
+            unsupportedYAMLStructure();
         }
 
         return result;
@@ -272,5 +262,9 @@ class YAMLEmitter implements Emitable {
         SEQUENCE_START
     }
 
+    private static void unsupportedYAMLStructure() {
+        throw new RuntimeException("Not supported YAML structure. Please " +
+                                        "report this with an example YAML document.");
+    }
 
 }
