@@ -5,17 +5,31 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.signature.SignatureReader;
 import org.objectweb.asm.signature.SignatureVisitor;
 
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
+/**
+ * A class visitor implementation.
+ */
 public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     private TypeCache.CachedType<? extends ClassFileDescriptor> cachedType;
+    private FileDescriptor fileDescriptor;
     private VisitorHelper visitorHelper;
 
-    public ClassVisitor(VisitorHelper visitorHelper) {
+    /**
+     * Constructor.
+     * 
+     * @param fileDescriptor
+     *            The file descriptor to be migrated to a type descriptor.
+     * @param visitorHelper
+     *            The visitor helper.
+     */
+    public ClassVisitor(FileDescriptor fileDescriptor, VisitorHelper visitorHelper) {
         super(Opcodes.ASM5);
+        this.fileDescriptor = fileDescriptor;
         this.visitorHelper = visitorHelper;
     }
 
@@ -31,7 +45,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
     @Override
     public void visit(final int version, final int access, final String name, final String signature, final String superName, final String[] interfaces) {
         Class<? extends ClassFileDescriptor> javaType = getJavaType(access);
-        cachedType = visitorHelper.createType(SignatureHelper.getObjectType(name), javaType);
+        cachedType = visitorHelper.createType(SignatureHelper.getObjectType(name), fileDescriptor, javaType);
         ClassFileDescriptor classFileDescriptor = cachedType.getTypeDescriptor();
         classFileDescriptor.setByteCodeVersion(version);
         if (hasFlag(access, Opcodes.ACC_ABSTRACT) && !hasFlag(access, Opcodes.ACC_INTERFACE)) {

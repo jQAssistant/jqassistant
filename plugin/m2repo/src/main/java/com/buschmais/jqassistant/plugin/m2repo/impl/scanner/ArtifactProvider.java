@@ -48,18 +48,6 @@ public class ArtifactProvider {
      *            the repository url
      * @param localDirectory
      *            the directory for resolved artifacts
-     */
-    public ArtifactProvider(URL repositoryUrl, File localDirectory) {
-        this(repositoryUrl, localDirectory, null, null);
-    }
-
-    /**
-     * Creates a new object.
-     * 
-     * @param repositoryUrl
-     *            the repository url
-     * @param localDirectory
-     *            the directory for resolved artifacts
      * @param username
      *            an username for authentication
      * @param password

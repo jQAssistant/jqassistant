@@ -1,16 +1,12 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.RepositoryUtils;
@@ -24,12 +20,18 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
 /**
  * A scanner for (remote) maven repositories.
@@ -140,7 +142,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      * @param repoDescriptor
      *            the {@link MavenRepositoryDescriptor}
      * @param pomModelBuilder
-     *            the {@link PomModelBuilder}
+     *            the {@link EffectiveModelBuilderImpl}
      * @param artifactProvider
      *            the {@link ArtifactProvider}
      * @param artifactFilter
@@ -170,7 +172,13 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                 DefaultArtifact mainArtifact = new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getPackaging(), model.getVersion());
                 RepositoryArtifactDescriptor repositoryArtifactDescriptor = getModel(repoDescriptor, mainArtifact, lastModified);
                 if (repositoryArtifactDescriptor == null) {
-                    MavenPomXmlDescriptor modelDescriptor = scanner.scan(model, modelArtifactFile.getAbsolutePath(), null);
+                    scanner.getContext().push(PomModelBuilder.class, pomModelBuilder);
+                    FileDescriptor modelDescriptor;
+                    try {
+                        modelDescriptor = scanner.scan(modelArtifactFile, modelArtifactFile.getAbsolutePath(), null);
+                    } finally {
+                        scanner.getContext().pop(PomModelBuilder.class);
+                    }
                     repositoryArtifactDescriptor = addRepositoryArtifact(repoDescriptor, modelDescriptor, mainArtifact, lastModified, store);
                     if (!keepArtifacts) {
                         modelArtifactFile.delete();
@@ -203,7 +211,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         }
     }
 
-    private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, MavenPomXmlDescriptor descriptor, Artifact artifact,
+    private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, FileDescriptor descriptor, Artifact artifact,
             long lastModified, Store store) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
         artifactDescriptor.setLastModified(lastModified);
@@ -233,7 +241,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         MavenIndex mavenIndex = new MavenIndex(item, localRepoDir, username, password);
         // used to resolve (remote) artifacts
         ArtifactProvider artifactProvider = new ArtifactProvider(item, localRepoDir, username, password);
-        PomModelBuilder pomModelBuilder = new PomModelBuilder(artifactProvider);
+        PomModelBuilder pomModelBuilder = new EffectiveModelBuilderImpl(artifactProvider);
         ArtifactFilter artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
         return scanRepository(item, scanner, mavenIndex, artifactProvider, pomModelBuilder, artifactFilter);
     }

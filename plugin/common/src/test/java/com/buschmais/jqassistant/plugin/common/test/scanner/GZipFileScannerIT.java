@@ -42,8 +42,14 @@ public class GZipFileScannerIT extends AbstractPluginIT {
         outputStream.close();
 
         FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
-        assertThat(descriptor, instanceOf(GZipFileDescriptor.class));
-        assertThat(descriptor.getFileName(), equalTo(gzFile.getAbsolutePath().replace('\\', '/')));
+        assertThat("Expecting a GZIP descriptor.", descriptor, instanceOf(GZipFileDescriptor.class));
+        String expectedGZFileName = gzFile.getAbsolutePath().replace('\\', '/');
+        assertThat("Expecting an valid valid file name.", descriptor.getFileName(), equalTo(expectedGZFileName));
+        GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
+        assertThat("Expecting one entry.", gZipFileDescriptor.getContains().size(), equalTo(1));
+        FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
+        assertThat("Expecting a valid entry file name, e.g. wihout .gz", fileDescriptor.getFileName(),
+                equalTo(expectedGZFileName.substring(0, expectedGZFileName.length() - 3)));
         store.commitTransaction();
     }
 
@@ -71,8 +77,11 @@ public class GZipFileScannerIT extends AbstractPluginIT {
 
         FileDescriptor descriptor = getScanner().scan(gzFile, gzFile.getAbsolutePath(), DefaultScope.NONE);
         assertThat(descriptor, instanceOf(GZipFileDescriptor.class));
-        assertThat(descriptor, instanceOf(ArchiveDescriptor.class));
         assertThat(descriptor.getFileName(), equalTo(gzFile.getAbsolutePath().replace('\\', '/')));
+        GZipFileDescriptor gZipFileDescriptor = (GZipFileDescriptor) descriptor;
+        assertThat(gZipFileDescriptor.getContains().size(), equalTo(1));
+        FileDescriptor fileDescriptor = gZipFileDescriptor.getContains().get(0);
+        assertThat(fileDescriptor, instanceOf(ArchiveDescriptor.class));
         store.commitTransaction();
     }
 

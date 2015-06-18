@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
@@ -54,8 +55,8 @@ public class VisitorHelper {
      * 
      * @param type The expected type.
      */
-    <T extends ClassFileDescriptor> TypeCache.CachedType<T> createType(String fullQualifiedName, Class<T> descriptorType) {
-        return getTypeResolver().create(fullQualifiedName, descriptorType, scannerContext);
+    <T extends ClassFileDescriptor> TypeCache.CachedType<T> createType(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType) {
+        return getTypeResolver().create(fullQualifiedName, fileDescriptor, descriptorType, scannerContext);
     }
 
     /**

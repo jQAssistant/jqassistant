@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 
@@ -22,8 +23,9 @@ public class DelegatingTypeResolver implements TypeResolver {
     }
 
     @Override
-    public <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, Class<T> descriptorType, ScannerContext scannerContext) {
-        return delegate.create(fullQualifiedName, descriptorType, scannerContext);
+    public <T extends ClassFileDescriptor> TypeCache.CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
+            ScannerContext scannerContext) {
+        return delegate.create(fullQualifiedName, fileDescriptor, descriptorType, scannerContext);
     }
 
     @Override

@@ -9,8 +9,11 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ManifestEntryDescriptor;
@@ -22,6 +25,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor
  * {@link com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin}
  * for java MANIFEST.MF files.
  */
+@Requires(FileDescriptor.class)
 public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResource, ManifestFileDescriptor> {
 
     public static final String SECTION_MAIN = "Main";
@@ -35,8 +39,10 @@ public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResourc
     public ManifestFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
             Manifest manifest = new Manifest(stream);
-            Store store = scanner.getContext().getStore();
-            ManifestFileDescriptor manifestFileDescriptor = store.create(ManifestFileDescriptor.class);
+            ScannerContext context = scanner.getContext();
+            Store store = context.getStore();
+            FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+            ManifestFileDescriptor manifestFileDescriptor = store.addDescriptorType(fileDescriptor, ManifestFileDescriptor.class);
             ManifestSectionDescriptor mainSectionDescriptor = store.create(ManifestSectionDescriptor.class);
             mainSectionDescriptor.setName(SECTION_MAIN);
             manifestFileDescriptor.setMainSection(mainSectionDescriptor);

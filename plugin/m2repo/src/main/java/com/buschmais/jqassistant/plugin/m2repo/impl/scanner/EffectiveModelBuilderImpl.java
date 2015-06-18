@@ -1,9 +1,7 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
@@ -11,12 +9,10 @@ import java.util.Properties;
 
 import org.apache.maven.model.*;
 import org.apache.maven.model.building.*;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.resolution.InvalidRepositoryException;
 import org.apache.maven.model.resolution.ModelResolver;
 import org.apache.maven.model.resolution.UnresolvableModelException;
 import org.apache.maven.model.validation.ModelValidator;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -24,18 +20,31 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PomModelBuilder {
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.RawModelBuilder;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PomModelBuilder.class);
+/**
+ * Implementation of a POM model builder which resolves the effective model.
+ */
+public class EffectiveModelBuilderImpl implements PomModelBuilder {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveModelBuilderImpl.class);
 
     private ModelResolverImpl modelResolver;
-    private MavenXpp3Reader mavenXpp3Reader;
+    private RawModelBuilder rawModelBuilder;
 
-    public PomModelBuilder(ArtifactProvider artifactProvider) {
+    /**
+     * Constructor.
+     * 
+     * @param artifactProvider
+     *            The artifact provider.
+     */
+    public EffectiveModelBuilderImpl(ArtifactProvider artifactProvider) {
         this.modelResolver = new ModelResolverImpl(artifactProvider);
-        this.mavenXpp3Reader = new MavenXpp3Reader();
+        this.rawModelBuilder = new RawModelBuilder();
     }
 
+    @Override
     public Model getModel(final File pomFile) throws IOException {
         DefaultModelBuilder builder = new DefaultModelBuilderFactory().newInstance();
         ModelBuildingRequest req = new DefaultModelBuildingRequest();
@@ -49,16 +58,7 @@ public class PomModelBuilder {
             return builder.build(req).getEffectiveModel();
         } catch (ModelBuildingException e) {
             LOGGER.warn("Cannot build effective model for " + pomFile.getAbsolutePath(), e);
-            return getRawModel(pomFile, e);
-        }
-    }
-
-    private Model getRawModel(File pomFile, ModelBuildingException e) throws IOException {
-        try (InputStream stream = new FileInputStream(pomFile)) {
-            Model model = mavenXpp3Reader.read(stream);
-            return new EffectiveModel(model);
-        } catch (XmlPullParserException e2) {
-            throw new IOException("Cannot read POM descriptor.", e);
+            return new EffectiveModel(rawModelBuilder.getModel(pomFile));
         }
     }
 

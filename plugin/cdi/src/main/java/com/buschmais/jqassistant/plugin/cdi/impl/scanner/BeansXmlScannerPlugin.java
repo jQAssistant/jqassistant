@@ -9,13 +9,13 @@ import org.jcp.xmlns.xml.ns.javaee.Alternatives;
 import org.jcp.xmlns.xml.ns.javaee.Beans;
 import org.jcp.xmlns.xml.ns.javaee.Decorators;
 import org.jcp.xmlns.xml.ns.javaee.Interceptors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -25,9 +25,8 @@ import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
+@Requires(FileDescriptor.class)
 public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BeansXmlScannerPlugin.class);
 
     private JAXBUnmarshaller<FileResource, Beans> unmarshaller;
 

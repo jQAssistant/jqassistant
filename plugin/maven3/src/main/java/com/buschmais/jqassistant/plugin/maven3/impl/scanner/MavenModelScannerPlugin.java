@@ -12,6 +12,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.*;
@@ -28,6 +29,7 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.PluginCoord
  * 
  * @author ronald.kunzmann@buschmais.com
  */
+@Requires(FileDescriptor.class)
 public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomXmlDescriptor> {
 
     @Override
@@ -55,8 +57,6 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         MavenPomXmlDescriptor pomDescriptor = createMavenPomXmlDescriptor(model, scanner);
         ScannerContext scannerContext = scanner.getContext();
         Store store = scannerContext.getStore();
-        pomDescriptor.setFileName(path);
-
         addParent(pomDescriptor, model, scannerContext);
         addProfiles(pomDescriptor, model, scannerContext);
         addProperties(pomDescriptor, model.getProperties(), store);
@@ -79,14 +79,16 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @return The descriptor.
      */
     protected MavenPomXmlDescriptor createMavenPomXmlDescriptor(Model model, Scanner scanner) {
-        MavenPomXmlDescriptor pomXmlDescriptor = scanner.getContext().getStore().create(MavenPomXmlDescriptor.class);
+        ScannerContext context = scanner.getContext();
+        FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        MavenPomXmlDescriptor pomXmlDescriptor = context.getStore().addDescriptorType(fileDescriptor, MavenPomXmlDescriptor.class);
         pomXmlDescriptor.setName(model.getName());
         pomXmlDescriptor.setGroupId(model.getGroupId());
         pomXmlDescriptor.setArtifactId(model.getArtifactId());
         pomXmlDescriptor.setPackaging(model.getPackaging());
         pomXmlDescriptor.setVersion(model.getVersion());
         pomXmlDescriptor.setFullQualifiedName(model.getId());
-        MavenArtifactDescriptor artifact = ArtifactResolver.resolve(new ModelCoordinates(model), MavenArtifactDescriptor.class, scanner.getContext());
+        MavenArtifactDescriptor artifact = ArtifactResolver.resolve(new ModelCoordinates(model), MavenArtifactDescriptor.class, context);
         pomXmlDescriptor.getDescribes().add(artifact);
         return pomXmlDescriptor;
     }

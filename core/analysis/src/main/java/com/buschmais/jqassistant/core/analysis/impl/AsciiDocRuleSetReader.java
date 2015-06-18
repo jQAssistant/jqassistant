@@ -44,7 +44,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return builder.getRuleSet();
     }
 
-    public void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
+    private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
         InputStream stream;
@@ -114,8 +114,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object> emptyMap(),
-                        requiresConcepts, verification, report);
+                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object> emptyMap(), requiresConcepts,
+                        verification, report);
                 builder.addConstraint(concept);
             }
         }

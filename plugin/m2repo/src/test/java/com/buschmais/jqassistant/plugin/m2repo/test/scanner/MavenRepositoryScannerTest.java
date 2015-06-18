@@ -37,6 +37,7 @@ import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescript
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.*;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
 public class MavenRepositoryScannerTest {
 
@@ -96,7 +97,7 @@ public class MavenRepositoryScannerTest {
             buildWhenThenReturn(artifactProvider, artifactInfo);
         }
 
-        PomModelBuilder pomModelBuilder = mock(PomModelBuilder.class);
+        PomModelBuilder pomModelBuilder = mock(EffectiveModelBuilderImpl.class);
         when(pomModelBuilder.getModel(any(File.class))).thenAnswer(new Answer<Model>() {
             @Override
             public Model answer(InvocationOnMock invocation) throws Throwable {

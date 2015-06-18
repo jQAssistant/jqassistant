@@ -4,19 +4,27 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverProvider;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JavaScopeTest {
 
-    @Mock private ScannerContext scannerContext;
+    @Mock
+    private ScannerContext scannerContext;
+
+    @Before
+    public void setUp() {
+        when(scannerContext.peek(FileResolverProvider.class)).thenReturn(new FileResolverProvider());
+    }
 
     @Test
     public void useExistingTypeResolver() {

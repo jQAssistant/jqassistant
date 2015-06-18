@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
 import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -33,6 +30,7 @@ public interface ScannerPlugin<I, D extends Descriptor> {
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
+    @Inherited
     public @interface Requires {
 
         /**
