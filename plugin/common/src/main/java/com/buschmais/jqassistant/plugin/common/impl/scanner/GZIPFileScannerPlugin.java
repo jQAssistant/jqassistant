@@ -5,18 +5,21 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * Scanner plugin for GZipped file resources.
  */
-public class GZIPFileScannerPlugin extends AbstractResourceScannerPlugin<FileResource, FileDescriptor> {
+@Requires(FileDescriptor.class)
+public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, FileDescriptor> {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
@@ -25,23 +28,20 @@ public class GZIPFileScannerPlugin extends AbstractResourceScannerPlugin<FileRes
 
     @Override
     public FileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+        ScannerContext context = scanner.getContext();
+        Store store = context.getStore();
+        final FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        GZipFileDescriptor gZipFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
+        String uncompressedPath = path.substring(0, path.toLowerCase().indexOf(".gz"));
         try (FileResource fileResource = new BufferedFileResource(new AbstractFileResource() {
-
             @Override
             public InputStream createStream() throws IOException {
                 return new GZIPInputStream(item.createStream());
             }
         })) {
-            Store store = scanner.getContext().getStore();
-            String uncompressedPath = path.substring(0, path.toLowerCase().indexOf(".gz"));
-            FileDescriptor fileDescriptor = scanner.scan(fileResource, uncompressedPath, scope);
-            GZipFileDescriptor archiveFileDescriptor;
-            if (fileDescriptor != null) {
-                archiveFileDescriptor = store.addDescriptorType(fileDescriptor, GZipFileDescriptor.class);
-            } else {
-                archiveFileDescriptor = store.create(GZipFileDescriptor.class);
-            }
-            return toFileDescriptor(fileResource, archiveFileDescriptor, path, scanner.getContext());
+            FileDescriptor entryDescriptor = scanner.scan(fileResource, uncompressedPath, scope);
+            gZipFileDescriptor.getContains().add(entryDescriptor);
         }
+        return gZipFileDescriptor;
     }
 }

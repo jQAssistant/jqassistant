@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 
 /**
  * Scanner plugin which handles URIs with defined default schemas as input.
  */
-public class DefaultUriScannerPlugin extends AbstractResourceScannerPlugin<URI, Descriptor> {
+public class DefaultUriScannerPlugin extends AbstractScannerPlugin<URI, Descriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUriScannerPlugin.class);
 

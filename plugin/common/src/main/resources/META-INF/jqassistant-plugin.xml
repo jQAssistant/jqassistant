@@ -15,6 +15,7 @@
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.DirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.DefaultUriScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.UrlScannerPlugin</class>
