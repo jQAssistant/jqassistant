@@ -14,14 +14,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.google.common.base.Strings;
 
+@Requires(FileDescriptor.class)
 public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, XmlFileDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlFileScannerPlugin.class);
@@ -41,12 +45,11 @@ public class XmlFileScannerPlugin extends AbstractScannerPlugin<FileResource, Xm
 
     @Override
     public XmlFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        Store store = scanner.getContext().getStore();
+        ScannerContext context = scanner.getContext();
+        Store store = context.getStore();
         XmlElementDescriptor parentElement = null;
-        XmlFileDescriptor documentDescriptor = scanner.getContext().peek(XmlFileDescriptor.class);
-        if (documentDescriptor == null) {
-            documentDescriptor = store.create(XmlFileDescriptor.class);
-        }
+        FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        XmlFileDescriptor documentDescriptor = store.addDescriptorType(fileDescriptor, XmlFileDescriptor.class);
         Map<String, XmlNamespaceDescriptor> namespaceMappings = new HashMap<>();
         Map<XmlElementDescriptor, SiblingDescriptor> siblings = new HashMap<>();
         try (InputStream stream = item.createStream()) {
