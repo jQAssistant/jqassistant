@@ -17,7 +17,9 @@ import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
@@ -25,6 +27,7 @@ import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
+@Requires(FileDescriptor.class)
 public class TestReportScannerPlugin extends AbstractScannerPlugin<FileResource, TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
