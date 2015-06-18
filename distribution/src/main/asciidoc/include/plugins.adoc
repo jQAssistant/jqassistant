@@ -21,5 +21,6 @@ include::{docRoot}/jqassistant.plugin.osgi/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.tycho/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.rdbms/plugin.adoc[]
 include::{docRoot}/jqassistant.plugin.xml/plugin.adoc[]
+include::{docRoot}/jqassistant.plugin.yaml/plugin.adoc[]
 
 :leveloffset: 0

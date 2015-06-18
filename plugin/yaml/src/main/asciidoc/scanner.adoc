@@ -1,0 +1,80 @@
+<<YAMLFileScanner>>
+[[YAMLFileScanner]]
+== Generic scanner for YAML files
+
+Imports all http://yaml.org/spec/1.1/[YAML 1.1] files in a generic representation
+for jQAssistant.
+
+Seen from a more formal perspective a YAML document is build by a tree of nodes.
+Each node can have one of the following values as content: scalar value, sequence
+or mapping. This plugin imports a YAML file in a simplified manner as simply
+model of keys and values. See section <<yaml-examples>> for examples.
+
+=== :File:YAML
+
+A file with the file extension `.yaml` containing zero or more YAML documents.
+
+.Relations of :File:Xml
+[options="header"]
+|====
+| Name             | Target label(s)    | Cardinality    | Description
+| HAS_ROOT_ELEMENT | <<:Document:YAML>> | 0..n           | References a document in the file
+|====
+
+[[:Document:YAML]]
+=== :Document:YAML
+
+.Relations of :Document:YAML
+[options="header"]
+|===
+| Name           | Target label(s)  | Cardinality | Description
+| CONTAINS_VALUE | <<:Key:YAML>>    | 0..n        | References a key in the containing document
+| CONTAINS_KEY   | <<:Value:YAML>>  | 0..n        | References a value in the containing document
+|===
+
+[[:Key:YAML]]
+=== :Key:YAML
+
+.Properties of :Key:YAML
+[options="header"]
+|====
+| Name   | Description
+| name   | The name of the key
+| fqn    | The full qualified name of the key. It is build by joining all parent keys and the
+           name of the current key with a dot as delimiter
+|====
+
+
+.Relations of :Key:YAML
+|===
+| Name           | Target label(s)  | Cardinality | Description
+| CONTAINS_KEY   | <<:Key:YAML>>    | 0..n        | References a child key of the containing key
+| CONTAINS_VALUE | <<:Value:YAML>>  | 0..n        | References a value assigned to the key
+|===
+
+
+[[:Value:YAML]]
+=== :Value:YAML
+
+Nodes tagged with `:Value:YAML` represents YAML scalars assigned to a <<:Key:YAML>>.
+
+.Properties of :Value:YAML
+|===
+| Name  | Description
+| value | The value itself.
+|===
+
+.Relations of :Value:YAML
+|===
+| Name           | Target label(s) | Cardinality | Description
+| CONTAINS_VALUE | <<:Value:YAML>> | 0..n        | References a child value assigned to this value
+|===
+
+[[yaml-examples]]
+=== Examples
+
+Not written yet.
+
+
+
+

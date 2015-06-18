@@ -230,6 +230,7 @@
 		<module>tycho</module>
 		<module>rdbms</module>
 		<module>xml</module>
+		<module>yaml</module>
 	</modules>
 
 </project>

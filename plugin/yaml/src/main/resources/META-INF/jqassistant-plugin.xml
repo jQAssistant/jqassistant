@@ -1,0 +1,13 @@
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+                               name="YAML">
+    <description>Provides a scanner for YAML files</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.yaml.api.model.YAMLValueDescriptor</class>
+    </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLFileScannerPlugin</class>
+    </scanner>
+</jqa-plugin:jqassistant-plugin>
