@@ -1,11 +1,10 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -15,11 +14,17 @@ import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
 import org.yaml.snakeyaml.serializer.Serializer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
 
+@Requires(FileDescriptor.class)
 public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YAMLFileDescriptor> {
 
     /**
@@ -34,7 +39,8 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
 
     @Override
     public YAMLFileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        Store store = scanner.getContext().getStore();
+        ScannerContext context = scanner.getContext();
+        Store store = context.getStore();
 
 
 
@@ -42,16 +48,17 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         Representer representer = new Representer();
         DumperOptions options = new DumperOptions();
 
-        YAMLFileDescriptor fileDescriptor = store.create(YAMLFileDescriptor.class);
+        FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        YAMLFileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAMLFileDescriptor.class);
 
-        fileDescriptor.setFileName(item.getFile().getAbsolutePath());
+        yamlFileDescriptor.setFileName(item.getFile().getAbsolutePath());
 
         try (InputStream in = item.createStream()) {
             Iterable<Object> docs = yaml.loadAll(in);
 
             for (Object doc : docs) {
                 Node node = representer.represent(doc);
-                YAMLEmitter emitter = new YAMLEmitter(fileDescriptor, scanner);
+                YAMLEmitter emitter = new YAMLEmitter(yamlFileDescriptor, scanner);
                 Serializer serializer = new Serializer(emitter, new Resolver(), options, null);
 
                 serializer.open();
@@ -60,7 +67,7 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
             }
         }
 
-        return fileDescriptor;
+        return yamlFileDescriptor;
     }
 
 

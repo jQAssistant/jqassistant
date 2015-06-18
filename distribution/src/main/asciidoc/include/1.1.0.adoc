@@ -5,6 +5,9 @@
 ==== GraphML
 - Added plugin which provides a GraphML export for the results of executed concepts
 
+==== YAML
+- Added plugin which provides a scanner for YAML files
+
 ==== JUnit
 - Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
 
