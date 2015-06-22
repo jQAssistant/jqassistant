@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.facelet.impl.scanner;
+package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,17 +25,23 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverProvider;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.facelet.api.model.JsfFaceletDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.JsfFaceletDescriptor;
 
 /**
  * Scans JSF template files and sets relationships between them.
  *
  * @author peter.herklotz@buschmais.com
  */
+@Requires(FileDescriptor.class)
 public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource, JsfFaceletDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsfFaceletScannerPlugin.class);
@@ -45,7 +51,6 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
 
     private DocumentBuilder documentBuilder;
     private Pattern filePattern;
-    private Store store;
     private XPath xPath;
 
     /** {@inheritDoc} */
@@ -120,11 +125,10 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     /** {@inheritDoc} */
     @Override
     public JsfFaceletDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        store = scanner.getContext().getStore();
-
-        // file path from resource folder
-        String currentFqn = normalizeFilePath(path);
-        JsfFaceletDescriptor currentDescriptor = getJsfTemplateDescriptor(currentFqn);
+        ScannerContext context = scanner.getContext();
+        Store store = context.getStore();
+        final FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        JsfFaceletDescriptor currentDescriptor = store.addDescriptorType(fileDescriptor, JsfFaceletDescriptor.class);
 
         try {
             // read the xml file
@@ -135,7 +139,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
                 String includeSrc = node.getAttributes().getNamedItem("src").getNodeValue();
-                JsfFaceletDescriptor includedJsf = findJsfTemplateDescriptor(currentFqn, includeSrc);
+                JsfFaceletDescriptor includedJsf = findJsfTemplateDescriptor(path, includeSrc, context);
 
                 if (includedJsf != null) {
                     currentDescriptor.getIncludes().add(includedJsf);
@@ -146,7 +150,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
             String templateSrc = (String) getXPath().evaluate("//ui:composition/@template", doc, XPathConstants.STRING);
 
             if (StringUtils.isNotBlank(templateSrc)) {
-                currentDescriptor.setTemplate(findJsfTemplateDescriptor(currentFqn, templateSrc));
+                currentDescriptor.setTemplate(findJsfTemplateDescriptor(path, templateSrc, context));
             }
         } catch (XPathExpressionException | SAXException e) {
             throw new IOException(e);
@@ -156,22 +160,21 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     } // end method scan
 
     /**
-     * Try to find an existing
-     * {@link com.buschmais.jqassistant.plugin.facelet.api.model.JsfFaceletDescriptor}
-     * with the given parameters.
+     * Try to find an existing {@link JsfFaceletDescriptor} with the given
+     * parameters.
      *
      * @param templateFqn
      *            full qualified name of the including file
      * @param path
      *            the found path to the included file
-     *
-     * @return an existing
-     *         {@link com.buschmais.jqassistant.plugin.facelet.api.model.JsfFaceletDescriptor}
-     *         or a new one if no descriptor exists.
+     * @param context
+     *            The scanner context
+     * @return an existing {@link JsfFaceletDescriptor} or a new one if no
+     *         descriptor exists.
      */
-    private JsfFaceletDescriptor findJsfTemplateDescriptor(String templateFqn, String path) {
+    private JsfFaceletDescriptor findJsfTemplateDescriptor(String templateFqn, String path, ScannerContext context) {
         String includedFile = absolutifyFilePath(path, templateFqn);
-        JsfFaceletDescriptor includedFileDescriptor = getJsfTemplateDescriptor(includedFile);
+        JsfFaceletDescriptor includedFileDescriptor = getJsfTemplateDescriptor(includedFile, context);
 
         return includedFileDescriptor;
     }
@@ -251,32 +254,28 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     }
 
     /**
-     * Tries to find a
-     * {@link com.buschmais.jqassistant.plugin.facelet.api.model.JsfFaceletDescriptor}
-     * in the store with the given fullFilePath. Creates a new one if no
-     * descriptor could be found.
+     * Tries to find a {@link JsfFaceletDescriptor} in the store with the given
+     * fullFilePath. Creates a new one if no descriptor could be found.
      *
      * @param fullFilePath
      *            the file path of the wanted file
-     *
-     * @return a
-     *         {@link com.buschmais.jqassistant.plugin.facelet.api.model.JsfFaceletDescriptor}
-     *         representing the wanted file
+     * @param context
+     *            The scanner context.
+     * @return a {@link JsfFaceletDescriptor} representing the wanted file
      */
-    private JsfFaceletDescriptor getJsfTemplateDescriptor(String fullFilePath) {
-
+    private JsfFaceletDescriptor getJsfTemplateDescriptor(String fullFilePath, ScannerContext context) {
         // can't handle EL-expressions
         if (isElExpression(fullFilePath)) {
             return null;
         }
-
-        JsfFaceletDescriptor jspxDescriptor = store.find(JsfFaceletDescriptor.class, fullFilePath);
-
-        if (jspxDescriptor == null) {
-            jspxDescriptor = store.create(JsfFaceletDescriptor.class);
+        final Descriptor descriptor = FileResolverProvider.resolve(null, fullFilePath, context);
+        JsfFaceletDescriptor jspxDescriptor;
+        if (descriptor != null) {
+            jspxDescriptor = context.getStore().addDescriptorType(descriptor, JsfFaceletDescriptor.class);
+        } else {
+            jspxDescriptor = context.getStore().create(JsfFaceletDescriptor.class);
             jspxDescriptor.setFileName(fullFilePath);
         }
-
         return jspxDescriptor;
     }
 

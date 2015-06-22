@@ -1,4 +1,3 @@
-<<FaceletScanner>>
 [[FaceletScanner]]
 == Scanner for JSF-template files
 Imports JSF template files (e.g. *.jspx) and builds references between them (template/includes).

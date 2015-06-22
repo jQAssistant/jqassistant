@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.facelet.api.model;
+package com.buschmais.jqassistant.plugin.javaee6.api.model;
 
 import java.util.Set;
 

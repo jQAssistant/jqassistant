@@ -17,11 +17,15 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     /**
-     * Get or create an {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor} .
+     * Get or create an
+     * {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
+     * .
      *
      * @param artifactId
      *            The artifact id.
-     * @return The {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor} .
+     * @return The
+     *         {@link com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor}
+     *         .
      */
     protected JavaClassesDirectoryDescriptor getArtifactDescriptor(String artifactId) {
         ArtifactDescriptor artifact = store.find(ArtifactDescriptor.class, artifactId);
@@ -88,7 +92,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
     protected void scanClasses(String artifactId, final Class<?>... classes) throws IOException {
         execute(artifactId, new ScanClassPathOperation() {
             @Override
-            public void scan(JavaArtifactFileDescriptor artifact,Scanner scanner) {
+            public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
                 for (Class<?> item : classes) {
                     FileDescriptor fileDescriptor = scanner.scan(item, item.getName(), JavaScope.CLASSPATH);
                     artifact.getContains().add(fileDescriptor);
@@ -146,7 +150,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         });
     }
 
-    private void execute(String artifactId, ScanClassPathOperation operation) {
+    protected void execute(String artifactId, ScanClassPathOperation operation) {
         store.beginTransaction();
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         Scanner scanner = getScanner();
@@ -159,7 +163,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
-    private interface ScanClassPathOperation {
-        void scan (JavaArtifactFileDescriptor artifact, Scanner scanner);
+    protected interface ScanClassPathOperation {
+        void scan(JavaArtifactFileDescriptor artifact, Scanner scanner);
     }
 }

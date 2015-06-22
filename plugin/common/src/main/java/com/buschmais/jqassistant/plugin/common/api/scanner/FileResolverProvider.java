@@ -1,9 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * A provider for file resolvers.
@@ -24,12 +25,25 @@ public final class FileResolverProvider {
      *            The scanner context.
      */
     public static void add(FileResolver fileResolver, ScannerContext context) {
+        FileResolverProvider fileResolverProvider = getFileResolverProvider(context);
+        fileResolverProvider.resolverMap.put(fileResolver.getClass(), fileResolver);
+    }
+
+    /**
+     * Lookup the file resolver provider instance from the scanner context. If
+     * no instance exists a new one will be created.
+     * 
+     * @param context
+     *            The context
+     * @return The provider.
+     */
+    private static FileResolverProvider getFileResolverProvider(ScannerContext context) {
         FileResolverProvider fileResolverProvider = context.peek(FileResolverProvider.class);
         if (fileResolverProvider == null) {
             fileResolverProvider = new FileResolverProvider();
             context.push(FileResolverProvider.class, fileResolverProvider);
         }
-        fileResolverProvider.resolverMap.put(fileResolver.getClass(), fileResolver);
+        return fileResolverProvider;
     }
 
     /**
@@ -60,7 +74,25 @@ public final class FileResolverProvider {
         }
     }
 
-    public Collection<FileResolver> get() {
-        return resolverMap.values();
+    /**
+     * Resolve the given resource.
+     * 
+     * @param fileResource
+     *            The file resource.
+     * @param path
+     *            The path.
+     * @param context
+     *            The scanner context.
+     * @return The resolved {@link Descriptor} or <code>null</code>.
+     */
+    public static Descriptor resolve(FileResource fileResource, String path, ScannerContext context) {
+        final FileResolverProvider provider = getFileResolverProvider(context);
+        for (FileResolver fileResolver : provider.resolverMap.values()) {
+            Descriptor resolvedDescriptor = fileResolver.resolve(fileResource, path, context);
+            if (resolvedDescriptor != null) {
+                return resolvedDescriptor;
+            }
+        }
+        return null;
     }
 }

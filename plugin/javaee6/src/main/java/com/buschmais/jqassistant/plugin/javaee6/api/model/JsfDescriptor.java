@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.facelet.api.model;
+package com.buschmais.jqassistant.plugin.javaee6.api.model;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.api.annotation.Abstract;

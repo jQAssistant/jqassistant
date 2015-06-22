@@ -40,6 +40,8 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ClientModuleDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.JsfFaceletDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.JsfDescriptor</class>
     </model>
     <scope>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope</class>
@@ -51,5 +53,6 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.JsfFaceletScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>
