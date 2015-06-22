@@ -1,7 +1,11 @@
 package com.buschmais.jqassistant.core.scanner.api;
 
 import java.io.IOException;
-import java.lang.annotation.*;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -15,8 +19,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 public interface ScannerPlugin<I, D extends Descriptor> {
 
     /**
-     * Defines the annotation for specifying a dependency to another plugin to
-     * provide an instance of the given descriptor value.
+     * Defines the annotation for specifying a dependency to another plugin to provide an instance of the given descriptor value.
      * 
      * <pre>
      * &#064;Requires(XmlDescriptor.class)
@@ -42,22 +45,22 @@ public interface ScannerPlugin<I, D extends Descriptor> {
     /**
      * Initialize the plugin.
      * 
-     * Life cycle callback for a plugin to do static initialization. Will be
-     * exactly once after the plugin has been instantiated.
+     * Life cycle callback for a plugin to do static initialization. Will be exactly once after the plugin has been instantiated.
      */
     void initialize();
 
     /**
      * Configure the plugin.
      *
-     * This method is always called at least once after {@link #initialize()}
-     * and allows re-configuring a plugin instance at runtime (e.g. in a Maven
+     * This method is always called at least once after {@link #initialize()} and allows re-configuring a plugin instance at runtime (e.g. in a Maven
      * multi-module build process).
      * 
+     * @param scannerContext
+     *            The scanner context.
      * @param properties
      *            The plugin properties.
      */
-    void configure(Map<String, Object> properties);
+    void configure(ScannerContext scannerContext, Map<String, Object> properties);
 
     /**
      * Return the item type accepted by the plugin.
@@ -98,8 +101,7 @@ public interface ScannerPlugin<I, D extends Descriptor> {
      * @param scope
      *            The scope.
      * @param scanner
-     *            The scanner instance to delegate items this plugin resolves
-     *            from the given item.
+     *            The scanner instance to delegate items this plugin resolves from the given item.
      * @return The {@link Descriptor} instance representing the scanned item.
      * @throws IOException
      *             If a problem occurs.

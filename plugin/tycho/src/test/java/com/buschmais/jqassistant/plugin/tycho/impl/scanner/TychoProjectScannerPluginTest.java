@@ -8,7 +8,11 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -93,7 +97,7 @@ public class TychoProjectScannerPluginTest {
     @Test
     public void testGetAdditionalFiles() throws Exception {
         TychoProjectScannerPlugin plugin = new TychoProjectScannerPlugin();
-        plugin.configure(Collections.<String, Object>emptyMap());
+        plugin.configure(scannerContext, Collections.<String, Object>emptyMap());
         plugin.scan(project, null, null, scanner);
         // FIXME: add assertions
     }

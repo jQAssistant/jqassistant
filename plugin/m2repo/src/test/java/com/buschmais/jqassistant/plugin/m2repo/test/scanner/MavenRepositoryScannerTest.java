@@ -2,7 +2,10 @@ package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.net.URL;
@@ -35,7 +38,11 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.*;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactFilter;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactProvider;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.EffectiveModelBuilderImpl;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
@@ -127,7 +134,7 @@ public class MavenRepositoryScannerTest {
         when(artifactFilter.match(any(org.apache.maven.artifact.Artifact.class))).thenReturn(true);
 
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin();
-        plugin.configure(new HashMap<String, Object>());
+        plugin.configure(context, new HashMap<String, Object>());
         plugin.scanRepository(new URL(repoUrl), scanner, mavenIndex, artifactProvider, pomModelBuilder, artifactFilter);
 
         verify(mavenIndex).updateIndex();

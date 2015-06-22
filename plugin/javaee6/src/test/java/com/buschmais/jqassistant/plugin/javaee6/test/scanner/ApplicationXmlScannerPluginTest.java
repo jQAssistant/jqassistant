@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -12,7 +14,16 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ClientModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.EjbModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.RoleNameDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
@@ -84,7 +95,7 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
 
         ApplicationXmlScannerPlugin scannerPlugin = new ApplicationXmlScannerPlugin();
         scannerPlugin.initialize();
-        scannerPlugin.configure(Collections.<String, Object>emptyMap());
+        scannerPlugin.configure(scannerContext, Collections.<String, Object>emptyMap());
         scannerPlugin.scan(fileResource, "/META-INF/application.xml", EnterpriseApplicationScope.EAR, scanner);
 
         verify(scanner).scan(fileResource, "/META-INF/application.xml", XmlScope.DOCUMENT);

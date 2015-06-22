@@ -2,7 +2,10 @@ package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,7 +125,7 @@ public class MavenProjectScannerPluginTest {
         when(scanner.getContext()).thenReturn(scannerContext);
 
         // scan
-        scannerPlugin.configure(properties);
+        scannerPlugin.configure(scannerContext, properties);
         scannerPlugin.scan(project, null, null, scanner);
 
         // verify

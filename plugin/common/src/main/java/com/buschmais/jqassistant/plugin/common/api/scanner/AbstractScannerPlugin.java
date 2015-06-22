@@ -5,6 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
@@ -22,7 +23,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     }
 
     @Override
-    public void configure(Map<String, Object> properties) {
+    public void configure(ScannerContext scannerContext, Map<String, Object> properties) {
         this.properties = properties;
         configure();
     }

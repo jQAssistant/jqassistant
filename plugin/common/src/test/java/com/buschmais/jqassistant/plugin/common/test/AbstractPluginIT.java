@@ -221,7 +221,8 @@ public abstract class AbstractPluginIT {
      */
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        return new ScannerImpl(scannerContext, getScannerPlugins(properties), scopePluginRepository.getScopes());
+        List<ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
+        return new ScannerImpl(scannerContext, scannerPlugins, scopePluginRepository.getScopes());
     }
 
     /**
@@ -354,9 +355,9 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    private List<ScannerPlugin<?, ?>> getScannerPlugins(Map<String, Object> properties) {
+    private List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
         try {
-            return scannerPluginRepository.getScannerPlugins(properties);
+            return scannerPluginRepository.getScannerPlugins(scannerContext, properties);
         } catch (PluginRepositoryException e) {
             throw new IllegalStateException("Cannot get scanner plugins.", e);
         }

@@ -52,9 +52,10 @@ public class ScanTask extends AbstractTask {
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
+        ScannerContext scannerContext = new ScannerContextImpl(store);
         List<ScannerPlugin<?, ?>> scannerPlugins;
         try {
-            scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(pluginProperties);
+            scannerPlugins = pluginRepository.getScannerPluginRepository().getScannerPlugins(scannerContext, pluginProperties);
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scanner plugins.", e);
         }
@@ -69,14 +70,14 @@ public class ScanTask extends AbstractTask {
             if (!file.exists()) {
                 getLog().info(absolutePath + "' does not exist, skipping scan.");
             } else {
-                scan(store, file, file.getAbsolutePath(), scopeName, scannerPlugins);
+                scan(scannerContext, file, file.getAbsolutePath(), scopeName, scannerPlugins);
             }
         }
         for (Map.Entry<String, String> entry : urls.entrySet()) {
             String uri = entry.getKey();
             String scopeName = entry.getValue();
             try {
-                scan(store, new URI(uri), uri, scopeName, scannerPlugins);
+                scan(scannerContext, new URI(uri), uri, scopeName, scannerPlugins);
             } catch (URISyntaxException e) {
                 throw new CliConfigurationException("Cannot parse URI " + uri, e);
             }
@@ -111,11 +112,11 @@ public class ScanTask extends AbstractTask {
         return resources;
     }
 
-    private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) throws CliExecutionException {
+    private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) throws CliExecutionException {
+        Store store = scannerContext.getStore();
         store.beginTransaction();
         Scanner scanner;
         try {
-            ScannerContext scannerContext = new ScannerContextImpl(store);
             scanner = new ScannerImpl(scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scope plugins.", e);

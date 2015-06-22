@@ -64,14 +64,14 @@ public class ScanMojo extends AbstractModuleMojo {
     @Override
     public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException {
         List<ScannerPlugin<?, ?>> scannerPlugins;
+        ScannerContext scannerContext = new ScannerContextImpl(store);
         ScannerPluginRepository scannerPluginRepository = pluginRepositoryProvider.getScannerPluginRepository();
         try {
-            scannerPlugins = scannerPluginRepository.getScannerPlugins(getPluginProperties());
+            scannerPlugins = scannerPluginRepository.getScannerPlugins(scannerContext, getPluginProperties());
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot determine scanner plugins.", e);
         }
         ScopePluginRepository scopePluginRepository = pluginRepositoryProvider.getScopePluginRepository();
-        ScannerContext scannerContext = new ScannerContextImpl(store);
         Scanner scanner = new ScannerImpl(scannerContext, scannerPlugins, scopePluginRepository.getScopes());
         store.beginTransaction();
         try {
