@@ -18,8 +18,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverProvider;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -101,17 +100,17 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
         execute("test", new ScanClassPathOperation() {
             @Override
             public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                FileResolver fileResolver = new FileResolver() {
+                FileResolverStrategy fileResolverStrategy = new FileResolverStrategy() {
                     @Override
-                    public Descriptor resolve(FileResource fileResource, String path, ScannerContext context) {
+                    public Descriptor resolve(String path, ScannerContext context) {
                         Map<String, Object> parameters = MapBuilder.<String, Object> create("fileName", path).get();
                         Result<Result.CompositeRowObject> rowObjects = store.executeQuery("MATCH (f:File) WHERE f.fileName={fileName} return f", parameters);
                         return rowObjects.hasResult() ? rowObjects.getSingleResult().get("f", FileDescriptor.class) : null;
                     }
                 };
-                FileResolverProvider.add(fileResolver, scanner.getContext());
+                FileResolver.add(fileResolverStrategy, scanner.getContext());
                 scanner.scan(faceletDirectory, "/", JavaScope.CLASSPATH);
-                FileResolverProvider.remove(fileResolver, scanner.getContext());
+                FileResolver.remove(fileResolverStrategy, scanner.getContext());
             }
         });
         TestResult result = query("match (f:File) with f.fileName as fileName match (f:File) where f.fileName=fileName "

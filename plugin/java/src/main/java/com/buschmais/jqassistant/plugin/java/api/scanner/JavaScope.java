@@ -4,8 +4,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverProvider;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 
 /**
@@ -17,13 +16,13 @@ public enum JavaScope implements Scope {
         @Override
         public void create(ScannerContext context) {
             TypeResolver typeResolver = getTypeResolver(context);
-            FileResolverProvider.add(new ClassFileResolver(typeResolver), context);
+            FileResolver.add(new ClassFileResolverStrategy(typeResolver), context);
             context.push(TypeResolver.class, typeResolver);
         }
 
         @Override
         public void destroy(ScannerContext context) {
-            FileResolverProvider.remove(ClassFileResolver.class, context);
+            FileResolver.remove(ClassFileResolverStrategy.class, context);
             context.pop(TypeResolver.class);
         }
 
@@ -55,7 +54,7 @@ public enum JavaScope implements Scope {
      * A file resolver that matches on .class files and returns the
      * corresponding type.
      */
-    private static class ClassFileResolver implements FileResolver {
+    private static class ClassFileResolverStrategy implements FileResolverStrategy {
 
         private static final String CLASS_SUFFIX = ".class";
 
@@ -67,12 +66,12 @@ public enum JavaScope implements Scope {
          * @param typeResolver
          *            The type resolver to use.
          */
-        private ClassFileResolver(TypeResolver typeResolver) {
+        private ClassFileResolverStrategy(TypeResolver typeResolver) {
             this.typeResolver = typeResolver;
         }
 
         @Override
-        public Descriptor resolve(FileResource fileResource, String path, ScannerContext context) {
+        public Descriptor resolve(String path, ScannerContext context) {
             if (path.toLowerCase().endsWith(CLASS_SUFFIX)) {
                 String typeName = path.substring(1, path.length() - CLASS_SUFFIX.length()).replaceAll("/", ".");
                 return typeResolver.resolve(typeName, context).getTypeDescriptor();

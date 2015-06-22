@@ -9,7 +9,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverProvider;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResource, FileDescriptor> {
@@ -21,7 +21,7 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
     @Override
     public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        Descriptor descriptor = FileResolverProvider.resolve(item, path, context);
+        Descriptor descriptor = FileResolver.resolve(path, context);
         Store store = context.getStore();
         FileDescriptor fileDescriptor;
         if (descriptor != null) {
