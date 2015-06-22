@@ -16,13 +16,13 @@ public enum JavaScope implements Scope {
         @Override
         public void create(ScannerContext context) {
             TypeResolver typeResolver = getTypeResolver(context);
-            FileResolver.add(new ClassFileResolverStrategy(typeResolver), context);
+            context.peek(FileResolver.class).addStrategy(new ClassFileResolverStrategy(typeResolver));
             context.push(TypeResolver.class, typeResolver);
         }
 
         @Override
         public void destroy(ScannerContext context) {
-            FileResolver.remove(ClassFileResolverStrategy.class, context);
+            context.peek(FileResolver.class).removeStrategy(ClassFileResolverStrategy.class);
             context.pop(TypeResolver.class);
         }
 

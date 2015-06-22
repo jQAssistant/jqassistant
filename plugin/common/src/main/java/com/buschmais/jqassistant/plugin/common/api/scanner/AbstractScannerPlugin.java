@@ -16,6 +16,8 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
 
     private Map<String, Object> properties;
 
+    private ScannerContext scannerContext;
+
     /**
      * Initialize the plugin.
      */
@@ -23,7 +25,8 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     }
 
     @Override
-    public void configure(ScannerContext scannerContext, Map<String, Object> properties) {
+    public final void configure(ScannerContext scannerContext, Map<String, Object> properties) {
+        this.scannerContext = scannerContext;
         this.properties = properties;
         configure();
     }
@@ -116,6 +119,15 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     protected Boolean getBooleanProperty(String name, Boolean defaultValue) {
         Object value = properties.get(name);
         return value != null ? Boolean.valueOf(value.toString()) : defaultValue;
+    }
+
+    /**
+     * Return the scanner context.
+     * 
+     * @return The scanner context.
+     */
+    protected ScannerContext getScannerContext() {
+        return scannerContext;
     }
 
     /**

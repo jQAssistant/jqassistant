@@ -160,7 +160,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     } // end method scan
 
     /**
-     * Try to find an existing {@link JsfFaceletDescriptor} with the given parameters.
+     * Try to find an existing {@link JsfFaceletDescriptor} with the given
+     * parameters.
      *
      * @param templateFqn
      *            full qualified name of the including file
@@ -168,7 +169,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
      *            the found path to the included file
      * @param context
      *            The scanner context
-     * @return an existing {@link JsfFaceletDescriptor} or a new one if no descriptor exists.
+     * @return an existing {@link JsfFaceletDescriptor} or a new one if no
+     *         descriptor exists.
      */
     private JsfFaceletDescriptor findJsfTemplateDescriptor(String templateFqn, String path, ScannerContext context) {
         String includedFile = absolutifyFilePath(path, templateFqn);
@@ -178,7 +180,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     }
 
     /**
-     * Normalize file paths like the jqassistant core (e.g. replace backslashs, add leading slash).
+     * Normalize file paths like the jqassistant core (e.g. replace backslashs,
+     * add leading slash).
      *
      * @param path
      *            the path to normalize
@@ -251,7 +254,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     }
 
     /**
-     * Tries to find a {@link JsfFaceletDescriptor} in the store with the given fullFilePath. Creates a new one if no descriptor could be found.
+     * Tries to find a {@link JsfFaceletDescriptor} in the store with the given
+     * fullFilePath. Creates a new one if no descriptor could be found.
      *
      * @param fullFilePath
      *            the file path of the wanted file
@@ -264,7 +268,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
         if (isElExpression(fullFilePath)) {
             return null;
         }
-        final Descriptor descriptor = FileResolver.resolve(fullFilePath, context);
+        Descriptor descriptor = context.peek(FileResolver.class).resolve(fullFilePath, context);
         JsfFaceletDescriptor jspxDescriptor;
         if (descriptor != null) {
             jspxDescriptor = context.getStore().addDescriptorType(descriptor, JsfFaceletDescriptor.class);
@@ -281,7 +285,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
      * @param str
      *            input string
      *
-     * @return <code>true</code> if the argument starts with '#{' or '${', otherwise <code>
+     * @return <code>true</code> if the argument starts with '#{' or '${',
+     *         otherwise <code>
      *          false</code>
      */
     private boolean isElExpression(String str) {

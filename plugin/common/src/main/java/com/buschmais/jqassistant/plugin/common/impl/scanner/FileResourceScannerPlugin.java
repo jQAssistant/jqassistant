@@ -13,6 +13,15 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResource, FileDescriptor> {
+
+    private FileResolver fileResolver;
+
+    @Override
+    protected void configure() {
+        this.fileResolver = new FileResolver();
+        getScannerContext().push(FileResolver.class, fileResolver);
+    }
+
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return true;
@@ -21,7 +30,7 @@ public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResourc
     @Override
     public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        Descriptor descriptor = FileResolver.resolve(path, context);
+        Descriptor descriptor = fileResolver.resolve(path, context);
         Store store = context.getStore();
         FileDescriptor fileDescriptor;
         if (descriptor != null) {

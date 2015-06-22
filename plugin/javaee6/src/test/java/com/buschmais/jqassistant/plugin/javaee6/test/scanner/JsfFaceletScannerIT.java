@@ -108,9 +108,10 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
                         return rowObjects.hasResult() ? rowObjects.getSingleResult().get("f", FileDescriptor.class) : null;
                     }
                 };
-                FileResolver.add(fileResolverStrategy, scanner.getContext());
+                final FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
+                fileResolver.addStrategy(fileResolverStrategy);
                 scanner.scan(faceletDirectory, "/", JavaScope.CLASSPATH);
-                FileResolver.remove(fileResolverStrategy, scanner.getContext());
+                fileResolver.removeStrategy(fileResolverStrategy);
             }
         });
         TestResult result = query("match (f:File) with f.fileName as fileName match (f:File) where f.fileName=fileName "

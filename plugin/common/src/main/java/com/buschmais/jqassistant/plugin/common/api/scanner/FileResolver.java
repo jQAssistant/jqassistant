@@ -20,29 +20,9 @@ public final class FileResolver {
      * 
      * @param fileResolverStrategy
      *            A file resolver.
-     * @param context
-     *            The scanner context.
      */
-    public static void add(FileResolverStrategy fileResolverStrategy, ScannerContext context) {
-        FileResolver fileResolver = getFileResolverProvider(context);
-        fileResolver.resolverStrategies.put(fileResolverStrategy.getClass(), fileResolverStrategy);
-    }
-
-    /**
-     * Lookup the file resolver provider instance from the scanner context. If
-     * no instance exists a new one will be created.
-     * 
-     * @param context
-     *            The context
-     * @return The provider.
-     */
-    private static FileResolver getFileResolverProvider(ScannerContext context) {
-        FileResolver fileResolver = context.peek(FileResolver.class);
-        if (fileResolver == null) {
-            fileResolver = new FileResolver();
-            context.push(FileResolver.class, fileResolver);
-        }
-        return fileResolver;
+    public void addStrategy(FileResolverStrategy fileResolverStrategy) {
+        resolverStrategies.put(fileResolverStrategy.getClass(), fileResolverStrategy);
     }
 
     /**
@@ -50,11 +30,9 @@ public final class FileResolver {
      * 
      * @param fileResolverStrategy
      *            The file resolver.
-     * @param context
-     *            The scanner context.
      */
-    public static void remove(FileResolverStrategy fileResolverStrategy, ScannerContext context) {
-        remove(fileResolverStrategy.getClass(), context);
+    public void removeStrategy(FileResolverStrategy fileResolverStrategy) {
+        removeStrategy(fileResolverStrategy.getClass());
     }
 
     /**
@@ -62,15 +40,9 @@ public final class FileResolver {
      * 
      * @param fileResolverType
      *            The file resolver type.
-     * @param context
-     *            The scanner context.
      */
-    public static void remove(Class<? extends FileResolverStrategy> fileResolverType, ScannerContext context) {
-        FileResolver fileResolver = context.peek(FileResolver.class);
-        fileResolver.resolverStrategies.remove(fileResolverType);
-        if (fileResolver.resolverStrategies.isEmpty()) {
-            context.pop(FileResolver.class);
-        }
+    public void removeStrategy(Class<? extends FileResolverStrategy> fileResolverType) {
+        resolverStrategies.remove(fileResolverType);
     }
 
     /**
@@ -82,9 +54,8 @@ public final class FileResolver {
      *            The scanner context.
      * @return The resolved {@link Descriptor} or <code>null</code>.
      */
-    public static Descriptor resolve(String path, ScannerContext context) {
-        final FileResolver provider = getFileResolverProvider(context);
-        for (FileResolverStrategy fileResolverStrategy : provider.resolverStrategies.values()) {
+    public Descriptor resolve(String path, ScannerContext context) {
+        for (FileResolverStrategy fileResolverStrategy : resolverStrategies.values()) {
             Descriptor resolvedDescriptor = fileResolverStrategy.resolve(path, context);
             if (resolvedDescriptor != null) {
                 return resolvedDescriptor;
