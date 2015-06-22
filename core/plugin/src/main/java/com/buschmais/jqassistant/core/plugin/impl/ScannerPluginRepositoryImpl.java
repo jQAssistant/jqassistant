@@ -33,7 +33,6 @@ public class ScannerPluginRepositoryImpl extends AbstractPluginRepository implem
         for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
             scannerPlugin.configure(new HashMap<>(properties));
         }
-
         return scannerPlugins;
     }
 
