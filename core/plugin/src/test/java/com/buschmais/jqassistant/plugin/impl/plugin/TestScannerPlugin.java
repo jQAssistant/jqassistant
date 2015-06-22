@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
@@ -18,7 +19,7 @@ public class TestScannerPlugin implements ScannerPlugin<File, Descriptor> {
     }
 
     @Override
-    public void configure(Map<String, Object> properties) {
+    public void configure(ScannerContext scannerContext, Map<String, Object> properties) {
         this.properties = properties;
     }
 

@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.plugin.api;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 
 /**
@@ -13,6 +14,8 @@ public interface ScannerPluginRepository {
     /**
      * Return the instances of the configured scanner plugins.
      * 
+     * @param scannerContext
+     *            The scannerContext.
      * @param properties
      *            The configuration properties.
      *
@@ -20,6 +23,6 @@ public interface ScannerPluginRepository {
      * @throws PluginRepositoryException
      *             If the instances cannot be created.
      */
-    List<ScannerPlugin<?, ?>> getScannerPlugins(Map<String, Object> properties) throws PluginRepositoryException;
+    List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) throws PluginRepositoryException;
 
 }
