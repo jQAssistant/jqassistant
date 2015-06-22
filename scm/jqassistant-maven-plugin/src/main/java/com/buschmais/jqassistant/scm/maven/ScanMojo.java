@@ -15,7 +15,9 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -69,7 +71,8 @@ public class ScanMojo extends AbstractModuleMojo {
             throw new MojoExecutionException("Cannot determine scanner plugins.", e);
         }
         ScopePluginRepository scopePluginRepository = pluginRepositoryProvider.getScopePluginRepository();
-        Scanner scanner = new ScannerImpl(store, scannerPlugins, scopePluginRepository.getScopes());
+        ScannerContext scannerContext = new ScannerContextImpl(store);
+        Scanner scanner = new ScannerImpl(scannerContext, scannerPlugins, scopePluginRepository.getScopes());
         store.beginTransaction();
         try {
             scanner.scan(mavenProject, mavenProject.getFile().getAbsolutePath(), MavenScope.PROJECT);

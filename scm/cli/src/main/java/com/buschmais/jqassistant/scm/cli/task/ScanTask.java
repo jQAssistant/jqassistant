@@ -16,8 +16,10 @@ import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
@@ -111,9 +113,10 @@ public class ScanTask extends AbstractTask {
 
     private <T> void scan(Store store, T element, String path, String scopeName, List<ScannerPlugin<?, ?>> scannerPlugins) throws CliExecutionException {
         store.beginTransaction();
-        Scanner scanner = null;
+        Scanner scanner;
         try {
-            scanner = new ScannerImpl(store, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
+            ScannerContext scannerContext = new ScannerContextImpl(store);
+            scanner = new ScannerImpl(scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scope plugins.", e);
         }

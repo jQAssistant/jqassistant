@@ -4,14 +4,21 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
 
@@ -33,15 +40,13 @@ public class ScannerImpl implements Scanner {
     /**
      * Constructor.
      * 
-     * @param store
-     *            The store.
      * @param scannerPlugins
      *            The configured plugins.
      */
-    public ScannerImpl(Store store, List<ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
+    public ScannerImpl(ScannerContext scannerContext, List<ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
+        this.scannerContext = scannerContext;
         this.scannerPlugins = scannerPlugins;
         this.scopes = scopes;
-        this.scannerContext = new ScannerContextImpl(store);
         this.scannerContext.push(Scope.class, null);
     }
 
