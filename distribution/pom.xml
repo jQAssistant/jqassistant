@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <properties>
+        <asciidoc.directory>${project.build.directory}/generated-asciidoc</asciidoc.directory>
         <distribution.directory>${project.build.directory}/distribution</distribution.directory>
     </properties>
 
@@ -49,7 +50,7 @@
                         <toclevels>3</toclevels>
                         <tabsize>4</tabsize>
                         <stylesheet>jqassistant.css</stylesheet>
-                        <docRoot>/${project.build.directory}/generated-sources/asciidoc</docRoot>
+                        <docRoot>/${asciidoc.directory}</docRoot>
                         <projectGroupId>${project.groupId}</projectGroupId>
                         <projectArtifactId>${project.artifactId}</projectArtifactId>
                         <projectVersion>${project.version}</projectVersion>
@@ -80,7 +81,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/generated-sources/asciidoc</outputDirectory>
+                            <outputDirectory>${asciidoc.directory}</outputDirectory>
                             <includeTypes>zip</includeTypes>
                             <includeClassifiers>asciidoc</includeClassifiers>
                             <stripVersion>true</stripVersion>

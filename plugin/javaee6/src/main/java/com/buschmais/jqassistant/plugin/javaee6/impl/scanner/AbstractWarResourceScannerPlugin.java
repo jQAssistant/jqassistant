@@ -42,7 +42,7 @@ public abstract class AbstractWarResourceScannerPlugin<R extends Resource, D ext
         } finally {
             context.pop(TypeResolver.class);
         }
-        return fileDescriptor;
+        return toFileDescriptor(item, fileDescriptor, path, context);
     }
 
     protected abstract D scan(R item, String path, JavaClassesDirectoryDescriptor classesDirectory, Scanner scanner) throws IOException;

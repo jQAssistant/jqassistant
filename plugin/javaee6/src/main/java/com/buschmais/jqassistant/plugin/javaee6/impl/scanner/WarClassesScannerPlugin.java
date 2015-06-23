@@ -5,22 +5,22 @@ import java.io.IOException;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WarClassesScannerPlugin extends AbstractWarResourceScannerPlugin<Resource, FileDescriptor> {
+public class WarClassesScannerPlugin extends AbstractWarResourceScannerPlugin<FileResource, FileDescriptor> {
 
     public static final String PREFIX = "/WEB-INF/classes";
 
     @Override
-    public boolean accepts(Resource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return WebApplicationScope.WAR.equals(scope) && path.startsWith(PREFIX);
     }
 
     @Override
-    protected FileDescriptor scan(Resource item, String path, JavaClassesDirectoryDescriptor classesDirectory, Scanner scanner) throws IOException {
+    protected FileDescriptor scan(FileResource item, String path, JavaClassesDirectoryDescriptor classesDirectory, Scanner scanner) throws IOException {
         if (PREFIX.equals(path)) {
             return classesDirectory;
         }
