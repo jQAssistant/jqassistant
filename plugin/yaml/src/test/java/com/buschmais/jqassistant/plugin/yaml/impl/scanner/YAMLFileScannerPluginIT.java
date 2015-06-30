@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
@@ -13,7 +15,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.util.StringValueMatcher.hasValue;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -25,6 +29,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.collection.IsIn.isIn;
 
 public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     @Test
@@ -70,14 +75,14 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(document.getValues(), hasSize(0));
         assertThat(document.getKeys(), hasSize(1));
 
-        YAMLKeyDescriptor key = document.getKeys().get(0);
+        YAMLKeyDescriptor key = findKeyByName(document.getKeys(), "key");
 
         assertThat(key.getName(), equalTo("key"));
         assertThat(key.getFullQualifiedName(), equalTo("key"));
         assertThat(key.getValues(), hasSize(1));
         assertThat(key.getPosition(), equalTo(0));
 
-        YAMLValueDescriptor value = key.getValues().get(0);
+        YAMLValueDescriptor value = findValueByValue(key.getValues(), "value");
 
         assertThat(value.getValue(), equalTo("value"));
         assertThat(value.getPosition(), equalTo(0));
@@ -110,14 +115,14 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(document.getValues(), hasSize(0));
         assertThat(document.getKeys(), hasSize(2));
 
-        YAMLKeyDescriptor keyA = document.getKeys().get(0);
+        YAMLKeyDescriptor keyA = findKeyByName(document.getKeys(), "keyA");
 
         assertThat(keyA.getName(), equalTo("keyA"));
         assertThat(keyA.getPosition(), equalTo(0));
         assertThat(keyA.getFullQualifiedName(), equalTo("keyA"));
         assertThat(keyA.getValues(), hasSize(1));
 
-        YAMLValueDescriptor valueOfKeyA = keyA.getValues().get(0);
+        YAMLValueDescriptor valueOfKeyA = findValueByValue(keyA.getValues(), "valueA");
 
         assertThat(valueOfKeyA.getValue(), equalTo("valueA"));
         assertThat(valueOfKeyA.getPosition(), equalTo(0));
@@ -223,7 +228,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         YAMLDocumentDescriptor docDescriptor = fileDescriptor.getDocuments().get(0);
 
 
-        YAMLKeyDescriptor keyDescriptor1 = docDescriptor.getKeys().get(0);
+        YAMLKeyDescriptor keyDescriptor1 = findKeyByName(docDescriptor.getKeys(), "american");
 
         assertThat(keyDescriptor1.getName(), equalTo("american"));
         assertThat(keyDescriptor1.getFullQualifiedName(), equalTo("american"));
@@ -233,7 +238,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                                                                   hasValue("New York Yankees"),
                                                                   hasValue("Detroit Tigers")));
 
-        YAMLKeyDescriptor keyDescriptor2 = docDescriptor.getKeys().get(1);
+        YAMLKeyDescriptor keyDescriptor2 = findKeyByName(docDescriptor.getKeys(), "national");
 
         assertThat(keyDescriptor2.getName(), equalTo("national"));
         assertThat(keyDescriptor2.getFullQualifiedName(), equalTo("national"));
@@ -281,17 +286,16 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(firstSequence.getValue(), nullValue());
         assertThat(firstSequence.getValues(), hasSize(3));
-        assertThat(firstSequence.getValues().get(0).getValue(), equalTo("name"));
-        assertThat(firstSequence.getValues().get(1).getValue(), equalTo("hr"));
-        assertThat(firstSequence.getValues().get(2).getValue(), equalTo("avg"));
+        assertThat(firstSequence.getValues(), containsInAnyOrder(hasValue("name"), hasValue("hr"),
+                                                                 hasValue("avg")));
 
         assertThat(secondSequence.getValue(), nullValue());
         assertThat(secondSequence.getValues(), hasSize(3));
 
         assertThat(thirdSequence.getValue(), CoreMatchers.nullValue());
-        assertThat(thirdSequence.getValues().get(0).getValue(), equalTo("Sammy Sosa"));
-        assertThat(thirdSequence.getValues().get(1).getValue(), equalTo("63"));
-        assertThat(thirdSequence.getValues().get(2).getValue(), equalTo("0.288"));
+        assertThat(thirdSequence.getValues(), containsInAnyOrder(hasValue("Sammy Sosa"),
+                                                                 hasValue("63"),
+                                                                 hasValue("0.288")));
 
         store.commitTransaction();
     }
@@ -321,13 +325,13 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(document.getKeys(), hasSize(2));
         assertThat(document.getValues(), empty());
 
-        YAMLKeyDescriptor keyA = document.getKeys().get(0);
+        YAMLKeyDescriptor keyA = findKeyByName(document.getKeys(), "Mark McGwire");
 
         assertThat(keyA.getKeys(), hasSize(2));
         assertThat(keyA.getName(), equalTo("Mark McGwire"));
         assertThat(keyA.getValues(), empty());
 
-        YAMLKeyDescriptor keyA1 = keyA.getKeys().get(0);
+        YAMLKeyDescriptor keyA1 = findKeyByName(keyA.getKeys(), "hr");
 
 
         System.out.println(keyA1.getName());
@@ -340,7 +344,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyA1.getValues(), contains(hasValue("65")));
 
 
-        YAMLKeyDescriptor keyA2 = keyA.getKeys().get(1);
+        YAMLKeyDescriptor keyA2 = findKeyByName(keyA.getKeys(), "avg");
 
         System.out.println(keyA2.getName());
         System.out.println(keyA2.getFullQualifiedName());
@@ -353,13 +357,13 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         //---
 
-        YAMLKeyDescriptor keyB = document.getKeys().get(1);
+        YAMLKeyDescriptor keyB = findKeyByName(document.getKeys(), "Sammy Sosa");
 
         assertThat(keyB.getName(), CoreMatchers.equalTo("Sammy Sosa"));
         assertThat(keyB.getValues(), empty());
         assertThat(keyB.getKeys(), hasSize(2));
 
-        YAMLKeyDescriptor keyB2 = keyB.getKeys().get(1);
+        YAMLKeyDescriptor keyB2 = findKeyByName(keyB.getKeys(), "avg");
 
         assertThat(keyB2.getFullQualifiedName(), CoreMatchers.equalTo("Sammy Sosa.avg"));
         assertThat(keyB2.getValues(), hasSize(1));
@@ -531,5 +535,35 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
             System.out.print(" ");
         }
 
+    }
+
+    /**
+     * Finds a value by its value. This method helps
+     * to make the tests more stable as the order of
+     * search result collection elements might vary.
+     */
+    static <T extends YAMLValueDescriptor> T findValueByValue(Collection<T> in, String value) {
+        for (T element : in) {
+            if (value.equals(element.getValue())) {
+                return element;
+            }
+        }
+
+        throw new NoSuchElementException("No entry with value '" + value + "' found.");
+    }
+
+    /**
+     * Finds a descriptor by the name of the node. This method
+     * helps to make the tests more stable as the order of the
+     * search result collection elements might vary.
+     */
+    static <T extends NamedDescriptor> T findKeyByName(Collection<T> in, String name) {
+        for (T element : in) {
+            if (name.equals(element.getName())) {
+                return element;
+            }
+        }
+
+        throw new NoSuchElementException("No entry with name '" + name + "' found.");
     }
 }
