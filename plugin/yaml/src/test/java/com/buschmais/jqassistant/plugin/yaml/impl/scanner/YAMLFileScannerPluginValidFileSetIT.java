@@ -25,6 +25,7 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
              {"/probes/valid/simple-key-value-pair.yaml"},
              {"/probes/valid/two-simple-key-value-pairs.yaml"},
              {"/probes/valid/simple-list.yaml"},
+             {"/probes/valid/dropwizard-configuration.yaml"},
 //             {"/probes/yamlspec/1.1/sec-2.1-example-2.1-sequence-of-scalars.yaml"},
              {"/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml"},
              {"/probes/yamlspec/1.1/sec-2.1-example-2.3-mapping-scalars-to-sequences.yaml"},

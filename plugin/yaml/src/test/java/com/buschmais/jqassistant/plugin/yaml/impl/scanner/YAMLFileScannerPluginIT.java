@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
@@ -29,7 +28,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.collection.IsIn.isIn;
 
 public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     @Test
@@ -186,17 +184,9 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(document.getKeys(), empty());
         assertThat(document.getValues(), hasSize(3));
-
-        for (YAMLValueDescriptor d : document.getValues()) {
-
-            System.out.println(d.getValue());
-        }
-
-        System.out.println();
-
-             assertThat(document.getValues(), containsInAnyOrder(hasValue("Mark McGwire"),
-                                                                 hasValue("Sammy Sosa"),
-                                                                 hasValue("Ken Griffey")));
+        assertThat(document.getValues(), containsInAnyOrder(hasValue("Mark McGwire"),
+                                                            hasValue("Sammy Sosa"),
+                                                            hasValue("Ken Griffey")));
 
         store.commitTransaction();
     }
@@ -206,6 +196,48 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     public void scanScalarsOfScalarsYAML() {
         Assert.fail("Not implemented yet!");
 //        "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml"
+    }
+
+    @Test
+    public void scanValidDropWizardConfigYAML() {
+        store.beginTransaction();
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/dropwizard-configuration.yaml");
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query("MATCH (f:YAML:File) WHERE f.fileName=~'.*/dropwizard-configuration.yaml' RETURN f")
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor documentDescriptor = fileDescriptor.getDocuments().get(0);
+
+        assertThat(documentDescriptor.getValues(), Matchers.empty());
+        assertThat(documentDescriptor.getKeys(), hasSize(2));
+
+        YAMLKeyDescriptor keyDescriptor = findKeyByName(documentDescriptor.getKeys(), "server");
+
+        assertThat(keyDescriptor.getName(), equalTo("server"));
+        assertThat(keyDescriptor.getFullQualifiedName(), equalTo("server"));
+
+        assertThat(keyDescriptor.getKeys(), hasSize(4));
+
+        YAMLKeyDescriptor subKey1 = findKeyByName(keyDescriptor.getKeys(), "maxThreads");
+        YAMLKeyDescriptor subKey2 = findKeyByName(keyDescriptor.getKeys(), "applicationConnectors");
+        YAMLKeyDescriptor subKey3 = findKeyByName(keyDescriptor.getKeys(), "adminConnectors");
+        YAMLKeyDescriptor subKey4 = findKeyByName(keyDescriptor.getKeys(), "requestLog");
+
+        assertThat(subKey1.getName(), equalTo("maxThreads"));
+        assertThat(subKey2.getName(), equalTo("applicationConnectors"));
+        assertThat(subKey3.getName(), equalTo("adminConnectors"));
+        assertThat(subKey4.getName(), equalTo("requestLog"));
+
+        store.commitTransaction();
     }
 
     @Test
@@ -321,7 +353,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
 
-        print(document);
         assertThat(document.getKeys(), hasSize(2));
         assertThat(document.getValues(), empty());
 
@@ -505,36 +536,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     public void scanLogFileYAML() {
 //             {"/probes/yamlspec/1.1/sec-2.5-example-2.28-log-file.yaml"},
         Assert.fail("Not implemented yet!");
-    }
-
-    int indent = 0;
-    public void print(YAMLDocumentDescriptor d) {
-        for (YAMLKeyDescriptor keyDescriptor : d.getKeys()) {
-            printKey(keyDescriptor);
-        }
-    }
-
-    private void printKey(YAMLKeyDescriptor keyDescriptor) {
-        i();
-        System.out.println(keyDescriptor.getFullQualifiedName());
-
-        for (YAMLValueDescriptor valueDescriptor : keyDescriptor.getValues()) {
-            printVal(valueDescriptor);
-        }
-
-    }
-
-    private void printVal(YAMLValueDescriptor valueDescriptor) {
-        i();
-        System.out.print("- ");
-        System.out.println(valueDescriptor.getValue());
-    }
-
-    private void i() {
-        for (int i = 0; i < indent; i++) {
-            System.out.print(" ");
-        }
-
     }
 
     /**
