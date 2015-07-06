@@ -106,7 +106,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
         XPathExpression classExpression = xpath
-                .compile("/graphml/graph/node[contains(@labels,':CyclomaticComplexity:Metrics')]/data[@key='totalCyclomaticComplexity']");
+                .compile("/graphml/graph/node[contains(@labels,':CyclomaticComplexity')]/data[@key='totalCyclomaticComplexity']");
         String complexity = classExpression.evaluate(doc);
         assertThat(complexity, equalTo("3"));
 
