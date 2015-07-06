@@ -1,10 +1,13 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
 import static java.util.Arrays.asList;
-import static org.neo4j.helpers.collection.Iterables.join;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.neo4j.cypher.export.SubGraph;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
@@ -65,10 +68,16 @@ public class MetaInformation {
     }
 
     public static String getLabelsString(Node node) {
-        Iterator<Label> it = node.getLabels().iterator();
-        if (it.hasNext()) {
-            return ":" + join(":", it);
+        Set<String> labels = new HashSet<>();
+        for (Label l : node.getLabels()) {
+            labels.add(l.name());
         }
-        return "";
+
+        if (labels.isEmpty()) {
+            return StringUtils.EMPTY;
+        } else {
+            return ":" + StringUtils.join(labels.iterator(), ":");
+        }
     }
+
 }

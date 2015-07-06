@@ -12,12 +12,12 @@ import org.apache.commons.cli.OptionBuilder;
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.cli.Task;
-import com.buschmais.jqassistant.scm.common.report.ReportHelper;
 import com.buschmais.jqassistant.scm.common.report.RuleHelper;
 
 /**

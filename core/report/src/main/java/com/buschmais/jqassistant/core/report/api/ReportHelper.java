@@ -1,18 +1,15 @@
-package com.buschmais.jqassistant.scm.common.report;
+package com.buschmais.jqassistant.core.report.api;
+
+import java.util.Collection;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.report.api.LanguageElement;
-import com.buschmais.jqassistant.core.report.api.LanguageHelper;
-import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Provides utility functionality for creating reports.
@@ -106,7 +103,7 @@ public final class ReportHelper {
      *            The value.
      * @return The string representation
      */
-    private String getStringValue(Object value) {
+    public static String getStringValue(Object value) {
         if (value != null) {
             if (value instanceof Descriptor) {
                 Descriptor descriptor = (Descriptor) value;
