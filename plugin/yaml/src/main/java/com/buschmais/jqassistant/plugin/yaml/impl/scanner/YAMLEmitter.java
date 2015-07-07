@@ -140,7 +140,14 @@ class YAMLEmitter implements Emitable {
     }
 
     protected void handleMappingEndEvent() {
-        if (processingContext.isContext(MAPPING_START)) {
+        if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START)) {
+            processingContext.popContextEvent(2);
+
+            YAMLKeyDescriptor currentKey = processingContext.pop();
+            YAMLKeyBucket parent = processingContext.peek();
+
+            parent.getKeys().add(currentKey);
+        } else if (processingContext.isContext(MAPPING_START)) {
             processingContext.popContextEvent(1);
 
         } else if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START, SCALAR, SCALAR)) {
