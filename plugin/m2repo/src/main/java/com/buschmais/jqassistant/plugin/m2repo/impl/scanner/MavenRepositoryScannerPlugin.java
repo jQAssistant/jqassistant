@@ -26,6 +26,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
 import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
@@ -61,26 +63,6 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     @Override
     public boolean accepts(URL item, String path, Scope scope) throws IOException {
         return MavenScope.REPOSITORY == scope;
-    }
-
-    /**
-     * Returns a string with the artifact coordinates
-     * (groupId:artifactId:[classifier:]version).
-     * 
-     * @param artifact
-     *            the artifact
-     * @return a string with the artifact coordinates
-     *         (groupId:artifactId:[classifier:]version).
-     */
-    private String getCoordinates(Artifact artifact) {
-        StringBuilder builder = new StringBuilder(artifact.getGroupId());
-        builder.append(":").append(artifact.getArtifactId());
-        builder.append(":").append(artifact.getExtension());
-        builder.append(":").append(artifact.getVersion());
-        if (StringUtils.isNotBlank(artifact.getClassifier())) {
-            builder.append(":").append(artifact.getClassifier());
-        }
-        return builder.toString();
     }
 
     /**
@@ -185,11 +167,10 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
                     }
                 }
                 if (scanArtifacts && !artifact.equals(modelArtifact)) {
-                    MavenArtifactDescriptor mavenArtifactDescriptor;
                     ArtifactResult artifactResult = artifactProvider.getArtifact(artifact);
                     File artifactFile = artifactResult.getArtifact().getFile();
                     Descriptor descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
-                    mavenArtifactDescriptor = store.addDescriptorType(descriptor, MavenArtifactDescriptor.class);
+                    MavenArtifactDescriptor mavenArtifactDescriptor = store.addDescriptorType(descriptor, MavenArtifactDescriptor.class);
                     ArtifactResolver.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
                     repositoryArtifactDescriptor.getDescribes().add(mavenArtifactDescriptor);
                     if (!keepArtifacts) {
@@ -203,7 +184,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     }
 
     private RepositoryArtifactDescriptor getModel(MavenRepositoryDescriptor repositoryDescriptor, Artifact artifact, long lastModified) {
-        String coordinates = getCoordinates(artifact);
+        String coordinates = ArtifactResolver.getId(new ArtifactCoordinates(artifact));
         if (artifact.isSnapshot()) {
             return repositoryDescriptor.getSnapshotArtifact(coordinates, lastModified);
         } else {
@@ -216,7 +197,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
         artifactDescriptor.setLastModified(lastModified);
         artifactDescriptor.setContainingRepository(repoDescriptor);
-        String coordinates = getCoordinates(artifact);
+        String coordinates = ArtifactResolver.getId(new ArtifactCoordinates(artifact));
         artifactDescriptor.setMavenCoordinates(coordinates);
         RepositoryArtifactDescriptor lastSnapshot = repoDescriptor.getLastSnapshot(coordinates, lastModified);
         if (lastSnapshot != null) {
@@ -236,14 +217,23 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             LOGGER.info("Creating local maven repository directory {}", localDirectory.getAbsolutePath());
             localDirectory.mkdirs();
         }
-        File localRepoDir = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
+        File workDirectory = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
+        File repositoryRoot = new File(workDirectory, "repository");
+        File indexRoot = new File(workDirectory, "index");
+        FileResolverStrategy fileResolverStrategy = new RepositoryFileResolverStrategy(repositoryRoot);
+        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
+        fileResolver.addStrategy(fileResolverStrategy);
         // handles the remote maven index
-        MavenIndex mavenIndex = new MavenIndex(item, localRepoDir, username, password);
+        MavenIndex mavenIndex = new MavenIndex(item, repositoryRoot, indexRoot, username, password);
         // used to resolve (remote) artifacts
-        ArtifactProvider artifactProvider = new ArtifactProvider(item, localRepoDir, username, password);
+        ArtifactProvider artifactProvider = new ArtifactProvider(item, repositoryRoot, username, password);
         PomModelBuilder pomModelBuilder = new EffectiveModelBuilderImpl(artifactProvider);
         ArtifactFilter artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
-        return scanRepository(item, scanner, mavenIndex, artifactProvider, pomModelBuilder, artifactFilter);
+        try {
+            return scanRepository(item, scanner, mavenIndex, artifactProvider, pomModelBuilder, artifactFilter);
+        } finally {
+            fileResolver.removeStrategy(fileResolverStrategy);
+        }
     }
 
     /**

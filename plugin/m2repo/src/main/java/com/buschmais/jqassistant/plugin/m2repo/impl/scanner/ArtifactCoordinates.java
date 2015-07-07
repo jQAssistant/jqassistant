@@ -1,24 +1,15 @@
-package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
+package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
+
+import org.eclipse.aether.artifact.Artifact;
 
 import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.Coordinates;
 
 public class ArtifactCoordinates implements Coordinates {
 
-    /**
-     * The artifact type for test jars.
-     */
-    public static final String ARTIFACTTYPE_TEST_JAR = "test-jar";
+    private Artifact artifact;
 
-    private org.apache.maven.artifact.Artifact artifact;
-    private boolean testJar;
-
-    public ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact) {
-        this(artifact, false);
-    }
-
-    public ArtifactCoordinates(org.apache.maven.artifact.Artifact artifact, boolean testJar) {
+    public ArtifactCoordinates(Artifact artifact) {
         this.artifact = artifact;
-        this.testJar = testJar;
     }
 
     @Override
@@ -38,7 +29,7 @@ public class ArtifactCoordinates implements Coordinates {
 
     @Override
     public String getType() {
-        return testJar ? ARTIFACTTYPE_TEST_JAR : artifact.getType();
+        return artifact.getExtension();
     }
 
     @Override

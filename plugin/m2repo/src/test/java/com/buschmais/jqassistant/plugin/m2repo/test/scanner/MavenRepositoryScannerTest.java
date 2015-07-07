@@ -2,8 +2,10 @@ package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,14 +20,11 @@ import org.apache.maven.index.ArtifactInfo;
 import org.apache.maven.index.MAVEN;
 import org.apache.maven.model.Model;
 import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.verification.Times;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -43,6 +42,7 @@ import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.EffectiveModelBuilderImpl;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
@@ -55,18 +55,19 @@ public class MavenRepositoryScannerTest {
     private static final String PACKAGING = "jar";
 
     private void buildWhenThenReturn(ArtifactProvider artifactProvider, final ArtifactInfo info) throws ArtifactResolutionException {
-        when(artifactProvider.getArtifact(any(Artifact.class))).thenAnswer(new Answer<ArtifactResult>() {
+        doAnswer(new Answer<ArtifactResult>() {
             @Override
             public ArtifactResult answer(InvocationOnMock invocation) throws Throwable {
                 Artifact a = (Artifact) invocation.getArguments()[0];
+                File file =
+                        new File("test-repo/" + a.getGroupId() + "/" + a.getArtifactId() + "/" + a.getVersion() + "/" + a.getGroupId() + "-"
+                                + a.getArtifactId() + "-" + a.getVersion() + "." + a.getExtension());
+                Artifact artifact = a.setFile(file);
                 ArtifactResult artifactResult = new ArtifactResult(new ArtifactRequest());
-                artifactResult.setArtifact(a);
-                File file = new File("test-repo/" + a.getGroupId() + "/" + a.getArtifactId() + "/" + a.getVersion() + "/" + a.getGroupId() + "-"
-                        + a.getArtifactId() + "-" + a.getVersion() + "." + a.getExtension());
-                a.setFile(file);
+                artifactResult.setArtifact(artifact);
                 return artifactResult;
             }
-        });
+        }).when(artifactProvider).getArtifact(any(Artifact.class));
     }
 
     private Iterable<ArtifactInfo> getTestArtifactInfos() {
@@ -79,19 +80,6 @@ public class MavenRepositoryScannerTest {
         return infos;
     }
 
-    private ArtifactResult newArtifactResult(ArtifactInfo info) {
-        ArtifactResult result = new ArtifactResult(new ArtifactRequest());
-        Artifact artifact = new DefaultArtifact(info.groupId, info.artifactId, info.packaging, info.version);
-        result.setArtifact(artifact.setFile(newFile(info)));
-        return result;
-    }
-
-    private File newFile(ArtifactInfo info) {
-        return new File("test-repo/" + info.groupId + "/" + info.artifactId + "/" + info.version + "/" + info.groupId + "-" + info.artifactId + "-"
-                + info.version + "." + info.packaging);
-    }
-
-    @Ignore
     @Test
     public void testMockMavenRepoScanner() throws Exception {
         MavenIndex mavenIndex = mock(MavenIndex.class);
@@ -127,8 +115,12 @@ public class MavenRepositoryScannerTest {
         when(repoDescriptor.getArtifact(anyString())).thenReturn(null);
 
         when(scanner.scan(any(FileResource.class), anyString(), Mockito.any(Scope.class))).thenReturn(mock(FileDescriptor.class));
-        when(scanner.scan(any(FileResource.class), Mockito.contains("pom"), Mockito.any(Scope.class))).thenReturn(mock(MavenPomXmlDescriptor.class));
-        when(store.addDescriptorType(any(Descriptor.class), eq(RepositoryArtifactDescriptor.class))).thenReturn(mock(RepositoryArtifactDescriptor.class));
+        when(scanner.scan(any(FileResource.class), Mockito.contains("pom"), Mockito.any(Scope.class))).thenReturn(
+                mock(MavenPomXmlDescriptor.class));
+        when(store.addDescriptorType(any(Descriptor.class), eq(RepositoryArtifactDescriptor.class))).thenReturn(
+                mock(RepositoryArtifactDescriptor.class));
+        when(store.addDescriptorType(any(Descriptor.class), eq(MavenArtifactDescriptor.class))).thenReturn(
+                mock(MavenArtifactDescriptor.class));
 
         ArtifactFilter artifactFilter = mock(ArtifactFilter.class);
         when(artifactFilter.match(any(org.apache.maven.artifact.Artifact.class))).thenReturn(true);
@@ -139,7 +131,8 @@ public class MavenRepositoryScannerTest {
 
         verify(mavenIndex).updateIndex();
         verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
-        verify(artifactFilter, Mockito.times(3)).match(any(org.apache.maven.artifact.Artifact.class));
-        verify(store, new Times(6)).addDescriptorType(any(Descriptor.class), eq(RepositoryArtifactDescriptor.class));
+        verify(artifactFilter, times(3)).match(any(org.apache.maven.artifact.Artifact.class));
+        verify(store, times(3)).addDescriptorType(any(Descriptor.class), eq(RepositoryArtifactDescriptor.class));
+        verify(store, times(3)).addDescriptorType(any(Descriptor.class), eq(MavenArtifactDescriptor.class));
     }
 }

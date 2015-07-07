@@ -10,7 +10,12 @@ import java.util.List;
 
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.maven.index.*;
+import org.apache.maven.index.ArtifactInfo;
+import org.apache.maven.index.ArtifactInfoFilter;
+import org.apache.maven.index.Field;
+import org.apache.maven.index.Indexer;
+import org.apache.maven.index.IteratorSearchRequest;
+import org.apache.maven.index.MAVEN;
 import org.apache.maven.index.context.ExistingLuceneIndexMismatchException;
 import org.apache.maven.index.context.IndexCreator;
 import org.apache.maven.index.context.IndexingContext;
@@ -19,7 +24,11 @@ import org.apache.maven.index.creator.MavenArchetypeArtifactInfoIndexCreator;
 import org.apache.maven.index.creator.MavenPluginArtifactInfoIndexCreator;
 import org.apache.maven.index.creator.MinimalArtifactInfoIndexCreator;
 import org.apache.maven.index.expr.SourcedSearchExpression;
-import org.apache.maven.index.updater.*;
+import org.apache.maven.index.updater.IndexUpdateRequest;
+import org.apache.maven.index.updater.IndexUpdateResult;
+import org.apache.maven.index.updater.IndexUpdater;
+import org.apache.maven.index.updater.ResourceFetcher;
+import org.apache.maven.index.updater.WagonHelper;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.authentication.AuthenticationInfo;
 import org.apache.maven.wagon.events.TransferEvent;
@@ -56,16 +65,18 @@ public class MavenIndex {
      * 
      * @param repoUrl
      *            the repository url
+     * @param repositoryDirectory
+     *            the directory containing the local repository.
      * @param indexDirectory
      *            the directory for local index data
      * @throws IOException
      *             error during index creation/update
      */
-    public MavenIndex(URL repoUrl, File indexDirectory, String username, String password) throws IOException {
+    public MavenIndex(URL repoUrl, File repositoryDirectory, File indexDirectory, String username, String password) throws IOException {
         this.username = username;
         this.password = password;
         try {
-            createIndexingContext(repoUrl, indexDirectory);
+            createIndexingContext(repoUrl, repositoryDirectory, indexDirectory);
         } catch (IllegalArgumentException | PlexusContainerException | ComponentLookupException e) {
             throw new IOException(e);
         }
@@ -95,13 +106,12 @@ public class MavenIndex {
      * @throws IllegalArgumentException
      * @throws IOException
      */
-    private void createIndexingContext(URL repoUrl, File indexDirectory) throws PlexusContainerException, ComponentLookupException,
-            ExistingLuceneIndexMismatchException, IllegalArgumentException, IOException {
+    private void createIndexingContext(URL repoUrl, File repositoryDirectory, File indexDirectory) throws PlexusContainerException,
+            ComponentLookupException, ExistingLuceneIndexMismatchException, IllegalArgumentException, IOException {
         plexusContainer = new DefaultPlexusContainer();
         indexer = plexusContainer.lookup(Indexer.class);
         // Files where local cache is (if any) and Lucene Index should be
         // located
-        File localArtifactCache = new File(indexDirectory, "repo-artifact-cache");
         String repoSuffix = repoUrl.getHost();
         File localIndexDir = new File(indexDirectory, "repo-index");
         // Creators we want to use (search for fields it defines)
@@ -112,8 +122,9 @@ public class MavenIndex {
         indexers.add(plexusContainer.lookup(IndexCreator.class, MavenArchetypeArtifactInfoIndexCreator.ID));
 
         // Create context for central repository index
-        indexingContext = indexer.createIndexingContext("jqa-cxt-" + repoSuffix, "jqa-repo-id-" + repoSuffix, localArtifactCache, localIndexDir,
-                repoUrl.toString(), null, true, true, indexers);
+        indexingContext =
+                indexer.createIndexingContext("jqa-cxt-" + repoSuffix, "jqa-repo-id-" + repoSuffix, repositoryDirectory, localIndexDir, repoUrl
+                        .toString(), null, true, true, indexers);
     }
 
     public void closeCurrentIndexingContext() throws IOException {
@@ -210,7 +221,8 @@ public class MavenIndex {
         } else if (updateResult.getTimestamp() == null) {
             LOGGER.debug("No update needed, index is up to date!");
         } else {
-            LOGGER.debug("Received an incremental update, change covered " + lastUpdateLocalRepo + " - " + updateResult.getTimestamp() + " period.");
+            LOGGER.debug("Received an incremental update, change covered " + lastUpdateLocalRepo + " - " + updateResult.getTimestamp()
+                    + " period.");
         }
     }
 

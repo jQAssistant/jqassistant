@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner.artifact;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 
 public class ArtifactResolver {
@@ -20,15 +19,27 @@ public class ArtifactResolver {
      * @return The resolved artifact descriptor.
      */
     public static <A extends ArtifactDescriptor> A resolve(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
-        Store store = scannerContext.getStore();
-        String id = getArtifactId(coordinates);
-        ArtifactDescriptor artifactDescriptor = store.find(ArtifactDescriptor.class, id);
+        ArtifactDescriptor artifactDescriptor = find(coordinates, scannerContext);
         if (artifactDescriptor == null) {
             artifactDescriptor = createArtifactDescriptor(coordinates, descriptorType, scannerContext);
         } else if (!(descriptorType.isAssignableFrom(artifactDescriptor.getClass()))) {
-            return store.migrate(artifactDescriptor, descriptorType);
+            return scannerContext.getStore().migrate(artifactDescriptor, descriptorType);
         }
         return descriptorType.cast(artifactDescriptor);
+    }
+
+    /**
+     * Find an artifact identified by the given coordinates.
+     * 
+     * @param coordinates
+     *            The coordinates.
+     * @param scannerContext
+     *            The scanner context.
+     * @return The artifact descriptor or <code>null</code>.
+     */
+    public static ArtifactDescriptor find(Coordinates coordinates, ScannerContext scannerContext) {
+        String id = getId(coordinates);
+        return scannerContext.getStore().find(ArtifactDescriptor.class, id);
     }
 
     /**
@@ -42,7 +53,7 @@ public class ArtifactResolver {
      *            The artifact tpe.
      */
     public static <A extends ArtifactDescriptor> void setCoordinates(A artifactDescriptor, Coordinates coordinates) {
-        artifactDescriptor.setFullQualifiedName(getArtifactId(coordinates));
+        artifactDescriptor.setFullQualifiedName(getId(coordinates));
         artifactDescriptor.setGroup(coordinates.getGroup());
         artifactDescriptor.setName(coordinates.getName());
         artifactDescriptor.setVersion(coordinates.getVersion());
@@ -65,10 +76,10 @@ public class ArtifactResolver {
      */
     private static <A extends ArtifactDescriptor> A createArtifactDescriptor(Coordinates coordinates, Class<A> descriptorType,
             ScannerContext scannerContext) {
-        String id = getArtifactId(coordinates);
+        String id = getId(coordinates);
         A artifactDescriptor = scannerContext.getStore().create(descriptorType, id);
         setCoordinates(artifactDescriptor, coordinates);
-        artifactDescriptor.setFullQualifiedName(getArtifactId(coordinates));
+        artifactDescriptor.setFullQualifiedName(getId(coordinates));
         return artifactDescriptor;
     }
 
@@ -79,7 +90,7 @@ public class ArtifactResolver {
      *            The maven coordinates.
      * @return The id.
      */
-    private static String getArtifactId(Coordinates coordinates) {
+    public static String getId(Coordinates coordinates) {
         StringBuffer id = new StringBuffer();
         if (coordinates.getGroup() != null) {
             id.append(coordinates.getGroup());

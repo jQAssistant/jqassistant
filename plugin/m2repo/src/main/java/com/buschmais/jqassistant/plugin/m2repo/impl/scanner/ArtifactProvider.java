@@ -46,14 +46,14 @@ public class ArtifactProvider {
      * 
      * @param repositoryUrl
      *            the repository url
-     * @param localDirectory
+     * @param directory
      *            the directory for resolved artifacts
      * @param username
      *            an username for authentication
      * @param password
      *            a password for authentication
      */
-    public ArtifactProvider(URL repositoryUrl, File localDirectory, String username, String password) {
+    public ArtifactProvider(URL repositoryUrl, File directory, String username, String password) {
         String url = StringUtils.replace(repositoryUrl.toString(), repositoryUrl.getUserInfo() + "@", StringUtils.EMPTY);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + url);
@@ -68,7 +68,7 @@ public class ArtifactProvider {
         Authentication auth = authBuilder.build();
         repository = new RemoteRepository.Builder("jqa", "default", url).setAuthentication(auth).build();
         repositorySystem = newRepositorySystem();
-        session = newRepositorySystemSession(repositorySystem, localDirectory);
+        session = newRepositorySystemSession(repositorySystem, directory);
     }
 
     /**
@@ -123,7 +123,7 @@ public class ArtifactProvider {
      */
     private DefaultRepositorySystemSession newRepositorySystemSession(RepositorySystem system, File localDirectory) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(localDirectory + "/repository");
+        LocalRepository localRepo = new LocalRepository(localDirectory);
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
         return session;
     }
