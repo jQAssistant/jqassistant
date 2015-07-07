@@ -2,9 +2,6 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
 import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.Coordinates;
 
-/**
- * Created by dimahler on 5/5/2015.
- */
 public class ArtifactCoordinates implements Coordinates {
 
     /**

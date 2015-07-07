@@ -22,10 +22,10 @@ A pom.xml file describing a single Maven project.
 .Relations of :Maven:Project:File:Directory
 [options="header"]
 |====
-| Name       | Target label(s)          | Cardinality | Description
-| CREATES    | <<:Artifact>>            | 0..n        | References an artifact created by the project
-| HAS_PARENT | <<:Maven:Project>>       | 0..1        | References the parent project (optional)
-| HAS_MODULE | <<:Maven:Project>>       | 0..n        | References modules of this project (optional)
+| Name       | Target label(s)    | Cardinality | Description
+| CREATES    | <<:Artifact>>      | 0..n        | References an artifact created by the project
+| HAS_PARENT | <<:Maven:Project>> | 0..1        | References the parent project (optional)
+| HAS_MODULE | <<:Maven:Project>> | 0..n        | References modules of this project (optional)
 |====
 
 [[:Artifact]]
@@ -36,8 +36,8 @@ Represents an artifact, e.g. a JAR-File.
 [options="header"]
 |====
 | Name       | Description
-| group      | The group id
-| name 		 | The artifact id
+| group      | The group name
+| name       | The artifact name
 | type       | The type, e.g. "jar"
 | classifier | The classifier
 | version    | The version
@@ -47,8 +47,8 @@ Represents an artifact, e.g. a JAR-File.
 [options="header"]
 |====
 | Name       | Target label(s) | Cardinality | Description
-| CONTAINS   | :File           | 0..n    	 | References a file contained in the artifact
-| DEPENDS_ON | <<:Artifact>>   | 0..n    	 | References an artifact which is a declared dependency
+| CONTAINS   | :File           | 0..n        | References a file contained in the artifact
+| DEPENDS_ON | <<:Artifact>>   | 0..n        | References an artifact which is a declared dependency
 |====
 
 .Properties of :DEPENDS_ON
@@ -65,33 +65,33 @@ Represents an artifact, e.g. a JAR-File.
 Imports raw information from Maven pom.xml files.
 
 [[:Maven:Pom:Xml]]
-=== :Maven:Artifact:Pom:Xml:File
+=== :Maven:Pom:Xml:File
 A pom.xml file describing a single Maven project.
 
-.Properties of :Maven:Artifact:Pom:Xml:File
+.Properties of :Maven:Pom:Xml:File
 [options="header"]
 |====
 | Name       | Description
 | group      | The group id
-| name 		 | The artifact id
+| name       | The artifact id
 | type       | The type, e.g. "jar"
 | classifier | The classifiert
 | version    | The version
 |====
 
-.Relations of :Maven:Artifact:Pom:Xml:File
+.Relations of :Maven:Pom:Xml:File
 [options="header"]
 |====
-| Name       		| Target label(s) 			| Cardinality | Description
-| HAS_PARENT 		| :Maven<<:Artifact>>:Pom	| 0..1		  | References a parent aritfact
-| HAS_PROPERTY		| :Value:Property			| 0..n		  | References a property
-| HAS_PROFILE 		| <<:Maven:Profile>>		| 0..n		  | References defined profiles
-| USES_LICENSE 		| <<:Maven:License>>		| 0..n		  | References used licenses
-| MANAGES_DEPENDENCY| :Maven<<:Artifact>>		| 0..n		  | References an artifact which is a managed dependency
-| DEPENDS_ON 		| :Maven<<:Artifact>>		| 0..n		  | References an artifact which is a declared dependency
-| HAS_MODULE		| <<:Maven:Module>>			| 0..n		  | References a sub module
-| MANAGES_PLUGIN	| <<:Maven:Plugin>>			| 0..n		  | References a managed plugin
-| USES_PLUGIN		| <<:Maven:Plugin>>			| 0..n		  | References a plugin that is used during maven lifecycle 
+| Name                | Target label(s)         | Cardinality | Description
+| HAS_PARENT          | :Maven<<:Artifact>>:Pom | 0..1        | References a parent aritfact
+| HAS_PROPERTY        | :Value:Property         | 0..n        | References a property
+| HAS_PROFILE         | <<:Maven:Profile>>      | 0..n        | References defined profiles
+| USES_LICENSE        | <<:Maven:License>>      | 0..n        | References used licenses
+| MANAGES_DEPENDENCY  | :Maven<<:Artifact>>     | 0..n        | References an artifact which is a managed dependency
+| DECLARES_DEPENDENCY | :Maven<<:Artifact>>     | 0..n        | References an artifact which is a declared dependency
+| HAS_MODULE          | <<:Maven:Module>>       | 0..n        | References a sub module
+| MANAGES_PLUGIN      | <<:Maven:Plugin>>       | 0..n        | References a managed plugin
+| USES_PLUGIN         | <<:Maven:Plugin>>       | 0..n        | References a plugin that is used during maven lifecycle
 |====
 
 [[:Maven:Profile]]
@@ -101,21 +101,21 @@ A maven profile
 .Properties of :Maven:Profile
 [options="header"]
 |====
-| Name	| Description
-| id 	| The profile id
+| Name    | Description
+| id     | The profile id
 |====
 
 .Relations of :Maven:Profile
 [options="header"]
 |====
-| Name       		| Target label(s) 				| Cardinality | Description
-| HAS_PROPERTY		| :Value:Property				| 0..n		  | References a property
-| MANAGES_DEPENDENCY| :Maven<<:Artifact>>			| 0..n		  | References an artifact which is a managed dependency
-| DEPENDS_ON 		| :Maven<<:Artifact>>			| 0..n		  | References an artifact which is a declared dependency
-| HAS_MODULE		| <<:Maven:Module>>				| 0..n		  | References a sub module
-| MANAGES_PLUGIN	| <<:Maven:Plugin>>				| 0..n		  | References a managed plugin
-| USES_PLUGIN		| <<:Maven:Plugin>>				| 0..n		  | References a plugin that is used during maven lifecycle 
-| HAS_ACTIVATION	| <<:Maven:ProfileActivation>>	| 0..1		  | References the conditions which will trigger the profile. 
+| Name                | Target label(s)              | Cardinality | Description
+| HAS_PROPERTY        | :Value:Property              | 0..n        | References a property
+| MANAGES_DEPENDENCY  | :Maven<<:Artifact>>          | 0..n        | References an artifact which is a managed dependency
+| DECLARES_DEPENDENCY | :Maven<<:Artifact>>          | 0..n        | References an artifact which is a declared dependency
+| HAS_MODULE          | <<:Maven:Module>>            | 0..n        | References a sub module
+| MANAGES_PLUGIN      | <<:Maven:Plugin>>            | 0..n        | References a managed plugin
+| USES_PLUGIN         | <<:Maven:Plugin>>            | 0..n        | References a plugin that is used during maven lifecycle
+| HAS_ACTIVATION      | <<:Maven:ProfileActivation>> | 0..1        | References the conditions which will trigger the profile.
 |====
 
 [[:Maven:ProfileActivation]]
@@ -125,18 +125,18 @@ A maven profile activation
 .Properties of :Maven:ProfileActivation
 [options="header"]
 |====
-| Name       		| Description
-| activeByDefault 	| Specifies if the profile is activated by default
-| jdk				| Specifies jdk needed to activate the profile
+| Name            | Description
+| activeByDefault | Specifies if the profile is activated by default
+| jdk             | Specifies jdk needed to activate the profile
 |====
 
 .Relations of :Maven:ProfileActivation
 [options="header"]
 |====
-| Name       		| Target label(s) 			| Cardinality | Description
-| HAS_PROPERTY		| :Value:Property			| 0..1		  | References a property
-| ACTIVATED_BY_FILE	| <<:Maven:ActivationFile>>	| 0..1		  | References file specification used to activate a profile
-| ACTIVATED_BY_OS	| <<:Maven:ActivationOS>>	| 0..1		  | References os specification used to activate a profile
+| Name              | Target label(s)           | Cardinality | Description
+| HAS_PROPERTY      | :Value:Property           | 0..1        | References a property
+| ACTIVATED_BY_FILE | <<:Maven:ActivationFile>> | 0..1        | References file specification used to activate a profile
+| ACTIVATED_BY_OS   | <<:Maven:ActivationOS>>   | 0..1        | References os specification used to activate a profile
 |====
 
 [[:Maven:ActivationFile]]
@@ -146,9 +146,9 @@ File specification used to activate a profile
 .Properties of :Maven:ActivationFile
 [options="header"]
 |====
-| Name  	| Description
-| exists 	| Specifies the name of the file that should exist to activate a profile
-| missing	| Specifies the name of the file that should be missing to activate a profile
+| Name    | Description
+| exists  | Specifies the name of the file that should exist to activate a profile
+| missing | Specifies the name of the file that should be missing to activate a profile
 |====
 
 [[:Maven:ActivationOS]]
@@ -158,11 +158,11 @@ Defines operating system's attributes to activate a profile
 .Properties of :Maven:ActivationOS
 [options="header"]
 |====
-| Name  	| Description
-| arch		| Specifies the architecture of the OS to be used to activate a profile
-| family	| Specifies the general family of the OS to be used to activate a profile
-| name		| Specifies the name of the OS to be used to activate a profile
-| version	| Specifies the version of the OS to be used to activate a profile
+| Name    | Description
+| arch    | Specifies the architecture of the OS to be used to activate a profile
+| family  | Specifies the general family of the OS to be used to activate a profile
+| name    | Specifies the name of the OS to be used to activate a profile
+| version | Specifies the version of the OS to be used to activate a profile
 |====
 
 [[:Maven:Module]]
@@ -172,8 +172,8 @@ A maven module
 .Properties of :Maven:Module
 [options="header"]
 |====
-| Name       | Description
-| name 		 | The module name
+| Name | Description
+| name | The module name
 |====
 
 [[:Maven:Plugin]]
@@ -185,19 +185,19 @@ A maven plugin
 |====
 | Name       | Description
 | group      | The group id
-| name 		 | The artifact id
+| name       | The artifact id
 | type       | The type, e.g. "jar"
 | classifier | The classifiert
 | version    | The version
-| inherited	 | Whether any configuration should be propagated to child POMs
+| inherited  | Whether any configuration should be propagated to child POMs
 |====
 
 .Relations of :Maven:Plugin
 [options="header"]
 |====
-| Name       			| Target label(s) 			 | Cardinality 	| Description
-| HAS_EXECUTION			| <<:Maven:PluginExecution>> | 0..n			| References a PluginExecution
-| HAS_CONFIGURATION		| <<:Maven:Configuration>>	 | 0..1		  	| References the configuration for the plugin
+| Name              | Target label(s)            | Cardinality | Description
+| HAS_EXECUTION     | <<:Maven:PluginExecution>> | 0..n        | References a PluginExecution
+| HAS_CONFIGURATION | <<:Maven:Configuration>>   | 0..1        | References the configuration for the plugin
 |====
 
 [[:Maven:License]]
@@ -207,11 +207,11 @@ A used license
 .Properties of :Maven:License
 [options="header"]
 |====
-| Name       	| Description
-| name 			| The full legal name of the license.
-| url      		| The official url for the license text.
-| comments      | Addendum information pertaining to this license.
-| distribution	| The primary method by which this project may be distributed.
+| Name         | Description
+| name         | The full legal name of the license.
+| url          | The official url for the license text.
+| comments     | Addendum information pertaining to this license.
+| distribution | The primary method by which this project may be distributed.
 |====
 
 [[:Maven:PluginExecution]]
@@ -221,18 +221,18 @@ A plugin execution
 .Properties of :Maven:PluginExecution
 [options="header"]
 |====
-| Name       	| Description
-| id 			| The plugin id
-| inherited     | Whether any configuration should be propagated to child POMs.
-| phase      	| The build lifecycle phase to bind the goals in this execution to.
+| Name      | Description
+| id        | The plugin id
+| inherited | Whether any configuration should be propagated to child POMs.
+| phase     | The build lifecycle phase to bind the goals in this execution to.
 |====
 
 .Relations of :Maven:PluginExecution
 [options="header"]
 |====
-| Name       			| Target label(s) 			| Cardinality 	| Description
-| HAS_GOAL				| <<:Maven:ExecutionGoal>> 	| 0..n			| The goals to execute with the given configuration
-| HAS_CONFIGURATION		| <<:Maven:Configuration>>	| 0..1		  	| References the configuration for the plugin
+| Name              | Target label(s)          | Cardinality | Description
+| HAS_GOAL          | <<:Maven:ExecutionGoal>> | 0..n        | The goals to execute with the given configuration
+| HAS_CONFIGURATION | <<:Maven:Configuration>> | 0..1        | References the configuration for the plugin
 |====
 
 [[:Maven:Configuration]]
@@ -242,8 +242,8 @@ A configuration for plugins, executions
 .Relations of :Maven:Configuration
 [options="header"]
 |====
-| Name       			| Target label(s) 			| Cardinality 	| Description
-| CONTAINS				| :Java:Value	 			| 0..n			| References a value or a list of values
+| Name     | Target label(s) | Cardinality | Description
+| CONTAINS | :Java:Value     | 0..n        | References a value or a list of values
 |====
 
 [[:Maven:ExecutionGoal]]
@@ -253,6 +253,6 @@ A goal for plugin executions
 .Properties of :Maven:ExecutionGoal
 [options="header"]
 |====
-| Name       	| Description
-| name 			| The name of the goal
+| Name | Description
+| name | The name of the goal
 |====

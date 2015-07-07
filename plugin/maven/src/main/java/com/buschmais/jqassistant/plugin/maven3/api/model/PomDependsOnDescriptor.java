@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  * @see org.apache.maven.model.Dependency
  * @author ronald.kunzmann@buschmais.com
  */
-@Relation("DEPENDS_ON")
+@Relation("DECLARES_DEPENDENCY")
 public interface PomDependsOnDescriptor extends MavenDependencyDescriptor {
 
     /**
