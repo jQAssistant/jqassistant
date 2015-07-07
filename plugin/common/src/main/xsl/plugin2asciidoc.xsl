@@ -47,7 +47,7 @@ include::{docRoot}/<xsl:value-of select="$pluginName"/>/<xsl:value-of select="te
 
     <xsl:template match="report">
         <xsl:value-of select="$newline"/>
-        include::{docRoot}/<xsl:value-of select="$pluginName"/>/report.adoc[]
+include::{docRoot}/<xsl:value-of select="$pluginName"/>/report.adoc[]
     </xsl:template>
 
 </xsl:stylesheet>
