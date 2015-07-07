@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner.artifact;
 
 /**
- * Created by dimahler on 5/5/2015.
+ * Defines unique artifact coordinates.
  */
 public interface Coordinates {
 
