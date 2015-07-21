@@ -2,13 +2,17 @@ package com.buschmais.jqassistant.plugin.junit.test.scanner;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
@@ -25,11 +29,15 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
      */
     @Test
     public void reportFile() throws IOException {
-        scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
+        String testReportFile = "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml";
+        scanClassPathResource(JunitScope.TESTREPORTS, testReportFile);
         store.beginTransaction();
-        List<TestSuiteDescriptor> testSuiteDescriptors = query("MATCH (suite:TestSuite:Xml:File) RETURN suite").getColumn("suite");
-        assertThat(testSuiteDescriptors.size(), equalTo(1));
-        TestSuiteDescriptor testSuiteDescriptor = testSuiteDescriptors.get(0);
+        Map<String, Object> params = MapBuilder.<String, Object>create().put("fileName", testReportFile).get();
+        List<FileDescriptor> fileDescriptors = query("MATCH (suite:File) where suite.fileName={fileName} RETURN suite", params).getColumn("suite");
+        assertThat(fileDescriptors.size(), equalTo(1));
+        FileDescriptor fileDescriptor = fileDescriptors.get(0);
+        assertThat(fileDescriptor, instanceOf(TestSuiteDescriptor.class));
+        TestSuiteDescriptor testSuiteDescriptor = (TestSuiteDescriptor) fileDescriptor;
         assertThat(testSuiteDescriptor.getFileName(), endsWith("TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml"));
         assertThat(testSuiteDescriptor.getTests(), equalTo(4));
         assertThat(testSuiteDescriptor.getFailures(), equalTo(1));
@@ -45,7 +53,8 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
     }
 
     private void verifyTestCase(String expectedName, TestCaseDescriptor.Result expectedResult, Float expectedTime) {
-        List<TestCaseDescriptor> testCaseDescriptors = query("MATCH (case:TestCase) WHERE case.name='" + expectedName + "' RETURN case").getColumn("case");
+        List<TestCaseDescriptor> testCaseDescriptors =
+                query("MATCH (case:TestCase) WHERE case.name='" + expectedName + "' RETURN case").getColumn("case");
         assertThat(testCaseDescriptors.size(), equalTo(1));
         TestCaseDescriptor testCaseDescriptor = testCaseDescriptors.get(0);
         assertThat(testCaseDescriptor.getName(), equalTo(expectedName));
