@@ -150,4 +150,14 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
         }
         return relativePath;
     }
+
+    @Override
+    public final boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public final int hashCode() {
+        return super.hashCode();
+    }
 }
