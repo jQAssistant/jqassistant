@@ -8,7 +8,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Test plugin: delegates scanning of the item using a custom scope before
@@ -42,7 +41,7 @@ public class TestScannerPlugin2 implements ScannerPlugin<TestItem, TestDescripto
 
     @Override
     public TestDescriptor2 scan(TestItem item, String path, Scope scope, Scanner scanner) throws IOException {
-        Descriptor testDescriptor2A = scanner.scan(item, path, TestScope.TEST);
+        TestDescriptor2A testDescriptor2A = scanner.scan(item, path, TestScope.TEST);
         return scanner.getContext().getStore().addDescriptorType(testDescriptor2A, TestDescriptor2.class);
     }
 }

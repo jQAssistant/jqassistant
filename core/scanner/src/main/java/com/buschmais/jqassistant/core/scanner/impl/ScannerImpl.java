@@ -4,13 +4,23 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
 
@@ -29,7 +39,7 @@ public class ScannerImpl implements Scanner {
 
     private final Map<String, Scope> scopes;
 
-    private final Map<Object, Queue<ScannerPlugin<?, ?>>> pipelines = new IdentityHashMap<>();
+    private final Map<Object, Set<ScannerPlugin<?, ?>>> pipelines = new IdentityHashMap<>();
 
     /**
      * Constructor.
@@ -46,20 +56,21 @@ public class ScannerImpl implements Scanner {
 
     @Override
     public <I, D extends Descriptor> D scan(final I item, final String path, final Scope scope) {
-        Queue<ScannerPlugin<?, ?>> pipeline = pipelines.get(item);
+        D descriptor = null;
         boolean pipelineCreated;
+        Set<ScannerPlugin<?, ?>> pipeline = this.pipelines.get(item);
         if (pipeline == null) {
-            Class<?> itemClass = item.getClass();
-            pipeline = new LinkedList<>(getScannerPluginsForType(itemClass));
-            pipelines.put(item, pipeline);
+            pipeline = new LinkedHashSet<>();
+            this.pipelines.put(item, pipeline);
             pipelineCreated = true;
         } else {
             pipelineCreated = false;
         }
-        D descriptor = null;
-        while (!pipeline.isEmpty()) {
-            ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) pipeline.poll();
-            if (accepts(selectedPlugin, item, path, scope)) {
+        Class<?> itemClass = item.getClass();
+        for (ScannerPlugin<?, ?> scannerPlugin : getScannerPluginsForType(itemClass)) {
+            ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
+            if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope)) {
+                pipeline.add(selectedPlugin);
                 pushDesriptor(descriptor);
                 enterScope(scope);
                 D newDescriptor = null;
