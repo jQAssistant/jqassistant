@@ -19,7 +19,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  * Scanner plugin for GZipped file resources.
  */
 @Requires(FileDescriptor.class)
-public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, FileDescriptor> {
+public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, GZipFileDescriptor> {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
@@ -27,7 +27,7 @@ public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, F
     }
 
     @Override
-    public FileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public GZipFileDescriptor scan(final FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         final FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
