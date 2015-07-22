@@ -4,6 +4,8 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
@@ -16,13 +18,14 @@ public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WebApp
 
     @Override
     protected Scope createScope(Scope currentScope, WebApplicationArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
-        scannerContext.push(WebApplicationArchiveDescriptor.class, archiveDescriptor);
+        TypeResolver typeResolver = new ArtifactScopedTypeResolver(archiveDescriptor);
+        scannerContext.push(TypeResolver.class, typeResolver);
         return WebApplicationScope.WAR;
     }
 
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
-        scannerContext.pop(WebApplicationArchiveDescriptor.class);
+        scannerContext.pop(TypeResolver.class);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
-import java.lang.String;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,24 +14,83 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.AsyncSupportedDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.AuthConstraintDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DispatcherDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ErrorPageDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.FormLoginConfigDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.HttpMethodDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.HttpMethodOmissionDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.LoginConfigDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.MultipartConfigDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ParamValueDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.RoleNameDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.RunAsDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityConstraintDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleRefDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletMappingDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.UrlPatternDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.UserDataConstraintDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebResourceCollectionDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
-import com.sun.java.xml.ns.javaee.*;
+import com.sun.java.xml.ns.javaee.AuthConstraintType;
+import com.sun.java.xml.ns.javaee.AuthMethodType;
+import com.sun.java.xml.ns.javaee.DescriptionType;
+import com.sun.java.xml.ns.javaee.DispatcherType;
+import com.sun.java.xml.ns.javaee.DisplayNameType;
+import com.sun.java.xml.ns.javaee.ErrorCodeType;
+import com.sun.java.xml.ns.javaee.ErrorPageType;
+import com.sun.java.xml.ns.javaee.FilterMappingType;
+import com.sun.java.xml.ns.javaee.FilterNameType;
+import com.sun.java.xml.ns.javaee.FilterType;
+import com.sun.java.xml.ns.javaee.FormLoginConfigType;
+import com.sun.java.xml.ns.javaee.FullyQualifiedClassType;
+import com.sun.java.xml.ns.javaee.IconType;
+import com.sun.java.xml.ns.javaee.JspFileType;
+import com.sun.java.xml.ns.javaee.ListenerType;
+import com.sun.java.xml.ns.javaee.LoginConfigType;
+import com.sun.java.xml.ns.javaee.MultipartConfigType;
+import com.sun.java.xml.ns.javaee.ParamValueType;
+import com.sun.java.xml.ns.javaee.RoleNameType;
+import com.sun.java.xml.ns.javaee.RunAsType;
+import com.sun.java.xml.ns.javaee.SecurityConstraintType;
+import com.sun.java.xml.ns.javaee.SecurityRoleRefType;
+import com.sun.java.xml.ns.javaee.SecurityRoleType;
+import com.sun.java.xml.ns.javaee.ServletMappingType;
+import com.sun.java.xml.ns.javaee.ServletNameType;
+import com.sun.java.xml.ns.javaee.ServletType;
+import com.sun.java.xml.ns.javaee.SessionConfigType;
+import com.sun.java.xml.ns.javaee.TrueFalseType;
+import com.sun.java.xml.ns.javaee.UrlPatternType;
+import com.sun.java.xml.ns.javaee.UserDataConstraintType;
+import com.sun.java.xml.ns.javaee.WebAppType;
+import com.sun.java.xml.ns.javaee.WebResourceCollectionType;
+import com.sun.java.xml.ns.javaee.XsdIntegerType;
+import com.sun.java.xml.ns.javaee.XsdStringType;
 
 /**
  * Scanner plugin for the content of web application XML descriptors (i.e.
  * WEB-INF/web.xml)
  */
 @Requires(FileDescriptor.class)
-public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileResource, WebXmlDescriptor> {
+public class WebXmlScannerPlugin extends AbstractScannerPlugin<FileResource, WebXmlDescriptor> {
 
     private JAXBUnmarshaller<FileResource, WebAppType> unmarshaller;
 
@@ -47,7 +105,7 @@ public class WebXmlScannerPlugin extends AbstractWarResourceScannerPlugin<FileRe
     }
 
     @Override
-    public WebXmlDescriptor scan(FileResource item, String path, JavaClassesDirectoryDescriptor classesDirectory, Scanner scanner) throws IOException {
+    public WebXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         WebAppType webAppType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);

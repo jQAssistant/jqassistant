@@ -3,14 +3,16 @@ package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WarClassesScannerPlugin extends AbstractWarResourceScannerPlugin<FileResource, FileDescriptor> {
+@Requires(FileDescriptor.class)
+public class WarClassesScannerPlugin extends AbstractResourceScannerPlugin<FileResource, FileDescriptor> {
 
     public static final String PREFIX = "/WEB-INF/classes";
 
@@ -20,13 +22,9 @@ public class WarClassesScannerPlugin extends AbstractWarResourceScannerPlugin<Fi
     }
 
     @Override
-    protected FileDescriptor scan(FileResource item, String path, JavaClassesDirectoryDescriptor classesDirectory, Scanner scanner) throws IOException {
-        if (PREFIX.equals(path)) {
-            return classesDirectory;
-        }
+    public FileDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         String resourcePath = path.substring(PREFIX.length());
         FileDescriptor fileDescriptor = scanner.scan(item, resourcePath, JavaScope.CLASSPATH);
-        classesDirectory.getContains().add(toFileDescriptor(item, fileDescriptor, resourcePath, scanner.getContext()));
-        return fileDescriptor;
+        return fileDescriptor != null ? fileDescriptor : scanner.getContext().peek(FileDescriptor.class);
     }
 }
