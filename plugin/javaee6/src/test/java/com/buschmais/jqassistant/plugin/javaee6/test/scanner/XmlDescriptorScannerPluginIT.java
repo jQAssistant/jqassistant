@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
@@ -29,10 +31,10 @@ public class XmlDescriptorScannerPluginIT extends AbstractPluginIT {
         store.beginTransaction();
         Scanner scanner = getScanner();
         WebApplicationArchiveDescriptor warDescriptor = store.create(WebApplicationArchiveDescriptor.class);
-        scanner.getContext().push(WebApplicationArchiveDescriptor.class, warDescriptor);
+        scanner.getContext().push(TypeResolver.class, new ArtifactScopedTypeResolver(warDescriptor));
         WebXmlDescriptor descriptor = scanner.scan(webXml, "/WEB-INF/web.xml", WebApplicationScope.WAR);
         assertThat(descriptor.getVersion(), equalTo("3.0"));
-        scanner.getContext().pop(WebApplicationArchiveDescriptor.class);
+        scanner.getContext().pop(TypeResolver.class);
         store.commitTransaction();
     }
 
