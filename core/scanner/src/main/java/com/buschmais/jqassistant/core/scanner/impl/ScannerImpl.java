@@ -69,19 +69,21 @@ public class ScannerImpl implements Scanner {
         Class<?> itemClass = item.getClass();
         for (ScannerPlugin<?, ?> scannerPlugin : getScannerPluginsForType(itemClass)) {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
-            if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope)) {
-                pipeline.add(selectedPlugin);
-                pushDesriptor(descriptor);
-                enterScope(scope);
-                D newDescriptor = null;
-                try {
-                    newDescriptor = selectedPlugin.scan(item, path, scope, this);
-                } catch (IOException e) {
-                    LOGGER.warn("Cannot scan item " + path, e);
+            try {
+                if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope)) {
+                    pipeline.add(selectedPlugin);
+                    pushDesriptor(descriptor);
+                    enterScope(scope);
+                    D newDescriptor = selectedPlugin.scan(item, path, scope, this);
+                    leaveScope(scope);
+                    popDescriptor(descriptor);
+                    descriptor = newDescriptor;
                 }
-                leaveScope(scope);
-                popDescriptor(descriptor);
-                descriptor = newDescriptor;
+            } catch (IOException e) {
+                LOGGER.warn("Cannot scan item " + path, e);
+            } catch (RuntimeException e) {
+                throw new IllegalStateException("Unexpected problem while scanning: item='" + item + "', path='" + path + "', scope='" + scope
+                        + "', pipeline='" + pipeline + "'.", e);
             }
         }
         if (pipelineCreated) {
@@ -109,7 +111,7 @@ public class ScannerImpl implements Scanner {
         try {
             return selectedPlugin.accepts(item, path, scope);
         } catch (IOException e) {
-            LOGGER.error("Plugin " + selectedPlugin + " cannot check if it accepts item " + path, e);
+            LOGGER.error("Plugin " + selectedPlugin + " failed to check whether it can accept item " + path, e);
             return false;
         }
     }
