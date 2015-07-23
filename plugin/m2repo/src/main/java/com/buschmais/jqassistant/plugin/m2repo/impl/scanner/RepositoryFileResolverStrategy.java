@@ -62,7 +62,8 @@ public class RepositoryFileResolverStrategy implements FileResolverStrategy {
             // lookup artifact
             DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, classifier, type, version);
             LOGGER.debug("Determined artifact '{}' for file '{}'", artifact, path);
-            return ArtifactResolver.find(new ArtifactCoordinates(artifact), context);
+            ArtifactCoordinates coordinates = new ArtifactCoordinates(artifact);
+            return ArtifactResolver.find(coordinates, context);
         }
         return null;
     }

@@ -34,15 +34,17 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
 
     @Override
     public D scan(FileResource file, String path, Scope currentScope, Scanner scanner) throws IOException {
-        D archive = createArchive(file, path, scanner.getContext());
+        ScannerContext scannerContext = scanner.getContext();
+        FileDescriptor fileDescriptor = scannerContext.peek(FileDescriptor.class);
+        D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
         ZipFile zipFile = new ZipFile(file.getFile());
-        scanner.getContext().push(ArchiveDescriptor.class, archive);
-        Scope archiveScope = createScope(currentScope, archive, scanner.getContext());
+        scannerContext.push(ArchiveDescriptor.class, archive);
+        Scope archiveScope = createScope(currentScope, archive, scannerContext);
         try {
             scanner.scan(zipFile, path, archiveScope);
         } finally {
-            destroyScope(scanner.getContext());
-            scanner.getContext().pop(ArchiveDescriptor.class);
+            destroyScope(scannerContext);
+            scannerContext.pop(ArchiveDescriptor.class);
         }
         return archive;
     }
@@ -75,17 +77,4 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
      * @return The new scope.
      */
     protected abstract void destroyScope(ScannerContext scannerContext);
-
-    /**
-     * Create descriptor which represents the archive type.
-     * 
-     * @param file
-     *            The file resource.
-     * @param path
-     *            The path.
-     * @param scannerContext
-     *            The scanner context.
-     * @return The descriptor.
-     */
-    protected abstract D createArchive(FileResource file, String path, ScannerContext scannerContext);
 }
