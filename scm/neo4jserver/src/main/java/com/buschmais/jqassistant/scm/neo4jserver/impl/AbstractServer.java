@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.neo4j.kernel.GraphDatabaseAPI;
+import org.neo4j.server.NeoServer;
 import org.neo4j.server.WrappingNeoServer;
 import org.neo4j.server.database.InjectableProvider;
 import org.neo4j.server.modules.ServerModule;
@@ -75,6 +76,7 @@ public abstract class AbstractServer extends WrappingNeoServer implements Server
         addInjectable(Store.class, store, defaultInjectables);
         addInjectable(RulePluginRepository.class, getRulePluginRepository(), defaultInjectables);
         addInjectable(ScannerPluginRepository.class, getScannerPluginRepository(), defaultInjectables);
+        addInjectable(NeoServer.class, this, defaultInjectables);
         return defaultInjectables;
     }
 
