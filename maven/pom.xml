@@ -38,6 +38,10 @@
                                 <pomInclude>multimodule/singleparent/multipleruledirs/pom.xml</pomInclude>
                                 <pomInclude>multimodule/multiparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/multiparent/singlestore/pom.xml</pomInclude>
+                                <pomInclude>parentmodule/myproject/pom.xml</pomInclude>
+                                <pomInclude>parentmodule/myproject/module1/pom.xml</pomInclude>
+                                <pomInclude>parentmodule/myproject/module2/pom.xml</pomInclude>
+                                <pomInclude>parentmodule/myproject/parent/pom.xml</pomInclude>
                                 <pomInclude>plugin/pom.xml</pomInclude>
                                 <pomInclude>tycho/additionalfiles/pom.xml</pomInclude>
                             </pomIncludes>
