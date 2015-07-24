@@ -1,0 +1,20 @@
+<jqa:jqassistant-rules
+	xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+	<constraint id="integrationtest:TestClassName">
+		<description>Check that classes with specific names exist.</description>
+		<cypher><![CDATA[
+            MATCH
+                (c:Class:Java)
+            WHERE
+                c.fqn = "test.myproject.App"
+            RETURN
+                c AS Class
+        ]]></cypher>
+	</constraint>
+
+	<group id="default">
+		<includeConstraint refId="integrationtest:TestClassName" />
+	</group>
+
+</jqa:jqassistant-rules>
