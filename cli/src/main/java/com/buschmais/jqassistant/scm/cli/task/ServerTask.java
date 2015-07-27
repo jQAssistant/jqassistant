@@ -3,8 +3,11 @@ package com.buschmais.jqassistant.scm.cli.task;
 import static com.buschmais.jqassistant.scm.cli.Log.getLog;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -18,12 +21,18 @@ import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
  */
 public class ServerTask extends AbstractTask {
 
+    public static final String CMDLINE_OPTION_SERVERADDRESS = "serverAddress";
+    public static final String CMDLINE_OPTION_SERVERPORT = "serverPort";
+
+    private String serverAddress;
+    private int serverPort;
+
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         Server server;
         try {
-            server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(),
-                    pluginRepository.getRulePluginRepository());
+            server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(), pluginRepository
+                    .getRulePluginRepository(), serverAddress, serverPort);
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get plugins.", e);
         }
@@ -40,6 +49,17 @@ public class ServerTask extends AbstractTask {
     }
 
     @Override
+    protected void addTaskOptions(final List<Option> options) {
+        super.addTaskOptions(options);
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERADDRESS).withDescription("The binding address of the server.").hasArgs()
+                .create(CMDLINE_OPTION_SERVERADDRESS));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SERVERPORT).withDescription("The binding port of the server.").hasArgs()
+                .create(CMDLINE_OPTION_SERVERPORT));
+    }
+
+    @Override
     public void withOptions(CommandLine options) {
+        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, DefaultServerImpl.DEFAULT_ADDRESS);
+        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(DefaultServerImpl.DEFAULT_PORT)));
     }
 }
