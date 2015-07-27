@@ -102,7 +102,7 @@ public class ScanIT extends AbstractCLIIT {
     private boolean isTypeScanned(EmbeddedGraphStore store, Class<?> type) {
         Map<String, Object> params = new HashMap<>();
         params.put("type", type.getName());
-        String query = "match (t:Type) where t.fqn={type} return count(t) as count";
+        String query = "match (t:Type:Class) where t.fqn={type} return count(t) as count";
         Long count = executeQuery(store, query, params, "count", Long.class);
         return count.longValue() == 1;
     }
