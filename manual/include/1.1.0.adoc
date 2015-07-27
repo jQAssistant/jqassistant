@@ -1,9 +1,12 @@
 == 1.1.0
 
+=== Maven
+- reset store (i.e. database) while building the root module of a project (was: execution root of Maven reactor)
+
 === Plugins
 
 ==== GraphML
-- Added plugin which provides a GraphML export for the results of executed concepts
+- Added plugin which provides a GraphML export for the results of executed concepts, includes support for virtual elements (sub graphs, nodes, relationships)
 
 ==== YAML
 - Added plugin which provides a scanner for YAML files
