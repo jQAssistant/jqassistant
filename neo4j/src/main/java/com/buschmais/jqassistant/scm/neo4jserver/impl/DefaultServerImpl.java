@@ -17,24 +17,13 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  */
 public class DefaultServerImpl extends AbstractServer {
 
+    public static final String DEFAULT_ADDRESS = "localhost";
+
+    public static final int DEFAULT_PORT = 7474;
+
     private ScannerPluginRepository scannerPluginRepository;
 
     private RulePluginRepository rulePluginRepository;
-
-    /**
-     * Constructor.
-     *
-     * @param graphStore
-     *            The store instance to use.
-     * @param scannerPluginRepository
-     *            The scanner plugin repository.
-     * @param rulePluginRepository
-     *            The rule plugin repository.
-     */
-    public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository) {
-        super(graphStore);
-        init(scannerPluginRepository, rulePluginRepository, 7474);
-    }
 
     /**
      * Constructor.
@@ -48,9 +37,10 @@ public class DefaultServerImpl extends AbstractServer {
      * @param port
      *            The port number of the server.
      */
-    public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository, int port) {
+    public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository,
+            RulePluginRepository rulePluginRepository, String address, int port) {
         super(graphStore);
-        init(scannerPluginRepository, rulePluginRepository, port);
+        init(scannerPluginRepository, rulePluginRepository, address, port);
     }
 
     /**
@@ -60,13 +50,16 @@ public class DefaultServerImpl extends AbstractServer {
      *            The scanner plugin repository.
      * @param rulePluginRepository
      *            The rule plugin repository.
+     * @param address
+     *            The address to use for binding the server.
      * @param port
      *            The HTTP port to use.
      */
-    private void init(ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository, int port) {
+    private void init(ScannerPluginRepository scannerPluginRepository, RulePluginRepository rulePluginRepository, String address, int port) {
         this.scannerPluginRepository = scannerPluginRepository;
         this.rulePluginRepository = rulePluginRepository;
         Configuration configuration = getConfigurator().configuration();
+        configuration.setProperty(ServerSettings.webserver_address.name(), address);
         configuration.setProperty(ServerSettings.webserver_port.name(), Integer.toString(port));
         configuration.setProperty(ServerSettings.auth_enabled.name(), Boolean.FALSE.toString());
     }
