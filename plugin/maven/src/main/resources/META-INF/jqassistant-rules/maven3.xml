@@ -11,7 +11,7 @@
             where
               not (module)-[:HAS_PARENT]->(parent)
             return
-              module as InvalidModule
+              module.name as InvalidModule
         ]]></cypher>
     </constraint>
 
