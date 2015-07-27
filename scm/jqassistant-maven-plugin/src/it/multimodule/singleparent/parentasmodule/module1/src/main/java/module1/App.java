@@ -1,4 +1,4 @@
-package test.myproject;
+package module1;
 
 /**
  * Hello world!
