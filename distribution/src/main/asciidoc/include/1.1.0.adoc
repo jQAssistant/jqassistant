@@ -2,6 +2,10 @@
 
 === Maven
 - reset store (i.e. database) while building the root module of a project (was: execution root of Maven reactor)
+- added serverAddress and serverPort parameters to jqassistant:server goal
+
+=== CLI
+- added serverAddress and serverPort parameters to server task
 
 === Plugins
 
