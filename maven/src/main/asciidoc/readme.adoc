@@ -134,6 +134,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         <rulesDirectory>target/generated-rules</rulesDirectory>
                     </rulesDirectories>
                     <xmlReportFile>target/jqassistant/jqassistant-report.xml</xmlReportFile>
+                    <serverAddress>localhost</serverAddress>
+                    <serverPort>7474</serverPort>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -247,12 +249,16 @@ Resets the database by deleting all nodes and relationships.
 [[server]]
 ==== jqassistant:server
 ===== Description
-Starts the integrated Neo4j web server (http://localhost:7474).
+Starts the integrated Neo4j web server (default address: http://localhost:7474).
 
 ===== Configuration
 * <<skip>>
 * <<storeDirectory>>
 * <<storeLifecycle>>
+* serverAddress <address> (-Djqassistant.server.address=<address>)
+** specifies the binding address for the server (default: localhost)
+* serverPort <port> (-Djqassistant.server.port=<port>)
+** specifies the binding port for the server (default: 7474)
 
 [[analyze]]
 ==== jqassistant:analyze
@@ -270,7 +276,7 @@ Executes an analysis.
 * <<rulesDirectories>>
 * <<rulesUrl>>
 * <<xmlReportFile>>
-* failOnViolations
+* failOnViolations (-Djqassistant.failOnViolations)
 ** determines if jQAssistant shall break the build if violations are detected (see also _severity_)
 ** default: 'false'
 * severity
