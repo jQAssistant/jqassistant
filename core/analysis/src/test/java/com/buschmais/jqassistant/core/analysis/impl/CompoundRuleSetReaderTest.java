@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 
@@ -44,7 +45,7 @@ public class CompoundRuleSetReaderTest {
     @Test
     public void testReadUrlSource() throws Exception {
         URL url = getClass().getResource("/test-concepts.xml");
-        RuleSetReader reader = new XmlRuleSetReader();
+        RuleSetReader reader = new XmlRuleSetReader(RuleSetBuilder.newInstance());
         RuleSet ruleSet = reader.read(Arrays.asList(new UrlRuleSource(url)));
         assertEquals(1, ruleSet.getConcepts().size());
         assertEquals(1, ruleSet.getConstraints().size());
