@@ -5,7 +5,14 @@ import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.ast.ContentPart;
@@ -14,15 +21,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Report;
+import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * @author mh
  * @since 12.10.14
  */
-public class AsciiDocRuleSetReader implements RuleSetReader {
+public class AsciiDocRuleSetReader extends AbstractRuleSetReader {
 
     private static final Set<String> RULETYPES = new HashSet<>(asList("concept", "constraint"));
 
@@ -33,15 +50,25 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      */
     private Asciidoctor cachedAsciidoctor;
 
+    /**
+     * Constructor.
+     * 
+     * @param ruleSetBuilder
+     *            The rulse set builder to use.
+     */
+    public AsciiDocRuleSetReader(RuleSetBuilder ruleSetBuilder) {
+        super(ruleSetBuilder);
+    }
+
     @Override
     public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
-        RuleSetBuilder builder = RuleSetBuilder.newInstance();
+        RuleSetBuilder ruleSetBuilder = getRuleSetBuilder();
         for (RuleSource source : sources) {
             if (source.isType(RuleSource.Type.AsciiDoc)) {
-                readDocument(source, builder);
+                readDocument(source, ruleSetBuilder);
             }
         }
-        return builder.getRuleSet();
+        return ruleSetBuilder.getRuleSet();
     }
 
     private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
@@ -109,13 +136,13 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = new Concept(id, description, severity, null, executable, Collections.<String, Object> emptyMap(), requiresConcepts,
-                        verification, report);
+                Concept concept = new Concept(id, description, severity, null, executable, Collections.<String, Object>emptyMap(),
+                        requiresConcepts, verification, report);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object> emptyMap(), requiresConcepts,
-                        verification, report);
+                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object>emptyMap(),
+                        requiresConcepts, verification, report);
                 builder.addConstraint(concept);
             }
         }
@@ -138,8 +165,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Unescapes the content of a rule.
      *
-     * TODO do better, or even better add a part.get(Original|Raw)Content() to
-     * asciidoctor
+     * TODO do better, or even better add a part.get(Original|Raw)Content() to asciidoctor
      * 
      * @param content
      *            The content of a rule.
@@ -166,8 +192,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Find all content parts representing source code listings with a role that
-     * represents a rule.
+     * Find all content parts representing source code listings with a role that represents a rule.
      * 
      * @param doc
      *            The document.
@@ -180,8 +205,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Find all content parts representing source code listings with a role that
-     * represents a rule.
+     * Find all content parts representing source code listings with a role that represents a rule.
      * 
      * @param parts
      *            The content parts of the document.

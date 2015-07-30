@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -13,7 +15,13 @@ import java.util.Map;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 
@@ -21,7 +29,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void cypherRules() throws Exception {
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
+        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader(RuleSetBuilder.newInstance());
         final URL url = getClass().getResource("/junit-without-assert.adoc");
         RuleSource ruleSource = new UrlRuleSource(url);
         RuleSet ruleSet = reader.read(asList(ruleSource));
@@ -60,7 +68,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void scriptRules() throws Exception {
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
+        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader(RuleSetBuilder.newInstance());
         final URL url = getClass().getResource("/javascript-rules.adoc");
         RuleSource ruleSource = new UrlRuleSource(url);
         RuleSet ruleSet = reader.read(asList(ruleSource));

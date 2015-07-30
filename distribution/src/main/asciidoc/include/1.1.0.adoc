@@ -1,5 +1,8 @@
 == 1.1.0
 
+=== Core
+- make sure that ids used for concepts, constraints or groups are unique nevertheless if they have been defined in XML or Asciidoc documents
+
 === Maven
 - reset store (i.e. database) while building the root module of a project (was: execution root of Maven reactor)
 - added serverAddress and serverPort parameters to jqassistant:server goal
