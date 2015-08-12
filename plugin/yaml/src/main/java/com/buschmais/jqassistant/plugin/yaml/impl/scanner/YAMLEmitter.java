@@ -21,10 +21,12 @@ import org.yaml.snakeyaml.events.StreamStartEvent;
 
 import java.io.IOException;
 
-import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.DOCUMENT_START;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.DOCUMENT_CTX;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.MAPPING_CXT;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.MAPPING_KEY_CXT;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.MAPPING_START;
-import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.SCALAR;
-import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.SEQUENCE_START;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.MAPPING_VALUE_CXT;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.SEQUENCE_CXT;
 import static org.apache.commons.lang.StringUtils.trimToEmpty;
 
 /**
@@ -83,29 +85,29 @@ class YAMLEmitter implements Emitable {
     }
 
     protected void handleSequenceStart(EventType typeOfEvent) {
-        if (processingContext.isContext(SEQUENCE_START)) {
+        if (processingContext.isContext(SEQUENCE_CXT)) {
             // Sequence of sequences...
             YAMLValueDescriptor valueDescriptor = currentScanner.getContext().getStore()
                                                                 .create(YAMLValueDescriptor.class);
 
             processingContext.push(valueDescriptor);
-            processingContext.pushContextEvent(typeOfEvent);
+            processingContext.pushContextEvent(SEQUENCE_CXT);
 
         } else {
-            processingContext.pushContextEvent(typeOfEvent);
+            processingContext.pushContextEvent(SEQUENCE_CXT);
         }
     }
 
     protected void handleSequenceEnd(EventType typeOfEvent) {
-        if (processingContext.isContext(MAPPING_START, SCALAR, SEQUENCE_START)) {
+        if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, SEQUENCE_CXT)) {
             processingContext.popContextEvent(2);
             YAMLKeyDescriptor keyForSequence = processingContext.pop();
             YAMLKeyBucket keyBucketForSequence = processingContext.peek();
 
             keyBucketForSequence.getKeys().add(keyForSequence);
-        } else if (processingContext.isContext(DOCUMENT_START, SEQUENCE_START)) {
+        } else if (processingContext.isContext(DOCUMENT_CTX, SEQUENCE_CXT)) {
             processingContext.popContextEvent(1);
-        } else if (processingContext.isContext(SEQUENCE_START, SEQUENCE_START)) {
+        } else if (processingContext.isContext(SEQUENCE_CXT, SEQUENCE_CXT)) {
             processingContext.popContextEvent(1);
             YAMLValueDescriptor value = processingContext.pop();
             YAMLValueBucket bbb = processingContext.peek();
@@ -117,7 +119,7 @@ class YAMLEmitter implements Emitable {
     }
 
     protected void handleDocumentEndEvent() {
-        if (!processingContext.isContext(DOCUMENT_START)) {
+        if (!processingContext.isContext(DOCUMENT_CTX)) {
             unsupportedYAMLStructure();
         } else {
 
@@ -131,26 +133,26 @@ class YAMLEmitter implements Emitable {
         YAMLDocumentDescriptor doc = currentScanner.getContext()
                                                    .getStore()
                                                    .create(YAMLDocumentDescriptor.class);
-        processingContext.pushContextEvent(typeOfEvent);
+        processingContext.pushContextEvent(DOCUMENT_CTX);
         processingContext.push(doc);
     }
 
     protected void handleMappingStartEvent(EventType typeOfEvent) {
-        processingContext.pushContextEvent(typeOfEvent);
+        processingContext.pushContextEvent(MAPPING_CXT);
     }
 
     protected void handleMappingEndEvent() {
-        if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START)) {
+        if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, MAPPING_CXT)) {
             processingContext.popContextEvent(2);
 
             YAMLKeyDescriptor currentKey = processingContext.pop();
             YAMLKeyBucket parent = processingContext.peek();
 
             parent.getKeys().add(currentKey);
-        } else if (processingContext.isContext(MAPPING_START)) {
+        } else if (processingContext.isContext(MAPPING_CXT)) {
             processingContext.popContextEvent(1);
 
-        } else if (processingContext.isContext(MAPPING_START, SCALAR, MAPPING_START, SCALAR, SCALAR)) {
+        } else if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, MAPPING_CXT, MAPPING_KEY_CXT, MAPPING_VALUE_CXT)) {
             processingContext.popContextEvent(4);
             YAMLKeyDescriptor currentKey = processingContext.pop();
             YAMLKeyDescriptor parentKeyOfThis= processingContext.pop();
@@ -159,7 +161,7 @@ class YAMLEmitter implements Emitable {
             parentKeyOfThis.getKeys().add(currentKey);
             parent.getKeys().add(parentKeyOfThis);
 
-        } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
+        } else if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, MAPPING_VALUE_CXT)) {
             processingContext.popContextEvent(3);
 
             YAMLKeyDescriptor keyDescriptor = processingContext.pop();
@@ -173,7 +175,7 @@ class YAMLEmitter implements Emitable {
     }
 
     protected void handleScalarEvent(ScalarEvent event, EventType typeOfEvent) {
-        if (processingContext.isContext(MAPPING_START)) {
+        if (processingContext.isContext(MAPPING_CXT)) {
             YAMLKeyDescriptor key = currentScanner.getContext().getStore()
                                                   .create(YAMLKeyDescriptor.class);
 
@@ -184,9 +186,9 @@ class YAMLEmitter implements Emitable {
             key.setFullQualifiedName(trimToEmpty(fqn));
 
             processingContext.push(key);
-            processingContext.pushContextEvent(typeOfEvent);
+            processingContext.pushContextEvent(MAPPING_KEY_CXT);
 
-        } else if (processingContext.isContext(MAPPING_START, SCALAR)) {
+        } else if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT)) {
             YAMLValueDescriptor value = currentScanner.getContext().getStore()
                                                       .create(YAMLValueDescriptor.class);
 
@@ -196,9 +198,9 @@ class YAMLEmitter implements Emitable {
             YAMLKeyDescriptor key = processingContext.peek();
             key.getValues().add(value);
 
-            processingContext.pushContextEvent(typeOfEvent);
+            processingContext.pushContextEvent(MAPPING_VALUE_CXT);
 
-        } else if (processingContext.isContext(MAPPING_START, SCALAR, SCALAR)) {
+        } else if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, MAPPING_VALUE_CXT)) {
             processingContext.popContextEvent(2);
             YAMLKeyDescriptor key = processingContext.pop();
 
@@ -215,9 +217,9 @@ class YAMLEmitter implements Emitable {
             nextKey.setFullQualifiedName(trimToEmpty(fqn));
 
             processingContext.push(nextKey);
-            processingContext.pushContextEvent(typeOfEvent);
+            processingContext.pushContextEvent(MAPPING_KEY_CXT);
 
-        } else if (processingContext.isContext(SEQUENCE_START)) {
+        } else if (processingContext.isContext(SEQUENCE_CXT)) {
             YAMLValueDescriptor value = currentScanner.getContext()
                                                       .getStore()
                                                       .create(YAMLValueDescriptor.class);
@@ -267,6 +269,14 @@ class YAMLEmitter implements Emitable {
         SCALAR,
         SEQUENCE_END,
         SEQUENCE_START
+    }
+
+    public enum ParseContext {
+        DOCUMENT_CTX,
+        MAPPING_CXT,
+        MAPPING_KEY_CXT,
+        MAPPING_VALUE_CXT,
+        SEQUENCE_CXT,
     }
 
     private static void unsupportedYAMLStructure() {
