@@ -51,15 +51,15 @@ class YAMLEmitter implements Emitable {
         if (typeOfEvent != null) {
             switch (typeOfEvent) {
                 case DOCUMENT_START:
-                    handleDocumentStartEvent(typeOfEvent);
+                    handleDocumentStartEvent();
                     break;
 
                 case SEQUENCE_START:
-                    handleSequenceStart(typeOfEvent);
+                    handleSequenceStart();
                     break;
 
                 case SEQUENCE_END:
-                    handleSequenceEnd(typeOfEvent);
+                    handleSequenceEnd();
                     break;
 
                 case DOCUMENT_END:
@@ -67,7 +67,7 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 case MAPPING_START:
-                    handleMappingStartEvent(typeOfEvent);
+                    handleMappingStartEvent();
                     break;
 
                 case MAPPING_END:
@@ -75,7 +75,7 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 case SCALAR:
-                    handleScalarEvent((ScalarEvent) event, typeOfEvent);
+                    handleScalarEvent((ScalarEvent) event);
                     break;
 
                 default:
@@ -84,7 +84,7 @@ class YAMLEmitter implements Emitable {
         }
     }
 
-    protected void handleSequenceStart(EventType typeOfEvent) {
+    protected void handleSequenceStart() {
         if (processingContext.isContext(SEQUENCE_CXT)) {
             // Sequence of sequences...
             YAMLValueDescriptor valueDescriptor = currentScanner.getContext().getStore()
@@ -98,7 +98,7 @@ class YAMLEmitter implements Emitable {
         }
     }
 
-    protected void handleSequenceEnd(EventType typeOfEvent) {
+    protected void handleSequenceEnd() {
         if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, SEQUENCE_CXT)) {
             processingContext.popContextEvent(2);
             YAMLKeyDescriptor keyForSequence = processingContext.pop();
@@ -129,7 +129,7 @@ class YAMLEmitter implements Emitable {
         }
     }
 
-    protected void handleDocumentStartEvent(EventType typeOfEvent) {
+    protected void handleDocumentStartEvent() {
         YAMLDocumentDescriptor doc = currentScanner.getContext()
                                                    .getStore()
                                                    .create(YAMLDocumentDescriptor.class);
@@ -137,7 +137,7 @@ class YAMLEmitter implements Emitable {
         processingContext.push(doc);
     }
 
-    protected void handleMappingStartEvent(EventType typeOfEvent) {
+    protected void handleMappingStartEvent() {
         processingContext.pushContextEvent(MAPPING_CXT);
     }
 
@@ -174,7 +174,7 @@ class YAMLEmitter implements Emitable {
         }
     }
 
-    protected void handleScalarEvent(ScalarEvent event, EventType typeOfEvent) {
+    protected void handleScalarEvent(ScalarEvent event) {
         if (processingContext.isContext(MAPPING_CXT)) {
             YAMLKeyDescriptor key = currentScanner.getContext().getStore()
                                                   .create(YAMLKeyDescriptor.class);
