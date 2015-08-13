@@ -282,8 +282,9 @@ class YAMLEmitter implements Emitable {
 
     private static void unsupportedYAMLStructure(Event event) {
         String templ = "Found %s in an unexpected position in the YAML document. " +
-                       "This might be an error in the YAML document or a bug in " +
-                       "our parser. Please verify the document or submit a bug.";
+                       "This might be an error in the YAML document, a bug in " +
+                       "our parser or an unsupported YAML document structure. " +
+                       "Please verify the document or submit a bug.";
 
         throw new RuntimeException(format(templ, event.toString()));
     }
