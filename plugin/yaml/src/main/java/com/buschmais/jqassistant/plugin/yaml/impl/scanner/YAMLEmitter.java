@@ -27,6 +27,7 @@ import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.Par
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.EventType.MAPPING_START;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.MAPPING_VALUE_CXT;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.SEQUENCE_CXT;
+import static java.lang.String.format;
 import static org.apache.commons.lang.StringUtils.trimToEmpty;
 
 /**
@@ -51,27 +52,27 @@ class YAMLEmitter implements Emitable {
         if (typeOfEvent != null) {
             switch (typeOfEvent) {
                 case DOCUMENT_START:
-                    handleDocumentStartEvent();
+                    handleDocumentStartEvent(event);
                     break;
 
                 case SEQUENCE_START:
-                    handleSequenceStart();
+                    handleSequenceStart(event);
                     break;
 
                 case SEQUENCE_END:
-                    handleSequenceEnd();
+                    handleSequenceEnd(event);
                     break;
 
                 case DOCUMENT_END:
-                    handleDocumentEndEvent();
+                    handleDocumentEndEvent(event);
                     break;
 
                 case MAPPING_START:
-                    handleMappingStartEvent();
+                    handleMappingStartEvent(event);
                     break;
 
                 case MAPPING_END:
-                    handleMappingEndEvent();
+                    handleMappingEndEvent(event);
                     break;
 
                 case SCALAR:
@@ -79,12 +80,12 @@ class YAMLEmitter implements Emitable {
                     break;
 
                 default:
-                    unsupportedYAMLStructure();
+                    unsupportedYAMLStructure(event);
             }
         }
     }
 
-    protected void handleSequenceStart() {
+    protected void handleSequenceStart(Event event) {
         if (processingContext.isContext(SEQUENCE_CXT)) {
             // Sequence of sequences...
             YAMLValueDescriptor valueDescriptor = currentScanner.getContext().getStore()
@@ -98,7 +99,7 @@ class YAMLEmitter implements Emitable {
         }
     }
 
-    protected void handleSequenceEnd() {
+    protected void handleSequenceEnd(Event event) {
         if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, SEQUENCE_CXT)) {
             processingContext.popContextEvent(2);
             YAMLKeyDescriptor keyForSequence = processingContext.pop();
@@ -114,13 +115,13 @@ class YAMLEmitter implements Emitable {
 
             bbb.getValues().add(value);
         } else {
-            unsupportedYAMLStructure();
+//            unsupportedYAMLStructure();
         }
     }
 
-    protected void handleDocumentEndEvent() {
+    protected void handleDocumentEndEvent(Event event) {
         if (!processingContext.isContext(DOCUMENT_CTX)) {
-            unsupportedYAMLStructure();
+            unsupportedYAMLStructure(event);
         } else {
 
             processingContext.popContextEvent(1);
@@ -129,7 +130,7 @@ class YAMLEmitter implements Emitable {
         }
     }
 
-    protected void handleDocumentStartEvent() {
+    protected void handleDocumentStartEvent(Event event) {
         YAMLDocumentDescriptor doc = currentScanner.getContext()
                                                    .getStore()
                                                    .create(YAMLDocumentDescriptor.class);
@@ -137,11 +138,11 @@ class YAMLEmitter implements Emitable {
         processingContext.push(doc);
     }
 
-    protected void handleMappingStartEvent() {
+    protected void handleMappingStartEvent(Event event) {
         processingContext.pushContextEvent(MAPPING_CXT);
     }
 
-    protected void handleMappingEndEvent() {
+    protected void handleMappingEndEvent(Event event) {
         if (processingContext.isContext(MAPPING_CXT, MAPPING_KEY_CXT, MAPPING_CXT)) {
             processingContext.popContextEvent(2);
 
@@ -170,7 +171,7 @@ class YAMLEmitter implements Emitable {
             bucket.getKeys().add(keyDescriptor);
 
         } else {
-            unsupportedYAMLStructure();
+            unsupportedYAMLStructure(event);
         }
     }
 
@@ -255,7 +256,7 @@ class YAMLEmitter implements Emitable {
         } else if (event instanceof SequenceEndEvent) {
             result = EventType.SEQUENCE_END;
         } else {
-            unsupportedYAMLStructure();
+            unsupportedYAMLStructure(event);
         }
 
         return result;
@@ -279,9 +280,12 @@ class YAMLEmitter implements Emitable {
         SEQUENCE_CXT,
     }
 
-    private static void unsupportedYAMLStructure() {
-        throw new RuntimeException("Not supported YAML structure. Please " +
-                                        "report this with an example YAML document.");
+    private static void unsupportedYAMLStructure(Event event) {
+        String templ = "Found %s in an unexpected position in the YAML document. " +
+                       "This might be an error in the YAML document or a bug in " +
+                       "our parser. Please verify the document or submit a bug.";
+
+        throw new RuntimeException(format(templ, event.toString()));
     }
 
 }
