@@ -115,7 +115,7 @@ class YAMLEmitter implements Emitable {
 
             bbb.getValues().add(value);
         } else {
-//            unsupportedYAMLStructure();
+            unsupportedYAMLStructure(event);
         }
     }
 
