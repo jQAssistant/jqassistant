@@ -29,11 +29,12 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void cypherRules() throws Exception {
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader(RuleSetBuilder.newInstance());
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
         final URL url = getClass().getResource("/junit-without-assert.adoc");
         RuleSource ruleSource = new UrlRuleSource(url);
-        RuleSet ruleSet = reader.read(asList(ruleSource));
-        // assertEquals(url.toString(),group.getId());
+        reader.read(asList(ruleSource), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         // assertEquals("Find JUnit tests without assertions",group.getDescription());
         Map<String, Concept> concepts = ruleSet.getConcepts();
         assertEquals(2, concepts.size());
@@ -68,10 +69,12 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void scriptRules() throws Exception {
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader(RuleSetBuilder.newInstance());
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
         final URL url = getClass().getResource("/javascript-rules.adoc");
         RuleSource ruleSource = new UrlRuleSource(url);
-        RuleSet ruleSet = reader.read(asList(ruleSource));
+        reader.read(asList(ruleSource), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         // assertEquals(url.toString(),group.getId());
         // assertEquals("Find JUnit tests without assertions",group.getDescription());
         Map<String, Concept> concepts = ruleSet.getConcepts();

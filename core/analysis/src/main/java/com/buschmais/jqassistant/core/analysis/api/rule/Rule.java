@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+
 /**
  * Interface for all rules.
  */
@@ -17,6 +19,11 @@ public interface Rule {
      * 
      * @return The description of the rule.
      */
-    public String getDescription();
+    String getDescription();
 
+    /**
+     * Return the source of the rule.
+     * @return The source of the rule.
+     */
+    RuleSource getSource();
 }

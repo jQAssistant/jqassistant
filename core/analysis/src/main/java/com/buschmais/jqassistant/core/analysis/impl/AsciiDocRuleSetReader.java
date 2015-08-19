@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -28,7 +29,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Report;
 import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -39,36 +39,24 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
  * @author mh
  * @since 12.10.14
  */
-public class AsciiDocRuleSetReader extends AbstractRuleSetReader {
+public class AsciiDocRuleSetReader implements RuleSetReader {
 
     private static final Set<String> RULETYPES = new HashSet<>(asList("concept", "constraint"));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSetReader.class);
 
     /**
-     *
+     * The cached rule set reader, initialized lazily.
      */
-    private Asciidoctor cachedAsciidoctor;
-
-    /**
-     * Constructor.
-     * 
-     * @param ruleSetBuilder
-     *            The rulse set builder to use.
-     */
-    public AsciiDocRuleSetReader(RuleSetBuilder ruleSetBuilder) {
-        super(ruleSetBuilder);
-    }
+    private Asciidoctor cachedAsciidoctor = null;
 
     @Override
-    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
-        RuleSetBuilder ruleSetBuilder = getRuleSetBuilder();
+    public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
         for (RuleSource source : sources) {
             if (source.isType(RuleSource.Type.AsciiDoc)) {
                 readDocument(source, ruleSetBuilder);
             }
         }
-        return ruleSetBuilder.getRuleSet();
     }
 
     private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
@@ -81,7 +69,7 @@ public class AsciiDocRuleSetReader extends AbstractRuleSetReader {
             throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
         StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
-        extractRules(doc, builder);
+        extractRules(doc, source, builder);
     }
 
     /**
@@ -110,15 +98,15 @@ public class AsciiDocRuleSetReader extends AbstractRuleSetReader {
      * @throws com.buschmais.jqassistant.core.analysis.api.RuleException
      *             If the rules are not consistent
      */
-    private void extractRules(StructuredDocument doc, RuleSetBuilder builder) throws RuleException {
+    private void extractRules(StructuredDocument doc, RuleSource ruleSource, RuleSetBuilder builder) throws RuleException {
         for (ContentPart part : findListings(doc)) {
             Map<String, Object> attributes = part.getAttributes();
             String id = part.getId();
             String description = attributes.get("title").toString();
             Set<String> requiresConcepts = getDependencies(attributes);
-            Executable executable = null;
             Object language = part.getAttributes().get("language");
             String source = unescapeHtml(part.getContent());
+            Executable executable;
             if ("cypher".equals(language)) {
                 executable = new CypherExecutable(source);
             } else {
@@ -136,12 +124,12 @@ public class AsciiDocRuleSetReader extends AbstractRuleSetReader {
             Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = new Concept(id, description, severity, null, executable, Collections.<String, Object>emptyMap(),
+                Concept concept = new Concept(id, description, ruleSource, severity, null, executable, Collections.<String, Object>emptyMap(),
                         requiresConcepts, verification, report);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object>emptyMap(),
+                Constraint concept = new Constraint(id, description, ruleSource, severity, null, executable, Collections.<String, Object>emptyMap(),
                         requiresConcepts, verification, report);
                 builder.addConstraint(concept);
             }

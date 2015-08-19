@@ -3,21 +3,12 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+
 /**
- * Defines an abstract rule which is has an unique identifier and references a
- * Query.
+ * Defines an abstract rule which is has an unique identifier and references a Query.
  */
-public abstract class AbstractExecutableRule implements ExecutableRule {
-
-    /**
-     * The id of the rule.
-     */
-    private String id;
-
-    /**
-     * The optional description.
-     */
-    private String description;
+public abstract class AbstractExecutableRule extends AbstractRule implements ExecutableRule {
 
     /**
      * The severity of the constraint.
@@ -58,6 +49,8 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      *            The id.
      * @param description
      *            The human readable description.
+     * @param ruleSource
+     *            The rule source.
      * @param severity
      *            The severity.
      * @param deprecation
@@ -70,11 +63,12 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
      *            The required concept ids.
      * @param verification
      *            The result verification.
+     * @param report
+     *            The report definition.
      */
-    protected AbstractExecutableRule(String id, String description, Severity severity, String deprecation, Executable executable,
-            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
-        this.id = id;
-        this.description = description;
+    protected AbstractExecutableRule(String id, String description, RuleSource ruleSource, Severity severity, String deprecation,
+            Executable executable, Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
+        super(id, description, ruleSource);
         this.severity = severity;
         this.deprecation = deprecation;
         this.executable = executable;
@@ -82,14 +76,6 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
         this.requiresConcepts = requiresConcepts;
         this.verification = verification;
         this.report = report;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     /**
@@ -131,28 +117,4 @@ public abstract class AbstractExecutableRule implements ExecutableRule {
     public Report getReport() {
         return report;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        AbstractExecutableRule executable = (AbstractExecutableRule) o;
-        if (!id.equals(executable.id))
-            return false;
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "AbstractExecutableRule [id=" + id + ", description=" + description + ", executable=" + executable + ", requiresConcepts=" + requiresConcepts
-                + ", severity=" + severity + "]";
-    }
-
 }
