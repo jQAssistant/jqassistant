@@ -27,7 +27,6 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
 import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
@@ -220,19 +219,19 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         File workDirectory = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
         File repositoryRoot = new File(workDirectory, "repository");
         File indexRoot = new File(workDirectory, "index");
-        FileResolverStrategy fileResolverStrategy = new RepositoryFileResolverStrategy(repositoryRoot);
-        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
-        fileResolver.addStrategy(fileResolverStrategy);
         // handles the remote maven index
         MavenIndex mavenIndex = new MavenIndex(item, repositoryRoot, indexRoot, username, password);
         // used to resolve (remote) artifacts
         ArtifactProvider artifactProvider = new ArtifactProvider(item, repositoryRoot, username, password);
         PomModelBuilder pomModelBuilder = new EffectiveModelBuilderImpl(artifactProvider);
         ArtifactFilter artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
+        // register file resolver strategy to identify repository artifacts
+        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
+        fileResolver.push(new RepositoryFileResolverStrategy(repositoryRoot));
         try {
             return scanRepository(item, scanner, mavenIndex, artifactProvider, pomModelBuilder, artifactFilter);
         } finally {
-            fileResolver.removeStrategy(fileResolverStrategy);
+            fileResolver.pop();
         }
     }
 

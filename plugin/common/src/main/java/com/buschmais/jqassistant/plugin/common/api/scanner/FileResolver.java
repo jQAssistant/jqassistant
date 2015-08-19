@@ -1,9 +1,11 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.util.HashMap;
+import java.util.Deque;
+import java.util.LinkedList;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 /**
  * A file resolver.
@@ -13,7 +15,7 @@ public final class FileResolver {
     /**
      * The registered file resolver instances identified by their type.
      */
-    private HashMap<Class<? extends FileResolverStrategy>, FileResolverStrategy> resolverStrategies = new HashMap<>();
+    private Deque<FileResolverStrategy> resolverStrategies = new LinkedList<>();
 
     /**
      * Add a file resolver.
@@ -21,46 +23,50 @@ public final class FileResolver {
      * @param fileResolverStrategy
      *            A file resolver.
      */
-    public void addStrategy(FileResolverStrategy fileResolverStrategy) {
-        resolverStrategies.put(fileResolverStrategy.getClass(), fileResolverStrategy);
+    public void push(FileResolverStrategy fileResolverStrategy) {
+        resolverStrategies.push(fileResolverStrategy);
     }
 
     /**
      * Remove a file resolver.
-     * 
-     * @param fileResolverStrategy
-     *            The file resolver.
      */
-    public void removeStrategy(FileResolverStrategy fileResolverStrategy) {
-        removeStrategy(fileResolverStrategy.getClass());
+    public void pop() {
+        resolverStrategies.pop();
     }
 
-    /**
-     * Remove a file resolver.
-     * 
-     * @param fileResolverType
-     *            The file resolver type.
-     */
-    public void removeStrategy(Class<? extends FileResolverStrategy> fileResolverType) {
-        resolverStrategies.remove(fileResolverType);
-    }
-
-    /**
-     * Resolve the given resource.
-     * 
-     * @param path
-     *            The path.
-     * @param context
-     *            The scanner context.
-     * @return The resolved {@link Descriptor} or <code>null</code>.
-     */
-    public Descriptor resolve(String path, ScannerContext context) {
-        for (FileResolverStrategy fileResolverStrategy : resolverStrategies.values()) {
-            Descriptor resolvedDescriptor = fileResolverStrategy.resolve(path, context);
-            if (resolvedDescriptor != null) {
-                return resolvedDescriptor;
+    public FileDescriptor create(String path, ScannerContext context) {
+        for (FileResolverStrategy fileResolverStrategy : resolverStrategies) {
+            Descriptor fileDescriptor = fileResolverStrategy.create(path, context);
+            if (fileDescriptor != null) {
+                return toFileDescriptor(fileDescriptor, path, context);
             }
         }
-        return null;
+        return createFileDescriptor(path, context);
     }
+
+    public FileDescriptor find(String path, ScannerContext context) {
+        for (FileResolverStrategy fileResolverStrategy : resolverStrategies) {
+            Descriptor descriptor = fileResolverStrategy.require(path, context);
+            if (descriptor != null) {
+                return toFileDescriptor(descriptor, path, context);
+            }
+        }
+        return createFileDescriptor(path, context);
+    }
+
+    private FileDescriptor toFileDescriptor(Descriptor descriptor, String path, ScannerContext context) {
+        if (!(descriptor instanceof FileDescriptor)) {
+            FileDescriptor fileDescriptor = context.getStore().addDescriptorType(descriptor, FileDescriptor.class);
+            fileDescriptor.setFileName(path);
+            return fileDescriptor;
+        }
+        return (FileDescriptor) descriptor;
+    }
+
+    private FileDescriptor createFileDescriptor(String path, ScannerContext context) {
+        FileDescriptor fileDescriptor = context.getStore().create(FileDescriptor.class);
+        fileDescriptor.setFileName(path);
+        return fileDescriptor;
+    }
+
 }

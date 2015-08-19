@@ -1,12 +1,15 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner.artifact;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 
 public class ArtifactResolver {
 
     /**
-     * Resolves an artifact descriptor for the given coordinates, i.e. by looking up an existing one and creating new one on demand.
+     * Resolves an artifact descriptor for the given coordinates, i.e. by
+     * looking up an existing one and creating new one on demand.
      * 
      * @param coordinates
      *            The artifact coordinates.
@@ -74,8 +77,7 @@ public class ArtifactResolver {
      *            The descriptor type.
      * @return The artifact descriptor.
      */
-    private static <A extends ArtifactDescriptor> A createArtifactDescriptor(Coordinates coordinates, Class<A> descriptorType,
-            ScannerContext scannerContext) {
+    private static <A extends ArtifactDescriptor> A createArtifactDescriptor(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
         String id = getId(coordinates);
         A artifactDescriptor = scannerContext.getStore().create(descriptorType, id);
         setCoordinates(artifactDescriptor, coordinates);
@@ -92,7 +94,7 @@ public class ArtifactResolver {
      */
     public static String getId(Coordinates coordinates) {
         StringBuffer id = new StringBuffer();
-        if (coordinates.getGroup() != null) {
+        if (StringUtils.isNotEmpty(coordinates.getGroup())) {
             id.append(coordinates.getGroup());
         }
         id.append(':');
@@ -100,13 +102,14 @@ public class ArtifactResolver {
         id.append(':');
         id.append(coordinates.getType());
         String classifier = coordinates.getClassifier();
-        if (classifier != null) {
+        if (StringUtils.isNotEmpty(classifier)) {
             id.append(':');
             id.append(classifier);
         }
-        id.append(':');
-        if (coordinates.getVersion() != null) {
-            id.append(coordinates.getVersion());
+        String version = coordinates.getVersion();
+        if (StringUtils.isNotEmpty(version)) {
+            id.append(':');
+            id.append(version);
         }
         return id.toString();
     }

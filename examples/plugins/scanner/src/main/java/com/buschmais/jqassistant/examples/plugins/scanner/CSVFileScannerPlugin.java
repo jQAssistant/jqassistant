@@ -22,8 +22,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 /**
  * A CSV file scanner plugin.
  */
-@Requires(FileDescriptor.class)
-// This plugin requires a file to be scanned
+@Requires(FileDescriptor.class) // The file descriptor is created by another
+                                // plugin and used by this one
 public class CSVFileScannerPlugin extends AbstractScannerPlugin<FileResource, CSVFileDescriptor> {
 
     @Override

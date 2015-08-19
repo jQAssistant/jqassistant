@@ -33,38 +33,55 @@ public class RepositoryFileResolverStrategy implements FileResolverStrategy {
     }
 
     @Override
-    public Descriptor resolve(String path, ScannerContext context) {
-        if (path.startsWith(repositoryRootPath)) {
-            LOGGER.debug("Resolving file '{}' within the local Maven repository.", path);
-            String localPath = path.substring(repositoryRootPath.length() + 1);
-            // the local path in the directory will be used to infer the artifact coordinates
-            // 1. groupId
-            String[] elements = localPath.split("/");
-            StringBuilder groupIdBuilder = new StringBuilder();
-            for (int i = 0; i < elements.length - 3; i++) {
-                if (groupIdBuilder.length() > 0) {
-                    groupIdBuilder.append('.');
-                }
-                groupIdBuilder.append(elements[i]);
-            }
-            String groupId = groupIdBuilder.toString();
-            // 2. artifactId
-            String artifactId = elements[elements.length - 3];
-            // 3. version
-            String version = elements[elements.length - 2];
-            // 4. fileName, used to detect an optional classifier
-            String fileName = elements[elements.length - 1];
-            int typeSeparator = fileName.lastIndexOf(".");
-            String type = fileName.substring(typeSeparator + 1);
-            String mainArtifactFile = artifactId + "-" + version;
-            String classifierPart = fileName.substring(mainArtifactFile.length(), typeSeparator);
-            String classifier = classifierPart.isEmpty() ? null : classifierPart.substring(1);
-            // lookup artifact
-            DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, classifier, type, version);
-            LOGGER.debug("Determined artifact '{}' for file '{}'", artifact, path);
-            ArtifactCoordinates coordinates = new ArtifactCoordinates(artifact);
+    public Descriptor require(String path, ScannerContext context) {
+        if (isArtifactPath(path)) {
+            ArtifactCoordinates coordinates = getArtifactCoordinates(path);
             return ArtifactResolver.find(coordinates, context);
         }
         return null;
+    }
+
+    @Override
+    public Descriptor create(String path, ScannerContext context) {
+        if (isArtifactPath(path)) {
+            ArtifactCoordinates coordinates = getArtifactCoordinates(path);
+            return ArtifactResolver.find(coordinates, context);
+        }
+        return null;
+    }
+
+    private boolean isArtifactPath(String path) {
+        return path.startsWith(repositoryRootPath);
+    }
+
+    private ArtifactCoordinates getArtifactCoordinates(String path) {
+        LOGGER.debug("Resolving file '{}' within the local Maven repository.", path);
+        String localPath = path.substring(repositoryRootPath.length() + 1);
+        // the local path in the directory will be used to infer the artifact coordinates
+        // 1. groupId
+        String[] elements = localPath.split("/");
+        StringBuilder groupIdBuilder = new StringBuilder();
+        for (int i = 0; i < elements.length - 3; i++) {
+            if (groupIdBuilder.length() > 0) {
+                groupIdBuilder.append('.');
+            }
+            groupIdBuilder.append(elements[i]);
+        }
+        String groupId = groupIdBuilder.toString();
+        // 2. artifactId
+        String artifactId = elements[elements.length - 3];
+        // 3. version
+        String version = elements[elements.length - 2];
+        // 4. fileName, used to detect an optional classifier
+        String fileName = elements[elements.length - 1];
+        int typeSeparator = fileName.lastIndexOf(".");
+        String type = fileName.substring(typeSeparator + 1);
+        String mainArtifactFile = artifactId + "-" + version;
+        String classifierPart = fileName.substring(mainArtifactFile.length(), typeSeparator);
+        String classifier = classifierPart.isEmpty() ? null : classifierPart.substring(1);
+        // lookup artifact
+        DefaultArtifact artifact = new DefaultArtifact(groupId, artifactId, classifier, type, version);
+        LOGGER.debug("Determined artifact '{}' for file '{}'", artifact, path);
+        return new ArtifactCoordinates(artifact);
     }
 }

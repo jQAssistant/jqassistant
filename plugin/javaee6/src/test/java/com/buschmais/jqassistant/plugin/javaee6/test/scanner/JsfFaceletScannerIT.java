@@ -13,18 +13,9 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.JsfFaceletDescriptor;
-import com.buschmais.xo.api.Query.Result;
+import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
 /**
  * Scans some jspx-files and checks nodes & relationships.
@@ -41,8 +32,8 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
      */
     @Test
     public void testNodes() throws IOException {
-        scanFaceletDirectory();
         store.beginTransaction();
+        scanFaceletDirectory();
 
         List<JsfFaceletDescriptor> jsfFaceletDescriptors = query("MATCH (n:File:Jsf:Facelet) RETURN n").getColumn("n");
         assertThat(jsfFaceletDescriptors.size(), equalTo(7));
@@ -68,8 +59,8 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
      */
     @Test
     public void testRelationships() throws IOException {
-        scanFaceletDirectory();
         store.beginTransaction();
+        scanFaceletDirectory();
 
         List<JsfFaceletDescriptor> descriptors = query("MATCH (n:File:Jsf:Facelet) WHERE n.fileName='/shop/productsite.jspx' RETURN n").getColumn("n");
         assertThat(descriptors.size(), equalTo(1));
@@ -97,23 +88,7 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
      */
     private void scanFaceletDirectory() throws IOException {
         final File faceletDirectory = new File(getClassesDirectory(JsfFaceletScannerIT.class), "facelet");
-        execute("test", new ScanClassPathOperation() {
-            @Override
-            public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
-                FileResolverStrategy fileResolverStrategy = new FileResolverStrategy() {
-                    @Override
-                    public Descriptor resolve(String path, ScannerContext context) {
-                        Map<String, Object> parameters = MapBuilder.<String, Object> create("fileName", path).get();
-                        Result<Result.CompositeRowObject> rowObjects = store.executeQuery("MATCH (f:File) WHERE f.fileName={fileName} return f", parameters);
-                        return rowObjects.hasResult() ? rowObjects.getSingleResult().get("f", FileDescriptor.class) : null;
-                    }
-                };
-                final FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
-                fileResolver.addStrategy(fileResolverStrategy);
-                scanner.scan(faceletDirectory, "/", JavaScope.CLASSPATH);
-                fileResolver.removeStrategy(fileResolverStrategy);
-            }
-        });
+        getScanner().scan(faceletDirectory, "/", WebApplicationScope.WAR);
         TestResult result = query("match (f:File) with f.fileName as fileName match (f:File) where f.fileName=fileName "
                 + "with fileName, count(f) as count where count > 1 return fileName, count");
         List<Map<String, Object>> rows = result.getRows();

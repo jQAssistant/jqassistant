@@ -6,9 +6,10 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractArchiveScanne
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WebApplicationArchiveDescriptor> {
+public class WebApplicationArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WebApplicationArchiveDescriptor> {
 
     @Override
     protected String getExtension() {
@@ -19,11 +20,13 @@ public class WarArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WebApp
     protected Scope createScope(Scope currentScope, WebApplicationArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) {
         TypeResolver typeResolver = new ArtifactScopedTypeResolver(archiveDescriptor);
         scannerContext.push(TypeResolver.class, typeResolver);
+        scannerContext.push(WebApplicationDescriptor.class, archiveDescriptor);
         return WebApplicationScope.WAR;
     }
 
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
+        scannerContext.pop(WebApplicationDescriptor.class);
         scannerContext.pop(TypeResolver.class);
     }
 

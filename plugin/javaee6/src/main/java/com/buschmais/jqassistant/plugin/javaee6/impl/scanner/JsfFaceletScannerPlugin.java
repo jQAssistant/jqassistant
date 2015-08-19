@@ -127,7 +127,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     public JsfFaceletDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
-        final FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
+        FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
         JsfFaceletDescriptor currentDescriptor = store.addDescriptorType(fileDescriptor, JsfFaceletDescriptor.class);
 
         try {
@@ -174,9 +174,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
      */
     private JsfFaceletDescriptor findJsfTemplateDescriptor(String templateFqn, String path, ScannerContext context) {
         String includedFile = absolutifyFilePath(path, templateFqn);
-        JsfFaceletDescriptor includedFileDescriptor = getJsfTemplateDescriptor(includedFile, context);
-
-        return includedFileDescriptor;
+        return getJsfTemplateDescriptor(includedFile, context);
     }
 
     /**
@@ -218,14 +216,12 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
      * @return a path absolute path in reference to the second path.
      */
     private String absolutifyFilePath(final String path, final String referencePath) {
-
         // can't handle EL-expressions
         if (isElExpression(path)) {
             return path;
         }
 
-        String normalizedPath = path;
-
+        String normalizedPath;
         if (!path.startsWith("/")) {
             Path reference = Paths.get(referencePath);
             normalizedPath = reference.getParent().resolve(path).normalize().toString();
@@ -239,7 +235,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     /**
      * Parses the xml file with a {@link DocumentBuilder}.
      *
-     * @param ressource
+     * @param resource
      *            the file to read
      *
      * @return a {@link Document}
@@ -249,8 +245,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
      * @throws IOException
      *             see {@link DocumentBuilder#parse(java.io.File)}
      */
-    private Document getDocument(FileResource ressource) throws SAXException, IOException {
-        return documentBuilder.parse(ressource.getFile());
+    private Document getDocument(FileResource resource) throws SAXException, IOException {
+        return documentBuilder.parse(resource.getFile());
     }
 
     /**
@@ -268,15 +264,8 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
         if (isElExpression(fullFilePath)) {
             return null;
         }
-        Descriptor descriptor = context.peek(FileResolver.class).resolve(fullFilePath, context);
-        JsfFaceletDescriptor jspxDescriptor;
-        if (descriptor != null) {
-            jspxDescriptor = context.getStore().addDescriptorType(descriptor, JsfFaceletDescriptor.class);
-        } else {
-            jspxDescriptor = context.getStore().create(JsfFaceletDescriptor.class);
-            jspxDescriptor.setFileName(fullFilePath);
-        }
-        return jspxDescriptor;
+        Descriptor descriptor = context.peek(FileResolver.class).find(fullFilePath, context);
+        return context.getStore().addDescriptorType(descriptor, JsfFaceletDescriptor.class);
     }
 
     /**

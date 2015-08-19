@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor.RequiresType;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor.RequiresType;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
@@ -28,7 +28,6 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor 
     @Target(ElementType.METHOD)
     @interface Declares {
     }
-
 
     /**
      * Return the declared methods.

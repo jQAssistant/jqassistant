@@ -4,14 +4,9 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -125,7 +120,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses) throws IOException, AnalysisException, ParserConfigurationException,
-            SAXException, FileNotFoundException {
+ SAXException {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.addAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
