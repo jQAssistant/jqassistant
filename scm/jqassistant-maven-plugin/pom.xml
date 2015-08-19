@@ -36,6 +36,7 @@
                                 <pomInclude>multimodule/singleparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/customruledir/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/multipleruledirs/pom.xml</pomInclude>
+                                <pomInclude>multimodule/singleparent/parentasmodule/pom.xml</pomInclude>
                                 <pomInclude>multimodule/multiparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/multiparent/singlestore/pom.xml</pomInclude>
                                 <pomInclude>plugin/pom.xml</pomInclude>

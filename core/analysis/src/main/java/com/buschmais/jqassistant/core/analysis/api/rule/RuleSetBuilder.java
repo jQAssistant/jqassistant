@@ -12,6 +12,12 @@ public class RuleSetBuilder {
 
     private DefaultRuleSet ruleSet = new DefaultRuleSet();
 
+    /**
+     * Private constructor.
+     */
+    private RuleSetBuilder() {
+    }
+
     public static RuleSetBuilder newInstance() {
         return new RuleSetBuilder();
     }
@@ -49,8 +55,7 @@ public class RuleSetBuilder {
     }
 
     /**
-     * Defines a set of rules containing all resolved {@link Concept} s,
-     * {@link Constraint}s and {@link Group}s.
+     * Defines a set of rules containing all resolved {@link Concept} s, {@link Constraint}s and {@link Group}s.
      */
     private static class DefaultRuleSet implements RuleSet {
 

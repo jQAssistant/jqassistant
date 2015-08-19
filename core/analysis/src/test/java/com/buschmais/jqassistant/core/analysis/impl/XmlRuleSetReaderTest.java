@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 
 public class XmlRuleSetReaderTest {
@@ -16,7 +17,7 @@ public class XmlRuleSetReaderTest {
     @Test
     public void readScriptRule() throws Exception {
         File xmlFile = new File(getClass().getResource("/javascript-rules.xml").getFile());
-        RuleSetReader reader = new XmlRuleSetReader();
+        RuleSetReader reader = new XmlRuleSetReader(RuleSetBuilder.newInstance());
         RuleSet ruleSet = reader.read(asList(new FileRuleSource(xmlFile)));
         assertEquals(1, ruleSet.getConcepts().size());
         assertEquals(1, ruleSet.getConstraints().size());

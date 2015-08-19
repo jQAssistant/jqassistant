@@ -27,7 +27,7 @@ public class AbstractServerTest extends AbstractJavaPluginIT {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         final ScannerPluginRepository scannerPluginRepository = getScannerPluginRepository();
         final RulePluginRepository rulePluginRepository = getRulePluginRepository();
-        server = new DefaultServerImpl(embeddedGraphStore, scannerPluginRepository, rulePluginRepository, SERVER_PORT);
+        server = new DefaultServerImpl(embeddedGraphStore, scannerPluginRepository, rulePluginRepository, DefaultServerImpl.DEFAULT_ADDRESS, SERVER_PORT);
         server.start();
     }
 

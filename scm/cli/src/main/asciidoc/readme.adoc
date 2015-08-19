@@ -113,7 +113,11 @@ Transforms an XML report into HTML.
 [[cli:server]]
 ==== server
 ===== Description
-Starts the integrated Neo4j web server (http://localhost:7474).
+Starts the integrated Neo4j web server.
+* -serverAddress <address>
+** specifies the binding address for the server (default: localhost)
+* -serverPort <port>
+** specifies the binding port for the server (default: 7474)
 
 ===== Options
 * <<cli:storeDirectory>>

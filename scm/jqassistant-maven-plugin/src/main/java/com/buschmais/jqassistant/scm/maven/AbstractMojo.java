@@ -1,5 +1,22 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.commons.io.DirectoryWalker;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.rtinfo.RuntimeInformation;
+
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
@@ -11,21 +28,6 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.provider.PluginRepositoryProvider;
 import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
-import org.apache.commons.io.DirectoryWalker;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.rtinfo.RuntimeInformation;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Abstract base implementation for analysis mojos.
@@ -159,8 +161,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Reads the available rules from the rules directory and deployed catalogs.
      *
-     * @return A rule set.
-     *         .
+     * @return A rule set. .
      * @throws MojoExecutionException
      *             If the rules cannot be read.
      */
@@ -274,7 +275,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
         synchronized (storeFactory) {
             Store store = getStore(rootModule);
-            if (isResetStoreBeforeExecution() && currentProject.isExecutionRoot()) {
+            if (isResetStoreBeforeExecution() && currentProject.equals(rootModule)) {
                 store.reset();
             }
             try {

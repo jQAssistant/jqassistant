@@ -1,9 +1,19 @@
 == 1.1.0
 
+=== Core
+- make sure that ids used for concepts, constraints or groups are unique nevertheless if they have been defined in XML or Asciidoc documents
+
+=== Maven
+- reset store (i.e. database) while building the root module of a project (was: execution root of Maven reactor)
+- added serverAddress and serverPort parameters to jqassistant:server goal
+
+=== CLI
+- added serverAddress and serverPort parameters to server task
+
 === Plugins
 
 ==== GraphML
-- Added plugin which provides a GraphML export for the results of executed concepts
+- Added plugin which provides a GraphML export for the results of executed concepts, includes support for virtual elements (sub graphs, nodes, relationships)
 
 ==== YAML
 - Added plugin which provides a scanner for YAML files

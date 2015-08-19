@@ -5,14 +5,25 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.sonar.api.rules.*;
+import org.sonar.api.rules.AnnotationRuleParser;
 import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleParam;
+import org.sonar.api.rules.RulePriority;
+import org.sonar.api.rules.RuleRepository;
 import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -61,8 +72,8 @@ public final class JQAssistantRuleRepository extends RuleRepository {
             throw new SonarException("Cannot read rules.", e);
         }
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
-        RuleSetReader ruleSetReader = new XmlRuleSetReader();
-        RuleSet ruleSet = null;
+        RuleSetReader ruleSetReader = new XmlRuleSetReader(RuleSetBuilder.newInstance());
+        RuleSet ruleSet;
         try {
             ruleSet = ruleSetReader.read(ruleSources);
         } catch (RuleException e) {
