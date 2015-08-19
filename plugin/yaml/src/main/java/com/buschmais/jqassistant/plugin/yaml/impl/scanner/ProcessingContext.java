@@ -10,7 +10,7 @@ import java.util.List;
 
 class ProcessingContext {
     private ArrayDeque<YAMLDescriptor> stackedContext = new ArrayDeque<>();
-    private LinkedList<YAMLEmitter.EventType> context = new LinkedList<>();
+    private LinkedList<YAMLEmitter.ParseContext> context = new LinkedList<>();
 
     public void push(YAMLDescriptor newContext) {
         stackedContext.push(newContext);
@@ -26,22 +26,22 @@ class ProcessingContext {
         return (T)stackedContext.pop();
     }
 
-    public void pushContextEvent(YAMLEmitter.EventType event) {
+    public void pushContextEvent(YAMLEmitter.ParseContext event) {
         context.push(event);
     }
 
-    public YAMLEmitter.EventType getContext() {
+    public YAMLEmitter.ParseContext getContext() {
         return context.peek();
     }
 
-    public boolean isContext(YAMLEmitter.EventType... eventChain) {
+    public boolean isContext(YAMLEmitter.ParseContext... eventChain) {
         int pathLength = eventChain.length;
         int currentContextDepth = context.size();
 
         boolean result = true;
 
         if (pathLength <= currentContextDepth) {
-            List<YAMLEmitter.EventType> tail = context.subList(0, pathLength);
+            List<YAMLEmitter.ParseContext> tail = context.subList(0, pathLength);
 
             for (int i = pathLength - 1; i >= 0; i--) {
                 if (eventChain[i] != tail.get(pathLength - 1 - i)) {
