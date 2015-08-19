@@ -22,10 +22,11 @@ A pom.xml file describing a single Maven project.
 .Relations of :Maven:Project:File:Directory
 [options="header"]
 |====
-| Name       | Target label(s)    | Cardinality | Description
-| CREATES    | <<:Artifact>>      | 0..n        | References an artifact created by the project
-| HAS_PARENT | <<:Maven:Project>> | 0..1        | References the parent project (optional)
-| HAS_MODULE | <<:Maven:Project>> | 0..n        | References modules of this project (optional)
+| Name       | Target label(s)         | Cardinality | Description
+| CREATES    | <<:Artifact>>           | 0..n        | References an artifact created by the project
+| HAS_MODEL  | <<:Maven:Pom:Xml:File>> | 1           | References the POM model of the project
+| HAS_PARENT | <<:Maven:Project>>      | 0..1        | References the parent project (optional)
+| HAS_MODULE | <<:Maven:Project>>      | 0..n        | References modules of this project (optional)
 |====
 
 [[:Artifact]]
