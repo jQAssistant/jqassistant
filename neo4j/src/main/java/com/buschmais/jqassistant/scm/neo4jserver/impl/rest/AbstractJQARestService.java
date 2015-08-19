@@ -1,9 +1,16 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import java.util.List;
+
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
@@ -15,8 +22,6 @@ import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.common.console.Slf4jConsole;
-
-import java.util.List;
 
 public abstract class AbstractJQARestService {
 
@@ -33,7 +38,9 @@ public abstract class AbstractJQARestService {
         RulePluginRepository rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new CompoundRuleSetReader();
-        availableRules = ruleSetReader.read(ruleSources);
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        ruleSetReader.read(ruleSources,ruleSetBuilder);
+        availableRules = ruleSetBuilder.getRuleSet();
     }
 
     protected RuleSet getAvailableRules() {
