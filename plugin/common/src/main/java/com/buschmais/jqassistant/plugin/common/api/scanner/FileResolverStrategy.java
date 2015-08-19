@@ -22,5 +22,7 @@ public interface FileResolverStrategy {
      *            The scanner context.
      * @return The resolved descriptor or <code>null</code>.
      */
-    Descriptor resolve(String path, ScannerContext context);
+    Descriptor require(String path, ScannerContext context);
+
+    Descriptor create(String path, ScannerContext context);
 }
