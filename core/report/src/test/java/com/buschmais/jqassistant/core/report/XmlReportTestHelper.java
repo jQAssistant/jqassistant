@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Report;
 import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
+import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 
 /**
  * Provides functionality for XML report tests.
@@ -95,7 +96,7 @@ public final class XmlReportTestHelper {
     private static Map<String, Object> createRow() {
         Map<String, Object> row = new HashMap<>();
         row.put(C1, "simpleValue");
-        row.put(C2, new TestDescriptor() {
+        row.put(C2, new TestDescriptorWithLanguageElement() {
             @Override
             public String getValue() {
                 return "descriptorValue";

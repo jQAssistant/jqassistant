@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml.api.model;
 
+import java.util.List;
+
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-
-import java.util.List;
 
 @Label("Key")
 public interface YAMLKeyDescriptor extends YAMLDescriptor, NamedDescriptor,
