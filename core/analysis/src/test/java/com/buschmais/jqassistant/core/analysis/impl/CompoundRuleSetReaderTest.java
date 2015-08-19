@@ -23,8 +23,10 @@ public class CompoundRuleSetReaderTest {
     public void testReadCompoundSources() throws Exception {
         File adocFile = new File(getClass().getResource("/junit-without-assert.adoc").getFile());
         File xmlFile = new File(getClass().getResource("/test-concepts.xml").getFile());
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         RuleSetReader reader = new CompoundRuleSetReader();
-        RuleSet ruleSet = reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)));
+        reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(3, ruleSet.getConcepts().size());
         assertEquals(2, ruleSet.getConstraints().size());
         for (String id : ruleSet.getConcepts().keySet()) {
@@ -44,9 +46,11 @@ public class CompoundRuleSetReaderTest {
 
     @Test
     public void testReadUrlSource() throws Exception {
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         URL url = getClass().getResource("/test-concepts.xml");
-        RuleSetReader reader = new XmlRuleSetReader(RuleSetBuilder.newInstance());
-        RuleSet ruleSet = reader.read(Arrays.asList(new UrlRuleSource(url)));
+        RuleSetReader reader = new XmlRuleSetReader();
+        reader.read(Arrays.asList(new UrlRuleSource(url)), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(1, ruleSet.getConcepts().size());
         assertEquals(1, ruleSet.getConstraints().size());
         for (String id : ruleSet.getConcepts().keySet()) {

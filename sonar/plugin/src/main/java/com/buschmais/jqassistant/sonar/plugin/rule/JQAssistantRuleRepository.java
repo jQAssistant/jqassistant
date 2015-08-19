@@ -38,15 +38,14 @@ import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
  * <p>
  * It provides two types of rules:
  * <ul>
- * <li>Rules from jQAssistant plugin descriptors which are deployed as
- * extensions.</li>
+ * <li>Rules from jQAssistant plugin descriptors which are deployed as extensions.</li>
  * <li>Template rules which can be configured by the user in the UI.</li>
  * </ul>
  */
 public final class JQAssistantRuleRepository extends RuleRepository {
 
     @SuppressWarnings("rawtypes")
-    public static final Collection<Class> RULE_CLASSES = Arrays.<Class> asList(ConceptTemplateRule.class, ConstraintTemplateRule.class);
+    public static final Collection<Class> RULE_CLASSES = Arrays.<Class>asList(ConceptTemplateRule.class, ConstraintTemplateRule.class);
 
     private final AnnotationRuleParser annotationRuleParser;
 
@@ -64,7 +63,8 @@ public final class JQAssistantRuleRepository extends RuleRepository {
 
     @Override
     public List<Rule> createRules() {
-        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(JQAssistantRuleRepository.class.getClassLoader());
+        PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(JQAssistantRuleRepository.class
+                .getClassLoader());
         RulePluginRepository rulePluginRepository;
         try {
             rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
@@ -72,13 +72,15 @@ public final class JQAssistantRuleRepository extends RuleRepository {
             throw new SonarException("Cannot read rules.", e);
         }
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
-        RuleSetReader ruleSetReader = new XmlRuleSetReader(RuleSetBuilder.newInstance());
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        RuleSetReader ruleSetReader = new XmlRuleSetReader();
         RuleSet ruleSet;
         try {
-            ruleSet = ruleSetReader.read(ruleSources);
+            ruleSetReader.read(ruleSources, ruleSetBuilder);
         } catch (RuleException e) {
             throw new SonarException("Cannot read rules", e);
         }
+        ruleSet = ruleSetBuilder.getRuleSet();
         List<Rule> rules = new ArrayList<>();
         for (Concept concept : ruleSet.getConcepts().values()) {
             rules.add(createRule(concept, RuleType.Concept));

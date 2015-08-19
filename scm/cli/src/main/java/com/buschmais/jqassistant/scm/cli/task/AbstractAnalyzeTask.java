@@ -1,23 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
-import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.Log;
-import com.buschmais.jqassistant.scm.cli.Task;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.DirectoryWalker;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,6 +8,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.DirectoryWalker;
+
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import com.buschmais.jqassistant.scm.cli.Log;
+import com.buschmais.jqassistant.scm.cli.Task;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -68,11 +70,13 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
             }
             sources.addAll(ruleSources);
         }
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         try {
-            return ruleSetReader.read(sources);
+            ruleSetReader.read(sources, ruleSetBuilder);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot read rules.", e);
         }
+        return ruleSetBuilder.getRuleSet();
     }
 
     /**

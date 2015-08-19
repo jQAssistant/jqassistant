@@ -49,7 +49,8 @@ public class RuleSetBuilder {
     private <T extends Rule> RuleSetBuilder put(Map<String, T> rules, T rule) throws RuleException {
         T oldRule = rules.put(rule.getId(), rule);
         if (oldRule != null) {
-            throw new RuleException("The id of a rule must be unique: " + rule.getId() + "(" + rule.getDescription() + ")");
+            throw new RuleException("The id of a rule must be unique: type=" + rule.getClass().getSimpleName() + ", id='" + rule.getId()
+                    + "', sources='" + rule.getSource() + "' and '" + oldRule.getSource() + "' .");
         }
         return this;
     }

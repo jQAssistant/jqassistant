@@ -1,11 +1,22 @@
 package com.buschmais.jqassistant.core.report;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Report;
+import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 
 /**
@@ -33,11 +44,11 @@ public final class XmlReportTestHelper {
         StringWriter writer = new StringWriter();
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
-        Concept concept = new Concept("my:concept", "My concept description", Severity.MAJOR, null, new CypherExecutable("match..."),
-                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification(), new Report("c2"));
+        Concept concept = new Concept("my:concept", "My concept description", null, Severity.MAJOR, null, new CypherExecutable("match..."),
+                Collections.<String, Object>emptyMap(), Collections.<String>emptySet(), new RowCountVerification(), new Report("c2"));
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
-        Group group = new Group("default", "My group", concepts, Collections.<String, Severity> emptyMap(), Collections.<String> emptySet());
+        Group group = new Group("default", "My group", null, concepts, Collections.<String, Severity>emptyMap(), Collections.<String>emptySet());
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConcept(concept);
         List<Map<String, Object>> rows = new ArrayList<>();
@@ -62,11 +73,13 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
 
-        Constraint constraint = new Constraint("my:Constraint", "My constraint description", Severity.BLOCKER, null, new CypherExecutable("match..."),
-                Collections.<String, Object> emptyMap(), Collections.<String> emptySet(), new RowCountVerification(), new Report(null));
+        Constraint constraint = new Constraint("my:Constraint", "My constraint description", null, Severity.BLOCKER, null, new CypherExecutable(
+                "match..."), Collections.<String, Object>emptyMap(), Collections.<String>emptySet(), new RowCountVerification(), new Report(
+                        null));
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
-        Group group = new Group("default", "My group", Collections.<String, Severity> emptyMap(), constraints, Collections.<String> emptySet());
+        Group group = new Group("default", "My group", null, Collections.<String, Severity>emptyMap(), constraints, Collections
+                .<String>emptySet());
         xmlReportWriter.beginGroup(group);
         xmlReportWriter.beginConstraint(constraint);
         List<Map<String, Object>> rows = new ArrayList<>();

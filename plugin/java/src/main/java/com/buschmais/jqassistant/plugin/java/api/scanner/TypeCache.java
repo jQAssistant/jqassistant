@@ -4,8 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.*;
-import com.google.common.cache.*;
+import com.buschmais.jqassistant.plugin.java.api.model.DependentDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MemberDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.RemovalCause;
+import com.google.common.cache.RemovalListener;
+import com.google.common.cache.RemovalNotification;
 
 /**
  * Cache for resolved types.
@@ -84,10 +92,6 @@ public class TypeCache {
 
         public T getTypeDescriptor() {
             return typeDescriptor;
-        }
-
-        public void migrate(T typeDescriptor) {
-            this.typeDescriptor = typeDescriptor;
         }
 
         public FieldDescriptor getField(String signature) {

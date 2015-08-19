@@ -17,8 +17,10 @@ public class XmlRuleSetReaderTest {
     @Test
     public void readScriptRule() throws Exception {
         File xmlFile = new File(getClass().getResource("/javascript-rules.xml").getFile());
-        RuleSetReader reader = new XmlRuleSetReader(RuleSetBuilder.newInstance());
-        RuleSet ruleSet = reader.read(asList(new FileRuleSource(xmlFile)));
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        RuleSetReader reader = new XmlRuleSetReader();
+        reader.read(asList(new FileRuleSource(xmlFile)), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(1, ruleSet.getConcepts().size());
         assertEquals(1, ruleSet.getConstraints().size());
         for (String id : ruleSet.getConcepts().keySet()) {
