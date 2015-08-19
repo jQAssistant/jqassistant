@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -27,11 +26,11 @@ public abstract class AbstractTypeResolver implements TypeResolver {
     @Override
     public <T extends ClassFileDescriptor> CachedType<T> create(String fullQualifiedName, FileDescriptor fileDescriptor, Class<T> descriptorType,
             ScannerContext context) {
-        T typeDescriptor = migrateDescriptor(fullQualifiedName, fileDescriptor, descriptorType, context);
+        T typeDescriptor = context.getStore().migrate(fileDescriptor, descriptorType);
         setTypeProperties(typeDescriptor, fullQualifiedName);
-        CachedType<T> cachedType = getCachedType(fullQualifiedName, typeDescriptor);
-        addContainedType(fullQualifiedName, cachedType.getTypeDescriptor());
-        return cachedType;
+        removeRequiredType(fullQualifiedName, typeDescriptor);
+        addContainedType(fullQualifiedName, typeDescriptor);
+        return getCachedType(fullQualifiedName, typeDescriptor);
     }
 
     @Override
@@ -43,7 +42,8 @@ public abstract class AbstractTypeResolver implements TypeResolver {
                 typeDescriptor = findInDependencies(fullQualifiedName, context);
             }
             if (typeDescriptor == null) {
-                typeDescriptor = createDescriptor(fullQualifiedName, TypeDescriptor.class, context);
+                typeDescriptor = context.getStore().create(TypeDescriptor.class);
+                setTypeProperties(typeDescriptor, fullQualifiedName);
                 addRequiredType(fullQualifiedName, typeDescriptor);
             }
             cachedType = getCachedType(fullQualifiedName, typeDescriptor);
@@ -57,12 +57,6 @@ public abstract class AbstractTypeResolver implements TypeResolver {
         return cachedType;
     }
 
-    private <T extends TypeDescriptor> T createDescriptor(String fullQualifiedName, Class<T> descriptorType, ScannerContext scannerContext) {
-        T typeDescriptor = scannerContext.getStore().create(descriptorType);
-        setTypeProperties(typeDescriptor, fullQualifiedName);
-        return typeDescriptor;
-    }
-
     private <T extends TypeDescriptor> void setTypeProperties(T typeDescriptor, String fullQualifiedName) {
         String name;
         int separatorIndex = fullQualifiedName.lastIndexOf('.');
@@ -73,12 +67,6 @@ public abstract class AbstractTypeResolver implements TypeResolver {
         }
         typeDescriptor.setName(name);
         typeDescriptor.setFullQualifiedName(fullQualifiedName);
-    }
-
-    private <T extends TypeDescriptor> T migrateDescriptor(String fqn, Descriptor resolvedType, Class<T> descriptorType, ScannerContext context) {
-        T typeDescriptor = context.getStore().migrate(resolvedType, descriptorType);
-        removeRequiredType(fqn, typeDescriptor);
-        return typeDescriptor;
     }
 
     /**

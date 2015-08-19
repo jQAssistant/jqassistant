@@ -16,13 +16,13 @@ public enum JavaScope implements Scope {
         @Override
         public void create(ScannerContext context) {
             TypeResolver typeResolver = getTypeResolver(context);
-            context.peek(FileResolver.class).addStrategy(new ClassFileResolverStrategy());
+            context.peek(FileResolver.class).push(new ClassFileResolverStrategy());
             context.push(TypeResolver.class, typeResolver);
         }
 
         @Override
         public void destroy(ScannerContext context) {
-            context.peek(FileResolver.class).removeStrategy(ClassFileResolverStrategy.class);
+            context.peek(FileResolver.class).pop();
             context.pop(TypeResolver.class);
         }
 
@@ -59,7 +59,12 @@ public enum JavaScope implements Scope {
         private static final String CLASS_SUFFIX = ".class";
 
         @Override
-        public Descriptor resolve(String path, ScannerContext context) {
+        public Descriptor require(String path, ScannerContext context) {
+            return null;
+        }
+
+        @Override
+        public Descriptor create(String path, ScannerContext context) {
             if (path.toLowerCase().endsWith(CLASS_SUFFIX)) {
                 String typeName = path.substring(1, path.length() - CLASS_SUFFIX.length()).replaceAll("/", ".");
                 TypeResolver typeResolver = context.peek(TypeResolver.class);
@@ -67,7 +72,5 @@ public enum JavaScope implements Scope {
             }
             return null;
         }
-
     }
-
 }
