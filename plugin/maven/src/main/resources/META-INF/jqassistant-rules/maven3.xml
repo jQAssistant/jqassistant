@@ -2,8 +2,7 @@
 
     <constraint id="maven3:HierarchicalParentModuleRelation">
         <description>If a parent Maven project declares a module then the parent project must also be declared as the
-            parent of the module (i.e. to keep the
-            project hierarchy consistent).
+            parent of the module (i.e. to keep the project hierarchy consistent).
         </description>
         <cypher><![CDATA[
             match
@@ -11,7 +10,7 @@
             where
               not (module)-[:HAS_PARENT]->(parent)
             return
-              module.name as InvalidModule
+              module as InvalidModule
         ]]></cypher>
     </constraint>
 
