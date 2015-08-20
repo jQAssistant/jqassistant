@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -31,7 +32,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
 import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
 import com.buschmais.jqassistant.core.analysis.api.rule.Report;
 import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -64,7 +64,7 @@ import com.buschmais.jqassistant.core.analysis.rules.schema.v1.VerificationType;
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader} implementation.
  */
-public class XmlRuleSetReader extends AbstractRuleSetReader {
+public class XmlRuleSetReader implements RuleSetReader {
 
     public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.0.xsd";
     public static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
@@ -86,28 +86,25 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
 
     public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
 
-    /**
-     * Constructor.
-     * 
-     * @param ruleSetBuilder
-     *            The rule set builder to use.
-     */
-    public XmlRuleSetReader(RuleSetBuilder ruleSetBuilder) {
-        super(ruleSetBuilder);
-    }
-
     @Override
-    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
-        List<JqassistantRules> rules = new ArrayList<>();
+    public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
         for (RuleSource ruleSource : sources) {
             if (ruleSource.isType(RuleSource.Type.XML)) {
-                readXmlSource(rules, ruleSource);
+                List<JqassistantRules> rules = readXmlSource(ruleSource);
+                convert(rules, ruleSource, ruleSetBuilder);
             }
         }
-        return convert(rules);
     }
 
-    private void readXmlSource(List<JqassistantRules> rules, RuleSource ruleSource) {
+    /**
+     * Read rules from XML documents.
+     * 
+     * @param ruleSource
+     *            The available sources.
+     * @return The list of found rules.
+     */
+    private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
+        List<JqassistantRules> rules = new ArrayList<>();
         try (InputStream inputStream = ruleSource.getInputStream()) {
             Unmarshaller unmarshaller = JAXB_CONTEXT.createUnmarshaller();
             unmarshaller.setSchema(SCHEMA);
@@ -118,6 +115,7 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
         } catch (IOException | JAXBException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
         }
+        return rules;
     }
 
     /**
@@ -131,36 +129,34 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
      *             If rules are not consistent.
      * 
      */
-    private RuleSet convert(List<JqassistantRules> rules) throws RuleException {
-        RuleSetBuilder builder = getRuleSetBuilder();
+    private void convert(List<JqassistantRules> rules, RuleSource ruleSource, RuleSetBuilder builder) throws RuleException {
         for (JqassistantRules rule : rules) {
             List<ReferenceableType> queryDefinitionOrConceptOrConstraint = rule.getTemplateOrConceptOrConstraint();
             for (ReferenceableType referenceableType : queryDefinitionOrConceptOrConstraint) {
                 String id = referenceableType.getId();
                 if (referenceableType instanceof TemplateType) {
-                    Template template = createTemplate((TemplateType) referenceableType);
+                    Template template = createTemplate((TemplateType) referenceableType, ruleSource);
                     builder.addTemplate(template);
                 } else {
                     if (referenceableType instanceof ConceptType) {
-                        Concept concept = createConcept(id, (ConceptType) referenceableType);
+                        Concept concept = createConcept(id, ruleSource, (ConceptType) referenceableType);
                         builder.addConcept(concept);
                     } else if (referenceableType instanceof ConstraintType) {
-                        Constraint constraint = createConstraint(id, (ConstraintType) referenceableType);
+                        Constraint constraint = createConstraint(id, ruleSource, (ConstraintType) referenceableType);
                         builder.addConstraint(constraint);
                     } else if (referenceableType instanceof GroupType) {
-                        Group group = createGroup(id, (GroupType) referenceableType);
+                        Group group = createGroup(id, ruleSource, (GroupType) referenceableType);
                         builder.addGroup(group);
                     } else if (referenceableType instanceof MetricGroupType) {
-                        MetricGroup metricGroup = createMetricGroup(id, (MetricGroupType) referenceableType);
+                        MetricGroup metricGroup = createMetricGroup(id, ruleSource, (MetricGroupType) referenceableType);
                         builder.addMetricGroup(metricGroup);
                     }
                 }
             }
         }
-        return builder.getRuleSet();
     }
 
-    private Template createTemplate(TemplateType templateType) throws RuleException {
+    private Template createTemplate(TemplateType templateType, RuleSource ruleSource) throws RuleException {
         Map<String, Class<?>> parameterTypes = new HashMap<>();
         for (ParameterDefinitionType parameterDefinitionType : templateType.getParameterDefinition()) {
             Class<?> parameterType;
@@ -177,10 +173,10 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
             parameterTypes.put(parameterDefinitionType.getName(), parameterType);
         }
         Executable executable = createExecutable(templateType);
-        return new Template(templateType.getId(), templateType.getDescription(), executable, parameterTypes);
+        return new Template(templateType.getId(), templateType.getDescription(), ruleSource, executable, parameterTypes);
     }
 
-    private MetricGroup createMetricGroup(String id, MetricGroupType referenceableType) {
+    private MetricGroup createMetricGroup(String id, RuleSource ruleSource, MetricGroupType referenceableType) {
         MetricGroupType metricGroupType = referenceableType;
         Map<String, Metric> metrics = new LinkedHashMap<>();
         for (MetricType metricType : metricGroupType.getMetric()) {
@@ -188,21 +184,22 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
             String description = metricType.getDescription();
             Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
             Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept());
-            Metric metric = new Metric(metricType.getId(), description, new CypherExecutable(cypher), parameterTypes, requiresConcepts);
+            Metric metric = new Metric(metricType.getId(), description, ruleSource, new CypherExecutable(cypher), parameterTypes,
+                    requiresConcepts);
             metrics.put(metricType.getId(), metric);
         }
-        return new MetricGroup(id, metricGroupType.getDescription(), metrics);
+        return new MetricGroup(id, metricGroupType.getDescription(), ruleSource, metrics);
     }
 
-    private Group createGroup(String id, GroupType referenceableType) {
+    private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) {
         GroupType groupType = referenceableType;
         Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), Concept.DEFAULT_SEVERITY);
         Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), Constraint.DEFAULT_SEVERITY);
         Set<String> includeGroups = getReferences(groupType.getIncludeGroup());
-        return new Group(id, null, includeConcepts, includeConstraints, includeGroups);
+        return new Group(id, null, ruleSource, includeConcepts, includeConstraints, includeGroups);
     }
 
-    private Concept createConcept(String id, ConceptType referenceableType) throws RuleException {
+    private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
         ConceptType conceptType = referenceableType;
         String description = conceptType.getDescription();
         Executable executable = createExecutable(referenceableType);
@@ -214,7 +211,7 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
-        return new Concept(id, description, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
+        return new Concept(id, description, ruleSource, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
     }
 
     /**
@@ -232,7 +229,7 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
         return new Report(primaryColumn);
     }
 
-    private Constraint createConstraint(String id, ConstraintType referenceableType) throws RuleException {
+    private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType referenceableType) throws RuleException {
         ConstraintType constraintType = referenceableType;
         Executable executable = createExecutable(constraintType);
         String description = constraintType.getDescription();
@@ -244,7 +241,7 @@ public class XmlRuleSetReader extends AbstractRuleSetReader {
         String deprecated = constraintType.getDeprecated();
         Verification verification = getVerification(constraintType.getVerify());
         Report report = getReport(constraintType.getReport());
-        return new Constraint(id, description, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
+        return new Constraint(id, description, ruleSource, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
     }
 
     private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {

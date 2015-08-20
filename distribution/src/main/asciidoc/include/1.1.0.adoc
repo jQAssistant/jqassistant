@@ -21,3 +21,12 @@
 ==== JUnit
 - Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
 
+=== Core
+
+==== Store
+- Upgraded to Neo4j 2.2.4
+
+==== Report
+- Marked the descriptor _com.buschmais.jqassistant.core.store.api.model.NamedDescriptor_ as deprecated and replaced it by
+    _com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor_, plugin implementations should adopt this type
+

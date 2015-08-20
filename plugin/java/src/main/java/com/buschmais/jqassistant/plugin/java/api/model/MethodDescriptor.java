@@ -4,7 +4,7 @@ import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguage
 
 import java.util.List;
 
-import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.report.Java;
 import com.buschmais.xo.neo4j.api.annotation.Label;

@@ -12,7 +12,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -21,15 +25,32 @@ import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
+import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -121,7 +142,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    protected static RuleSet ruleSet;
+    protected RuleSet ruleSet;
 
     protected Analyzer analyzer;
 
@@ -143,7 +164,9 @@ public abstract class AbstractPluginIT {
         reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
         List<RuleSource> sources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new CompoundRuleSetReader();
-        ruleSet = ruleSetReader.read(sources);
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        ruleSetReader.read(sources, ruleSetBuilder);
+        ruleSet = ruleSetBuilder.getRuleSet();
     }
 
     @Before
@@ -162,8 +185,8 @@ public abstract class AbstractPluginIT {
      */
     @Before
     public void startStore() throws PluginRepositoryException {
-        store =
-                new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName());
+        store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod()
+                .getName());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         boolean resetStore = true;

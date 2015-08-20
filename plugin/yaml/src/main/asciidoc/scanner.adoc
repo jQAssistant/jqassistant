@@ -2,13 +2,18 @@
 [[YAMLFileScanner]]
 == Generic scanner for YAML files
 
-Imports all http://yaml.org/spec/1.1/[YAML 1.1] files in a generic representation
+Imports http://yaml.org/spec/1.1/[YAML 1.1] files in a generic representation
 for jQAssistant.
 
 Seen from a more formal perspective a YAML document is build by a tree of nodes.
 Each node can have one of the following values as content: scalar value, sequence
 or mapping. This plugin imports a YAML file in a simplified manner as simply
 model of keys and values. See section <<yaml-examples>> for examples.
+
+IMPORTANT: This YAML scanner supports not the full YAML 1.1 specification as is
+is intended to help to scan and validate YAML configuration files with the
+help of a simple graph model. If you need an better support for YAML files,
+please report a feature request.
 
 === :File:YAML
 

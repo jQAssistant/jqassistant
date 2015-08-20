@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.xml.transform.Source;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
@@ -14,12 +14,12 @@ public interface RuleSetReader {
 
     /**
      * Reads the given {@link Source}s and a returns
-     * {@link com.buschmais.jqassistant.core.analysis.api.rule.DefaultRuleSet}.
+     * {@link com.buschmais.jqassistant.core.analysis.api.rule.RuleSet}.
      * 
      * @param sources
      *            The sources to be read.
      * @return The map of constraint groups.
      */
-    public RuleSet read(List<? extends RuleSource> sources) throws RuleException;
+    void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException;
 
 }

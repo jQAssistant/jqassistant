@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 
 /**
  * Defines generic language elements.
@@ -21,9 +22,37 @@ public @interface Generic {
 
     GenericLanguageElement value();
 
-    public enum GenericLanguageElement implements LanguageElement {
-        ArtifactFile {
+    enum GenericLanguageElement implements LanguageElement {
 
+        /**
+         * Named elements.
+         */
+        Named {
+            @Override
+            public SourceProvider<? extends Descriptor> getSourceProvider() {
+                return new SourceProvider<NamedDescriptor>() {
+                    @Override
+                    public String getName(NamedDescriptor descriptor) {
+                        return descriptor.getName();
+                    }
+
+                    @Override
+                    public String getSourceFile(NamedDescriptor descriptor) {
+                        return null;
+                    }
+
+                    @Override
+                    public Integer getLineNumber(NamedDescriptor descriptor) {
+                        return null;
+                    }
+                };
+            }
+        },
+
+        /**
+         * Artifacts.
+         */
+        ArtifactFile {
             @Override
             public SourceProvider<? extends Descriptor> getSourceProvider() {
                 return new SourceProvider<ArtifactFileDescriptor>() {
