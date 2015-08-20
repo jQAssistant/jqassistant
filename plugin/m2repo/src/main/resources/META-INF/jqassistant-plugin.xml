@@ -7,5 +7,6 @@
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenArtifactScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>
