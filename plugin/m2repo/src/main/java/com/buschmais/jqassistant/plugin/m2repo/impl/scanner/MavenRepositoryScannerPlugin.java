@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
@@ -110,12 +111,10 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      * @throws IOException
      */
     public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactProvider artifactProvider) throws IOException {
-        Store store = scanner.getContext().getStore();
+        ScannerContext context = scanner.getContext();
+        Store store = context.getStore();
         // the MavenRepositoryDescriptor
         MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(store, item.toString());
-        scanner.getContext().push(MavenRepositoryDescriptor.class, repoDescriptor);
-
-        scanner.getContext().push(ArtifactProvider.class, artifactProvider);
 
         Date lastIndexUpdateTime = mavenIndex.getLastUpdateLocalRepo();
         Date lastScanTime = new Date(repoDescriptor.getLastScanDate());
@@ -123,17 +122,20 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         if (lastIndexUpdateTime == null || lastIndexUpdateTime.after(lastScanTime)) {
             artifactsSince = lastScanTime;
         }
-
         mavenIndex.updateIndex();
-
         // Search artifacts
-        Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
-        for (ArtifactInfo ai : searchResponse) {
-            scanner.scan(ai, ai.toString(), MavenScope.REPOSITORY);
-        }
-        scanner.getContext().pop(MavenRepositoryDescriptor.class);
-        scanner.getContext().pop(ArtifactProvider.class);
+        try {
+            context.push(MavenRepositoryDescriptor.class, repoDescriptor);
+            context.push(ArtifactProvider.class, artifactProvider);
 
+            Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
+            for (ArtifactInfo ai : searchResponse) {
+                scanner.scan(ai, ai.toString(), MavenScope.REPOSITORY);
+            }
+        } finally {
+            context.pop(MavenRepositoryDescriptor.class);
+            context.pop(ArtifactProvider.class);
+        }
         mavenIndex.closeCurrentIndexingContext();
         repoDescriptor.setLastScanDate(System.currentTimeMillis());
         return repoDescriptor;

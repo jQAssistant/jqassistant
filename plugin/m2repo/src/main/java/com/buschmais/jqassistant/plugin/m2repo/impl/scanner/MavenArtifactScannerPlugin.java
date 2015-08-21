@@ -29,6 +29,11 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
+/**
+ * A plugin for (remote) maven artifacts.
+ * 
+ * @author pherklotz
+ */
 public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactInfo, RepositoryArtifactDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenArtifactScannerPlugin.class);
@@ -41,6 +46,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     private boolean scanArtifacts;
     private ArtifactFilter artifactFilter;
 
+    /** {@inheritDoc} */
     @Override
     protected void configure() {
         super.configure();
@@ -52,11 +58,13 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
         artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean accepts(ArtifactInfo item, String path, Scope scope) throws IOException {
         return item != null && MavenScope.REPOSITORY.equals(scope);
     }
 
+    /** {@inheritDoc} */
     @Override
     public RepositoryArtifactDescriptor scan(ArtifactInfo item, String path, Scope scope, Scanner scanner) throws IOException {
         MavenRepositoryDescriptor repositoryDescriptor = scanner.getContext().peek(MavenRepositoryDescriptor.class);
@@ -74,8 +82,6 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      *            the {@link MavenRepositoryDescriptor}
      * @param artifactProvider
      *            the {@link ArtifactProvider}
-     * @param artifactFilter
-     *            The {@link ArtifactFilter}.
      * @param artifactInfo
      *            informations about the searches artifact
      * @throws IOException
@@ -135,6 +141,18 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
         return null;
     }
 
+    /**
+     * Returns {@link RepositoryArtifactDescriptor} from the given repository
+     * descriptor or <code>null</code>.
+     * 
+     * @param repositoryDescriptor
+     *            the repository in which the artifact will be searched
+     * @param artifact
+     *            the artifact to find
+     * @param lastModified
+     *            the last modified date
+     * @return a {@link RepositoryArtifactDescriptor} or <code>null</code>.
+     */
     private RepositoryArtifactDescriptor getModel(MavenRepositoryDescriptor repositoryDescriptor, Artifact artifact, long lastModified) {
         String coordinates = ArtifactResolver.getId(new ArtifactCoordinates(artifact));
         if (artifact.isSnapshot()) {
@@ -144,6 +162,22 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
         }
     }
 
+    /**
+     * Creates a {@link RepositoryArtifactDescriptor} from the given
+     * {@link FileDescriptor} and sets some properties.
+     * 
+     * @param repoDescriptor
+     *            the containing repository
+     * @param descriptor
+     *            the File which contains the artifact
+     * @param artifact
+     *            the artifact data
+     * @param lastModified
+     *            last modified date
+     * @param store
+     *            the store
+     * @return the new created artifact descriptor
+     */
     private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, FileDescriptor descriptor, Artifact artifact,
             long lastModified, Store store) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);

@@ -50,6 +50,15 @@ A remote Maven repository.
 | CONTAINS_ARTIFACT | <<:RepositoryArtifact:Maven>> | 0..n        | References repository artifacts
 |====
 
+<<MavenArtifactScanner>>
+[[MavenArtifactScanner]]
+== Scanner for remote maven artifacts
+Gets the maven artifact coordinates to retrieve the artifact from an repository and scans it. The scanner accepts org.apache.maven.index.ArtifactInfo-Items 
+with the scope maven:repository.
+
+This plugin needs some prerequisites to work properly. The context must contain a MavenRepositoryDescriptor to which the new Maven Artifact belongs and an
+ArtifactProvider-Object to load the artifact from the configured repository.
+
 === :RepositoryArtifact:Maven
 A Maven artifact (e.g. *.pom, *.jar).
 
