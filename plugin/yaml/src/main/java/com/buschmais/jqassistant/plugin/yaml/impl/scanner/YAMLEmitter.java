@@ -231,8 +231,21 @@ class YAMLEmitter implements Emitable {
 
             YAMLValueBucket bucket = processingContext.peek();
             bucket.getValues().add(value);
+        } else if (processingContext.isContext(DOCUMENT_CTX)) {
+            YAMLValueDescriptor value = currentScanner.getContext()
+                                                      .getStore()
+                                                      .create(YAMLValueDescriptor.class);
+
+            String rawValue = event.getValue();
+
+            value.setValue(trimToEmpty(rawValue));
+
+            YAMLValueBucket bucket = processingContext.peek();
+            bucket.getValues().add(value);
+        } else {
+            unsupportedYAMLStructure(event);
         }
-    }
+}
 
     private EventType toEventType(Event event) {
         EventType result = null;
