@@ -33,6 +33,8 @@ A file with the file extension `.yaml` containing zero or more YAML documents.
 | parsed | Property to indicate if the documents of this file have been parsed
            successfully or not. If the YAML scanner was able to parse all
            documents, this property is _true_. Otherwise it is _false_.
+           This property can be used to check if all of your YAML files
+           could have been parsed or not.
 |====
 
 [[:Document:YAML]]
