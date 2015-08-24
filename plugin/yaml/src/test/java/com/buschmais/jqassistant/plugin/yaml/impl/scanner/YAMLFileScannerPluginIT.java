@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
@@ -631,6 +632,54 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     public void scanLogFileYAML() {
 //             {"/probes/yamlspec/1.1/sec-2.5-example-2.28-log-file.yaml"},
         Assert.fail("Not implemented yet!");
+    }
+
+    @Test
+    public void scanAnInvalidMappingAndParsedIsFalse() {
+        store.beginTransaction();
+
+        String fileName = "invalid-mapping.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getParsed(), is(false));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void scanAnValidMappingAndParsedIsTrue() {
+        store.beginTransaction();
+
+        String fileName = "simple-list.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getParsed(), is(true));
+
+        store.commitTransaction();
     }
 
     /**
