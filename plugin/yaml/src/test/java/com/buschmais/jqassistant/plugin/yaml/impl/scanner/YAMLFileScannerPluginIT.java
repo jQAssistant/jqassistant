@@ -1,13 +1,16 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.util.StringValueMatcher.hasValue;
+import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
@@ -399,7 +402,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(keyB2.getFullQualifiedName(), CoreMatchers.equalTo("Sammy Sosa.avg"));
         assertThat(keyB2.getValues(), hasSize(1));
-        assertThat(keyB2.getValues(), contains(hasValue("0.288")));
+        assertThat(keyB2.getValues(), hasItem(hasValue("0.288")));
 
         store.commitTransaction();
     }
@@ -425,9 +428,50 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 //             {"/probes/yamlspec/1.1/sec-2.2-example-2.9-single-document-with-comments.yaml"},
     }
 
-//    @Test
-//    public void scan//             {"/probes/yamlspec/1.1/sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml"},
+    @Test
+    public void scanNodeForSammySosaTwice() {
+        store.beginTransaction();
+
+        String fileName = "sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml";
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/1.1/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
+
+        assertThat(document.getKeys(), hasSize(2));
+        assertThat(document.getValues(), empty());
+
+        //-- In this test I will try to find the nodes by its fqn
+
+        List<YAMLKeyDescriptor> nodes = query("MATCH (k:YAML:Key) RETURN k").getColumn("k");
+
+        assertThat(nodes, hasSize(2));
+
+        YAMLKeyDescriptor rbiNode = findKeyByName(nodes, "rbi");
+
+        assertThat(rbiNode, Matchers.notNullValue());
+        assertThat(rbiNode.getValues(), hasSize(2));
+
+        for (YAMLValueDescriptor valueDescriptor : rbiNode.getValues()) {
+            System.out.println(valueDescriptor.getValue());
+        }
+
+        assertThat(rbiNode.getValues(), hasItem(hasValue("Sammy Sosa")));
+
+        store.commitTransaction();
+    }
 
 //    @Test
 //    public void scan//             {"/probes/yamlspec/1.1/sec-2.2-example-2.11-mapping-betweend-sequences.yaml"},
@@ -445,9 +489,60 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 //    public void scan//             {"/probes/yamlspec/1.1/sec-2.3-example-2.14-in-the-plain-scalar-newline-as-spaces.yaml"},
 //             {"/probes/yamlspec/1.1/sec-2.3-example-2.14-in-the-plain-scalar-newline-as-spaces.yaml"},
 
-//    @Test
-//    public void scan//             {"/probes/yamlspec/1.1/sec-2.3-example-2.15-folded-newlines-are-preserved.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.3-example-2.15-folded-newlines-are-preserved.yaml"},
+    @Test
+    public void scanFoldedNewLinesArePreserved() {
+        store.beginTransaction();
+
+        String fileName = "sec-2.3-example-2.15-folded-newlines-are-preserved.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/1.1/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
+
+        assertThat(document.getKeys(), empty());
+        assertThat(document.getValues(), hasSize(1));
+
+        YAMLValueDescriptor valueDescriptor = document.getValues().get(0);
+
+        assertThat(valueDescriptor.getValue(), equalTo("Sammy Sosa completed another" +
+                                                            " fine season with great stats.\n" +
+                                                            "\n" +
+                                                            "  63 Home Runs\n" +
+                                                            "  0.288 Batting Average\n" +
+                                                            "\n" +
+                                                            "What a year!"));
+
+        List<YAMLValueDescriptor> valuesOfDocument =
+             query(format("MATCH (f:YAML:File)-[:CONTAINS_DOCUMENT]->(d:YAML:Document)-[:CONTAINS_VALUE]->(v) WHERE f.fileName=~'.*/1.1/%s' RETURN v", fileName))
+                  .getColumn("v");
+
+        assertThat(valuesOfDocument, hasSize(1));
+
+        YAMLValueDescriptor valueOfDocument = valuesOfDocument.get(0);
+
+        assertThat(valueOfDocument.getValue(), equalTo("Sammy Sosa completed another" +
+                                                       " fine season with great stats.\n" +
+                                                       "\n" +
+                                                       "  63 Home Runs\n" +
+                                                       "  0.288 Batting Average\n" +
+                                                       "\n" +
+                                                       "What a year!"));
+
+        store.commitTransaction();
+    }
 
     @Test
     @Ignore
@@ -537,6 +632,54 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     public void scanLogFileYAML() {
 //             {"/probes/yamlspec/1.1/sec-2.5-example-2.28-log-file.yaml"},
         Assert.fail("Not implemented yet!");
+    }
+
+    @Test
+    public void scanAnInvalidMappingAndParsedIsFalse() {
+        store.beginTransaction();
+
+        String fileName = "invalid-mapping.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getParsed(), is(false));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void scanAnValidMappingAndParsedIsTrue() {
+        store.beginTransaction();
+
+        String fileName = "simple-list.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getParsed(), is(true));
+
+        store.commitTransaction();
     }
 
     /**

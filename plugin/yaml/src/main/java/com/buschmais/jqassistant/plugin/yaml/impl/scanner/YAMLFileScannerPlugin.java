@@ -52,6 +52,7 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         YAMLFileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAMLFileDescriptor.class);
 
         yamlFileDescriptor.setFileName(item.getFile().getAbsolutePath());
+        yamlFileDescriptor.setParsed(false);
 
         try (InputStream in = item.createStream()) {
             Iterable<Object> docs = yaml.loadAll(in);
@@ -65,6 +66,12 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
                 serializer.serialize(node);
                 serializer.close();
             }
+
+            // In case the content of the file is not parseable set parsed=false
+            // to help the user to identify nonparseable files
+            yamlFileDescriptor.setParsed(true);
+        } catch (RuntimeException rt) {
+            // @todo Logging is desired here Oliver B. Fischer, 23.08.2015
         }
 
         return yamlFileDescriptor;
