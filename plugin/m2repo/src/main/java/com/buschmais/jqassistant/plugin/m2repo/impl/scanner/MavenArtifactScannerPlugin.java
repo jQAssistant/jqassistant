@@ -24,6 +24,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
@@ -88,7 +89,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      * @param repoDescriptor
      *            the {@link MavenRepositoryDescriptor}
      * @param artifactProvider
-     *            the {@link ArtifactProvider}
+     *            the {@link DefaultArtifactProvider}
      * @param artifactInfo
      *            informations about the searches artifact
      * @throws IOException

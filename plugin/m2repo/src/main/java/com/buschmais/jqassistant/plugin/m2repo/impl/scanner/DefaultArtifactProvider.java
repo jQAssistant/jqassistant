@@ -28,14 +28,16 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
+
 /**
  * Transfers artifacts from a remote repository to a local repository.
  * 
  * @author pherklotz
  */
-public class ArtifactProvider {
+public class DefaultArtifactProvider implements ArtifactProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultArtifactProvider.class);
 
     private final File repositoryRoot;
 
@@ -56,7 +58,7 @@ public class ArtifactProvider {
      * @param password
      *            a password for authentication
      */
-    public ArtifactProvider(URL repositoryUrl, File workDirectory, String username, String password) {
+    public DefaultArtifactProvider(URL repositoryUrl, File workDirectory, String username, String password) {
         String url = StringUtils.replace(repositoryUrl.toString(), repositoryUrl.getUserInfo() + "@", StringUtils.EMPTY);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + url);
@@ -86,6 +88,7 @@ public class ArtifactProvider {
      * @throws ArtifactResolutionException
      *             in case of a unresolvable artifacts
      */
+    @Override
     public ArtifactResult getArtifact(Artifact artifact) throws ArtifactResolutionException {
         ArtifactRequest artifactRequest = createArtifactRequest(artifact);
         return repositorySystem.resolveArtifact(session, artifactRequest);
@@ -96,6 +99,7 @@ public class ArtifactProvider {
      * 
      * @return The root directory of the local repository.
      */
+    @Override
     public File getRepositoryRoot() {
         return repositoryRoot;
     }

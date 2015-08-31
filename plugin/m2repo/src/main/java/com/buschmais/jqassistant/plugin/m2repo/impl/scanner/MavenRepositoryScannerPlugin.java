@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
@@ -73,7 +74,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             LOGGER.info("Creating local maven repository directory {}", localDirectory.getAbsolutePath());
             localDirectory.mkdirs();
         }
-        ArtifactProvider artifactProvider = new ArtifactProvider(item, localDirectory, username, password);
+        DefaultArtifactProvider artifactProvider = new DefaultArtifactProvider(item, localDirectory, username, password);
         File indexRoot = new File(artifactProvider.getRepositoryRoot(), ".index");
         // handles the remote maven index
         MavenIndex mavenIndex = new MavenIndex(item, indexRoot, indexRoot, username, password);
