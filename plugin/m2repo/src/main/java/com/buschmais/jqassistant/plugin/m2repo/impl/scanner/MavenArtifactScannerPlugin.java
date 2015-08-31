@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
@@ -69,12 +70,18 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     public RepositoryArtifactDescriptor scan(ArtifactInfo item, String path, Scope scope, Scanner scanner) throws IOException {
         MavenRepositoryDescriptor repositoryDescriptor = scanner.getContext().peek(MavenRepositoryDescriptor.class);
         ArtifactProvider artifactProvider = scanner.getContext().peek(ArtifactProvider.class);
-        return resolveAndScan(scanner, repositoryDescriptor, artifactProvider, item);
+        // register file resolver strategy to identify repository artifacts
+        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
+        fileResolver.push(new RepositoryFileResolverStrategy(artifactProvider.getRepositoryRoot()));
+        try {
+            return resolveAndScan(scanner, repositoryDescriptor, artifactProvider, item);
+        } finally {
+            fileResolver.pop();
+        }
     }
 
     /**
-     * Resolves, scans and add the artifact to the
-     * {@link MavenRepositoryDescriptor}.
+     * Resolves, scans and add the artifact to the {@link MavenRepositoryDescriptor}.
      * 
      * @param scanner
      *            the {@link Scanner}
@@ -86,8 +93,8 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      *            informations about the searches artifact
      * @throws IOException
      */
-    private RepositoryArtifactDescriptor resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactProvider artifactProvider,
-            ArtifactInfo artifactInfo) throws IOException {
+    private RepositoryArtifactDescriptor resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor,
+            ArtifactProvider artifactProvider, ArtifactInfo artifactInfo) throws IOException {
 
         PomModelBuilder pomModelBuilder = new EffectiveModelBuilderImpl(artifactProvider);
 
@@ -107,7 +114,8 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
                 ArtifactResult modelArtifactResult = artifactProvider.getArtifact(modelArtifact);
                 File modelArtifactFile = modelArtifactResult.getArtifact().getFile();
                 Model model = pomModelBuilder.getModel(modelArtifactFile);
-                DefaultArtifact mainArtifact = new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getPackaging(), model.getVersion());
+                DefaultArtifact mainArtifact = new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getPackaging(), model
+                        .getVersion());
                 RepositoryArtifactDescriptor repositoryArtifactDescriptor = getModel(repoDescriptor, mainArtifact, lastModified);
                 if (repositoryArtifactDescriptor == null) {
                     scanner.getContext().push(PomModelBuilder.class, pomModelBuilder);
@@ -142,8 +150,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     }
 
     /**
-     * Returns {@link RepositoryArtifactDescriptor} from the given repository
-     * descriptor or <code>null</code>.
+     * Returns {@link RepositoryArtifactDescriptor} from the given repository descriptor or <code>null</code>.
      * 
      * @param repositoryDescriptor
      *            the repository in which the artifact will be searched
@@ -163,8 +170,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     }
 
     /**
-     * Creates a {@link RepositoryArtifactDescriptor} from the given
-     * {@link FileDescriptor} and sets some properties.
+     * Creates a {@link RepositoryArtifactDescriptor} from the given {@link FileDescriptor} and sets some properties.
      * 
      * @param repoDescriptor
      *            the containing repository
@@ -178,8 +184,8 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      *            the store
      * @return the new created artifact descriptor
      */
-    private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, FileDescriptor descriptor, Artifact artifact,
-            long lastModified, Store store) {
+    private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, FileDescriptor descriptor,
+            Artifact artifact, long lastModified, Store store) {
         RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
         artifactDescriptor.setLastModified(lastModified);
         artifactDescriptor.setContainingRepository(repoDescriptor);

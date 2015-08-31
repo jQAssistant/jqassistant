@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -36,6 +37,8 @@ public class ArtifactProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ArtifactProvider.class);
 
+    private final File repositoryRoot;
+
     private final RemoteRepository repository;
     private final RepositorySystem repositorySystem;
 
@@ -46,14 +49,14 @@ public class ArtifactProvider {
      * 
      * @param repositoryUrl
      *            the repository url
-     * @param directory
-     *            the directory for resolved artifacts
+     * @param workDirectory
+     *            the workDirectory for resolved artifacts
      * @param username
      *            an username for authentication
      * @param password
      *            a password for authentication
      */
-    public ArtifactProvider(URL repositoryUrl, File directory, String username, String password) {
+    public ArtifactProvider(URL repositoryUrl, File workDirectory, String username, String password) {
         String url = StringUtils.replace(repositoryUrl.toString(), repositoryUrl.getUserInfo() + "@", StringUtils.EMPTY);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + url);
@@ -66,9 +69,12 @@ public class ArtifactProvider {
             authBuilder.addPassword(password);
         }
         Authentication auth = authBuilder.build();
-        repository = new RemoteRepository.Builder("jqa", "default", url).setAuthentication(auth).build();
+        String repositoryId = DigestUtils.md5Hex(repositoryUrl.toString());
+        repository = new RemoteRepository.Builder(repositoryId, "default", url).setAuthentication(auth).build();
         repositorySystem = newRepositorySystem();
-        session = newRepositorySystemSession(repositorySystem, directory);
+        this.repositoryRoot = new File(workDirectory, repositoryId);
+        LOGGER.debug("Using '{}' for repository URL '{}'", repositoryRoot, repositoryUrl);
+        session = newRepositorySystemSession(repositorySystem, repositoryRoot);
     }
 
     /**
@@ -86,8 +92,16 @@ public class ArtifactProvider {
     }
 
     /**
-     * Creates a list of {@link ArtifactRequest}s for each artifact. The result
-     * will always include the "pom" artifact for building the model.
+     * Return the root directory of the local repository.
+     * 
+     * @return The root directory of the local repository.
+     */
+    public File getRepositoryRoot() {
+        return repositoryRoot;
+    }
+
+    /**
+     * Creates a list of {@link ArtifactRequest}s for each artifact. The result will always include the "pom" artifact for building the model.
      *
      * @param artifact
      *            The artifact.

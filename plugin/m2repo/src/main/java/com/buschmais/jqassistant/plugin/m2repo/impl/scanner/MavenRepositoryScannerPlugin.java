@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.index.ArtifactInfo;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
@@ -75,21 +73,12 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             LOGGER.info("Creating local maven repository directory {}", localDirectory.getAbsolutePath());
             localDirectory.mkdirs();
         }
-        File workDirectory = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
-        File repositoryRoot = new File(workDirectory, "repository");
-        File indexRoot = new File(workDirectory, "index");
+        ArtifactProvider artifactProvider = new ArtifactProvider(item, localDirectory, username, password);
+        File indexRoot = new File(artifactProvider.getRepositoryRoot(), ".index");
         // handles the remote maven index
-        MavenIndex mavenIndex = new MavenIndex(item, repositoryRoot, indexRoot, username, password);
+        MavenIndex mavenIndex = new MavenIndex(item, indexRoot, indexRoot, username, password);
         // used to resolve (remote) artifacts
-        ArtifactProvider artifactProvider = new ArtifactProvider(item, repositoryRoot, username, password);
-        // register file resolver strategy to identify repository artifacts
-        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
-        fileResolver.push(new RepositoryFileResolverStrategy(repositoryRoot));
-        try {
-            return scanRepository(item, scanner, mavenIndex, artifactProvider);
-        } finally {
-            fileResolver.pop();
-        }
+        return scanRepository(item, scanner, mavenIndex, artifactProvider);
     }
 
     /**
@@ -103,14 +92,11 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
      *            the MavenIndex
      * @param artifactProvider
      *            the ArtifactResolver
-     * @param pomModelBuilder
-     *            the PomModelBuilder
-     * @param artifactFilter
-     *            The artifact filter to apply.
      * @return a MavenRepositoryDescriptor
      * @throws IOException
      */
-    public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactProvider artifactProvider) throws IOException {
+    public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactProvider artifactProvider)
+            throws IOException {
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
         // the MavenRepositoryDescriptor
