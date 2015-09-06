@@ -143,7 +143,7 @@
         </description>
         <cypher><![CDATA[
             MATCH
-              (m:Method)-[:RETURNS]->(Type)-[:RESOLVES_TO]->(t:Type)
+              (m:Method)-[:RETURNS]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
               (m)-[:RETURNS{resolved:true}]->(t)
             RETURN
