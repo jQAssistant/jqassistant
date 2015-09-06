@@ -37,6 +37,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     public static final String REPORT_XML = "jqassistant-report.xml";
 
+    public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
+
     /**
      * The store directory.
      */
@@ -44,13 +46,15 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected File storeDirectory;
 
     /**
-     * Specifies the name of the directory containing rule files. It is also used to identify the root module.
+     * Specifies the name of the directory containing rule files. It is also
+     * used to identify the root module.
      */
     @Parameter(property = "jqassistant.rules.directory", defaultValue = ProjectResolver.DEFAULT_RULES_DIRECTORY)
     protected String rulesDirectory;
 
     /**
-     * Specifies a list of directory names relative to the root module containing additional rule files.
+     * Specifies a list of directory names relative to the root module
+     * containing additional rule files.
      */
     @Parameter(property = "jqassistant.rules.directories")
     protected List<String> rulesDirectories;
@@ -94,11 +98,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Controls the life cycle of the data store.
      * <p>
-     * REACTOR is the default value which provides caching of the initialized store. There are configurations where this will cause problems, in such
+     * REACTOR is the default value which provides caching of the initialized
+     * store. There are configurations where this will cause problems, in such
      * cases MODULE shall be used.
      * </p>
      */
-    @Parameter(property = "jqassistant.store.lifecycle")
+    @Parameter(property = PROPERTY_STORE_LIFECYCLE)
     protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
 
     /**
@@ -211,7 +216,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *
      * @param rulesDirectory
      *            The rules directory.
-     * @return The {@link java.util.List} of available rules {@link java.io.File}s.
+     * @return The {@link java.util.List} of available rules
+     *         {@link java.io.File}s.
      * @throws MojoExecutionException
      *             If the rules directory cannot be read.
      */
@@ -297,18 +303,19 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     private Store getStore(MavenProject rootModule) throws MojoExecutionException {
         Store store = null;
         switch (storeLifecycle) {
-            case MODULE:
-                break;
-            case REACTOR:
-                Object existingStore = rootModule.getContextValue(Store.class.getName());
-                if (existingStore != null) {
-                    if (!Store.class.isAssignableFrom(existingStore.getClass())) {
-                        throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle "
-                                + StoreLifecycle.MODULE);
-                    }
-                    store = (Store) existingStore;
+        case MODULE:
+            break;
+        case REACTOR:
+            Object existingStore = rootModule.getContextValue(Store.class.getName());
+            if (existingStore != null) {
+                if (!Store.class.isAssignableFrom(existingStore.getClass())) {
+                    throw new MojoExecutionException(
+                            "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
+                                    + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
                 }
-                break;
+                store = (Store) existingStore;
+            }
+            break;
         }
         if (store == null) {
             File directory = getStoreDirectory(rootModule);
@@ -333,12 +340,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     private void releaseStore(MavenProject rootModule, Store store) {
         switch (storeLifecycle) {
-            case MODULE:
-                storeFactory.closeStore(store);
-                break;
-            case REACTOR:
-                rootModule.setContextValue(Store.class.getName(), store);
-                break;
+        case MODULE:
+            storeFactory.closeStore(store);
+            break;
+        case REACTOR:
+            rootModule.setContextValue(Store.class.getName(), store);
+            break;
         }
     }
 
@@ -363,18 +370,18 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * Defines an operation to execute on an initialized store instance.
      */
     protected interface StoreOperation {
-                /**
-                 * Execute the operation-
-                 * 
-                 * @param store
-                 *            The store.
-                 * @param rootModule
-                 *            The root module.
-                 * @throws MojoExecutionException
-                 *             On execution errors.
-                 * @throws MojoFailureException
-                 *             On execution failures.
-                 */
-                void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException;
+        /**
+         * Execute the operation-
+         * 
+         * @param store
+         *            The store.
+         * @param rootModule
+         *            The root module.
+         * @throws MojoExecutionException
+         *             On execution errors.
+         * @throws MojoFailureException
+         *             On execution failures.
+         */
+        void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException;
     }
 }
