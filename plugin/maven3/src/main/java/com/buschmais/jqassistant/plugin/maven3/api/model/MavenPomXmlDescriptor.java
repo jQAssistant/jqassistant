@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.model.Model;
 
@@ -22,16 +23,17 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 public interface MavenPomXmlDescriptor extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor,
         FullQualifiedNameDescriptor, NamedDescriptor, XmlFileDescriptor {
 
+    /**
+     * Get the artifacts which are described by this POM.
+     * 
+     * @return The described artifacts.
+     */
     @Relation("DESCRIBES")
-    List<MavenArtifactDescriptor> getDescribes();
+    Set<ArtifactDescriptor> getDescribes();
 
     /**
-     * Get the location of the parent project, if one exists. Values from the
-     * parent project will be the default for this project if they are left
-     * unspecified. The location is given as a group ID, artifact ID and
-     * version.
-     * 
-     * 
+     * Get the parent pom.
+     *
      * @return The parent POM.
      */
     @Relation("HAS_PARENT")
