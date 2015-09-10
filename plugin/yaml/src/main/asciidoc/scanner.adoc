@@ -22,8 +22,8 @@ A file with the file extension `.yaml` containing zero or more YAML documents.
 .Relations of :File:Xml
 [options="header"]
 |====
-| Name             | Target label(s)    | Cardinality    | Description
-| HAS_ROOT_ELEMENT | <<:Document:YAML>> | 0..n           | References a document in the file
+| Name              | Target label(s)    | Cardinality    | Description
+| CONTAINS_DOCUMENT | <<:Document:YAML>> | 0..n           | References a document in the file
 |====
 
 .Properties of :File:YAML
