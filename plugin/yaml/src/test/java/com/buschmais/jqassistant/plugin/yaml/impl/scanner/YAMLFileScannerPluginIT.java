@@ -6,6 +6,7 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -678,6 +679,84 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
         assertThat(fileDescriptor.getParsed(), is(true));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void invalidDocumentInHostConfigInvalidLeedsToParsingError() {
+        store.beginTransaction();
+
+        String fileName = "hostconfig-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getParsed(), is(false));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void ifParsingFailsThereWillBeNoNodesForTheContentOfTheYAMLFile() {
+        store.beginTransaction();
+
+        String fileName = "hostconfig-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getParsed(), is(false));
+
+        List<YAMLFileDescriptor> childNodes =
+             query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
+                  .getColumn("c");
+
+        assertThat(childNodes, anyOf(empty(), nullValue()));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void ifParsingFailsThereWillBeNoNodesForTheContentOfTheSecondYAMLDocument() {
+        store.beginTransaction();
+
+        String fileName = "hostconfig-2-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+//        assertThat(fileDescriptor.getParsed(), is(false));
+
+        List<YAMLFileDescriptor> childNodes =
+             query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
+                  .getColumn("c");
+
+        assertThat(childNodes, anyOf(empty(), nullValue()));
 
         store.commitTransaction();
     }

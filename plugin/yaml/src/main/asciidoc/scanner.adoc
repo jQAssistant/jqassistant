@@ -22,8 +22,8 @@ A file with the file extension `.yaml` containing zero or more YAML documents.
 .Relations of :File:Xml
 [options="header"]
 |====
-| Name             | Target label(s)    | Cardinality    | Description
-| HAS_ROOT_ELEMENT | <<:Document:YAML>> | 0..n           | References a document in the file
+| Name              | Target label(s)    | Cardinality    | Description
+| CONTAINS_DOCUMENT | <<:Document:YAML>> | 0..n           | References a document in the file
 |====
 
 .Properties of :File:YAML
@@ -36,6 +36,10 @@ A file with the file extension `.yaml` containing zero or more YAML documents.
            This property can be used to check if all of your YAML files
            could have been parsed or not.
 |====
+
+An non-parsable file with YAML documents will not have any outgoing relationships
+to any dependent <<:Document:YAML,YAML documents>>. Please consider this aspect
+when writing your queries.
 
 [[:Document:YAML]]
 === :Document:YAML
