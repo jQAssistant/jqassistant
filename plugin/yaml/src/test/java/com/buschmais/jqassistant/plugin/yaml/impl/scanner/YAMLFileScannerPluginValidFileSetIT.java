@@ -22,6 +22,7 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
+             {"/probes/valid/hostconfig.yaml"},
              {"/probes/valid/simple-key-value-pair.yaml"},
              {"/probes/valid/two-simple-key-value-pairs.yaml"},
              {"/probes/valid/simple-list.yaml"},

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -71,6 +72,9 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
             // to help the user to identify nonparseable files
             yamlFileDescriptor.setParsed(true);
         } catch (RuntimeException rt) {
+            for (YAMLDocumentDescriptor documentDescriptor : yamlFileDescriptor.getDocuments()) {
+                yamlFileDescriptor.getDocuments().remove(documentDescriptor);
+            }
             // @todo Logging is desired here Oliver B. Fischer, 23.08.2015
         }
 

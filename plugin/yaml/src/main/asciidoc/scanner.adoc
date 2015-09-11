@@ -37,6 +37,10 @@ A file with the file extension `.yaml` containing zero or more YAML documents.
            could have been parsed or not.
 |====
 
+An non-parsable file with YAML documents will not have any outgoing relationships
+to any dependent <<:Document:YAML,YAML documents>>. Please consider this aspect
+when writing your queries.
+
 [[:Document:YAML]]
 === :Document:YAML
 
