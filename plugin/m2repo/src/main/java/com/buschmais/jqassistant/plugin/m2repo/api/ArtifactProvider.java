@@ -22,5 +22,10 @@ public interface ArtifactProvider {
      */
     ArtifactResult getArtifact(Artifact artifact) throws ArtifactResolutionException;
 
-    public File getRepositoryRoot();
+    /**
+     * Return the root directory of the local repository representation.
+     * 
+     * @return The root directory.
+     */
+    File getRepositoryRoot();
 }
