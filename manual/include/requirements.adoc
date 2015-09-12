@@ -1,5 +1,7 @@
 == Requirements
 
-- Java Runtime Environment 7 or later (it's still possible to analyze applications compiled with older Java versions).
-- at least 512MB of RAM
+- Java Runtime Environment 7 or later (it is still possible to analyze applications which have been compiled with older Java versions)
+- at least 1GB of RAM
 
+NOTE: If Java 7 is used to execute jQAssistant the PermGen size of the JVM must be set to 512MB (-XX:MaxPermSize=512M).
+This can be achieved by setting the environment variables JQASSISTANT_OPTS (command line) or MAVEN_OPTS (Maven).
