@@ -15,6 +15,10 @@
 ==== GraphML
 - Added plugin which provides a GraphML export for the results of executed concepts, includes support for virtual elements (sub graphs, nodes, relationships)
 
+==== Maven Repository
+- Resolve the POM model to provide full information about dependencies, plugins, etc.
+- Added properties for filtering artifacts while scanning
+
 ==== YAML
 - Added plugin which provides a scanner for YAML files
 
@@ -24,7 +28,7 @@
 === Core
 
 ==== Store
-- Upgraded to Neo4j 2.2.4
+- Upgraded to Neo4j 2.2.5
 
 ==== Report
 - Marked the descriptor _com.buschmais.jqassistant.core.store.api.model.NamedDescriptor_ as deprecated and replaced it by
