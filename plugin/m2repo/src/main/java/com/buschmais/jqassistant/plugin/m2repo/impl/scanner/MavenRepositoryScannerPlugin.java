@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.index.ArtifactInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,65 +65,49 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
 
     /** {@inheritDoc} */
     @Override
-    public MavenRepositoryDescriptor scan(URL item, String path, Scope scope, Scanner scanner) throws IOException {
-        String userInfo = item.getUserInfo();
-        String username = StringUtils.substringBefore(userInfo, ":");
-        String password = StringUtils.substringAfter(userInfo, ":");
+    public MavenRepositoryDescriptor scan(URL repositoryUrl, String path, Scope scope, Scanner scanner) throws IOException {
         if (!localDirectory.exists()) {
             LOGGER.info("Creating local maven repository directory {}", localDirectory.getAbsolutePath());
             localDirectory.mkdirs();
         }
-        DefaultArtifactProvider artifactProvider = new DefaultArtifactProvider(item, localDirectory, username, password);
-        File indexRoot = new File(artifactProvider.getRepositoryRoot(), ".index");
-        // handles the remote maven index
-        MavenIndex mavenIndex = new MavenIndex(item, indexRoot, indexRoot, username, password);
-        // used to resolve (remote) artifacts
-        return scanRepository(item, scanner, mavenIndex, artifactProvider);
+        MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(scanner.getContext().getStore(), repositoryUrl.toString());
+        AetherArtifactProvider artifactProvider = new AetherArtifactProvider(repositoryUrl, repoDescriptor, localDirectory);
+        scan(artifactProvider, scanner);
+        return repoDescriptor;
     }
 
     /**
-     * Scans a Repository.
+     * Scan the repository represented by the given artifact provider.
      * 
-     * @param item
-     *            the URL
-     * @param scanner
-     *            the Scanner
-     * @param mavenIndex
-     *            the MavenIndex
      * @param artifactProvider
-     *            the ArtifactResolver
-     * @return a MavenRepositoryDescriptor
+     *            The artifact provider.
+     * @return The repository descriptor.
      * @throws IOException
+     *             If scanning fails.
      */
-    public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactProvider artifactProvider)
-            throws IOException {
-        ScannerContext context = scanner.getContext();
-        Store store = context.getStore();
+    public void scan(AetherArtifactProvider artifactProvider, Scanner scanner) throws IOException {
         // the MavenRepositoryDescriptor
-        MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(store, item.toString());
-
+        MavenIndex mavenIndex = artifactProvider.getMavenIndex();
         Date lastIndexUpdateTime = mavenIndex.getLastUpdateLocalRepo();
-        Date lastScanTime = new Date(repoDescriptor.getLastScanDate());
+        MavenRepositoryDescriptor repositoryDescriptor = artifactProvider.getRepositoryDescriptor();
+        Date lastScanTime = new Date(repositoryDescriptor.getLastScanDate());
         Date artifactsSince = lastIndexUpdateTime;
         if (lastIndexUpdateTime == null || lastIndexUpdateTime.after(lastScanTime)) {
             artifactsSince = lastScanTime;
         }
         mavenIndex.updateIndex();
         // Search artifacts
+        ScannerContext context = scanner.getContext();
+        context.push(ArtifactProvider.class, artifactProvider);
         try {
-            context.push(MavenRepositoryDescriptor.class, repoDescriptor);
-            context.push(ArtifactProvider.class, artifactProvider);
-
             Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
             for (ArtifactInfo ai : searchResponse) {
                 scanner.scan(ai, ai.toString(), MavenScope.REPOSITORY);
             }
         } finally {
-            context.pop(MavenRepositoryDescriptor.class);
             context.pop(ArtifactProvider.class);
         }
         mavenIndex.closeCurrentIndexingContext();
-        repoDescriptor.setLastScanDate(System.currentTimeMillis());
-        return repoDescriptor;
+        repositoryDescriptor.setLastScanDate(System.currentTimeMillis());
     }
 }

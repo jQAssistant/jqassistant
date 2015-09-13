@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -28,16 +29,26 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 
 /**
  * Transfers artifacts from a remote repository to a local repository.
  * 
  * @author pherklotz
  */
-public class DefaultArtifactProvider implements ArtifactProvider {
+public class AetherArtifactProvider implements ArtifactProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultArtifactProvider.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AetherArtifactProvider.class);
+
+    private MavenRepositoryDescriptor repositoryDescriptor;
+
+    private URL url;
+
+    private String username;
+
+    private String password;
 
     private final File repositoryRoot;
 
@@ -50,16 +61,18 @@ public class DefaultArtifactProvider implements ArtifactProvider {
      * Creates a new object.
      * 
      * @param repositoryUrl
-     *            the repository url
+     *            The repository url
+     * @param repositoryDescriptor
+     *            The repository descriptor.
      * @param workDirectory
-     *            the workDirectory for resolved artifacts
-     * @param username
-     *            an username for authentication
-     * @param password
-     *            a password for authentication
+     *            The work directory for local caching of files.
      */
-    public DefaultArtifactProvider(URL repositoryUrl, File workDirectory, String username, String password) {
-        String url = StringUtils.replace(repositoryUrl.toString(), repositoryUrl.getUserInfo() + "@", StringUtils.EMPTY);
+    public AetherArtifactProvider(URL repositoryUrl, MavenRepositoryDescriptor repositoryDescriptor, File workDirectory) {
+        this.url = repositoryUrl;
+        this.repositoryDescriptor = repositoryDescriptor;
+        String userInfo = repositoryUrl.getUserInfo();
+        this.username = StringUtils.substringBefore(userInfo, ":");
+        this.password = StringUtils.substringAfter(userInfo, ":");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Create new " + this.getClass().getSimpleName() + " for URL " + url);
         }
@@ -71,12 +84,18 @@ public class DefaultArtifactProvider implements ArtifactProvider {
             authBuilder.addPassword(password);
         }
         Authentication auth = authBuilder.build();
+        String url = StringUtils.replace(repositoryUrl.toString(), repositoryUrl.getUserInfo() + "@", StringUtils.EMPTY);
         String repositoryId = DigestUtils.md5Hex(repositoryUrl.toString());
         repository = new RemoteRepository.Builder(repositoryId, "default", url).setAuthentication(auth).build();
         repositorySystem = newRepositorySystem();
         this.repositoryRoot = new File(workDirectory, repositoryId);
         LOGGER.debug("Using '{}' for repository URL '{}'", repositoryRoot, repositoryUrl);
         session = newRepositorySystemSession(repositorySystem, repositoryRoot);
+    }
+
+    @Override
+    public MavenRepositoryDescriptor getRepositoryDescriptor() {
+        return repositoryDescriptor;
     }
 
     /**
@@ -94,18 +113,26 @@ public class DefaultArtifactProvider implements ArtifactProvider {
         return repositorySystem.resolveArtifact(session, artifactRequest);
     }
 
-    /**
-     * Return the root directory of the local repository.
-     * 
-     * @return The root directory of the local repository.
-     */
     @Override
-    public File getRepositoryRoot() {
-        return repositoryRoot;
+    public FileResolverStrategy getFileResolverStrategy() {
+        return new RepositoryFileResolverStrategy(repositoryRoot);
     }
 
     /**
-     * Creates a list of {@link ArtifactRequest}s for each artifact. The result will always include the "pom" artifact for building the model.
+     * Return the index of the remote repository.
+     *
+     * @return The index.
+     * @throws IOException
+     *             If the local index directoy cannot be created.
+     */
+    public MavenIndex getMavenIndex() throws IOException {
+        File indexRoot = new File(repositoryRoot, ".index");
+        return new MavenIndex(url, indexRoot, indexRoot, username, password);
+    }
+
+    /**
+     * Creates a list of {@link ArtifactRequest}s for each artifact. The result
+     * will always include the "pom" artifact for building the model.
      *
      * @param artifact
      *            The artifact.
@@ -145,4 +172,5 @@ public class DefaultArtifactProvider implements ArtifactProvider {
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepo));
         return session;
     }
+
 }

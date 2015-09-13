@@ -18,7 +18,7 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.DefaultArtifactProvider;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.AetherArtifactProvider;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
@@ -85,15 +85,12 @@ public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
 
             Scanner scanner = getScanner(getScannerProperties());
 
-            ArtifactProvider provider = new DefaultArtifactProvider(new URL(TEST_REPOSITORY_URL), new File(M2REPO_DATA_DIR), null, null);
-            scanner.getContext().push(ArtifactProvider.class, provider);
-
             MavenRepositoryDescriptor repoDescriptor = store.create(MavenRepositoryDescriptor.class);
+            ArtifactProvider provider = new AetherArtifactProvider(new URL(TEST_REPOSITORY_URL), repoDescriptor, new File(M2REPO_DATA_DIR));
+            scanner.getContext().push(ArtifactProvider.class, provider);
             repoDescriptor.setUrl(TEST_REPOSITORY_URL);
-            scanner.getContext().push(MavenRepositoryDescriptor.class, repoDescriptor);
-
             scanner.scan(info, info.toString(), MavenScope.REPOSITORY);
-
+            scanner.getContext().pop(ArtifactProvider.class);
             Long countJarNodes = store.executeQuery("MATCH (n:Maven:Artifact:Jar) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
             final int expectedJarNodes = 1;
             Assert.assertEquals("Number of jar nodes is wrong.", new Long(expectedJarNodes), countJarNodes);

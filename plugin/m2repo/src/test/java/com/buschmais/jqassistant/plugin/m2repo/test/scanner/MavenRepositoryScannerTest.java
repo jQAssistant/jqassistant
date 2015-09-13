@@ -3,14 +3,9 @@ package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +33,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.AetherArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.EffectiveModelBuilderImpl;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
@@ -85,7 +81,8 @@ public class MavenRepositoryScannerTest {
         List<ArtifactInfo> testArtifactInfos = getTestArtifactInfos();
         when(mavenIndex.getArtifactsSince(new Date(0))).thenReturn(testArtifactInfos);
 
-        ArtifactProvider artifactProvider = mock(ArtifactProvider.class);
+        AetherArtifactProvider artifactProvider = mock(AetherArtifactProvider.class);
+        when(artifactProvider.getMavenIndex()).thenReturn(mavenIndex);
 
         for (ArtifactInfo artifactInfo : testArtifactInfos) {
             buildWhenThenReturn(artifactProvider, artifactInfo);
@@ -110,7 +107,7 @@ public class MavenRepositoryScannerTest {
         when(scanner.getContext()).thenReturn(context);
 
         MavenRepositoryDescriptor repoDescriptor = mock(MavenRepositoryDescriptor.class);
-        when(store.find(MavenRepositoryDescriptor.class, repoUrl)).thenReturn(repoDescriptor);
+        when(artifactProvider.getRepositoryDescriptor()).thenReturn(repoDescriptor);
         when(repoDescriptor.getArtifact(anyString())).thenReturn(null);
 
         when(scanner.scan(any(FileResource.class), anyString(), Mockito.any(Scope.class))).thenReturn(mock(FileDescriptor.class));
@@ -120,10 +117,9 @@ public class MavenRepositoryScannerTest {
 
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin();
         plugin.configure(context, new HashMap<String, Object>());
-        plugin.scanRepository(new URL(repoUrl), scanner, mavenIndex, artifactProvider);
+        plugin.scan(artifactProvider, scanner);
 
         verify(mavenIndex).updateIndex();
-        verify(store).find(MavenRepositoryDescriptor.class, repoUrl);
         verify(scanner, times(testArtifactInfos.size())).scan(any(ArtifactInfo.class), anyString(), eq(MavenScope.REPOSITORY));
     }
 }
