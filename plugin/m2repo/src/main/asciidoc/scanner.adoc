@@ -47,8 +47,8 @@ A remote Maven repository.
 .Relations of :Maven:Repository
 [options="header"]
 |====
-| Name          	| Target label(s)             	| Cardinality | Description
-| CONTAINS_ARTIFACT | <<:RepositoryArtifact:Maven>> | 0..n        | References repository artifacts
+| Name         | Target label(s)               | Cardinality | Description
+| CONTAINS_POM | <<:RepositoryArtifact:Maven>> | 0..n        | References the POMs in the repository
 |====
 
 <<MavenArtifactScanner>>

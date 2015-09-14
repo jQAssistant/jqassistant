@@ -1,6 +1,6 @@
 package com.buschmais.jqassistant.plugin.m2repo.api.model;
 
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor.ContainsArtifact;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor.ContainsPom;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
@@ -21,7 +21,7 @@ public interface RepositoryArtifactDescriptor extends MavenPomXmlDescriptor {
      * @return the containing repository.
      */
     @Incoming
-    @ContainsArtifact
+    @ContainsPom
     MavenRepositoryDescriptor getContainingRepository();
 
     void setContainingRepository(MavenRepositoryDescriptor containsArtifactDescriptor);
