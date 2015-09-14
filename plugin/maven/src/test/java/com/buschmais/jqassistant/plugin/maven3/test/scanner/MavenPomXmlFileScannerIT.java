@@ -354,7 +354,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
             if (Objects.equals(artifact.getClassifier(), plugin.classifier) && //
                     Objects.equals(artifact.getGroup(), plugin.group) && //
                     Objects.equals(artifact.getName(), plugin.name) && //
-                    Objects.equals(artifact.getType(), plugin.type) && //
+                    Objects.equals(artifact.getType(), "jar") && //
                     Objects.equals(artifact.getVersion(), plugin.version) && //
                     Objects.equals(pluginDescriptor.isInherited(), plugin.inherited)) {
                 return pluginDescriptor;
