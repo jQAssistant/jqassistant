@@ -411,7 +411,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
     private List<Plugin> createParentPlugins() {
         List<Plugin> pluginList = new ArrayList<>();
-        pluginList.add(createPlugin("org.apache.maven.plugins", "maven-compiler-plugin", null, "3.1", null, true));
+        pluginList.add(createPlugin("org.apache.maven.plugins", "maven-compiler-plugin", null, "3.3", null, true));
         Plugin javadocPlugin = createPlugin("org.apache.maven.plugins", "maven-javadoc-plugin", null, "2.10.1", null, true);
         Execution attachJavadocExecution = createPluginExecution("attach-javadoc", null, true);
         attachJavadocExecution.goals.add("jar");
