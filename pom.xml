@@ -50,7 +50,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <com.buschmais.xo_version>0.6.0-SNAPSHOT</com.buschmais.xo_version>
+        <maven.failsafe.version>2.18.1</maven.failsafe.version>
         <maven.compiler.version>3.3</maven.compiler.version>
+        <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
         <org.neo4j_version>2.2.5</org.neo4j_version>
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
@@ -258,7 +260,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.18</version>
+                    <version>${maven.failsafe.version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.surefire</groupId>
