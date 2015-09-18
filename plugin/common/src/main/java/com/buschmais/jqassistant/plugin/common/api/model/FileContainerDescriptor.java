@@ -5,8 +5,10 @@ import java.util.List;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
+import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
+@Label("Container")
 public interface FileContainerDescriptor extends FileNameDescriptor {
 
     /**
