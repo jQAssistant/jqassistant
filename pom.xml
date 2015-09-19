@@ -53,6 +53,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo_version>0.6.0-SNAPSHOT</com.buschmais.xo_version>
         <maven.failsafe.version>2.18.1</maven.failsafe.version>
         <maven.compiler.version>3.3</maven.compiler.version>
