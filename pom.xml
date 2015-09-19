@@ -135,19 +135,6 @@
                                     <pluginExecutions>
                                         <pluginExecution>
                                             <pluginExecutionFilter>
-                                                <groupId>org.apache.maven.plugins</groupId>
-                                                <artifactId>maven-enforcer-plugin</artifactId>
-                                                <versionRange>[1.0,)</versionRange>
-                                                <goals>
-                                                    <goal>enforce</goal>
-                                                </goals>
-                                            </pluginExecutionFilter>
-                                            <action>
-                                                <execute />
-                                            </action>
-                                        </pluginExecution>
-                                        <pluginExecution>
-                                            <pluginExecutionFilter>
                                                 <groupId>com.buschmais.jqassistant.scm</groupId>
                                                 <artifactId>jqassistant-maven-plugin</artifactId>
                                                 <versionRange>[1.0.0,)</versionRange>
@@ -189,7 +176,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.0</version>
+                    <version>1.4.1</version>
                     <executions>
                         <execution>
                             <id>enforce-maven</id>
@@ -377,6 +364,19 @@
             </plugins>
         </pluginManagement>
         <plugins>
+          <!--
+            ! Based on the wrong parent pom (org.sonatype.oss:oss-parent:9)
+            ! it is not possible to simply define a newer version of maven-enforcer-plugin
+            ! via pluginManagement. You need to define it here via hard-coded version.
+            ! otherwise the version of the parent will be used.
+            ! At the moment this will produce a WARNING in Elcipse about 
+            ! duplicating managed version.
+          -->
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-enforcer-plugin</artifactId>
+              <version>1.4.1</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
