@@ -60,6 +60,7 @@
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
         <org.neo4j_version>2.2.5</org.neo4j_version>
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
+        <org.asciidoctor-plugin.version>1.5.2.1</org.asciidoctor-plugin.version>
         <org.jruby_version>9.0.0.0</org.jruby_version>
         <org.ow2.asm_version>5.0.4</org.ow2.asm_version>
         <org.slf4j_version>1.7.5</org.slf4j_version>
