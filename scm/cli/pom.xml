@@ -127,7 +127,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>${org.slf4j_version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
