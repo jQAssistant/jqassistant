@@ -261,6 +261,13 @@
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven.failsafe.version}</version>
                     <dependencies>
+                        <!-- We need the manual specification of the JUnit provider
+                             since there is a single TestNG test class for the TestNG
+                             scanner plugin. Oliver B. Fischer, 2015-09-20
+                             See:
+                             https://github.com/buschmais/jqassistant/issues/252
+                             https://github.com/buschmais/jqassistant/issues/246
+                             https://github.com/buschmais/jqassistant/issues/249 -->
                         <dependency>
                             <groupId>org.apache.maven.surefire</groupId>
                             <artifactId>surefire-junit47</artifactId>
@@ -278,6 +285,13 @@
                         </includes>
                     </configuration>
                     <dependencies>
+                        <!-- We need the manual specification of the JUnit provider
+                             since there is a single TestNG test class for the TestNG
+                             scanner plugin. Oliver B. Fischer, 2015-09-20
+                             See:
+                             https://github.com/buschmais/jqassistant/issues/252
+                             https://github.com/buschmais/jqassistant/issues/246
+                             https://github.com/buschmais/jqassistant/issues/249 -->
                         <dependency>
                             <groupId>org.apache.maven.surefire</groupId>
                             <artifactId>surefire-junit47</artifactId>
