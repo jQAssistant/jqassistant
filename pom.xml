@@ -413,12 +413,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>2.6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>2.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -437,18 +437,29 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
-                </plugin>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.4</version>
+                    <executions>
+                      <!-- 
+                        ! here we override the super-pom attach-sources execution id which 
+                        ! calls sources:jar goal. That goals forks the lifecycle, 
+                        ! causing the generate-sources phase to be called twice for the install goal.
+                      -->
+                      <execution>
+                        <id>attach-sources</id>
+                        <phase>DISABLE_FORKED_LIFECYCLE_MSOURCES-13</phase>
+                      </execution>
+                    </executions>
+                  </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.4</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.apache.maven.doxia</groupId>
                             <artifactId>doxia-module-markdown</artifactId>
-                            <version>1.4</version>
+                            <version>1.6</version>
                         </dependency>
                         <dependency>
                             <groupId>org.asciidoctor</groupId>
@@ -459,6 +470,11 @@
                     <configuration>
                         <skipDeploy>true</skipDeploy>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -475,6 +491,22 @@
                   <artifactId>maven-gpg-plugin</artifactId>
                   <version>1.6</version>
                 </plugin>
+                <!--
+                  ! For the maven plugin area.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-invoker-plugin</artifactId>
+                    <version>2.0.0</version>
+                </plugin>
+                <!--
+                  ! Other used plugins
+                -->
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.11</version>
+                  </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -509,7 +541,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -522,7 +553,6 @@
             <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.11</version>
                 <configuration>
                     <message>Creating site for ${project.artifactId}, ${project.version}</message>
                     <path>${project.distributionManagement.site.url}</path>
@@ -546,12 +576,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.8</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.10.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
