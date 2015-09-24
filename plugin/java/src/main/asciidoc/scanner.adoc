@@ -26,8 +26,8 @@ A directory or archive containing packages, classes and resources.
 === :Java:Artifact:Directory
 A directory representing a Java artifact.
 
-[[:Java:Artifact:Jar:Archive]]
-=== :Java:Artifact:Jar:Archive
+[[:Java:Artifact:Jar:Archive:Container]]
+=== :Java:Artifact:Jar:Archive:Container
 A JAR file representing a Java artifact.
 
 
@@ -36,10 +36,10 @@ A JAR file representing a Java artifact.
 Imports Java packages.
 
 [[:Java:Package]]
-=== :Java:Package
+=== :Java:Package:Container
 A Java package, i.e. a directory containing '.class' files or other directories.
 
-.Properties of :Java:Package
+.Properties of :Java:Package:Container
 [options="header"]
 |====
 | Name       | Description
@@ -47,7 +47,7 @@ A Java package, i.e. a directory containing '.class' files or other directories.
 | name       | The local name, e.g. 'lang'
 |====
 
-.Relations of :Java:Package
+.Relations of :Java:Package:Container
 [options="header"]
 |====
 | Name         | Target label(s)   | Cardinality | Description
