@@ -206,6 +206,11 @@
 				<artifactId>jqassistant.plugin.xml</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.buschmais.jqassistant.plugin</groupId>
+				<artifactId>jqassistant.plugin.yaml</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
