@@ -22,7 +22,9 @@ import java.util.NoSuchElementException;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -35,10 +37,20 @@ import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLValueDescriptor;
 
 public class YAMLFileScannerPluginIT extends AbstractPluginIT {
+
+    @Before
+    public void startTransaction() {
+        store.beginTransaction();
+    }
+
+    @After
+    public void commitTransaction() {
+        store.commitTransaction();
+    }
+
+
     @Test
     public void scanReturnsFileDescriptorWithCorrectFileName() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/simple-key-value-pair.yaml");
 
@@ -50,15 +62,11 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(file.getFileName(), Matchers.notNullValue());
         assertThat(file.getFileName(), endsWith("probes/valid/simple-key-value-pair.yaml"));
-
-        store.commitTransaction();
     }
 
 
     @Test
     public void scanSimpleKeyValuePairYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/simple-key-value-pair.yaml");
 
@@ -89,15 +97,11 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(value.getValue(), equalTo("value"));
         assertThat(value.getPosition(), equalTo(0));
-
-        store.commitTransaction();
     }
 
 
     @Test
     public void scanTwoSimpleKeyValuePairsYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/two-simple-key-value-pairs.yaml");
 
@@ -129,16 +133,11 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(valueOfKeyA.getValue(), equalTo("valueA"));
         assertThat(valueOfKeyA.getPosition(), equalTo(0));
-
-
-        store.commitTransaction();
     }
 
 
     @Test
     public void scanSimpleListYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/simple-list.yaml");
 
@@ -162,15 +161,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyDescriptor.getKeys(), empty());
         assertThat(keyDescriptor.getValues(), containsInAnyOrder(hasValue("a"), hasValue("b"),
                                                                  hasValue("c")));
-
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanSequenceOfScalarsYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.1-sequence-of-scalars.yaml");
 
@@ -192,8 +186,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(document.getValues(), containsInAnyOrder(hasValue("Mark McGwire"),
                                                             hasValue("Sammy Sosa"),
                                                             hasValue("Ken Griffey")));
-
-        store.commitTransaction();
     }
 
     @Test
@@ -205,8 +197,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void scanValidDropWizardConfigYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/dropwizard-configuration.yaml");
 
@@ -241,14 +231,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(subKey2.getName(), equalTo("applicationConnectors"));
         assertThat(subKey3.getName(), equalTo("adminConnectors"));
         assertThat(subKey4.getName(), equalTo("requestLog"));
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanMappingScalarsToSequencesYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.3-mapping-scalars-to-sequences.yaml");
 
@@ -284,7 +270,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyDescriptor2.getValues(), containsInAnyOrder(hasValue("New York Mets"),
                                                                   hasValue("Chicago Cubs"),
                                                                   hasValue("Atlanta Braves")));
-        store.commitTransaction();
     }
 
     @Test
@@ -296,8 +281,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void scanSequenceOfSequencesYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.5-sequence-of-sequences.yaml");
 
@@ -333,14 +316,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(thirdSequence.getValues(), containsInAnyOrder(hasValue("Sammy Sosa"),
                                                                  hasValue("63"),
                                                                  hasValue("0.288")));
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanMappingOfMappingsYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.6-mapping-of-mappings.yaml");
 
@@ -404,8 +383,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyB2.getFullQualifiedName(), CoreMatchers.equalTo("Sammy Sosa.avg"));
         assertThat(keyB2.getValues(), hasSize(1));
         assertThat(keyB2.getValues(), hasItem(hasValue("0.288")));
-
-        store.commitTransaction();
     }
 
     @Test
@@ -431,8 +408,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void scanNodeForSammySosaTwice() {
-        store.beginTransaction();
-
         String fileName = "sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml";
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/" + fileName);
@@ -470,8 +445,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         }
 
         assertThat(rbiNode.getValues(), hasItem(hasValue("Sammy Sosa")));
-
-        store.commitTransaction();
     }
 
 //    @Test
@@ -492,8 +465,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void scanFoldedNewLinesArePreserved() {
-        store.beginTransaction();
-
         String fileName = "sec-2.3-example-2.15-folded-newlines-are-preserved.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -541,8 +512,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                                                        "  0.288 Batting Average\n" +
                                                        "\n" +
                                                        "What a year!"));
-
-        store.commitTransaction();
     }
 
     @Test
@@ -637,8 +606,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void scanAnInvalidMappingAndParsedIsFalse() {
-        store.beginTransaction();
-
         String fileName = "invalid-mapping.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -655,14 +622,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
         assertThat(fileDescriptor.getParsed(), is(false));
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanAnValidMappingAndParsedIsTrue() {
-        store.beginTransaction();
-
         String fileName = "simple-list.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -679,14 +642,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
         assertThat(fileDescriptor.getParsed(), is(true));
-
-        store.commitTransaction();
     }
 
     @Test
     public void invalidDocumentInHostConfigInvalidLeedsToParsingError() {
-        store.beginTransaction();
-
         String fileName = "hostconfig-invalid.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -701,14 +660,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
         assertThat(fileDescriptor.getParsed(), is(false));
-
-        store.commitTransaction();
     }
 
     @Test
     public void ifParsingFailsThereWillBeNoNodesForTheContentOfTheYAMLFile() {
-        store.beginTransaction();
-
         String fileName = "hostconfig-invalid.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -729,14 +684,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                   .getColumn("c");
 
         assertThat(childNodes, anyOf(empty(), nullValue()));
-
-        store.commitTransaction();
     }
 
     @Test
     public void ifParsingFailsThereWillBeNoNodesForTheContentOfTheSecondYAMLDocument() {
-        store.beginTransaction();
-
         String fileName = "hostconfig-2-invalid.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -757,8 +708,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                   .getColumn("c");
 
         assertThat(childNodes, anyOf(empty(), nullValue()));
-
-        store.commitTransaction();
     }
 
     /**
