@@ -24,5 +24,5 @@ public interface FileResolverStrategy {
      */
     Descriptor require(String path, ScannerContext context);
 
-    Descriptor create(String path, ScannerContext context);
+    Descriptor match(String path, ScannerContext context);
 }
