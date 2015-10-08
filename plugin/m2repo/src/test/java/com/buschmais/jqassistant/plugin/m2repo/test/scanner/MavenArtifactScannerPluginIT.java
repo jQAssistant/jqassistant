@@ -14,16 +14,19 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.AetherArtifactProvider;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
 
-    private static final int REPO_SERVER_PORT = 9090;
+    private static final int REPO_SERVER_PORT = 9095;
     private static final String REPO_SERVER_BASE_DIR = "./src/test/resources/maven-repository-";
 
     private static final String TEST_REPOSITORY_URL = "http://localhost:" + REPO_SERVER_PORT;
@@ -87,10 +90,13 @@ public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
 
             MavenRepositoryDescriptor repoDescriptor = store.create(MavenRepositoryDescriptor.class);
             ArtifactProvider provider = new AetherArtifactProvider(new URL(TEST_REPOSITORY_URL), repoDescriptor, new File(M2REPO_DATA_DIR));
-            scanner.getContext().push(ArtifactProvider.class, provider);
+            ScannerContext context = scanner.getContext();
+            context.push(ArtifactProvider.class, provider);
+            context.push(ArtifactResolver.class, new MavenArtifactResolver());
             repoDescriptor.setUrl(TEST_REPOSITORY_URL);
             scanner.scan(info, info.toString(), MavenScope.REPOSITORY);
-            scanner.getContext().pop(ArtifactProvider.class);
+            context.pop(ArtifactProvider.class);
+            context.pop(ArtifactResolver.class);
             Long countJarNodes = store.executeQuery("MATCH (n:Maven:Artifact:Jar) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
             final int expectedJarNodes = 1;
             Assert.assertEquals("Number of jar nodes is wrong.", new Long(expectedJarNodes), countJarNodes);
