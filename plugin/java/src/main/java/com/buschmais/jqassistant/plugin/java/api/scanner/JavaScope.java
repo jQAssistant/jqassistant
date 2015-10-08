@@ -64,7 +64,7 @@ public enum JavaScope implements Scope {
         }
 
         @Override
-        public Descriptor create(String path, ScannerContext context) {
+        public Descriptor match(String path, ScannerContext context) {
             if (path.toLowerCase().endsWith(CLASS_SUFFIX)) {
                 String typeName = path.substring(1, path.length() - CLASS_SUFFIX.length()).replaceAll("/", ".");
                 TypeResolver typeResolver = context.peek(TypeResolver.class);
