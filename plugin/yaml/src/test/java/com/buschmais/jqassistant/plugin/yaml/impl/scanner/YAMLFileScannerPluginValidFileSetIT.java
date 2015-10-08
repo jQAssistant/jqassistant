@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -58,14 +60,22 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
         });
     }
 
+    @Before
+    public void startTransaction() {
+        store.beginTransaction();
+    }
+
+    @After
+    public void commitTransaction() {
+        store.commitTransaction();
+    }
+
     public YAMLFileScannerPluginValidFileSetIT(String file) {
         pathToYAMLFile = file;
     }
 
     @Test
     public void canLoadYAMLFile() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class), pathToYAMLFile);
 
         Scanner scanner = getScanner();
@@ -73,8 +83,6 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
 
         assertThat("Scanner must be able to scan the resource and to return a descriptor.",
                    descriptor, notNullValue());
-
-        store.commitTransaction();
     }
 
 }

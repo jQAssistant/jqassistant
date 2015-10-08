@@ -103,10 +103,10 @@ public class DependencyIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("package", A.class.getPackage().getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn={package} RETURN p2", parameters).getColumn("p2"),
+        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package:Container) WHERE p1.fqn={package} RETURN p2", parameters).getColumn("p2"),
                 hasItem(packageDescriptor(B.class.getPackage())));
         parameters.put("package", B.class.getPackage().getName());
-        assertThat(query("MATCH (p1:Package)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn={package} RETURN p2", parameters).getColumn("p2"),
+        assertThat(query("MATCH (p1:Package:Container)-[:DEPENDS_ON]->(p2:Package) WHERE p1.fqn={package} RETURN p2", parameters).getColumn("p2"),
                 hasItem(packageDescriptor(A.class.getPackage())));
         store.commitTransaction();
     }

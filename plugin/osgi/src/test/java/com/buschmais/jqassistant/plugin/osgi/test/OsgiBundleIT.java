@@ -8,8 +8,6 @@ import static com.buschmais.jqassistant.plugin.java.test.matcher.PackageDescript
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsMapContaining.hasValue;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -92,7 +90,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     @Test
     public void importedPackages() throws IOException, AnalysisException {
         scanClassPathDirectory(getClassesDirectory(Service.class));
-        query("create (:File:Directory:Package{fqn:'org.junit'})");
+        query("create (:File:Container:Directory:Package{fqn:'org.junit'})");
         assertThat(applyConcept("osgi-bundle:ImportPackage").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Package) RETURN p").getColumn("p");
