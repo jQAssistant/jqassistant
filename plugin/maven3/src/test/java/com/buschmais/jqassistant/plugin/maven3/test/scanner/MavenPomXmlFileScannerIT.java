@@ -13,13 +13,23 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
+
+    @Override
+    protected Scanner getScanner() {
+        Scanner scanner = super.getScanner();
+        scanner.getContext().push(ArtifactResolver.class, new MavenArtifactResolver());
+        return scanner;
+    }
 
     /**
      * Scans and tests pom.xml files.
