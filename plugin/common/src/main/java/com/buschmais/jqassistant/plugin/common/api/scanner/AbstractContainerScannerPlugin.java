@@ -54,7 +54,6 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                 try (Resource resource = getEntry(container, entry.getValue())) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
-                    descriptor = toFileDescriptor(resource, descriptor, relativePath, context);
                     files.put(relativePath, descriptor);
                     containerDescriptor.getContains().add(descriptor);
                     int separatorIndex = relativePath.lastIndexOf('/');

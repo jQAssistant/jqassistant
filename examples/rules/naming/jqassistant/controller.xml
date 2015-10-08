@@ -29,10 +29,10 @@
 
     <constraint id="controller:ClassesMustBeLocatedInControllerPackage">
         <requiresConcept refId="controller:ControllerClass"/>
-        <description>All controller implementations must be located in the package "model".</description>
+        <description>All controller implementations must be located in the package "controller".</description>
         <cypher><![CDATA[
             MATCH
-                (package:PACKAGE)-[:CONTAINS]->(controllerClass:Class:Controller)
+                (package:Package)-[:CONTAINS]->(controllerClass:Class:Controller)
             WHERE
                 NOT package.name = "controller"
             RETURN
