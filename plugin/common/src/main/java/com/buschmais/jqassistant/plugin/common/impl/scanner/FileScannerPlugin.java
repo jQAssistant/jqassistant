@@ -47,8 +47,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
             public void close() {
             }
         };) {
-            fileDescriptor = scanner.scan(fileResource, normalizedPath, scope);
-            return toFileDescriptor(new BufferedFileResource(fileResource), fileDescriptor, normalizedPath, scanner.getContext());
+            return scanner.scan(fileResource, normalizedPath, scope);
         }
     }
 }
