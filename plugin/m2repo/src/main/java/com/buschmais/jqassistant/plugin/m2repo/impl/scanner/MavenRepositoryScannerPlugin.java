@@ -16,7 +16,9 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 /**
  * A scanner for (remote) maven repositories.
@@ -90,7 +92,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         MavenIndex mavenIndex = artifactProvider.getMavenIndex();
         Date lastIndexUpdateTime = mavenIndex.getLastUpdateLocalRepo();
         MavenRepositoryDescriptor repositoryDescriptor = artifactProvider.getRepositoryDescriptor();
-        Date lastScanTime = new Date(repositoryDescriptor.getLastScanDate());
+        Date lastScanTime = new Date(repositoryDescriptor.getLastUpdate());
         Date artifactsSince = lastIndexUpdateTime;
         if (lastIndexUpdateTime == null || lastIndexUpdateTime.after(lastScanTime)) {
             artifactsSince = lastScanTime;
@@ -98,6 +100,7 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
         mavenIndex.updateIndex();
         // Search artifacts
         ScannerContext context = scanner.getContext();
+        context.push(ArtifactResolver.class, new MavenArtifactResolver());
         context.push(ArtifactProvider.class, artifactProvider);
         try {
             Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
@@ -106,8 +109,9 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
             }
         } finally {
             context.pop(ArtifactProvider.class);
+            context.pop(ArtifactResolver.class);
         }
         mavenIndex.closeCurrentIndexingContext();
-        repositoryDescriptor.setLastScanDate(System.currentTimeMillis());
+        repositoryDescriptor.setLastUpdate(System.currentTimeMillis());
     }
 }

@@ -9,12 +9,13 @@ import org.slf4j.LoggerFactory;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 
 /**
  * A file resolver strategy for a local maven repository.
  * 
- * If a file is given which is part of the local maven repository then this strategy will lookup an existing artifact descriptor, i.e.
+ * If a file is given which is part of the local maven repository then this
+ * strategy will lookup an existing artifact descriptor, i.e.
  */
 public class RepositoryFileResolverStrategy implements FileResolverStrategy {
 
@@ -34,18 +35,14 @@ public class RepositoryFileResolverStrategy implements FileResolverStrategy {
 
     @Override
     public Descriptor require(String path, ScannerContext context) {
-        if (isArtifactPath(path)) {
-            ArtifactCoordinates coordinates = getArtifactCoordinates(path);
-            return ArtifactResolver.find(coordinates, context);
-        }
-        return null;
+        return match(path, context);
     }
 
     @Override
-    public Descriptor create(String path, ScannerContext context) {
+    public Descriptor match(String path, ScannerContext context) {
         if (isArtifactPath(path)) {
             ArtifactCoordinates coordinates = getArtifactCoordinates(path);
-            return ArtifactResolver.find(coordinates, context);
+            return context.peek(ArtifactResolver.class).find(coordinates, context);
         }
         return null;
     }
@@ -57,7 +54,8 @@ public class RepositoryFileResolverStrategy implements FileResolverStrategy {
     private ArtifactCoordinates getArtifactCoordinates(String path) {
         LOGGER.debug("Resolving file '{}' within the local Maven repository.", path);
         String localPath = path.substring(repositoryRootPath.length() + 1);
-        // the local path in the directory will be used to infer the artifact coordinates
+        // the local path in the directory will be used to infer the artifact
+        // coordinates
         // 1. groupId
         String[] elements = localPath.split("/");
         StringBuilder groupIdBuilder = new StringBuilder();

@@ -24,7 +24,7 @@ public class WebApplicationFileResolverStrategy implements FileResolverStrategy 
     }
 
     @Override
-    public FileDescriptor create(String path, ScannerContext context) {
+    public FileDescriptor match(String path, ScannerContext context) {
         WebApplicationDescriptor webApplicationDescriptor = context.peek(WebApplicationDescriptor.class);
         FileDescriptor fileDescriptor = webApplicationDescriptor.find(path);
         if (fileDescriptor != null) {

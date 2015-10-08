@@ -36,7 +36,7 @@ public final class FileResolver {
 
     public FileDescriptor create(String path, ScannerContext context) {
         for (FileResolverStrategy fileResolverStrategy : resolverStrategies) {
-            Descriptor fileDescriptor = fileResolverStrategy.create(path, context);
+            Descriptor fileDescriptor = fileResolverStrategy.match(path, context);
             if (fileDescriptor != null) {
                 return toFileDescriptor(fileDescriptor, path, context);
             }

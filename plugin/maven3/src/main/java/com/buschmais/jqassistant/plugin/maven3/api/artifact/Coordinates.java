@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.plugin.common.api.scanner.artifact;
+package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
 /**
  * Defines unique artifact coordinates.

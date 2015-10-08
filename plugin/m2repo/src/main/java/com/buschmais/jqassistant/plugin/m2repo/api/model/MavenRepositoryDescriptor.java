@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.plugin.m2repo.api.model;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.*;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
  * Describes a maven repository.
@@ -20,11 +19,16 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
 
     /**
-     * A list of contained artifacts.
+     * The contained POMs.
      */
-    @Outgoing
-    @ContainsPom
-    List<RepositoryArtifactDescriptor> getContainedArtifacts();
+    @Relation("CONTAINS_POM")
+    List<MavenPomXmlDescriptor> getContainedModels();
+
+    /**
+     * The contained artifacts.
+     */
+    @Relation("CONTAINS_ARTIFACT")
+    List<MavenArtifactDescriptor> getContainedArtifacts();
 
     /**
      * The repository url.
@@ -43,35 +47,22 @@ public interface MavenRepositoryDescriptor extends Descriptor, MavenDescriptor {
     void setUrl(String url);
 
     /**
-     * The last scan date.
+     * The last update.
      * 
-     * @return the last scan date.
+     * @return the last update.
      */
-    @Property("lastScanDate")
-    long getLastScanDate();
+    @Property("lastUpdate")
+    long getLastUpdate();
 
     /**
-     * Set the last scan date.
+     * Set the last update.
      * 
-     * @param scanDate
-     *            the last scan date.
+     * @param lastUpdate
+     *            the last update.
      */
-    void setLastScanDate(long scanDate);
+    void setLastUpdate(long lastUpdate);
 
     @ResultOf
-    @Cypher("MATCH (r:Maven:Repository)-[:CONTAINS_POM]->(a:Maven:Pom) WHERE id(r)={this} and a.mavenCoordinates={coordinates} RETURN a")
-    RepositoryArtifactDescriptor getArtifact(@Parameter("coordinates") String coordinates);
-
-    @ResultOf
-    @Cypher("MATCH (r:Maven:Repository)-[:CONTAINS_POM]->(a:Maven:Pom) WHERE id(r)={this} and a.mavenCoordinates={coordinates} and a.lastModified={lastModified} RETURN a")
-    RepositoryArtifactDescriptor getSnapshotArtifact(@Parameter("coordinates") String coordinates, @Parameter("lastModified") long lastModified);
-
-    @ResultOf
-    @Cypher("MATCH (r:Maven:Repository)-[:CONTAINS_POM]->(a:Maven:Pom) WHERE id(r)={this} and a.mavenCoordinates={coordinates} AND a.lastModified<>{lastModified} RETURN a ORDER BY a.lastModified DESC LIMIT 1")
-    RepositoryArtifactDescriptor getLastSnapshot(@Parameter("coordinates") String coordinates, @Parameter("lastModified") long lastModified);
-
-    @Relation("CONTAINS_POM")
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface ContainsPom {
-    }
+    @Cypher("MATCH (repository)-[:CONTAINS_POM]->(pom:Maven:Pom:Xml) WHERE id(repository)={this} and pom.fqn={coordinates} RETURN pom")
+    MavenPomXmlDescriptor findModel(@Parameter("coordinates") String coordinates);
 }

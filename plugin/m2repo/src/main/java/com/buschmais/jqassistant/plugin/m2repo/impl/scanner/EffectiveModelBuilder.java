@@ -7,34 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.model.Build;
-import org.apache.maven.model.CiManagement;
-import org.apache.maven.model.Contributor;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.Developer;
-import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.InputLocation;
-import org.apache.maven.model.IssueManagement;
-import org.apache.maven.model.License;
-import org.apache.maven.model.MailingList;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Organization;
-import org.apache.maven.model.Parent;
-import org.apache.maven.model.Prerequisites;
-import org.apache.maven.model.Profile;
-import org.apache.maven.model.Reporting;
-import org.apache.maven.model.Repository;
-import org.apache.maven.model.Scm;
-import org.apache.maven.model.building.DefaultModelBuilder;
-import org.apache.maven.model.building.DefaultModelBuilderFactory;
-import org.apache.maven.model.building.DefaultModelBuildingRequest;
-import org.apache.maven.model.building.FileModelSource;
-import org.apache.maven.model.building.ModelBuildingException;
-import org.apache.maven.model.building.ModelBuildingRequest;
-import org.apache.maven.model.building.ModelProblemCollector;
-import org.apache.maven.model.building.ModelProblemCollectorExt;
-import org.apache.maven.model.building.ModelSource;
+import org.apache.maven.model.*;
+import org.apache.maven.model.building.*;
 import org.apache.maven.model.resolution.InvalidRepositoryException;
 import org.apache.maven.model.resolution.ModelResolver;
 import org.apache.maven.model.resolution.UnresolvableModelException;
@@ -53,9 +27,9 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.RawModelBuilder;
 /**
  * Implementation of a POM model builder which resolves the effective model.
  */
-public class EffectiveModelBuilderImpl implements PomModelBuilder {
+public class EffectiveModelBuilder implements PomModelBuilder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveModelBuilderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveModelBuilder.class);
 
     private ModelResolverImpl modelResolver;
     private RawModelBuilder rawModelBuilder;
@@ -66,7 +40,7 @@ public class EffectiveModelBuilderImpl implements PomModelBuilder {
      * @param artifactProvider
      *            The artifact provider.
      */
-    public EffectiveModelBuilderImpl(ArtifactProvider artifactProvider) {
+    public EffectiveModelBuilder(ArtifactProvider artifactProvider) {
         this.modelResolver = new ModelResolverImpl(artifactProvider);
         this.rawModelBuilder = new RawModelBuilder();
     }

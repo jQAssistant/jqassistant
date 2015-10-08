@@ -99,7 +99,7 @@ public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
                     .get("r", MavenRepositoryDescriptor.class);
             Assert.assertNotNull(repositoryDescriptor);
             final int expectedNodes = 1;
-            Assert.assertEquals(expectedNodes, repositoryDescriptor.getContainedArtifacts().size());
+            Assert.assertEquals(expectedNodes, repositoryDescriptor.getContainedModels().size());
         } finally {
             store.commitTransaction();
             stopServer();

@@ -19,26 +19,18 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.AetherArtifactProvider;
-import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.EffectiveModelBuilderImpl;
+import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.EffectiveModelBuilder;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenIndex;
 import com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
@@ -88,7 +80,7 @@ public class MavenRepositoryScannerTest {
             buildWhenThenReturn(artifactProvider, artifactInfo);
         }
 
-        PomModelBuilder pomModelBuilder = mock(EffectiveModelBuilderImpl.class);
+        PomModelBuilder pomModelBuilder = mock(EffectiveModelBuilder.class);
         when(pomModelBuilder.getModel(any(File.class))).thenAnswer(new Answer<Model>() {
             @Override
             public Model answer(InvocationOnMock invocation) throws Throwable {
@@ -98,8 +90,6 @@ public class MavenRepositoryScannerTest {
             }
         });
 
-        final String repoUrl = "http://example.com/m2repo";
-
         Store store = mock(Store.class);
         ScannerContext context = mock(ScannerContext.class);
         when(context.getStore()).thenReturn(store);
@@ -108,12 +98,6 @@ public class MavenRepositoryScannerTest {
 
         MavenRepositoryDescriptor repoDescriptor = mock(MavenRepositoryDescriptor.class);
         when(artifactProvider.getRepositoryDescriptor()).thenReturn(repoDescriptor);
-        when(repoDescriptor.getArtifact(anyString())).thenReturn(null);
-
-        when(scanner.scan(any(FileResource.class), anyString(), Mockito.any(Scope.class))).thenReturn(mock(FileDescriptor.class));
-        when(scanner.scan(any(FileResource.class), Mockito.contains("pom"), Mockito.any(Scope.class))).thenReturn(mock(MavenPomXmlDescriptor.class));
-        when(store.addDescriptorType(any(Descriptor.class), eq(RepositoryArtifactDescriptor.class))).thenReturn(mock(RepositoryArtifactDescriptor.class));
-        when(store.addDescriptorType(any(Descriptor.class), eq(MavenArtifactDescriptor.class))).thenReturn(mock(MavenArtifactDescriptor.class));
 
         MavenRepositoryScannerPlugin plugin = new MavenRepositoryScannerPlugin();
         plugin.configure(context, new HashMap<String, Object>());
