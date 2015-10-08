@@ -7,11 +7,11 @@ import java.io.InputStream;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 
-public class ClassTypeScannerPlugin extends AbstractResourceScannerPlugin<Class<?>, ClassFileDescriptor> {
+public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>, ClassFileDescriptor> {
 
     @Override
     public boolean accepts(Class<?> item, String path, Scope scope) throws IOException {
@@ -27,7 +27,6 @@ public class ClassTypeScannerPlugin extends AbstractResourceScannerPlugin<Class<
                 return item.getResourceAsStream(fileName);
             }
         };
-        ClassFileDescriptor fileDescriptor = scanner.scan(fileResource, fileName, scope);
-        return toFileDescriptor(fileResource, fileDescriptor, fileName, scanner.getContext());
+        return scanner.scan(fileResource, fileName, scope);
     }
 }
