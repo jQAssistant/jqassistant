@@ -46,7 +46,7 @@ public class PackageIT extends AbstractJavaPluginIT {
                 currentPackage = null;
             }
         } while (currentPackage != null);
-        assertThat(query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) RETURN p").getColumn("p"), allOf(packageMatchers));
+        assertThat(query("MATCH (a:Artifact:Directory:Container)-[:CONTAINS]->(p:Package) RETURN p").getColumn("p"), allOf(packageMatchers));
         assertThat(query("MATCH (a:Artifact:Directory)-[:CONTAINS]->(p:Package) WHERE NOT (p)-[:CONTAINS]->(:Type) RETURN p").getColumn("p"),
                 hasItem(packageDescriptor(EMPTY_PACKAGE)));
         store.commitTransaction();
