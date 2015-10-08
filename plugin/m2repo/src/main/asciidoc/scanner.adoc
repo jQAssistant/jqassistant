@@ -41,43 +41,23 @@ A remote Maven repository.
 |====
 | Name      	| Description
 | url 			| the remote URL
-| lastScanDate	| timestamp of the last successful scan
+| lastUpdate	| timestamp of the last scan
 |====
 
 .Relations of :Maven:Repository
 [options="header"]
 |====
-| Name         | Target label(s)               | Cardinality | Description
-| CONTAINS_POM | <<:RepositoryArtifact:Maven>> | 0..n        | References the POMs in the repository
+| Name              | Target label(s)            | Cardinality | Description
+| CONTAINS_POM      | <<:Maven:Pom:Xml>>  | 0..n | References the POMs in the repository
+| CONTAINS_ARTIFACT | <<:Maven:Artifact>> | 0..n | References the artifacts in the repository
 |====
 
 <<MavenArtifactScanner>>
 [[MavenArtifactScanner]]
 == Scanner for remote maven artifacts
 Gets the maven artifact coordinates to retrieve the artifact from an repository and scans it. The scanner accepts org.apache.maven.index.ArtifactInfo-Items 
-with the scope maven:repository.
+with the scope "maven:repository".
 
-This plugin needs some prerequisites to work properly. The context must contain a MavenRepositoryDescriptor to which the new Maven Artifact belongs and an
+NOTE: This plugin needs some prerequisites to work properly. The context must contain a MavenRepositoryDescriptor to which the new Maven Artifact belongs and an
 ArtifactProvider-Object to load the artifact from the configured repository.
 
-=== :RepositoryArtifact:Maven
-A Maven artifact (e.g. *.pom, *.jar).
-
-.Properties of :RepositoryArtifact:Maven
-[options="header"]
-|====
-| Name       		| Description
-| mavenCoordinates  | The maven coordinates <groupId>:<artifactId>:<type>:(<classifier>:)<version>.
-| group      		| The group id
-| name 		 		| The artifact id
-| type       		| The type, e.g. "jar"
-| classifier 		| The classifier
-| version    		| The version
-|====
-
-.Relations of :RepositoryArtifact:Maven
-[options="header"]
-|====
-| Name          	| Target label(s)             	| Cardinality | Description
-| HAS_PREDECESSOR 	| <<:RepositoryArtifact:Maven>> | 0..1        | References a predecessor snapshot repository artifact
-|====
