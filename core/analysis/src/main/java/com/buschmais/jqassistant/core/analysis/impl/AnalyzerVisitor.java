@@ -1,20 +1,18 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.util.*;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.XOException;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -186,7 +184,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
                 if (columnNames == null) {
                     columnNames = new ArrayList<>(rowObject.getColumns());
                 }
-                Map<String, Object> row = new HashMap<>();
+                Map<String, Object> row = new LinkedHashMap<>();
                 for (String columnName : columnNames) {
                     row.put(columnName, rowObject.get(columnName, Object.class));
                 }
