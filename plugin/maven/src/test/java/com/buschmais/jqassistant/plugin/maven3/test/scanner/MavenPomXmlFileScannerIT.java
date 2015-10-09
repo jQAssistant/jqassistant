@@ -72,6 +72,9 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Checks if a Maven plugin has also the label Maven.
+     */
     @Test
     public void pluginCanBeFoundWithLabelsMavenAndPlugin() throws Exception {
         scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
