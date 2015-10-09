@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -67,6 +69,25 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         PomDependsOnDescriptor dependsOnDescriptor = dependencies.get(0);
         ArtifactDescriptor test1Artifact = store.find(ArtifactDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
         assertThat(dependsOnDescriptor.getDependency(), is(test1Artifact));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void pluginCanBeFoundWithLabelsMavenAndPlugin() throws Exception {
+        scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
+
+        store.beginTransaction();
+
+        // Precondition that parent POM can be found
+        List<MavenPomXmlDescriptor> mavenPomDescriptors =
+             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
+        Assert.assertEquals(1, mavenPomDescriptors.size());
+
+        // Now let us see if we can find a plugin with given labels Plugin and Maven
+        List<Plugin> plugins = query("MATCH (plug:Maven:Plugin) RETURN plug AS p").getColumn("p");
+
+        assertThat(plugins, hasSize(15));
+
         store.commitTransaction();
     }
 
