@@ -1,7 +1,11 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.IOException;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -16,6 +20,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  */
 @Requires(FileDescriptor.class)
 public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> extends AbstractScannerPlugin<FileResource, D> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveScannerPlugin.class);
 
     @Override
     public Class<? extends FileResource> getType() {
@@ -37,12 +43,15 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
         ScannerContext scannerContext = scanner.getContext();
         FileDescriptor fileDescriptor = scannerContext.peek(FileDescriptor.class);
         D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
-        ZipFile zipFile = new ZipFile(file.getFile());
         scannerContext.push(ArchiveDescriptor.class, archive);
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
         try {
+            ZipFile zipFile = new ZipFile(file.getFile());
             scanner.scan(zipFile, path, archiveScope);
-        } finally {
+        } catch (ZipException e) {
+            LOGGER.warn("Cannot read ZIP file '" + path + "'.", e);
+        }
+        finally {
             destroyScope(scannerContext);
             scannerContext.pop(ArchiveDescriptor.class);
         }
