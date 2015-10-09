@@ -12,7 +12,7 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.ExtendedCommunityNeoServer;
 
 /**
  * Starts an embedded Neo4j server.
@@ -23,7 +23,7 @@ public class ServerMojo extends AbstractProjectMojo {
     /**
      * The address the server shall bind to.
      */
-    @Parameter(property = "jqassistant.server.address", defaultValue = DefaultServerImpl.DEFAULT_ADDRESS)
+    @Parameter(property = "jqassistant.server.address", defaultValue = ExtendedCommunityNeoServer.DEFAULT_ADDRESS)
     protected String serverAddress;
 
     /**
@@ -40,9 +40,9 @@ public class ServerMojo extends AbstractProjectMojo {
     @Override
     protected void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException,
             MojoFailureException {
-        Server server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepositoryProvider.getScannerPluginRepository(),
+        Server server = new ExtendedCommunityNeoServer((EmbeddedGraphStore) store, pluginRepositoryProvider.getScannerPluginRepository(),
                 pluginRepositoryProvider.getRulePluginRepository(), serverAddress, serverPort != null ? serverPort
-                        : DefaultServerImpl.DEFAULT_PORT);
+                        : ExtendedCommunityNeoServer.DEFAULT_PORT);
         server.start();
         getLog().info("Running server for module " + rootModule.getGroupId() + ":" + rootModule.getArtifactId() + ":" + rootModule.getVersion());
         getLog().info("Press <Enter> to finish.");
