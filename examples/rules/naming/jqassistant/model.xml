@@ -32,7 +32,7 @@
         <description>All model classes must be located in the package "model".</description>
         <cypher><![CDATA[
             MATCH
-                (package:PACKAGE)-[:CONTAINS]->(modelClass:Class:Model)
+                (package:Package)-[:CONTAINS]->(modelClass:Class:Model)
             WHERE
                 NOT package.name = "model"
             RETURN
