@@ -17,7 +17,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  *
  */
 @Label("Plugin")
-public interface MavenPluginDescriptor extends MavenDependentDescriptor, ConfigurableDescriptor {
+public interface MavenPluginDescriptor extends MavenDependentDescriptor, MavenDescriptor,
+                                               ConfigurableDescriptor {
 
     @Relation("IS_ARTIFACT")
     MavenArtifactDescriptor getArtifact();
