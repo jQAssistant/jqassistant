@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.ExtendedCommunityNeoServer;
 
 /**
  * Abstract base class for server tests.
@@ -27,7 +27,7 @@ public class AbstractServerTest extends AbstractJavaPluginIT {
         EmbeddedGraphStore embeddedGraphStore = (EmbeddedGraphStore) store;
         final ScannerPluginRepository scannerPluginRepository = getScannerPluginRepository();
         final RulePluginRepository rulePluginRepository = getRulePluginRepository();
-        server = new DefaultServerImpl(embeddedGraphStore, scannerPluginRepository, rulePluginRepository, DefaultServerImpl.DEFAULT_ADDRESS, SERVER_PORT);
+        server = new ExtendedCommunityNeoServer(embeddedGraphStore, scannerPluginRepository, rulePluginRepository, ExtendedCommunityNeoServer.DEFAULT_ADDRESS, SERVER_PORT);
         server.start();
     }
 

@@ -15,7 +15,7 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
  * The class adds the {@link JQAServerModule}
  * </p>
  */
-public class DefaultServerImpl extends AbstractServer {
+public class ExtendedCommunityNeoServer extends AbstractServer {
 
     public static final String DEFAULT_ADDRESS = "localhost";
 
@@ -37,8 +37,8 @@ public class DefaultServerImpl extends AbstractServer {
      * @param port
      *            The port number of the server.
      */
-    public DefaultServerImpl(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository,
-            RulePluginRepository rulePluginRepository, String address, int port) {
+    public ExtendedCommunityNeoServer(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository,
+                                      RulePluginRepository rulePluginRepository, String address, int port) {
         super(graphStore);
         init(scannerPluginRepository, rulePluginRepository, address, port);
     }
