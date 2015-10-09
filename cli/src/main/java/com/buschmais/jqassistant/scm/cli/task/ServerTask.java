@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.DefaultServerImpl;
+import com.buschmais.jqassistant.scm.neo4jserver.impl.ExtendedCommunityNeoServer;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
@@ -31,7 +31,7 @@ public class ServerTask extends AbstractTask {
     protected void executeTask(final Store store) throws CliExecutionException {
         Server server;
         try {
-            server = new DefaultServerImpl((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(), pluginRepository
+            server = new ExtendedCommunityNeoServer((EmbeddedGraphStore) store, pluginRepository.getScannerPluginRepository(), pluginRepository
                     .getRulePluginRepository(), serverAddress, serverPort);
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get plugins.", e);
@@ -59,7 +59,7 @@ public class ServerTask extends AbstractTask {
 
     @Override
     public void withOptions(CommandLine options) {
-        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, DefaultServerImpl.DEFAULT_ADDRESS);
-        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(DefaultServerImpl.DEFAULT_PORT)));
+        serverAddress = getOptionValue(options, CMDLINE_OPTION_SERVERADDRESS, ExtendedCommunityNeoServer.DEFAULT_ADDRESS);
+        serverPort = Integer.valueOf(getOptionValue(options, CMDLINE_OPTION_SERVERPORT, Integer.toString(ExtendedCommunityNeoServer.DEFAULT_PORT)));
     }
 }
