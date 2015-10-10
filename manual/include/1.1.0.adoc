@@ -18,6 +18,10 @@
 ==== Maven Repository
 - Resolve the POM model to provide full information about dependencies, plugins, etc.
 - Added properties for filtering artifacts while scanning
+- Added a relation CONTAINS_POM from the repository to each contained POM model (:Maven:Pom:Xml)
+
+==== Tycho
+- Upgraded scanner plugin to to Tycho 0.23.1 to fix compatibility issues
 
 ==== YAML
 - Added plugin which provides a scanner for YAML files
