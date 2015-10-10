@@ -3,7 +3,7 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant</artifactId>
-    <version>1.1.0-RC1</version>
+    <version>1.1.0-RC2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <url>https://github.com/buschmais/jqassistant</url>
@@ -25,7 +25,7 @@
         <connection>scm:git:git://github.com/buschmais/jqassistant.git</connection>
         <developerConnection>scm:git:git@github.com:buschmais/jqassistant.git</developerConnection>
         <url>https://github.com/buschmais/jqassistant</url>
-      <tag>1.1.0-RC1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <repositories>
