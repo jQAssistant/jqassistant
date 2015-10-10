@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.eclipse.tycho</groupId>
             <artifactId>tycho-packaging-plugin</artifactId>
-            <version>0.21.0</version>
+            <version>0.23.1</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
