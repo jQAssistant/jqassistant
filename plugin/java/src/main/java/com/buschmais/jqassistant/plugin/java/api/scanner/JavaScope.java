@@ -27,11 +27,11 @@ public enum JavaScope implements Scope {
         }
 
         private TypeResolver getTypeResolver(ScannerContext context) {
-            TypeResolver typeResolver = context.peek(TypeResolver.class);
+            TypeResolver typeResolver = context.peekOrDefault(TypeResolver.class, null);
             if (typeResolver != null) {
                 return new DelegatingTypeResolver(typeResolver);
             } else {
-                JavaArtifactFileDescriptor artifactDescriptor = context.peek(JavaArtifactFileDescriptor.class);
+                JavaArtifactFileDescriptor artifactDescriptor = context.peekOrDefault(JavaArtifactFileDescriptor.class, null);
                 if (artifactDescriptor != null) {
                     return new ClasspathScopedTypeResolver(artifactDescriptor);
                 }
