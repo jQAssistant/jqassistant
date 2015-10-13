@@ -37,8 +37,24 @@ public interface ScannerContext {
      * @param <T>
      *            The type of the value.
      * @return The value.
+     * @throws IllegalStateException
+     *             If the context does not provide a value for the given key.
      */
     <T> T peek(Class<T> key);
+
+    /**
+     * Peek for a value in the context. If no value is available return the
+     * provided default value.
+     *
+     * @param key
+     *            The type of the value.
+     * @param defaultValue
+     *            The default value to return.
+     * @param <T>
+     *            The type of the value.
+     * @return The value.
+     */
+    <T> T peekOrDefault(Class<T> key, T defaultValue);
 
     /**
      * Pop a value from the context.
