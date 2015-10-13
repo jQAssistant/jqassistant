@@ -150,6 +150,14 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         });
     }
 
+    /**
+     * Executes the given scan operation.
+     * 
+     * @param artifactId
+     *            The artifact id of the artifact to push on the context.
+     * @param operation
+     *            The operation.
+     */
     protected void execute(String artifactId, ScanClassPathOperation operation) {
         store.beginTransaction();
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
@@ -163,7 +171,19 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Operation to execute for scanning a classpath.
+     */
     protected interface ScanClassPathOperation {
+
+        /**
+         * Perform the scan.
+         * 
+         * @param artifact
+         *            The artifact.
+         * @param scanner
+         *            The scanner.
+         */
         void scan(JavaArtifactFileDescriptor artifact, Scanner scanner);
     }
 }

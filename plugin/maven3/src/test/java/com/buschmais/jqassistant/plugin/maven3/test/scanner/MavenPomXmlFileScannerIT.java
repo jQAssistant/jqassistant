@@ -3,34 +3,60 @@ package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
-    @Override
-    protected Scanner getScanner() {
-        Scanner scanner = super.getScanner();
-        scanner.getContext().push(ArtifactResolver.class, new MavenArtifactResolver());
-        return scanner;
+    /**
+     * Scans and tests pom.xml files.
+     *
+     * @throws IOException
+     *             error during scan
+     */
+    @Test
+    public void artifactResolver() throws IOException {
+        final File directory = getClassesDirectory(MavenPomXmlFileScannerIT.class);
+        final ArtifactResolver artifactResolverSpy = Mockito.spy(new MavenArtifactResolver());
+        execute(ARTIFACT_ID, new ScanClassPathOperation() {
+            @Override
+            public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
+                ScannerContext context = scanner.getContext();
+                context.push(ArtifactResolver.class, artifactResolverSpy);
+                scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
+                context.pop(ArtifactResolver.class);
+            }
+        });
+        verify(artifactResolverSpy, atLeastOnce()).resolve(Mockito.any(Coordinates.class), Mockito.any(Class.class), Mockito.any(ScannerContext.class));
+        store.beginTransaction();
+        validateParentPom();
+        validateChildPom();
+        store.commitTransaction();
     }
 
     /**
@@ -82,11 +108,11 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.beginTransaction();
 
         // Precondition that parent POM can be found
-        List<MavenPomXmlDescriptor> mavenPomDescriptors =
-             query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
+        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
         Assert.assertEquals(1, mavenPomDescriptors.size());
 
-        // Now let us see if we can find a plugin with given labels Plugin and Maven
+        // Now let us see if we can find a plugin with given labels Plugin and
+        // Maven
         List<Plugin> plugins = query("MATCH (plug:Maven:Plugin) RETURN plug AS p").getColumn("p");
 
         assertThat(plugins, hasSize(15));

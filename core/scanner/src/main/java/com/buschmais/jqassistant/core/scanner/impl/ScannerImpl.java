@@ -4,23 +4,13 @@ import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
+import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
 
@@ -82,8 +72,8 @@ public class ScannerImpl implements Scanner {
             } catch (IOException e) {
                 LOGGER.warn("Cannot scan item " + path, e);
             } catch (RuntimeException e) {
-                throw new IllegalStateException("Unexpected problem while scanning: item='" + item + "', path='" + path + "', scope='" + scope
-                        + "', pipeline='" + pipeline + "'.", e);
+                throw new IllegalStateException(
+                        "Unexpected problem while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='" + pipeline + "'.", e);
             }
         }
         if (pipelineCreated) {
@@ -221,7 +211,7 @@ public class ScannerImpl implements Scanner {
     }
 
     private void enterScope(Scope newScope) {
-        Scope oldScope = scannerContext.peek(Scope.class);
+        Scope oldScope = scannerContext.peekOrDefault(Scope.class, null);
         if (newScope != null && !newScope.equals(oldScope)) {
             newScope.create(scannerContext);
         }
@@ -230,7 +220,7 @@ public class ScannerImpl implements Scanner {
 
     private void leaveScope(Scope newScope) {
         scannerContext.pop(Scope.class);
-        Scope oldScope = scannerContext.peek(Scope.class);
+        Scope oldScope = scannerContext.peekOrDefault(Scope.class, null);
         if (newScope != null && !newScope.equals(oldScope)) {
             newScope.destroy(scannerContext);
         }
