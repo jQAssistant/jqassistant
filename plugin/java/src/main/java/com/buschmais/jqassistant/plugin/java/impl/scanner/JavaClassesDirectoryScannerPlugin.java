@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner;
 
+import java.io.File;
+import java.util.Arrays;
+
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -7,9 +10,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScan
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-
-import java.io.File;
-import java.util.Arrays;
 
 /**
  * A scanner plugin for directories containing java classes.
@@ -33,7 +33,7 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
 
     @Override
     protected JavaClassesDirectoryDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {
-        JavaArtifactFileDescriptor javaArtifactDescriptor = scannerContext.peek(JavaArtifactFileDescriptor.class);
+        JavaArtifactFileDescriptor javaArtifactDescriptor = scannerContext.peekOrDefault(JavaArtifactFileDescriptor.class, null);
         Store store = scannerContext.getStore();
         if (javaArtifactDescriptor == null) {
             return store.create(JavaClassesDirectoryDescriptor.class);
