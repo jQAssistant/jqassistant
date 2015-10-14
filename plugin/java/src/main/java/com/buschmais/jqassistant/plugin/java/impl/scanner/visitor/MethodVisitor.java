@@ -14,6 +14,11 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
 
+    /**
+     * Annotation indicating a synthetic parameter of a method.
+     */
+    private static final String JAVA_LANG_SYNTHETIC = "java.lang.Synthetic";
+
     private TypeCache.CachedType containingType;
     private MethodDescriptor methodDescriptor;
     private VisitorHelper visitorHelper;
@@ -31,9 +36,10 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
         String annotationType = SignatureHelper.getType(desc);
-        if ("java.lang.Synthetic".equals(annotationType)) {
-            // Ignore synthetic parameters add the start of the signature.
-            syntheticParameters++;
+        if (JAVA_LANG_SYNTHETIC.equals(annotationType)) {
+            // Ignore synthetic parameters add the start of the signature, i.e.
+            // determine the number of synthetic parameters
+            syntheticParameters = Math.max(syntheticParameters, parameter + 1);
             return null;
         }
         ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
