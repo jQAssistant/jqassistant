@@ -10,16 +10,6 @@
         ]]></cypher>
     </concept>
 
-    <concept id="default:CustomTestConcept">
-        <description>Test concept.</description>
-        <cypher><![CDATA[
-           create
-             (n:CustomTestConcept)
-           return
-              n
-        ]]></cypher>
-    </concept>
-
     <constraint id="default:TestConstraint">
         <requiresConcept refId="default:TestConcept"/>
         <description>Test constraint.</description>
