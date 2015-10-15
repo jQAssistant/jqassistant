@@ -98,10 +98,9 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         final List<File> ruleFiles = new ArrayList<>();
         try {
             new DirectoryWalker<File>() {
-
                 @Override
                 protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (!file.isDirectory() && file.getName().endsWith(".xml")) {
+                    if (!file.isDirectory()) {
                         results.add(file);
                     }
                 }
