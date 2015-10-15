@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.google.common.base.Predicate;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -189,10 +190,35 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    @Ignore
     public void scanScalarsOfScalarsYAML() {
-        Assert.fail("Not implemented yet!");
-//        "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml"
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml");
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query("MATCH (f:YAML:File) WHERE f.fileName=~'.*/sec-2.1-example-2.2-scalars-of-scalars.yaml' RETURN f")
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, not(empty()));
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor yamlFileDescriptor = fileDescriptors.get(0);
+
+        assertThat(yamlFileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor yamlDocumentDescriptor = yamlFileDescriptor.getDocuments().get(0);
+
+        assertThat(yamlDocumentDescriptor.getKeys(), hasSize(3));
+        assertThat(yamlDocumentDescriptor.getValues(), Matchers.empty());
+
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "hr"), Matchers.notNullValue());
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "avg"), Matchers.notNullValue());
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "rbi"), Matchers.notNullValue());
+
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "hr").getValues(), hasSize(1));
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "avg").getValues(), hasSize(1));
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "rbi").getValues(), hasSize(1));
     }
 
     @Test
