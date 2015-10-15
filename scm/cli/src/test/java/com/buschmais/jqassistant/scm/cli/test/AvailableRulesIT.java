@@ -17,9 +17,6 @@ import org.junit.Test;
  */
 public class AvailableRulesIT extends AbstractCLIIT {
 
-    public static final String TEST_CONCEPT = "default:TestConcept";
-    public static final String CUSTOM_TEST_CONCEPT = "default:CustomTestConcept";
-
     @Test
     public void listUsingRuleDirectory() throws IOException, InterruptedException {
         String rulesDirectory = AvailableRulesIT.class.getResource("/rules").getFile();
@@ -34,12 +31,11 @@ public class AvailableRulesIT extends AbstractCLIIT {
 
     @Test
     public void listUsingRulesUrl() throws IOException, InterruptedException {
-        URL rulesUrl = AvailableRulesIT.class.getResource("/rules/default.xml");
+        URL rulesUrl = AvailableRulesIT.class.getResource("/rules/custom.adoc");
         String[] args = new String[] { "available-rules", "-rulesUrl", rulesUrl.toString() };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode(), equalTo(0));
         List<String> standardConsole = executionResult.getStandardConsole();
-        assertThat(standardConsole, hasItem(containsString(TEST_CONCEPT)));
         assertThat(standardConsole, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
         assertThat(standardConsole, not(hasItem(containsString("junit4:TestMethod"))));
     }
