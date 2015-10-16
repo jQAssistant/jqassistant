@@ -70,10 +70,11 @@
     </developers>
 
     <prerequisites>
-        <maven>3.0.5</maven>
+        <maven>${maven.min.version}</maven>
     </prerequisites>
 
     <properties>
+        <maven.min.version>3.2.5</maven.min.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo_version>0.6.0</com.buschmais.xo_version>
@@ -250,7 +251,7 @@
                             <configuration>
                                 <rules>
                                     <requireMavenVersion>
-                                        <version>(3.0.5,)</version>
+                                        <version>(${maven.min.version},)</version>
                                     </requireMavenVersion>
                                     <requireJavaVersion>
                                         <version>1.8</version>
