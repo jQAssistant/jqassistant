@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.Finders.findKeyByName;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.Finders.findValueByValue;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.util.StringValueMatcher.hasValue;
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -16,9 +18,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -29,7 +29,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
@@ -733,35 +732,5 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                   .getColumn("c");
 
         assertThat(childNodes, anyOf(empty(), nullValue()));
-    }
-
-    /**
-     * Finds a value by its value. This method helps
-     * to make the tests more stable as the order of
-     * search result collection elements might vary.
-     */
-    static <T extends YAMLValueDescriptor> T findValueByValue(Collection<T> in, String value) {
-        for (T element : in) {
-            if (value.equals(element.getValue())) {
-                return element;
-            }
-        }
-
-        throw new NoSuchElementException("No entry with value '" + value + "' found.");
-    }
-
-    /**
-     * Finds a descriptor by the name of the node. This method
-     * helps to make the tests more stable as the order of the
-     * search result collection elements might vary.
-     */
-    static <T extends NamedDescriptor> T findKeyByName(Collection<T> in, String name) {
-        for (T element : in) {
-            if (name.equals(element.getName())) {
-                return element;
-            }
-        }
-
-        throw new NoSuchElementException("No entry with name '" + name + "' found.");
     }
 }
