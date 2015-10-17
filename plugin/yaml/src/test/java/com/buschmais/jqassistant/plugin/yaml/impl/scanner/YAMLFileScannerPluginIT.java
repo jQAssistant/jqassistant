@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.Finders.findKeyByName;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.Finders.findValueByValue;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.util.StringValueMatcher.hasValue;
 import static java.lang.String.format;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -16,9 +18,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
@@ -29,7 +29,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
@@ -189,10 +188,35 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    @Ignore
     public void scanScalarsOfScalarsYAML() {
-        Assert.fail("Not implemented yet!");
-//        "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml"
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml");
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query("MATCH (f:YAML:File) WHERE f.fileName=~'.*/sec-2.1-example-2.2-scalars-of-scalars.yaml' RETURN f")
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, not(empty()));
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor yamlFileDescriptor = fileDescriptors.get(0);
+
+        assertThat(yamlFileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor yamlDocumentDescriptor = yamlFileDescriptor.getDocuments().get(0);
+
+        assertThat(yamlDocumentDescriptor.getKeys(), hasSize(3));
+        assertThat(yamlDocumentDescriptor.getValues(), Matchers.empty());
+
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "hr"), Matchers.notNullValue());
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "avg"), Matchers.notNullValue());
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "rbi"), Matchers.notNullValue());
+
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "hr").getValues(), hasSize(1));
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "avg").getValues(), hasSize(1));
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "rbi").getValues(), hasSize(1));
     }
 
     @Test
@@ -708,35 +732,5 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                   .getColumn("c");
 
         assertThat(childNodes, anyOf(empty(), nullValue()));
-    }
-
-    /**
-     * Finds a value by its value. This method helps
-     * to make the tests more stable as the order of
-     * search result collection elements might vary.
-     */
-    static <T extends YAMLValueDescriptor> T findValueByValue(Collection<T> in, String value) {
-        for (T element : in) {
-            if (value.equals(element.getValue())) {
-                return element;
-            }
-        }
-
-        throw new NoSuchElementException("No entry with value '" + value + "' found.");
-    }
-
-    /**
-     * Finds a descriptor by the name of the node. This method
-     * helps to make the tests more stable as the order of the
-     * search result collection elements might vary.
-     */
-    static <T extends NamedDescriptor> T findKeyByName(Collection<T> in, String name) {
-        for (T element : in) {
-            if (name.equals(element.getName())) {
-                return element;
-            }
-        }
-
-        throw new NoSuchElementException("No entry with name '" + name + "' found.");
     }
 }

@@ -13,6 +13,7 @@
 
 === CLI
 - Added serverAddress and serverPort parameters to server task
+- Fixed a problem that .adoc files containing rules have not been evaluated
 
 === Plugins
 

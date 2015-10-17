@@ -43,9 +43,8 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
 
-
-
-        Yaml yaml = new Yaml(new TagOverridingConstructor());
+        Yaml yaml = new Yaml(new TagOverridingConstructor(), new Representer(), new DumperOptions(),
+                             new NonResolvingResolver());
         Representer representer = new Representer();
         DumperOptions options = new DumperOptions();
 
@@ -81,13 +80,22 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         return yamlFileDescriptor;
     }
 
+    /**
+     * This resolver does not resolve any types, that means that there is not
+     * implicit type conversion as OFF -> true or YES -> true.
+     */
+    private static class NonResolvingResolver extends Resolver {
+        @Override
+        protected void addImplicitResolvers() {
+        }
+    }
+
 
     class TagOverridingConstructor extends Constructor {
         private List<Tag> SUPPORTED_TAGS =
              Arrays.asList(Tag.YAML, Tag.MERGE,
                            Tag.SET, Tag.PAIRS, Tag.OMAP,
                            Tag.BINARY, Tag.INT, Tag.FLOAT,
-//                           Tag.TIMESTAMP,
                            Tag.BOOL, Tag.NULL,
                            Tag.STR, Tag.SEQ, Tag.MAP);
 
