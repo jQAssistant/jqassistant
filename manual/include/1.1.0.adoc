@@ -1,17 +1,18 @@
 == 1.1.0
 
 === Core
-- make sure that ids used for concepts, constraints or groups are unique nevertheless if they have been defined in XML or Asciidoc documents
+- Groups may be defined in AsciiDoc documents
+- Make sure that ids used for concepts, constraints or groups are unique nevertheless if they have been defined in XML or AsciiDoc documents
 - Upgraded to Neo4j 2.2.5
 - For plugin developers: marked the descriptor _com.buschmais.jqassistant.core.store.api.model.NamedDescriptor_ as deprecated
   and replaced it by _com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor_, plugin implementations should use this type
 
 === Maven
-- reset store (i.e. database) while building the root module of a project (was: execution root of Maven reactor)
-- added serverAddress and serverPort parameters to jqassistant:server goal
+- Reset store (i.e. database) while building the root module of a project (was: execution root of Maven reactor)
+- Added serverAddress and serverPort parameters to jqassistant:server goal
 
 === CLI
-- added serverAddress and serverPort parameters to server task
+- Added serverAddress and serverPort parameters to server task
 
 === Plugins
 
@@ -32,5 +33,5 @@
 ==== JUnit
 - Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
 
-
-
+=== Documentation
+- Added an example to demonstrate using rules in AsciiDoc documents
