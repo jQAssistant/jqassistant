@@ -90,6 +90,7 @@ public class ReportHelperTest {
         Result<T> ruleResult = mock(Result.class);
         T rule = mock(ruleType);
         when(rule.getId()).thenReturn(id);
+        when(rule.getDescription()).thenReturn("A\ndescription\r\n.\r");
         when(ruleResult.getRule()).thenReturn(rule);
         when(ruleResult.getStatus()).thenReturn(status);
         when(ruleResult.getSeverity()).thenReturn(severity);
