@@ -1,6 +1,13 @@
+The following constraints apply for modules:
+
+[[default]]
+[role=group,includesConstraints="module-structure:ApiMustNotDependOnImplementation(blocker)"]
+- <<module-structure:ApiMustNotDependOnImplementation>>
+
+Modules can provide their API types (e.g. interfaces and domain objects) in a package "api":
 
 [[module-structure:Api]]
-.Labels all "api" packages with "Api".
+.Marks all "api" packages with "Api".
 [source,cypher,role=concept]
 ----
 match
@@ -12,31 +19,31 @@ set
 return
   p as ApiPackage
 ----
+
+Implementation types of a module are located in "impl" packages:
 
 [[module-structure:Impl]]
-.Labels all "impl" packages with "Impl".
-[source,cypher,role=concept]
+.Marks all "impl" packages with "Impl".
+[source,cypher,role=concept,severity=minor]
 ----
 match
   (p:Package)
 where
   p.name="api"
 set
-  p:Api
+  p:Impl
 return
-  p as ApiPackage
+  p as ImplPackage
 ----
-
 
 [[module-structure:ApiMustNotDependOnImplementation]]
 .Types contained within an API package must not have dependencies to types contained in an implementation package.
-[source,cypher,role=constraint,depends="module-structure:Api, module-structure:Impl"]]
+[source,cypher,role=constraint,requiresConcepts="module-structure:Api,module-structure:Impl",severity=critical]]
 ----
 match
   (:Api:Package)-[:CONTAINS*0..]->(t1:Type),
   (:Impl:Package)-[:CONTAINS*0..]->(t2:Type),
-  (t1)-[:DEPENDS_ON]-(ts)
+  (t1)-[:DEPENDS_ON]-(t2)
 return
   t1 as ApiType, t2 as ImplementationType
 ----
-

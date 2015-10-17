@@ -4,6 +4,8 @@
 :author: Dirk Mahler
 :version: 1.0.0-M03+
 
+NOTE: This file uses "depends" as attribute to require concepts.
+
 As a follow up of the last post http://jqassistant.org/junit-assertions-without-message/[Find JUnit assertions without a message] another useful constraint can be created using a set of cypher queries.
 
 How can we find all test implementations which do not perform any assertion?

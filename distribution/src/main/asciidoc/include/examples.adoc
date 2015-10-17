@@ -1,6 +1,7 @@
 == Examples
 
 === Rules
+include::{docRoot}/jqassistant.examples.rules.asciidoc/readme.adoc[]
 include::{docRoot}/jqassistant.examples.rules.forbiddenmethod/readme.adoc[]
 include::{docRoot}/jqassistant.examples.rules.naming/readme.adoc[]
 include::{docRoot}/jqassistant.examples.rules.scripting/readme.adoc[]

@@ -1,0 +1,29 @@
+==== AsciiDoc
+
+Demonstrates definition of rules in AsciiDoc documents.
+
+The file "jqassistant/module-structure.adoc" provides the following definitions:
+
+The group "default"::
+  A group can be applied to any block in the document, e.g. a head line, a list, etc by adding a role attribute with value
+  "group". The attributes "includeGroups", "includesConcepts" and "includesConstraints" reference the rules which should
+  be included and are given as comma separated lists of their ids. For concepts and constraints their default severity may
+  be overwritten.
+
+The concepts "module-structure:Api", "module-structure:Impl" and the constraint "module-structure:ApiMustNotDependOnImplementation"::
+  Concepts and constraints are code blocks (i.e. cypher) with a role attribute being either "concept" or "constraint". Further
+  allowed attributes are "severity" and "requiresConcepts".
+
+[source]
+.jqassistant/module-structure.adoc
+....
+include::{docRoot}/jqassistant.examples.rules.asciidoc/src/jqassistant/module-structure.adoc[]
+....
+
+The AsciiDoc document renders to the following output:
+
+===============
+include::{docRoot}/jqassistant.examples.rules.asciidoc/src/jqassistant/module-structure.adoc[]
+===============
+
+
