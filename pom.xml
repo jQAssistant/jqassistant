@@ -70,7 +70,7 @@
     </developers>
 
     <prerequisites>
-        <maven>${maven.min.version}</maven>
+        <maven>[${maven.min.version},)</maven>
     </prerequisites>
 
     <properties>
@@ -251,7 +251,7 @@
                             <configuration>
                                 <rules>
                                     <requireMavenVersion>
-                                        <version>(${maven.min.version},)</version>
+                                        <version>[${maven.min.version},)</version>
                                     </requireMavenVersion>
                                     <requireJavaVersion>
                                         <version>1.8</version>
@@ -299,14 +299,9 @@
                     <version>${project.version}</version>
                     <executions>
                         <execution>
-                            <id>scan</id>
+                            <id>default</id>
                             <goals>
                                 <goal>scan</goal>
-                            </goals>
-                        </execution>
-                        <execution>
-                            <id>analyze</id>
-                            <goals>
                                 <goal>analyze</goal>
                             </goals>
                         </execution>

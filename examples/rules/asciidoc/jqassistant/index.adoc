@@ -1,8 +1,12 @@
+= Coding Rules
+
 The following constraints apply for modules:
 
 [[default]]
 [role=group,includesConstraints="module-structure:ApiMustNotDependOnImplementation(blocker)"]
 - <<module-structure:ApiMustNotDependOnImplementation>>
+
+== Packages for API and implementation
 
 Modules can provide their API types (e.g. interfaces and domain objects) in a package "api":
 

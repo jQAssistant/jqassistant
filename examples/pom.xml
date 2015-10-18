@@ -27,9 +27,10 @@
                 <artifactId>jqassistant-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>scan</id>
+                        <id>default</id>
                         <goals>
                             <goal>scan</goal>
+                            <goal>analyze</goal>
                         </goals>
                     </execution>
                     <execution>
@@ -39,17 +40,9 @@
                         </goals>
                         <phase>post-integration-test</phase>
                     </execution>
-                    <execution>
-                        <id>analyze</id>
-                        <goals>
-                            <goal>analyze</goal>
-                        </goals>
-                        <configuration>
-                            <failOnViolations>false</failOnViolations>
-                        </configuration>
-                    </execution>
                 </executions>
                 <configuration>
+                    <failOnViolations>false</failOnViolations>
                     <storeLifecycle>MODULE</storeLifecycle>
                 </configuration>
             </plugin>
