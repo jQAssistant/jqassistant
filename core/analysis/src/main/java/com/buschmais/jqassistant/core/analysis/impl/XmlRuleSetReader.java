@@ -2,13 +2,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -22,44 +16,9 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
-import com.buschmais.jqassistant.core.analysis.api.rule.Report;
-import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.api.rule.Template;
-import com.buschmais.jqassistant.core.analysis.api.rule.TemplateExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.AggregationVerificationType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ExecutableRuleType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReportType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.RowCountVerificationType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ScriptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.TemplateType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.VerificationType;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader} implementation.
@@ -285,11 +244,11 @@ public class XmlRuleSetReader implements RuleSetReader {
         return references;
     }
 
-    private Map<String, Severity> getReferences(List<IncludedReferenceType> referenceType, Severity defaultConceptSeverity) {
+    private Map<String, Severity> getReferences(List<IncludedReferenceType> referenceType, Severity defaultSeverity) {
         Map<String, Severity> references = new HashMap<>();
-        for (IncludedReferenceType includedRefereceType : referenceType) {
-            Severity severity = getSeverity(includedRefereceType.getSeverity(), defaultConceptSeverity);
-            references.put(includedRefereceType.getRefId(), severity);
+        for (IncludedReferenceType includedReferenceType : referenceType) {
+            Severity severity = getSeverity(includedReferenceType.getSeverity(), defaultSeverity);
+            references.put(includedReferenceType.getRefId(), severity);
         }
         return references;
     }
