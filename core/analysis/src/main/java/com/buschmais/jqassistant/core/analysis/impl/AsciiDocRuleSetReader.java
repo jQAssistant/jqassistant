@@ -123,9 +123,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint concept = new Constraint(id, description, ruleSource, severity, null, executable, Collections.<String, Object> emptyMap(),
+                Constraint constraint = new Constraint(id, description, ruleSource, severity, null, executable, Collections.<String, Object> emptyMap(),
                         requiresConcepts, verification, report);
-                builder.addConstraint(concept);
+                builder.addConstraint(constraint);
             }
         }
     }
