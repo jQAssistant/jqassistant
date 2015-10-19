@@ -78,7 +78,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <com.buschmais.xo_version>0.6.0</com.buschmais.xo_version>
-        <maven.failsafe.version>2.18.1</maven.failsafe.version>
+        <maven.failsafe.version>2.19</maven.failsafe.version>
         <maven.compiler.version>3.3</maven.compiler.version>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
