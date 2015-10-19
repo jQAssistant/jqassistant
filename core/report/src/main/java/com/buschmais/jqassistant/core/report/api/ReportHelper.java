@@ -107,9 +107,6 @@ public final class ReportHelper {
                     console.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
                 }
 
-                console.error(FOOTER);
-                console.error(System.lineSeparator());
-
                 for (Map<String, Object> columns : constraintResult.getRows()) {
                     StringBuilder message = new StringBuilder();
                     for (Map.Entry<String, Object> entry : columns.entrySet()) {
@@ -123,6 +120,10 @@ public final class ReportHelper {
                     }
                     console.error("  " + message.toString());
                 }
+
+                console.error(FOOTER);
+                console.error(System.lineSeparator());
+
                 // severity level check
                 if (constraintResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;
