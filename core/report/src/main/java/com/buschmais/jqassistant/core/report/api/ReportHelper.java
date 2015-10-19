@@ -21,7 +21,7 @@ public final class ReportHelper {
          = "--[ Constraint Violation ]-----------------------------------------";
 
     private static String CONCEPT_FAILED_HEADER
-         = "--[ Conecept Application Failure ]---------------------------------";
+         = "--[ Concept Application Failure ]----------------------------------";
 
     private static String FOOTER
          = "-------------------------------------------------------------------";
