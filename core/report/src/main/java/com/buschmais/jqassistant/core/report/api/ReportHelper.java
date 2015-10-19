@@ -60,6 +60,7 @@ public final class ReportHelper {
                 Concept concept = conceptResult.getRule();
                 console.error(CONCEPT_FAILED_HEADER);
                 console.error("Concept: '" + concept.getId());
+                console.error("Severity: " + concept.getSeverity());
                 String description = concept.getDescription();
 
                 StringTokenizer tokenizer = new StringTokenizer(description, "\n");
@@ -99,6 +100,7 @@ public final class ReportHelper {
 
                 console.error(CONSTRAINT_VIOLATION_HEADER);
                 console.error("Constraint: " + constraint.getId());
+                console.error("Severity: " + constraint.getSeverity());
                 String description = constraint.getDescription();
 
                 StringTokenizer tokenizer = new StringTokenizer(description, "\n");
