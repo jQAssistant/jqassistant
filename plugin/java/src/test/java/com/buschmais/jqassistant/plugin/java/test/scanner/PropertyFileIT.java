@@ -40,4 +40,22 @@ public class PropertyFileIT extends AbstractJavaPluginIT {
         assertThat(propertyFileDescriptor.getProperties(), hasItem(valueMatcher));
         store.commitTransaction();
     }
+
+    /**
+     * Verifies that invalid property files don't make the scanner fail.
+     *
+     * @throws java.io.IOException
+     *             If the test fails.
+     */
+    @Test
+    public void invalidPropertyFile() throws IOException {
+        scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/invalid.properties");
+        store.beginTransaction();
+        List<PropertyFileDescriptor> propertyFileDescriptors = query("MATCH (p:Properties:File) RETURN p").getColumn("p");
+        assertThat(propertyFileDescriptors.size(), equalTo(1));
+        PropertyFileDescriptor propertyFileDescriptor = propertyFileDescriptors.get(0);
+        assertThat(propertyFileDescriptor.getFileName(), endsWith("/META-INF/invalid.properties"));
+        assertThat(propertyFileDescriptor.getProperties().size(), equalTo(0));
+        store.commitTransaction();
+    }
 }
