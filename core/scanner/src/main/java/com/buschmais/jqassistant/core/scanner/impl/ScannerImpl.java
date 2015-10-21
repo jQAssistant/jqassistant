@@ -213,7 +213,7 @@ public class ScannerImpl implements Scanner {
     private void enterScope(Scope newScope) {
         Scope oldScope = scannerContext.peekOrDefault(Scope.class, null);
         if (newScope != null && !newScope.equals(oldScope)) {
-            newScope.create(scannerContext);
+            newScope.onEnter(scannerContext);
         }
         scannerContext.push(Scope.class, newScope);
     }
@@ -222,7 +222,7 @@ public class ScannerImpl implements Scanner {
         scannerContext.pop(Scope.class);
         Scope oldScope = scannerContext.peekOrDefault(Scope.class, null);
         if (newScope != null && !newScope.equals(oldScope)) {
-            newScope.destroy(scannerContext);
+            newScope.onLeave(scannerContext);
         }
     }
 }
