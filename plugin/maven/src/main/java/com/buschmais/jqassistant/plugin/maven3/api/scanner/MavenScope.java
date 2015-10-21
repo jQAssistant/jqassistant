@@ -10,20 +10,20 @@ public enum MavenScope implements Scope {
 
     PROJECT {
         @Override
-        public void create(ScannerContext context) {
+        public void onEnter(ScannerContext context) {
         }
 
         @Override
-        public void destroy(ScannerContext context) {
+        public void onLeave(ScannerContext context) {
         }
     },
     REPOSITORY {
         @Override
-        public void create(ScannerContext context) {
+        public void onEnter(ScannerContext context) {
         }
 
         @Override
-        public void destroy(ScannerContext context) {
+        public void onLeave(ScannerContext context) {
         }
     };
 
