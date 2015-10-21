@@ -14,14 +14,14 @@ public enum JavaScope implements Scope {
 
     CLASSPATH {
         @Override
-        public void create(ScannerContext context) {
+        public void onEnter(ScannerContext context) {
             TypeResolver typeResolver = getTypeResolver(context);
             context.peek(FileResolver.class).push(new ClassFileResolverStrategy());
             context.push(TypeResolver.class, typeResolver);
         }
 
         @Override
-        public void destroy(ScannerContext context) {
+        public void onLeave(ScannerContext context) {
             context.peek(FileResolver.class).pop();
             context.pop(TypeResolver.class);
         }
