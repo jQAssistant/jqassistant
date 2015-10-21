@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -23,6 +26,8 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 @Requires(FileDescriptor.class)
 public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResource, PropertyFileDescriptor> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyFileScannerPlugin.class);
+
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(".properties");
@@ -37,6 +42,8 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
         Properties properties = new Properties();
         try (InputStream stream = item.createStream()) {
             properties.load(stream);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Cannot load properties from " + path, e);
         }
         for (String name : properties.stringPropertyNames()) {
             String value = properties.getProperty(name);
