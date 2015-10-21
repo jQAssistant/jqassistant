@@ -18,10 +18,10 @@ public enum TestScope implements Scope {
     }
 
     @Override
-    public void create(ScannerContext context) {
+    public void onEnter(ScannerContext context) {
     }
 
     @Override
-    public void destroy(ScannerContext context) {
+    public void onLeave(ScannerContext context) {
     }
 }
