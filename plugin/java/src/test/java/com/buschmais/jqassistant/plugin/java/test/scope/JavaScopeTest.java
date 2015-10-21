@@ -30,10 +30,10 @@ public class JavaScopeTest {
     public void useExistingTypeResolver() {
         TypeResolver typeResolver = mock(TypeResolver.class);
         when(scannerContext.peekOrDefault(TypeResolver.class, null)).thenReturn(typeResolver);
-        JavaScope.CLASSPATH.create(scannerContext);
+        JavaScope.CLASSPATH.onEnter(scannerContext);
         verify(scannerContext).peekOrDefault(TypeResolver.class, null);
         verify(scannerContext).push(eq(TypeResolver.class), any(DelegatingTypeResolver.class));
-        JavaScope.CLASSPATH.destroy(scannerContext);
+        JavaScope.CLASSPATH.onLeave(scannerContext);
         verify(scannerContext).pop(TypeResolver.class);
     }
 
@@ -42,10 +42,10 @@ public class JavaScopeTest {
         when(scannerContext.peekOrDefault(TypeResolver.class, null)).thenReturn(null);
         JavaArtifactFileDescriptor artifactFileDescriptor = mock(JavaArtifactFileDescriptor.class);
         when(scannerContext.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(artifactFileDescriptor);
-        JavaScope.CLASSPATH.create(scannerContext);
+        JavaScope.CLASSPATH.onEnter(scannerContext);
         verify(scannerContext).peekOrDefault(TypeResolver.class, null);
         verify(scannerContext).push(eq(TypeResolver.class), any(ClasspathScopedTypeResolver.class));
-        JavaScope.CLASSPATH.destroy(scannerContext);
+        JavaScope.CLASSPATH.onLeave(scannerContext);
         verify(scannerContext).pop(TypeResolver.class);
     }
 
@@ -53,10 +53,10 @@ public class JavaScopeTest {
     public void createDefaultTypeResolver() {
         when(scannerContext.peekOrDefault(TypeResolver.class, null)).thenReturn(null);
         when(scannerContext.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(null);
-        JavaScope.CLASSPATH.create(scannerContext);
+        JavaScope.CLASSPATH.onEnter(scannerContext);
         verify(scannerContext).peekOrDefault(TypeResolver.class, null);
         verify(scannerContext).push(eq(TypeResolver.class), any(DefaultTypeResolver.class));
-        JavaScope.CLASSPATH.destroy(scannerContext);
+        JavaScope.CLASSPATH.onLeave(scannerContext);
         verify(scannerContext).pop(TypeResolver.class);
     }
 }

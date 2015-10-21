@@ -152,7 +152,7 @@
                          type="javaee:lifecycle-callbackType"
                          minOccurs="0"
                          maxOccurs="unbounded"/>
-            <xsd:element name="pre-destroy"
+            <xsd:element name="pre-onLeave"
                          type="javaee:lifecycle-callbackType"
                          minOccurs="0"
                          maxOccurs="unbounded"/>

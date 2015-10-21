@@ -51,7 +51,6 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
         YAMLFileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAMLFileDescriptor.class);
 
-        yamlFileDescriptor.setFileName(item.getFile().getAbsolutePath());
         yamlFileDescriptor.setParsed(false);
 
         try (InputStream in = item.createStream()) {
