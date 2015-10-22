@@ -1,28 +1,11 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ReturnableEvaluator;
-import org.neo4j.graphdb.StopEvaluator;
-import org.neo4j.graphdb.Traverser;
+import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Traverser.Order;
 
-public class VirtualNode implements Node {
+public class VirtualNode extends VirtualPropertyContainer implements Node {
 
     private static long NODE_ID = -1;
     private static final String ROLE_NODE = "node";
@@ -30,7 +13,6 @@ public class VirtualNode implements Node {
     private long id;
     private final List<Relationship> relationships = new ArrayList<>();
     private final List<Label> labels = new ArrayList<>();
-    private final Map<String, Object> props = new LinkedHashMap<>();
     private final Set<SimpleSubGraph> subgraphs = new LinkedHashSet<>();
 
     public static boolean isNode(Map<String, Object> m) {
@@ -38,6 +20,7 @@ public class VirtualNode implements Node {
     }
 
     public VirtualNode(Map<String, Object> m) {
+        super(m);
         if (!isNode(m)) {
             throw new IllegalArgumentException("Not a node-map " + m);
         }
@@ -58,10 +41,6 @@ public class VirtualNode implements Node {
 
             }
         }
-
-        if (m.containsKey("properties")) {
-            this.props.putAll((Map<String, Object>) m.get("properties"));
-        }
     }
 
     public void add(Object o) {
@@ -72,44 +51,6 @@ public class VirtualNode implements Node {
                 add(iterOb);
             }
         }
-    }
-
-    @Override
-    public GraphDatabaseService getGraphDatabase() {
-        return null;
-    }
-
-    @Override
-    public boolean hasProperty(String key) {
-        return props.containsKey(key);
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        return props.get(key);
-    }
-
-    @Override
-    public Object getProperty(String key, Object defaultValue) {
-        if (hasProperty(key)) {
-            return getProperty(key);
-        }
-        return defaultValue;
-    }
-
-    @Override
-    public void setProperty(String key, Object value) {
-        props.put(key, value);
-    }
-
-    @Override
-    public Object removeProperty(String key) {
-        return props.remove(key);
-    }
-
-    @Override
-    public Iterable<String> getPropertyKeys() {
-        return props.keySet();
     }
 
     @Override
