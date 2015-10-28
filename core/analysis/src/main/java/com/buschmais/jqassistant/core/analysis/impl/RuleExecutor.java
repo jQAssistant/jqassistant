@@ -7,7 +7,13 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.Template;
 
 /**
  * Implementation of the
@@ -53,11 +59,11 @@ public class RuleExecutor {
      */
     private void executeGroup(RuleSet ruleSet, Group group) throws AnalysisException {
         if (!executedGroups.contains(group)) {
+            ruleVisitor.beforeGroup(group);
             for (String includedGroupId : group.getGroups()) {
                 Group includedGroup = resolveGroup(ruleSet, includedGroupId);
                 executeGroup(ruleSet, includedGroup);
             }
-            ruleVisitor.beforeGroup(group);
 
             Map<String, Severity> concepts = group.getConcepts();
             for (Map.Entry<String, Severity> conceptEntry : concepts.entrySet()) {
