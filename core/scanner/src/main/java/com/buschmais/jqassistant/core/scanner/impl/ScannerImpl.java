@@ -46,7 +46,6 @@ public class ScannerImpl implements Scanner {
 
     @Override
     public <I, D extends Descriptor> D scan(final I item, final String path, final Scope scope) {
-        D descriptor = null;
         boolean pipelineCreated;
         Set<ScannerPlugin<?, ?>> pipeline = this.pipelines.get(item);
         if (pipeline == null) {
@@ -57,23 +56,28 @@ public class ScannerImpl implements Scanner {
             pipelineCreated = false;
         }
         Class<?> itemClass = item.getClass();
+        Class<D> type = null;
+        D descriptor = null;
         for (ScannerPlugin<?, ?> scannerPlugin : getScannerPluginsForType(itemClass)) {
             ScannerPlugin<I, D> selectedPlugin = (ScannerPlugin<I, D>) scannerPlugin;
-            try {
-                if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope)) {
-                    pipeline.add(selectedPlugin);
-                    pushDesriptor(descriptor);
-                    enterScope(scope);
-                    D newDescriptor = selectedPlugin.scan(item, path, scope, this);
-                    leaveScope(scope);
-                    popDescriptor(descriptor);
-                    descriptor = newDescriptor;
+            if (!pipeline.contains(selectedPlugin) && accepts(selectedPlugin, item, path, scope)) {
+                pipeline.add(selectedPlugin);
+                pushDesriptor(type, descriptor);
+                enterScope(scope);
+                D newDescriptor = null;
+                try {
+                    newDescriptor = selectedPlugin.scan(item, path, scope, this);
+                } catch (IOException e) {
+                    LOGGER.warn("Cannot scan item " + path, e);
+                } catch (RuntimeException e) {
+                    throw new IllegalStateException(
+                            "Unexpected problem while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='" + pipeline + "'.",
+                            e);
                 }
-            } catch (IOException e) {
-                LOGGER.warn("Cannot scan item " + path, e);
-            } catch (RuntimeException e) {
-                throw new IllegalStateException(
-                        "Unexpected problem while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='" + pipeline + "'.", e);
+                leaveScope(scope);
+                popDescriptor(type, descriptor);
+                descriptor = newDescriptor;
+                type = selectedPlugin.getDescriptorType();
             }
         }
         if (pipelineCreated) {
@@ -114,11 +118,9 @@ public class ScannerImpl implements Scanner {
      * @param <D>
      *            The descriptor type.
      */
-    private <D extends Descriptor> void pushDesriptor(D descriptor) {
+    private <D extends Descriptor> void pushDesriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
-            for (Class<?> type : descriptor.getClass().getInterfaces()) {
-                scannerContext.push((Class<Object>) type, descriptor);
-            }
+            scannerContext.push(type, descriptor);
         }
     }
 
@@ -130,11 +132,9 @@ public class ScannerImpl implements Scanner {
      * @param <D>
      *            The descriptor type.
      */
-    private <D extends Descriptor> void popDescriptor(D descriptor) {
+    private <D extends Descriptor> void popDescriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
-            for (Class<?> type : descriptor.getClass().getInterfaces()) {
-                scannerContext.pop(type);
-            }
+            scannerContext.pop(type);
         }
     }
 
