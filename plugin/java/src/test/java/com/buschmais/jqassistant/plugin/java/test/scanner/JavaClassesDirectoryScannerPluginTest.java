@@ -18,6 +18,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -61,6 +62,7 @@ public class JavaClassesDirectoryScannerPluginTest {
     @Test
     public void createArtifact() throws IOException {
         JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
+        when(context.peek(FileResolver.class)).thenReturn(mock(FileResolver.class));
         JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(null);
         when(store.create(JavaClassesDirectoryDescriptor.class)).thenReturn(artifact);
@@ -84,6 +86,7 @@ public class JavaClassesDirectoryScannerPluginTest {
     public void useArtifactFromContext() throws IOException {
         JavaClassesDirectoryScannerPlugin plugin = new JavaClassesDirectoryScannerPlugin();
         File directory = Files.createTempDirectory("directory").toFile();
+        when(context.peek(FileResolver.class)).thenReturn(mock(FileResolver.class));
         JavaClassesDirectoryDescriptor artifact = mock(JavaClassesDirectoryDescriptor.class);
         when(context.peekOrDefault(JavaArtifactFileDescriptor.class, null)).thenReturn(artifact);
         when(store.addDescriptorType(artifact, JavaClassesDirectoryDescriptor.class)).thenReturn(mock(JavaClassesDirectoryDescriptor.class));
