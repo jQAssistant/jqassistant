@@ -37,7 +37,7 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
     }
 
     @Override
-    public Class<? extends MavenPomXmlDescriptor> getDescriptorType() {
+    public Class<MavenPomXmlDescriptor> getDescriptorType() {
         return MavenPomXmlDescriptor.class;
     }
 

@@ -35,7 +35,7 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     }
 
     @Override
-    public Class<? extends D> getDescriptorType() {
+    public Class<D> getDescriptorType() {
         return getTypeParameter(AbstractSchemaScannerPlugin.class, 1);
     }
 
