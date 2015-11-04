@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -39,7 +38,8 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         String containerPath = getContainerPath(container, path);
         containerDescriptor.setFileName(containerPath);
         LOGGER.info("Entering {}", containerPath);
-        Map<String, FileDescriptor> files = new HashMap<>();
+        ContainerFileResolverStrategy fileResolverStrategy = new ContainerFileResolverStrategy(containerDescriptor);
+        context.peek(FileResolver.class).push(fileResolverStrategy);
         enterContainer(container, containerDescriptor, scanner.getContext());
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
@@ -54,12 +54,11 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
                 try (Resource resource = getEntry(container, entry.getValue())) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
-                    files.put(relativePath, descriptor);
-                    containerDescriptor.getContains().add(descriptor);
+                    fileResolverStrategy.put(relativePath, descriptor);
                     int separatorIndex = relativePath.lastIndexOf('/');
                     if (separatorIndex != -1) {
                         String parentName = relativePath.substring(0, separatorIndex);
-                        FileDescriptor fileDescriptor = files.get(parentName);
+                        FileDescriptor fileDescriptor = fileResolverStrategy.get(parentName);
                         if (fileDescriptor instanceof FileContainerDescriptor) {
                             ((FileContainerDescriptor) fileDescriptor).getContains().add(descriptor);
                         }
@@ -68,8 +67,10 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
-            LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, files.size(), stopwatch.elapsed(MILLISECONDS));
+            context.peek(FileResolver.class).pop();
         }
+        fileResolverStrategy.flush();
+        LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, fileResolverStrategy.size(), stopwatch.elapsed(MILLISECONDS));
         return containerDescriptor;
     }
 

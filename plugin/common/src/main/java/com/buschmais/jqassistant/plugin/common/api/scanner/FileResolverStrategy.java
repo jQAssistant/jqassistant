@@ -1,7 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 
 /**
  * Defines a strategy for resolving a file.
@@ -22,7 +22,26 @@ public interface FileResolverStrategy {
      *            The scanner context.
      * @return The resolved descriptor or <code>null</code>.
      */
-    Descriptor require(String path, ScannerContext context);
+    <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context);
 
-    Descriptor match(String path, ScannerContext context);
+    /**
+     * Match an existing descriptor in the store and return it with as the given
+     * type if it exists.
+     * 
+     * Example: A Java class might exist with a fully qualified name in the
+     * database. The implementation of this method should check if the given
+     * path can be transformed into a class name (i.e. replacing '/' with '.')
+     * that already exists as descriptor (i.e. node) and return it.
+     * 
+     * @param path
+     *            The path.
+     * @param type
+     *            The expected type.
+     * @param context
+     *            The scanner context.
+     * @param <D>
+     *            The expected type.
+     * @return The matching descriptor or <code>null</code>.
+     */
+    <D extends FileDescriptor> D match(String path, Class<D> type, ScannerContext context);
 }

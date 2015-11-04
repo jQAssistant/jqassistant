@@ -23,7 +23,7 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    public Class<? extends ArchiveDescriptor> getDescriptorType() {
+    public Class<ArchiveDescriptor> getDescriptorType() {
         return ArchiveDescriptor.class;
     }
 
