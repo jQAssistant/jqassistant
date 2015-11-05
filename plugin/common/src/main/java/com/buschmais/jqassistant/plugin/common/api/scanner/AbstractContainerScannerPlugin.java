@@ -26,6 +26,8 @@ import com.google.common.base.Stopwatch;
  *            The container type.
  * @param <E>
  *            The element type.
+ * @param <D>
+ *            The descriptor type.
  */
 public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 

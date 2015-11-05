@@ -32,10 +32,13 @@ public abstract class AbstractFileResolverStrategy implements FileResolverStrate
         D result;
         if (descriptor == null) {
             result = context.getStore().create(type);
+            result.setFileName(path);
+        } else if (type.isAssignableFrom(descriptor.getClass())) {
+            result = type.cast(descriptor);
         } else {
             result = context.getStore().addDescriptorType(descriptor, type);
+            result.setFileName(path);
         }
-        result.setFileName(path);
         return result;
     }
 }
