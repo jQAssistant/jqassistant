@@ -1,10 +1,11 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.util.Deque;
-import java.util.LinkedList;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResolverStrategy;
+
+import java.util.Deque;
+import java.util.LinkedList;
 
 /**
  * A file resolver.
@@ -12,15 +13,31 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 public class FileResolver {
 
     /**
-     * The registered file resolver instances identified by their type.
+     * The registered file resolver instances.
      */
     private Deque<FileResolverStrategy> resolverStrategies = new LinkedList<>();
 
     /**
+     * Constructor.
+     */
+    public FileResolver() {
+        resolverStrategies.push(new AbstractFileResolverStrategy() {
+            @Override
+            public <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context) {
+                return toFileDescriptor(null, type, path, context);
+            }
+
+            @Override
+            public <D extends FileDescriptor> D match(String path, Class<D> type, ScannerContext context) {
+                return toFileDescriptor(null, type, path, context);
+            }
+        });
+    }
+
+    /**
      * Add a file resolver.
-     * 
-     * @param fileResolverStrategy
-     *            A file resolver.
+     *
+     * @param fileResolverStrategy A file resolver.
      */
     public void push(FileResolverStrategy fileResolverStrategy) {
         resolverStrategies.push(fileResolverStrategy);
@@ -40,7 +57,7 @@ public class FileResolver {
                 return fileDescriptor;
             }
         }
-        return createFileDescriptor(path, FileDescriptor.class, context);
+        throw new IllegalStateException("No file resolver strategy available.");
     }
 
     public <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context) {
@@ -50,13 +67,8 @@ public class FileResolver {
                 return fileDescriptor;
             }
         }
-        return createFileDescriptor(path, type, context);
+        throw new IllegalStateException("No file resolver strategy available.");
     }
 
-    private <D extends FileDescriptor> D createFileDescriptor(String path, Class<D> type, ScannerContext context) {
-        D fileDescriptor = context.getStore().create(type);
-        fileDescriptor.setFileName(path);
-        return fileDescriptor;
-    }
 
 }
