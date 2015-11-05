@@ -1,9 +1,5 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
@@ -11,6 +7,10 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Provides utility functionality for creating reports.
@@ -59,7 +59,7 @@ public final class ReportHelper {
             if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
                 Concept concept = conceptResult.getRule();
                 console.error(CONCEPT_FAILED_HEADER);
-                console.error("Concept: '" + concept.getId());
+                console.error("Concept: " + concept.getId());
                 console.error("Severity: " + concept.getSeverity());
                 String description = concept.getDescription();
 
