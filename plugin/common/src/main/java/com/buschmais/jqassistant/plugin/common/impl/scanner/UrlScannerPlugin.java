@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -50,9 +52,9 @@ public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDes
         String query = item.getQuery();
         String ref = item.getRef();
         StringBuilder result = new StringBuilder();
-        result.append(protocol).append("://");
-        if (host != null) {
-            result.append(host);
+        result.append(protocol).append(":");
+        if (isNotEmpty(host)) {
+            result.append("//").append(host);
         }
         if (port != -1) {
             result.append(":").append(port);

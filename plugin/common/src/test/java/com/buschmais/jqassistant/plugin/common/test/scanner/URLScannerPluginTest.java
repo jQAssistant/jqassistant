@@ -41,7 +41,7 @@ public class URLScannerPluginTest {
 
     @Test
     public void urls() throws IOException {
-        scan("test:///path", "test:///path");
+        scan("test:/path", "test:/path");
         scan("test://myhost", "test://myhost");
         scan("test://myhost:8080", "test://myhost:8080");
         scan("test://myhost:8080/path", "test://myhost:8080/path");
