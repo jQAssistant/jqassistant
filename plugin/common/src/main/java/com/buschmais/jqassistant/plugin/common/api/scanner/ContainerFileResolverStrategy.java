@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +9,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResolverStrategy;
 
 /**
- * A file resolver strátegy for file containers.
+ * A file resolver strategy for file containers.
  */
 public class ContainerFileResolverStrategy extends AbstractFileResolverStrategy {
 
@@ -49,22 +48,32 @@ public class ContainerFileResolverStrategy extends AbstractFileResolverStrategy 
     }
 
     public void flush() {
-        flush(requiredFiles.values(), fileContainerDescriptor.getRequires());
-        flush(containedFiles.values(), fileContainerDescriptor.getContains());
+        createHierarchy();
+        fileContainerDescriptor.getRequires().addAll(requiredFiles.values());
+        fileContainerDescriptor.getContains().addAll(containedFiles.values());
     }
 
-    private void flush(Collection<FileDescriptor> fileDescriptors, Collection<FileDescriptor> collection) {
-        for (FileDescriptor fileDescriptor : fileDescriptors) {
-            collection.add(fileDescriptor);
+    /**
+     * Build the hierarchy of the container entries, i.e. add contains relations
+     * from containers to their children.
+     */
+    private void createHierarchy() {
+        for (Map.Entry<String, FileDescriptor> entry : containedFiles.entrySet()) {
+            String relativePath = entry.getKey();
+            FileDescriptor fileDescriptor = entry.getValue();
+            int separatorIndex = relativePath.lastIndexOf('/');
+            if (separatorIndex != -1) {
+                String parentName = relativePath.substring(0, separatorIndex);
+                FileDescriptor parentDescriptor = containedFiles.get(parentName);
+                if (parentDescriptor instanceof FileContainerDescriptor) {
+                    ((FileContainerDescriptor) parentDescriptor).getContains().add(fileDescriptor);
+                }
+            }
         }
     }
 
     public void put(String path, FileDescriptor fileDescriptor) {
         containedFiles.put(path, fileDescriptor);
-    }
-
-    public FileDescriptor get(String path) {
-        return containedFiles.get(path);
     }
 
     public int size() {
