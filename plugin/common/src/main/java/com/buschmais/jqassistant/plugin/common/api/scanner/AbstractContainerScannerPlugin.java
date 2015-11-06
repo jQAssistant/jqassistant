@@ -3,9 +3,6 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,25 +43,12 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             Iterable<? extends E> entries = getEntries(container);
-            SortedMap<String, E> sortedEntries = new TreeMap<>();
-            for (E e : entries) {
-                String relativePath = getRelativePath(container, e);
-                sortedEntries.put(relativePath, e);
-            }
-            for (Map.Entry<String, E> entry : sortedEntries.entrySet()) {
-                String relativePath = entry.getKey();
-                try (Resource resource = getEntry(container, entry.getValue())) {
+            for (E entry : entries) {
+                String relativePath = getRelativePath(container, entry);
+                try (Resource resource = getEntry(container, entry)) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
                     fileResolverStrategy.put(relativePath, descriptor);
-                    int separatorIndex = relativePath.lastIndexOf('/');
-                    if (separatorIndex != -1) {
-                        String parentName = relativePath.substring(0, separatorIndex);
-                        FileDescriptor fileDescriptor = fileResolverStrategy.get(parentName);
-                        if (fileDescriptor instanceof FileContainerDescriptor) {
-                            ((FileContainerDescriptor) fileDescriptor).getContains().add(descriptor);
-                        }
-                    }
                 }
             }
         } finally {
