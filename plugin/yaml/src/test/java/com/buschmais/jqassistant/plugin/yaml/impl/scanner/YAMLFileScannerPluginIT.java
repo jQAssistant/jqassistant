@@ -424,10 +424,29 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    @Ignore
     public void scanSingleDocumentWithCommentsYAML() {
-        Assert.fail("Not implemented yet!");
-//             {"/probes/yamlspec/1.1/sec-2.2-example-2.9-single-document-with-comments.yaml"},
+        String fileName = "sec-2.2-example-2.9-single-document-with-comments.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/1.1/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
+
+        assertThat(document.getKeys(), hasSize(2));
+        assertThat(document.getValues(), empty());
+
+        // Enough tests. The same structure is covered by other tests
     }
 
     @Test
