@@ -1,6 +1,0 @@
-com.buschmais.jqassistant.core.analysis.api
-com.buschmais.jqassistant.core.analysis.api.model
-com.buschmais.jqassistant.core.analysis.api.rule
-com.buschmais.jqassistant.core.analysis.api.rule.source
-com.buschmais.jqassistant.core.analysis.api.rule.visitor
-com.buschmais.jqassistant.core.analysis.impl
