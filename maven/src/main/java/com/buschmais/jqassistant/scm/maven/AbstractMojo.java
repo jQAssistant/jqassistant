@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -204,10 +202,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On error.
      */
     private void addRuleFiles(List<RuleSource> sources, File directory) throws MojoExecutionException {
-        List<File> ruleFiles = readRulesDirectory(directory);
-        for (final File ruleFile : ruleFiles) {
-            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new FileRuleSource(ruleFile));
+        List<RuleSource> ruleSources = readRulesDirectory(directory);
+        for (RuleSource ruleSource : ruleSources) {
+            getLog().debug("Adding rules from file " + ruleSource);
+            sources.add(ruleSource);
         }
     }
 
@@ -221,27 +219,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the rules directory cannot be read.
      */
-    private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
+    private List<RuleSource> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
         getLog().info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
-        final List<File> ruleFiles = new ArrayList<>();
         try {
-            new DirectoryWalker<File>() {
-
-                @Override
-                protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (RuleSource.Type.XML.matches(file) || RuleSource.Type.AsciiDoc.matches(file)) {
-                        results.add(file);
-                    }
-                }
-
-                public void scan(File directory) throws IOException {
-                    super.walk(directory, ruleFiles);
-                }
-            }.scan(rulesDirectory);
-            return ruleFiles;
+            return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
         }
