@@ -27,9 +27,9 @@ public class CompoundRuleSetReaderTest {
         RuleSetReader reader = new CompoundRuleSetReader();
         reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertEquals(3, ruleSet.getConcepts().size());
+        assertEquals(3, ruleSet.getConceptBucket().size());
         assertEquals(2, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        for (String id : ruleSet.getConceptBucket().getConceptIds()) {
             assertEquals(true, asList("junit4:TestClassOrMethod", "junit4:AssertMethod", "java:Throwable").contains(id));
         }
         for (String id : ruleSet.getConstraints().keySet()) {
@@ -51,9 +51,9 @@ public class CompoundRuleSetReaderTest {
         RuleSetReader reader = new XmlRuleSetReader();
         reader.read(Arrays.asList(new UrlRuleSource(url)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertEquals(1, ruleSet.getConcepts().size());
+        assertEquals(1, ruleSet.getConceptBucket().size());
         assertEquals(1, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        for (String id : ruleSet.getConceptBucket().getConceptIds()) {
             assertEquals(true, asList("java:Throwable").contains(id));
         }
         for (String id : ruleSet.getConstraints().keySet()) {

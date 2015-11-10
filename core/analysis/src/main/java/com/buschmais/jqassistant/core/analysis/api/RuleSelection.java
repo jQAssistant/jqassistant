@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 
@@ -49,8 +50,10 @@ public class RuleSelection {
          * @return The rule selection.
          */
         public static RuleSelection allOf(RuleSet ruleSet) {
+            Set<String> conceptIds = ruleSet.getConceptBucket().getConceptIds();
+
             return newInstance().addGroupIds(ruleSet.getGroups().keySet()).addConstraintIds(ruleSet.getConstraints().keySet())
-                    .addConceptIds(ruleSet.getConcepts().keySet()).get();
+                                .addConceptIds(conceptIds).get();
         }
 
         /**

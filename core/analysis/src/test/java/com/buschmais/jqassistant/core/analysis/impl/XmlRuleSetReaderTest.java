@@ -21,9 +21,9 @@ public class XmlRuleSetReaderTest {
         RuleSetReader reader = new XmlRuleSetReader();
         reader.read(asList(new FileRuleSource(xmlFile)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertEquals(1, ruleSet.getConcepts().size());
+        assertEquals(1, ruleSet.getConceptBucket().size());
         assertEquals(1, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        for (String id : ruleSet.getConceptBucket().getConceptIds()) {
             assertEquals(true, "test:JavaScriptConcept".equals(id));
         }
         for (String id : ruleSet.getConstraints().keySet()) {
