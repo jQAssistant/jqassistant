@@ -8,10 +8,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,6 +18,7 @@ import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
@@ -45,11 +43,12 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         final ArtifactResolver artifactResolverSpy = Mockito.spy(new MavenArtifactResolver());
         execute(ARTIFACT_ID, new ScanClassPathOperation() {
             @Override
-            public void scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
+            public List<FileDescriptor> scan(JavaArtifactFileDescriptor artifact, Scanner scanner) {
                 ScannerContext context = scanner.getContext();
                 context.push(ArtifactResolver.class, artifactResolverSpy);
                 scanner.scan(directory, directory.getAbsolutePath(), JavaScope.CLASSPATH);
                 context.pop(ArtifactResolver.class);
+                return Collections.emptyList();
             }
         });
         verify(artifactResolverSpy, atLeastOnce()).resolve(Mockito.any(Coordinates.class), Mockito.any(Class.class), Mockito.any(ScannerContext.class));
