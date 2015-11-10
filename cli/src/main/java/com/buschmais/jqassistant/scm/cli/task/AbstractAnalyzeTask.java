@@ -5,14 +5,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.DirectoryWalker;
 
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
@@ -57,11 +55,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         } else {
             File selectedDirectory = new File(ruleDirectory);
             // read rules from rules directory
-            List<File> ruleFiles = readRulesDirectory(selectedDirectory);
-            for (final File ruleFile : ruleFiles) {
-                LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
-                sources.add(new FileRuleSource(ruleFile));
-            }
+            sources.addAll(readRulesDirectory(selectedDirectory));
             List<RuleSource> ruleSources;
             try {
                 ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
@@ -90,26 +84,13 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         return RuleSelection.Builder.select(ruleSet, groupIds, constraintIds, conceptIds);
     }
 
-    private List<File> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
+    private List<RuleSource> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
         LOG.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
-        final List<File> ruleFiles = new ArrayList<>();
         try {
-            new DirectoryWalker<File>() {
-                @Override
-                protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (!file.isDirectory()) {
-                        results.add(file);
-                    }
-                }
-
-                public void scan(File directory) throws IOException {
-                    super.walk(directory, ruleFiles);
-                }
-            }.scan(rulesDirectory);
-            return ruleFiles;
+            return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {
             throw new CliExecutionException("Cannot read rules directory: " + rulesDirectory.getAbsolutePath(), e);
         }
