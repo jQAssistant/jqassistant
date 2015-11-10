@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.Template;
@@ -137,11 +138,12 @@ public class RuleExecutor {
     }
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {
-        Concept requiredConcept = ruleSet.getConcepts().get(requiredConceptId);
-        if (requiredConcept == null) {
+        try {
+            Concept requiredConcept = ruleSet.getConceptBucket().getConcept(requiredConceptId);
+            return requiredConcept;
+        } catch (NoConceptException e) {
             throw new AnalysisException("Concept '" + requiredConceptId + "' is not defined.");
         }
-        return requiredConcept;
     }
 
     public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws AnalysisException {

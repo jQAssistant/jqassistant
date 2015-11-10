@@ -5,16 +5,17 @@ import java.util.TreeMap;
 
 public class CompoundRuleSet implements RuleSet {
 
+    private ConceptBucket conceptBucket = new ConceptBucket();
     private Map<String, Template> templates = new TreeMap<>();
-    private Map<String, Concept> concepts = new TreeMap<>();
+    private ConceptBucket concepts = new ConceptBucket();
     private Map<String, Constraint> constraints = new TreeMap<>();
     private Map<String, Group> groups = new TreeMap<>();
     private Map<String, MetricGroup> metricGroups = new TreeMap<>();
 
-    public CompoundRuleSet(RuleSet... ruleSets) {
+    public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateConceptException {
         for (RuleSet ruleSet : ruleSets) {
             templates.putAll(ruleSet.getTemplates());
-            concepts.putAll(ruleSet.getConcepts());
+            concepts.addConcepts(ruleSet.getConceptBucket());
             constraints.putAll(ruleSet.getConstraints());
             groups.putAll(ruleSet.getGroups());
             metricGroups.putAll(ruleSet.getMetricGroups());
@@ -24,11 +25,6 @@ public class CompoundRuleSet implements RuleSet {
     @Override
     public Map<String, Template> getTemplates() {
         return templates;
-    }
-
-    @Override
-    public Map<String, Concept> getConcepts() {
-        return concepts;
     }
 
     @Override
@@ -44,5 +40,10 @@ public class CompoundRuleSet implements RuleSet {
     @Override
     public Map<String, MetricGroup> getMetricGroups() {
         return metricGroups;
+    }
+
+    @Override
+    public ConceptBucket getConceptBucket() {
+        return conceptBucket;
     }
 }

@@ -6,7 +6,9 @@ public interface RuleSet {
 
     Map<String, Template> getTemplates();
 
-    Map<String, Concept> getConcepts();
+    ConceptBucket getConceptBucket();
+
+//    Map<String, Concept> getConcepts();
 
     Map<String, Constraint> getConstraints();
 

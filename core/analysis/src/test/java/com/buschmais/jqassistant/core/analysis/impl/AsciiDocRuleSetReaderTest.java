@@ -30,9 +30,9 @@ public class AsciiDocRuleSetReaderTest {
         RuleSource ruleSource = new UrlRuleSource(url);
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        Map<String, Concept> concepts = ruleSet.getConcepts();
+        ConceptBucket concepts = ruleSet.getConceptBucket();
         assertEquals(2, concepts.size());
-        Concept concept1 = concepts.get("junit4:TestClassOrMethod");
+        Concept concept1 = concepts.getConcept("junit4:TestClassOrMethod");
         assertEquals("junit4:TestClassOrMethod", concept1.getId());
         assertEquals(true, concept1.getDescription().contains("labels them and their containing classes with `:Test` and `:Junit4`."));
         Executable executable1 = concept1.getExecutable();
@@ -40,7 +40,7 @@ public class AsciiDocRuleSetReaderTest {
         assertEquals(true, ((CypherExecutable) executable1).getStatement().contains("c:Test:Junit4, m:Test:Junit4"));
         assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
 
-        Concept concept2 = concepts.get("junit4:AssertMethod");
+        Concept concept2 = concepts.getConcept("junit4:AssertMethod");
         assertEquals("junit4:AssertMethod", concept2.getId());
         assertEquals("Labels all assertion methods declared by `org.junit.Assert` with `:Assert`.", concept2.getDescription());
         Executable executable2 = concept2.getExecutable();
@@ -57,7 +57,7 @@ public class AsciiDocRuleSetReaderTest {
         Executable constraintExecutable = constraint.getExecutable();
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
         assertEquals(true, ((CypherExecutable) constraintExecutable).getStatement().contains("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
-        assertEquals(new HashSet<>(ruleSet.getConcepts().keySet()), constraint.getRequiresConcepts());
+        assertEquals(new HashSet<>(ruleSet.getConceptBucket().getConceptIds()), constraint.getRequiresConcepts());
 
     }
 
@@ -69,9 +69,9 @@ public class AsciiDocRuleSetReaderTest {
         RuleSource ruleSource = new UrlRuleSource(url);
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        Map<String, Concept> concepts = ruleSet.getConcepts();
+        ConceptBucket concepts = ruleSet.getConceptBucket();
         assertEquals(1, concepts.size());
-        Concept concept1 = concepts.get("concept:JavaScript");
+        Concept concept1 = concepts.getConcept("concept:JavaScript");
         assertEquals("concept:JavaScript", concept1.getId());
         assertEquals(true, concept1.getDescription().contains("Demonstrates a concept using JavaScript."));
         Executable executable = concept1.getExecutable();
@@ -91,7 +91,7 @@ public class AsciiDocRuleSetReaderTest {
         RuleSource ruleSource = new UrlRuleSource(url);
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertThat(ruleSet.getConcepts().keySet(), hasItems("test:Concept", "test:CriticalConcept"));
+        assertThat(ruleSet.getConceptBucket().getConceptIds(), hasItems("test:Concept", "test:CriticalConcept"));
         assertThat(ruleSet.getConstraints().keySet(), hasItems("test:Constraint", "test:CriticalConstraint"));
         Map<String, Group> groups = ruleSet.getGroups();
         Group defaultGroup = groups.get("test:Default");
