@@ -35,8 +35,8 @@ public class CompoundRuleSetReaderTest {
         for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
             assertEquals(true, asList("junit4:TestMethodWithoutAssertion", "example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
-        assertEquals(1, ruleSet.getGroups().size());
-        Group group = ruleSet.getGroups().values().iterator().next();
+        assertEquals(1, ruleSet.getGroupsBucket().size());
+        Group group = ruleSet.getGroupsBucket().getGroup("default");
         assertEquals("default", group.getId());
         assertEquals(1, group.getConcepts().size());
         assertEquals("java:Throwable", group.getConcepts().keySet().iterator().next());
@@ -59,8 +59,8 @@ public class CompoundRuleSetReaderTest {
         for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
             assertEquals(true, asList("example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
-        assertEquals(1, ruleSet.getGroups().size());
-        Group group = ruleSet.getGroups().values().iterator().next();
+        assertEquals(1, ruleSet.getGroupsBucket().size());
+        Group group = ruleSet.getGroupsBucket().getGroup("default");
         assertEquals("default", group.getId());
     }
 }

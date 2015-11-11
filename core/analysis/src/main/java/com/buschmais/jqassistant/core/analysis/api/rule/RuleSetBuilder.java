@@ -23,7 +23,8 @@ public class RuleSetBuilder {
     }
 
     public RuleSetBuilder addTemplate(Template template) throws RuleException {
-        return put(ruleSet.templates, template);
+        ruleSet.templateBucket.add(template);
+        return this;
     }
 
     public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
@@ -39,7 +40,9 @@ public class RuleSetBuilder {
     }
 
     public RuleSetBuilder addGroup(Group group) throws RuleException {
-        return put(ruleSet.groups, group);
+        ruleSet.groupsBucket.add(group);
+
+        return this;
     }
 
     public RuleSetBuilder addMetricGroup(MetricGroup metricGroup) throws RuleException {
@@ -66,16 +69,16 @@ public class RuleSetBuilder {
 
         private ConceptBucket conceptBucket = new ConceptBucket();
         private ConstraintBucket constraintBucket = new ConstraintBucket();
-        private Map<String, Template> templates = new HashMap<>();
-        private Map<String, Group> groups = new HashMap<>();
+        private TemplateBucket templateBucket = new TemplateBucket();
+        private GroupsBucket groupsBucket = new GroupsBucket();
         private Map<String, MetricGroup> metricGroups = new HashMap<>();
 
         private DefaultRuleSet() {
         }
 
         @Override
-        public Map<String, Template> getTemplates() {
-            return templates;
+        public TemplateBucket getTemplateBucket() {
+            return templateBucket;
         }
 
         public ConceptBucket getConceptBucket() {
@@ -88,8 +91,8 @@ public class RuleSetBuilder {
         }
 
         @Override
-        public Map<String, Group> getGroups() {
-            return groups;
+        public GroupsBucket getGroupsBucket() {
+            return groupsBucket;
         }
 
         @Override
@@ -99,7 +102,7 @@ public class RuleSetBuilder {
 
         @Override
         public String toString() {
-            return "RuleSet{" + "groups=" + groups + ", constraints=" + constraintBucket.size() + ", rules=" + conceptBucket.size() + '}';
+            return "RuleSet{" + "groups=" + groupsBucket.size() + ", constraints=" + constraintBucket.size() + ", rules=" + conceptBucket.size() + '}';
         }
     }
 }
