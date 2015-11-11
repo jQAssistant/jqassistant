@@ -2,7 +2,6 @@ package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Map;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -143,7 +142,7 @@ public class AnalysisService extends AbstractJQARestService {
 
         JSONArray concepts = new JSONArray();
         response.put(JSON_OBJECT_KEY_CONCEPTS, concepts);
-        for (Concept concept : ruleSet.getConceptBucket().getConcepts()) {
+        for (Concept concept : ruleSet.getConceptBucket().getAll()) {
             JSONObject conceptObject = new JSONObject();
             conceptObject.put(JSON_OBJECT_KEY_ID, concept.getId());
             conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, concept.getDescription());
@@ -153,7 +152,7 @@ public class AnalysisService extends AbstractJQARestService {
 
         JSONArray constraints = new JSONArray();
         response.put(JSON_OBJECT_KEY_CONSTRAINTS, constraints);
-        for (Constraint constraint : ruleSet.getConstraintBucket().getConstraints()) {
+        for (Constraint constraint : ruleSet.getConstraintBucket().getAll()) {
             JSONObject constraintObject = new JSONObject();
             constraintObject.put(JSON_OBJECT_KEY_ID, constraint.getId());
             constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, constraint.getDescription());
@@ -163,7 +162,7 @@ public class AnalysisService extends AbstractJQARestService {
 
         JSONArray groups = new JSONArray();
         response.put(JSON_OBJECT_KEY_GROUPS, groups);
-        for (Group group : ruleSet.getGroupsBucket().getGroups()) {
+        for (Group group : ruleSet.getGroupsBucket().getAll()) {
             JSONObject groupObject = new JSONObject();
             groupObject.put(JSON_OBJECT_KEY_ID, group.getId());
             groupObject.put(JSON_OBJECT_KEY_DESCRIPTION, group.getDescription());
