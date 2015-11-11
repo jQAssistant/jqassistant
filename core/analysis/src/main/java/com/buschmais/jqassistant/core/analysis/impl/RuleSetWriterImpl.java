@@ -38,7 +38,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     @Override
     public void write(RuleSet ruleSet, Writer writer) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
-        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroups().keySet())
+        RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroupsBucket().getGroupIds())
                 .addConstraintIds(ruleSet.getConstraintBucket().getConstraintIds())
                 .addConceptIds(ruleSet.getConceptBucket().getConceptIds()).get();
         try {

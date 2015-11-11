@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
-public class ConceptBucketTest {
+public class ConceptBucketTest implements AbstractRuleBucketSpec {
     private ConceptBucket concepts;
 
     @Before
@@ -25,7 +25,7 @@ public class ConceptBucketTest {
         assertThat(concepts.size(), equalTo(0));
     }
 
-    //--- All tests for getConcpets()
+    //--- All tests for getConcepts()
 
     @Test
     public void getConceptsReturnsAllConcepts() throws DuplicateConceptException {

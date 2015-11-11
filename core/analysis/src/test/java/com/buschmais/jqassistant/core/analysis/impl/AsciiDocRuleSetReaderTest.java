@@ -94,8 +94,8 @@ public class AsciiDocRuleSetReaderTest {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertThat(ruleSet.getConceptBucket().getConceptIds(), hasItems("test:Concept", "test:CriticalConcept"));
         assertThat(ruleSet.getConstraintBucket().getConstraintIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
-        Map<String, Group> groups = ruleSet.getGroups();
-        Group defaultGroup = groups.get("test:Default");
+        GroupsBucket groups = ruleSet.getGroupsBucket();
+        Group defaultGroup = groups.getGroup("test:Default");
         assertThat(defaultGroup, notNullValue());
         Map<String, Severity> includedConcepts = defaultGroup.getConcepts();
         assertThat(includedConcepts.containsKey("test:Concept"), equalTo(true));
@@ -109,7 +109,7 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(includedConstraints.get("test:CriticalConstraint"), equalTo(Severity.CRITICAL));
         Set<String> includedGroups = defaultGroup.getGroups();
         assertThat(includedGroups, IsCollectionContaining.hasItems("test:Group"));
-        Group group = groups.get("test:Group");
+        Group group = groups.getGroup("test:Group");
         assertThat(group, notNullValue());
     }
 }

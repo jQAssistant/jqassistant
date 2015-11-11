@@ -53,7 +53,7 @@ public class RuleSelection {
             Set<String> conceptIds = ruleSet.getConceptBucket().getConceptIds();
             Set<String> constraintIds = ruleSet.getConstraintBucket().getConstraintIds();
 
-            return newInstance().addGroupIds(ruleSet.getGroups().keySet())
+            return newInstance().addGroupIds(ruleSet.getGroupsBucket().getGroupIds())
                                 .addConstraintIds(constraintIds)
                                 .addConceptIds(conceptIds)
                                 .get();
@@ -69,7 +69,7 @@ public class RuleSelection {
          */
         public static RuleSelection newDefault(RuleSet ruleSet) {
             Builder builder = newInstance();
-            if (ruleSet.getGroups().containsKey(GROUP_DEFAULT)) {
+            if (ruleSet.getGroupsBucket().getGroupIds().contains(GROUP_DEFAULT)) {
                 builder.addGroupId(GROUP_DEFAULT).get();
             }
             return builder.get();

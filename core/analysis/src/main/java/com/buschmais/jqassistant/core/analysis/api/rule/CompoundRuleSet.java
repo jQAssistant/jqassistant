@@ -7,23 +7,23 @@ public class CompoundRuleSet implements RuleSet {
 
     private ConceptBucket conceptBucket = new ConceptBucket();
     private ConstraintBucket constraintBucket = new ConstraintBucket();
-    private Map<String, Template> templates = new TreeMap<>();
-    private Map<String, Group> groups = new TreeMap<>();
+    private TemplateBucket templateBucket = new TemplateBucket();
+    private GroupsBucket groupsBucket = new GroupsBucket();
     private Map<String, MetricGroup> metricGroups = new TreeMap<>();
 
     public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateRuleException {
         for (RuleSet ruleSet : ruleSets) {
-            templates.putAll(ruleSet.getTemplates());
+            templateBucket.addTemplates(ruleSet.getTemplateBucket());
             conceptBucket.addConcepts(ruleSet.getConceptBucket());
             constraintBucket.addConstraints(ruleSet.getConstraintBucket());
-            groups.putAll(ruleSet.getGroups());
+            groupsBucket.addGroups(ruleSet.getGroupsBucket());
             metricGroups.putAll(ruleSet.getMetricGroups());
         }
     }
 
     @Override
-    public Map<String, Template> getTemplates() {
-        return templates;
+    public TemplateBucket getTemplateBucket() {
+        return templateBucket;
     }
 
     @Override
@@ -32,8 +32,8 @@ public class CompoundRuleSet implements RuleSet {
     }
 
     @Override
-    public Map<String, Group> getGroups() {
-        return groups;
+    public GroupsBucket getGroupsBucket() {
+        return groupsBucket;
     }
 
     @Override

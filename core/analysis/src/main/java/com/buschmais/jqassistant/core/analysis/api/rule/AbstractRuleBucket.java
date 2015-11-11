@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
-public abstract class AbstractRuleBucket<T extends AbstractExecutableRule, NRE extends NoRuleException,
+public abstract class AbstractRuleBucket<T extends AbstractRule, NRE extends NoRuleException,
                                          DRE extends DuplicateRuleException> {
     TreeMap<String, T> rules = new TreeMap<>();
 
@@ -47,7 +47,7 @@ public abstract class AbstractRuleBucket<T extends AbstractExecutableRule, NRE e
         return rule;
     }
 
-    protected void addAll(AbstractRuleBucket<T, NRE, DRE> bucket) throws DRE {
+    protected <B extends AbstractRuleBucket<T, NRE, DRE>> void addAll(B bucket) throws DRE {
         String id = null;
         try {
             for (String conceptId : bucket.getRuleIds()) {

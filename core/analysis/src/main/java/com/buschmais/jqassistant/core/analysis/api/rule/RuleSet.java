@@ -4,13 +4,13 @@ import java.util.Map;
 
 public interface RuleSet {
 
-    Map<String, Template> getTemplates();
+    TemplateBucket getTemplateBucket();
 
     ConceptBucket getConceptBucket();
 
     ConstraintBucket getConstraintBucket();
 
-    Map<String, Group> getGroups();
+    GroupsBucket getGroupsBucket();
 
     Map<String, MetricGroup> getMetricGroups();
 

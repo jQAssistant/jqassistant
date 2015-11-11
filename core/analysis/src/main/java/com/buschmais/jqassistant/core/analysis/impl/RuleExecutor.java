@@ -12,7 +12,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.Template;
@@ -131,11 +133,12 @@ public class RuleExecutor {
     }
 
     public Template resolveTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
-        Template template = ruleSet.getTemplates().get(queryTemplateId);
-        if (template == null) {
-            throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.");
+        try {
+            Template template = ruleSet.getTemplateBucket().getTemplate(queryTemplateId);
+            return template;
+        } catch (NoTemplateException e) {
+            throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.", e);
         }
-        return template;
     }
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {
@@ -157,11 +160,12 @@ public class RuleExecutor {
     }
 
     public Group resolveGroup(RuleSet ruleSet, String groupId) throws AnalysisException {
-        Group group = ruleSet.getGroups().get(groupId);
-        if (group == null) {
-            throw new AnalysisException("Group '" + groupId + "' is not defined.");
+        try {
+            Group group = ruleSet.getGroupsBucket().getGroup(groupId);
+            return group;
+        } catch (NoGroupException e) {
+            throw  new AnalysisException("Group '" +  groupId + "' is not defined.", e);
         }
-        return group;
     }
 
 }
