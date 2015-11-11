@@ -127,25 +127,29 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
                         modelDescriptor = scanner.scan(modelArtifactFile, modelArtifactFile.getAbsolutePath(), null);
                     } finally {
                         context.pop(PomModelBuilder.class);
+                        if (!keepArtifacts) {
+                            modelArtifactFile.delete();
+                        }
                     }
                     modelDescriptor = markReleaseOrSnaphot(modelDescriptor, MavenPomXmlDescriptor.class, resolvedModelArtifact, lastModified, store);
                     repositoryDescriptor.getContainedModels().add(modelDescriptor);
-                    if (!keepArtifacts) {
-                        modelArtifactFile.delete();
-                    }
                 }
                 if (scanArtifacts && !artifact.getExtension().equals("pom")) {
                     ArtifactResult artifactResult = artifactProvider.getArtifact(artifact);
                     File artifactFile = artifactResult.getArtifact().getFile();
-                    Descriptor descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
+                    Descriptor descriptor;
+                    try {
+                        descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
+                    } finally {
+                        if (!keepArtifacts) {
+                            artifactFile.delete();
+                        }
+                    }
                     MavenArtifactDescriptor mavenArtifactDescriptor = markReleaseOrSnaphot(store.addDescriptorType(descriptor, MavenArtifactDescriptor.class),
                             MavenArtifactDescriptor.class, artifact, lastModified, store);
                     ArtifactHelper.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
                     modelDescriptor.getDescribes().add(mavenArtifactDescriptor);
                     repositoryDescriptor.getContainedArtifacts().add(mavenArtifactDescriptor);
-                    if (!keepArtifacts) {
-                        artifactFile.delete();
-                    }
                     return mavenArtifactDescriptor;
                 }
             } catch (ArtifactResolutionException e) {
