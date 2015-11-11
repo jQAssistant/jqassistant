@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -368,7 +369,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void defaultGroup() throws AnalysisException {
+    public void defaultGroup() throws AnalysisException, NoGroupException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
         assertThat(constraintViolations.keySet(),
