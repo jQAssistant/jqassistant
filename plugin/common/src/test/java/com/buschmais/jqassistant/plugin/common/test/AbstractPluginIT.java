@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoConstraintException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -298,9 +299,9 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws AnalysisException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
-        Concept concept = ruleSet.getConcepts().get(id);
+        Concept concept = ruleSet.getConceptBucket().getConcept(id);
         assertNotNull("The requested concept cannot be found: " + id, concept);
         analyzer.execute(ruleSet, ruleSelection);
         return reportWriter.getConceptResults().get(id);
@@ -315,9 +316,9 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws AnalysisException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
-        Constraint constraint = ruleSet.getConstraints().get(id);
+        Constraint constraint = ruleSet.getConstraintBucket().getConstraint(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
         analyzer.execute(ruleSet, ruleSelection);
         return reportWriter.getConstraintResults().get(id);
