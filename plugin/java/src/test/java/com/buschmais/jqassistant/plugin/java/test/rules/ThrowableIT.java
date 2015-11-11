@@ -38,7 +38,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void throwable() throws IOException, AnalysisException {
+    public void throwable() throws Exception {
         assertThat(applyConcept("java:Throwable").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Throwable) RETURN element").getColumn("element");
@@ -57,7 +57,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void error() throws IOException, AnalysisException {
+    public void error() throws Exception {
         assertThat(applyConcept("java:Error").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Error) RETURN element").getColumn("element");
@@ -76,7 +76,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void exception() throws IOException, AnalysisException {
+    public void exception() throws Exception {
         assertThat(applyConcept("java:Exception").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:Exception) RETURN element").getColumn("element");
@@ -95,7 +95,7 @@ public class ThrowableIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void runtimeException() throws IOException, AnalysisException {
+    public void runtimeException() throws Exception {
         assertThat(applyConcept("java:RuntimeException").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> elements = query("MATCH (element:Class:RuntimeException) RETURN element").getColumn("element");

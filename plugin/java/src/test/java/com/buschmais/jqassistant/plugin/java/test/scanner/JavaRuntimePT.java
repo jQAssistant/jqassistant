@@ -45,7 +45,7 @@ public class JavaRuntimePT extends AbstractJavaPluginIT {
 
     @Test
     @TestStore(reset = false)
-    public void javaRuntime02Analyze() throws IOException, AnalysisException {
+    public void javaRuntime02Analyze() throws Exception {
         applyConcept("metric:Top10TypesPerArtifact");
         applyConcept("metric:Top10TypesPerPackage");
         applyConcept("metric:Top10MethodsPerType");
