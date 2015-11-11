@@ -12,6 +12,6 @@ public interface RuleSet {
 
     GroupsBucket getGroupsBucket();
 
-    Map<String, MetricGroup> getMetricGroups();
+    MetricGroupsBucket getMetricGroupsBucket();
 
 }

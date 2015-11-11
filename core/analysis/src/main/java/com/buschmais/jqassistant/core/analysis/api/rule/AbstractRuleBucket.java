@@ -25,7 +25,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule, NRE extends NoR
 
     protected abstract String getRuleTypeName();
 
-    protected Collection<T> getAll() {
+    public Collection<T> getAll() {
         return Collections.unmodifiableCollection(rules.values());
     }
 
@@ -33,11 +33,11 @@ public abstract class AbstractRuleBucket<T extends AbstractRule, NRE extends NoR
 
     protected abstract NRE newNoRuleException(String message);
 
-    protected Set<String> getRuleIds() {
+    public Set<String> getRuleIds() {
         return Collections.unmodifiableSet(rules.keySet());
     }
 
-    protected T get(String id) throws NRE {
+    public T get(String id) throws NRE {
         T rule = rules.get(id);
 
         if (null == rule) {
@@ -47,7 +47,7 @@ public abstract class AbstractRuleBucket<T extends AbstractRule, NRE extends NoR
         return rule;
     }
 
-    protected <B extends AbstractRuleBucket<T, NRE, DRE>> void addAll(B bucket) throws DRE {
+    public <B extends AbstractRuleBucket<T, NRE, DRE>> void addAll(B bucket) throws DRE {
         String id = null;
         try {
             for (String conceptId : bucket.getRuleIds()) {

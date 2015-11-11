@@ -46,7 +46,9 @@ public class RuleSetBuilder {
     }
 
     public RuleSetBuilder addMetricGroup(MetricGroup metricGroup) throws RuleException {
-        return put(ruleSet.metricGroups, metricGroup);
+        ruleSet.getMetricGroupsBucket().add(metricGroup);
+
+        return this;
     }
 
     public RuleSet getRuleSet() {
@@ -71,7 +73,7 @@ public class RuleSetBuilder {
         private ConstraintBucket constraintBucket = new ConstraintBucket();
         private TemplateBucket templateBucket = new TemplateBucket();
         private GroupsBucket groupsBucket = new GroupsBucket();
-        private Map<String, MetricGroup> metricGroups = new HashMap<>();
+        private MetricGroupsBucket metricGroupsBucket = new MetricGroupsBucket();
 
         private DefaultRuleSet() {
         }
@@ -96,13 +98,14 @@ public class RuleSetBuilder {
         }
 
         @Override
-        public Map<String, MetricGroup> getMetricGroups() {
-            return metricGroups;
+        public MetricGroupsBucket getMetricGroupsBucket() {
+            return metricGroupsBucket;
         }
 
         @Override
         public String toString() {
-            return "RuleSet{" + "groups=" + groupsBucket.size() + ", constraints=" + constraintBucket.size() + ", rules=" + conceptBucket.size() + '}';
+            return "RuleSet{" + "groups=" + groupsBucket.size() + ", constraints=" + constraintBucket.size() +
+                    ", rules=" + conceptBucket.size() + ", metric groups=" + metricGroupsBucket.size() + "}";
         }
     }
 }
