@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoMetricGroupException;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
@@ -46,7 +47,7 @@ public class MetricsViewIT extends AbstractUITest {
     @Test
     public void testGetMetricIds() {
 
-        Set<String> ruleSetMetricGroupIds = ruleSet.getMetricGroups().keySet();
+        Set<String> ruleSetMetricGroupIds = ruleSet.getMetricGroupsBucket().getRuleIds();
         assertFalse(ruleSetMetricGroupIds.isEmpty());
 
         Set<String> metricGroupIds = metricsPage.getMetricGroupIds();
@@ -70,7 +71,7 @@ public class MetricsViewIT extends AbstractUITest {
      * This test lets the metric service run a metric.
      */
     @Test
-    public void testMetricGroupSelection() throws IOException {
+    public void testMetricGroupSelection() throws IOException, NoMetricGroupException {
         scanClasses("core", Store.class);
         scanClassPathDirectory("server-test", getClassesDirectory(MetricsViewIT.class));
 
@@ -82,7 +83,7 @@ public class MetricsViewIT extends AbstractUITest {
         // is visible
         metricsPage.openMetricDetails();
 
-        MetricGroup metricGroup = ruleSet.getMetricGroups().get(METRIC_GROUP_ID_artifactDependencies);
+        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().get(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
         // if running the metric succeeded, the metric ID field in the metric
         // page is filled with the metric ID
@@ -114,7 +115,7 @@ public class MetricsViewIT extends AbstractUITest {
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);
         metricsPage.openMetricDetails();
 
-        MetricGroup metricGroup = ruleSet.getMetricGroups().get(METRIC_GROUP_ID_artifactDependencies);
+        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().get(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
 
         List<String> breadcrumb = metricsPage.getBreadcrumb();
