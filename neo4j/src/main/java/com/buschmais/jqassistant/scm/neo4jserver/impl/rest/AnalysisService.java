@@ -143,23 +143,21 @@ public class AnalysisService extends AbstractJQARestService {
 
         JSONArray concepts = new JSONArray();
         response.put(JSON_OBJECT_KEY_CONCEPTS, concepts);
-        for (Map.Entry<String, Concept> concept : ruleSet.getConcepts().entrySet()) {
+        for (Concept concept : ruleSet.getConceptBucket().getConcepts()) {
             JSONObject conceptObject = new JSONObject();
-            Concept value = concept.getValue();
-            conceptObject.put(JSON_OBJECT_KEY_ID, value.getId());
-            conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, value.getDescription());
-            conceptObject.put(JSON_OBJECT_KEY_CYPHER, getCypher(value));
+            conceptObject.put(JSON_OBJECT_KEY_ID, concept.getId());
+            conceptObject.put(JSON_OBJECT_KEY_DESCRIPTION, concept.getDescription());
+            conceptObject.put(JSON_OBJECT_KEY_CYPHER, getCypher(concept));
             concepts.put(conceptObject);
         }
 
         JSONArray constraints = new JSONArray();
         response.put(JSON_OBJECT_KEY_CONSTRAINTS, constraints);
-        for (Map.Entry<String, Constraint> constraint : ruleSet.getConstraints().entrySet()) {
+        for (Constraint constraint : ruleSet.getConstraintBucket().getConstraints()) {
             JSONObject constraintObject = new JSONObject();
-            Constraint value = constraint.getValue();
-            constraintObject.put(JSON_OBJECT_KEY_ID, value.getId());
-            constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, value.getDescription());
-            constraintObject.put(JSON_OBJECT_KEY_CYPHER, getCypher(value));
+            constraintObject.put(JSON_OBJECT_KEY_ID, constraint.getId());
+            constraintObject.put(JSON_OBJECT_KEY_DESCRIPTION, constraint.getDescription());
+            constraintObject.put(JSON_OBJECT_KEY_CYPHER, getCypher(constraint));
             constraints.put(constraintObject);
         }
 
