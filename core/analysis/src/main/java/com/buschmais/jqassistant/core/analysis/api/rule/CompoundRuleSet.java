@@ -1,15 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 public class CompoundRuleSet implements RuleSet {
 
     private ConceptBucket conceptBucket = new ConceptBucket();
     private ConstraintBucket constraintBucket = new ConstraintBucket();
     private TemplateBucket templateBucket = new TemplateBucket();
     private GroupsBucket groupsBucket = new GroupsBucket();
-    private Map<String, MetricGroup> metricGroups = new TreeMap<>();
+    private MetricGroupsBucket metricGroupsBucket = new MetricGroupsBucket();
 
     public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateRuleException {
         for (RuleSet ruleSet : ruleSets) {
@@ -17,7 +14,7 @@ public class CompoundRuleSet implements RuleSet {
             conceptBucket.addConcepts(ruleSet.getConceptBucket());
             constraintBucket.addConstraints(ruleSet.getConstraintBucket());
             groupsBucket.addGroups(ruleSet.getGroupsBucket());
-            metricGroups.putAll(ruleSet.getMetricGroups());
+            metricGroupsBucket.addAll(ruleSet.getMetricGroupsBucket());
         }
     }
 
@@ -37,8 +34,8 @@ public class CompoundRuleSet implements RuleSet {
     }
 
     @Override
-    public Map<String, MetricGroup> getMetricGroups() {
-        return metricGroups;
+    public MetricGroupsBucket getMetricGroupsBucket() {
+        return metricGroupsBucket;
     }
 
     @Override
