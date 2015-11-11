@@ -156,7 +156,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             String templateId = ((TemplateExecutable) executable).getTemplateId();
             Template template = null;
             try {
-                template = ruleSet.getTemplateBucket().getTemplate(templateId);
+                template = ruleSet.getTemplateBucket().getById(templateId);
             } catch (NoTemplateException e) {
                 throw new AnalysisException("Unknown template with id " + templateId, e);
             }

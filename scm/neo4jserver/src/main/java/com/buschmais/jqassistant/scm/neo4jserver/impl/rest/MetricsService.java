@@ -158,7 +158,7 @@ public class MetricsService extends AbstractJQARestService {
 
         MetricGroup metricGroup = null;
         try {
-            metricGroup = readMetricGroups().get(metricGroupId);
+            metricGroup = readMetricGroups().getById(metricGroupId);
             return metricGroup.getMetrics().get(metricId);
         } catch (NoMetricGroupException e) {
             return null;

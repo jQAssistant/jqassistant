@@ -10,11 +10,11 @@ public class CompoundRuleSet implements RuleSet {
 
     public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateRuleException {
         for (RuleSet ruleSet : ruleSets) {
-            templateBucket.addTemplates(ruleSet.getTemplateBucket());
-            conceptBucket.addConcepts(ruleSet.getConceptBucket());
-            constraintBucket.addConstraints(ruleSet.getConstraintBucket());
-            groupsBucket.addGroups(ruleSet.getGroupsBucket());
-            metricGroupsBucket.addAll(ruleSet.getMetricGroupsBucket());
+            templateBucket.add(ruleSet.getTemplateBucket());
+            conceptBucket.add(ruleSet.getConceptBucket());
+            constraintBucket.add(ruleSet.getConstraintBucket());
+            groupsBucket.add(ruleSet.getGroupsBucket());
+            metricGroupsBucket.add(ruleSet.getMetricGroupsBucket());
         }
     }
 

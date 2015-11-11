@@ -17,20 +17,4 @@ public class GroupsBucket extends AbstractRuleBucket<Group, NoGroupException, Du
     protected NoGroupException newNoRuleException(String message) {
         return new NoGroupException(message);
     }
-
-    public Collection<String> getGroupIds() {
-        return getRuleIds();
-    }
-
-    public void addGroups(GroupsBucket bucket) throws DuplicateGroupException {
-        addAll(bucket);
-    }
-
-    public Group getGroup(String id) throws NoGroupException {
-        return get(id);
-    }
-
-    public Collection<Group> getGroups() {
-        return getAll();
-    }
 }

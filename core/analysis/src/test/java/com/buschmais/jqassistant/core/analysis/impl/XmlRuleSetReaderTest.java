@@ -23,10 +23,10 @@ public class XmlRuleSetReaderTest {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(1, ruleSet.getConceptBucket().size());
         assertEquals(1, ruleSet.getConstraintBucket().size());
-        for (String id : ruleSet.getConceptBucket().getConceptIds()) {
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, "test:JavaScriptConcept".equals(id));
         }
-        for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, "test:JavaScriptConstraint".equals(id));
         }
     }

@@ -199,7 +199,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     /**
      * Unescapes the content of a rule.
      *
-     * TODO do better, or even better add a part.get(Original|Raw)Content() to
+     * TODO do better, or even better add a partget(Original|Raw)Content() to
      * asciidoctor
      * 
      * @param content

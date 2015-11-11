@@ -47,7 +47,7 @@ public class MetricsViewIT extends AbstractUITest {
     @Test
     public void testGetMetricIds() {
 
-        Set<String> ruleSetMetricGroupIds = ruleSet.getMetricGroupsBucket().getRuleIds();
+        Set<String> ruleSetMetricGroupIds = ruleSet.getMetricGroupsBucket().getIds();
         assertFalse(ruleSetMetricGroupIds.isEmpty());
 
         Set<String> metricGroupIds = metricsPage.getMetricGroupIds();
@@ -83,7 +83,7 @@ public class MetricsViewIT extends AbstractUITest {
         // is visible
         metricsPage.openMetricDetails();
 
-        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().get(METRIC_GROUP_ID_artifactDependencies);
+        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().getById(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
         // if running the metric succeeded, the metric ID field in the metric
         // page is filled with the metric ID
@@ -115,7 +115,7 @@ public class MetricsViewIT extends AbstractUITest {
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);
         metricsPage.openMetricDetails();
 
-        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().get(METRIC_GROUP_ID_artifactDependencies);
+        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().getById(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
 
         List<String> breadcrumb = metricsPage.getBreadcrumb();

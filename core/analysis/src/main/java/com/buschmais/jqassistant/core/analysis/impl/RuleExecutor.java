@@ -134,7 +134,7 @@ public class RuleExecutor {
 
     public Template resolveTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
         try {
-            Template template = ruleSet.getTemplateBucket().getTemplate(queryTemplateId);
+            Template template = ruleSet.getTemplateBucket().getById(queryTemplateId);
             return template;
         } catch (NoTemplateException e) {
             throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.", e);
@@ -143,7 +143,7 @@ public class RuleExecutor {
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {
         try {
-            Concept requiredConcept = ruleSet.getConceptBucket().getConcept(requiredConceptId);
+            Concept requiredConcept = ruleSet.getConceptBucket().getById(requiredConceptId);
             return requiredConcept;
         } catch (NoConceptException e) {
             throw new AnalysisException("Concept '" + requiredConceptId + "' is not defined.");
@@ -152,7 +152,7 @@ public class RuleExecutor {
 
     public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws AnalysisException {
         try {
-            Constraint constraint = ruleSet.getConstraintBucket().getConstraint(constraintId);
+            Constraint constraint = ruleSet.getConstraintBucket().getById(constraintId);
             return constraint;
         } catch (NoRuleException e) {
             throw new AnalysisException("Constraint '" + constraintId + "' not found.");
@@ -161,7 +161,7 @@ public class RuleExecutor {
 
     public Group resolveGroup(RuleSet ruleSet, String groupId) throws AnalysisException {
         try {
-            Group group = ruleSet.getGroupsBucket().getGroup(groupId);
+            Group group = ruleSet.getGroupsBucket().getById(groupId);
             return group;
         } catch (NoGroupException e) {
             throw  new AnalysisException("Group '" +  groupId + "' is not defined.", e);

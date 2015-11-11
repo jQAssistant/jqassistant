@@ -83,11 +83,11 @@ public final class JQAssistantRuleRepository extends RuleRepository {
         ruleSet = ruleSetBuilder.getRuleSet();
         List<Rule> rules = new ArrayList<>();
 
-        for (Concept concept : ruleSet.getConceptBucket().getConcepts()) {
+        for (Concept concept : ruleSet.getConceptBucket().getAll()) {
             rules.add(createRule(concept, RuleType.Concept));
         }
 
-        for (Constraint constraint : ruleSet.getConstraintBucket().getConstraints()) {
+        for (Constraint constraint : ruleSet.getConstraintBucket().getAll()) {
             rules.add(createRule(constraint, RuleType.Constraint));
         }
 

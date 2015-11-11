@@ -29,14 +29,14 @@ public class CompoundRuleSetReaderTest {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(3, ruleSet.getConceptBucket().size());
         assertEquals(2, ruleSet.getConstraintBucket().size());
-        for (String id : ruleSet.getConceptBucket().getConceptIds()) {
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, asList("junit4:TestClassOrMethod", "junit4:AssertMethod", "java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, asList("junit4:TestMethodWithoutAssertion", "example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
         assertEquals(1, ruleSet.getGroupsBucket().size());
-        Group group = ruleSet.getGroupsBucket().getGroup("default");
+        Group group = ruleSet.getGroupsBucket().getById("default");
         assertEquals("default", group.getId());
         assertEquals(1, group.getConcepts().size());
         assertEquals("java:Throwable", group.getConcepts().keySet().iterator().next());
@@ -53,14 +53,14 @@ public class CompoundRuleSetReaderTest {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(1, ruleSet.getConceptBucket().size());
         assertEquals(1, ruleSet.getConstraintBucket().size());
-        for (String id : ruleSet.getConceptBucket().getConceptIds()) {
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, asList("java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, asList("example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
         assertEquals(1, ruleSet.getGroupsBucket().size());
-        Group group = ruleSet.getGroupsBucket().getGroup("default");
+        Group group = ruleSet.getGroupsBucket().getById("default");
         assertEquals("default", group.getId());
     }
 }
