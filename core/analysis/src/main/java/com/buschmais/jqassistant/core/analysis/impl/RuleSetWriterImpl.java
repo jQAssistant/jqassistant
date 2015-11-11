@@ -39,7 +39,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
     public void write(RuleSet ruleSet, Writer writer) throws RuleException {
         CollectRulesVisitor visitor = new CollectRulesVisitor();
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupIds(ruleSet.getGroups().keySet())
-                .addConstraintIds(ruleSet.getConstraints().keySet())
+                .addConstraintIds(ruleSet.getConstraintBucket().getConstraintIds())
                 .addConceptIds(ruleSet.getConceptBucket().getConceptIds()).get();
         try {
             new RuleExecutor(visitor).execute(ruleSet, ruleSelection);

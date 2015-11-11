@@ -12,6 +12,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.Template;
@@ -147,11 +148,12 @@ public class RuleExecutor {
     }
 
     public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws AnalysisException {
-        Constraint constraint = ruleSet.getConstraints().get(constraintId);
-        if (constraint == null) {
+        try {
+            Constraint constraint = ruleSet.getConstraintBucket().getConstraint(constraintId);
+            return constraint;
+        } catch (NoRuleException e) {
             throw new AnalysisException("Constraint '" + constraintId + "' not found.");
         }
-        return constraint;
     }
 
     public Group resolveGroup(RuleSet ruleSet, String groupId) throws AnalysisException {

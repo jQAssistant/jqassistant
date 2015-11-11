@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 public class Group extends AbstractRule {
 
     /**
-     * The set of concepts contained in the group.
+     * The set of rules contained in the group.
      */
     private Map<String, Severity> concepts = new HashMap<>();
 
@@ -37,7 +37,7 @@ public class Group extends AbstractRule {
      * @param ruleSource
      *            The rule source.
      * @param concepts
-     *            The included concepts.
+     *            The included rules.
      * @param constraints
      *            The included constraints.
      * @param groups

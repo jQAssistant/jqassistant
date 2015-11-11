@@ -51,9 +51,12 @@ public class RuleSelection {
          */
         public static RuleSelection allOf(RuleSet ruleSet) {
             Set<String> conceptIds = ruleSet.getConceptBucket().getConceptIds();
+            Set<String> constraintIds = ruleSet.getConstraintBucket().getConstraintIds();
 
-            return newInstance().addGroupIds(ruleSet.getGroups().keySet()).addConstraintIds(ruleSet.getConstraints().keySet())
-                                .addConceptIds(conceptIds).get();
+            return newInstance().addGroupIds(ruleSet.getGroups().keySet())
+                                .addConstraintIds(constraintIds)
+                                .addConceptIds(conceptIds)
+                                .get();
         }
 
         /**

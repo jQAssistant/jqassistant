@@ -31,7 +31,7 @@ public abstract class AbstractExecutableRule extends AbstractRule implements Exe
     private Map<String, Object> parameters;
 
     /**
-     * The concepts which must be applied before this rule can be executed.
+     * The rules which must be applied before this rule can be executed.
      */
     private Set<String> requiresConcepts;
 
