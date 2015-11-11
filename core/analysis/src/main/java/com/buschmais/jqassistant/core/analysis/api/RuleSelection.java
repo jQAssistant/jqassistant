@@ -50,10 +50,11 @@ public class RuleSelection {
          * @return The rule selection.
          */
         public static RuleSelection allOf(RuleSet ruleSet) {
-            Set<String> conceptIds = ruleSet.getConceptBucket().getConceptIds();
-            Set<String> constraintIds = ruleSet.getConstraintBucket().getConstraintIds();
+            Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
+            Set<String> constraintIds = ruleSet.getConstraintBucket().getIds();
+            Set<String> groupIds = ruleSet.getGroupsBucket().getIds();
 
-            return newInstance().addGroupIds(ruleSet.getGroupsBucket().getGroupIds())
+            return newInstance().addGroupIds(groupIds)
                                 .addConstraintIds(constraintIds)
                                 .addConceptIds(conceptIds)
                                 .get();
@@ -69,7 +70,7 @@ public class RuleSelection {
          */
         public static RuleSelection newDefault(RuleSet ruleSet) {
             Builder builder = newInstance();
-            if (ruleSet.getGroupsBucket().getGroupIds().contains(GROUP_DEFAULT)) {
+            if (ruleSet.getGroupsBucket().getIds().contains(GROUP_DEFAULT)) {
                 builder.addGroupId(GROUP_DEFAULT).get();
             }
             return builder.get();

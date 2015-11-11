@@ -32,7 +32,7 @@ public class AsciiDocRuleSetReaderTest {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertEquals(2, concepts.size());
-        Concept concept1 = concepts.getConcept("junit4:TestClassOrMethod");
+        Concept concept1 = concepts.getById("junit4:TestClassOrMethod");
         assertEquals("junit4:TestClassOrMethod", concept1.getId());
         assertEquals(true, concept1.getDescription().contains("labels them and their containing classes with `:Test` and `:Junit4`."));
         Executable executable1 = concept1.getExecutable();
@@ -40,7 +40,7 @@ public class AsciiDocRuleSetReaderTest {
         assertEquals(true, ((CypherExecutable) executable1).getStatement().contains("c:Test:Junit4, m:Test:Junit4"));
         assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
 
-        Concept concept2 = concepts.getConcept("junit4:AssertMethod");
+        Concept concept2 = concepts.getById("junit4:AssertMethod");
         assertEquals("junit4:AssertMethod", concept2.getId());
         assertEquals("Labels all assertion methods declared by `org.junit.Assert` with `:Assert`.", concept2.getDescription());
         Executable executable2 = concept2.getExecutable();
@@ -51,14 +51,14 @@ public class AsciiDocRuleSetReaderTest {
         ConstraintBucket constraints = ruleSet.getConstraintBucket();
         assertEquals(1, constraints.size());
 
-        Constraint constraint = constraints.getConstraint("junit4:TestMethodWithoutAssertion");
+        Constraint constraint = constraints.getById("junit4:TestMethodWithoutAssertion");
 
         assertEquals("junit4:TestMethodWithoutAssertion", constraint.getId());
         assertEquals("All test methods must perform assertions.", constraint.getDescription());
         Executable constraintExecutable = constraint.getExecutable();
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
         assertEquals(true, ((CypherExecutable) constraintExecutable).getStatement().contains("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
-        assertEquals(new HashSet<>(ruleSet.getConceptBucket().getConceptIds()), constraint.getRequiresConcepts());
+        assertEquals(new HashSet<>(ruleSet.getConceptBucket().getIds()), constraint.getRequiresConcepts());
 
     }
 
@@ -72,7 +72,7 @@ public class AsciiDocRuleSetReaderTest {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertEquals(1, concepts.size());
-        Concept concept1 = concepts.getConcept("concept:JavaScript");
+        Concept concept1 = concepts.getById("concept:JavaScript");
         assertEquals("concept:JavaScript", concept1.getId());
         assertEquals(true, concept1.getDescription().contains("Demonstrates a concept using JavaScript."));
         Executable executable = concept1.getExecutable();
@@ -92,10 +92,10 @@ public class AsciiDocRuleSetReaderTest {
         RuleSource ruleSource = new UrlRuleSource(url);
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertThat(ruleSet.getConceptBucket().getConceptIds(), hasItems("test:Concept", "test:CriticalConcept"));
-        assertThat(ruleSet.getConstraintBucket().getConstraintIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
+        assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:Concept", "test:CriticalConcept"));
+        assertThat(ruleSet.getConstraintBucket().getIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
         GroupsBucket groups = ruleSet.getGroupsBucket();
-        Group defaultGroup = groups.getGroup("test:Default");
+        Group defaultGroup = groups.getById("test:Default");
         assertThat(defaultGroup, notNullValue());
         Map<String, Severity> includedConcepts = defaultGroup.getConcepts();
         assertThat(includedConcepts.containsKey("test:Concept"), equalTo(true));
@@ -109,7 +109,7 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(includedConstraints.get("test:CriticalConstraint"), equalTo(Severity.CRITICAL));
         Set<String> includedGroups = defaultGroup.getGroups();
         assertThat(includedGroups, IsCollectionContaining.hasItems("test:Group"));
-        Group group = groups.getGroup("test:Group");
+        Group group = groups.getById("test:Group");
         assertThat(group, notNullValue());
     }
 }

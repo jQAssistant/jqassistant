@@ -28,13 +28,13 @@ public class RuleSetBuilder {
     }
 
     public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
-        ruleSet.conceptBucket.addConcept(concept);
+        ruleSet.conceptBucket.add(concept);
 
         return this;
     }
 
     public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
-        ruleSet.constraintBucket.addConstraint(constraint);
+        ruleSet.constraintBucket.add(constraint);
 
         return this;
     }

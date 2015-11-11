@@ -1,7 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,31 +16,6 @@ public class ConceptBucket extends AbstractRuleBucket<Concept, NoConceptExceptio
     @Override
     protected String getRuleTypeName() {
         return "concept";
-    }
-
-    public void addConcept(Concept concept) throws DuplicateConceptException {
-        add(concept);
-    }
-
-    /**
-     * Returns a unmodifiable set with all concept ids.
-     *
-     * @return a set with all concept ids. Result will never be {@code null}.
-     */
-    public Set<String> getConceptIds() {
-        return getRuleIds();
-    }
-
-    public Concept getConcept(String id) throws NoConceptException {
-        return get(id);
-    }
-
-    public void addConcepts(ConceptBucket bucket) throws DuplicateConceptException {
-        addAll(bucket);
-    }
-
-    public Collection<Concept> getConcepts() {
-        return getAll();
     }
 
     @Override
