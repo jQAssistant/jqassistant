@@ -48,9 +48,10 @@ public class AsciiDocRuleSetReaderTest {
         assertEquals(true, ((CypherExecutable) executable2).getStatement().contains("and assertMethod.signature =~ 'void assert.*'"));
         assertEquals(Collections.emptySet(), concept2.getRequiresConcepts());
 
-        Map<String, Constraint> constraints = ruleSet.getConstraints();
+        ConstraintBucket constraints = ruleSet.getConstraintBucket();
         assertEquals(1, constraints.size());
-        Constraint constraint = constraints.values().iterator().next();
+
+        Constraint constraint = constraints.getConstraint("junit4:TestMethodWithoutAssertion");
 
         assertEquals("junit4:TestMethodWithoutAssertion", constraint.getId());
         assertEquals("All test methods must perform assertions.", constraint.getDescription());
@@ -92,7 +93,7 @@ public class AsciiDocRuleSetReaderTest {
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertThat(ruleSet.getConceptBucket().getConceptIds(), hasItems("test:Concept", "test:CriticalConcept"));
-        assertThat(ruleSet.getConstraints().keySet(), hasItems("test:Constraint", "test:CriticalConstraint"));
+        assertThat(ruleSet.getConstraintBucket().getConstraintIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
         Map<String, Group> groups = ruleSet.getGroups();
         Group defaultGroup = groups.get("test:Default");
         assertThat(defaultGroup, notNullValue());

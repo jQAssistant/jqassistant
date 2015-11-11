@@ -97,7 +97,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void packages() throws IOException, AnalysisException {
+    public void packages() throws Exception {
         scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
         assertThat(applyConcept("dependency:Package").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
@@ -120,7 +120,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void artifacts() throws IOException, AnalysisException {
+    public void artifacts() throws Exception {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
         assertThat(applyConcept("dependency:Artifact").getStatus(), Matchers.equalTo(SUCCESS));
@@ -144,7 +144,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void packageCycles() throws IOException, AnalysisException {
+    public void packageCycles() throws Exception {
         scanClassPathDirectory(getClassesDirectory(A.class));
         assertThat(validateConstraint("dependency:PackageCycles").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -170,7 +170,7 @@ public class DependencyIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void artifactCycles() throws IOException, AnalysisException {
+    public void artifactCycles() throws Exception {
         scanClasses("a", A.class);
         scanClasses("b", B.class);
         assertThat(validateConstraint("dependency:ArtifactCycles").getStatus(), equalTo(FAILURE));

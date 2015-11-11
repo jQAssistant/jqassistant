@@ -31,7 +31,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_GetResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_GetResourceMethod_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:GetResourceMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -51,7 +51,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_PutResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_PutResourceMethod_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:PutResourceMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -71,7 +71,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_PostResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_PostResourceMethod_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:PostResourceMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -91,7 +91,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_DeleteResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_DeleteResourceMethod_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:DeleteResourceMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -111,7 +111,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_HeadResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_HeadResourceMethod_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:HeadResourceMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -131,7 +131,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_OptionsResourceMethod_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_OptionsResourceMethod_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:OptionsResourceMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -152,7 +152,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_SubResourceLocator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_SubResourceLocator_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:SubResourceLocator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -175,7 +175,7 @@ public class ResourceMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_invalid_SubResourceLocator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_invalid_SubResourceLocator_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:SubResourceLocator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

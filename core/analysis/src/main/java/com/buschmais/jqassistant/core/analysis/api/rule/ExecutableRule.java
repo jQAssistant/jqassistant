@@ -23,9 +23,9 @@ public interface ExecutableRule extends Rule {
     String getDeprecation();
 
     /**
-     * Return the ids of required concepts.
+     * Return the ids of required rules.
      * 
-     * @return The ids of required concepts.
+     * @return The ids of required rules.
      */
     Set<String> getRequiresConcepts();
 

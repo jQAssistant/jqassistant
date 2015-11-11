@@ -28,7 +28,7 @@ public class FunctionalInterfaceIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void functionalInterface() throws IOException, AnalysisException, NoSuchMethodException {
+    public void functionalInterface() throws Exception {
         scanClasses(com.buschmais.jqassistant.plugin.java8.test.set.rules.FunctionalInterface.class);
         assertThat(applyConcept("java8:FunctionalInterface").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

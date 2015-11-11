@@ -6,9 +6,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.util.Set;
-import java.util.TreeSet;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
@@ -26,6 +24,27 @@ public class ConceptBucketTest {
     public void sizeOfBucketIsZeroIfThereAreNotConcepts() {
         assertThat(concepts.size(), equalTo(0));
     }
+
+    //--- All tests for getConcpets()
+
+    @Test
+    public void getConceptsReturnsAllConcepts() throws DuplicateConceptException {
+        Concept a = Mockito.mock(Concept.class);
+        Concept b = Mockito.mock(Concept.class);
+        Concept c = Mockito.mock(Concept.class);
+
+        Mockito.when(a.getId()).thenReturn("a");
+        Mockito.when(b.getId()).thenReturn("b");
+        Mockito.when(c.getId()).thenReturn("c");
+
+        concepts.addConcept(a);
+        concepts.addConcept(b);
+        concepts.addConcept(c);
+
+        assertThat(concepts.getConcepts(), containsInAnyOrder(a, b, c));
+    }
+
+    //--- All tests for size()
 
     @Test
     public void sizeOfBucketIsEqualNumberOfConceptsInBucket() throws DuplicateConceptException {
@@ -107,14 +126,11 @@ public class ConceptBucketTest {
         Mockito.when(b.getId()).thenReturn("b");
         Mockito.when(c.getId()).thenReturn("c");
 
-        TreeSet<String> ids = new TreeSet<>(asList(a.getId(), b.getId(), c.getId()));
+        ConceptBucket existingBucket = new ConceptBucket();
 
-        ConceptBucket existingBucket = Mockito.mock(ConceptBucket.class);
-
-        Mockito.when(existingBucket.getConceptIds()).thenReturn(ids);
-        Mockito.when(existingBucket.getConcept(Mockito.eq("a"))).thenReturn(a);
-        Mockito.when(existingBucket.getConcept(Mockito.eq("b"))).thenReturn(b);
-        Mockito.when(existingBucket.getConcept(Mockito.eq("c"))).thenReturn(c);
+        existingBucket.addConcept(a);
+        existingBucket.addConcept(b);
+        existingBucket.addConcept(c);
 
         ConceptBucket newBucket = new ConceptBucket();
 
@@ -157,14 +173,11 @@ public class ConceptBucketTest {
         Mockito.when(b.getId()).thenReturn("b");
         Mockito.when(c.getId()).thenReturn("c");
 
-        TreeSet<String> ids = new TreeSet<>(asList(a.getId(), b.getId(), c.getId()));
+        ConceptBucket existingBucket = new ConceptBucket();
 
-        ConceptBucket existingBucket = Mockito.mock(ConceptBucket.class);
-
-        Mockito.when(existingBucket.getConceptIds()).thenReturn(ids);
-        Mockito.when(existingBucket.getConcept(Mockito.eq("a"))).thenReturn(a);
-        Mockito.when(existingBucket.getConcept(Mockito.eq("b"))).thenReturn(b);
-        Mockito.when(existingBucket.getConcept(Mockito.eq("c"))).thenReturn(c);
+        existingBucket.addConcept(a);
+        existingBucket.addConcept(b);
+        existingBucket.addConcept(c);
 
         ConceptBucket newBucket = new ConceptBucket();
 

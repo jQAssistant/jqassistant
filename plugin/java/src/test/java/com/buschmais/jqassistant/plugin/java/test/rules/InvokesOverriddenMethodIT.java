@@ -35,7 +35,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void invokeInterfaceMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void invokeInterfaceMethod() throws Exception {
         scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
@@ -57,7 +57,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void invokeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void invokeClassMethod() throws Exception {
         scanClasses(ClassType.class, SubClassType.class, InvokeClient.class);
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -79,7 +79,7 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void lineNumbers() throws IOException, AnalysisException, NoSuchMethodException {
+    public void lineNumbers() throws Exception {
         scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
         assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

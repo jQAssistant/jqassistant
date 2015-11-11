@@ -26,14 +26,16 @@ public class RuleSetBuilder {
         return put(ruleSet.templates, template);
     }
 
-    public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException, DuplicateConceptException {
+    public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
         ruleSet.conceptBucket.addConcept(concept);
 
         return this;
     }
 
     public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
-        return put(ruleSet.constraints, constraint);
+        ruleSet.constraintBucket.addConstraint(constraint);
+
+        return this;
     }
 
     public RuleSetBuilder addGroup(Group group) throws RuleException {
@@ -62,9 +64,9 @@ public class RuleSetBuilder {
      */
     private static class DefaultRuleSet implements RuleSet {
 
-        private ConceptBucket  conceptBucket = new ConceptBucket();
+        private ConceptBucket conceptBucket = new ConceptBucket();
+        private ConstraintBucket constraintBucket = new ConstraintBucket();
         private Map<String, Template> templates = new HashMap<>();
-        private Map<String, Constraint> constraints = new HashMap<>();
         private Map<String, Group> groups = new HashMap<>();
         private Map<String, MetricGroup> metricGroups = new HashMap<>();
 
@@ -81,8 +83,8 @@ public class RuleSetBuilder {
         }
 
         @Override
-        public Map<String, Constraint> getConstraints() {
-            return constraints;
+        public ConstraintBucket getConstraintBucket() {
+            return constraintBucket;
         }
 
         @Override
@@ -97,7 +99,7 @@ public class RuleSetBuilder {
 
         @Override
         public String toString() {
-            return "RuleSet{" + "groups=" + groups + ", constraints=" + constraints + ", concepts=" + conceptBucket.size() + '}';
+            return "RuleSet{" + "groups=" + groups + ", constraints=" + constraintBucket.size() + ", rules=" + conceptBucket.size() + '}';
         }
     }
 }

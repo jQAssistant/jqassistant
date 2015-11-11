@@ -28,7 +28,7 @@ public class DefaultMethodIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void defaultMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void defaultMethod() throws Exception {
         scanClasses(DefaultMethod.class);
         assertThat(applyConcept("java8:DefaultMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

@@ -35,7 +35,7 @@ public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_RequestMethodDesignator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_RequestMethodDesignator_Concept() throws Exception {
         scanClasses(GET.class, PUT.class, POST.class, DELETE.class, HEAD.class, OPTIONS.class);
         assertThat(applyConcept("jaxrs:RequestMethodDesignator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -72,7 +72,7 @@ public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testInvalid_RequestMethodDesignator_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testInvalid_RequestMethodDesignator_Concept() throws Exception {
         scanClasses(Test.class);
         assertThat(applyConcept("jaxrs:RequestMethodDesignator").getStatus(), equalTo(FAILURE));
         store.beginTransaction();

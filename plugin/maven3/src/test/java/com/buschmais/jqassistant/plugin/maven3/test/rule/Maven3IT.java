@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDe
 public class Maven3IT extends AbstractPluginIT {
 
     @Test
-    public void hierarchicalParentModuleRelation() throws AnalysisException {
+    public void hierarchicalParentModuleRelation() throws Exception {
         store.beginTransaction();
         MavenProjectDirectoryDescriptor parent = store.create(MavenProjectDirectoryDescriptor.class);
         MavenProjectDirectoryDescriptor module1 = store.create(MavenProjectDirectoryDescriptor.class);

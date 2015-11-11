@@ -39,7 +39,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_ConstructorInjection() throws IOException, AnalysisException {
+    public void test_ConstructorInjection() throws Exception {
         scanClasses(BeanWithFieldInjection.class);
         String ruleName = "cdi:BeansMustUseConstructorInjection";
         assertThat(validateConstraint(ruleName).getStatus(), equalTo(FAILURE));
@@ -66,7 +66,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_ConstructorInjection_No_Violation() throws IOException, AnalysisException {
+    public void test_ConstructorInjection_No_Violation() throws Exception {
         scanClasses(BeanWithConstructorInjection.class);
         String ruleName = "cdi:BeansMustUseConstructorInjection";
         assertThat(validateConstraint(ruleName).getStatus(), equalTo(SUCCESS));
@@ -92,7 +92,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_FieldInjection_No_Violation() throws IOException, AnalysisException {
+    public void test_FieldInjection_No_Violation() throws Exception {
         scanClasses(BeanWithConstructorInjection.class);
         scanClasses(BeanWithSetterInjection.class);
         String ruleName = "cdi:BeansMustNotUseFieldInjection";
@@ -118,7 +118,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_BeanInjection() throws IOException, AnalysisException {
+    public void test_BeanInjection() throws Exception {
         scanClasses(BeanWithFieldInjection.class);
         String ruleName = "cdi:BeansMustNotUseFieldInjection";
         assertThat(validateConstraint(ruleName).getStatus(), equalTo(FAILURE));

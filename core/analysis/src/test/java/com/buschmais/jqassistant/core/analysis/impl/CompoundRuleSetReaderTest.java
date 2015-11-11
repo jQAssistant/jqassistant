@@ -28,11 +28,11 @@ public class CompoundRuleSetReaderTest {
         reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(3, ruleSet.getConceptBucket().size());
-        assertEquals(2, ruleSet.getConstraints().size());
+        assertEquals(2, ruleSet.getConstraintBucket().size());
         for (String id : ruleSet.getConceptBucket().getConceptIds()) {
             assertEquals(true, asList("junit4:TestClassOrMethod", "junit4:AssertMethod", "java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraints().keySet()) {
+        for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
             assertEquals(true, asList("junit4:TestMethodWithoutAssertion", "example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
         assertEquals(1, ruleSet.getGroups().size());
@@ -52,11 +52,11 @@ public class CompoundRuleSetReaderTest {
         reader.read(Arrays.asList(new UrlRuleSource(url)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertEquals(1, ruleSet.getConceptBucket().size());
-        assertEquals(1, ruleSet.getConstraints().size());
+        assertEquals(1, ruleSet.getConstraintBucket().size());
         for (String id : ruleSet.getConceptBucket().getConceptIds()) {
             assertEquals(true, asList("java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraints().keySet()) {
+        for (String id : ruleSet.getConstraintBucket().getConstraintIds()) {
             assertEquals(true, asList("example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
         assertEquals(1, ruleSet.getGroups().size());

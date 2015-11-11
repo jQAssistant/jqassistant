@@ -6,17 +6,16 @@ import java.util.TreeMap;
 public class CompoundRuleSet implements RuleSet {
 
     private ConceptBucket conceptBucket = new ConceptBucket();
+    private ConstraintBucket constraintBucket = new ConstraintBucket();
     private Map<String, Template> templates = new TreeMap<>();
-    private ConceptBucket concepts = new ConceptBucket();
-    private Map<String, Constraint> constraints = new TreeMap<>();
     private Map<String, Group> groups = new TreeMap<>();
     private Map<String, MetricGroup> metricGroups = new TreeMap<>();
 
-    public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateConceptException {
+    public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateRuleException {
         for (RuleSet ruleSet : ruleSets) {
             templates.putAll(ruleSet.getTemplates());
-            concepts.addConcepts(ruleSet.getConceptBucket());
-            constraints.putAll(ruleSet.getConstraints());
+            conceptBucket.addConcepts(ruleSet.getConceptBucket());
+            constraintBucket.addConstraints(ruleSet.getConstraintBucket());
             groups.putAll(ruleSet.getGroups());
             metricGroups.putAll(ruleSet.getMetricGroups());
         }
@@ -28,8 +27,8 @@ public class CompoundRuleSet implements RuleSet {
     }
 
     @Override
-    public Map<String, Constraint> getConstraints() {
-        return constraints;
+    public ConstraintBucket getConstraintBucket() {
+        return constraintBucket;
     }
 
     @Override

@@ -34,7 +34,7 @@ public class ResourceIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_Resource_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_Resource_Concept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:Resource").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -55,7 +55,7 @@ public class ResourceIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testInvalid_Resource_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testInvalid_Resource_Concept() throws Exception {
         scanClasses(ResourceIT.class);
         assertThat(applyConcept("jaxrs:Resource").getStatus(), equalTo(FAILURE));
         store.beginTransaction();

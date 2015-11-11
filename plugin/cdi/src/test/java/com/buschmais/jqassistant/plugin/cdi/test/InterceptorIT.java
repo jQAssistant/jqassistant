@@ -30,7 +30,7 @@ public class InterceptorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void interceptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void interceptor() throws Exception {
         scanClasses(CustomInterceptor.class);
         assertThat(applyConcept("interceptor:Interceptor").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -48,7 +48,7 @@ public class InterceptorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void interceptorBinding() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void interceptorBinding() throws Exception {
         scanClasses(CustomBinding.class);
         assertThat(applyConcept("interceptor:Binding").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();

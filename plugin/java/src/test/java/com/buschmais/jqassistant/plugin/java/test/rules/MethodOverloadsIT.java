@@ -30,7 +30,7 @@ public class MethodOverloadsIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void methodOverloads() throws IOException, AnalysisException, NoSuchMethodException {
+    public void methodOverloads() throws Exception {
         scanClasses(InterfaceType.class);
         assertThat(applyConcept("java:MethodOverloads").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

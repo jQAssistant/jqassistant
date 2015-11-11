@@ -33,7 +33,7 @@ public class DeprecatedIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void deprecated() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void deprecated() throws Exception {
         scanClasses(DeprecatedType.class);
         String packageInfoName = DeprecatedType.class.getPackage().getName() + ".package-info";
         scanClassPathResource(JavaScope.CLASSPATH, "/" + packageInfoName.replaceAll("\\.", "/") + ".class");
