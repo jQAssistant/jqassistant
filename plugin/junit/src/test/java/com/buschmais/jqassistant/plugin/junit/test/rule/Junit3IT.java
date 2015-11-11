@@ -31,7 +31,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testClass() throws Exception {
         scanClasses(Junit3Test.class);
         assertThat(applyConcept("junit3:TestClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -50,7 +50,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testMethod() throws Exception {
         scanClasses(Junit3Test.class);
         assertThat(applyConcept("junit3:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -69,7 +69,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void setUpMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void setUpMethod() throws Exception {
         scanClasses(Junit3Test.class);
         assertThat(applyConcept("junit3:SetUpMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -88,7 +88,7 @@ public class Junit3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void tearDownMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void tearDownMethod() throws Exception {
         scanClasses(Junit3Test.class);
         assertThat(applyConcept("junit3:TearDownMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
