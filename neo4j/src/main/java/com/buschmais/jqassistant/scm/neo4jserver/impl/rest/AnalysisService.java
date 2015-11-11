@@ -163,10 +163,10 @@ public class AnalysisService extends AbstractJQARestService {
 
         JSONArray groups = new JSONArray();
         response.put(JSON_OBJECT_KEY_GROUPS, groups);
-        for (Map.Entry<String, Group> group : ruleSet.getGroups().entrySet()) {
+        for (Group group : ruleSet.getGroupsBucket().getGroups()) {
             JSONObject groupObject = new JSONObject();
-            groupObject.put(JSON_OBJECT_KEY_ID, group.getValue().getId());
-            groupObject.put(JSON_OBJECT_KEY_DESCRIPTION, group.getValue().getDescription());
+            groupObject.put(JSON_OBJECT_KEY_ID, group.getId());
+            groupObject.put(JSON_OBJECT_KEY_DESCRIPTION, group.getDescription());
             groups.put(groupObject);
         }
 
