@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.NoConstraintException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -332,9 +332,9 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void executeGroup(String id) throws AnalysisException {
+    protected void executeGroup(String id) throws AnalysisException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
-        Group group = ruleSet.getGroups().get(id);
+        Group group = ruleSet.getGroupsBucket().getGroup(id);
         assertNotNull("The request group cannot be found: " + id, group);
         analyzer.execute(ruleSet, ruleSelection);
     }
