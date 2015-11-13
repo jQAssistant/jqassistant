@@ -3,7 +3,7 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant</artifactId>
-    <version>1.1.0-RC2-SNAPSHOT</version>
+    <version>1.1.0-RC3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant</name>
@@ -392,7 +392,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.6.1</version>
+                    <version>3.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

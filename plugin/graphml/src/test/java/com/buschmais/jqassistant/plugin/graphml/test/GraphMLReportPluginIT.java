@@ -95,7 +95,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void renderGraphMLUsingWithVirtualNode() throws Exception {
+    public void renderGraphMLUsingVirtualNode() throws Exception {
         Document doc = scanAndWriteReport("test:DeclaredMembersWithVirtualNode.graphml", TestClass.class);
 
         XPathFactory xPathfactory = XPathFactory.newInstance();
@@ -105,6 +105,19 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         String complexity = classExpression.evaluate(doc);
         assertThat(complexity, equalTo("3"));
 
+    }
+
+    @Test
+    public void uniqueElementsPerSubGraph() throws Exception {
+        Document doc = scanAndWriteReport("test:RedundantNodesAndRelations.graphml", TestClass.class);
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        NodeList classNodes = (NodeList) xpath.compile("/graphml/graph/node[contains(@labels,':Class')]").evaluate(doc, XPathConstants.NODESET);
+        assertThat(classNodes.getLength(), equalTo(1));
+        NodeList methodNodes = (NodeList) xpath.compile("/graphml/graph/node[contains(@labels,':Constructor')]").evaluate(doc, XPathConstants.NODESET);
+        assertThat(methodNodes.getLength(), equalTo(1));
+        NodeList declaresRelations = (NodeList) xpath.compile("/graphml/edge[@label='DECLARES']").evaluate(doc, XPathConstants.NODESET);
+        assertThat(declaresRelations.getLength(), equalTo(1));
     }
 
     private void reportAndVerify(String conceptName, int assertedEdges) throws Exception {
@@ -119,8 +132,8 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         assertThat(edges.getLength(), equalTo(assertedEdges));
     }
 
-    private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses) throws IOException, AnalysisException, ParserConfigurationException,
- SAXException {
+    private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses)
+            throws IOException, AnalysisException, ParserConfigurationException, SAXException {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.addAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
@@ -131,7 +144,6 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         assertThat(reportFile.exists(), equalTo(true));
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc = builder.parse(new InputSource(new FileReader(reportFile)));
-        return doc;
+        return builder.parse(new InputSource(new FileReader(reportFile)));
     }
 }

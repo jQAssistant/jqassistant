@@ -43,7 +43,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
         try (InputStream stream = item.createStream()) {
             properties.load(stream);
         } catch (IllegalArgumentException e) {
-            LOGGER.warn("Cannot load properties from " + path, e);
+            LOGGER.warn("Cannot load properties from '" + path + "': " + e.getMessage());
         }
         for (String name : properties.stringPropertyNames()) {
             String value = properties.getProperty(name);

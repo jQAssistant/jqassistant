@@ -45,4 +45,14 @@
 				{role: "node", properties: {totalCyclomaticComplexity : sum(m.cyclomaticComplexity)}, labels: ["Metrics", "CyclomaticComplexity"] } 
         ]]></cypher>
 	</concept>
+
+	<concept id="test:RedundantNodesAndRelations.graphml">
+		<description>A type with methods as subgraph</description>
+		<cypher><![CDATA[
+           	MATCH
+			  (t:Class:Type)-[d:DECLARES]->(c:Method:Constructor)
+			RETURN
+			  t as t1, t as t2, d as d1, d as d2, c as c1, c as c2
+        ]]></cypher>
+	</concept>
 </jqa:jqassistant-rules>

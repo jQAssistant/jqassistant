@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache.CachedType;
@@ -42,7 +43,8 @@ public abstract class AbstractTypeResolver implements TypeResolver {
                 typeDescriptor = findInDependencies(fullQualifiedName, context);
             }
             if (typeDescriptor == null) {
-                typeDescriptor = context.getStore().create(TypeDescriptor.class);
+                String fileName = "/" + fullQualifiedName.replace(".", "/") + ".class";
+                typeDescriptor = context.peek(FileResolver.class).require(fileName, ClassFileDescriptor.class, context);
                 setTypeProperties(typeDescriptor, fullQualifiedName);
                 addRequiredType(fullQualifiedName, typeDescriptor);
             }

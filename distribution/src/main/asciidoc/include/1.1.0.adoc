@@ -20,6 +20,9 @@
 ==== GraphML
 - Added plugin which provides a GraphML export for the results of executed concepts, includes support for virtual elements (sub graphs, nodes, relationships)
 
+==== JUnit
+- Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
+
 ==== Maven Repository
 - Resolve the POM model to provide full information about dependencies, plugins, etc.
 - Added properties for filtering artifacts while scanning
@@ -28,11 +31,11 @@
 ==== Tycho
 - Upgraded scanner plugin to to Tycho 0.23.1 to fix compatibility issues
 
+==== URL
+- Added support for basic authentication for scanning URLs, e.g. http://user:secret@host/file
+
 ==== YAML
 - Added plugin which provides a scanner for YAML files
-
-==== JUnit
-- Fixed an exception which has been logged during Maven build while parsing surefire and failsafe reports
 
 === Documentation
 - Added an example to demonstrate using rules in AsciiDoc documents

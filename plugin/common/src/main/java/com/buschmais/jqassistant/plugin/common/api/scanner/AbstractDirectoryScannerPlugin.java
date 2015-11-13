@@ -29,7 +29,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     }
 
     @Override
-    public Class<? extends D> getDescriptorType() {
+    public Class<D> getDescriptorType() {
         return getTypeParameter(AbstractDirectoryScannerPlugin.class, 0);
     }
 

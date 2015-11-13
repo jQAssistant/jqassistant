@@ -1,9 +1,7 @@
-package com.buschmais.jqassistant.core.analysis.api.rule.source;
+package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.Map;
 import java.util.TreeMap;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 
 public class CompoundRuleSet implements RuleSet {
 

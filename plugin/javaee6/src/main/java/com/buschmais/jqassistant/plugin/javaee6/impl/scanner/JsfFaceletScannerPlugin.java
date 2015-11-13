@@ -29,7 +29,6 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
@@ -264,8 +263,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
         if (isElExpression(fullFilePath)) {
             return null;
         }
-        Descriptor descriptor = context.peek(FileResolver.class).find(fullFilePath, context);
-        return context.getStore().addDescriptorType(descriptor, JsfFaceletDescriptor.class);
+        return context.peek(FileResolver.class).require(fullFilePath, JsfFaceletDescriptor.class, context);
     }
 
     /**

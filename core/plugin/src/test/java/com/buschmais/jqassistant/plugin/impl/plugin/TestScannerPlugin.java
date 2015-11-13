@@ -29,7 +29,7 @@ public class TestScannerPlugin implements ScannerPlugin<File, Descriptor> {
     }
 
     @Override
-    public Class<? extends Descriptor> getDescriptorType() {
+    public Class<Descriptor> getDescriptorType() {
         return Descriptor.class;
     }
 

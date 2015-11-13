@@ -1,10 +1,6 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
@@ -15,10 +11,10 @@ class SimpleSubGraph {
 
     private static final String ROLE_GRAPH = "graph";
 
-    private Set<CompositeObject> nodes = new LinkedHashSet<>(1000);
-    private Set<CompositeObject> relationships = new LinkedHashSet<>(1000);
     private CompositeObject parentNode;
-    private Set<SimpleSubGraph> subgraphs = new LinkedHashSet<>(1000);
+    private Map<Long, SimpleSubGraph> subgraphs = new LinkedHashMap<>(1000);
+    private Map<Long, CompositeObject> nodes = new LinkedHashMap<>(1000);
+    private Map<Long, CompositeObject> relationships = new LinkedHashMap<>(1000);
 
     public SimpleSubGraph() {
     }
@@ -26,11 +22,10 @@ class SimpleSubGraph {
     public SimpleSubGraph(Map m) {
         if (!isSubgraph(m))
             throw new IllegalArgumentException("the argument m (" + m + ") is not a subgraph map");
-
         if (m.containsKey("nodes"))
-            add((List<Node>) m.get("nodes"));
+            add(m.get("nodes"));
         if (m.containsKey("relationships"))
-            add((List<CompositeObject>) m.get("relationships"));
+            add(m.get("relationships"));
         if (m.containsKey("parent"))
             parentNode = (CompositeObject) m.get("parent");
     }
@@ -40,12 +35,12 @@ class SimpleSubGraph {
     }
 
     public Iterable<CompositeObject> getNodes() {
-        return nodes;
+        return nodes.values();
     }
 
     /**
      * Gets all nodes including nodes from subgraphs AND the parent node.
-     * 
+     *
      * @return a list of all nodes
      */
     public Collection<CompositeObject> getAllNodes() {
@@ -54,52 +49,49 @@ class SimpleSubGraph {
             allNodes.add(parentNode);
         }
 
-        allNodes.addAll(nodes);
-        for (SimpleSubGraph subgraph : subgraphs) {
+        allNodes.addAll(nodes.values());
+        for (SimpleSubGraph subgraph : subgraphs.values()) {
             allNodes.addAll(subgraph.getAllNodes());
         }
 
         return allNodes;
     }
 
-    public Iterable<CompositeObject> getRelationships() {
-        return relationships;
-    }
-
     /**
      * Gets all nodes including nodes from subgraphs.
-     * 
+     *
      * @return a list of all nodes
      */
     public Collection<CompositeObject> getAllRelationships() {
         Set<CompositeObject> allRels = new LinkedHashSet<>(1000);
-        allRels.addAll(relationships);
-        for (SimpleSubGraph subgraph : subgraphs) {
+        allRels.addAll(relationships.values());
+        for (SimpleSubGraph subgraph : subgraphs.values()) {
             allRels.addAll(subgraph.getAllRelationships());
         }
-
         return allRels;
     }
 
     public void add(Object value) {
         if (value instanceof CompositeObject) {
             CompositeObject compositeObject = (CompositeObject) value;
+            Long id = compositeObject.getId();
             Object o = compositeObject.getDelegate();
             if (o instanceof Node) {
-                nodes.add(compositeObject);
+                nodes.put(id, compositeObject);
             } else if (o instanceof Relationship) {
-                relationships.add(compositeObject);
+                relationships.put(id, compositeObject);
             } else {
                 add(o);
             }
         } else if (value instanceof SimpleSubGraph) {
-            subgraphs.add((SimpleSubGraph) value);
+            SimpleSubGraph subGraph = (SimpleSubGraph) value;
+            subgraphs.put(subGraph.getId(), subGraph);
         } else if (value instanceof Relationship) {
             Relationship rel = (Relationship) value;
-            relationships.add(new RelationWrapper(rel));
+            relationships.put(rel.getId(), new RelationWrapper(rel));
         } else if (value instanceof Node) {
             Node node = (Node) value;
-            nodes.add(new NodeWrapper(node));
+            nodes.put(node.getId(), new NodeWrapper(node));
         } else if (value instanceof Iterable) {
             for (Object o : (Iterable) value)
                 add(o);
@@ -110,12 +102,12 @@ class SimpleSubGraph {
         return ROLE_GRAPH.equals(m.get("role"));
     }
 
-    public Set<SimpleSubGraph> getSubgraphs() {
-        return subgraphs;
+    public Collection<SimpleSubGraph> getSubgraphs() {
+        return subgraphs.values();
     }
 
-    public boolean contains(Relationship relationship) {
-        return relationships.contains(relationship);
+    public Long getId() {
+        return parentNode.getId();
     }
 
     @SuppressWarnings("unchecked")
@@ -129,7 +121,7 @@ class SimpleSubGraph {
 
         @Override
         public Long getId() {
-            return Long.valueOf(rel.getId());
+            return rel.getId();
         }
 
         @Override
@@ -160,7 +152,7 @@ class SimpleSubGraph {
 
         @Override
         public Long getId() {
-            return Long.valueOf(node.getId());
+            return node.getId();
         }
 
         @Override

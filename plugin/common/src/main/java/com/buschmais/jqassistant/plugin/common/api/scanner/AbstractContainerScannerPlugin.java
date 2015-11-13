@@ -3,10 +3,6 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +23,8 @@ import com.google.common.base.Stopwatch;
  *            The container type.
  * @param <E>
  *            The element type.
+ * @param <D>
+ *            The descriptor type.
  */
 public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor> extends AbstractResourceScannerPlugin<I, D> {
 
@@ -39,37 +37,26 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         String containerPath = getContainerPath(container, path);
         containerDescriptor.setFileName(containerPath);
         LOGGER.info("Entering {}", containerPath);
-        Map<String, FileDescriptor> files = new HashMap<>();
+        ContainerFileResolverStrategy fileResolverStrategy = new ContainerFileResolverStrategy(containerDescriptor);
+        context.peek(FileResolver.class).push(fileResolverStrategy);
         enterContainer(container, containerDescriptor, scanner.getContext());
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             Iterable<? extends E> entries = getEntries(container);
-            SortedMap<String, E> sortedEntries = new TreeMap<>();
-            for (E e : entries) {
-                String relativePath = getRelativePath(container, e);
-                sortedEntries.put(relativePath, e);
-            }
-            for (Map.Entry<String, E> entry : sortedEntries.entrySet()) {
-                String relativePath = entry.getKey();
-                try (Resource resource = getEntry(container, entry.getValue())) {
+            for (E entry : entries) {
+                String relativePath = getRelativePath(container, entry);
+                try (Resource resource = getEntry(container, entry)) {
                     LOGGER.debug("Scanning {}", relativePath);
                     FileDescriptor descriptor = scanner.scan(resource, relativePath, scope);
-                    files.put(relativePath, descriptor);
-                    containerDescriptor.getContains().add(descriptor);
-                    int separatorIndex = relativePath.lastIndexOf('/');
-                    if (separatorIndex != -1) {
-                        String parentName = relativePath.substring(0, separatorIndex);
-                        FileDescriptor fileDescriptor = files.get(parentName);
-                        if (fileDescriptor instanceof FileContainerDescriptor) {
-                            ((FileContainerDescriptor) fileDescriptor).getContains().add(descriptor);
-                        }
-                    }
+                    fileResolverStrategy.put(relativePath, descriptor);
                 }
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
-            LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, files.size(), stopwatch.elapsed(MILLISECONDS));
+            context.peek(FileResolver.class).pop();
         }
+        fileResolverStrategy.flush();
+        LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, fileResolverStrategy.size(), stopwatch.elapsed(MILLISECONDS));
         return containerDescriptor;
     }
 

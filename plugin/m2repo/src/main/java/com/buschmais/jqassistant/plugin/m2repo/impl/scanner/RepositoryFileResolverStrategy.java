@@ -7,8 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResolverStrategy;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 
 /**
@@ -17,7 +18,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
  * If a file is given which is part of the local maven repository then this
  * strategy will lookup an existing artifact descriptor, i.e.
  */
-public class RepositoryFileResolverStrategy implements FileResolverStrategy {
+public class RepositoryFileResolverStrategy extends AbstractFileResolverStrategy {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryFileResolverStrategy.class);
 
@@ -34,15 +35,16 @@ public class RepositoryFileResolverStrategy implements FileResolverStrategy {
     }
 
     @Override
-    public Descriptor require(String path, ScannerContext context) {
-        return match(path, context);
+    public <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context) {
+        return null;
     }
 
     @Override
-    public Descriptor match(String path, ScannerContext context) {
+    public <D extends FileDescriptor> D match(String path, Class<D> type, ScannerContext context) {
         if (isArtifactPath(path)) {
             ArtifactCoordinates coordinates = getArtifactCoordinates(path);
-            return context.peek(ArtifactResolver.class).find(coordinates, context);
+            ArtifactDescriptor artifactDescriptor = context.peek(ArtifactResolver.class).find(coordinates, context);
+            return toFileDescriptor(artifactDescriptor, type, path, context);
         }
         return null;
     }
