@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.XOException;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a rule visitor for analysis execution.
