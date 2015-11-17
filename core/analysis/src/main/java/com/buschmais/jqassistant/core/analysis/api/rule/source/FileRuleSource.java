@@ -42,7 +42,11 @@ public class FileRuleSource extends RuleSource {
         new DirectoryWalker<File>() {
             @Override
             protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                if (!file.isDirectory()) {
+                boolean isFile = file.isFile();
+                boolean isAsciiDocFile = Type.AsciiDoc.matches(file);
+                boolean isXMLFile = Type.XML.matches(file);
+
+                if (isFile && (isAsciiDocFile || isXMLFile)) {
                     results.add(file);
                 }
             }
@@ -51,10 +55,13 @@ public class FileRuleSource extends RuleSource {
                 super.walk(directory, ruleFiles);
             }
         }.scan(rulesDirectory);
+
         List<RuleSource> ruleSources = new LinkedList<>();
+
         for (File ruleFile : ruleFiles) {
             ruleSources.add(new FileRuleSource(ruleFile));
         }
+
         return ruleSources;
     }
 
