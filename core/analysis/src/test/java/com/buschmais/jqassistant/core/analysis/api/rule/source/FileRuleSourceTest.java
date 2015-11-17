@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.core.analysis.api.rule.source;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -14,7 +11,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSourceTest.RuleSourceMatcher.matchesById;
+import static com.buschmais.jqassistant.core.analysis.test.matcher.RuleSourceMatcher.matchesById;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasItem;
@@ -132,31 +129,4 @@ public class FileRuleSourceTest {
         }
     }
 
-    public static class RuleSourceMatcher extends TypeSafeMatcher<RuleSource> {
-
-        private final String ruleSourceId;
-
-        private RuleSourceMatcher(String id) {
-            ruleSourceId = id;
-        }
-
-        @Override
-        protected boolean matchesSafely(RuleSource ruleSource) {
-            return ruleSourceId.equals(ruleSource.getId());
-        }
-
-        @Override
-        public void describeTo(Description description) {
-            description.appendText(ruleSourceId);
-        }
-
-        @Override
-        protected void describeMismatchSafely(RuleSource item, Description mismatchDescription) {
-            mismatchDescription.appendText(item.getId());
-        }
-
-        public static Matcher<RuleSource> matchesById(String id) {
-            return new RuleSourceMatcher(id);
-        }
-    }
 }
