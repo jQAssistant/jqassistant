@@ -2,7 +2,9 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 /**
  * Defines an abstraction for a console.
+ * @deprecated Must be replaced with Slf4j
  */
+@Deprecated
 public interface Console {
 
     /**
