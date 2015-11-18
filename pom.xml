@@ -87,7 +87,7 @@
         <org.asciidoctor-plugin.version>1.5.2.1</org.asciidoctor-plugin.version>
         <org.jruby_version>9.0.3.0</org.jruby_version>
         <org.ow2.asm_version>5.0.4</org.ow2.asm_version>
-        <org.slf4j_version>1.7.5</org.slf4j_version>
+        <org.slf4j_version>1.7.13</org.slf4j_version>
         <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
         <org.hamcrest_version>1.3</org.hamcrest_version>
         <github.global.server>github</github.global.server>
