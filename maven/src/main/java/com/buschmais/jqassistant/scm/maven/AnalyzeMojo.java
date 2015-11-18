@@ -76,7 +76,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         reportWriters.add(inMemoryReportWriter);
         if (reportTypes == null || reportTypes.isEmpty()) {
-            reportTypes = Arrays.asList(ReportType.JQA);
+            reportTypes = Collections.singletonList(ReportType.JQA);
         }
         for (ReportType reportType : reportTypes) {
             switch (reportType) {
