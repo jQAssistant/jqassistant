@@ -9,6 +9,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.*;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroupsBucket;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoMetricGroupException;
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -72,10 +74,10 @@ public class MetricsService extends AbstractJQARestService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/")
     public JSONArray getMetrics() {
-
         JSONArray metrics = new JSONArray();
+
         try {
-            for (MetricGroup metricGroup : readMetricGroups().values()) {
+            for (MetricGroup metricGroup : readMetricGroups().getAll()) {
                 metrics.put(metricGroupAsJsonObject(metricGroup));
             }
         } catch (JSONException e) {
@@ -154,12 +156,13 @@ public class MetricsService extends AbstractJQARestService {
      */
     private Metric findMetric(String metricGroupId, String metricId) {
 
-        MetricGroup metricGroup = readMetricGroups().get(metricGroupId);
-        if (metricGroup != null) {
+        MetricGroup metricGroup = null;
+        try {
+            metricGroup = readMetricGroups().getById(metricGroupId);
             return metricGroup.getMetrics().get(metricId);
+        } catch (NoMetricGroupException e) {
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -269,9 +272,9 @@ public class MetricsService extends AbstractJQARestService {
      * 
      * @return the map of metric groups
      */
-    private Map<String, MetricGroup> readMetricGroups() {
+    private MetricGroupsBucket readMetricGroups() {
 
-        return getAvailableRules().getMetricGroups();
+        return getAvailableRules().getMetricGroupsBucket();
     }
 
 }
