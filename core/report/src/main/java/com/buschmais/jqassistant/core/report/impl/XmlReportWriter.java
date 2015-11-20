@@ -17,6 +17,7 @@ import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.LanguageElement;
 import com.buschmais.jqassistant.core.report.api.LanguageHelper;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -31,7 +32,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.0";
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
-    private static interface XmlOperation {
+    private interface XmlOperation {
         void run() throws XMLStreamException, AnalysisListenerException;
     }
 
@@ -254,7 +255,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                 }
             }
         } else if (value != null) {
-            stringValue = value.toString();
+            stringValue = ReportHelper.getStringValue(value);
         }
         xmlStreamWriter.writeStartElement("value");
         xmlStreamWriter.writeCharacters(stringValue);
