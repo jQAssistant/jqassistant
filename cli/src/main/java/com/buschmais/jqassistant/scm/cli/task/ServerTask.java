@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -15,11 +13,14 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
 import com.buschmais.jqassistant.scm.neo4jserver.impl.ExtendedCommunityNeoServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
 public class ServerTask extends AbstractTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerTask.class);
 
     public static final String CMDLINE_OPTION_SERVERADDRESS = "serverAddress";
     public static final String CMDLINE_OPTION_SERVERPORT = "serverPort";
@@ -37,8 +38,8 @@ public class ServerTask extends AbstractTask {
             throw new CliExecutionException("Cannot get plugins.", e);
         }
         server.start();
-        getLog().info("Running server");
-        getLog().info("Press <Enter> to finish.");
+        LOGGER.info("Running server");
+        LOGGER.info("Press <Enter> to finish.");
         try {
             System.in.read();
         } catch (IOException e) {

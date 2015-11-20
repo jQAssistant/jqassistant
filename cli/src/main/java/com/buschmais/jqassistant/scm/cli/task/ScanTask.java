@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,11 +22,14 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
  */
 public class ScanTask extends AbstractTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScanTask.class);
 
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URIS = "u";
@@ -68,7 +69,7 @@ public class ScanTask extends AbstractTask {
             final File file = new File(fileName);
             String absolutePath = file.getAbsolutePath();
             if (!file.exists()) {
-                getLog().info(absolutePath + "' does not exist, skipping scan.");
+                LOGGER.info(absolutePath + "' does not exist, skipping scan.");
             } else {
                 scan(scannerContext, file, file.getAbsolutePath(), scopeName, scannerPlugins);
             }

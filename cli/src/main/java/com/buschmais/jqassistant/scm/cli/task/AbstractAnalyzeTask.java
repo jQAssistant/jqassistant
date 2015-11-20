@@ -24,8 +24,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.cli.Task;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -39,7 +40,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
     private static final String CMDLINE_OPTION_CONSTRAINTS = "constraints";
     private static final String CMDLINE_OPTION_CONCEPTS = "concepts";
 
-    private static final Log LOG = Log.getLog();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private final RuleSetReader ruleSetReader = new CompoundRuleSetReader();
     private URL rulesUrl;
@@ -88,7 +89,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
-        LOG.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
+        LOGGER.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
         try {
             return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {

@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import static com.buschmais.jqassistant.scm.cli.Log.getLog;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,7 +26,8 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
-import com.buschmais.jqassistant.scm.cli.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -37,14 +36,14 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private static final String CMDLINE_OPTION_SEVERITY = "severity";
 
-    private static final Console LOG = Log.getLog();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private String reportDirectory;
     private Severity severity;
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
-        LOG.info("Executing analysis.");
+        LOGGER.info("Executing analysis.");
         InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
@@ -64,7 +63,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         reportWriters.addAll(getReportPlugins());
         try {
             CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            Analyzer analyzer = new AnalyzerImpl(store, reportWriter, getLog());
+            Analyzer analyzer = new AnalyzerImpl(store, reportWriter, LOGGER);
             try {
                 RuleSet availableRules = getAvailableRules();
                 analyzer.execute(availableRules, getRuleSelection(availableRules));
@@ -75,9 +74,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             IOUtils.closeQuietly(xmlReportFileWriter);
         }
         store.beginTransaction();
-        Log.getLog().info("Verifying results, severity=" + severity);
+        LOGGER.info("Verifying results, severity=" + severity);
         try {
-            final ReportHelper reportHelper = new ReportHelper(getLog());
+            final ReportHelper reportHelper = new ReportHelper(LOGGER);
             final int conceptViolations = reportHelper.verifyConceptResults(severity, inMemoryReportWriter);
             final int constraintViolations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
             if (conceptViolations > 0 || constraintViolations > 0) {
