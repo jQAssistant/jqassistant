@@ -5,31 +5,29 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import com.buschmais.jqassistant.plugin.graphml.report.impl.GraphMLReportPlugin;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
-import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 import com.buschmais.jqassistant.plugin.graphml.test.set.a.A;
 import com.buschmais.jqassistant.plugin.graphml.test.set.b.B;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -38,6 +36,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
  * Verifies functionality of the GraphML report plugin.
  */
 public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphMLReportPlugin.class);
 
     public static final String REPORT_DIR = "target/graphml";
 
@@ -137,7 +136,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.addAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
-        this.analyzer = new AnalyzerImpl(this.store, compositeReportWriter, new TestConsole());
+        this.analyzer = new AnalyzerImpl(this.store, compositeReportWriter, LOGGER);
         scanClasses(scanClasses);
         applyConcept(conceptName);
         File reportFile = new File(REPORT_DIR, conceptName.replace(':', '_'));

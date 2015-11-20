@@ -2,24 +2,24 @@ package com.buschmais.jqassistant.scm.common.report;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+import org.slf4j.Logger;
 
 /**
  * Provides common functionality for working with scopes.
  */
 public class ScopeHelper {
 
-    private final Console console;
+    private final Logger logger;
 
     /**
      * Constructor.
      * 
-     * @param console
-     *            The console used for writing messages.
+     * @param log
+     *            The logger used to log all messages
      */
-    public ScopeHelper(Console console) {
-        this.console = console;
+    public ScopeHelper(Logger log) {
+        this.logger = log;
     }
 
     /**
@@ -29,9 +29,9 @@ public class ScopeHelper {
      *            The available scopes.
      */
     public void printScopes(Map<String, Scope> scopes) {
-        console.info("Scopes [" + scopes.size() + "]");
+        logger.info("Scopes [" + scopes.size() + "]");
         for (String scopeName : scopes.keySet()) {
-            console.info("\t" + scopeName);
+            logger.info("\t" + scopeName);
         }
     }
 }

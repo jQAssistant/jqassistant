@@ -19,6 +19,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -30,6 +32,7 @@ import java.util.*;
  */
 @Mojo(name = "analyze", defaultPhase = LifecyclePhase.VERIFY, threadSafe = true)
 public class AnalyzeMojo extends AbstractProjectMojo {
+    private Logger logger = LoggerFactory.getLogger(AnalyzeMojo.class);
 
     /**
      * Defines the supported report types.
@@ -109,14 +112,13 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
         reportWriters.addAll(reportPlugins);
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-        MavenConsole console = new MavenConsole(getLog());
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
+        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, logger);
         try {
             analyzer.execute(ruleSet, ruleSelection);
         } catch (AnalysisException e) {
             throw new MojoExecutionException("Analysis failed.", e);
         }
-        ReportHelper reportHelper = new ReportHelper(console);
+        ReportHelper reportHelper = new ReportHelper(logger);
         store.beginTransaction();
         try {
             Severity effectiveSeverity = Severity.fromValue(severity);

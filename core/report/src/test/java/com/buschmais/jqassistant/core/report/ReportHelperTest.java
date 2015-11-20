@@ -14,7 +14,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -22,6 +21,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import org.slf4j.Logger;
 
 /**
  * Verifies functionality of the report helper.
@@ -30,7 +30,7 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 public class ReportHelperTest {
 
     @Mock
-    private Console console;
+    private Logger logger;
 
     @Mock
     private InMemoryReportWriter inMemoryReportWriter;
@@ -39,7 +39,7 @@ public class ReportHelperTest {
 
     @Before
     public void before() {
-        reportHelper = new ReportHelper(console);
+        reportHelper = new ReportHelper(logger);
     }
 
     @Test

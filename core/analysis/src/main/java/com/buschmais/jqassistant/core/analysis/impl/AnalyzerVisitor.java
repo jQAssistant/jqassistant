@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.XOException;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -35,7 +35,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private RuleSet ruleSet;
     private Store store;
     private AnalysisListener reportWriter;
-    private Console console;
+    private Logger logger;
     private ScriptEngineManager scriptEngineManager;
     private Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies = new HashMap<>();
 
@@ -48,14 +48,14 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      *            The store.
      * @param reportWriter
      *            The report writer.
-     * @param console
-     *            The console
+     * @param log
+     *            The logger
      */
-    public AnalyzerVisitor(RuleSet ruleSet, Store store, AnalysisListener reportWriter, Console console) {
+    public AnalyzerVisitor(RuleSet ruleSet, Store store, AnalysisListener reportWriter, Logger log) {
         this.ruleSet = ruleSet;
         this.store = store;
         this.reportWriter = reportWriter;
-        this.console = console;
+        this.logger = log;
         this.scriptEngineManager = new ScriptEngineManager();
         registerVerificationStrategy(new RowCountVerificationStrategy());
         registerVerificationStrategy(new AggregationVerificationStrategy());
@@ -71,7 +71,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             store.beginTransaction();
             ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
             if (conceptDescriptor == null) {
-                console.info("Applying concept '" + concept.getId() + "' with severity: '" + getSeverityInfo(concept, severity) + "'.");
+                logger.info("Applying concept '" + concept.getId() + "' with severity: '" + getSeverityInfo(concept, severity) + "'.");
                 reportWriter.beginConcept(concept);
                 reportWriter.setResult(execute(concept, ruleSet, severity));
                 conceptDescriptor = store.create(ConceptDescriptor.class);
@@ -87,7 +87,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
 
     @Override
     public void visitConstraint(Constraint constraint, Severity severity) throws AnalysisException {
-        console.info("Validating constraint '" + constraint.getId() + "' with severity: '" + getSeverityInfo(constraint, severity) + "'.");
+        logger.info("Validating constraint '" + constraint.getId() + "' with severity: '" + getSeverityInfo(constraint, severity) + "'.");
         try {
             store.beginTransaction();
             reportWriter.beginConstraint(constraint);
@@ -119,7 +119,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
 
     @Override
     public void beforeGroup(Group group) throws AnalysisException {
-        console.info("Executing group '" + group.getId() + "'");
+        logger.info("Executing group '" + group.getId() + "'");
         store.beginTransaction();
         reportWriter.beginGroup(group);
         store.commitTransaction();
@@ -278,7 +278,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @return The query result.
      */
     private com.buschmais.xo.api.Query.Result<Query.Result.CompositeRowObject> executeQuery(String cypher, Map<String, Object> parameters) {
-        console.debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
+        logger.debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
         return store.executeQuery(cypher, parameters);
     }
 }

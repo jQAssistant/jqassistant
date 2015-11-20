@@ -21,9 +21,11 @@ import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.common.console.Slf4jConsole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractJQARestService {
+    private static Logger logger = LoggerFactory.getLogger(AbstractJQARestService.class);
 
     /**
      * The rules reader instance.
@@ -55,11 +57,10 @@ public abstract class AbstractJQARestService {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptIds(conceptNames).addConstraintIds(constraintNames).addGroupIds(groupNames)
                 .get();
         InMemoryReportWriter reportWriter = new InMemoryReportWriter();
-        Slf4jConsole console = new Slf4jConsole();
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, console);
+        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, logger);
         analyzer.execute(getAvailableRules(), ruleSelection);
         store.beginTransaction();
-        ReportHelper reportHelper = new ReportHelper(console);
+        ReportHelper reportHelper = new ReportHelper(logger);
         reportHelper.verifyConceptResults(Concept.DEFAULT_SEVERITY, reportWriter);
         reportHelper.verifyConstraintResults(Constraint.DEFAULT_SEVERITY, reportWriter);
         store.commitTransaction();

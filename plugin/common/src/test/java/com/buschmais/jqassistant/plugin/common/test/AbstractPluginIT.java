@@ -38,13 +38,16 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 import com.buschmais.xo.api.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for analysis tests.
  */
 public abstract class AbstractPluginIT {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
@@ -158,7 +161,7 @@ public abstract class AbstractPluginIT {
     @Before
     public void initializeAnalyzer() {
         reportWriter = new InMemoryReportWriter();
-        analyzer = new AnalyzerImpl(store, reportWriter, new TestConsole());
+        analyzer = new AnalyzerImpl(store, reportWriter, LOGGER);
     }
 
     /**

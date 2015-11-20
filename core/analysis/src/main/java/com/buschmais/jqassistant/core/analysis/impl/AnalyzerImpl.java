@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.impl;
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
+import org.slf4j.Logger;
 
 /**
  * Implementation of the {@link Analyzer}.
@@ -13,7 +14,7 @@ public class AnalyzerImpl implements Analyzer {
 
     private AnalysisListener reportWriter;
 
-    private Console console;
+    private Logger logger;
 
     /**
      * Constructor.
@@ -21,10 +22,10 @@ public class AnalyzerImpl implements Analyzer {
      * @param store
      *            The Store to use.
      */
-    public AnalyzerImpl(Store store, AnalysisListener reportWriter, Console console) {
+    public AnalyzerImpl(Store store, AnalysisListener reportWriter, Logger log) {
         this.store = store;
         this.reportWriter = reportWriter;
-        this.console = console;
+        this.logger = log;
     }
 
     @Override
@@ -32,7 +33,7 @@ public class AnalyzerImpl implements Analyzer {
         try {
             reportWriter.begin();
             try {
-                AnalyzerVisitor visitor = new AnalyzerVisitor(ruleSet, store, reportWriter, console);
+                AnalyzerVisitor visitor = new AnalyzerVisitor(ruleSet, store, reportWriter, logger);
                 RuleExecutor executor = new RuleExecutor(visitor);
                 executor.execute(ruleSet, ruleSelection);
             } finally {
