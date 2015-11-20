@@ -1,48 +1,45 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 public class CompoundRuleSet implements RuleSet {
 
-    private Map<String, Template> templates = new TreeMap<>();
-    private Map<String, Concept> concepts = new TreeMap<>();
-    private Map<String, Constraint> constraints = new TreeMap<>();
-    private Map<String, Group> groups = new TreeMap<>();
-    private Map<String, MetricGroup> metricGroups = new TreeMap<>();
+    private ConceptBucket conceptBucket = new ConceptBucket();
+    private ConstraintBucket constraintBucket = new ConstraintBucket();
+    private TemplateBucket templateBucket = new TemplateBucket();
+    private GroupsBucket groupsBucket = new GroupsBucket();
+    private MetricGroupsBucket metricGroupsBucket = new MetricGroupsBucket();
 
-    public CompoundRuleSet(RuleSet... ruleSets) {
+    public CompoundRuleSet(RuleSet... ruleSets) throws DuplicateRuleException {
         for (RuleSet ruleSet : ruleSets) {
-            templates.putAll(ruleSet.getTemplates());
-            concepts.putAll(ruleSet.getConcepts());
-            constraints.putAll(ruleSet.getConstraints());
-            groups.putAll(ruleSet.getGroups());
-            metricGroups.putAll(ruleSet.getMetricGroups());
+            templateBucket.add(ruleSet.getTemplateBucket());
+            conceptBucket.add(ruleSet.getConceptBucket());
+            constraintBucket.add(ruleSet.getConstraintBucket());
+            groupsBucket.add(ruleSet.getGroupsBucket());
+            metricGroupsBucket.add(ruleSet.getMetricGroupsBucket());
         }
     }
 
     @Override
-    public Map<String, Template> getTemplates() {
-        return templates;
+    public TemplateBucket getTemplateBucket() {
+        return templateBucket;
     }
 
     @Override
-    public Map<String, Concept> getConcepts() {
-        return concepts;
+    public ConstraintBucket getConstraintBucket() {
+        return constraintBucket;
     }
 
     @Override
-    public Map<String, Constraint> getConstraints() {
-        return constraints;
+    public GroupsBucket getGroupsBucket() {
+        return groupsBucket;
     }
 
     @Override
-    public Map<String, Group> getGroups() {
-        return groups;
+    public MetricGroupsBucket getMetricGroupsBucket() {
+        return metricGroupsBucket;
     }
 
     @Override
-    public Map<String, MetricGroup> getMetricGroups() {
-        return metricGroups;
+    public ConceptBucket getConceptBucket() {
+        return conceptBucket;
     }
 }

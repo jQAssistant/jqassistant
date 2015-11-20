@@ -27,16 +27,16 @@ public class CompoundRuleSetReaderTest {
         RuleSetReader reader = new CompoundRuleSetReader();
         reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertEquals(3, ruleSet.getConcepts().size());
-        assertEquals(2, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        assertEquals(3, ruleSet.getConceptBucket().size());
+        assertEquals(2, ruleSet.getConstraintBucket().size());
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, asList("junit4:TestClassOrMethod", "junit4:AssertMethod", "java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraints().keySet()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, asList("junit4:TestMethodWithoutAssertion", "example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
-        assertEquals(1, ruleSet.getGroups().size());
-        Group group = ruleSet.getGroups().values().iterator().next();
+        assertEquals(1, ruleSet.getGroupsBucket().size());
+        Group group = ruleSet.getGroupsBucket().getById("default");
         assertEquals("default", group.getId());
         assertEquals(1, group.getConcepts().size());
         assertEquals("java:Throwable", group.getConcepts().keySet().iterator().next());
@@ -51,16 +51,16 @@ public class CompoundRuleSetReaderTest {
         RuleSetReader reader = new XmlRuleSetReader();
         reader.read(Arrays.asList(new UrlRuleSource(url)), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertEquals(1, ruleSet.getConcepts().size());
-        assertEquals(1, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        assertEquals(1, ruleSet.getConceptBucket().size());
+        assertEquals(1, ruleSet.getConstraintBucket().size());
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, asList("java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraints().keySet()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, asList("example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
-        assertEquals(1, ruleSet.getGroups().size());
-        Group group = ruleSet.getGroups().values().iterator().next();
+        assertEquals(1, ruleSet.getGroupsBucket().size());
+        Group group = ruleSet.getGroupsBucket().getById("default");
         assertEquals("default", group.getId());
     }
 }

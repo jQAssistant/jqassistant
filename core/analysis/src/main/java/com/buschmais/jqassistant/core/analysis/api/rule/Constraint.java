@@ -31,7 +31,7 @@ public class Constraint extends AbstractExecutableRule {
      * @param parameters
      *            The parameters.
      * @param requiresConcepts
-     *            The required concepts.
+     *            The required rules.
      * @param verification
      *            The result verification.
      * @param report
