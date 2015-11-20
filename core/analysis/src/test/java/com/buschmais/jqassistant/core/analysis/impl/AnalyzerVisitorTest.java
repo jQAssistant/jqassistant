@@ -21,7 +21,6 @@ import org.mockito.Mockito;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
@@ -38,6 +37,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.ResultIterator;
+import org.slf4j.Logger;
 
 /**
  * Verifies the functionality of the analyzer visitor.
@@ -75,7 +75,7 @@ public class AnalyzerVisitorTest {
         when(store.executeQuery(Mockito.eq(statement), Mockito.anyMap())).thenReturn(result);
 
         AnalysisListener<AnalysisListenerException> reportWriter = mock(AnalysisListener.class);
-        Console console = mock(Console.class);
+        Logger console = mock(Logger.class);
 
         AnalyzerVisitor analyzerVisitor = new AnalyzerVisitor(ruleSet, store, reportWriter, console);
         analyzerVisitor.visitConcept(concept, Severity.MINOR);

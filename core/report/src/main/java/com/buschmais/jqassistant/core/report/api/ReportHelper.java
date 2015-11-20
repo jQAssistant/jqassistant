@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.Map;
@@ -26,16 +26,16 @@ public final class ReportHelper {
     private static String FOOTER
          = "-------------------------------------------------------------------";
 
-    private Console console;
+    private Logger logger;
 
     /**
      * Constructor.
      *
-     * @param console
-     *            The console to use for printing messages.
+     * @param log
+     *            The logger to use for logging messages.
      */
-    public ReportHelper(Console console) {
-        this.console = console;
+    public ReportHelper(Logger log) {
+        this.logger = log;
     }
 
     /**
@@ -58,19 +58,19 @@ public final class ReportHelper {
         for (Result<Concept> conceptResult : conceptResults) {
             if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
                 Concept concept = conceptResult.getRule();
-                console.error(CONCEPT_FAILED_HEADER);
-                console.error("Concept: " + concept.getId());
-                console.error("Severity: " + concept.getSeverity());
+                logger.error(CONCEPT_FAILED_HEADER);
+                logger.error("Concept: " + concept.getId());
+                logger.error("Severity: " + concept.getSeverity());
                 String description = concept.getDescription();
 
                 StringTokenizer tokenizer = new StringTokenizer(description, "\n");
 
                 while (tokenizer.hasMoreTokens()) {
-                    console.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+                    logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
                 }
 
-                console.error(FOOTER);
-                console.error(System.lineSeparator());
+                logger.error(FOOTER);
+                logger.error(System.lineSeparator());
 
                 // severity level check
                 if (conceptResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
@@ -98,15 +98,15 @@ public final class ReportHelper {
             if (Result.Status.FAILURE.equals(constraintResult.getStatus())) {
                 Constraint constraint = constraintResult.getRule();
 
-                console.error(CONSTRAINT_VIOLATION_HEADER);
-                console.error("Constraint: " + constraint.getId());
-                console.error("Severity: " + constraint.getSeverity());
+                logger.error(CONSTRAINT_VIOLATION_HEADER);
+                logger.error("Constraint: " + constraint.getId());
+                logger.error("Severity: " + constraint.getSeverity());
                 String description = constraint.getDescription();
 
                 StringTokenizer tokenizer = new StringTokenizer(description, "\n");
 
                 while (tokenizer.hasMoreTokens()) {
-                    console.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+                    logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
                 }
 
                 for (Map<String, Object> columns : constraintResult.getRows()) {
@@ -120,11 +120,11 @@ public final class ReportHelper {
                         String stringValue = getStringValue(entry.getValue());
                         message.append(stringValue);
                     }
-                    console.error("  " + message.toString());
+                    logger.error("  " + message.toString());
                 }
 
-                console.error(FOOTER);
-                console.error(System.lineSeparator());
+                logger.error(FOOTER);
+                logger.error(System.lineSeparator());
 
                 // severity level check
                 if (constraintResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
