@@ -197,9 +197,11 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
 
     protected List<? extends FileDescriptor> execute(JavaArtifactFileDescriptor artifact, ScanClassPathOperation operation, Scanner scanner) {
         ScannerContext context = scanner.getContext();
+        context.push(JavaArtifactFileDescriptor.class, artifact);
         context.push(TypeResolver.class, new ClasspathScopedTypeResolver(artifact));
         List<? extends FileDescriptor> descriptors = operation.scan(artifact, scanner);
         context.pop(TypeResolver.class);
+        context.pop(JavaArtifactFileDescriptor.class);
         return descriptors;
     }
 
