@@ -11,12 +11,16 @@ import org.apache.maven.project.MavenProject;
 import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.common.report.ScopeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lists all available scopes.
  */
 @Mojo(name = "available-scopes", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class AvailableScopesMojo extends AbstractProjectMojo {
+
+    private Logger logger = LoggerFactory.getLogger(AvailableScopesMojo.class);
 
     @Override
     protected boolean isResetStoreBeforeExecution() {
@@ -26,7 +30,7 @@ public class AvailableScopesMojo extends AbstractProjectMojo {
     @Override
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Available scopes for '" + rootModule.getName() + "'.");
-        ScopeHelper scopeHelper = new ScopeHelper(new MavenConsole(getLog()));
+        ScopeHelper scopeHelper = new ScopeHelper(logger);
         ScopePluginRepository scopePluginRepository = pluginRepositoryProvider.getScopePluginRepository();
         scopeHelper.printScopes(scopePluginRepository.getScopes());
     }
