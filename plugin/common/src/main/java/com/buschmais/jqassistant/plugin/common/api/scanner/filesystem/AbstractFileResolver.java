@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 
 /**
- * Abstract base class for {@link FileResolverStrategy}s.
+ * Abstract base class for {@link FileResolver}s.
  * 
  * Provides utility functionality.
  */
-public abstract class AbstractFileResolverStrategy implements FileResolverStrategy {
+public abstract class AbstractFileResolver implements FileResolver {
 
     /**
      * Takes an optional descriptor and transforms it to file descriptor.

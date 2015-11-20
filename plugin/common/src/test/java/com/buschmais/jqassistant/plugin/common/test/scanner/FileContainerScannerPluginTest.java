@@ -6,10 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,14 +47,28 @@ public class FileContainerScannerPluginTest {
         when(context.getStore()).thenReturn(store);
         when(store.create(FileDescriptor.class)).thenReturn(mock(FileDescriptor.class));
         when(store.addDescriptorType(Mockito.any(FileDescriptor.class), Mockito.eq(FileDescriptor.class))).thenReturn(mock(FileDescriptor.class));
-        when(context.peek(FileResolver.class)).thenReturn(new FileResolver());
+        final Deque<FileResolver> fileResolvers = new LinkedList<>();
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                FileResolver resolver = (FileResolver) invocation.getArguments()[1];
+                fileResolvers.push(resolver);
+                return null;
+            }
+        }).when(context).push(eq(FileResolver.class), any(FileResolver.class));
+        when(context.peek(FileResolver.class)).then(new Answer<FileResolver>() {
+            @Override
+            public FileResolver answer(InvocationOnMock invocation) throws Throwable {
+                return fileResolvers.peek();
+            }
+        });
         when(scanner.scan(Mockito.anyString(), Mockito.anyString(), Mockito.eq(DefaultScope.NONE))).thenAnswer(new Answer<FileDescriptor>() {
             @Override
             public FileDescriptor answer(InvocationOnMock invocation) throws Throwable {
                 FileResolver fileResolver = context.peek(FileResolver.class);
                 fileResolver.require("/D", FileDescriptor.class, context);
                 String path = (String) invocation.getArguments()[1];
-                return fileResolver.create(path, context);
+                return fileResolver.match(path, FileDescriptor.class, context);
             }
         });
     }
@@ -72,6 +83,7 @@ public class FileContainerScannerPluginTest {
 
         List<FileDescriptor> contains = scannerPlugin.getContains();
         assertThat(contains.size(), equalTo(3));
+        assertThat(contains, equalTo(directoryDescriptor.getContains()));
         FileDescriptor a = contains.get(0);
         verify(a).setFileName("/A");
         FileDescriptor b = contains.get(1);
@@ -81,6 +93,7 @@ public class FileContainerScannerPluginTest {
 
         List<FileDescriptor> requires = scannerPlugin.getRequires();
         assertThat(requires.size(), equalTo(1));
+        assertThat(requires, equalTo(directoryDescriptor.getRequires()));
         FileDescriptor requiredFileDescriptor = requires.get(0);
         verify(requiredFileDescriptor).setFileName("/D");
     }
@@ -95,6 +108,7 @@ public class FileContainerScannerPluginTest {
 
         List<FileDescriptor> contains = scannerPlugin.getContains();
         assertThat(contains.size(), equalTo(2));
+        assertThat(contains, equalTo(directoryDescriptor.getContains()));
         FileDescriptor a = contains.get(0);
         verify(a).setFileName("/A");
         FileDescriptor b = contains.get(1);
@@ -102,6 +116,7 @@ public class FileContainerScannerPluginTest {
 
         List<FileDescriptor> requires = scannerPlugin.getRequires();
         assertThat(requires.size(), equalTo(0));
+        assertThat(requires, equalTo(directoryDescriptor.getRequires()));
     }
 
     private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {

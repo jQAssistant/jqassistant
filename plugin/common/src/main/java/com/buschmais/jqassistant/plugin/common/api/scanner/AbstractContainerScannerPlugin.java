@@ -37,8 +37,8 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
         String containerPath = getContainerPath(container, path);
         containerDescriptor.setFileName(containerPath);
         LOGGER.info("Entering {}", containerPath);
-        ContainerFileResolverStrategy fileResolverStrategy = new ContainerFileResolverStrategy(containerDescriptor);
-        context.peek(FileResolver.class).push(fileResolverStrategy);
+        ContainerFileResolver fileResolverStrategy = new ContainerFileResolver(containerDescriptor);
+        context.push(FileResolver.class, fileResolverStrategy);
         enterContainer(container, containerDescriptor, scanner.getContext());
         Stopwatch stopwatch = Stopwatch.createStarted();
         try {
@@ -53,7 +53,7 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
             }
         } finally {
             leaveContainer(container, containerDescriptor, scanner.getContext());
-            context.peek(FileResolver.class).pop();
+            context.pop(FileResolver.class);
         }
         fileResolverStrategy.flush();
         LOGGER.info("Leaving {} ({} entries, {} ms)", containerPath, fileResolverStrategy.size(), stopwatch.elapsed(MILLISECONDS));
