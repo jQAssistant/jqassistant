@@ -51,7 +51,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
                 return Collections.emptyList();
             }
         });
-        verify(artifactResolverSpy, atLeastOnce()).resolve(Mockito.any(Coordinates.class), Mockito.any(Class.class), Mockito.any(ScannerContext.class));
+        verify(artifactResolverSpy, atLeastOnce()).resolve(Mockito.any(Coordinates.class), Mockito.any(ScannerContext.class));
         store.beginTransaction();
         validateParentPom();
         validateChildPom();
@@ -85,9 +85,9 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         scanClassPathResource(DefaultScope.NONE, "/dependency/2/pom.xml");
         scanClassPathResource(DefaultScope.NONE, "/dependency/1/pom.xml");
         store.beginTransaction();
-        MavenPomXmlDescriptor test1 = store.find(MavenPomXmlDescriptor.class, "com.buschmais.jqassistant:test1:jar:1.0.0-SNAPSHOT");
+        MavenPomXmlDescriptor test1 = store.find(MavenPomXmlDescriptor.class, "com.buschmais.jqassistant:test1:pom:1.0.0-SNAPSHOT");
         assertThat(test1, notNullValue());
-        MavenPomXmlDescriptor test2 = store.find(MavenPomXmlDescriptor.class, "com.buschmais.jqassistant:test2:jar:1.0.0-SNAPSHOT");
+        MavenPomXmlDescriptor test2 = store.find(MavenPomXmlDescriptor.class, "com.buschmais.jqassistant:test2:pom:1.0.0-SNAPSHOT");
         assertThat(test2, notNullValue());
         List<PomDependsOnDescriptor> dependencies = test2.getDependencies();
         assertThat(dependencies.size(), equalTo(1));
