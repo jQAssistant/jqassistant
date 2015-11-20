@@ -2,73 +2,46 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResolverStrategy;
-
-import java.util.Deque;
-import java.util.LinkedList;
 
 /**
- * A file resolver.
+ * Defines a strategy for resolving a file.
  */
-public class FileResolver {
+public interface FileResolver {
 
     /**
-     * The registered file resolver instances.
-     */
-    private Deque<FileResolverStrategy> resolverStrategies = new LinkedList<>();
-
-    /**
-     * Constructor.
-     */
-    public FileResolver() {
-        resolverStrategies.push(new AbstractFileResolverStrategy() {
-            @Override
-            public <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context) {
-                return toFileDescriptor(null, type, path, context);
-            }
-
-            @Override
-            public <D extends FileDescriptor> D match(String path, Class<D> type, ScannerContext context) {
-                return toFileDescriptor(null, type, path, context);
-            }
-        });
-    }
-
-    /**
-     * Add a file resolver.
+     * Resolve an existing descriptor from the given information.
      *
-     * @param fileResolverStrategy A file resolver.
+     * This is usually done by evaluating the given path, e.g. if a path
+     * "com/buschmais/Test.class" is given a class file resolver might return an
+     * existing class descriptor with the fully qualified name
+     * "com.buschmais.Test" which has been created before as a referenced class.
+     * 
+     * @param path
+     *            The path.
+     * @param context
+     *            The scanner context.
+     * @return The resolved descriptor or <code>null</code>.
      */
-    public void push(FileResolverStrategy fileResolverStrategy) {
-        resolverStrategies.push(fileResolverStrategy);
-    }
+    <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context);
 
     /**
-     * Remove a file resolver.
+     * Match an existing descriptor in the store and return it with as the given
+     * type if it exists.
+     * 
+     * Example: A Java class might exist with a fully qualified name in the
+     * database. The implementation of this method should check if the given
+     * path can be transformed into a class name (i.e. replacing '/' with '.')
+     * that already exists as descriptor (i.e. node) and return it.
+     * 
+     * @param path
+     *            The path.
+     * @param type
+     *            The expected type.
+     * @param context
+     *            The scanner context.
+     * @param <D>
+     *            The expected type.
+     * @return The matching descriptor or <code>null</code>.
      */
-    public void pop() {
-        resolverStrategies.pop();
-    }
-
-    public FileDescriptor create(String path, ScannerContext context) {
-        for (FileResolverStrategy fileResolverStrategy : resolverStrategies) {
-            FileDescriptor fileDescriptor = fileResolverStrategy.match(path, FileDescriptor.class, context);
-            if (fileDescriptor != null) {
-                return fileDescriptor;
-            }
-        }
-        throw new IllegalStateException("No file resolver strategy available.");
-    }
-
-    public <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context) {
-        for (FileResolverStrategy fileResolverStrategy : resolverStrategies) {
-            D fileDescriptor = fileResolverStrategy.require(path, type, context);
-            if (fileDescriptor != null) {
-                return fileDescriptor;
-            }
-        }
-        throw new IllegalStateException("No file resolver strategy available.");
-    }
-
-
+    <D extends FileDescriptor> D match(String path, Class<D> type, ScannerContext context);
 }

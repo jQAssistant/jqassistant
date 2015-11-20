@@ -1,28 +1,33 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactHelper;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactHelper;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.Query.Result.CompositeRowObject;
 
 public class MavenArtifactResolver implements ArtifactResolver {
 
     @Override
-    public <A extends ArtifactDescriptor> A resolve(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
-        ArtifactDescriptor artifactDescriptor = find(coordinates, scannerContext);
+    public MavenArtifactDescriptor resolve(Coordinates coordinates, ScannerContext scannerContext) {
+        MavenArtifactDescriptor artifactDescriptor = find(coordinates, scannerContext);
         if (artifactDescriptor == null) {
-            artifactDescriptor = createArtifactDescriptor(coordinates, descriptorType, scannerContext);
-        } else if (!(descriptorType.isAssignableFrom(artifactDescriptor.getClass()))) {
-            return scannerContext.getStore().migrate(artifactDescriptor, descriptorType);
+            artifactDescriptor = createArtifactDescriptor(coordinates, scannerContext);
         }
-        return descriptorType.cast(artifactDescriptor);
+        return artifactDescriptor;
     }
 
-    @Override
-    public ArtifactDescriptor find(Coordinates coordinates, ScannerContext scannerContext) {
-        String id = ArtifactHelper.getId(coordinates);
-        return scannerContext.getStore().find(ArtifactDescriptor.class, id);
+    private MavenArtifactDescriptor find(Coordinates coordinates, ScannerContext scannerContext) {
+        String id = MavenArtifactHelper.getId(coordinates);
+        Map<String, Object> params = new HashMap<>();
+        params.put("fqn", id);
+        Query.Result<CompositeRowObject> result = scannerContext.getStore().executeQuery("MATCH (a:Maven:Artifact:File) WHERE a.fqn={fqn} RETURN a", params);
+        return result.hasResult() ? result.getSingleResult().get("a", MavenArtifactDescriptor.class) : null;
     }
 
     /**
@@ -30,17 +35,14 @@ public class MavenArtifactResolver implements ArtifactResolver {
      * 
      * @param coordinates
      *            The artifact coordinates.
-     * @param descriptorType
-     *            The descriptor type.
      * @param scannerContext
      *            The scanner context.
-     * @param <A>
-     *            The descriptor type.
      * @return The artifact descriptor.
      */
-    private static <A extends ArtifactDescriptor> A createArtifactDescriptor(Coordinates coordinates, Class<A> descriptorType, ScannerContext scannerContext) {
-        A artifactDescriptor = scannerContext.getStore().create(descriptorType, ArtifactHelper.getId(coordinates));
-        ArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
+    private MavenArtifactDescriptor createArtifactDescriptor(Coordinates coordinates, ScannerContext scannerContext) {
+        String id = MavenArtifactHelper.getId(coordinates);
+        MavenArtifactDescriptor artifactDescriptor = scannerContext.getStore().create(MavenArtifactDescriptor.class, id);
+        MavenArtifactHelper.setCoordinates(artifactDescriptor, coordinates);
         return artifactDescriptor;
     }
 }

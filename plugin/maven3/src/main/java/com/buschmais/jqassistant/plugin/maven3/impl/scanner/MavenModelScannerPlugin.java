@@ -87,10 +87,28 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         pomXmlDescriptor.setArtifactId(model.getArtifactId());
         pomXmlDescriptor.setPackaging(model.getPackaging());
         pomXmlDescriptor.setVersion(model.getVersion());
-        pomXmlDescriptor.setFullQualifiedName(model.getId());
-        MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(new ModelCoordinates(model), MavenArtifactDescriptor.class, context);
+        pomXmlDescriptor.setFullQualifiedName(getFullyQualifiedName(model));
+        MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(new ModelCoordinates(model), context);
         pomXmlDescriptor.getDescribes().add(artifact);
         return pomXmlDescriptor;
+    }
+
+    /**
+     * Create the fully qualified name of the model (using packaging type
+     * "pom").
+     * 
+     * @param model
+     *            The model.
+     * @return The fully qualified name.
+     */
+    private String getFullyQualifiedName(Model model) {
+        StringBuilder id = new StringBuilder(64);
+        id.append((model.getGroupId() == null) ? "[inherited]" : model.getGroupId());
+        id.append(":");
+        id.append(model.getArtifactId());
+        id.append(":pom:");
+        id.append((model.getVersion() == null) ? "[inherited]" : model.getVersion());
+        return id.toString();
     }
 
     /**
@@ -279,8 +297,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         List<MavenPluginDescriptor> pluginDescriptors = new ArrayList<>();
         for (Plugin plugin : plugins) {
             MavenPluginDescriptor mavenPluginDescriptor = store.create(MavenPluginDescriptor.class);
-            MavenArtifactDescriptor artifactDescriptor = getArtifactResolver(context).resolve(new PluginCoordinates(plugin), MavenArtifactDescriptor.class,
-                    context);
+            MavenArtifactDescriptor artifactDescriptor = getArtifactResolver(context).resolve(new PluginCoordinates(plugin), context);
             mavenPluginDescriptor.setArtifact(artifactDescriptor);
             mavenPluginDescriptor.setInherited(plugin.isInherited());
             addDependencies(mavenPluginDescriptor, plugin.getDependencies(), PluginDependsOnDescriptor.class, context);
@@ -336,7 +353,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     private void addParent(MavenPomXmlDescriptor pomDescriptor, Model model, ScannerContext context) {
         Parent parent = model.getParent();
         if (null != parent) {
-            ArtifactDescriptor parentDescriptor = getArtifactResolver(context).resolve(new ParentCoordinates(parent), ArtifactDescriptor.class, context);
+            MavenArtifactDescriptor parentDescriptor = getArtifactResolver(context).resolve(new ParentCoordinates(parent), context);
             pomDescriptor.setParent(parentDescriptor);
         }
     }
@@ -464,8 +481,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      */
     private MavenArtifactDescriptor getMavenArtifactDescriptor(Dependency dependency, ScannerContext context) {
         DependencyCoordinates coordinates = new DependencyCoordinates(dependency);
-        MavenArtifactDescriptor artifactDescriptor = getArtifactResolver(context).resolve(coordinates, MavenArtifactDescriptor.class, context);
-        return artifactDescriptor;
+        return getArtifactResolver(context).resolve(coordinates, context);
     }
 
     /**

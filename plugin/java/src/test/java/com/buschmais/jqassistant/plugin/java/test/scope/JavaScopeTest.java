@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.scanner.DefaultFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.*;
@@ -23,7 +24,7 @@ public class JavaScopeTest {
 
     @Before
     public void setUp() {
-        when(scannerContext.peek(FileResolver.class)).thenReturn(new FileResolver());
+        when(scannerContext.peek(FileResolver.class)).thenReturn(new DefaultFileResolver());
     }
 
     @Test

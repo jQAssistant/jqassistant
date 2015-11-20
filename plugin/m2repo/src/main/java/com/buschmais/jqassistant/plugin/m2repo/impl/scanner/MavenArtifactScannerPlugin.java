@@ -26,7 +26,8 @@ import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenReleaseDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenSnapshotDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactHelper;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactHelper;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
@@ -79,12 +80,13 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     public MavenArtifactDescriptor scan(ArtifactInfo item, String path, Scope scope, Scanner scanner) throws IOException {
         ArtifactProvider artifactProvider = scanner.getContext().peek(ArtifactProvider.class);
         // register file resolver strategy to identify repository artifacts
-        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
-        fileResolver.push(artifactProvider.getFileResolverStrategy());
+        scanner.getContext().push(FileResolver.class, artifactProvider.getFileResolver());
+        scanner.getContext().push(ArtifactResolver.class, artifactProvider.getArtifactResolver());
         try {
             return resolveAndScan(scanner, artifactProvider, item);
         } finally {
-            fileResolver.pop();
+            scanner.getContext().pop(ArtifactResolver.class);
+            scanner.getContext().pop(FileResolver.class);
         }
     }
 
@@ -147,7 +149,8 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
                     }
                     MavenArtifactDescriptor mavenArtifactDescriptor = markReleaseOrSnaphot(store.addDescriptorType(descriptor, MavenArtifactDescriptor.class),
                             MavenArtifactDescriptor.class, artifact, lastModified, store);
-                    ArtifactHelper.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
+                    MavenArtifactHelper.setId(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
+                    MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
                     modelDescriptor.getDescribes().add(mavenArtifactDescriptor);
                     repositoryDescriptor.getContainedArtifacts().add(mavenArtifactDescriptor);
                     return mavenArtifactDescriptor;
@@ -173,7 +176,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     private MavenPomXmlDescriptor findModel(MavenRepositoryDescriptor repositoryDescriptor, Artifact resolvedModelArtifact) {
         Artifact resolvedMainArtifact = new DefaultArtifact(resolvedModelArtifact.getGroupId(), resolvedModelArtifact.getArtifactId(),
                 resolvedModelArtifact.getExtension(), resolvedModelArtifact.getVersion());
-        String coordinates = ArtifactHelper.getId(new ArtifactCoordinates(resolvedMainArtifact));
+        String coordinates = MavenArtifactHelper.getId(new ArtifactCoordinates(resolvedMainArtifact));
         return repositoryDescriptor.findModel(coordinates);
     }
 

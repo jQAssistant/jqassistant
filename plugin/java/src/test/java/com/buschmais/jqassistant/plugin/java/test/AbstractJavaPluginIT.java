@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.ContainerFileResolverStrategy;
+import com.buschmais.jqassistant.plugin.common.api.scanner.ContainerFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
@@ -180,8 +180,8 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         JavaArtifactFileDescriptor artifact = getArtifactDescriptor(artifactId);
         artifact.setFullQualifiedName(artifactId);
         context.push(JavaArtifactFileDescriptor.class, artifact);
-        ContainerFileResolverStrategy fileResolverStrategy = new ContainerFileResolverStrategy(artifact);
-        context.peek(FileResolver.class).push(fileResolverStrategy);
+        ContainerFileResolver fileResolverStrategy = new ContainerFileResolver(artifact);
+        context.push(FileResolver.class, fileResolverStrategy);
 
         List<? extends FileDescriptor> descriptors = execute(artifact, operation, scanner);
         for (FileDescriptor descriptor : descriptors) {
@@ -189,7 +189,7 @@ public abstract class AbstractJavaPluginIT extends AbstractPluginIT {
         }
 
         context.pop(JavaArtifactFileDescriptor.class);
-        context.peek(FileResolver.class).pop();
+        context.pop(FileResolver.class);
         fileResolverStrategy.flush();
         store.commitTransaction();
         return descriptors;

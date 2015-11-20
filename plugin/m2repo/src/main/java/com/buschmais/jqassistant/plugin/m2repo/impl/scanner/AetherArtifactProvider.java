@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,9 +29,10 @@ import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 
 /**
  * Transfers artifacts from a remote repository to a local repository.
@@ -51,6 +52,10 @@ public class AetherArtifactProvider implements ArtifactProvider {
     private String password;
 
     private final File repositoryRoot;
+
+    private MavenRepositoryFileResolver repositoryFileResolver;
+
+    private MavenRepositoryArtifactResolver repositoryArtifactResolver;
 
     private final RemoteRepository repository;
     private final RepositorySystem repositorySystem;
@@ -88,7 +93,9 @@ public class AetherArtifactProvider implements ArtifactProvider {
         String repositoryId = DigestUtils.md5Hex(repositoryUrl.toString());
         repository = new RemoteRepository.Builder(repositoryId, "default", url).setAuthentication(auth).build();
         repositorySystem = newRepositorySystem();
+        this.repositoryFileResolver = new MavenRepositoryFileResolver(repositoryDescriptor);
         this.repositoryRoot = new File(workDirectory, repositoryId);
+        this.repositoryArtifactResolver = new MavenRepositoryArtifactResolver(repositoryRoot, repositoryFileResolver);
         LOGGER.debug("Using '{}' for repository URL '{}'", repositoryRoot, repositoryUrl);
         session = newRepositorySystemSession(repositorySystem, repositoryRoot);
     }
@@ -114,8 +121,13 @@ public class AetherArtifactProvider implements ArtifactProvider {
     }
 
     @Override
-    public FileResolverStrategy getFileResolverStrategy() {
-        return new RepositoryFileResolverStrategy(repositoryRoot);
+    public FileResolver getFileResolver() {
+        return repositoryFileResolver;
+    }
+
+    @Override
+    public ArtifactResolver getArtifactResolver() {
+        return repositoryArtifactResolver;
     }
 
     /**
@@ -141,7 +153,7 @@ public class AetherArtifactProvider implements ArtifactProvider {
     private ArtifactRequest createArtifactRequest(Artifact artifact) {
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(artifact);
-        final List<RemoteRepository> repositories = Arrays.asList(repository);
+        final List<RemoteRepository> repositories = Collections.singletonList(repository);
         artifactRequest.setRepositories(repositories);
         return artifactRequest;
     }

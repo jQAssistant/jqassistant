@@ -4,8 +4,9 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 
 /**
  * Defines the interface for an artifact provider
@@ -35,5 +36,12 @@ public interface ArtifactProvider {
      * 
      * @return The file resolver strategy.
      */
-    FileResolverStrategy getFileResolverStrategy();
+    FileResolver getFileResolver();
+
+    /**
+     * Return the associated artifact resolver.
+     *
+     * @return The artifact resolver.
+     */
+    ArtifactResolver getArtifactResolver();
 }

@@ -2,12 +2,12 @@ package com.buschmais.jqassistant.plugin.maven3.api.artifact;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 
 /**
  * Contains artifact related functionality.
  */
-public class ArtifactHelper {
+public class MavenArtifactHelper {
 
     /**
      * Apply the given coordinates to an artifact descriptor.
@@ -16,11 +16,8 @@ public class ArtifactHelper {
      *            The artifact descriptor.
      * @param coordinates
      *            The coordinates.
-     * @param <A>
-     *            The artifact tpe.
      */
-    public static <A extends ArtifactDescriptor> void setCoordinates(A artifactDescriptor, Coordinates coordinates) {
-        artifactDescriptor.setFullQualifiedName(ArtifactHelper.getId(coordinates));
+    public static void setCoordinates(MavenArtifactDescriptor artifactDescriptor, Coordinates coordinates) {
         artifactDescriptor.setGroup(coordinates.getGroup());
         artifactDescriptor.setName(coordinates.getName());
         artifactDescriptor.setVersion(coordinates.getVersion());
@@ -29,6 +26,17 @@ public class ArtifactHelper {
     }
 
     /**
+     * Set the fully qualified name of an artifact descriptor.
+     *
+     * @param artifactDescriptor
+     *            The artifact descriptor.
+     * @param coordinates
+     *            The coordinates.
+     */
+    public static void setId(MavenArtifactDescriptor artifactDescriptor, Coordinates coordinates) {
+        artifactDescriptor.setFullQualifiedName(MavenArtifactHelper.getId(coordinates));
+    }
+    /**
      * Creates the id of an coordinates descriptor by the given items.
      *
      * @param coordinates
@@ -36,7 +44,7 @@ public class ArtifactHelper {
      * @return The id.
      */
     public static String getId(Coordinates coordinates) {
-        StringBuffer id = new StringBuffer();
+        StringBuilder id = new StringBuilder();
         if (StringUtils.isNotEmpty(coordinates.getGroup())) {
             id.append(coordinates.getGroup());
         }
@@ -56,5 +64,4 @@ public class ArtifactHelper {
         }
         return id.toString();
     }
-
 }
