@@ -34,7 +34,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void methodOverrides() throws IOException, AnalysisException, NoSuchMethodException {
+    public void methodOverrides() throws Exception {
         scanClasses(ClassType.class, InterfaceType.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -60,7 +60,7 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void methodOverridesSubClass() throws IOException, AnalysisException, NoSuchMethodException {
+    public void methodOverridesSubClass() throws Exception {
         scanClasses(ClassType.class, SubClassType.class);
         assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

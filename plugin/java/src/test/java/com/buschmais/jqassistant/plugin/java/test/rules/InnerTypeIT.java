@@ -28,7 +28,7 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void innerType() throws IOException, AnalysisException, ClassNotFoundException {
+    public void innerType() throws Exception {
         scanClasses(OuterType.class, OuterType.InnerClass.class, OuterType.InnerEnum.class, OuterType.InnerInterface.class, OuterType.InnerAnnotation.class);
         scanInnerClass(OuterType.class, "1");
         assertThat(applyConcept("java:InnerType").getStatus(), equalTo(SUCCESS));
@@ -50,7 +50,7 @@ public class InnerTypeIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void anonymousInnerTypes() throws IOException, AnalysisException, ClassNotFoundException {
+    public void anonymousInnerTypes() throws Exception {
         scanClasses(OuterType.class, OuterType.InnerClass.class, OuterType.InnerEnum.class, OuterType.InnerInterface.class, OuterType.InnerAnnotation.class);
         scanInnerClass(OuterType.class, "1");
         assertThat(applyConcept("java:AnonymousInnerType").getStatus(), Matchers.equalTo(SUCCESS));
