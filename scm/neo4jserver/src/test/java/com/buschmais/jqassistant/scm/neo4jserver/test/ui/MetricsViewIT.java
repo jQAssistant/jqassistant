@@ -100,15 +100,10 @@ public class MetricsViewIT extends AbstractUITest {
      */
     @Test
     public void testDrillDown() throws Exception {
-        String artifactId = "server-test";
-        scanClassPathDirectory(artifactId, getClassesDirectory(MetricsViewIT.class));
-        scanClasses("core", Store.class);
-
-        // TODO Applying concept 'dependency:Package' doesn't work properly, as
-        // the classes are scanned directly. This is a workaround for that
-        // issue.
-        store.executeQuery("match " + "(a:Artifact)-[:CONTAINS]->(t:Type), " + "(p:Package)-[:CONTAINS*]->(t) " + "create (a)-[c:CONTAINS]->(p) "
-                + "return count(c)");
+        String artifactId1 = "a1";
+        String artifactId2 = "a2";
+        scanClassPathDirectory(artifactId1, getClassesDirectory(MetricsViewIT.class));
+        scanClassPathDirectory(artifactId2, getClassesDirectory(MetricsViewIT.class));
 
         // for test step explanation see testMetricGroupSelection()
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);
@@ -122,7 +117,7 @@ public class MetricsViewIT extends AbstractUITest {
         assertEquals(firstMetric.getId(), breadcrumb.get(0));
 
         // this triggers the AJAX call
-        metricsPage.selectNode(artifactId);
+        metricsPage.selectNode(artifactId1);
 
         // the breadcrumb now must contain the first and the second metric ID
         Metric secondMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(1);
