@@ -59,13 +59,16 @@ public class ZipScannerIT extends AbstractPluginIT {
 
     private void test(Strategy strategy) throws Exception {
         File archive = createZipArchive();
-        store.beginTransaction();
-        FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
-        assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
-        ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
-        assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test.txt")));
-        store.commitTransaction();
-        archive.delete();
+        try {
+            store.beginTransaction();
+            FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
+            assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
+            ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
+            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test.txt")));
+            store.commitTransaction();
+        } finally {
+            archive.delete();
+        }
     }
 
     /**
