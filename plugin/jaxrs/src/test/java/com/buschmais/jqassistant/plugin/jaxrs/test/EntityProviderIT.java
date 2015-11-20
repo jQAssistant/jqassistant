@@ -37,7 +37,7 @@ public class EntityProviderIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_EntityProvider_Writer_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_EntityProvider_Writer_Concept() throws Exception {
         scanClasses(BookWriter.class);
         assertThat(applyConcept("jaxrs:EntityProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -58,7 +58,7 @@ public class EntityProviderIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_EntityProvider_Reader_Concept() throws IOException, AnalysisException, NoSuchMethodException {
+    public void test_EntityProvider_Reader_Concept() throws Exception {
         scanClasses(BookReader.class);
         assertThat(applyConcept("jaxrs:EntityProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

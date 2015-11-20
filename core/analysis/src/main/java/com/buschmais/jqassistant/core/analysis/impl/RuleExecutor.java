@@ -11,6 +11,10 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.Template;
@@ -129,35 +133,39 @@ public class RuleExecutor {
     }
 
     public Template resolveTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
-        Template template = ruleSet.getTemplates().get(queryTemplateId);
-        if (template == null) {
-            throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.");
+        try {
+            Template template = ruleSet.getTemplateBucket().getById(queryTemplateId);
+            return template;
+        } catch (NoTemplateException e) {
+            throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.", e);
         }
-        return template;
     }
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {
-        Concept requiredConcept = ruleSet.getConcepts().get(requiredConceptId);
-        if (requiredConcept == null) {
+        try {
+            Concept requiredConcept = ruleSet.getConceptBucket().getById(requiredConceptId);
+            return requiredConcept;
+        } catch (NoConceptException e) {
             throw new AnalysisException("Concept '" + requiredConceptId + "' is not defined.");
         }
-        return requiredConcept;
     }
 
     public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws AnalysisException {
-        Constraint constraint = ruleSet.getConstraints().get(constraintId);
-        if (constraint == null) {
+        try {
+            Constraint constraint = ruleSet.getConstraintBucket().getById(constraintId);
+            return constraint;
+        } catch (NoRuleException e) {
             throw new AnalysisException("Constraint '" + constraintId + "' not found.");
         }
-        return constraint;
     }
 
     public Group resolveGroup(RuleSet ruleSet, String groupId) throws AnalysisException {
-        Group group = ruleSet.getGroups().get(groupId);
-        if (group == null) {
-            throw new AnalysisException("Group '" + groupId + "' is not defined.");
+        try {
+            Group group = ruleSet.getGroupsBucket().getById(groupId);
+            return group;
+        } catch (NoGroupException e) {
+            throw  new AnalysisException("Group '" +  groupId + "' is not defined.", e);
         }
-        return group;
     }
 
 }

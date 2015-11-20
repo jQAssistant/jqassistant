@@ -133,7 +133,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses)
-            throws IOException, AnalysisException, ParserConfigurationException, SAXException {
+         throws Exception {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.addAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);

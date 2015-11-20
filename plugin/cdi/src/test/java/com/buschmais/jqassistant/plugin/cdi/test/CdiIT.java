@@ -41,7 +41,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void dependent() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void dependent() throws Exception {
         scanClasses(DependentBean.class);
         assertThat(applyConcept("cdi:Dependent").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -61,7 +61,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void requestScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void requestScoped() throws Exception {
         scanClasses(RequestScopedBean.class);
         assertThat(applyConcept("cdi:RequestScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -81,7 +81,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void sessionScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void sessionScoped() throws Exception {
         scanClasses(SessionScopedBean.class);
         assertThat(applyConcept("cdi:SessionScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -101,7 +101,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void conversationScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void conversationScoped() throws Exception {
         scanClasses(ConversationScopedBean.class);
         assertThat(applyConcept("cdi:ConversationScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -121,7 +121,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void applicationScoped() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void applicationScoped() throws Exception {
         scanClasses(ApplicationScopedBean.class);
         assertThat(applyConcept("cdi:ApplicationScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -141,7 +141,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void singletonScoped() throws IOException, AnalysisException {
+    public void singletonScoped() throws Exception {
         scanClasses(SingletonScopedBean.class);
         assertThat(applyConcept("cdi:SingletonScoped").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -159,7 +159,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void stereotype() throws IOException, AnalysisException {
+    public void stereotype() throws Exception {
         scanClasses(CustomStereotype.class);
         assertThat(applyConcept("cdi:Stereotype").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -177,7 +177,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void alternative() throws IOException, AnalysisException {
+    public void alternative() throws Exception {
         scanClasses(AlternativeBean.class);
         assertThat(applyConcept("cdi:Alternative").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -195,7 +195,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void specializes() throws IOException, AnalysisException, NoSuchMethodException {
+    public void specializes() throws Exception {
         scanClasses(SpecializesBean.class);
         assertThat(applyConcept("cdi:Specializes").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -214,7 +214,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void qualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void qualifier() throws Exception {
         scanClasses(CustomQualifier.class);
         assertThat(applyConcept("cdi:Qualifier").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -233,7 +233,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void produces() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void produces() throws Exception {
         scanClasses(ApplicationScopedBean.class, ConversationScopedBean.class, DependentBean.class, RequestScopedBean.class, SessionScopedBean.class);
         assertThat(applyConcept("cdi:Produces").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -260,7 +260,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void disposes() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void disposes() throws Exception {
         scanClasses(DisposesBean.class);
         assertThat(applyConcept("cdi:Disposes").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -278,7 +278,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void named() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void named() throws Exception {
         scanClasses(NamedBean.class);
         assertThat(applyConcept("cdi:Named").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -297,7 +297,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void any() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void any() throws Exception {
         scanClasses(DecoratorBean.class);
         assertThat(applyConcept("cdi:Any").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -315,7 +315,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void newQualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void newQualifier() throws Exception {
         scanClasses(NewBean.class);
         assertThat(applyConcept("cdi:New").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -333,7 +333,7 @@ public class CdiIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void defaultQualifier() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void defaultQualifier() throws Exception {
         scanClasses(DefaultBean.class);
         assertThat(applyConcept("cdi:Default").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();

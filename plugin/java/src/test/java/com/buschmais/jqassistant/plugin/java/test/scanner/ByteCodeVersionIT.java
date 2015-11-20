@@ -34,7 +34,7 @@ public class ByteCodeVersionIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void javaVersion() throws IOException, AnalysisException {
+    public void javaVersion() throws Exception {
         scanClasses(Pojo.class);
         assertThat(applyConcept("java:JavaVersion").getStatus(), CoreMatchers.equalTo(SUCCESS));
         store.beginTransaction();

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -48,7 +49,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testMethod() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:TestMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -67,7 +68,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testClass() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testClass() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:TestClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -86,7 +87,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testClassOrMethod() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:TestClassOrMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -106,7 +107,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void suiteClass() throws IOException, AnalysisException, NoSuchMethodException {
+    public void suiteClass() throws Exception {
         scanClasses(TestSuite.class, TestClass.class);
         assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -128,7 +129,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void ignoreTestClassOrMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void ignoreTestClassOrMethod() throws Exception {
         scanClasses(IgnoredTest.class);
         assertThat(applyConcept("junit4:IgnoreTestClassOrMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -148,7 +149,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void ignoreWithoutMessage() throws IOException, AnalysisException, NoSuchMethodException {
+    public void ignoreWithoutMessage() throws Exception {
         scanClasses(IgnoredTest.class, IgnoredTestWithMessage.class);
         assertThat(validateConstraint("junit4:IgnoreWithoutMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -182,7 +183,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testCaseImplementedByMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testCaseImplementedByMethod() throws Exception {
         scanClasses(Example.class);
         scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
@@ -207,7 +208,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void assertMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void assertMethod() throws Exception {
         scanClasses(Assertions.class);
         assertThat(applyConcept("junit4:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -232,7 +233,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void assertionMustProvideMessage() throws IOException, AnalysisException, NoSuchMethodException {
+    public void assertionMustProvideMessage() throws Exception {
         scanClasses(Assertions.class);
         assertThat(validateConstraint("junit4:AssertionMustProvideMessage").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -259,7 +260,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void testMethodWithoutAssertion() throws IOException, AnalysisException, NoSuchMethodException {
+    public void testMethodWithoutAssertion() throws Exception {
         scanClasses(Assertions.class);
         assertThat(validateConstraint("junit4:TestMethodWithoutAssertion").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -286,7 +287,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void beforeMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void beforeMethod() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:BeforeMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -308,7 +309,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void afterMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void afterMethod() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:AfterMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -330,7 +331,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void beforeClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void beforeClassMethod() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:BeforeClassMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -352,7 +353,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void afterClassMethod() throws IOException, AnalysisException, NoSuchMethodException {
+    public void afterClassMethod() throws Exception {
         scanClasses(TestClass.class);
         assertThat(applyConcept("junit4:AfterClassMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -368,7 +369,7 @@ public class Junit4IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void defaultGroup() throws AnalysisException {
+    public void defaultGroup() throws AnalysisException, NoGroupException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
         assertThat(constraintViolations.keySet(),

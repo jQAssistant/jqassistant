@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
@@ -27,7 +28,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void statelessSessionBean() throws IOException, AnalysisException {
+    public void statelessSessionBean() throws Exception {
         scanClasses(StatelessLocalBean.class);
         assertThat(applyConcept("ejb3:StatelessSessionBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -44,7 +45,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void statefulSessionBean() throws IOException, AnalysisException {
+    public void statefulSessionBean() throws Exception {
         scanClasses(StatefulBean.class);
         assertThat(applyConcept("ejb3:StatefulSessionBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -61,7 +62,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void singletonBean() throws IOException, AnalysisException {
+    public void singletonBean() throws Exception {
         scanClasses(SingletonBean.class);
         assertThat(applyConcept("ejb3:SingletonBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -78,7 +79,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void messageDrivenBean() throws IOException, AnalysisException {
+    public void messageDrivenBean() throws Exception {
         scanClasses(MessageDrivenBean.class);
         assertThat(applyConcept("ejb3:MessageDrivenBean").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -95,7 +96,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void localSessionBean() throws IOException, AnalysisException {
+    public void localSessionBean() throws Exception {
         scanClasses(StatelessLocalBean.class);
         assertThat(applyConcept("ejb3:Local").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -112,7 +113,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void remoteSessionBean() throws IOException, AnalysisException {
+    public void remoteSessionBean() throws Exception {
         scanClasses(StatelessRemoteBean.class);
         assertThat(applyConcept("ejb3:Remote").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();
@@ -129,7 +130,7 @@ public class Ejb3IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void enterpriseJavaBean() throws IOException, AnalysisException {
+    public void enterpriseJavaBean() throws IOException, AnalysisException, NoGroupException {
         scanClasses(StatelessLocalBean.class, StatelessRemoteBean.class, StatefulBean.class, MessageDrivenBean.class);
         executeGroup("ejb3:EJB");
         store.beginTransaction();

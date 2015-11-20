@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.XOException;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -154,7 +155,12 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             return executeScript(executableRule, (ScriptExecutable) executable, executableRule, severity);
         } else if (executable instanceof TemplateExecutable) {
             String templateId = ((TemplateExecutable) executable).getTemplateId();
-            Template template = ruleSet.getTemplates().get(templateId);
+            Template template = null;
+            try {
+                template = ruleSet.getTemplateBucket().getById(templateId);
+            } catch (NoTemplateException e) {
+                throw new AnalysisException("Unknown template with id " + templateId, e);
+            }
             return execute(executableRule, template.getExecutable(), ruleSet, severity);
         } else {
             throw new AnalysisException("Unsupported executable type " + executable);

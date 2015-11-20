@@ -46,7 +46,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void entity() throws IOException, AnalysisException {
+    public void entity() throws Exception {
         scanClasses(JpaEntity.class);
         assertThat(applyConcept("jpa2:Entity").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -63,7 +63,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void embeddable() throws IOException, AnalysisException {
+    public void embeddable() throws Exception {
         scanClasses(JpaEmbeddable.class);
         assertThat(applyConcept("jpa2:Embeddable").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -80,7 +80,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void embedded() throws IOException, AnalysisException, NoSuchFieldException, NoSuchMethodException {
+    public void embedded() throws Exception {
         scanClasses(JpaEntity.class);
         assertThat(applyConcept("jpa2:Embedded").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -99,7 +99,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void embeddedId() throws IOException, AnalysisException, NoSuchFieldException, NoSuchMethodException {
+    public void embeddedId() throws Exception {
         scanClasses(JpaEntity.class);
         assertThat(applyConcept("jpa2:EmbeddedId").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -118,7 +118,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void namedQuery() throws IOException, AnalysisException {
+    public void namedQuery() throws Exception {
         scanClasses(JpaEntity.class);
         assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -215,7 +215,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void validationModeNotSpecified() throws IOException, AnalysisException {
+    public void validationModeNotSpecified() throws Exception {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -238,7 +238,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void validationModeAuto() throws IOException, AnalysisException {
+    public void validationModeAuto() throws Exception {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -261,7 +261,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void validationModeSpecified() throws IOException, AnalysisException {
+    public void validationModeSpecified() throws Exception {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

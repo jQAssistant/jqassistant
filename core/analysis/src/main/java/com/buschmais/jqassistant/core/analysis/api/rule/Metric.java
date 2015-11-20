@@ -24,7 +24,7 @@ public class Metric extends AbstractExecutableRule {
      * @param cypherExecutable
      *            The cypher executable.
      * @param requiresConcepts
-     *            The required concepts.
+     *            The required rules.
      */
     public Metric(String id, String description, RuleSource ruleSource, CypherExecutable cypherExecutable, Map<String, Class<?>> parameterTypes,
             Set<String> requiresConcepts) {

@@ -49,7 +49,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void bundle() throws IOException, AnalysisException {
+    public void bundle() throws Exception {
         scanClassPathResource(JavaScope.CLASSPATH, "/META-INF/MANIFEST.MF");
         assertThat(applyConcept("osgi-bundle:Bundle").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -69,7 +69,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void exportedPackages() throws IOException, AnalysisException {
+    public void exportedPackages() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         assertThat(applyConcept("osgi-bundle:ExportPackage").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -88,7 +88,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void importedPackages() throws IOException, AnalysisException {
+    public void importedPackages() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         query("create (:File:Container:Directory:Package{fqn:'org.junit'})");
         assertThat(applyConcept("osgi-bundle:ImportPackage").getStatus(), equalTo(SUCCESS));
@@ -108,7 +108,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void activator() throws IOException, AnalysisException {
+    public void activator() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         assertThat(applyConcept("osgi-bundle:Activator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
@@ -127,7 +127,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void internalType() throws IOException, AnalysisException {
+    public void internalType() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         assertThat(applyConcept("osgi-bundle:InternalType").getStatus(), equalTo(SUCCESS));
@@ -149,7 +149,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void unusedInternalType() throws IOException, AnalysisException {
+    public void unusedInternalType() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         assertThat(validateConstraint("osgi-bundle:UnusedInternalType").getStatus(), equalTo(FAILURE));
@@ -179,7 +179,7 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void internalTypeMustNotBePublic() throws IOException, AnalysisException {
+    public void internalTypeMustNotBePublic() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
         removeTestClass();
         assertThat(validateConstraint("osgi-bundle:InternalTypeMustNotBePublic").getStatus(), equalTo(FAILURE));
