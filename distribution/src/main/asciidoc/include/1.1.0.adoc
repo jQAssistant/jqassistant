@@ -3,7 +3,7 @@
 === Core
 - Groups may be defined in AsciiDoc documents
 - Make sure that ids used for concepts, constraints or groups are unique nevertheless if they have been defined in XML or AsciiDoc documents
-- Upgraded to Neo4j 2.2.6
+- Upgraded to Neo4j 2.2.7
 - For plugin developers: marked the descriptor _com.buschmais.jqassistant.core.store.api.model.NamedDescriptor_ as deprecated
   and replaced it by _com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor_, plugin implementations should use this type
 

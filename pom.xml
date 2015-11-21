@@ -82,7 +82,7 @@
         <maven.compiler.version>3.3</maven.compiler.version>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
-        <org.neo4j_version>2.2.6</org.neo4j_version>
+        <org.neo4j_version>2.2.7</org.neo4j_version>
         <org.asciidoctor_version>1.5.2</org.asciidoctor_version>
         <org.asciidoctor-plugin.version>1.5.2.1</org.asciidoctor-plugin.version>
         <org.jruby_version>9.0.3.0</org.jruby_version>
