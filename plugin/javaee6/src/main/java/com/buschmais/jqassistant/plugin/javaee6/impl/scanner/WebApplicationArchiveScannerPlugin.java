@@ -2,14 +2,14 @@ package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractArchiveScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractZipArchiveScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WebApplicationArchiveScannerPlugin extends AbstractArchiveScannerPlugin<WebApplicationArchiveDescriptor> {
+public class WebApplicationArchiveScannerPlugin extends AbstractZipArchiveScannerPlugin<WebApplicationArchiveDescriptor> {
 
     @Override
     protected String getExtension() {

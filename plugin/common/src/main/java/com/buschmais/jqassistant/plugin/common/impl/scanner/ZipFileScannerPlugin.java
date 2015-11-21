@@ -9,13 +9,13 @@ import java.util.zip.ZipFile;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractContainerScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
-public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry, ArchiveDescriptor> {
+public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipEntry, ZipArchiveDescriptor> {
 
     @Override
     public Class<? extends ZipFile> getType() {
@@ -23,8 +23,8 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    public Class<ArchiveDescriptor> getDescriptorType() {
-        return ArchiveDescriptor.class;
+    public Class<ZipArchiveDescriptor> getDescriptorType() {
+        return ZipArchiveDescriptor.class;
     }
 
     @Override
@@ -33,8 +33,8 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected ArchiveDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
-        return scannerContext.peek(ArchiveDescriptor.class);
+    protected ZipArchiveDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
+        return scannerContext.peek(ZipArchiveDescriptor.class);
     }
 
     @Override
@@ -81,11 +81,11 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected void enterContainer(ZipFile zipFile, ArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
+    protected void enterContainer(ZipFile zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
     }
 
     @Override
-    protected void leaveContainer(ZipFile zipFile, ArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) throws IOException {
+    protected void leaveContainer(ZipFile zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) throws IOException {
         zipFile.close();
     }
 

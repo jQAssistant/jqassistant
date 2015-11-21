@@ -12,6 +12,7 @@
         <class>com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.common.api.model.GZipFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.common.impl.scanner.FileScannerPlugin</class>
