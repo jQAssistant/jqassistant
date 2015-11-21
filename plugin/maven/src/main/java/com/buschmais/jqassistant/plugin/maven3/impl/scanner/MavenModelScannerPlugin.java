@@ -19,7 +19,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.*;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactHelper;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.*;
 
@@ -96,8 +95,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         // if the pom describes itself as artifact then the returned artifact
         // descriptor must be used as pom descriptor (the old instance is
         // invalidated due to adding labels)
-        String artifactFqn = MavenArtifactHelper.getId(artifactCoordinates);
-        if (artifactFqn.equals(pomFqn)) {
+        if (MavenPomXmlDescriptor.class.isAssignableFrom(artifact.getClass())) {
             pomXmlDescriptor = MavenPomXmlDescriptor.class.cast(artifact);
         }
         pomXmlDescriptor.getDescribes().add(artifact);
