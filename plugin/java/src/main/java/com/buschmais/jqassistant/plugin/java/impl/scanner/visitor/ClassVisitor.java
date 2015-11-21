@@ -39,7 +39,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      * @return The type descriptor.
      */
     public ClassFileDescriptor getTypeDescriptor() {
-        return cachedType.getTypeDescriptor();
+        return cachedType != null ? cachedType.getTypeDescriptor() : null;
     }
 
     @Override
