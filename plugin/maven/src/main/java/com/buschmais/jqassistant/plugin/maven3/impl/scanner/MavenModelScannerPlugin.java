@@ -111,7 +111,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @return The fully qualified name.
      */
     private String getFullyQualifiedName(Model model) {
-        StringBuilder id = new StringBuilder(64);
+        StringBuilder id = new StringBuilder();
         id.append((model.getGroupId() == null) ? "[inherited]" : model.getGroupId());
         id.append(":");
         id.append(model.getArtifactId());
