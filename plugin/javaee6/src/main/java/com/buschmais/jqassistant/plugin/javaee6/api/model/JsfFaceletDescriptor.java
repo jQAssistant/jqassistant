@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.plugin.javaee6.api.model;
 import java.util.Set;
 
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileNameDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
@@ -12,7 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  *
  * @author peter.herklotz@buschmais.com
  */
-@Label(value = "Facelet", usingIndexedPropertyOf = FileNameDescriptor.class)
+@Label(value = "Facelet")
 public interface JsfFaceletDescriptor extends JsfDescriptor, FileDescriptor {
 
     /**
