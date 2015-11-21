@@ -74,13 +74,14 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
             @Override
             public String getNamespaceURI(String prefix) {
                 if (prefix != null) {
-                    if (prefix.equals(XMLConstants.DEFAULT_NS_PREFIX)) {
+                    switch (prefix) {
+                    case XMLConstants.DEFAULT_NS_PREFIX:
                         return "http://www.w3.org/1999/xhtml";
-                    } else if (prefix.equals("ui")) {
+                    case "ui":
                         return "http://java.sun.com/jsf/facelets";
-                    } else if (prefix.equals("h")) {
+                    case "h":
                         return "http://java.sun.com/jsf/html";
-                    } else if (prefix.equals("f")) {
+                    case "f":
                         return "http://java.sun.com/jsf/core";
                     }
                 }
@@ -118,7 +119,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     /** {@inheritDoc} */
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return filePattern.matcher(path).find();
+        return filePattern.matcher(path).matches();
     }
 
     /** {@inheritDoc} */

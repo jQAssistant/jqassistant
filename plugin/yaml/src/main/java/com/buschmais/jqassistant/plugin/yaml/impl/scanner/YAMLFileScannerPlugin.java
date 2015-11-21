@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
@@ -23,6 +22,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
 
 @Requires(FileDescriptor.class)
@@ -35,7 +35,7 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        return file.getFile().getName().toLowerCase().endsWith(YAML_FILE_EXTENSION);
+        return path.toLowerCase().endsWith(YAML_FILE_EXTENSION);
     }
 
     @Override
