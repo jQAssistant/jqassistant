@@ -63,7 +63,7 @@ public final class SignatureHelper {
      * @return The method signature.
      */
     public static String getMethodSignature(String name, String rawSignature) {
-        StringBuffer signature = new StringBuffer();
+        StringBuilder signature = new StringBuilder();
         String returnType = org.objectweb.asm.Type.getReturnType(rawSignature).getClassName();
         if (returnType != null) {
             signature.append(returnType);
@@ -92,7 +92,7 @@ public final class SignatureHelper {
      * @return The field signature.
      */
     public static String getFieldSignature(String name, String rawSignature) {
-        StringBuffer signature = new StringBuffer();
+        StringBuilder signature = new StringBuilder();
         String returnType = org.objectweb.asm.Type.getReturnType(rawSignature).getClassName();
         signature.append(returnType);
         signature.append(' ');
