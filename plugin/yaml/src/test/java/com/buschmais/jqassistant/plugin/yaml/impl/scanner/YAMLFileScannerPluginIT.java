@@ -664,7 +664,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.getParsed(), is(false));
+        assertThat(fileDescriptor.isInvalid(), is(true));
     }
 
     @Test
@@ -684,7 +684,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.getParsed(), is(true));
+        assertThat(fileDescriptor.isInvalid(), is(false));
     }
 
     @Test
@@ -702,7 +702,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.getParsed(), is(false));
+        assertThat(fileDescriptor.isInvalid(), is(true));
     }
 
     @Test
@@ -720,13 +720,47 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.getParsed(), is(false));
+        assertThat(fileDescriptor.isInvalid(), is(true));
 
         List<YAMLFileDescriptor> childNodes =
              query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
                   .getColumn("c");
 
         assertThat(childNodes, anyOf(empty(), nullValue()));
+    }
+
+    @Test
+    public void ifParsingFailsThePropertyInvalidWillBeTrue() {
+        String fileName = "hostconfig-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' AND " +
+                          "f.invalid = true RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+    }
+
+    @Test
+    public void ifParsingSuccedsThePropertyInvalidWillBeFalse() {
+        String fileName = "simple-list.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' AND " +
+                          "f.invalid = false RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
     }
 
     @Test
@@ -744,7 +778,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-//        assertThat(fileDescriptor.getParsed(), is(false));
+        assertThat(fileDescriptor.isInvalid(), is(true));
 
         List<YAMLFileDescriptor> childNodes =
              query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
