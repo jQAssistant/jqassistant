@@ -17,6 +17,9 @@
 
 === Plugins
 
+==== Common
+- All ZIP archives (i.e. ZIP, JAR, WAR and EAR) are now labeled with "Zip"
+
 ==== GraphML
 - Added plugin which provides a GraphML export for the results of executed concepts, includes support for virtual elements (sub graphs, nodes, relationships)
 
