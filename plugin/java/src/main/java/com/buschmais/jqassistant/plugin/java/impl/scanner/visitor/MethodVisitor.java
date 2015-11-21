@@ -4,6 +4,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
@@ -13,6 +15,8 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorHelper.class);
 
     /**
      * Annotation indicating a synthetic parameter of a method.
@@ -43,6 +47,11 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
             return null;
         }
         ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
+        if (parameterDescriptor == null) {
+            LOGGER.warn("Cannot find parameter with index " + (parameter - syntheticParameters) + " in method signature "
+                    + containingType.getTypeDescriptor().getFullQualifiedName() + "#" + methodDescriptor.getSignature());
+            return null;
+        }
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(containingType, parameterDescriptor, SignatureHelper.getType(desc));
         return new AnnotationVisitor(containingType, annotationDescriptor, visitorHelper);
     }
