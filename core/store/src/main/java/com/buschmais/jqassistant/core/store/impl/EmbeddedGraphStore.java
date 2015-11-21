@@ -56,7 +56,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     @Override
     protected XOManagerFactory createXOManagerFactory(Collection<Class<?>> types) {
         File database = new File(databaseDirectory);
-        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[0]))
+        XOUnit xoUnit = XOUnitBuilder.create(database.toURI(), Neo4jXOProvider.class, types.toArray(new Class<?>[types.size()]))
                 .property(PROPERTY_NEO4J_CACHE_TYPE, VALUE_NEO4J_CACHE_TYPE_NONE).property(PROPERTY_NEO4J_ALLOW_STORE_UPGRADE, Boolean.TRUE.toString())
                 .property(PROPERTY_NEO4J_KEEP_LOGICAL_LOGS, Boolean.FALSE.toString()).property(PROPERTY_NEO4J_LOCK_MANAGER, NoOpLockFactory.KEY)
                 .property(PROPERTY_NEO4J_DBMS_PAGE_CACHE_MEMORY, "100M").create();
@@ -88,7 +88,7 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
             }
         });
         commitTransaction();
-        LOGGER.info("Reset finished.");
+        LOGGER.debug("Reset finished.");
     }
 
     private <T> void run(Iterable<T> iterable, Operation<T> operation) {
