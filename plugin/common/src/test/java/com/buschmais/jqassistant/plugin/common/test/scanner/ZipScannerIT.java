@@ -14,8 +14,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 
 /**
@@ -61,8 +61,8 @@ public class ZipScannerIT extends AbstractPluginIT {
         File archive = createZipArchive();
         store.beginTransaction();
         FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
-        assertThat(descriptor, instanceOf(ArchiveDescriptor.class));
-        ArchiveDescriptor archiveDescriptor = (ArchiveDescriptor) descriptor;
+        assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
+        ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
         assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test.txt")));
         store.commitTransaction();
         archive.delete();

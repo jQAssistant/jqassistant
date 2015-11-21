@@ -11,17 +11,17 @@ import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.model.ArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * Abstract base implementation for archive scanners.
  */
 @Requires(FileDescriptor.class)
-public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> extends AbstractScannerPlugin<FileResource, D> {
+public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescriptor> extends AbstractScannerPlugin<FileResource, D> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveScannerPlugin.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractZipArchiveScannerPlugin.class);
 
     @Override
     public Class<? extends FileResource> getType() {
@@ -30,7 +30,7 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
 
     @Override
     public Class<D> getDescriptorType() {
-        return getTypeParameter(AbstractArchiveScannerPlugin.class, 0);
+        return getTypeParameter(AbstractZipArchiveScannerPlugin.class, 0);
     }
 
     @Override
@@ -43,7 +43,7 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
         ScannerContext scannerContext = scanner.getContext();
         FileDescriptor fileDescriptor = scannerContext.peek(FileDescriptor.class);
         D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
-        scannerContext.push(ArchiveDescriptor.class, archive);
+        scannerContext.push(ZipArchiveDescriptor.class, archive);
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
         try {
             ZipFile zipFile = new ZipFile(file.getFile());
@@ -53,7 +53,7 @@ public abstract class AbstractArchiveScannerPlugin<D extends ArchiveDescriptor> 
         }
         finally {
             destroyScope(scannerContext);
-            scannerContext.pop(ArchiveDescriptor.class);
+            scannerContext.pop(ZipArchiveDescriptor.class);
         }
         return archive;
     }
