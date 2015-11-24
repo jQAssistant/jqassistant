@@ -31,7 +31,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>${org.asciidoctor_version}</version>
+                <version>${org.asciidoctor-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>jqassistant-rules</id>

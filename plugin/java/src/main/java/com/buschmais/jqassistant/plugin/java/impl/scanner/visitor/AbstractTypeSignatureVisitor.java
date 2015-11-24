@@ -28,7 +28,7 @@ public abstract class AbstractTypeSignatureVisitor<T extends Descriptor> extends
     /**
      * Constructor.
      * 
-     * @param usingDescriptor
+     * @param containingType
      *            The descriptor using the resolved types descriptor.
      * @param visitorHelper
      *            The {@link VisitorHelper}.
