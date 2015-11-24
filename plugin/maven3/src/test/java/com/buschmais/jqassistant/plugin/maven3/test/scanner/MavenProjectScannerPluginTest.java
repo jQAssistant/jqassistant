@@ -1,6 +1,8 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
@@ -9,10 +11,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
@@ -26,6 +25,7 @@ import org.mockito.stubbing.Answer;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
@@ -79,6 +79,8 @@ public class MavenProjectScannerPluginTest {
         properties.put(MavenProject.class.getName(), project);
         Store store = mock(Store.class);
         MavenProjectDirectoryDescriptor projectDescriptor = mock(MavenProjectDirectoryDescriptor.class);
+        List<ArtifactFileDescriptor> createsArtifacts = new LinkedList<>();
+        when(projectDescriptor.getCreatesArtifacts()).thenReturn(createsArtifacts);
         when(store.find(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(null, projectDescriptor);
         when(store.create(MavenProjectDirectoryDescriptor.class, "group:artifact:1.0.0")).thenReturn(projectDescriptor);
 
@@ -171,6 +173,8 @@ public class MavenProjectScannerPluginTest {
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, mainClassesDirectory);
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectory);
         verify(scannerContext, times(2)).pop(JavaArtifactFileDescriptor.class);
+        assertThat(createsArtifacts.size(), equalTo(2));
+        assertThat(createsArtifacts, allOf(hasItem(mainClassesDirectory), hasItem(testClassesDirectory)));
     }
 
 }
