@@ -18,7 +18,6 @@ public interface RuleSetReader {
      * 
      * @param sources
      *            The sources to be read.
-     * @return The map of constraint groups.
      */
     void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException;
 
