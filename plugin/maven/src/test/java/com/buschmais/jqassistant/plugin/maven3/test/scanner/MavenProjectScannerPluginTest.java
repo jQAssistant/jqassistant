@@ -114,13 +114,13 @@ public class MavenProjectScannerPluginTest {
         when(store.create(MavenArtifactDescriptor.class, "group:dependency:jar:main:2.0.0")).thenReturn(dependencyArtifact);
 
         DependsOnDescriptor testDependsOnMainDescriptor = mock(DependsOnDescriptor.class);
-        when(store.create(testClassesDirectory, DependsOnDescriptor.class, mainClassesDirectory)).thenReturn(testDependsOnMainDescriptor);
+        when(store.create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor)).thenReturn(testDependsOnMainDescriptor);
 
         DependsOnDescriptor mainDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
-        when(store.create(mainClassesDirectory, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(mainDependsOnDependencyDescriptor);
+        when(store.create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(mainDependsOnDependencyDescriptor);
 
         DependsOnDescriptor testDependsOnDependencyDescriptor = mock(DependsOnDescriptor.class);
-        when(store.create(testClassesDirectory, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(testDependsOnDependencyDescriptor);
+        when(store.create(testArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact)).thenReturn(testDependsOnDependencyDescriptor);
 
         MavenProjectDescriptor parentProjectDescriptor = mock(MavenProjectDescriptor.class);
         when(store.find(MavenProjectDescriptor.class, "group:parent-artifact:1.0.0")).thenReturn(null, parentProjectDescriptor);
@@ -163,9 +163,9 @@ public class MavenProjectScannerPluginTest {
         verify(testArtifactDescriptor).setClassifier("main");
         verify(testArtifactDescriptor).setVersion("1.0.0");
 
-        verify(store).create(testClassesDirectory, DependsOnDescriptor.class, mainClassesDirectory);
-        verify(store).create(mainClassesDirectory, DependsOnDescriptor.class, dependencyArtifact);
-        verify(store).create(testClassesDirectory, DependsOnDescriptor.class, dependencyArtifact);
+        verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, mainArtifactDescriptor);
+        verify(store).create(mainArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
+        verify(store).create(testArtifactDescriptor, DependsOnDescriptor.class, dependencyArtifact);
 
         verify(scannerContext, times(2)).push(eq(TypeResolver.class), any(TypeResolver.class));
         verify(scannerContext, times(2)).pop(TypeResolver.class);
@@ -174,7 +174,7 @@ public class MavenProjectScannerPluginTest {
         verify(scannerContext).push(JavaArtifactFileDescriptor.class, testClassesDirectory);
         verify(scannerContext, times(2)).pop(JavaArtifactFileDescriptor.class);
         assertThat(createsArtifacts.size(), equalTo(2));
-        assertThat(createsArtifacts, allOf(hasItem(mainClassesDirectory), hasItem(testClassesDirectory)));
+        assertThat(createsArtifacts, allOf(hasItem(mainArtifactDescriptor), hasItem(testArtifactDescriptor)));
     }
 
 }
