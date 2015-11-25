@@ -57,7 +57,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
             Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
             for (Artifact dependency : project.getDependencyArtifacts()) {
-                ArtifactFileDescriptor dependencyDescriptor = artifactResolver.resolve(new ArtifactCoordinates(dependency, false), scanner.getContext());
+                ArtifactFileDescriptor dependencyDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(dependency, false), artifactResolver, scanner);
                 if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                     mainArtifactDependencies.put(dependencyDescriptor, dependency);
                 }
@@ -65,21 +65,25 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             }
             Artifact artifact = project.getArtifact();
             // main artifact
-            JavaClassesDirectoryDescriptor mainArtifactDescriptor = getJavaClassesDirectoryDescriptor(new ArtifactCoordinates(artifact, false),
-                    artifactResolver, scanner);
+            MavenArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, false), artifactResolver, scanner);
             projectDescriptor.getCreatesArtifacts().add(mainArtifactDescriptor);
             addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
-            mainArtifactDescriptor = scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
             // test artifact
+            MavenArtifactDescriptor testArtifactDescriptor = null;
             String testOutputDirectory = project.getBuild().getTestOutputDirectory();
             if (testOutputDirectory != null) {
-                JavaClassesDirectoryDescriptor testArtifactDescriptor = getJavaClassesDirectoryDescriptor(new ArtifactCoordinates(artifact, true),
-                        artifactResolver, scanner);
+                testArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, true), artifactResolver, scanner);
                 projectDescriptor.getCreatesArtifacts().add(testArtifactDescriptor);
                 testArtifactDependencies.put(mainArtifactDescriptor, artifact);
                 addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
+            }
+
+            // Scan classes
+            scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
+            if (testOutputDirectory != null) {
                 scanClassesDirectory(projectDescriptor, testArtifactDescriptor, testOutputDirectory, scanner);
             }
+
             // project information
             addProjectDetails(project, projectDescriptor, scanner);
             // add test reports
@@ -101,7 +105,7 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     }
 
     /**
-     * Returns an artifact which represents a java classes directory.
+     * Returns a resolved maven artifact descriptor for the given coordinates.
      * 
      * @param artifact
      *            The artifact.
@@ -109,11 +113,10 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      *            The artifact resolver.
      * @param scanner
      *            The scanner.
-     * @return The directory descriptor.
+     * @return The artifact descriptor descriptor.
      */
-    private JavaClassesDirectoryDescriptor getJavaClassesDirectoryDescriptor(ArtifactCoordinates artifact, ArtifactResolver artifactResolver, Scanner scanner) {
-        MavenArtifactDescriptor mavenArtifactDescriptor = artifactResolver.resolve(artifact, scanner.getContext());
-        return scanner.getContext().getStore().addDescriptorType(mavenArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
+    private MavenArtifactDescriptor getMavenArtifactDescriptor(ArtifactCoordinates artifact, ArtifactResolver artifactResolver, Scanner scanner) {
+        return artifactResolver.resolve(artifact, scanner.getContext());
     }
 
     /**
@@ -251,22 +254,23 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *            The scanner.
      */
-    private JavaClassesDirectoryDescriptor scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor,
-            JavaClassesDirectoryDescriptor artifactDescriptor, final String directoryName, Scanner scanner) {
+    private void scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, MavenArtifactDescriptor artifactDescriptor, final String directoryName,
+            Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
+            JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext().getStore().addDescriptorType(artifactDescriptor,
+                    JavaClassesDirectoryDescriptor.class);
             ScannerContext context = scanner.getContext();
-            context.push(JavaArtifactFileDescriptor.class, artifactDescriptor);
-            TypeResolver typeResolver = new ClasspathScopedTypeResolver(artifactDescriptor);
+            context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
+            TypeResolver typeResolver = new ClasspathScopedTypeResolver(javaArtifactFileDescriptor);
             context.push(TypeResolver.class, typeResolver);
             try {
-                return scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
+                scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
             } finally {
                 context.pop(TypeResolver.class);
                 context.pop(JavaArtifactFileDescriptor.class);
             }
         }
-        return artifactDescriptor;
     }
 
     /**
