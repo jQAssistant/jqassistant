@@ -110,6 +110,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter(property = "project")
     protected MavenProject currentProject;
 
+    /**
+     * Contains the full list of projects in the reactor.
+     */
+    @Parameter(property = "reactorProjects")
+    protected List<MavenProject> reactorProjects;
+
     @Inject
     protected PluginRepositoryProvider pluginRepositoryProvider;
 
@@ -264,7 +270,8 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
         synchronized (storeFactory) {
             Store store = getStore(rootModule);
-            if (isResetStoreBeforeExecution() && currentProject.equals(rootModule)) {
+            boolean shouldReset = reactorProjects.contains(rootModule) ? currentProject.equals(rootModule) : currentProject.isExecutionRoot();
+            if (isResetStoreBeforeExecution() && shouldReset) {
                 store.reset();
             }
             try {
