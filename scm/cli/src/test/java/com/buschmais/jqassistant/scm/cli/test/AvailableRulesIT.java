@@ -23,10 +23,10 @@ public class AvailableRulesIT extends AbstractCLIIT {
         String[] args = new String[] { "available-rules", "-r", rulesDirectory };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode(), equalTo(0));
-        List<String> standardConsole = executionResult.getStandardConsole();
-        assertThat(standardConsole, hasItem(containsString(TEST_CONCEPT)));
-        assertThat(standardConsole, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
-        assertThat(standardConsole, hasItem(containsString("junit4:TestMethod")));
+        List<String> console = executionResult.getErrorConsole();
+        assertThat(console, hasItem(containsString(TEST_CONCEPT)));
+        assertThat(console, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
+        assertThat(console, hasItem(containsString("junit4:TestMethod")));
     }
 
     @Test
@@ -35,8 +35,8 @@ public class AvailableRulesIT extends AbstractCLIIT {
         String[] args = new String[] { "available-rules", "-rulesUrl", rulesUrl.toString() };
         ExecutionResult executionResult = execute(args);
         assertThat(executionResult.getExitCode(), equalTo(0));
-        List<String> standardConsole = executionResult.getStandardConsole();
-        assertThat(standardConsole, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
-        assertThat(standardConsole, not(hasItem(containsString("junit4:TestMethod"))));
+        List<String> console = executionResult.getErrorConsole();
+        assertThat(console, hasItem(containsString(CUSTOM_TEST_CONCEPT)));
+        assertThat(console, not(hasItem(containsString("junit4:TestMethod"))));
     }
 }
