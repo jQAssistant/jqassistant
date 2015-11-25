@@ -51,10 +51,8 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
 
             if (!execution.equals(that.execution))
                 return false;
-            if (!goal.equals(that.goal))
-                return false;
+            return goal.equals(that.goal);
 
-            return true;
         }
 
         @Override
@@ -64,12 +62,6 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
             return result;
         }
     }
-
-    /**
-     * Contains the full list of projects in the reactor.
-     */
-    @Parameter(property = "reactorProjects")
-    protected List<MavenProject> reactorProjects;
 
     @Parameter(property = "mojoExecution")
     protected MojoExecution execution;
