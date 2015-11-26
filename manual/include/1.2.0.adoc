@@ -1,0 +1,4 @@
+== 1.2.0
+
+=== Core
+- Upgraded to Neo4j 2.3.1
