@@ -69,7 +69,6 @@
     <modules>
         <module>rules</module>
         <module>plugins</module>
-        <module>sonar</module>
     </modules>
 
 </project>
