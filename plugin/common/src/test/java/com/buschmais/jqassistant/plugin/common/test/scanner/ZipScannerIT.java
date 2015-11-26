@@ -8,7 +8,6 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -23,41 +22,17 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
  */
 public class ZipScannerIT extends AbstractPluginIT {
 
-    /**
-     * The strategies for referencing the archive to scan.
-     */
-    enum Strategy {
-        /**
-         * As URL.
-         */
-        Url {
-            Object get(File file) throws MalformedURLException {
-                return file.toURI().toURL();
-            }
-        },
-        /**
-         * As file.
-         */
-        File {
-            Object get(File file) {
-                return file;
-            }
-        };
-
-        abstract <T> T get(File file) throws Exception;
-    }
-
     @Test
     public void zipFile() throws Exception {
-        test(Strategy.File);
+        test(FileResourceStrategy.File);
     }
 
     @Test
     public void zipUrl() throws Exception {
-        test(Strategy.Url);
+        test(FileResourceStrategy.Url);
     }
 
-    private void test(Strategy strategy) throws Exception {
+    private void test(FileResourceStrategy strategy) throws Exception {
         File archive = createZipArchive();
         try {
             store.beginTransaction();
