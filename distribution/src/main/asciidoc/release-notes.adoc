@@ -1,6 +1,8 @@
 = Release Notes
 
 :numbered!:
+include::include/1.2.0.adoc[]
+
 include::include/1.1.0.adoc[]
 
 include::include/1.0.0.adoc[]
