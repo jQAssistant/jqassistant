@@ -315,7 +315,6 @@
                     </executions>
                     <configuration>
                         <failOnViolations>true</failOnViolations>
-                        <storeLifecycle>MODULE</storeLifecycle>
                     </configuration>
                 </plugin>
                 <plugin>
