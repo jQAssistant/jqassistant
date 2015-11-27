@@ -50,9 +50,22 @@ public class InvalidClassFileIT extends AbstractJavaPluginIT {
         assertThat(fileDescriptor, instanceOf(ClassFileDescriptor.class));
         ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) fileDescriptor;
         assertThat(classFileDescriptor.getFileName(), equalTo(path));
-        assertThat(classFileDescriptor.isInvalid(), equalTo(true));
+        assertThat(classFileDescriptor.isValid(), equalTo(false));
         store.commitTransaction();
 
     }
 
+    @Test
+    public void validClass() throws IOException, AnalysisException {
+        scanClasses(InvalidClassFileIT.class);
+        store.beginTransaction();
+        List<FileDescriptor> fileDescriptors = query("MATCH (c:Class:File) RETURN c").getColumn("c");
+        assertThat(fileDescriptors.size(), equalTo(1));
+        FileDescriptor fileDescriptor = fileDescriptors.get(0);
+        assertThat(fileDescriptor, instanceOf(ClassFileDescriptor.class));
+        ClassFileDescriptor classFileDescriptor = (ClassFileDescriptor) fileDescriptor;
+        assertThat(classFileDescriptor.isValid(), equalTo(true));
+        store.commitTransaction();
+
+    }
 }
