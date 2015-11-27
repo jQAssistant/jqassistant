@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.common.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.common.test.matcher.FileDescriptorMatcher.fileDescriptorMatcher;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.junit.Assert.assertThat;
@@ -32,6 +33,18 @@ public class ZipScannerIT extends AbstractPluginIT {
         test(FileResourceStrategy.Url);
     }
 
+    @Test
+    public void invalidZip() throws Exception {
+        File archive = File.createTempFile("test", ".zip");
+        archive.deleteOnExit();
+        store.beginTransaction();
+        FileDescriptor descriptor = getScanner().scan(archive, archive.getAbsolutePath(), null);
+        assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
+        ZipArchiveDescriptor zipArchiveDescriptor = (ZipArchiveDescriptor) descriptor;
+        assertThat(zipArchiveDescriptor.isInvalid(), equalTo(true));
+        store.commitTransaction();
+    }
+
     private void test(FileResourceStrategy strategy) throws Exception {
         File archive = createZipArchive();
         try {
@@ -39,7 +52,8 @@ public class ZipScannerIT extends AbstractPluginIT {
             FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
             assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
             ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
-            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test.txt")));
+            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test1.txt")));
+            assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test2.txt")));
             store.commitTransaction();
         } finally {
             archive.delete();
@@ -55,12 +69,17 @@ public class ZipScannerIT extends AbstractPluginIT {
     private File createZipArchive() throws IOException {
         File archive = File.createTempFile("test", ".zip");
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(archive));
-        ZipEntry fileEntry = new ZipEntry("test.txt");
-        fileEntry.setTime(System.currentTimeMillis());
-        zipOutputStream.putNextEntry(fileEntry);
-        zipOutputStream.write("Hello World!".getBytes());
-        zipOutputStream.closeEntry();
+        addEntry(zipOutputStream, "test1.txt", "Foo");
+        addEntry(zipOutputStream, "test2.txt", "Bar");
         zipOutputStream.close();
         return archive;
+    }
+
+    private void addEntry(ZipOutputStream zipOutputStream, String fileName, String content) throws IOException {
+        ZipEntry fileEntry = new ZipEntry(fileName);
+        fileEntry.setTime(System.currentTimeMillis());
+        zipOutputStream.putNextEntry(fileEntry);
+        zipOutputStream.write(content.getBytes());
+        zipOutputStream.closeEntry();
     }
 }

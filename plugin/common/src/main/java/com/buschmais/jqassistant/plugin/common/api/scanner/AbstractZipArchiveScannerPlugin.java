@@ -2,8 +2,8 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.IOException;
 import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +45,7 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
         D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
         scannerContext.push(ZipArchiveDescriptor.class, archive);
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
-        try {
-            ZipFile zipFile = new ZipFile(file.getFile());
+        try (ZipFile zipFile = new ZipFile(file.getFile())){
             scanner.scan(zipFile, path, archiveScope);
         } catch (ZipException e) {
             LOGGER.warn("Cannot read ZIP file '" + path + "'.", e);
