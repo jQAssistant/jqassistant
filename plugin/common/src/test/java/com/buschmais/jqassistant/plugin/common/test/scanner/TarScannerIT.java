@@ -24,12 +24,12 @@ import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 public class TarScannerIT extends AbstractPluginIT {
 
     @Test
-    public void zipFile() throws Exception {
+    public void tarFile() throws Exception {
         test(FileResourceStrategy.File);
     }
 
     @Test
-    public void zipUrl() throws Exception {
+    public void tarUrl() throws Exception {
         test(FileResourceStrategy.Url);
     }
 
