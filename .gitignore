@@ -4,6 +4,7 @@ target
 .shell_history
 .project
 .classpath
+jqassistant.datastore
 /.idea
 *~
 *.iml
