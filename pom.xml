@@ -675,7 +675,6 @@
         <module>core</module>
         <module>plugin</module>
         <module>scm</module>
-        <module>examples</module>
         <module>distribution</module>
     </modules>
 
