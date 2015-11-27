@@ -23,8 +23,6 @@ include::{docRoot}/jqassistant.scm.cli/readme.adoc[]
 
 include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
 
-include::include/examples.adoc[]
-
 include::include/plugins.adoc[]
 
 ////
