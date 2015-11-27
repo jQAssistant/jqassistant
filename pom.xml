@@ -314,7 +314,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <failOnViolations>true</failOnViolations>
+                        <failOnViolations>false</failOnViolations>
                     </configuration>
                 </plugin>
                 <plugin>
