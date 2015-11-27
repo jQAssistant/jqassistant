@@ -232,7 +232,7 @@
 		<module>maven3</module>
 		<module>osgi</module>
 		<module>tycho</module>
-		<module>rdbms</module>
+		<!--<module>rdbms</module>-->
 		<module>xml</module>
 		<module>yaml</module>
 	</modules>

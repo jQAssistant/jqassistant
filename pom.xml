@@ -91,6 +91,13 @@
         <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
         <org.hamcrest_version>1.3</org.hamcrest_version>
         <github.global.server>github</github.global.server>
+
+        <!--
+         ! The current version of jQAssistant is always scanned by the
+         ! previous version of jQAssistant.
+         !                          Oliver B. Fischer, 2015-11-27
+         !-->
+        <jqassistant.previous.version>1.1.0</jqassistant.previous.version>
     </properties>
 
     <profiles>
@@ -296,7 +303,7 @@
                 <plugin>
                     <groupId>com.buschmais.jqassistant.scm</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
-                    <version>${project.version}</version>
+                    <version>${jqassistant.previous.version}</version>
                     <executions>
                         <execution>
                             <id>default</id>
@@ -307,7 +314,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <failOnViolations>false</failOnViolations>
+                        <failOnViolations>true</failOnViolations>
                         <storeLifecycle>MODULE</storeLifecycle>
                     </configuration>
                 </plugin>
@@ -559,6 +566,10 @@
                         <phase>site-deploy</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
