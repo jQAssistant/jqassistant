@@ -9,11 +9,10 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsEmptyCollection.empty;
 
@@ -22,11 +21,7 @@ import java.util.List;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -664,7 +659,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.isInvalid(), is(true));
+        assertThat(fileDescriptor.isValid(), is(false));
     }
 
     @Test
@@ -684,7 +679,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.isInvalid(), is(false));
+        assertThat(fileDescriptor.isValid(), is(true));
     }
 
     @Test
@@ -702,7 +697,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.isInvalid(), is(true));
+        assertThat(fileDescriptor.isValid(), is(false));
     }
 
     @Test
@@ -720,7 +715,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.isInvalid(), is(true));
+        assertThat(fileDescriptor.isValid(), is(false));
 
         List<YAMLFileDescriptor> childNodes =
              query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
@@ -740,14 +735,14 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         List<YAMLFileDescriptor> fileDescriptors =
              query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' AND " +
-                          "f.invalid = true RETURN f", fileName))
+ "f.valid = false RETURN f", fileName))
                   .getColumn("f");
 
         assertThat(fileDescriptors, hasSize(1));
     }
 
     @Test
-    public void ifParsingSuccedsThePropertyInvalidWillBeFalse() {
+    public void ifParsingSuccedsThePropertyValidWillBeTrue() {
         String fileName = "simple-list.yaml";
 
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
@@ -757,7 +752,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         List<YAMLFileDescriptor> fileDescriptors =
              query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' AND " +
-                          "f.invalid = false RETURN f", fileName))
+ "f.valid = true RETURN f", fileName))
                   .getColumn("f");
 
         assertThat(fileDescriptors, hasSize(1));
@@ -778,7 +773,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
 
-        assertThat(fileDescriptor.isInvalid(), is(true));
+        assertThat(fileDescriptor.isValid(), is(false));
 
         List<YAMLFileDescriptor> childNodes =
              query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))

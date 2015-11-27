@@ -50,9 +50,9 @@ public abstract class AbstractMavenPomScannerPlugin extends AbstractScannerPlugi
     public MavenPomXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.getContext().getStore().addDescriptorType(xmlFileDescriptor, MavenPomXmlDescriptor.class);
-        scanner.getContext().push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
         Model model = getModel(item, scanner);
         if (model != null) {
+            scanner.getContext().push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
             try {
                 scanner.scan(model, path, scope);
             } finally {
