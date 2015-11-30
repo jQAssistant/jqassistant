@@ -8,7 +8,7 @@
         <description>Return all POM models</description>
         <cypher>
             MATCH
-              (:Maven:Project)-[:HAS_MODEL]->(pom:Pom)
+              (:Maven:Project)-[:HAS_MODEL]->(pom:Maven:Pom:File)
             RETURN
               pom
         </cypher>
