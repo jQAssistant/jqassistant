@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
@@ -43,7 +44,7 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
      * @return The pom.xml file.
      */
     @Relation("HAS_MODEL")
-    MavenPomXmlDescriptor getModel();
+    FileDescriptor getModel();
 
-    void setModel(MavenPomXmlDescriptor model);
+    void setModel(FileDescriptor model);
 }
