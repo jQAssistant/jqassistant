@@ -74,7 +74,8 @@ public final class ProjectResolver {
      * @return The file representing the directory.
      */
     static File getRulesDirectory(MavenProject rootModule, String rulesDirectory) {
-        return new File(rootModule.getBasedir().getAbsolutePath() + File.separator + rulesDirectory);
+        File rules = new File(rulesDirectory);
+        return rules.isAbsolute() ? rules : new File(rootModule.getBasedir().getAbsolutePath() + File.separator + rulesDirectory);
     }
 
     /**

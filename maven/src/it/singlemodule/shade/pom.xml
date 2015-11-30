@@ -17,6 +17,8 @@
                 <configuration>
                     <failOnViolations>true</failOnViolations>
                     <severity>minor</severity>
+					<rulesDirectory>${project.basedir}/jqassistant</rulesDirectory>
+					<storeDirectory>${project.build.directory}/jqassistant/store</storeDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -37,4 +39,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <dependencies>
+        <!-- At least one dependency is required for the shade plugin to do something -->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+	</dependencies>
+
 </project>
