@@ -38,8 +38,11 @@ public class MavenPomFileScannerPlugin extends AbstractScannerPlugin<FileResourc
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
-        return !XmlScope.DOCUMENT.equals(scope) && (path.toLowerCase().endsWith("pom.xml") || path.toLowerCase().endsWith(".pom"))
-                && XMLFileFilter.rootElementMatches(item, path, "project");
+        boolean isPomXML = path.toLowerCase().endsWith("pom.xml");
+        boolean isPom = path.toLowerCase().endsWith(".pom");
+        boolean hasProjectRootElement = XMLFileFilter.rootElementMatches(item, path, "project");
+
+        return !XmlScope.DOCUMENT.equals(scope) && (isPomXML || isPom) && hasProjectRootElement;
     }
 
     /** {@inheritDoc} */
