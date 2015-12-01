@@ -44,7 +44,7 @@ public final class XMLFileFilter {
      * @throws IOException
      *             If the file resource cannot be read.
      */
-    public static boolean matches(FileResource fileResource, String path, String expectedRootElement) throws IOException {
+    public static boolean rootElementMatches(FileResource fileResource, String path, String expectedRootElement) throws IOException {
         try (InputStream stream = fileResource.createStream()) {
             XMLStreamReader reader = factory.createXMLStreamReader(stream);
             if (reader.hasNext()) {
