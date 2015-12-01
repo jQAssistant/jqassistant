@@ -47,9 +47,10 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
         try (ZipFile zipFile = new ZipFile(file.getFile())){
             scanner.scan(zipFile, path, archiveScope);
+            archive.setValid(true);
         } catch (ZipException e) {
             LOGGER.warn("Cannot read ZIP file '" + path + "'.", e);
-            archive.setInvalid(true);
+            archive.setValid(false);
         }
         finally {
             destroyScope(scannerContext);
