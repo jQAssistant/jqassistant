@@ -3,10 +3,10 @@ package com.buschmais.jqassistant.plugin.common.api.model;
 /**
  * Template for descriptor which indicate that information is invalid.
  */
-public interface InvalidDescriptor {
+public interface ValidDescriptor {
 
-    boolean isInvalid();
+    boolean isValid();
 
-    void setInvalid(boolean invalid);
+    void setValid(boolean valid);
 
 }

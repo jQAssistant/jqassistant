@@ -12,10 +12,12 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.*;
+import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.BaseDependencyDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
@@ -27,8 +29,7 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.*;
  * 
  * @author ronald.kunzmann@buschmais.com
  */
-@Requires(FileDescriptor.class)
-public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomXmlDescriptor> {
+public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor> {
 
     private ArtifactResolver defaultArtifactResolver;
 
@@ -43,8 +44,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     @Override
-    public Class<MavenPomXmlDescriptor> getDescriptorType() {
-        return MavenPomXmlDescriptor.class;
+    public Class<MavenPomDescriptor> getDescriptorType() {
+        return MavenPomDescriptor.class;
     }
 
     @Override
@@ -54,8 +55,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
     /** {@inheritDoc} */
     @Override
-    public MavenPomXmlDescriptor scan(Model model, String path, Scope scope, Scanner scanner) throws IOException {
-        MavenPomXmlDescriptor pomDescriptor = createMavenPomXmlDescriptor(model, scanner);
+    public MavenPomDescriptor scan(Model model, String path, Scope scope, Scanner scanner) throws IOException {
+        MavenPomDescriptor pomDescriptor = createMavenPomDescriptor(model, scanner);
         ScannerContext scannerContext = scanner.getContext();
         Store store = scannerContext.getStore();
         addParent(pomDescriptor, model, scannerContext);
@@ -79,27 +80,26 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      *            The scanner.
      * @return The descriptor.
      */
-    protected MavenPomXmlDescriptor createMavenPomXmlDescriptor(Model model, Scanner scanner) {
+    protected MavenPomDescriptor createMavenPomDescriptor(Model model, Scanner scanner) {
         ScannerContext context = scanner.getContext();
-        FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
-        MavenPomXmlDescriptor pomXmlDescriptor = context.getStore().addDescriptorType(fileDescriptor, MavenPomXmlDescriptor.class);
-        pomXmlDescriptor.setName(model.getName());
-        pomXmlDescriptor.setGroupId(model.getGroupId());
-        pomXmlDescriptor.setArtifactId(model.getArtifactId());
-        pomXmlDescriptor.setPackaging(model.getPackaging());
-        pomXmlDescriptor.setVersion(model.getVersion());
+        MavenPomDescriptor pomDescriptor = context.peek(MavenPomDescriptor.class);
+        pomDescriptor.setName(model.getName());
+        pomDescriptor.setGroupId(model.getGroupId());
+        pomDescriptor.setArtifactId(model.getArtifactId());
+        pomDescriptor.setPackaging(model.getPackaging());
+        pomDescriptor.setVersion(model.getVersion());
         String pomFqn = getFullyQualifiedName(model);
-        pomXmlDescriptor.setFullQualifiedName(pomFqn);
+        pomDescriptor.setFullQualifiedName(pomFqn);
         Coordinates artifactCoordinates = new ModelCoordinates(model);
         MavenArtifactDescriptor artifact = getArtifactResolver(context).resolve(artifactCoordinates, context);
         // if the pom describes itself as artifact then the returned artifact
         // descriptor must be used as pom descriptor (the old instance is
         // invalidated due to adding labels)
-        if (MavenPomXmlDescriptor.class.isAssignableFrom(artifact.getClass())) {
-            pomXmlDescriptor = MavenPomXmlDescriptor.class.cast(artifact);
+        if (MavenPomDescriptor.class.isAssignableFrom(artifact.getClass())) {
+            pomDescriptor = MavenPomDescriptor.class.cast(artifact);
         }
-        pomXmlDescriptor.getDescribes().add(artifact);
-        return pomXmlDescriptor;
+        pomDescriptor.getDescribes().add(artifact);
+        return pomDescriptor;
     }
 
     /**
@@ -238,7 +238,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param store
      *            The database.
      */
-    private void addLicenses(MavenPomXmlDescriptor pomDescriptor, Model model, Store store) {
+    private void addLicenses(MavenPomDescriptor pomDescriptor, Model model, Store store) {
         List<License> licenses = model.getLicenses();
         for (License license : licenses) {
             MavenLicenseDescriptor licenseDescriptor = store.create(MavenLicenseDescriptor.class);
@@ -359,7 +359,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param context
      *            The scanner context.
      */
-    private void addParent(MavenPomXmlDescriptor pomDescriptor, Model model, ScannerContext context) {
+    private void addParent(MavenPomDescriptor pomDescriptor, Model model, ScannerContext context) {
         Parent parent = model.getParent();
         if (null != parent) {
             MavenArtifactDescriptor parentDescriptor = getArtifactResolver(context).resolve(new ParentCoordinates(parent), context);
@@ -440,7 +440,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
      * @param scannerContext
      *            The scanner context.
      */
-    private void addProfiles(MavenPomXmlDescriptor pomDescriptor, Model model, ScannerContext scannerContext) {
+    private void addProfiles(MavenPomDescriptor pomDescriptor, Model model, ScannerContext scannerContext) {
         List<Profile> profiles = model.getProfiles();
         Store store = scannerContext.getStore();
         for (Profile profile : profiles) {

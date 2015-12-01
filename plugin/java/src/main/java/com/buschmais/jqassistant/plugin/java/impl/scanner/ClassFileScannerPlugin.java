@@ -57,13 +57,14 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
                     return visitor.getTypeDescriptor();
                 }
             });
+            classFileDescriptor.setValid(true);
         } catch (RuntimeException e) {
             LOGGER.warn("Cannot scan class '" + path + "'.", e);
             classFileDescriptor = visitor.getTypeDescriptor();
             if (classFileDescriptor == null) {
                 classFileDescriptor = scanner.getContext().getStore().addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
             }
-            classFileDescriptor.setInvalid(true);
+            classFileDescriptor.setValid(false);
         }
         return classFileDescriptor;
     }

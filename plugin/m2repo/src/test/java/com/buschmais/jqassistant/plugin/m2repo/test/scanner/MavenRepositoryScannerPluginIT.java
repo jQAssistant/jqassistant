@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.javastack.httpd.HttpServer;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
@@ -17,7 +16,6 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
-@Ignore
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 
     private static final int REPO_SERVER_PORT = 9090;

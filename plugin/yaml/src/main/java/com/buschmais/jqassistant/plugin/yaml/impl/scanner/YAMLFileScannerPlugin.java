@@ -51,7 +51,6 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
         YAMLFileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAMLFileDescriptor.class);
 
-        yamlFileDescriptor.setInvalid(true);
 
         try (InputStream in = item.createStream()) {
             Iterable<Object> docs = yaml.loadAll(in);
@@ -65,11 +64,11 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
                 serializer.serialize(node);
                 serializer.close();
             }
-
             // In case the content of the file is not parseable set parsed=false
             // to help the user to identify nonparseable files
-            yamlFileDescriptor.setInvalid(false);
+            yamlFileDescriptor.setValid(true);
         } catch (RuntimeException rt) {
+            yamlFileDescriptor.setValid(false);
             for (YAMLDocumentDescriptor documentDescriptor : yamlFileDescriptor.getDocuments()) {
                 yamlFileDescriptor.getDocuments().remove(documentDescriptor);
             }

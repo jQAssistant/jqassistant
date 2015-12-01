@@ -18,5 +18,5 @@ public interface PomDependsOnDescriptor extends MavenDependencyDescriptor {
      * @return The dependent POM.
      */
     @Outgoing
-    MavenPomXmlDescriptor getDependent();
+    MavenPomDescriptor getDependent();
 }
