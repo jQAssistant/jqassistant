@@ -1,0 +1,6 @@
+== 1.1.1
+
+=== Plugins
+
+==== Common
+- Use commons collection for handling ZIP files for more robust handling of different encodings
