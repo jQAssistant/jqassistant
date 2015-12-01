@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -114,7 +115,20 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         // Maven
         List<Plugin> plugins = query("MATCH (plug:Maven:Plugin) RETURN plug AS p").getColumn("p");
 
-        assertThat(plugins, hasSize(15));
+        assertThat(plugins, hasSize(20));
+
+        store.commitTransaction();
+    }
+
+    @Test
+    public void pluginCanFindMavenPOMInXMLDocumentWithNonStandardName()
+            throws PluginRepositoryException, IOException {
+        scanClassPathDirectory(getClassesDirectory(MavenPomXmlFileScannerIT.class));
+
+        store.beginTransaction();
+
+        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName=~ \".*/dependency-reduced-pom-file.xml\" RETURN n").getColumn("n");
+        Assert.assertEquals(1, mavenPomDescriptors.size());
 
         store.commitTransaction();
     }
