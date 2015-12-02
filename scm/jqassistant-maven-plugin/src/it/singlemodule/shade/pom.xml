@@ -17,8 +17,8 @@
                 <configuration>
                     <failOnViolations>true</failOnViolations>
                     <severity>minor</severity>
-					<rulesDirectory>${project.basedir}/jqassistant</rulesDirectory>
-					<storeDirectory>${project.build.directory}/jqassistant/store</storeDirectory>
+                    <rulesDirectory>${project.basedir}/jqassistant</rulesDirectory>
+                    <storeDirectory>${project.build.directory}/jqassistant/store</storeDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -34,7 +34,8 @@
                 </executions>
                 <configuration>
                     <shadedArtifactAttached>false</shadedArtifactAttached>
-                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml
+                    </dependencyReducedPomLocation>
                 </configuration>
             </plugin>
         </plugins>
@@ -47,6 +48,6 @@
             <artifactId>commons-collections</artifactId>
             <version>3.2.1</version>
         </dependency>
-	</dependencies>
+    </dependencies>
 
 </project>

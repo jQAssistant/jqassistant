@@ -41,7 +41,7 @@ public class ZipScannerIT extends AbstractPluginIT {
         FileDescriptor descriptor = getScanner().scan(archive, archive.getAbsolutePath(), null);
         assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
         ZipArchiveDescriptor zipArchiveDescriptor = (ZipArchiveDescriptor) descriptor;
-        assertThat(zipArchiveDescriptor.isInvalid(), equalTo(true));
+        assertThat(zipArchiveDescriptor.isValid(), equalTo(false));
         store.commitTransaction();
     }
 
@@ -52,6 +52,7 @@ public class ZipScannerIT extends AbstractPluginIT {
             FileDescriptor descriptor = getScanner().scan(strategy.get(archive), archive.getAbsolutePath(), null);
             assertThat(descriptor, instanceOf(ZipArchiveDescriptor.class));
             ZipArchiveDescriptor archiveDescriptor = (ZipArchiveDescriptor) descriptor;
+            assertThat(archiveDescriptor.isValid(), equalTo(true));
             assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test1.txt")));
             assertThat(archiveDescriptor.getContains(), hasItem(fileDescriptorMatcher("/test2.txt")));
             store.commitTransaction();
