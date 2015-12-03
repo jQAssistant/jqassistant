@@ -60,12 +60,15 @@ public class MavenPomFileScannerPlugin extends AbstractScannerPlugin<FileResourc
         MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.getContext().getStore().addDescriptorType(xmlFileDescriptor, MavenPomXmlDescriptor.class);
         Model model = getModel(item, scanner);
         if (model != null) {
+            mavenPomXmlDescriptor.setValid(true);
             scanner.getContext().push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
             try {
                 scanner.scan(model, path, scope);
             } finally {
                 scanner.getContext().pop(MavenPomDescriptor.class);
             }
+        } else {
+            mavenPomXmlDescriptor.setValid(false);
         }
         return mavenPomXmlDescriptor;
     }

@@ -89,6 +89,7 @@ A Java type. Can be qualified by either ':Class', ':Interface', ':Enum' or ':Ann
 | synthetic       | optional, 'true' indicates that the type is synthetic, i.e. it has been generated
 | byteCodeVersion | The byte code version of the class file, e.g. 52 for "Java SE 8"
 | md5             | The MD5 hash sum of the class file.
+| valid           | true if the class file could be scanned successfully.
 |====
 
 .Relations of :Java:Type
