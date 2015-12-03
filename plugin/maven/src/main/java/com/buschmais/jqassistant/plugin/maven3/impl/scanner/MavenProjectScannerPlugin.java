@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.ClasspathScopedTypeReso
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
@@ -178,6 +180,13 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
         File pomXmlFile = project.getFile();
         FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
+        // Effective model
+        MavenPomDescriptor effectiveModelDescriptor = scanner.getContext().getStore().create(MavenPomDescriptor.class);
+        Model model = project.getModel();
+        scanner.getContext().push(MavenPomDescriptor.class, effectiveModelDescriptor);
+        scanner.scan(model, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        scanner.getContext().pop(MavenPomDescriptor.class);
+        projectDescriptor.setEffectiveModel(effectiveModelDescriptor);
     }
 
     /**
