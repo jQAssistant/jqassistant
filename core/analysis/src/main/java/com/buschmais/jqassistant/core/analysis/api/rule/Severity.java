@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.EnumSet;
 
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+
 /**
  * Represents level of rule violations.
  * 
@@ -53,7 +55,7 @@ public enum Severity {
      *            found.
      * @return {@link Severity}
      */
-    public static Severity fromValue(String value) {
+    public static Severity fromValue(String value) throws RuleException {
         if (value == null) {
             return null;
         }
@@ -62,26 +64,7 @@ public enum Severity {
                 return severity;
             }
         }
-        return null;
-    }
-
-    /**
-     * Retrieves severity based on violation level.
-     * 
-     * @param level
-     *            violation level; {@code null} if no matching severity found.
-     * @return {@link Severity}
-     */
-    public static Severity fromLevel(Integer level) {
-        if (level == null) {
-            return null;
-        }
-        for (Severity severity : EnumSet.allOf(Severity.class)) {
-            if (severity.level.equals(level)) {
-                return severity;
-            }
-        }
-        return null;
+        throw new RuleException("Unknown severity '" + value + "'.");
     }
 
     /**
@@ -96,6 +79,22 @@ public enum Severity {
             names[i++] = severity.value;
         }
         return names;
+    }
+
+
+    /**
+     * Return a string representing of the effective severity of a rule.
+     *
+     * @param effectiveSeverity
+     *            The severity to use.
+     * @return The string representation.
+     */
+    public String getInfo(Severity effectiveSeverity) {
+        StringBuffer result = new StringBuffer(effectiveSeverity.name());
+        if (!this.equals(effectiveSeverity)) {
+            result.append(" (from ").append(this.name()).append(")");
+        }
+        return result.toString();
     }
 
 }

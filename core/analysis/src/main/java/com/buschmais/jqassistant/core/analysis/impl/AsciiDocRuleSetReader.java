@@ -5,7 +5,14 @@ import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +24,18 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Report;
+import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
@@ -94,7 +112,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Set<String> requiresConcepts = new HashSet<>(getDependencies(attributes, "requiresConcepts").keySet());
             Set<String> depends = getDependencies(attributes, "depends").keySet();
             if (!depends.isEmpty()) {
-                LOGGER.info("Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}'}.",
+                LOGGER.info(
+                        "Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}'}.",
                         ruleSource.getId(), id);
                 requiresConcepts.addAll(depends);
             }
@@ -118,13 +137,15 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = new Concept(id, description, ruleSource, severity, null, executable, Collections.<String, Object> emptyMap(),
-                        requiresConcepts, verification, report);
+                Concept concept =
+                        new Concept(id, description, ruleSource, severity, null, executable, Collections.<String, Object>emptyMap(),
+                                requiresConcepts, verification, report);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint constraint = new Constraint(id, description, ruleSource, severity, null, executable, Collections.<String, Object> emptyMap(),
-                        requiresConcepts, verification, report);
+                Constraint constraint =
+                        new Constraint(id, description, ruleSource, severity, null, executable, Collections.<String, Object>emptyMap(),
+                                requiresConcepts, verification, report);
                 builder.addConstraint(constraint);
             }
         }
@@ -160,10 +181,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The map of attributes.
      * @param attributeName
      *            The name of the attribute.
-     * @return A map containing the ids of the dependencies as keys and their
-     *         severity (optional).
+     * @return A map containing the ids of the dependencies as keys and their severity (optional).
      */
-    private Map<String, Severity> getDependencies(Map<String, Object> attributes, String attributeName) {
+    private Map<String, Severity> getDependencies(Map<String, Object> attributes, String attributeName) throws RuleException {
         String attribute = (String) attributes.get(attributeName);
         Set<String> dependencies = new HashSet<>();
         if (attribute != null && !attribute.trim().isEmpty()) {
@@ -191,16 +211,19 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The default severity to use if no severity is specified.
      * @return The severity.
      */
-    private Severity getSeverity(ContentPart part, Severity defaultSeverity) {
+    private Severity getSeverity(ContentPart part, Severity defaultSeverity) throws RuleException {
         Object severity = part.getAttributes().get("severity");
-        return severity == null ? defaultSeverity : Severity.fromValue(severity.toString().toLowerCase());
+        if (severity == null) {
+            return defaultSeverity;
+        }
+        Severity value = Severity.fromValue(severity.toString().toLowerCase());
+        return value != null ? value : defaultSeverity;
     }
 
     /**
      * Unescapes the content of a rule.
      *
-     * TODO do better, or even better add a partget(Original|Raw)Content() to
-     * asciidoctor
+     * TODO do better, or even better add a partget(Original|Raw)Content() to asciidoctor
      * 
      * @param content
      *            The content of a rule.
@@ -211,8 +234,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Find all content parts representing source code listings with a role that
-     * represents a rule.
+     * Find all content parts representing source code listings with a role that represents a rule.
      * 
      * @param parts
      *            The content parts of the document.
