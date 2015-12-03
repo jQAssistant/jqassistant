@@ -47,4 +47,14 @@ public interface MavenProjectDirectoryDescriptor extends MavenProjectDescriptor,
     FileDescriptor getModel();
 
     void setModel(FileDescriptor model);
+
+    /**
+     * Return the effective (i.e. interpolated) model.
+     *
+     * @return The effective model.
+     */
+    @Relation("HAS_EFFECTIVE_MODEL")
+    MavenPomDescriptor getEffectiveModel();
+
+    void setEffectiveModel(MavenPomDescriptor effectiveModel);
 }

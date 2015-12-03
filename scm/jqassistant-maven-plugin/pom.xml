@@ -32,6 +32,8 @@
                                 <pomInclude>singlemodule/skip/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/scanincludes/pom.xml</pomInclude>
                                 <pomInclude>singlemodule/severity/pom.xml</pomInclude>
+                                <pomInclude>singlemodule/shade/pom.xml</pomInclude>
+                                <pomInclude>singlemodule/model/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/skip/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/customruledir/pom.xml</pomInclude>
