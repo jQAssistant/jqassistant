@@ -25,7 +25,10 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.*;
 
 /**
- * Scans pom.xml files.
+ * Scans Maven model instances.
+ * 
+ * This plugin requires an instance of {@link MavenPomDescriptor} in the scanner
+ * context which will be enriched.
  * 
  * @author ronald.kunzmann@buschmais.com
  */

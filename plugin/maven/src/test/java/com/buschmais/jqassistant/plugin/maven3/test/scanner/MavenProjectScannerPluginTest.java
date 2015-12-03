@@ -17,6 +17,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -30,10 +31,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.MavenProjectScannerPlugin;
 import com.buschmais.xo.api.Query;
@@ -90,6 +88,13 @@ public class MavenProjectScannerPluginTest {
         MavenPomXmlDescriptor pomXmlDescriptor = mock(MavenPomXmlDescriptor.class);
         when(scanner.scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(pomXmlDescriptor);
 
+        // Effective effective model
+        MavenPomDescriptor effectiveModelDescriptor = mock(MavenPomDescriptor.class);
+        when(store.create(MavenPomDescriptor.class)).thenReturn(effectiveModelDescriptor);
+        Model effectiveModel = mock(Model.class);
+        when(project.getModel()).thenReturn(effectiveModel);
+        when(scanner.scan(effectiveModel, pomXml.getAbsolutePath(), MavenScope.PROJECT)).thenReturn(effectiveModelDescriptor);
+
         // classes directory
         MavenArtifactDescriptor mainArtifactDescriptor = mock(MavenArtifactDescriptor.class);
         JavaClassesDirectoryDescriptor mainClassesDirectory = mock(JavaClassesDirectoryDescriptor.class);
@@ -145,8 +150,15 @@ public class MavenProjectScannerPluginTest {
         verify(projectDescriptor).setArtifactId("artifact");
         verify(projectDescriptor).setVersion("1.0.0");
         verify(projectDescriptor).setPackaging("jar");
+        // Model
         verify(scanner).scan(pomXml, pomXml.getAbsolutePath(), MavenScope.PROJECT);
         verify(projectDescriptor).setModel(pomXmlDescriptor);
+        // Effective model
+        verify(store).create(MavenPomDescriptor.class);
+        verify(scannerContext).push(MavenPomDescriptor.class, effectiveModelDescriptor);
+        verify(scanner).scan(effectiveModel, pomXml.getAbsolutePath(), MavenScope.PROJECT);
+        verify(scannerContext).pop(MavenPomDescriptor.class);
+        verify(projectDescriptor).setEffectiveModel(effectiveModelDescriptor);
         verify(store).create(MavenArtifactDescriptor.class, "group:artifact:jar:main:1.0.0");
         verify(store).addDescriptorType(mainArtifactDescriptor, JavaClassesDirectoryDescriptor.class);
         verify(store).create(MavenArtifactDescriptor.class, "group:artifact:test-jar:main:1.0.0");
