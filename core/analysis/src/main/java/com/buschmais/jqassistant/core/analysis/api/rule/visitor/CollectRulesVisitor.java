@@ -1,9 +1,18 @@
 package com.buschmais.jqassistant.core.analysis.api.rule.visitor;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRuleVisitor;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 public class CollectRulesVisitor extends AbstractRuleVisitor {
 
@@ -23,36 +32,18 @@ public class CollectRulesVisitor extends AbstractRuleVisitor {
     private Set<String> missingGroups = new TreeSet<>();
 
     @Override
-    public void visitConcept(Concept concept, Severity severity) throws AnalysisException {
-        concepts.put(concept, severity);
+    public void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
+        concepts.put(concept, effectiveSeverity);
     }
 
     @Override
-    public void visitConstraint(Constraint constraint, Severity severity) throws AnalysisException {
-        constraints.put(constraint, severity);
+    public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
+        constraints.put(constraint, effectiveSeverity);
     }
 
     @Override
     public void beforeGroup(Group group) throws AnalysisException {
         groups.add(group);
-    }
-
-    @Override
-    public boolean missingConcept(String id) {
-        missingConcepts.add(id);
-        return true;
-    }
-
-    @Override
-    public boolean missingConstraint(String id) {
-        missingConstraints.add(id);
-        return true;
-    }
-
-    @Override
-    public boolean missingGroup(String id) {
-        missingGroups.add(id);
-        return true;
     }
 
     public Map<Concept, Severity> getConcepts() {

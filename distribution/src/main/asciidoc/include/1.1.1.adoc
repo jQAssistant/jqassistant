@@ -1,6 +1,10 @@
 == 1.1.1
 
+=== Maven
+- fixed a bug where analyze and server goals were not executed at the end of a multi-module reactor if one of the modules defined the property "jqassistant.skip"
+
 === Plugins
 
 ==== Common
 - Use Apache commons compress for handling ZIP files for more robust handling of different encodings
+

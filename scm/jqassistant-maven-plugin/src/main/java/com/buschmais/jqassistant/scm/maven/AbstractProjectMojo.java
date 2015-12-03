@@ -71,17 +71,16 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
         Map<MavenProject, List<MavenProject>> modules = getModules(reactorProjects);
         final MavenProject rootModule = ProjectResolver.getRootModule(currentProject, rulesDirectory);
         final List<MavenProject> currentModules = modules.get(rootModule);
-
-        execute(new StoreOperation() {
-            @Override
-            public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
-                Set<MavenProject> executedModules = getExecutedModules(rootModule);
-                executedModules.add(currentProject);
-                if (currentModules != null && currentModules.size() == executedModules.size()) {
+        Set<MavenProject> executedModules = getExecutedModules(rootModule);
+        executedModules.add(currentProject);
+        if (currentModules != null && currentModules.size() == executedModules.size()) {
+            execute(new StoreOperation() {
+                @Override
+                public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
                     aggregate(rootModule, currentModules, store);
                 }
-            }
-        }, rootModule);
+            }, rootModule);
+        }
     }
 
     /**
@@ -94,8 +93,8 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
         ExecutionKey key = new ExecutionKey(execution);
         String executedModulesContextKey = AbstractProjectMojo.class.getName() + "#executedModules";
-        Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey = (Map<ExecutionKey, Set<MavenProject>>) rootModule
-                .getContextValue(executedModulesContextKey);
+        Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey =
+                (Map<ExecutionKey, Set<MavenProject>>) rootModule.getContextValue(executedModulesContextKey);
         if (executedProjectsPerExecutionKey == null) {
             executedProjectsPerExecutionKey = new HashMap<>();
             rootModule.setContextValue(executedModulesContextKey, executedProjectsPerExecutionKey);
@@ -113,8 +112,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * 
      * @param reactorProjects
      *            The current reactor projects.
-     * @return A map containing resolved base projects and their aggregated
-     *         projects.
+     * @return A map containing resolved base projects and their aggregated projects.
      * @throws MojoExecutionException
      *             If aggregation fails.
      */
@@ -140,6 +138,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException
      *             If execution fails.
      */
-    protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store) throws MojoExecutionException, MojoFailureException;
+    protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store) throws MojoExecutionException,
+            MojoFailureException;
 
 }

@@ -1,19 +1,40 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
+import org.slf4j.Logger;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.VerificationStrategy;
 import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AbstractRuleVisitor;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.Template;
+import com.buschmais.jqassistant.core.analysis.api.rule.TemplateExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.Query;
 import com.buschmais.xo.api.XOException;
-import org.slf4j.Logger;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -66,14 +87,15 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void visitConcept(Concept concept, Severity severity) throws AnalysisException {
+    public void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
         try {
             store.beginTransaction();
             ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
             if (conceptDescriptor == null) {
-                logger.info("Applying concept '" + concept.getId() + "' with severity: '" + getSeverityInfo(concept, severity) + "'.");
+                logger.info("Applying concept '" + concept.getId() + "' with severity: '"
+                        + concept.getSeverity().getInfo(effectiveSeverity) + "'.");
                 reportWriter.beginConcept(concept);
-                reportWriter.setResult(execute(concept, ruleSet, severity));
+                reportWriter.setResult(execute(concept, ruleSet, effectiveSeverity));
                 conceptDescriptor = store.create(ConceptDescriptor.class);
                 conceptDescriptor.setId(concept.getId());
                 reportWriter.endConcept();
@@ -86,35 +108,19 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void visitConstraint(Constraint constraint, Severity severity) throws AnalysisException {
-        logger.info("Validating constraint '" + constraint.getId() + "' with severity: '" + getSeverityInfo(constraint, severity) + "'.");
+    public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
+        logger.info("Validating constraint '" + constraint.getId() + "' with severity: '"
+                + constraint.getSeverity().getInfo(effectiveSeverity) + "'.");
         try {
             store.beginTransaction();
             reportWriter.beginConstraint(constraint);
-            reportWriter.setResult(execute(constraint, ruleSet, severity));
+            reportWriter.setResult(execute(constraint, ruleSet, effectiveSeverity));
             reportWriter.endConstraint();
             store.commitTransaction();
         } catch (XOException e) {
             store.rollbackTransaction();
             throw new AnalysisException("Cannot validate constraint " + constraint.getId(), e);
         }
-    }
-
-    /**
-     * Return a string representing the effective severity of a rule.
-     * 
-     * @param rule
-     *            The rule.
-     * @param severity
-     *            The severity to use.
-     * @return The string representation.
-     */
-    private String getSeverityInfo(ExecutableRule rule, Severity severity) {
-        StringBuffer result = new StringBuffer(severity.toString());
-        if (!severity.equals(rule.getSeverity())) {
-            result.append(" (from ").append(rule.getSeverity()).append(")");
-        }
-        return result.toString();
     }
 
     @Override
