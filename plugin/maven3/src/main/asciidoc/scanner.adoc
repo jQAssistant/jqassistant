@@ -22,11 +22,12 @@ A pom.xml file describing a single Maven project.
 .Relations of :Maven:Project:File:Directory
 [options="header"]
 |====
-| Name       | Target label(s)         | Cardinality | Description
-| CREATES    | <<:Maven:Artifact>>     | 0..n        | References an artifact created by the project
-| HAS_MODEL  | <<:Maven:Pom:Xml:File>> | 1           | References the POM model of the project
-| HAS_PARENT | <<:Maven:Project>>      | 0..1        | References the parent project (optional)
-| HAS_MODULE | <<:Maven:Project>>      | 0..n        | References modules of this project (optional)
+| Name                | Target label(s)         | Cardinality | Description
+| CREATES             | <<:Maven:Artifact>>     | 0..n        | References an artifact created by the project
+| HAS_MODEL           | <<:Maven:Pom>>          | 1           | References the POM model of the project
+| HAS_EFFECTIVE_MODEL | <<:Maven:Pom>>          | 1           | References the effective POM model of the project
+| HAS_PARENT          | <<:Maven:Project>>      | 0..1        | References the parent project (optional)
+| HAS_MODULE          | <<:Maven:Project>>      | 0..n        | References modules of this project (optional)
 |====
 
 [[:Maven:Artifact]]
@@ -62,29 +63,29 @@ Represents an artifact, e.g. a JAR-File.
 
 <<MavenPomScanner>>
 [[MavenPomScanner]]
-== Scanner for Maven pom.xml files
-Imports raw information from Maven pom.xml files.
+== Scanner for Maven POMs
+Imports information from Maven POMs (e.g. pom.xml) files.
 
-[[:Maven:Pom:Xml]]
-=== :Maven:Pom:Xml:File
-A pom.xml file describing a single Maven project.
+[[:Maven:Pom]]
+=== :Maven:Pom
+A POM describing a Maven project.
 
-.Properties of :Maven:Pom:Xml:File
+.Properties of :Maven:Pom
 [options="header"]
 |====
 | Name       | Description
 | group      | The group id
 | name       | The artifact id
 | type       | The type, e.g. "jar"
-| classifier | The classifiert
+| classifier | The classifier (optional)
 | version    | The version
 |====
 
-.Relations of :Maven:Pom:Xml:File
+.Relations of :Maven:Pom
 [options="header"]
 |====
 | Name                | Target label(s)         | Cardinality | Description
-| HAS_PARENT          | <<:Maven:Pom:Xml>>      | 0..1        | References a parent aritfact
+| HAS_PARENT          | <<:Maven:Pom>>          | 0..1        | References a parent aritfact
 | HAS_PROPERTY        | :Value:Property         | 0..n        | References a property
 | HAS_PROFILE         | <<:Maven:Profile>>      | 0..n        | References defined profiles
 | USES_LICENSE        | <<:Maven:License>>      | 0..n        | References used licenses
