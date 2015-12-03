@@ -42,7 +42,7 @@ return
 
 [[module-structure:ApiMustNotDependOnImplementation]]
 .Types contained within an API package must not have dependencies to types contained in an implementation package.
-[source,cypher,role=constraint,requiresConcepts="module-structure:Api,module-structure:Impl",severity=critical]]
+[source,cypher,role=constraint,requiresConcepts="module-structure:Api,module-structure:Impl",severity=critical]
 ----
 match
   (:Api:Package)-[:CONTAINS*0..]->(t1:Type),

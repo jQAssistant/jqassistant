@@ -1,16 +1,17 @@
 package com.buschmais.jqassistant.core.report.api;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+import org.slf4j.Logger;
+
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import org.slf4j.Logger;
-
-import java.util.Collection;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * Provides utility functionality for creating reports.
@@ -60,7 +61,7 @@ public final class ReportHelper {
                 Concept concept = conceptResult.getRule();
                 logger.error(CONCEPT_FAILED_HEADER);
                 logger.error("Concept: " + concept.getId());
-                logger.error("Severity: " + concept.getSeverity());
+                logger.error("Severity: " + concept.getSeverity().getInfo(conceptResult.getSeverity()));
                 String description = concept.getDescription();
 
                 StringTokenizer tokenizer = new StringTokenizer(description, "\n");
@@ -100,7 +101,7 @@ public final class ReportHelper {
 
                 logger.error(CONSTRAINT_VIOLATION_HEADER);
                 logger.error("Constraint: " + constraint.getId());
-                logger.error("Severity: " + constraint.getSeverity());
+                logger.error("Severity: " + constraint.getSeverity().getInfo(constraintResult.getSeverity()));
                 String description = constraint.getDescription();
 
                 StringTokenizer tokenizer = new StringTokenizer(description, "\n");
