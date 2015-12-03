@@ -25,6 +25,8 @@ import org.junit.Test;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.dependency.packages.a.A;
@@ -121,18 +123,30 @@ public class DependencyIT extends AbstractJavaPluginIT {
      */
     @Test
     public void artifacts() throws Exception {
+        store.beginTransaction();
+        JavaArtifactFileDescriptor a = getArtifactDescriptor("a");
+        JavaArtifactFileDescriptor b = getArtifactDescriptor("b");
+        store.create(b, DependsOnDescriptor.class, a);
+        store.commitTransaction();
         scanClasses("a", A.class);
         scanClasses("b", B.class);
         assertThat(applyConcept("dependency:Artifact").getStatus(), Matchers.equalTo(SUCCESS));
         store.beginTransaction();
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("artifact", "a");
-        assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
-                hasItem(artifactDescriptor("b")));
-        parameters.put("artifact", "b");
-        assertThat(query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2"),
-                hasItem(artifactDescriptor("a")));
+        verifyArtifactDependency("a", "b");
+        verifyArtifactDependency("b", "a");
         store.commitTransaction();
+    }
+
+    private Map<String, Object> verifyArtifactDependency(String from, String to) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("artifact", from);
+        List<Object> usedDependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON{used:true}]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters)
+                .getColumn("a2");
+        assertThat(usedDependency, hasItem(artifactDescriptor(to)));
+        // The DEPENDS_RELATION must be unique
+        List<Object> dependency = query("MATCH (a1:Artifact)-[:DEPENDS_ON]->(a2:Artifact) WHERE a1.fqn={artifact} RETURN a2", parameters).getColumn("a2");
+        assertThat(dependency.size(), equalTo(1));
+        return parameters;
     }
 
     /**

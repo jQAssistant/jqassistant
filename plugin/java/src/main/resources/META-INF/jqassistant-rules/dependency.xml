@@ -19,8 +19,10 @@
     </concept>
 
     <concept id="dependency:Artifact">
-        <description>Creates a DEPENDS_ON relationship with a 'used' property between artifacts if there are type dependencies between them, i.e.
-            artifact a2 contains a type which a type from an artifact a1 depends on (using the fully qualified name).
+        <description>Creates a new DEPENDS_ON relationship between artifacts or updates an existing one with a 'used'
+            property if there are type dependencies between them, i.e. if an artifact contains a type with a fully
+            qualified
+            name which a type from another artifact requires.
         </description>
         <cypher><![CDATA[
             MATCH
@@ -28,12 +30,14 @@
             WITH
               a1,type.fqn as fqn
             MATCH
-              (t2:Type)<-[:CONTAINS]-(a2:Artifact)
+              (a2:Artifact)-[:CONTAINS]->(t2:Type)
             WHERE
-              t2.fqn=fqn
-              and a1<>a2
+              a1 <> a2
+              and t2.fqn = fqn
             MERGE
-              (a1)-[:DEPENDS_ON{used:true}]->(a2)
+              (a1)-[d:DEPENDS_ON]->(a2)
+            SET
+              d.used=true
             RETURN
               a1 AS Artifact, COLLECT(DISTINCT a2.fqn) AS Dependencies
         ]]></cypher>
