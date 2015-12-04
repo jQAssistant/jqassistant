@@ -314,6 +314,11 @@
                         </execution>
                     </executions>
                     <configuration>
+                        <skip>true</skip>
+                        <!-- Must be set to true later if we are compliant
+                         !   with our own rules
+                         !          Oliver B. Fischer, 2015-12-04
+                         !-->
                         <failOnViolations>false</failOnViolations>
                     </configuration>
                 </plugin>
@@ -683,11 +688,11 @@
     </dependencyManagement>
 
     <modules>
-        <module>assembly</module>
+        <!--<module>assembly</module>-->
         <module>core</module>
         <module>plugin</module>
-        <module>scm</module>
-        <module>distribution</module>
+        <!--<module>scm</module>-->
+        <!--<module>distribution</module>-->
     </modules>
 
 </project>
