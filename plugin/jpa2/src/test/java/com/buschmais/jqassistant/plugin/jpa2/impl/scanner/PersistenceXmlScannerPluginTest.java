@@ -15,25 +15,16 @@ import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
-import com.sun.java.xml.ns.persistence.PersistenceUnitCachingType;
-import com.sun.java.xml.ns.persistence.PersistenceUnitTransactionType;
-import com.sun.java.xml.ns.persistence.PersistenceUnitValidationModeType;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.collection.IsCollectionWithSize;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.internal.verification.Only;
-import org.mockito.internal.verification.Times;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.verification.VerificationMode;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,7 +39,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceXmlScannerPluginTest {
@@ -238,18 +228,27 @@ public class PersistenceXmlScannerPluginTest {
     }
 
     @Test
-    public void scannerSetsCorrectJTADataSourceFromPersistenceUnitInPersistenceXMLV20() {
-        throw new RuntimeException("!!!");
+    public void scannerSetsCorrectJTADataSourceFromPersistenceUnitInPersistenceXMLV20() throws IOException {
+        plugin.scan(item, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be one persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setJtaDataSource(eq("jtaDataSource"));
     }
 
     @Test
-    public void scannerSetsCorrectNonJTADataSourceFromPersistenceUnitInPersistenceXMLV20() {
-        throw new RuntimeException("!!!");
+    public void scannerSetsCorrectNonJTADataSourceFromPersistenceUnitInPersistenceXMLV20() throws IOException {
+        plugin.scan(item, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be one persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setNonJtaDataSource(eq("nonJtaDataSource"));
     }
 
     @Test
-    public void scannerSetsCorrectProviderFromPersistenceUnitInPersistenceXMLV20() {
-        throw new RuntimeException("!!!");
+    public void scannerSetsCorrectProviderFromPersistenceUnitInPersistenceXMLV20() throws IOException {
+        plugin.scan(item, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be one persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setProvider(eq("provider"));
     }
 
     @Test
@@ -261,8 +260,11 @@ public class PersistenceXmlScannerPluginTest {
     }
 
     @Test
-    public void scannerSetsCorrectSharedCacheModeFromPersistenceUnitInPersistenceXMLV20() {
-        throw new RuntimeException("!!!");
+    public void scannerSetsCorrectSharedCacheModeFromPersistenceUnitInPersistenceXMLV20() throws IOException {
+        plugin.scan(item, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat(persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setValidationMode(eq("AUTO"));
     }
 
     @Test
@@ -272,14 +274,6 @@ public class PersistenceXmlScannerPluginTest {
         assertThat("There must be unit persistence unit.", persistenceUnitList, hasSize(1));
         assertThat("There must be one JPA entity class.", persistenceUnitList.get(0).getContains(), hasSize(1));
         assertThat(persistenceUnitList.get(0).getContains(), hasItem(equalTo(cachedType.getTypeDescriptor())));
-    }
-
-    @Test
-    public void scannerSetsCorrectMappingFileFromPersistenceUnitInPersistenceXMLV20() throws IOException {
-        plugin.scan(item, path, JavaScope.CLASSPATH, scanner);
-
-        assertThat("There must be unit persistence unit.", persistenceUnitList, hasSize(1));
-        verify(persistenceUnitList.get(0)).setMappingFile(eq("mappingFile"));
     }
 
 }
