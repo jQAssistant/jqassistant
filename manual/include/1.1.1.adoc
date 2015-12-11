@@ -1,7 +1,10 @@
 == 1.1.1
 
+=== Core
+- If a rule could not be executed the file name containing it is now part of the error message
+
 === Maven
-- fixed a bug where analyze and server goals were not executed at the end of a multi-module reactor if one of the modules defined the property "jqassistant.skip"
+- Fixed a bug where analyze and server goals were not executed at the end of a multi-module reactor if one of the modules defined the property "jqassistant.skip"
 
 === Plugins
 
