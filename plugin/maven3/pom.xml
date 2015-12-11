@@ -10,11 +10,6 @@
 
     <artifactId>jqassistant.plugin.maven3</artifactId>
 
-    <properties>
-        <!-- The invalid POM from the test data causes jQAssistant 1.1.0 to crash -->
-        <jqassistant.skip>true</jqassistant.skip>
-    </properties>
-
     <build>
         <plugins>
             <plugin>
