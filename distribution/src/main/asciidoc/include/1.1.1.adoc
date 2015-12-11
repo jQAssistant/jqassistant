@@ -1,5 +1,8 @@
 == 1.1.1
 
+=== Core
+- Upgraded to Neo4j 2.3.1
+
 === Maven
 - fixed a bug where analyze and server goals were not executed at the end of a multi-module reactor if one of the modules defined the property "jqassistant.skip"
 
