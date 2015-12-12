@@ -3,10 +3,10 @@
 == Generic scanner for XML and XSD files
 Imports all XML or XSD files in a generic representation, e.g. namespaces, elements, attributes and text.
 
-=== :File:Xml
+=== :File:Xml:Document
 Represents an XML file.
 
-.Properties of :File:Xml
+.Properties of :File:Xml:Document
 [options="header"]
 |====
 | Name                    | Description
@@ -16,7 +16,7 @@ Represents an XML file.
 | xmlWellFormed           | Indicates if the document is well-formed, i.e. could be parsed.
 |====
 
-.Relations of :File:Xml
+.Relations of :File:Xml:Document
 [options="header"]
 |====
 | Name             | Target label(s)  | Cardinality | Description
