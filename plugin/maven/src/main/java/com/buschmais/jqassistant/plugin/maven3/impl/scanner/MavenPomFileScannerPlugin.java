@@ -11,21 +11,19 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 /**
  * Scans pom.xml files.
  * 
  * @author ronald.kunzmann@buschmais.com
  */
-public class MavenPomFileScannerPlugin extends AbstractScannerPlugin<FileResource, MavenPomXmlDescriptor> {
+public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<MavenPomXmlDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenPomFileScannerPlugin.class);
 
@@ -42,7 +40,7 @@ public class MavenPomFileScannerPlugin extends AbstractScannerPlugin<FileResourc
         boolean hasXMLExtension = path.toLowerCase().endsWith(".xml");
         boolean isPomXML = path.toLowerCase().endsWith("pom.xml");
         boolean hasPomExtension = path.toLowerCase().endsWith(".pom");
-        boolean identifiedByExtension = !XmlScope.DOCUMENT.equals(scope) && (isPomXML || hasPomExtension);
+        boolean identifiedByExtension = isPomXML || hasPomExtension;
 
         if (!identifiedByExtension && hasXMLExtension) {
             isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project");
@@ -55,9 +53,7 @@ public class MavenPomFileScannerPlugin extends AbstractScannerPlugin<FileResourc
 
     /** {@inheritDoc} */
     @Override
-    public MavenPomXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.getContext().getStore().addDescriptorType(xmlFileDescriptor, MavenPomXmlDescriptor.class);
+    public void scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         Model model = getModel(item, scanner);
         if (model != null) {
             mavenPomXmlDescriptor.setValid(true);
@@ -70,7 +66,6 @@ public class MavenPomFileScannerPlugin extends AbstractScannerPlugin<FileResourc
         } else {
             mavenPomXmlDescriptor.setValid(false);
         }
-        return mavenPomXmlDescriptor;
     }
 
     /**
