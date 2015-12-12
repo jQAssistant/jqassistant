@@ -1,8 +1,6 @@
 package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -14,19 +12,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ClientModuleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.EjbModuleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.RoleNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin;
-import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -69,7 +57,7 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
     public void applicationXml() throws IOException {
 
         FileResource fileResource = mock(FileResource.class);
-        when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/META-INF/application.xml"));
+        when(fileResource.createStream()).thenReturn(ApplicationXmlScannerPluginTest.class.getResourceAsStream("/META-INF/application.xml"));
 
         when(scanner.scan(fileResource, "/META-INF/application.xml", XmlScope.DOCUMENT)).thenReturn(applicationXmlDescriptor);
         when(store.addDescriptorType(applicationXmlDescriptor, ApplicationXmlDescriptor.class)).thenReturn(applicationXmlDescriptor);

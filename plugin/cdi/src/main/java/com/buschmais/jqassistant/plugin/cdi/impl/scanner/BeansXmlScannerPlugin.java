@@ -28,7 +28,7 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 @Requires(FileDescriptor.class)
 public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
 
-    private JAXBUnmarshaller<FileResource, Beans> unmarshaller;
+    private JAXBUnmarshaller<Beans> unmarshaller;
 
     @Override
     public void initialize() {

@@ -24,7 +24,7 @@ import com.sun.java.xml.ns.javaee.*;
 @Requires(FileDescriptor.class)
 public class ApplicationXmlScannerPlugin extends AbstractScannerPlugin<FileResource, ApplicationXmlDescriptor> {
 
-    private JAXBUnmarshaller<FileResource, ApplicationType> unmarshaller;
+    private JAXBUnmarshaller<ApplicationType> unmarshaller;
 
     @Override
     public void initialize() {

@@ -1,9 +1,6 @@
 package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -20,30 +17,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescr
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.AuthConstraintDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ErrorPageDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.FilterMappingDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.FormLoginConfigDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.HttpMethodDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ListenerDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.LoginConfigDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ParamValueDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.RoleNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.RunAsDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityConstraintDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ServletMappingDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.UrlPatternDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.UserDataConstraintDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WebResourceCollectionDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
@@ -203,7 +177,7 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class)).thenReturn(mock(JavaClassesDirectoryDescriptor.class));
 
         FileResource fileResource = mock(FileResource.class);
-        when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/WEB-INF/web.xml"));
+        when(fileResource.createStream()).thenReturn(WebXmlScannerPluginTest.class.getResourceAsStream("/WEB-INF/web.xml"));
 
         when(scanner.scan(fileResource, "/WEB-INF/web.xml", XmlScope.DOCUMENT)).thenReturn(webXmlDescriptor);
         when(store.addDescriptorType(webXmlDescriptor, WebXmlDescriptor.class)).thenReturn(webXmlDescriptor);
