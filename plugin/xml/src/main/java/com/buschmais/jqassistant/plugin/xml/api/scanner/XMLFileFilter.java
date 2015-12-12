@@ -50,9 +50,9 @@ public final class XMLFileFilter {
             if (reader.hasNext()) {
                 int event = reader.next();
                 switch (event) {
-                case XMLStreamConstants.START_ELEMENT:
-                    String rootElement = reader.getLocalName();
-                    return expectedRootElement.equals(rootElement);
+                    case XMLStreamConstants.START_ELEMENT:
+                        String rootElement = reader.getLocalName();
+                        return expectedRootElement.equals(rootElement);
                 }
             }
         } catch (XMLStreamException e) {
@@ -79,7 +79,6 @@ public final class XMLFileFilter {
                             break;
                         }
 
-
                         // In case of Java 8 -> for-loops are faster!
                         for (int i = 0; i < namespaces; i++) {
                             String namespaceURI = reader.getNamespaceURI(i);
@@ -96,7 +95,6 @@ public final class XMLFileFilter {
         } catch (XMLStreamException e) {
             LOGGER.warn("Cannot parse XML file '{}'.", path);
         }
-
 
         return result;
     }
