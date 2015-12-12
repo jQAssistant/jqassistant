@@ -53,5 +53,75 @@ public class XMLFileFilterTest {
         assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "project"), is(false));
     }
 
+    @Test
+    public void doesMatchIfRootElementAndNamespaceAreRequestedOnes() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<p xmlns:h=\"http://www\"><a></<a></z>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
 
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(true));
+    }
+
+    @Test
+    public void doesMatchIfRootElementAndNamespaceAreRequestedOnesMultipleNameSpaces() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<p xmlns:h=\"http://www\" xmlns:b=\"http://zzz\"><a></<a></z>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(true));
+    }
+
+    @Test
+    public void doesNotMatchIfRootElementIsWrongAndNamespaceAreRequestedIfCorrect() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<e xmlns:h=\"http://www\"><a></<a></e>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(false));
+    }
+
+    @Test
+    public void doesNotMatchIfRootElementIsWrongAndNamespaceAreRequestedIsWrong() throws Exception {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<p xmlns:h=\"http://www\"><a></<a></z>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "e", "http://yyy"), is(false));
+    }
+
+    @Test
+    public void doesNotMatchIfRootElementIsWrongAndNamespaceIsRequestedONe() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<p xmlns:h=\"http://yyyy\"><a></<a></p>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://yyyy"), is(true));
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "e", "http://yyyy"), is(false));
+    }
+
+
+    @Test
+    public void doesNotMatchIfDocumentIsEmptyForMatchingByRootElementAndNamespace() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("   ".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(false));
+    }
+
+    @Test
+    public void doesNotMatchIfDocumentIsInvalidForMatchingByRootElementAndNamespace() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("<p xmlns:h=\"http://www\"><a></<a>".getBytes());
+        FileResource resource = Mockito.mock(FileResource.class);
+
+        doReturn(stream).when(resource).createStream();
+
+        assertThat(XMLFileFilter.rootElementMatches(resource, "/path/", "p", "http://www"), is(true));
+    }
 }

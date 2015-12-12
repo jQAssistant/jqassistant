@@ -61,4 +61,43 @@ public final class XMLFileFilter {
         return false;
 
     }
+
+    public static Boolean rootElementMatches(FileResource fileResource, String path, String expectedRootElement,
+                                             String expectedNameSpace) throws IOException {
+        boolean result = false;
+
+        try (InputStream stream = fileResource.createStream()) {
+            XMLStreamReader reader = factory.createXMLStreamReader(stream);
+            if (reader.hasNext()) {
+                int event = reader.next();
+                switch (event) {
+                    case XMLStreamConstants.START_ELEMENT:
+                        String rootElement = reader.getLocalName();
+                        int namespaces = reader.getNamespaceCount();
+
+                        if (!expectedRootElement.equals(rootElement)) {
+                            break;
+                        }
+
+
+                        // In case of Java 8 -> for-loops are faster!
+                        for (int i = 0; i < namespaces; i++) {
+                            String namespaceURI = reader.getNamespaceURI(i);
+
+                            if (expectedNameSpace.equals(namespaceURI)) {
+                                result = true;
+                                break;
+                            }
+                        }
+
+                        break;
+                }
+            }
+        } catch (XMLStreamException e) {
+            LOGGER.warn("Cannot parse XML file '{}'.", path);
+        }
+
+
+        return result;
+    }
 }
