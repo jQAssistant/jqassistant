@@ -8,13 +8,11 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.sun.java.xml.ns.javaee.*;
 
 /**
@@ -22,9 +20,9 @@ import com.sun.java.xml.ns.javaee.*;
  * APP-INF/application.xml)
  */
 @Requires(FileDescriptor.class)
-public class ApplicationXmlScannerPlugin extends AbstractScannerPlugin<FileResource, ApplicationXmlDescriptor> {
+public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor> {
 
-    private JAXBUnmarshaller<FileResource, ApplicationType> unmarshaller;
+    private JAXBUnmarshaller<ApplicationType> unmarshaller;
 
     @Override
     public void initialize() {
@@ -37,11 +35,9 @@ public class ApplicationXmlScannerPlugin extends AbstractScannerPlugin<FileResou
     }
 
     @Override
-    public ApplicationXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public void scan(FileResource item, ApplicationXmlDescriptor applicationXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         ApplicationType applicationType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        ApplicationXmlDescriptor applicationXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, ApplicationXmlDescriptor.class);
         com.sun.java.xml.ns.javaee.String applicationName = applicationType.getApplicationName();
         if (applicationName != null) {
             applicationXmlDescriptor.setName(applicationName.getValue());
@@ -95,6 +91,5 @@ public class ApplicationXmlScannerPlugin extends AbstractScannerPlugin<FileResou
             SecurityRoleDescriptor securityRole = XmlDescriptorHelper.createSecurityRole(securityRoleType, store);
             applicationXmlDescriptor.getSecurityRoles().add(securityRole);
         }
-        return applicationXmlDescriptor;
     }
 }

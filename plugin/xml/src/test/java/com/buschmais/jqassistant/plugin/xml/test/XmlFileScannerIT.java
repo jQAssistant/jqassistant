@@ -8,9 +8,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.scanner.api.DefaultScope;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
@@ -25,16 +30,39 @@ public class XmlFileScannerIT extends AbstractPluginIT {
      *             If the test fails.
      */
     @Test
-    public void validDocument() throws IOException, AnalysisException {
+    public void validXmlSource() throws IOException, AnalysisException {
+        store.beginTransaction();
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
+        Source source = new StreamSource(xmlFile);
+        Scanner scanner = getScanner();
+        XmlDocumentDescriptor documentDescriptor = store.create(XmlDocumentDescriptor.class);
+        scanner.getContext().push(XmlDocumentDescriptor.class, documentDescriptor);
+        scanner.scan(source, xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        scanner.getContext().pop(XmlDocumentDescriptor.class);
+        verifyDocument(documentDescriptor);
+        store.commitTransaction();
+    }
+
+    /**
+     * @throws java.io.IOException
+     *             If the test fails.
+     */
+    @Test
+    public void validXmlFile() throws IOException, AnalysisException {
         store.beginTransaction();
         File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/validDocument.xml");
         XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
-        assertThat(xmlFileDescriptor, notNullValue());
-        assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(true));
-        assertThat(xmlFileDescriptor.getXmlVersion(), equalTo("1.0"));
-        assertThat(xmlFileDescriptor.getCharacterEncodingScheme(), equalTo("UTF-8"));
-        assertThat(xmlFileDescriptor.isStandalone(), equalTo(false));
-        XmlElementDescriptor rootElement = xmlFileDescriptor.getRootElement();
+        verifyDocument(xmlFileDescriptor);
+        store.commitTransaction();
+    }
+
+    private void verifyDocument(XmlDocumentDescriptor xmlDocumentDescriptor) {
+        assertThat(xmlDocumentDescriptor, notNullValue());
+        assertThat(xmlDocumentDescriptor.isXmlWellFormed(), equalTo(true));
+        assertThat(xmlDocumentDescriptor.getXmlVersion(), equalTo("1.0"));
+        assertThat(xmlDocumentDescriptor.getCharacterEncodingScheme(), equalTo("UTF-8"));
+        assertThat(xmlDocumentDescriptor.isStandalone(), equalTo(false));
+        XmlElementDescriptor rootElement = xmlDocumentDescriptor.getRootElement();
         assertThat(rootElement, notNullValue());
         assertThat(rootElement.getName(), equalTo("RootElement"));
         List<XmlNamespaceDescriptor> rootNamespaces = rootElement.getDeclaredNamespaces();
@@ -55,7 +83,6 @@ public class XmlFileScannerIT extends AbstractPluginIT {
                 fail("Found unexpected child element: " + childElement.getName());
             }
         }
-        store.commitTransaction();
     }
 
     private void verifyChildElement(XmlElementDescriptor childElement) {
@@ -116,6 +143,19 @@ public class XmlFileScannerIT extends AbstractPluginIT {
         XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), XmlScope.DOCUMENT);
         assertThat(xmlFileDescriptor, notNullValue());
         assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(false));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void schemaDocument() throws IOException, AnalysisException {
+        store.beginTransaction();
+        File xmlFile = new File(getClassesDirectory(XmlFileScannerIT.class), "/testSchema.xsd");
+        XmlFileDescriptor xmlFileDescriptor = getScanner().scan(xmlFile, xmlFile.getAbsolutePath(), DefaultScope.NONE);
+        assertThat(xmlFileDescriptor, notNullValue());
+        assertThat(xmlFileDescriptor.isXmlWellFormed(), equalTo(true));
+        XmlElementDescriptor rootElement = xmlFileDescriptor.getRootElement();
+        assertThat(rootElement, notNullValue());
+        assertThat(rootElement.getName(), equalTo("schema"));
         store.commitTransaction();
     }
 }

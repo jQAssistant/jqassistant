@@ -37,6 +37,9 @@ import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
  */
 public class Jpa2IT extends AbstractJavaPluginIT {
 
+    public static final String SCHEMA_2_0 = "2.0";
+    public static final String SCHEMA_2_1 = "2.1";
+
     /**
      * Verifies the concept "jpa2:Entity".
      * 
@@ -140,14 +143,14 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceDescriptor() throws IOException, AnalysisException {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
+    public void fullPersistenceDescriptor_2_0() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_0/full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
-        assertThat(persistenceXmlDescriptor.getVersion(), equalTo("2.0"));
+        assertThat(persistenceXmlDescriptor.getVersion(), equalTo(SCHEMA_2_0));
         List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
@@ -162,8 +165,8 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceUnitDescriptor() throws IOException, AnalysisException {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
+    public void fullPersistenceUnitDescriptor_2_1() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (pu:Jpa:PersistenceUnit) RETURN pu");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -193,13 +196,13 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void minimalPersistenceDescriptor() throws IOException, AnalysisException {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/minimal"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
         List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
-        assertThat(persistenceXmlDescriptor.getVersion(), equalTo("2.0"));
+        assertThat(persistenceXmlDescriptor.getVersion(), equalTo(SCHEMA_2_1));
         List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
@@ -216,7 +219,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void validationModeNotSpecified() throws Exception {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "minimal"));
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/minimal"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
@@ -239,7 +242,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void validationModeAuto() throws Exception {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "full"));
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/full"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
@@ -262,7 +265,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void validationModeSpecified() throws Exception {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "validationmode"));
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/validationmode"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
