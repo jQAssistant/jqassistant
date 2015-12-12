@@ -18,22 +18,20 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 /**
  * A scanner for JPA model units.
  */
 @Requires(FileDescriptor.class)
-public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceXmlDescriptor> {
+public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<PersistenceXmlDescriptor> {
 
     private JAXBUnmarshaller<Persistence> unmarshaller;
 
@@ -50,11 +48,9 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
     }
 
     @Override
-    public PersistenceXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        Persistence persistence = unmarshaller.unmarshal(item);
+    public void scan(FileResource item, PersistenceXmlDescriptor persistenceXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = scanner.getContext().getStore();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        PersistenceXmlDescriptor persistenceXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);
+        Persistence persistence = unmarshaller.unmarshal(item);
         persistenceXmlDescriptor.setVersion(persistence.getVersion());
         // Create model units
         for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
@@ -93,6 +89,5 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
             // Add model unit to model descriptor
             persistenceXmlDescriptor.getContains().add(persistenceUnitDescriptor);
         }
-        return persistenceXmlDescriptor;
     }
 }

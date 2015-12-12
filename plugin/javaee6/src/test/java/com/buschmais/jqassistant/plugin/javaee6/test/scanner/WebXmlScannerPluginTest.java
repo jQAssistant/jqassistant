@@ -3,14 +3,21 @@ package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
@@ -20,7 +27,6 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
@@ -30,6 +36,9 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
 
     @Mock
     private WebApplicationArchiveDescriptor warDescriptor;
+
+    @Mock
+    private FileDescriptor fileDescriptor;
 
     @Mock
     private WebXmlDescriptor webXmlDescriptor;
@@ -177,10 +186,16 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(scannerContext.getStore().create(JavaClassesDirectoryDescriptor.class)).thenReturn(mock(JavaClassesDirectoryDescriptor.class));
 
         FileResource fileResource = mock(FileResource.class);
-        when(fileResource.createStream()).thenReturn(WebXmlScannerPluginTest.class.getResourceAsStream("/WEB-INF/web.xml"));
+        when(fileResource.createStream()).thenAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return WebXmlScannerPluginTest.class.getResourceAsStream("/WEB-INF/web.xml");
+            }
+        });
 
-        when(scanner.scan(fileResource, "/WEB-INF/web.xml", XmlScope.DOCUMENT)).thenReturn(webXmlDescriptor);
-        when(store.addDescriptorType(webXmlDescriptor, WebXmlDescriptor.class)).thenReturn(webXmlDescriptor);
+        when(scannerContext.peek(FileDescriptor.class)).thenReturn(fileDescriptor);
+        when(store.addDescriptorType(fileDescriptor, WebXmlDescriptor.class)).thenReturn(webXmlDescriptor);
+        when(scanner.scan(Mockito.any(StreamSource.class), Mockito.eq("/WEB-INF/web.xml"), Mockito.eq(WebApplicationScope.WAR))).thenReturn(webXmlDescriptor);
         when(webXmlDescriptor.getContextParams()).thenReturn(mock(List.class));
         when(webXmlDescriptor.getErrorPages()).thenReturn(mock(List.class));
         when(webXmlDescriptor.getServlets()).thenReturn(mock(List.class));
@@ -205,9 +220,8 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(store.create(RunAsDescriptor.class)).thenReturn(runAsDescriptor);
         when(runAsDescriptor.getDescriptions()).thenReturn(mock(List.class));
 
-        when(store.create(DescriptionDescriptor.class)).thenReturn(servletDescriptionDescriptor, servletRunAsDescriptionDescriptor,
-                filterDescriptionDescriptor, authConstraintDescriptionDescriptor, webResourceCollectionDescriptionDescriptor,
-                securityRoleDescriptionDescriptor, null);
+        when(store.create(DescriptionDescriptor.class)).thenReturn(servletDescriptionDescriptor, servletRunAsDescriptionDescriptor, filterDescriptionDescriptor,
+                authConstraintDescriptionDescriptor, webResourceCollectionDescriptionDescriptor, securityRoleDescriptionDescriptor, null);
         when(store.create(DisplayNameDescriptor.class)).thenReturn(servletDisplayNameDescriptor, filterDisplayNameDescriptor,
                 securityConstraintDisplayNameDescriptor, null);
         when(store.create(IconDescriptor.class)).thenReturn(servletIconDescriptor, filterIconDescriptor, null);
@@ -272,8 +286,8 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         scannerPlugin.configure(scannerContext, Collections.<String, Object> emptyMap());
         scannerPlugin.scan(fileResource, "/WEB-INF/web.xml", WebApplicationScope.WAR, scanner);
 
-        verify(scanner).scan(fileResource, "/WEB-INF/web.xml", XmlScope.DOCUMENT);
-        verify(store).addDescriptorType(webXmlDescriptor, WebXmlDescriptor.class);
+        verify(store).addDescriptorType(fileDescriptor, WebXmlDescriptor.class);
+        verify(scanner).scan(Mockito.any(StreamSource.class), Mockito.eq("/WEB-INF/web.xml"), Mockito.eq(WebApplicationScope.WAR));
         verify(webXmlDescriptor).setVersion("3.0");
         verify(webXmlDescriptor).setSessionConfig(sessionConfigDescriptor);
         verify(webXmlDescriptor.getContextParams()).add(contextParamDescriptor);
@@ -288,8 +302,8 @@ public class WebXmlScannerPluginTest extends AbstractXmlScannerTest {
         verifyFilterMapping();
         verifyListener();
         verifySecurityConstraint();
-        verifySecurityRole(webXmlDescriptor.getSecurityRoles(), securityRoleDescriptor, securityRoleDescriptionDescriptor, securityRoleRoleNameDescriptor,
-                "en", "Admin users", "Admin");
+        verifySecurityRole(webXmlDescriptor.getSecurityRoles(), securityRoleDescriptor, securityRoleDescriptionDescriptor, securityRoleRoleNameDescriptor, "en",
+                "Admin users", "Admin");
         verifyLoginConfig();
     }
 

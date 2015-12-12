@@ -15,16 +15,14 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.sun.java.xml.ns.javaee.*;
 
 /**
@@ -32,7 +30,7 @@ import com.sun.java.xml.ns.javaee.*;
  * WEB-INF/web.xml)
  */
 @Requires(FileDescriptor.class)
-public class WebXmlScannerPlugin extends AbstractScannerPlugin<FileResource, WebXmlDescriptor> {
+public class WebXmlScannerPlugin extends AbstractXmlFileScannerPlugin<WebXmlDescriptor> {
 
     private JAXBUnmarshaller<WebAppType> unmarshaller;
 
@@ -47,11 +45,9 @@ public class WebXmlScannerPlugin extends AbstractScannerPlugin<FileResource, Web
     }
 
     @Override
-    public WebXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public void scan(FileResource item, WebXmlDescriptor  webXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         WebAppType webAppType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        WebXmlDescriptor webXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, WebXmlDescriptor.class);
         webXmlDescriptor.setVersion(webAppType.getVersion());
         Map<String, ServletDescriptor> servlets = new HashMap<>();
         Map<String, FilterDescriptor> filters = new HashMap<>();
@@ -93,7 +89,6 @@ public class WebXmlScannerPlugin extends AbstractScannerPlugin<FileResource, Web
                 webXmlDescriptor.getLoginConfigs().add(loginConfigDescriptor);
             }
         }
-        return webXmlDescriptor;
     }
 
     private LoginConfigDescriptor createLoginConfig(LoginConfigType loginConfigType, Store store) {
