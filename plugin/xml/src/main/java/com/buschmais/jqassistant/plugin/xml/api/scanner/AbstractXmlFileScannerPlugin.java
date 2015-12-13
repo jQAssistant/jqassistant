@@ -34,7 +34,7 @@ public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> 
     }
 
     @Override
-    public final D scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public  D scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
         FileDescriptor fileDescriptor = scanner.getContext().peek(FileDescriptor.class);
         Class<D> descriptorType = getDescriptorType();
         D xmlFileDescriptor = scanner.getContext().getStore().addDescriptorType(fileDescriptor, descriptorType);
