@@ -143,8 +143,8 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceDescriptor_2_0() throws IOException, AnalysisException {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_0/full"));
+    public void fullPersistenceDescriptorV21() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -158,15 +158,15 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of persistence unit descriptors.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceUnitDescriptor_2_1() throws IOException, AnalysisException {
-        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/full"));
+    public void fullPersistenceUnitDescriptorV21() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (pu:Jpa:PersistenceUnit) RETURN pu");
         assertThat(testResult.getRows().size(), equalTo(1));
@@ -188,14 +188,14 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of persistence descriptors.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void minimalPersistenceDescriptor() throws IOException, AnalysisException {
+    public void minimalPersistenceDescriptorV21() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/minimal"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
@@ -208,17 +208,45 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    @Test
+    public void minimalPersistenceDescriptorV20() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/minimal"));
+        store.beginTransaction();
+        TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
+        PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
+        assertThat(persistenceXmlDescriptor.getVersion(), equalTo(SCHEMA_2_0));
+        List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
+        assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
+        store.commitTransaction();
+    }
+
     /**
      * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if
      * it is not set.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void validationModeNotSpecified() throws Exception {
+    public void validationModeNotSpecifiedV20() throws Exception {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/minimal"));
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
+        assertThat(constraintViolations, matcher);
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> constraintResult = constraintViolations.get(0);
+        assertThat(constraintResult.isEmpty(), equalTo(false));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void validationModeNotSpecifiedV21() throws Exception {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/minimal"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -234,14 +262,28 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     /**
      * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if
      * it is set to AUTO.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void validationModeAuto() throws Exception {
+    public void validationModeAutoV20() throws Exception {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/full"));
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("jpa2:ValidationModeMustBeExplicitlySpecified")));
+        assertThat(constraintViolations, matcher);
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> constraintResult = constraintViolations.get(0);
+        assertThat(constraintResult.isEmpty(), equalTo(false));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void validationModeAutoV21() throws Exception {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/full"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(FAILURE));
         store.beginTransaction();
@@ -257,15 +299,27 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     /**
      * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified"
      * for values NONE and CALLBACK.
-     * 
+     *
      * @throws java.io.IOException
      *             If the test fails.
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the test fails.
      */
     @Test
-    public void validationModeSpecified() throws Exception {
+    public void validationModeSpecifiedV21() throws Exception {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/validationmode"));
+        assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
+        assertThat(constraintViolations.size(), equalTo(1));
+        Result<Constraint> constraintResult = constraintViolations.get(0);
+        assertThat(constraintResult.isEmpty(), equalTo(true));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void validationModeSpecifiedV20() throws Exception {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_0/validationmode"));
         assertThat(validateConstraint("jpa2:ValidationModeMustBeExplicitlySpecified").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());

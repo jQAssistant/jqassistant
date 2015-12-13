@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
+
 import static org.jcp.xmlns.xml.ns.persistence.Persistence.PersistenceUnit;
 import static org.jcp.xmlns.xml.ns.persistence.Persistence.PersistenceUnit.Properties.Property;
 
@@ -7,10 +10,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import org.jcp.xmlns.xml.ns.persistence.Persistence;
 import org.jcp.xmlns.xml.ns.persistence.PersistenceUnitCachingType;
 import org.jcp.xmlns.xml.ns.persistence.PersistenceUnitTransactionType;
 import org.jcp.xmlns.xml.ns.persistence.PersistenceUnitValidationModeType;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -31,15 +39,12 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
  * A scanner for JPA model units.
  */
 @Requires(FileDescriptor.class)
-public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<PersistenceXmlDescriptor> {
+public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResource, PersistenceXmlDescriptor> {
 
-    private JAXBUnmarshaller<Persistence> unmarshaller;
+    private PersistanceXMLUnmarshaller unmarshaller = new PersistanceXMLUnmarshaller();
 
     @Override
     public void initialize() {
-        Map<String, String> namespaceMapping = new HashMap<>();
-        namespaceMapping.put("http://java.sun.com/xml/ns/persistence", "http://xmlns.jcp.org/xml/ns/persistence");
-        unmarshaller = new JAXBUnmarshaller<>(Persistence.class, namespaceMapping);
     }
 
     @Override
@@ -47,47 +52,52 @@ public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<Pe
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
     }
 
-    @Override
-    public void scan(FileResource item, PersistenceXmlDescriptor persistenceXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
+    public PersistenceXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+        PersistenceView persistenceView = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
-        Persistence persistence = unmarshaller.unmarshal(item);
-        persistenceXmlDescriptor.setVersion(persistence.getVersion());
+        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
+        PersistenceXmlDescriptor persistenceXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);
+        persistenceXmlDescriptor.setVersion(persistenceView.getVersion());
+
         // Create model units
-        for (PersistenceUnit persistenceUnit : persistence.getPersistenceUnit()) {
+
+        for (PersistenceUnitView persistenceUnit : persistenceView.getPersistenceUnits()) {
             PersistenceUnitDescriptor persistenceUnitDescriptor = store.create(PersistenceUnitDescriptor.class);
             persistenceUnitDescriptor.setName(persistenceUnit.getName());
-            PersistenceUnitTransactionType transactionType = persistenceUnit.getTransactionType();
+            String transactionType = persistenceUnit.getTransactionType();
             if (transactionType != null) {
-                persistenceUnitDescriptor.setTransactionType(transactionType.name());
+                persistenceUnitDescriptor.setTransactionType(transactionType);
             }
             persistenceUnitDescriptor.setDescription(persistenceUnit.getDescription());
             persistenceUnitDescriptor.setJtaDataSource(persistenceUnit.getJtaDataSource());
             persistenceUnitDescriptor.setNonJtaDataSource(persistenceUnit.getNonJtaDataSource());
             persistenceUnitDescriptor.setProvider(persistenceUnit.getProvider());
-            PersistenceUnitValidationModeType validationMode = persistenceUnit.getValidationMode();
+            String validationMode = persistenceUnit.getValidationMode();
             if (validationMode != null) {
-                persistenceUnitDescriptor.setValidationMode(validationMode.name());
+                persistenceUnitDescriptor.setValidationMode(validationMode);
             }
-            PersistenceUnitCachingType sharedCacheMode = persistenceUnit.getSharedCacheMode();
+            String sharedCacheMode = persistenceUnit.getSharedCacheMode();
             if (sharedCacheMode != null) {
-                persistenceUnitDescriptor.setSharedCacheMode(sharedCacheMode.name());
+                persistenceUnitDescriptor.setSharedCacheMode(sharedCacheMode);
             }
             for (String clazz : persistenceUnit.getClazz()) {
                 TypeDescriptor typeDescriptor = scanner.getContext().peek(TypeResolver.class).resolve(clazz, scanner.getContext()).getTypeDescriptor();
                 persistenceUnitDescriptor.getContains().add(typeDescriptor);
             }
             // Create persistence unit properties
-            PersistenceUnit.Properties properties = persistenceUnit.getProperties();
+            Properties properties = persistenceUnit.getProperties();
             if (properties != null) {
-                for (Property property : properties.getProperty()) {
+                for (Map.Entry<Object, Object> entry : properties.entrySet()) {
                     PropertyDescriptor propertyDescriptor = store.create(PropertyDescriptor.class);
-                    propertyDescriptor.setName(property.getName());
-                    propertyDescriptor.setValue(property.getValue());
+                    propertyDescriptor.setName((String) entry.getKey());
+                    propertyDescriptor.setValue((String) entry.getValue());
                     persistenceUnitDescriptor.getProperties().add(propertyDescriptor);
                 }
             }
             // Add model unit to model descriptor
             persistenceXmlDescriptor.getContains().add(persistenceUnitDescriptor);
         }
+
+        return persistenceXmlDescriptor;
     }
 }
