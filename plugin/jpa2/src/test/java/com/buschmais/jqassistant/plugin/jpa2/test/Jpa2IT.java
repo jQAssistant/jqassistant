@@ -143,7 +143,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void fullPersistenceDescriptorV21() throws IOException, AnalysisException {
+    public void fullPersistenceDescriptorV20() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
@@ -151,6 +151,20 @@ public class Jpa2IT extends AbstractJavaPluginIT {
         List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
         PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
         assertThat(persistenceXmlDescriptor.getVersion(), equalTo(SCHEMA_2_0));
+        List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
+        assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void fullPersistenceDescriptorV21() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/full"));
+        store.beginTransaction();
+        TestResult testResult = query("MATCH (p:Jpa:Persistence:Xml) RETURN p");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        List<? super PersistenceXmlDescriptor> persistenceDescriptors = testResult.getColumn("p");
+        PersistenceXmlDescriptor persistenceXmlDescriptor = (PersistenceXmlDescriptor) persistenceDescriptors.get(0);
+        assertThat(persistenceXmlDescriptor.getVersion(), equalTo(SCHEMA_2_1));
         List<PersistenceUnitDescriptor> persistenceUnits = persistenceXmlDescriptor.getContains();
         assertThat(persistenceUnits, hasItem(PersistenceUnitMatcher.persistenceUnitDescriptor("persistence-unit")));
         store.commitTransaction();
@@ -166,6 +180,28 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void fullPersistenceUnitDescriptorV21() throws IOException, AnalysisException {
+        scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "2_1/full"));
+        store.beginTransaction();
+        TestResult testResult = query("MATCH (pu:Jpa:PersistenceUnit) RETURN pu");
+        assertThat(testResult.getRows().size(), equalTo(1));
+        List<? super PersistenceUnitDescriptor> persistenceUnitDescriptors = testResult.getColumn("pu");
+        PersistenceUnitDescriptor persistenceUnitDescriptor = (PersistenceUnitDescriptor) persistenceUnitDescriptors.get(0);
+        assertThat(persistenceUnitDescriptor.getName(), equalTo("persistence-unit"));
+        assertThat(persistenceUnitDescriptor.getTransactionType(), equalTo("RESOURCE_LOCAL"));
+        assertThat(persistenceUnitDescriptor.getDescription(), equalTo("description"));
+        assertThat(persistenceUnitDescriptor.getJtaDataSource(), equalTo("jtaDataSource"));
+        assertThat(persistenceUnitDescriptor.getNonJtaDataSource(), equalTo("nonJtaDataSource"));
+        assertThat(persistenceUnitDescriptor.getProvider(), equalTo("provider"));
+        assertThat(persistenceUnitDescriptor.getValidationMode(), equalTo("AUTO"));
+        assertThat(persistenceUnitDescriptor.getSharedCacheMode(), equalTo("ENABLE_SELECTIVE"));
+        assertThat(persistenceUnitDescriptor.getContains(), hasItem(typeDescriptor(JpaEntity.class)));
+        Matcher<? super PropertyDescriptor> valueMatcher = valueDescriptor("stringProperty", equalTo("stringValue"));
+        assertThat(persistenceUnitDescriptor.getProperties(), hasItem(valueMatcher));
+        store.commitTransaction();
+    }
+
+    @Test
+    public void fullPersistenceUnitDescriptorV20() throws IOException, AnalysisException {
         scanClassPathDirectory(new File(getClassesDirectory(JpaEntity.class), "v2dot0/full"));
         store.beginTransaction();
         TestResult testResult = query("MATCH (pu:Jpa:PersistenceUnit) RETURN pu");
