@@ -15,6 +15,7 @@ import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor
 import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,6 +54,12 @@ public class PersistenceXmlScannerPluginTest {
 
     @Mock
     FileResource item4V20;
+
+    @Mock
+    FileResource itemMinimal4V20;
+
+    @Mock
+    FileResource itemMinimal4V21;
 
     @Mock
     FileResource item4V21;
@@ -120,6 +127,22 @@ public class PersistenceXmlScannerPluginTest {
             }
         }).when(item4V21).createStream();
 
+
+        doAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/v2dot0/minimal/META-INF/persistence.xml");
+            }
+        }).when(itemMinimal4V20).createStream();
+
+        doAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocationOnMock) throws Throwable {
+                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/2_1/minimal/META-INF/persistence.xml");
+            }
+        }).when(itemMinimal4V21).createStream();
+
+
         doReturn(properties).when(unitDescriptor).getProperties();
         doReturn(propertyDescriptor).when(store).create(PropertyDescriptor.class);
         doReturn(jpaEntityDescriptor).when(cachedType).getTypeDescriptor();
@@ -129,6 +152,8 @@ public class PersistenceXmlScannerPluginTest {
         doReturn(context).when(scanner).getContext();
         doReturn(xmlFileDescriptor).when(scanner).scan(eq(item4V20), eq(path), eq(XmlScope.DOCUMENT));
         doReturn(xmlFileDescriptor).when(scanner).scan(eq(item4V21), eq(path), eq(XmlScope.DOCUMENT));
+        doReturn(xmlFileDescriptor).when(scanner).scan(eq(itemMinimal4V20), eq(path), eq(XmlScope.DOCUMENT));
+        doReturn(xmlFileDescriptor).when(scanner).scan(eq(itemMinimal4V21), eq(path), eq(XmlScope.DOCUMENT));
         doReturn(persistenceDescriptor).when(store).addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);
         doReturn(persistenceUnitList).when(persistenceDescriptor).getContains();
         doReturn(unitDescriptor).when(store).create(PersistenceUnitDescriptor.class);
@@ -361,4 +386,35 @@ public class PersistenceXmlScannerPluginTest {
         assertThat(persistenceUnitList.get(0).getContains(), hasItem(equalTo(cachedType.getTypeDescriptor())));
     }
 
+    @Test
+    public void scannerSetsExcludeUnlistedClassesToTrueIfNotSpecifiedXMLV20() throws Exception {
+        plugin.scan(itemMinimal4V20, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be unit persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setExcludingUnlistedClasses(eq(true));
+    }
+
+    @Test
+    public void scannerSetsExcludeUnlistedClassesToTrueIfNotSpecifiedXMLV21() throws Exception {
+        plugin.scan(itemMinimal4V21, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be unit persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setExcludingUnlistedClasses(eq(true));
+    }
+
+    @Test
+    public void scannerSetsExcludeUnlistedClassesAsSpecifiedXMLV20() throws Exception {
+        plugin.scan(item4V20, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be unit persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setExcludingUnlistedClasses(eq(false));
+    }
+
+    @Test
+    public void scannerSetsExcludeUnlistedClassesAsSpecifiedXMLV21() throws Exception {
+        plugin.scan(item4V21, path, JavaScope.CLASSPATH, scanner);
+
+        assertThat("There must be unit persistence unit.", persistenceUnitList, hasSize(1));
+        verify(persistenceUnitList.get(0)).setExcludingUnlistedClasses(eq(false));
+    }
 }

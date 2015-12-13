@@ -6,7 +6,7 @@
         <non-jta-data-source>nonJtaDataSource</non-jta-data-source>
         <mapping-file>mappingFile</mapping-file>
         <class>com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity</class>
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <validation-mode>AUTO</validation-mode>
         <properties>

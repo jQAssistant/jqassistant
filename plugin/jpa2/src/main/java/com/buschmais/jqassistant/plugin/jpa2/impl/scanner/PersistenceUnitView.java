@@ -84,4 +84,9 @@ public class PersistenceUnitView {
 
         return properties;
     }
+
+    public boolean isExcludingUnlistedClasses() {
+        Boolean result = (null != unitV20) ? unitV20.isExcludeUnlistedClasses() : unitV21.isExcludeUnlistedClasses();
+        return result;
+    }
 }

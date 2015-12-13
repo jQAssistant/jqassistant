@@ -58,4 +58,8 @@ public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, 
     @Relation("HAS")
     Set<PropertyDescriptor> getProperties();
 
+    @Property("excludeUnlistedClasses")
+    boolean isExcludingUnlistedClasses();
+
+    void setExcludingUnlistedClasses(boolean exclude);
 }

@@ -28,14 +28,15 @@ A persistence unit.
 .Properties of :Jpa:PersistenceUnit
 [options="header"]
 |====
-| Name             | Description
-| description      | The description of the persistence unit.
-| transactionType  | The transaction type, can be 'RESOURCE_LOCAL' or 'JTA'
-| provider         | The class name of the JPA provider.
-| jtaDatasource    | The JNDI name of the transactional datasource
-| nonJtaDatasource | The JNDI name of the non-transactional datasource
-| validationMode   | The validation mode, can be 'NONE', 'CALLBACK' or 'AUTO'
-| sharedCacheMode  | The shared cache mode, e.g. 'NONE'
+| Name                   | Description
+| description            | The description of the persistence unit.
+| excludeUnlistedClasses | If the persistence unit should only contain listed classes or all entities.
+| transactionType        | The transaction type, can be 'RESOURCE_LOCAL' or 'JTA'
+| provider               | The class name of the JPA provider.
+| jtaDatasource          | The JNDI name of the transactional datasource
+| nonJtaDatasource       | The JNDI name of the non-transactional datasource
+| validationMode         | The validation mode, can be 'NONE', 'CALLBACK' or 'AUTO'
+| sharedCacheMode        | The shared cache mode, e.g. 'NONE'
 |====
 
 .Relations of :Jpa:PersistenceUnit

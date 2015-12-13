@@ -72,7 +72,9 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
             persistenceUnitDescriptor.setJtaDataSource(persistenceUnit.getJtaDataSource());
             persistenceUnitDescriptor.setNonJtaDataSource(persistenceUnit.getNonJtaDataSource());
             persistenceUnitDescriptor.setProvider(persistenceUnit.getProvider());
+            persistenceUnitDescriptor.setExcludingUnlistedClasses(persistenceUnit.isExcludingUnlistedClasses());
             String validationMode = persistenceUnit.getValidationMode();
+
             if (validationMode != null) {
                 persistenceUnitDescriptor.setValidationMode(validationMode);
             }
