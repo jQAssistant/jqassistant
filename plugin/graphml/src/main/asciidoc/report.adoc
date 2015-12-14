@@ -63,7 +63,14 @@ store:
               (p2:Package)-[:CONTAINS]->(t2:Type),
               (t1)-[:DEPENDS_ON]->(t2)
             RETURN
-              p1, {role: "relationship", type:"DEPENDS_ON", startNode:startNode(p1), endNode:endNode(p2)} , p2
+              p1,
+              {
+                role: "relationship",
+                type: "DEPENDS_ON",
+                startNode: p1,
+                endNode: p2
+              },
+              p2
         ]]></cypher>
     </concept>
 
@@ -89,7 +96,11 @@ The following example virtually aggregates some data without creating a node in 
             MATCH
 			    (m:Method)
             RETURN
-                {role: "node", properties: {totalCyclomaticComplexity : sum(m.cyclomaticComplexity)}, labels: ["Metrics", "CyclomaticComplexity"] } 
+              {
+                role: "node",
+                properties: {totalCyclomaticComplexity : sum(m.cyclomaticComplexity)},
+                labels: ["Metrics", "CyclomaticComplexity"]
+              }
         ]]></cypher>
     </concept>
 
@@ -114,18 +125,19 @@ The following example creates a virtual subgraph:
         <description>Creates a Subgraph for a better overview.</description>
         <cypher><![CDATA[
             MATCH
-              (t:Class),
-              (t)-[:DECLARES]->(m1:Method)
+              (t:Class)-[:DECLARES]->(m:Method)
             OPTIONAL MATCH
-              (m1)-[i:INVOKES]->(m2:Method) 
-            WITH
-              t, collect(m1) as methods, collect(i) as invocations //<1>
+              (m)-[i:INVOKES]->(:Method)
             RETURN
-              {role: "graph", parent: t, nodes: methods, relationships: invocations} as subgraph]]> //<2>
-		</cypher>
+              {
+                role: "graph",
+                parent: t,
+                nodes: collect(m),
+                relationships: collect(i)  //<1>
+              } as subgraph
+		]]></cypher>
     </concept>
 
 </jqa:jqassistant-rules>
 ----
-<1> This with clause is necessary to get more than one subgraph, this might be a strange behavior of Node4J.
-<2> The relationships can be used overall subgraphs 
+<1> The relationships can be used overall subgraphs
