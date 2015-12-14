@@ -19,9 +19,14 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  */
 public final class XMLFileFilter {
 
-    private static XMLInputFactory factory = XMLInputFactory.newInstance();
+    private static XMLInputFactory factory ;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XMLFileFilter.class);
+
+    static {
+        factory = XMLInputFactory.newInstance();
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+    }
 
     /**
      * Private constructor.

@@ -35,6 +35,7 @@ public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSu
     @Override
     public void initialize() {
         inputFactory = XMLInputFactory.newInstance();
+        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
     }
 
     @Override
