@@ -44,9 +44,8 @@ public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> 
         } finally {
             scanner.getContext().pop(XmlDocumentDescriptor.class);
         }
-        scan(item, xmlFileDescriptor, path, scope, scanner);
-        return xmlFileDescriptor;
+        return scan(item, xmlFileDescriptor, path, scope, scanner);
     }
 
-    public abstract void scan(FileResource item, D descriptor, String path, Scope scope, Scanner scanner) throws IOException;
+    public abstract D scan(FileResource item, D descriptor, String path, Scope scope, Scanner scanner) throws IOException;
 }

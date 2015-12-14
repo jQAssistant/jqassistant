@@ -20,7 +20,8 @@ public class XmlFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDe
     }
 
     @Override
-    public void scan(FileResource item, XmlFileDescriptor descriptor, String path, Scope scope, Scanner scanner) throws IOException {
+    public XmlFileDescriptor scan(FileResource item, XmlFileDescriptor descriptor, String path, Scope scope, Scanner scanner) throws IOException {
+        return descriptor;
     }
 
 }
