@@ -48,7 +48,7 @@ public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<Pe
     }
 
     @Override
-    public void scan(FileResource item, PersistenceXmlDescriptor persistenceXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
+    public PersistenceXmlDescriptor scan(FileResource item, PersistenceXmlDescriptor persistenceXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = scanner.getContext().getStore();
         Persistence persistence = unmarshaller.unmarshal(item);
         persistenceXmlDescriptor.setVersion(persistence.getVersion());
@@ -89,5 +89,6 @@ public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<Pe
             // Add model unit to model descriptor
             persistenceXmlDescriptor.getContains().add(persistenceUnitDescriptor);
         }
+        return persistenceXmlDescriptor;
     }
 }

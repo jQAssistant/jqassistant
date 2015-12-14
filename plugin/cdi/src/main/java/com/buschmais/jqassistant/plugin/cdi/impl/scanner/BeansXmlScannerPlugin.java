@@ -39,7 +39,7 @@ public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXml
     }
 
     @Override
-    public void scan(FileResource item, BeansXmlDescriptor beansXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
+    public BeansXmlDescriptor scan(FileResource item, BeansXmlDescriptor beansXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
         Beans beans = unmarshaller.unmarshal(item);
         beansXmlDescriptor.setVersion(beans.getVersion());
@@ -57,6 +57,7 @@ public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXml
                 }
             }
         }
+        return beansXmlDescriptor;
     }
 
     private void addTypes(List<String> typeNames, List<TypeDescriptor> types, ScannerContext scannerContext) {
