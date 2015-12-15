@@ -115,14 +115,14 @@ public class PersistenceXmlScannerPluginTest {
         doAnswer(new Answer<InputStream>() {
             @Override
             public InputStream answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/v2dot0/full/META-INF/persistence.xml");
+                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/2_0/full/META-INF/persistence.xml");
             }
         }).when(item4V20).createStream();
 
         doAnswer(new Answer<InputStream>() {
             @Override
             public InputStream answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/v2dot1/full/META-INF/persistence.xml");
+                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/2_1/full/META-INF/persistence.xml");
             }
         }).when(item4V21).createStream();
 
@@ -130,7 +130,7 @@ public class PersistenceXmlScannerPluginTest {
         doAnswer(new Answer<InputStream>() {
             @Override
             public InputStream answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/v2dot0/minimal/META-INF/persistence.xml");
+                return PersistenceXmlScannerPluginTest.class.getResourceAsStream("/2_0/minimal/META-INF/persistence.xml");
             }
         }).when(itemMinimal4V20).createStream();
 
@@ -248,7 +248,7 @@ public class PersistenceXmlScannerPluginTest {
 
         assertThat("There must be on persistence unit.", persistenceUnitList, hasSize(1));
 
-        verify(persistenceUnitList.get(0)).setName(eq("unit21"));
+        verify(persistenceUnitList.get(0)).setName(eq("persistence-unit"));
     }
 
     @Test
@@ -264,7 +264,7 @@ public class PersistenceXmlScannerPluginTest {
         plugin.scan(item4V21, path, JavaScope.CLASSPATH, scanner);
 
         assertThat(persistenceUnitList, hasSize(1));
-        verify(persistenceUnitList.get(0)).setTransactionType(eq("JTA"));
+        verify(persistenceUnitList.get(0)).setTransactionType(eq("RESOURCE_LOCAL"));
     }
 
     @Test
@@ -280,7 +280,7 @@ public class PersistenceXmlScannerPluginTest {
         plugin.scan(item4V21, path, JavaScope.CLASSPATH, scanner);
 
         assertThat("There must be one persistence unit.", persistenceUnitList, hasSize(1));
-        verify(persistenceUnitList.get(0)).setDescription(eq("bla"));
+        verify(persistenceUnitList.get(0)).setDescription(eq("description"));
     }
 
     @Test
@@ -328,7 +328,7 @@ public class PersistenceXmlScannerPluginTest {
         plugin.scan(item4V21, path, JavaScope.CLASSPATH, scanner);
 
         assertThat("There must be one persistence unit.", persistenceUnitList, hasSize(1));
-        verify(persistenceUnitList.get(0)).setProvider(eq("other"));
+        verify(persistenceUnitList.get(0)).setProvider(eq("provider"));
     }
 
     @Test
@@ -344,7 +344,7 @@ public class PersistenceXmlScannerPluginTest {
         plugin.scan(item4V21, path, JavaScope.CLASSPATH, scanner);
 
         assertThat("There must be one persistence unit.", persistenceUnitList, hasSize(1));
-        verify(persistenceUnitList.get(0)).setValidationMode(eq("NONE"));
+        verify(persistenceUnitList.get(0)).setValidationMode(eq("AUTO"));
     }
 
     @Test
@@ -360,7 +360,7 @@ public class PersistenceXmlScannerPluginTest {
         plugin.scan(item4V21, path, JavaScope.CLASSPATH, scanner);
 
         assertThat(persistenceUnitList, hasSize(1));
-        verify(persistenceUnitList.get(0)).setValidationMode(eq("NONE"));
+        verify(persistenceUnitList.get(0)).setValidationMode(eq("AUTO"));
     }
 
 
