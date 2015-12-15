@@ -4,7 +4,7 @@
     <parent>
         <artifactId>jqassistant.core</artifactId>
         <groupId>com.buschmais.jqassistant.core</groupId>
-        <version>1.1.1</version>
+        <version>1.1.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant.core.plugin</artifactId>
