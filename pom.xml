@@ -97,7 +97,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <jqassistant.previous.version>1.1.0</jqassistant.previous.version>
+        <jqassistant.previous.version>1.1.1</jqassistant.previous.version>
     </properties>
 
     <profiles>
@@ -314,7 +314,6 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <skip>true</skip>
                         <!-- Must be set to true later if we are compliant
                          !   with our own rules
                          !          Oliver B. Fischer, 2015-12-04
@@ -688,11 +687,11 @@
     </dependencyManagement>
 
     <modules>
-        <!--<module>assembly</module>-->
+        <module>assembly</module>
         <module>core</module>
         <module>plugin</module>
-        <!--<module>scm</module>-->
-        <!--<module>distribution</module>-->
+        <module>scm</module>
+        <module>distribution</module>
     </modules>
 
 </project>
