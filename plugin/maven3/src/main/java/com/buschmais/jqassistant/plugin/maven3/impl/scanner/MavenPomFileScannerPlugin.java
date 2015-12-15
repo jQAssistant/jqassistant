@@ -53,18 +53,21 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
 
     /** {@inheritDoc} */
     @Override
-    public void scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenPomXmlDescriptor scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor, String path, Scope scope, Scanner scanner)
+            throws IOException {
         Model model = getModel(item, scanner);
         if (model != null) {
-            mavenPomXmlDescriptor.setValid(true);
             scanner.getContext().push(MavenPomDescriptor.class, mavenPomXmlDescriptor);
             try {
-                scanner.scan(model, path, scope);
+                MavenPomXmlDescriptor result = scanner.scan(model, path, scope);
+                result.setValid(true);
+                return result;
             } finally {
                 scanner.getContext().pop(MavenPomDescriptor.class);
             }
         } else {
             mavenPomXmlDescriptor.setValid(false);
+            return mavenPomXmlDescriptor;
         }
     }
 

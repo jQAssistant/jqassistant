@@ -52,8 +52,8 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
         return JavaScope.CLASSPATH.equals(scope) && "/META-INF/persistence.xml".equals(path) || "/WEB-INF/persistence.xml".equals(path);
     }
 
-    public PersistenceXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
-        PersistenceView persistenceView = unmarshaller.unmarshal(item);
+    @Override
+    public PersistenceXmlDescriptor scan(FileResource item, PersistenceXmlDescriptor persistenceXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         Store store = scanner.getContext().getStore();
         XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
         PersistenceXmlDescriptor persistenceXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);
@@ -99,7 +99,6 @@ public class PersistenceXmlScannerPlugin extends AbstractScannerPlugin<FileResou
             // Add model unit to model descriptor
             persistenceXmlDescriptor.getContains().add(persistenceUnitDescriptor);
         }
-
         return persistenceXmlDescriptor;
     }
 }

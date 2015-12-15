@@ -35,6 +35,7 @@ public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSu
     @Override
     public void initialize() {
         inputFactory = XMLInputFactory.newInstance();
+        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
     }
 
     @Override
@@ -43,7 +44,7 @@ public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSu
     }
 
     @Override
-    public void scan(FileResource item, TestSuiteDescriptor testSuiteDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
+    public TestSuiteDescriptor scan(FileResource item, TestSuiteDescriptor testSuiteDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         try (InputStream stream = item.createStream()) {
             XMLEventReader reader = inputFactory.createXMLEventReader(stream);
             TestCaseDescriptor testCaseDescriptor = null;
@@ -118,6 +119,7 @@ public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSu
         } catch (XMLStreamException e) {
             throw new IOException("Cannot read XML document.", e);
         }
+        return testSuiteDescriptor;
     }
 
     private float parseTime(String value) throws IOException {
