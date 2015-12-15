@@ -28,6 +28,6 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      * @return The type.
      */
     @ResultOf
-    @Cypher("MATCH (type:Type) WHERE type.fqn={fqn} WITH type MATCH (type)<-[:CONTAINS]-(dependency:Artifact), p=shortestPath((artifact)-[:DEPENDS_ON*]->(dependency)) WHERE id(artifact)={this} RETURN type LIMIT 1")
+    @Cypher("MATCH (type:Type) WHERE type.fqn={fqn} WITH type MATCH (type)<-[:CONTAINS|REQUIRES]-(dependency:Artifact), p=shortestPath((artifact)-[:DEPENDS_ON*]->(dependency)) WHERE id(artifact)={this} RETURN type LIMIT 1")
     TypeDescriptor resolveRequiredType(@Parameter("fqn") String fqn);
 }
