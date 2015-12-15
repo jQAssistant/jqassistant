@@ -98,6 +98,12 @@ public class TypeResolverIT extends AbstractJavaPluginIT {
                 "match (artifact2:Artifact)-[:CONTAINS]->(b:Type)-[:DEPENDS_ON]->(a:Type)<-[:CONTAINS]-(artifact1:Artifact) where artifact1.fqn={a1} and artifact2.fqn={a2} and b.fqn={b} return a",
                 MapBuilder.<String, Object> create("b", B.class.getName()).put("a1", "a1").put("a2", "a2").get());
         assertThat(testResult.getColumn("a"), hasItem(typeDescriptor(A.class)));
+        // java.lang.Object is only required by artifact A1
+        testResult = query("match (a:Artifact)-[:REQUIRES]->(o:Type) where o.fqn={object} return a",
+                MapBuilder.<String, Object> create("object", Object.class.getName()).get());
+        List<JavaArtifactFileDescriptor> objects = testResult.getColumn("a");
+        assertThat(objects.size(), equalTo(1));
+        assertThat(objects.get(0), equalTo(a1));
         store.commitTransaction();
     }
 
