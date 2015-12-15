@@ -367,10 +367,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLKeyDescriptor keyA1 = findKeyByName(keyA.getKeys(), "hr");
 
-
-        System.out.println(keyA1.getName());
-        System.out.println(keyA1.getFullQualifiedName());
-
         assertThat(keyA1.getName(), equalTo("hr"));
         assertThat(keyA1.getFullQualifiedName(), CoreMatchers.equalTo("Mark McGwire.hr"));
         assertThat(keyA1.getKeys(), empty());
@@ -379,9 +375,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
 
         YAMLKeyDescriptor keyA2 = findKeyByName(keyA.getKeys(), "avg");
-
-        System.out.println(keyA2.getName());
-        System.out.println(keyA2.getFullQualifiedName());
 
         assertThat(keyA2.getName(), equalTo("avg"));
         assertThat(keyA2.getFullQualifiedName(), CoreMatchers.equalTo("Mark McGwire.avg"));
@@ -477,11 +470,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(rbiNode, Matchers.notNullValue());
         assertThat(rbiNode.getValues(), hasSize(2));
-
-        for (YAMLValueDescriptor valueDescriptor : rbiNode.getValues()) {
-            System.out.println(valueDescriptor.getValue());
-        }
-
         assertThat(rbiNode.getValues(), hasItem(hasValue("Sammy Sosa")));
     }
 

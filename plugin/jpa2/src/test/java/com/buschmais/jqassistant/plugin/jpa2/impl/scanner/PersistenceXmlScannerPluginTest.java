@@ -1,38 +1,5 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSourceTest;
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
-import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.Is.is;
@@ -43,6 +10,38 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSourceTest;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
+import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistenceXmlScannerPluginTest {
@@ -71,7 +70,7 @@ public class PersistenceXmlScannerPluginTest {
     ScannerContext context;
 
     @Mock
-    XmlFileDescriptor xmlFileDescriptor;
+    FileDescriptor fileDescriptor;
 
     @Mock
     TypeDescriptor jpaEntityDescriptor;
@@ -98,7 +97,7 @@ public class PersistenceXmlScannerPluginTest {
     PropertyDescriptor propertyDescriptor;
 
     @Spy
-    Set<PropertyDescriptor> properties = new HashSet<PropertyDescriptor>();
+    Set<PropertyDescriptor> properties = new HashSet<>();
 
     private String path = "/META-INF/persistence.xml";
 
@@ -150,11 +149,8 @@ public class PersistenceXmlScannerPluginTest {
                 eq(context));
         doReturn(typeResolver).when(context).peek(TypeResolver.class);
         doReturn(context).when(scanner).getContext();
-        doReturn(xmlFileDescriptor).when(scanner).scan(eq(item4V20), eq(path), eq(XmlScope.DOCUMENT));
-        doReturn(xmlFileDescriptor).when(scanner).scan(eq(item4V21), eq(path), eq(XmlScope.DOCUMENT));
-        doReturn(xmlFileDescriptor).when(scanner).scan(eq(itemMinimal4V20), eq(path), eq(XmlScope.DOCUMENT));
-        doReturn(xmlFileDescriptor).when(scanner).scan(eq(itemMinimal4V21), eq(path), eq(XmlScope.DOCUMENT));
-        doReturn(persistenceDescriptor).when(store).addDescriptorType(xmlFileDescriptor, PersistenceXmlDescriptor.class);
+        doReturn(fileDescriptor).when(context).peek(FileDescriptor.class);
+        doReturn(persistenceDescriptor).when(store).addDescriptorType(fileDescriptor, PersistenceXmlDescriptor.class);
         doReturn(persistenceUnitList).when(persistenceDescriptor).getContains();
         doReturn(unitDescriptor).when(store).create(PersistenceUnitDescriptor.class);
     }
