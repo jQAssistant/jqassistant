@@ -3,5 +3,4 @@ language: java
 jdk: oraclejdk8
 script: mvn install -DskipTests=true -B -V
 install: mvn verify
-before_script:
-  - echo "MAVEN_OPTS='-Xmx1g'" > ~/.mavenrc
+
