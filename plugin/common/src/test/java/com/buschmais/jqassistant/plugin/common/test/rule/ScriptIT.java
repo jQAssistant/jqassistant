@@ -11,7 +11,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.common.test.rule.model.TestDescriptor;
@@ -75,7 +75,7 @@ public class ScriptIT extends AbstractPluginIT {
         verifyResults(reportWriter.getConstraintResults(), "ruby:XmlTestConstraint", Severity.BLOCKER);
     }
 
-    private <R extends Rule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {
+    private <R extends ExecutableRule> void verifyResults(Map<String, Result<R>> results, String ruleName, Severity severity) {
         store.beginTransaction();
         assertThat("Expecting one analysis result.", results.size(), equalTo(1));
         Result<?> result = results.get(ruleName);

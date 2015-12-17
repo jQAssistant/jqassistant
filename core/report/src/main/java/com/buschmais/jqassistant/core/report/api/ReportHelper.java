@@ -4,12 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.slf4j.Logger;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
@@ -18,14 +16,11 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public final class ReportHelper {
 
-    private static String CONSTRAINT_VIOLATION_HEADER
-         = "--[ Constraint Violation ]-----------------------------------------";
+    private static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
 
-    private static String CONCEPT_FAILED_HEADER
-         = "--[ Concept Application Failure ]----------------------------------";
+    private static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
 
-    private static String FOOTER
-         = "-------------------------------------------------------------------";
+    private static String FOOTER = "-------------------------------------------------------------------";
 
     private Logger logger;
 
@@ -54,32 +49,7 @@ public final class ReportHelper {
      */
     public int verifyConceptResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
-        int violations = 0;
-
-        for (Result<Concept> conceptResult : conceptResults) {
-            if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
-                Concept concept = conceptResult.getRule();
-                logger.error(CONCEPT_FAILED_HEADER);
-                logger.error("Concept: " + concept.getId());
-                logger.error("Severity: " + concept.getSeverity().getInfo(conceptResult.getSeverity()));
-                String description = concept.getDescription();
-
-                StringTokenizer tokenizer = new StringTokenizer(description, "\n");
-
-                while (tokenizer.hasMoreTokens()) {
-                    logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
-                }
-
-                logger.error(FOOTER);
-                logger.error(System.lineSeparator());
-
-                // severity level check
-                if (conceptResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
-                    violations++;
-                }
-            }
-        }
-        return violations;
+        return verifyRuleResults(violationSeverity, conceptResults, "Concept", CONCEPT_FAILED_HEADER, false);
     }
 
     /**
@@ -94,46 +64,62 @@ public final class ReportHelper {
      */
     public int verifyConstraintResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
+        return verifyRuleResults(violationSeverity, constraintResults, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
+    }
+
+    private int verifyRuleResults(Severity violationSeverity, Collection<? extends Result<? extends ExecutableRule>> results, String type, String header,
+            boolean showResult) {
         int violations = 0;
-        for (Result<Constraint> constraintResult : constraintResults) {
-            if (Result.Status.FAILURE.equals(constraintResult.getStatus())) {
-                Constraint constraint = constraintResult.getRule();
+        for (Result<?> result : results) {
+            if (Result.Status.FAILURE.equals(result.getStatus())) {
+                ExecutableRule rule = result.getRule();
 
-                logger.error(CONSTRAINT_VIOLATION_HEADER);
-                logger.error("Constraint: " + constraint.getId());
-                logger.error("Severity: " + constraint.getSeverity().getInfo(constraintResult.getSeverity()));
-                String description = constraint.getDescription();
+                logger.error(header);
+                logger.error(type + ": " + rule.getId());
+                logger.error("Severity: " + rule.getSeverity().getInfo(result.getSeverity()));
 
-                StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+                logDescription(rule);
 
-                while (tokenizer.hasMoreTokens()) {
-                    logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
-                }
-
-                for (Map<String, Object> columns : constraintResult.getRows()) {
-                    StringBuilder message = new StringBuilder();
-                    for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                        if (message.length() > 0) {
-                            message.append(", ");
+                if (showResult) {
+                    for (Map<String, Object> columns : result.getRows()) {
+                        StringBuilder message = new StringBuilder();
+                        for (Map.Entry<String, Object> entry : columns.entrySet()) {
+                            if (message.length() > 0) {
+                                message.append(", ");
+                            }
+                            message.append(entry.getKey());
+                            message.append('=');
+                            String stringValue = getStringValue(entry.getValue());
+                            message.append(stringValue);
                         }
-                        message.append(entry.getKey());
-                        message.append('=');
-                        String stringValue = getStringValue(entry.getValue());
-                        message.append(stringValue);
+                        logger.error("  " + message.toString());
                     }
-                    logger.error("  " + message.toString());
                 }
 
                 logger.error(FOOTER);
                 logger.error(System.lineSeparator());
 
-                // severity level check
-                if (constraintResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
+                // violationSeverity level check
+                if (result.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;
                 }
             }
         }
         return violations;
+    }
+
+    /**
+     * Log the description of a rule.
+     * 
+     * @param rule
+     *            The rule.
+     */
+    private void logDescription(Rule rule) {
+        String description = rule.getDescription();
+        StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+        while (tokenizer.hasMoreTokens()) {
+            logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+        }
     }
 
     /**
@@ -153,7 +139,7 @@ public final class ReportHelper {
                     return sourceProvider.getName(descriptor);
                 }
             } else if (value instanceof Iterable) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (Object o : ((Iterable) value)) {
                     if (sb.length() > 0) {
                         sb.append(",");
@@ -162,7 +148,7 @@ public final class ReportHelper {
                 }
                 return "[" + sb.toString() + "]";
             } else if (value instanceof Map) {
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 for (Map.Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()) {
                     if (sb.length() > 0) {
                         sb.append(",");

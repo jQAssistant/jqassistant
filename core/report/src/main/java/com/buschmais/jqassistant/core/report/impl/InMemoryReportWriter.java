@@ -69,7 +69,7 @@ public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerEx
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends Rule> void addResult(Map<String, Result<T>> results) {
+    private <T extends ExecutableRule> void addResult(Map<String, Result<T>> results) {
         if (currentResult != null) {
             results.put(currentResult.getRule().getId(), (Result<T>) currentResult);
             this.currentResult = null;
