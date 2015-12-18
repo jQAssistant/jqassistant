@@ -1,13 +1,11 @@
 package com.buschmais.jqassistant.core.report.api;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.slf4j.Logger;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
@@ -16,9 +14,9 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public final class ReportHelper {
 
-    private static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
+    public static String CONSTRAINT_VIOLATION_HEADER = "--[ Constraint Violation ]-----------------------------------------";
 
-    private static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
+    public static String CONCEPT_FAILED_HEADER = "--[ Concept Application Failure ]----------------------------------";
 
     private static String FOOTER = "-------------------------------------------------------------------";
 
@@ -49,7 +47,7 @@ public final class ReportHelper {
      */
     public int verifyConceptResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
-        return verifyRuleResults(violationSeverity, conceptResults, "Concept", CONCEPT_FAILED_HEADER, false);
+        return verifyRuleResults(conceptResults, violationSeverity, "Concept", CONCEPT_FAILED_HEADER, false);
     }
 
     /**
@@ -64,48 +62,89 @@ public final class ReportHelper {
      */
     public int verifyConstraintResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Constraint>> constraintResults = inMemoryReportWriter.getConstraintResults().values();
-        return verifyRuleResults(violationSeverity, constraintResults, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
+        return verifyRuleResults(constraintResults, violationSeverity, "Constraint", CONSTRAINT_VIOLATION_HEADER, true);
     }
 
-    private int verifyRuleResults(Severity violationSeverity, Collection<? extends Result<? extends ExecutableRule>> results, String type, String header,
-            boolean showResult) {
+    /**
+     * Verifies the given results and logs messages.
+     * 
+     * @param results
+     *            The collection of results to verify.
+     * @param violationSeverity
+     *            The severity to use for identifying violations (i.e.
+     *            threshold).
+     * @param type
+     *            The type of the rules (as string).
+     * @param header
+     *            The header to use.
+     * @param logResult
+     *            if <code>true</code> log the result of the executable rule.
+     * @return The number of detected violations.
+     */
+    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity violationSeverity, String type, String header,
+            boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
                 ExecutableRule rule = result.getRule();
-
-                logger.error(header);
-                logger.error(type + ": " + rule.getId());
-                logger.error("Severity: " + rule.getSeverity().getInfo(result.getSeverity()));
-
-                logDescription(rule);
-
-                if (showResult) {
-                    for (Map<String, Object> columns : result.getRows()) {
-                        StringBuilder message = new StringBuilder();
-                        for (Map.Entry<String, Object> entry : columns.entrySet()) {
-                            if (message.length() > 0) {
-                                message.append(", ");
-                            }
-                            message.append(entry.getKey());
-                            message.append('=');
-                            String stringValue = getStringValue(entry.getValue());
-                            message.append(stringValue);
-                        }
-                        logger.error("  " + message.toString());
-                    }
-                }
-
-                logger.error(FOOTER);
-                logger.error(System.lineSeparator());
-
-                // violationSeverity level check
+                String severityInfo = rule.getSeverity().getInfo(result.getSeverity());
+                List<String> resultRows = getResultRows(result, logResult);
+                // violation severity level check
                 if (result.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;
+
+                    logger.error(header);
+                    logger.error(type + ": " + rule.getId());
+                    logger.error("Severity: " + severityInfo);
+
+                    logDescription(rule);
+
+                    // we need lambdas...
+                    for (String row : resultRows) {
+                        logger.error(row);
+                    }
+
+                    logger.error(FOOTER);
+                    logger.error(System.lineSeparator());
+                } else {
+                    logger.warn(type + " failed: " + rule.getId() + ", Severity: " + severityInfo);
+                    // we need lambdas...
+                    for (String row : resultRows) {
+                        logger.debug(row);
+                    }
                 }
             }
         }
         return violations;
+    }
+
+    /**
+     * Convert the result rows into a string representation.
+     * 
+     * @param result
+     *            The result.
+     * @param logResult
+     *            if <code>false</code> suppress logging the result.
+     * @return The string representation as list.
+     */
+    private List<String> getResultRows(Result<?> result, boolean logResult) {
+        List<String> rows = new ArrayList<>();
+        if (logResult) {
+            for (Map<String, Object> columns : result.getRows()) {
+                StringBuilder row = new StringBuilder();
+                for (Map.Entry<String, Object> entry : columns.entrySet()) {
+                    if (row.length() > 0) {
+                        row.append(", ");
+                    }
+                    row.append(entry.getKey());
+                    row.append('=');
+                    String stringValue = getStringValue(entry.getValue());
+                    row.append(stringValue);
+                }
+                rows.add("  " + row.toString());
+            }
+        }
+        return rows;
     }
 
     /**
