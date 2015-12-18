@@ -2,9 +2,8 @@ package com.buschmais.jqassistant.plugin.cdi.api.model;
 
 import java.util.List;
 
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
@@ -12,7 +11,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Defines the label "Beans" representing a beans.xml descriptor.
  */
 @Label("Beans")
-public interface BeansXmlDescriptor extends CdiDescriptor, FileDescriptor, XmlDescriptor {
+public interface BeansXmlDescriptor extends CdiDescriptor, XmlFileDescriptor {
 
     /**
      * Return the version of the CDI specification.

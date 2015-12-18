@@ -2,11 +2,8 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
 import org.apache.maven.model.Plugin;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 
-/**
- * Created by dimahler on 5/5/2015.
- */
 public final class PluginCoordinates implements Coordinates {
 
     private Plugin plugin;
@@ -32,7 +29,7 @@ public final class PluginCoordinates implements Coordinates {
 
     @Override
     public String getType() {
-        return null;
+        return "jar";
     }
 
     @Override

@@ -3,37 +3,20 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.maven.RepositoryUtils;
 import org.apache.maven.index.ArtifactInfo;
-import org.apache.maven.index.MAVEN;
-import org.apache.maven.model.Model;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolverStrategy;
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
 
 /**
  * A scanner for (remote) maven repositories.
@@ -47,17 +30,8 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenRepositoryScannerPlugin.class);
 
     private static final String PROPERTY_NAME_DIRECTORY = "m2repo.directory";
-    private static final String PROPERTY_NAME_ARTIFACTS_KEEP = "m2repo.artifacts.keep";
-    private static final String PROPERTY_NAME_ARTIFACTS_SCAN = "m2repo.artifacts.scan";
-    private static final String PROPERTY_NAME_FILTER_INCLUDES = "m2repo.filter.includes";
-    private static final String PROPERTY_NAME_FILTER_EXCLUDES = "m2repo.filter.excludes";
 
     private File localDirectory;
-
-    private boolean keepArtifacts;
-    private boolean scanArtifacts;
-    private List<String> includeFilter;
-    private List<String> excludeFilter;
 
     /** {@inheritDoc} */
     @Override
@@ -87,196 +61,52 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     @Override
     public void configure() {
         localDirectory = new File(getStringProperty(PROPERTY_NAME_DIRECTORY, DEFAULT_M2REPO_DIR));
-        scanArtifacts = getBooleanProperty(PROPERTY_NAME_ARTIFACTS_SCAN, true);
-        keepArtifacts = getBooleanProperty(PROPERTY_NAME_ARTIFACTS_KEEP, true);
-        includeFilter = getFilterPattern(PROPERTY_NAME_FILTER_INCLUDES);
-        excludeFilter = getFilterPattern(PROPERTY_NAME_FILTER_EXCLUDES);
-    }
-
-    /**
-     * Extracts a list of artifact filters from the given property.
-     * 
-     * @param propertyName
-     *            The name of the property.
-     * @return The list of artifact patterns.
-     */
-    private List<String> getFilterPattern(String propertyName) {
-        String patterns = getStringProperty(propertyName, null);
-        if (patterns == null) {
-            return null;
-        }
-        List<String> result = new ArrayList<>();
-        for (String pattern : patterns.split(",")) {
-            String trimmed = pattern.trim();
-            if (!trimmed.isEmpty()) {
-                result.add(trimmed);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Resolves, scans and add the artifact to the
-     * {@link MavenRepositoryDescriptor}.
-     * 
-     * @param scanner
-     *            the {@link Scanner}
-     * @param repoDescriptor
-     *            the {@link MavenRepositoryDescriptor}
-     * @param pomModelBuilder
-     *            the {@link EffectiveModelBuilderImpl}
-     * @param artifactProvider
-     *            the {@link ArtifactProvider}
-     * @param artifactFilter
-     *            The {@link ArtifactFilter}.
-     * @param artifactInfo
-     *            informations about the searches artifact
-     * @throws IOException
-     */
-    private void resolveAndScan(Scanner scanner, MavenRepositoryDescriptor repoDescriptor, ArtifactProvider artifactProvider, PomModelBuilder pomModelBuilder,
-            ArtifactFilter artifactFilter, ArtifactInfo artifactInfo) throws IOException {
-        Store store = scanner.getContext().getStore();
-        String groupId = artifactInfo.getFieldValue(MAVEN.GROUP_ID);
-        String artifactId = artifactInfo.getFieldValue(MAVEN.ARTIFACT_ID);
-        String classifier = artifactInfo.getFieldValue(MAVEN.CLASSIFIER);
-        String packaging = artifactInfo.getFieldValue(MAVEN.PACKAGING);
-        String version = artifactInfo.getFieldValue(MAVEN.VERSION);
-        long lastModified = artifactInfo.lastModified;
-        Artifact artifact = new DefaultArtifact(groupId, artifactId, classifier, packaging, version);
-
-        Artifact modelArtifact = new DefaultArtifact(groupId, artifactId, null, "pom", version);
-
-        if (artifactFilter.match(RepositoryUtils.toArtifact(artifact))) {
-            try {
-                ArtifactResult modelArtifactResult = artifactProvider.getArtifact(modelArtifact);
-                File modelArtifactFile = modelArtifactResult.getArtifact().getFile();
-                Model model = pomModelBuilder.getModel(modelArtifactFile);
-                DefaultArtifact mainArtifact = new DefaultArtifact(model.getGroupId(), model.getArtifactId(), model.getPackaging(), model.getVersion());
-                RepositoryArtifactDescriptor repositoryArtifactDescriptor = getModel(repoDescriptor, mainArtifact, lastModified);
-                if (repositoryArtifactDescriptor == null) {
-                    scanner.getContext().push(PomModelBuilder.class, pomModelBuilder);
-                    FileDescriptor modelDescriptor;
-                    try {
-                        modelDescriptor = scanner.scan(modelArtifactFile, modelArtifactFile.getAbsolutePath(), null);
-                    } finally {
-                        scanner.getContext().pop(PomModelBuilder.class);
-                    }
-                    repositoryArtifactDescriptor = addRepositoryArtifact(repoDescriptor, modelDescriptor, mainArtifact, lastModified, store);
-                    if (!keepArtifacts) {
-                        modelArtifactFile.delete();
-                    }
-                }
-                if (scanArtifacts && !artifact.equals(modelArtifact)) {
-                    ArtifactResult artifactResult = artifactProvider.getArtifact(artifact);
-                    File artifactFile = artifactResult.getArtifact().getFile();
-                    Descriptor descriptor = scanner.scan(artifactFile, artifactFile.getAbsolutePath(), null);
-                    MavenArtifactDescriptor mavenArtifactDescriptor = store.addDescriptorType(descriptor, MavenArtifactDescriptor.class);
-                    ArtifactResolver.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
-                    repositoryArtifactDescriptor.getDescribes().add(mavenArtifactDescriptor);
-                    if (!keepArtifacts) {
-                        artifactFile.delete();
-                    }
-                }
-            } catch (ArtifactResolutionException e) {
-                LOGGER.warn(e.getMessage());
-            }
-        }
-    }
-
-    private RepositoryArtifactDescriptor getModel(MavenRepositoryDescriptor repositoryDescriptor, Artifact artifact, long lastModified) {
-        String coordinates = ArtifactResolver.getId(new ArtifactCoordinates(artifact));
-        if (artifact.isSnapshot()) {
-            return repositoryDescriptor.getSnapshotArtifact(coordinates, lastModified);
-        } else {
-            return repositoryDescriptor.getArtifact(coordinates);
-        }
-    }
-
-    private RepositoryArtifactDescriptor addRepositoryArtifact(MavenRepositoryDescriptor repoDescriptor, FileDescriptor descriptor, Artifact artifact,
-            long lastModified, Store store) {
-        RepositoryArtifactDescriptor artifactDescriptor = store.addDescriptorType(descriptor, RepositoryArtifactDescriptor.class);
-        artifactDescriptor.setLastModified(lastModified);
-        artifactDescriptor.setContainingRepository(repoDescriptor);
-        String coordinates = ArtifactResolver.getId(new ArtifactCoordinates(artifact));
-        artifactDescriptor.setMavenCoordinates(coordinates);
-        RepositoryArtifactDescriptor lastSnapshot = repoDescriptor.getLastSnapshot(coordinates, lastModified);
-        if (lastSnapshot != null) {
-            artifactDescriptor.setPredecessorArtifact(lastSnapshot);
-            lastSnapshot.setContainingRepository(null);
-        }
-        return artifactDescriptor;
     }
 
     /** {@inheritDoc} */
     @Override
-    public MavenRepositoryDescriptor scan(URL item, String path, Scope scope, Scanner scanner) throws IOException {
-        String userInfo = item.getUserInfo();
-        String username = StringUtils.substringBefore(userInfo, ":");
-        String password = StringUtils.substringAfter(userInfo, ":");
+    public MavenRepositoryDescriptor scan(URL repositoryUrl, String path, Scope scope, Scanner scanner) throws IOException {
         if (!localDirectory.exists()) {
             LOGGER.info("Creating local maven repository directory {}", localDirectory.getAbsolutePath());
             localDirectory.mkdirs();
         }
-        File workDirectory = new File(localDirectory, DigestUtils.md5Hex(item.toString()));
-        File repositoryRoot = new File(workDirectory, "repository");
-        File indexRoot = new File(workDirectory, "index");
-        FileResolverStrategy fileResolverStrategy = new RepositoryFileResolverStrategy(repositoryRoot);
-        FileResolver fileResolver = scanner.getContext().peek(FileResolver.class);
-        fileResolver.addStrategy(fileResolverStrategy);
-        // handles the remote maven index
-        MavenIndex mavenIndex = new MavenIndex(item, repositoryRoot, indexRoot, username, password);
-        // used to resolve (remote) artifacts
-        ArtifactProvider artifactProvider = new ArtifactProvider(item, repositoryRoot, username, password);
-        PomModelBuilder pomModelBuilder = new EffectiveModelBuilderImpl(artifactProvider);
-        ArtifactFilter artifactFilter = new ArtifactFilter(includeFilter, excludeFilter);
-        try {
-            return scanRepository(item, scanner, mavenIndex, artifactProvider, pomModelBuilder, artifactFilter);
-        } finally {
-            fileResolver.removeStrategy(fileResolverStrategy);
-        }
+        MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(scanner.getContext().getStore(), repositoryUrl.toString());
+        AetherArtifactProvider artifactProvider = new AetherArtifactProvider(repositoryUrl, repoDescriptor, localDirectory);
+        scan(artifactProvider, scanner);
+        return repoDescriptor;
     }
 
     /**
-     * Scans a Repository.
+     * Scan the repository represented by the given artifact provider.
      * 
-     * @param item
-     *            the URL
-     * @param scanner
-     *            the Scanner
-     * @param mavenIndex
-     *            the MavenIndex
      * @param artifactProvider
-     *            the ArtifactResolver
-     * @param pomModelBuilder
-     *            the PomModelBuilder
-     * @param artifactFilter
-     *            The artifact filter to apply.
-     * @return a MavenRepositoryDescriptor
+     *            The artifact provider.
      * @throws IOException
+     *             If scanning fails.
      */
-    public MavenRepositoryDescriptor scanRepository(URL item, Scanner scanner, MavenIndex mavenIndex, ArtifactProvider artifactProvider,
-            PomModelBuilder pomModelBuilder, ArtifactFilter artifactFilter) throws IOException {
-
-        Store store = scanner.getContext().getStore();
+    public void scan(AetherArtifactProvider artifactProvider, Scanner scanner) throws IOException {
         // the MavenRepositoryDescriptor
-        MavenRepositoryDescriptor repoDescriptor = getRepositoryDescriptor(store, item.toString());
-
+        MavenIndex mavenIndex = artifactProvider.getMavenIndex();
         Date lastIndexUpdateTime = mavenIndex.getLastUpdateLocalRepo();
-        Date lastScanTime = new Date(repoDescriptor.getLastScanDate());
+        MavenRepositoryDescriptor repositoryDescriptor = artifactProvider.getRepositoryDescriptor();
+        Date lastScanTime = new Date(repositoryDescriptor.getLastUpdate());
         Date artifactsSince = lastIndexUpdateTime;
         if (lastIndexUpdateTime == null || lastIndexUpdateTime.after(lastScanTime)) {
             artifactsSince = lastScanTime;
         }
-
         mavenIndex.updateIndex();
-
         // Search artifacts
-        Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
-        for (ArtifactInfo ai : searchResponse) {
-            resolveAndScan(scanner, repoDescriptor, artifactProvider, pomModelBuilder, artifactFilter, ai);
+        ScannerContext context = scanner.getContext();
+        context.push(ArtifactProvider.class, artifactProvider);
+        try {
+            Iterable<ArtifactInfo> searchResponse = mavenIndex.getArtifactsSince(artifactsSince);
+            for (ArtifactInfo ai : searchResponse) {
+                scanner.scan(ai, ai.toString(), MavenScope.REPOSITORY);
+            }
+        } finally {
+            context.pop(ArtifactProvider.class);
         }
         mavenIndex.closeCurrentIndexingContext();
-        repoDescriptor.setLastScanDate(System.currentTimeMillis());
-        return repoDescriptor;
+        repositoryDescriptor.setLastUpdate(System.currentTimeMillis());
     }
 }

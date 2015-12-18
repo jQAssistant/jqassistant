@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.plugin</groupId>
         <artifactId>jqassistant.plugin</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant.plugin.tycho</artifactId>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.eclipse.tycho</groupId>
             <artifactId>tycho-packaging-plugin</artifactId>
-            <version>0.21.0</version>
+            <version>0.23.1</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

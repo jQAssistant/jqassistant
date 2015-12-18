@@ -12,12 +12,16 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.common.report.RuleHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lists all available rules.
  */
 @Mojo(name = "available-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class AvailableRulesMojo extends AbstractProjectMojo {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AvailableRulesMojo.class);
+
 
     @Override
     protected boolean isResetStoreBeforeExecution() {
@@ -28,7 +32,7 @@ public class AvailableRulesMojo extends AbstractProjectMojo {
     public void aggregate(MavenProject rootModule, List<MavenProject> projects, Store store) throws MojoExecutionException, MojoFailureException {
         getLog().info("Available rules for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule);
-        RuleHelper ruleHelper = new RuleHelper(new MavenConsole(getLog()));
+        RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
             ruleHelper.printRuleSet(ruleSet);
         } catch (AnalysisException e) {

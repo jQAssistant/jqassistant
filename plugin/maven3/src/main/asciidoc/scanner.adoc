@@ -22,17 +22,19 @@ A pom.xml file describing a single Maven project.
 .Relations of :Maven:Project:File:Directory
 [options="header"]
 |====
-| Name       | Target label(s)    | Cardinality | Description
-| CREATES    | <<:Artifact>>      | 0..n        | References an artifact created by the project
-| HAS_PARENT | <<:Maven:Project>> | 0..1        | References the parent project (optional)
-| HAS_MODULE | <<:Maven:Project>> | 0..n        | References modules of this project (optional)
+| Name                | Target label(s)         | Cardinality | Description
+| CREATES             | <<:Maven:Artifact>>     | 0..n        | References an artifact created by the project
+| HAS_MODEL           | <<:Maven:Pom>>          | 1           | References the POM model of the project
+| HAS_EFFECTIVE_MODEL | <<:Maven:Pom>>          | 1           | References the effective POM model of the project
+| HAS_PARENT          | <<:Maven:Project>>      | 0..1        | References the parent project (optional)
+| HAS_MODULE          | <<:Maven:Project>>      | 0..n        | References modules of this project (optional)
 |====
 
-[[:Artifact]]
-=== :Artifact
+[[:Maven:Artifact]]
+=== :Maven:Artifact
 Represents an artifact, e.g. a JAR-File.
 
-.Properties of :Artifact
+.Properties of :Maven:Artifact
 [options="header"]
 |====
 | Name       | Description
@@ -43,12 +45,12 @@ Represents an artifact, e.g. a JAR-File.
 | version    | The version
 |====
 
-.Relations of :Artifact
+.Relations of :Maven:Artifact
 [options="header"]
 |====
 | Name       | Target label(s) | Cardinality | Description
 | CONTAINS   | :File           | 0..n        | References a file contained in the artifact
-| DEPENDS_ON | <<:Artifact>>   | 0..n        | References an artifact which is a declared dependency
+| DEPENDS_ON | <<:Maven:Artifact>>   | 0..n        | References an artifact which is a declared dependency
 |====
 
 .Properties of :DEPENDS_ON
@@ -61,34 +63,34 @@ Represents an artifact, e.g. a JAR-File.
 
 <<MavenPomScanner>>
 [[MavenPomScanner]]
-== Scanner for Maven pom.xml files
-Imports raw information from Maven pom.xml files.
+== Scanner for Maven POMs
+Imports information from Maven POMs (e.g. pom.xml) files.
 
-[[:Maven:Pom:Xml]]
-=== :Maven:Pom:Xml:File
-A pom.xml file describing a single Maven project.
+[[:Maven:Pom]]
+=== :Maven:Pom
+A POM describing a Maven project.
 
-.Properties of :Maven:Pom:Xml:File
+.Properties of :Maven:Pom
 [options="header"]
 |====
 | Name       | Description
 | group      | The group id
 | name       | The artifact id
 | type       | The type, e.g. "jar"
-| classifier | The classifiert
+| classifier | The classifier (optional)
 | version    | The version
 |====
 
-.Relations of :Maven:Pom:Xml:File
+.Relations of :Maven:Pom
 [options="header"]
 |====
 | Name                | Target label(s)         | Cardinality | Description
-| HAS_PARENT          | :Maven<<:Artifact>>:Pom | 0..1        | References a parent aritfact
+| HAS_PARENT          | <<:Maven:Pom>>          | 0..1        | References a parent aritfact
 | HAS_PROPERTY        | :Value:Property         | 0..n        | References a property
 | HAS_PROFILE         | <<:Maven:Profile>>      | 0..n        | References defined profiles
 | USES_LICENSE        | <<:Maven:License>>      | 0..n        | References used licenses
-| MANAGES_DEPENDENCY  | :Maven<<:Artifact>>     | 0..n        | References an artifact which is a managed dependency
-| DECLARES_DEPENDENCY | :Maven<<:Artifact>>     | 0..n        | References an artifact which is a declared dependency
+| MANAGES_DEPENDENCY  | <<:Maven:Artifact>>     | 0..n        | References an artifact which is a managed dependency
+| DECLARES_DEPENDENCY | <<:Maven:Artifact>>     | 0..n        | References an artifact which is a declared dependency
 | HAS_MODULE          | <<:Maven:Module>>       | 0..n        | References a sub module
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>       | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>       | 0..n        | References a plugin that is used during maven lifecycle
@@ -110,8 +112,8 @@ A maven profile
 |====
 | Name                | Target label(s)              | Cardinality | Description
 | HAS_PROPERTY        | :Value:Property              | 0..n        | References a property
-| MANAGES_DEPENDENCY  | :Maven<<:Artifact>>          | 0..n        | References an artifact which is a managed dependency
-| DECLARES_DEPENDENCY | :Maven<<:Artifact>>          | 0..n        | References an artifact which is a declared dependency
+| MANAGES_DEPENDENCY  | <<:Maven:Artifact>>          | 0..n        | References an artifact which is a managed dependency
+| DECLARES_DEPENDENCY | <<:Maven:Artifact>>          | 0..n        | References an artifact which is a declared dependency
 | HAS_MODULE          | <<:Maven:Module>>            | 0..n        | References a sub module
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>            | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>            | 0..n        | References a plugin that is used during maven lifecycle
@@ -198,6 +200,7 @@ A maven plugin
 | Name              | Target label(s)            | Cardinality | Description
 | HAS_EXECUTION     | <<:Maven:PluginExecution>> | 0..n        | References a PluginExecution
 | HAS_CONFIGURATION | <<:Maven:Configuration>>   | 0..1        | References the configuration for the plugin
+| IS_ARTIFACT       | <<:Maven:Artifact>>        | 1           | References Maven artifact representing the Maven plugin
 |====
 
 [[:Maven:License]]

@@ -3,7 +3,9 @@
     <description>Aggregates plugins providing scanners and rules for Java EE 6 technologies (e.g. JPA2, EJB3).</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.EnterpriseApplicationArchiveDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDirectoryDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.SessionConfigDescriptor</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.api.model.ErrorPageDescriptor</class>
@@ -49,7 +51,8 @@
     </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarArchiveScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebApplicationArchiveScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebApplicationDirectoryScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin</class>

@@ -28,17 +28,17 @@ public class ByteCodeVersionIT extends AbstractJavaPluginIT {
         List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         ClassFileDescriptor pojo = types.get(0);
-        assertThat(pojo.getByteCodeVersion(), equalTo(51)); // Java 7
+        assertThat(pojo.getByteCodeVersion(), equalTo(52)); // Java 8
         store.commitTransaction();
 
     }
 
     @Test
-    public void javaVersion() throws IOException, AnalysisException {
+    public void javaVersion() throws Exception {
         scanClasses(Pojo.class);
         assertThat(applyConcept("java:JavaVersion").getStatus(), CoreMatchers.equalTo(SUCCESS));
         store.beginTransaction();
-        List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion='Java 7' RETURN t").getColumn("t");
+        List<ClassFileDescriptor> types = query("MATCH (t:Type) WHERE t.name='Pojo' and t.javaVersion='Java 8' RETURN t").getColumn("t");
         assertThat(types.size(), equalTo(1));
         ClassFileDescriptor pojo = types.get(0);
         assertThat(pojo, typeDescriptor(Pojo.class));

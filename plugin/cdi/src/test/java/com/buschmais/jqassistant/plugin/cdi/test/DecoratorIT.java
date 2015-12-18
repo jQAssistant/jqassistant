@@ -29,7 +29,7 @@ public class DecoratorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void decorator() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void decorator() throws Exception {
         scanClasses(DecoratorBean.class);
         assertThat(applyConcept("decorator:Decorator").getStatus(), equalTo(Result.Status.SUCCESS));
         store.beginTransaction();

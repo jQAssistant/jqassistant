@@ -1,39 +1,50 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.Finders.findKeyByName;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.Finders.findValueByValue;
+import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.util.StringValueMatcher.hasValue;
+import static java.lang.String.format;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+
+import java.io.File;
+import java.util.List;
+
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matchers;
+import org.junit.*;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLValueDescriptor;
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.util.StringValueMatcher.hasValue;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
 
 public class YAMLFileScannerPluginIT extends AbstractPluginIT {
+
+    @Before
+    public void startTransaction() {
+        store.beginTransaction();
+    }
+
+    @After
+    public void commitTransaction() {
+        store.commitTransaction();
+    }
+
+
     @Test
     public void scanReturnsFileDescriptorWithCorrectFileName() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/simple-key-value-pair.yaml");
 
@@ -45,15 +56,11 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(file.getFileName(), Matchers.notNullValue());
         assertThat(file.getFileName(), endsWith("probes/valid/simple-key-value-pair.yaml"));
-
-        store.commitTransaction();
     }
 
 
     @Test
     public void scanSimpleKeyValuePairYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/simple-key-value-pair.yaml");
 
@@ -84,15 +91,11 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(value.getValue(), equalTo("value"));
         assertThat(value.getPosition(), equalTo(0));
-
-        store.commitTransaction();
     }
 
 
     @Test
     public void scanTwoSimpleKeyValuePairsYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/two-simple-key-value-pairs.yaml");
 
@@ -124,16 +127,11 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(valueOfKeyA.getValue(), equalTo("valueA"));
         assertThat(valueOfKeyA.getPosition(), equalTo(0));
-
-
-        store.commitTransaction();
     }
 
 
     @Test
     public void scanSimpleListYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/simple-list.yaml");
 
@@ -157,15 +155,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyDescriptor.getKeys(), empty());
         assertThat(keyDescriptor.getValues(), containsInAnyOrder(hasValue("a"), hasValue("b"),
                                                                  hasValue("c")));
-
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanSequenceOfScalarsYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.1-sequence-of-scalars.yaml");
 
@@ -187,21 +180,42 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(document.getValues(), containsInAnyOrder(hasValue("Mark McGwire"),
                                                             hasValue("Sammy Sosa"),
                                                             hasValue("Ken Griffey")));
-
-        store.commitTransaction();
     }
 
     @Test
-    @Ignore
     public void scanScalarsOfScalarsYAML() {
-        Assert.fail("Not implemented yet!");
-//        "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml"
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml");
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query("MATCH (f:YAML:File) WHERE f.fileName=~'.*/sec-2.1-example-2.2-scalars-of-scalars.yaml' RETURN f")
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, not(empty()));
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor yamlFileDescriptor = fileDescriptors.get(0);
+
+        assertThat(yamlFileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor yamlDocumentDescriptor = yamlFileDescriptor.getDocuments().get(0);
+
+        assertThat(yamlDocumentDescriptor.getKeys(), hasSize(3));
+        assertThat(yamlDocumentDescriptor.getValues(), Matchers.empty());
+
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "hr"), Matchers.notNullValue());
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "avg"), Matchers.notNullValue());
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "rbi"), Matchers.notNullValue());
+
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "hr").getValues(), hasSize(1));
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "avg").getValues(), hasSize(1));
+        assertThat(findKeyByName(yamlDocumentDescriptor.getKeys(), "rbi").getValues(), hasSize(1));
     }
 
     @Test
     public void scanValidDropWizardConfigYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/valid/dropwizard-configuration.yaml");
 
@@ -236,14 +250,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(subKey2.getName(), equalTo("applicationConnectors"));
         assertThat(subKey3.getName(), equalTo("adminConnectors"));
         assertThat(subKey4.getName(), equalTo("requestLog"));
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanMappingScalarsToSequencesYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.3-mapping-scalars-to-sequences.yaml");
 
@@ -279,7 +289,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(keyDescriptor2.getValues(), containsInAnyOrder(hasValue("New York Mets"),
                                                                   hasValue("Chicago Cubs"),
                                                                   hasValue("Atlanta Braves")));
-        store.commitTransaction();
     }
 
     @Test
@@ -291,8 +300,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
     @Test
     public void scanSequenceOfSequencesYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.5-sequence-of-sequences.yaml");
 
@@ -328,14 +335,10 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         assertThat(thirdSequence.getValues(), containsInAnyOrder(hasValue("Sammy Sosa"),
                                                                  hasValue("63"),
                                                                  hasValue("0.288")));
-
-        store.commitTransaction();
     }
 
     @Test
     public void scanMappingOfMappingsYAML() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
                                  "/probes/yamlspec/1.1/sec-2.1-example-2.6-mapping-of-mappings.yaml");
 
@@ -364,10 +367,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLKeyDescriptor keyA1 = findKeyByName(keyA.getKeys(), "hr");
 
-
-        System.out.println(keyA1.getName());
-        System.out.println(keyA1.getFullQualifiedName());
-
         assertThat(keyA1.getName(), equalTo("hr"));
         assertThat(keyA1.getFullQualifiedName(), CoreMatchers.equalTo("Mark McGwire.hr"));
         assertThat(keyA1.getKeys(), empty());
@@ -376,9 +375,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
 
         YAMLKeyDescriptor keyA2 = findKeyByName(keyA.getKeys(), "avg");
-
-        System.out.println(keyA2.getName());
-        System.out.println(keyA2.getFullQualifiedName());
 
         assertThat(keyA2.getName(), equalTo("avg"));
         assertThat(keyA2.getFullQualifiedName(), CoreMatchers.equalTo("Mark McGwire.avg"));
@@ -398,9 +394,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(keyB2.getFullQualifiedName(), CoreMatchers.equalTo("Sammy Sosa.avg"));
         assertThat(keyB2.getValues(), hasSize(1));
-        assertThat(keyB2.getValues(), contains(hasValue("0.288")));
-
-        store.commitTransaction();
+        assertThat(keyB2.getValues(), hasItem(hasValue("0.288")));
     }
 
     @Test
@@ -418,15 +412,66 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
     }
 
     @Test
-    @Ignore
     public void scanSingleDocumentWithCommentsYAML() {
-        Assert.fail("Not implemented yet!");
-//             {"/probes/yamlspec/1.1/sec-2.2-example-2.9-single-document-with-comments.yaml"},
+        String fileName = "sec-2.2-example-2.9-single-document-with-comments.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/1.1/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
+
+        assertThat(document.getKeys(), hasSize(2));
+        assertThat(document.getValues(), empty());
+
+        // Enough tests. The same structure is covered by other tests
     }
 
-//    @Test
-//    public void scan//             {"/probes/yamlspec/1.1/sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml"},
+    @Test
+    public void scanNodeForSammySosaTwice() {
+        String fileName = "sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml";
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/1.1/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
+
+        assertThat(document.getKeys(), hasSize(2));
+        assertThat(document.getValues(), empty());
+
+        //-- In this test I will try to find the nodes by its fqn
+
+        List<YAMLKeyDescriptor> nodes = query("MATCH (k:YAML:Key) RETURN k").getColumn("k");
+
+        assertThat(nodes, hasSize(2));
+
+        YAMLKeyDescriptor rbiNode = findKeyByName(nodes, "rbi");
+
+        assertThat(rbiNode, Matchers.notNullValue());
+        assertThat(rbiNode.getValues(), hasSize(2));
+        assertThat(rbiNode.getValues(), hasItem(hasValue("Sammy Sosa")));
+    }
 
 //    @Test
 //    public void scan//             {"/probes/yamlspec/1.1/sec-2.2-example-2.11-mapping-betweend-sequences.yaml"},
@@ -444,9 +489,56 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 //    public void scan//             {"/probes/yamlspec/1.1/sec-2.3-example-2.14-in-the-plain-scalar-newline-as-spaces.yaml"},
 //             {"/probes/yamlspec/1.1/sec-2.3-example-2.14-in-the-plain-scalar-newline-as-spaces.yaml"},
 
-//    @Test
-//    public void scan//             {"/probes/yamlspec/1.1/sec-2.3-example-2.15-folded-newlines-are-preserved.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.3-example-2.15-folded-newlines-are-preserved.yaml"},
+    @Test
+    public void scanFoldedNewLinesArePreserved() {
+        String fileName = "sec-2.3-example-2.15-folded-newlines-are-preserved.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/yamlspec/1.1/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/1.1/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = fileDescriptor.getDocuments().get(0);
+
+        assertThat(document.getKeys(), empty());
+        assertThat(document.getValues(), hasSize(1));
+
+        YAMLValueDescriptor valueDescriptor = document.getValues().get(0);
+
+        assertThat(valueDescriptor.getValue(), equalTo("Sammy Sosa completed another" +
+                                                            " fine season with great stats.\n" +
+                                                            "\n" +
+                                                            "  63 Home Runs\n" +
+                                                            "  0.288 Batting Average\n" +
+                                                            "\n" +
+                                                            "What a year!"));
+
+        List<YAMLValueDescriptor> valuesOfDocument =
+             query(format("MATCH (f:YAML:File)-[:CONTAINS_DOCUMENT]->(d:YAML:Document)-[:CONTAINS_VALUE]->(v) WHERE f.fileName=~'.*/1.1/%s' RETURN v", fileName))
+                  .getColumn("v");
+
+        assertThat(valuesOfDocument, hasSize(1));
+
+        YAMLValueDescriptor valueOfDocument = valuesOfDocument.get(0);
+
+        assertThat(valueOfDocument.getValue(), equalTo("Sammy Sosa completed another" +
+                                                       " fine season with great stats.\n" +
+                                                       "\n" +
+                                                       "  63 Home Runs\n" +
+                                                       "  0.288 Batting Average\n" +
+                                                       "\n" +
+                                                       "What a year!"));
+    }
 
     @Test
     @Ignore
@@ -538,33 +630,143 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
         Assert.fail("Not implemented yet!");
     }
 
-    /**
-     * Finds a value by its value. This method helps
-     * to make the tests more stable as the order of
-     * search result collection elements might vary.
-     */
-    static <T extends YAMLValueDescriptor> T findValueByValue(Collection<T> in, String value) {
-        for (T element : in) {
-            if (value.equals(element.getValue())) {
-                return element;
-            }
-        }
+    @Test
+    public void scanAnInvalidMappingAndParsedIsFalse() {
+        String fileName = "invalid-mapping.yaml";
 
-        throw new NoSuchElementException("No entry with value '" + value + "' found.");
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.isValid(), is(false));
     }
 
-    /**
-     * Finds a descriptor by the name of the node. This method
-     * helps to make the tests more stable as the order of the
-     * search result collection elements might vary.
-     */
-    static <T extends NamedDescriptor> T findKeyByName(Collection<T> in, String name) {
-        for (T element : in) {
-            if (name.equals(element.getName())) {
-                return element;
-            }
-        }
+    @Test
+    public void scanAnValidMappingAndParsedIsTrue() {
+        String fileName = "simple-list.yaml";
 
-        throw new NoSuchElementException("No entry with name '" + name + "' found.");
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.isValid(), is(true));
+    }
+
+    @Test
+    public void invalidDocumentInHostConfigInvalidLeedsToParsingError() {
+        String fileName = "hostconfig-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.isValid(), is(false));
+    }
+
+    @Test
+    public void ifParsingFailsThereWillBeNoNodesForTheContentOfTheYAMLFile() {
+        String fileName = "hostconfig-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.isValid(), is(false));
+
+        List<YAMLFileDescriptor> childNodes =
+             query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
+                  .getColumn("c");
+
+        assertThat(childNodes, anyOf(empty(), nullValue()));
+    }
+
+    @Test
+    public void ifParsingFailsThePropertyInvalidWillBeTrue() {
+        String fileName = "hostconfig-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' AND " +
+ "f.valid = false RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+    }
+
+    @Test
+    public void ifParsingSuccedsThePropertyValidWillBeTrue() {
+        String fileName = "simple-list.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' AND " +
+ "f.valid = true RETURN f", fileName))
+                  .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+    }
+
+    @Test
+    public void ifParsingFailsThereWillBeNoNodesForTheContentOfTheSecondYAMLDocument() {
+        String fileName = "hostconfig-2-invalid.yaml";
+
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/invalid/" + fileName);
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query(format("MATCH (f:YAML:File) WHERE f.fileName=~'.*/%s' RETURN f", fileName))
+                  .getColumn("f");
+
+        YAMLFileDescriptor fileDescriptor = fileDescriptors.get(0);
+
+        assertThat(fileDescriptor.isValid(), is(false));
+
+        List<YAMLFileDescriptor> childNodes =
+             query(format("MATCH (f:YAML:File)-[*]->(c) WHERE f.fileName=~'.*/%s' RETURN c", fileName))
+                  .getColumn("c");
+
+        assertThat(childNodes, anyOf(empty(), nullValue()));
     }
 }

@@ -1,0 +1,58 @@
+= Rules
+
+[[test:Default]]
+[role="group",includesConstraints="test:Constraint,test:CriticalConstraint(CRITICAL)",includesConcepts="test:Concept,test:CriticalConcept(CRITICAL)",includesGroups="test:Group"]
+== Default Rules
+* <<test:Concept>>
+* <<test:CriticalConcept>>
+* <<test:Constraint>>
+* <<test:CriticalConstraint>>
+* <<test:Group>>
+
+== Concepts
+
+[[test:Concept]]
+.Test Concept
+[source,cypher,role=concept]
+----
+match
+  (n)
+return
+  n
+----
+
+[[test:CriticalConcept]]
+.Test Concept
+[source,cypher,role=concept]
+----
+match
+  (n)
+return
+  n
+----
+
+== Constraints
+
+[[test:Constraint]]
+.Test Constraint
+[source,cypher,role=constraint,requreseverity=minor]
+----
+match
+  (n)
+return
+  n
+----
+
+[[test:CriticalConstraint]]
+.Test Constraint
+[source,cypher,role=constraint,severity=minor]
+----
+match
+  (n)
+return
+  n
+----
+
+[[test:Group]]
+[role="group"]
+== Group

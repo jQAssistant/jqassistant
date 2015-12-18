@@ -5,7 +5,16 @@ import static java.util.Arrays.asList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.ast.ContentPart;
@@ -15,7 +24,18 @@ import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.Report;
+import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
+import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
@@ -24,26 +44,36 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
  */
 public class AsciiDocRuleSetReader implements RuleSetReader {
 
-    private static final Set<String> RULETYPES = new HashSet<>(asList("concept", "constraint"));
+    private static final Set<String> EXECUTABLE_RULE_TYPES = new HashSet<>(asList("concept", "constraint"));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AsciiDocRuleSetReader.class);
 
+    private static final Pattern DEPENDENCY_PATTERN = Pattern.compile("(.*?)(\\((.*)\\))?");
+
     /**
-     *
+     * The cached rule set reader, initialized lazily.
      */
-    private Asciidoctor cachedAsciidoctor;
+    private Asciidoctor cachedAsciidoctor = null;
 
     @Override
-    public RuleSet read(List<? extends RuleSource> sources) throws RuleException {
-        RuleSetBuilder builder = RuleSetBuilder.newInstance();
+    public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
         for (RuleSource source : sources) {
             if (source.isType(RuleSource.Type.AsciiDoc)) {
-                readDocument(source, builder);
+                readDocument(source, ruleSetBuilder);
             }
         }
-        return builder.getRuleSet();
     }
 
+    /**
+     * Reads and decodes a rule source.
+     * 
+     * @param source
+     *            The source.
+     * @param builder
+     *            The builder to use.
+     * @throws RuleException
+     *             If building fails.
+     */
     private void readDocument(RuleSource source, RuleSetBuilder builder) throws RuleException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(Asciidoctor.STRUCTURE_MAX_LEVEL, 10);
@@ -54,7 +84,8 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             throw new IllegalArgumentException("Cannot read rules from '" + source.getId() + "'.", e);
         }
         StructuredDocument doc = getAsciidoctor().readDocumentStructure(new InputStreamReader(stream), parameters);
-        extractRules(doc, builder);
+        extractExecutableRules(source, doc, builder);
+        extractGroups(source, doc, builder);
     }
 
     /**
@@ -73,25 +104,22 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         return cachedAsciidoctor;
     }
 
-    /**
-     * Extract the rules from the given document.
-     * 
-     * @param doc
-     *            The document.
-     * @param builder
-     *            The ruleset builder
-     * @throws com.buschmais.jqassistant.core.analysis.api.RuleException
-     *             If the rules are not consistent
-     */
-    private void extractRules(StructuredDocument doc, RuleSetBuilder builder) throws RuleException {
-        for (ContentPart part : findListings(doc)) {
+    private void extractExecutableRules(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder builder) throws RuleException {
+        for (ContentPart part : findExecutableRules(doc.getParts())) {
             Map<String, Object> attributes = part.getAttributes();
             String id = part.getId();
             String description = attributes.get("title").toString();
-            Set<String> requiresConcepts = getDependencies(attributes);
-            Executable executable = null;
+            Set<String> requiresConcepts = new HashSet<>(getDependencies(attributes, "requiresConcepts").keySet());
+            Set<String> depends = getDependencies(attributes, "depends").keySet();
+            if (!depends.isEmpty()) {
+                LOGGER.info(
+                        "Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}'}.",
+                        ruleSource.getId(), id);
+                requiresConcepts.addAll(depends);
+            }
             Object language = part.getAttributes().get("language");
             String source = unescapeHtml(part.getContent());
+            Executable executable;
             if ("cypher".equals(language)) {
                 executable = new CypherExecutable(source);
             } else {
@@ -109,16 +137,69 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if ("concept".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = new Concept(id, description, severity, null, executable, Collections.<String, Object> emptyMap(), requiresConcepts,
-                        verification, report);
+                Concept concept =
+                        new Concept(id, description, ruleSource, severity, null, executable, Collections.<String, Object>emptyMap(),
+                                requiresConcepts, verification, report);
                 builder.addConcept(concept);
             } else if ("constraint".equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint concept = new Constraint(id, description, severity, null, executable, Collections.<String, Object> emptyMap(), requiresConcepts,
-                        verification, report);
-                builder.addConstraint(concept);
+                Constraint constraint =
+                        new Constraint(id, description, ruleSource, severity, null, executable, Collections.<String, Object>emptyMap(),
+                                requiresConcepts, verification, report);
+                builder.addConstraint(constraint);
             }
         }
+    }
+
+    /**
+     * Extract the defined groups from a document.
+     * 
+     * @param ruleSource
+     *            The source of the document.
+     * @param doc
+     *            The document.
+     * @param ruleSetBuilder
+     *            The rule set builder.
+     * @throws RuleException
+     *             If the rules cannot be built.
+     */
+    private void extractGroups(RuleSource ruleSource, StructuredDocument doc, RuleSetBuilder ruleSetBuilder) throws RuleException {
+        for (ContentPart contentPart : findGroups(doc.getParts())) {
+            Map<String, Object> attributes = contentPart.getAttributes();
+            Map<String, Severity> constraints = getDependencies(attributes, "includesConstraints");
+            Map<String, Severity> concepts = getDependencies(attributes, "includesConcepts");
+            Set<String> groups = getDependencies(attributes, "includesGroups").keySet();
+            Group group = new Group(contentPart.getId(), contentPart.getTitle(), ruleSource, concepts, constraints, groups);
+            ruleSetBuilder.addGroup(group);
+        }
+    }
+
+    /**
+     * Get dependency declarations for an attribute from a map of attributes.
+     * 
+     * @param attributes
+     *            The map of attributes.
+     * @param attributeName
+     *            The name of the attribute.
+     * @return A map containing the ids of the dependencies as keys and their severity (optional).
+     */
+    private Map<String, Severity> getDependencies(Map<String, Object> attributes, String attributeName) throws RuleException {
+        String attribute = (String) attributes.get(attributeName);
+        Set<String> dependencies = new HashSet<>();
+        if (attribute != null && !attribute.trim().isEmpty()) {
+            dependencies.addAll(asList(attribute.split("\\s*,\\s*")));
+        }
+        Map<String, Severity> rules = new HashMap<>();
+        for (String dependency : dependencies) {
+            Matcher matcher = DEPENDENCY_PATTERN.matcher(dependency);
+            if (matcher.matches()) {
+                String id = matcher.group(1);
+                String severityValue = matcher.group(3);
+                Severity severity = severityValue != null ? Severity.fromValue(severityValue.toLowerCase()) : null;
+                rules.put(id, severity);
+            }
+        }
+        return rules;
     }
 
     /**
@@ -130,16 +211,19 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      *            The default severity to use if no severity is specified.
      * @return The severity.
      */
-    private Severity getSeverity(ContentPart part, Severity defaultSeverity) {
+    private Severity getSeverity(ContentPart part, Severity defaultSeverity) throws RuleException {
         Object severity = part.getAttributes().get("severity");
-        return severity == null ? defaultSeverity : Severity.fromValue(severity.toString().toLowerCase());
+        if (severity == null) {
+            return defaultSeverity;
+        }
+        Severity value = Severity.fromValue(severity.toString().toLowerCase());
+        return value != null ? value : defaultSeverity;
     }
 
     /**
      * Unescapes the content of a rule.
      *
-     * TODO do better, or even better add a part.get(Original|Raw)Content() to
-     * asciidoctor
+     * TODO do better, or even better add a partget(Original|Raw)Content() to asciidoctor
      * 
      * @param content
      *            The content of a rule.
@@ -150,51 +234,33 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Get the dependencies declared for a rule.
-     * 
-     * @param attributes
-     *            The attributes of the rule.
-     * @return The set of dependencies.
-     */
-    private Set<String> getDependencies(Map<String, Object> attributes) {
-        String depends = (String) attributes.get("depends");
-        Set<String> dependencies = new HashSet<>();
-        if (depends != null && !depends.trim().isEmpty()) {
-            dependencies.addAll(asList(depends.split("\\s*,\\s*")));
-        }
-        return dependencies;
-    }
-
-    /**
-     * Find all content parts representing source code listings with a role that
-     * represents a rule.
-     * 
-     * @param doc
-     *            The document.
-     * @return A collection of content parts representing rules.
-     */
-    private static Collection<ContentPart> findListings(StructuredDocument doc) {
-        Set<ContentPart> result = new LinkedHashSet<ContentPart>();
-        result.addAll(findListings(doc.getParts()));
-        return result;
-    }
-
-    /**
-     * Find all content parts representing source code listings with a role that
-     * represents a rule.
+     * Find all content parts representing source code listings with a role that represents a rule.
      * 
      * @param parts
      *            The content parts of the document.
      * @return A collection of content parts representing rules.
      */
-    private static Collection<ContentPart> findListings(Collection<ContentPart> parts) {
+    private static Collection<ContentPart> findExecutableRules(Collection<ContentPart> parts) {
         Set<ContentPart> result = new LinkedHashSet<ContentPart>();
         if (parts != null) {
             for (ContentPart part : parts) {
-                if ("listing".equals(part.getContext()) && "source".equals(part.getStyle()) && RULETYPES.contains(part.getRole())) {
+                if ("listing".equals(part.getContext()) && "source".equals(part.getStyle()) && EXECUTABLE_RULE_TYPES.contains(part.getRole())) {
                     result.add(part);
                 }
-                result.addAll(findListings(part.getParts()));
+                result.addAll(findExecutableRules(part.getParts()));
+            }
+        }
+        return result;
+    }
+
+    private static Collection<ContentPart> findGroups(Collection<ContentPart> parts) {
+        Set<ContentPart> result = new LinkedHashSet<>();
+        if (parts != null) {
+            for (ContentPart part : parts) {
+                if ("group".equals(part.getRole())) {
+                    result.add(part);
+                }
+                result.addAll(findGroups(part.getParts()));
             }
         }
         return result;

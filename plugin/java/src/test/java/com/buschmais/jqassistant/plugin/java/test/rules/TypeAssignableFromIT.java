@@ -28,7 +28,7 @@ public class TypeAssignableFromIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void assignableFrom() throws IOException, AnalysisException {
+    public void assignableFrom() throws Exception {
         scanClasses(ClassType.class);
         assertThat(applyConcept("java:TypeAssignableFrom").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

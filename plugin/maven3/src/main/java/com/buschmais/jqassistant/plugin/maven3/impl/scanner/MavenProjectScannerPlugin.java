@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,17 +21,19 @@ import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.DependsOnDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaClassesDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.ClasspathScopedTypeResolver;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomXmlDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenPomDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ArtifactCoordinates;
+import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
 /**
  * A scanner plugin for maven projects.
@@ -47,48 +50,74 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     @Override
     public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
-        // resolve dependencies
-        Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
-        Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
-        for (Artifact dependency : project.getDependencyArtifacts()) {
-            ArtifactFileDescriptor dependencyDescriptor = ArtifactResolver.resolve(new ArtifactCoordinates(dependency, false),
-                    JavaArtifactFileDescriptor.class, scanner.getContext());
-            if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
-                mainArtifactDependencies.put(dependencyDescriptor, dependency);
+        ArtifactResolver artifactResolver = new MavenArtifactResolver();
+        context.push(ArtifactResolver.class, artifactResolver);
+        try {
+            MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
+            // resolve dependencies
+            Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
+            Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
+            for (Artifact dependency : project.getDependencyArtifacts()) {
+                ArtifactFileDescriptor dependencyDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(dependency, false), artifactResolver, scanner);
+                if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
+                    mainArtifactDependencies.put(dependencyDescriptor, dependency);
+                }
+                testArtifactDependencies.put(dependencyDescriptor, dependency);
             }
-            testArtifactDependencies.put(dependencyDescriptor, dependency);
-        }
-        Artifact artifact = project.getArtifact();
-        // main artifact
-        JavaClassesDirectoryDescriptor mainArtifactDescriptor = ArtifactResolver.resolve(new ArtifactCoordinates(artifact, false),
-                JavaClassesDirectoryDescriptor.class, scanner.getContext());
-        addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
-        mainArtifactDescriptor = scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
-        // test artifact
-        String testOutputDirectory = project.getBuild().getTestOutputDirectory();
-        if (testOutputDirectory != null) {
-            JavaClassesDirectoryDescriptor testArtifactDescriptor = ArtifactResolver.resolve(new ArtifactCoordinates(artifact, true),
-                    JavaClassesDirectoryDescriptor.class, scanner.getContext());
-            testArtifactDependencies.put(mainArtifactDescriptor, artifact);
-            addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
-            scanClassesDirectory(projectDescriptor, testArtifactDescriptor, testOutputDirectory, scanner);
-        }
-        // project information
-        addProjectDetails(project, projectDescriptor, scanner);
-        // add test reports
-        scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
-        scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
-        // add additional includes
-        List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
-        if (scanIncludes != null) {
-            for (ScanInclude scanInclude : scanIncludes) {
-                String scopeName = scanInclude.getScope();
-                Scope includeScope = scanner.resolveScope(scopeName);
-                scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
+            Artifact artifact = project.getArtifact();
+            // main artifact
+            MavenArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, false), artifactResolver, scanner);
+            projectDescriptor.getCreatesArtifacts().add(mainArtifactDescriptor);
+            addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
+            // test artifact
+            MavenArtifactDescriptor testArtifactDescriptor = null;
+            String testOutputDirectory = project.getBuild().getTestOutputDirectory();
+            if (testOutputDirectory != null) {
+                testArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, true), artifactResolver, scanner);
+                projectDescriptor.getCreatesArtifacts().add(testArtifactDescriptor);
+                testArtifactDependencies.put(mainArtifactDescriptor, artifact);
+                addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
             }
+
+            // Scan classes
+            scanClassesDirectory(projectDescriptor, mainArtifactDescriptor, project.getBuild().getOutputDirectory(), scanner);
+            if (testOutputDirectory != null) {
+                scanClassesDirectory(projectDescriptor, testArtifactDescriptor, testOutputDirectory, scanner);
+            }
+
+            // project information
+            addProjectDetails(project, projectDescriptor, scanner);
+            // add test reports
+            scanPath(projectDescriptor, project.getBuild().getDirectory() + "/surefire-reports", TESTREPORTS, scanner);
+            scanPath(projectDescriptor, project.getBuild().getDirectory() + "/failsafe-reports", TESTREPORTS, scanner);
+            // add additional includes
+            List<ScanInclude> scanIncludes = getProperty(ScanInclude.class.getName(), List.class);
+            if (scanIncludes != null) {
+                for (ScanInclude scanInclude : scanIncludes) {
+                    String scopeName = scanInclude.getScope();
+                    Scope includeScope = scanner.resolveScope(scopeName);
+                    scanPath(projectDescriptor, scanInclude.getPath(), includeScope, scanner);
+                }
+            }
+            return projectDescriptor;
+        } finally {
+            context.pop(ArtifactResolver.class);
         }
-        return projectDescriptor;
+    }
+
+    /**
+     * Returns a resolved maven artifact descriptor for the given coordinates.
+     * 
+     * @param artifact
+     *            The artifact.
+     * @param artifactResolver
+     *            The artifact resolver.
+     * @param scanner
+     *            The scanner.
+     * @return The artifact descriptor descriptor.
+     */
+    private MavenArtifactDescriptor getMavenArtifactDescriptor(ArtifactCoordinates artifact, ArtifactResolver artifactResolver, Scanner scanner) {
+        return artifactResolver.resolve(artifact, scanner.getContext());
     }
 
     /**
@@ -149,8 +178,15 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      */
     private void addModel(MavenProject project, MavenProjectDirectoryDescriptor projectDescriptor, Scanner scanner) {
         File pomXmlFile = project.getFile();
-        MavenPomXmlDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        FileDescriptor mavenPomXmlDescriptor = scanner.scan(pomXmlFile, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
         projectDescriptor.setModel(mavenPomXmlDescriptor);
+        // Effective model
+        MavenPomDescriptor effectiveModelDescriptor = scanner.getContext().getStore().create(MavenPomDescriptor.class);
+        Model model = project.getModel();
+        scanner.getContext().push(MavenPomDescriptor.class, effectiveModelDescriptor);
+        scanner.scan(model, pomXmlFile.getAbsolutePath(), MavenScope.PROJECT);
+        scanner.getContext().pop(MavenPomDescriptor.class);
+        projectDescriptor.setEffectiveModel(effectiveModelDescriptor);
     }
 
     /**
@@ -226,23 +262,23 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *            The scanner.
      */
-    private JavaClassesDirectoryDescriptor scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor,
-            JavaClassesDirectoryDescriptor artifactDescriptor, final String directoryName, Scanner scanner) {
+    private void scanClassesDirectory(MavenProjectDirectoryDescriptor projectDescriptor, MavenArtifactDescriptor artifactDescriptor, final String directoryName,
+            Scanner scanner) {
         File directory = new File(directoryName);
         if (directory.exists()) {
-            projectDescriptor.getCreatesArtifacts().add(artifactDescriptor);
+            JavaArtifactFileDescriptor javaArtifactFileDescriptor = scanner.getContext().getStore().addDescriptorType(artifactDescriptor,
+                    JavaClassesDirectoryDescriptor.class);
             ScannerContext context = scanner.getContext();
-            context.push(JavaArtifactFileDescriptor.class, artifactDescriptor);
-            TypeResolver typeResolver = new ClasspathScopedTypeResolver(artifactDescriptor);
+            context.push(JavaArtifactFileDescriptor.class, javaArtifactFileDescriptor);
+            TypeResolver typeResolver = new ClasspathScopedTypeResolver(javaArtifactFileDescriptor);
             context.push(TypeResolver.class, typeResolver);
             try {
-                return scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
+                scanPath(projectDescriptor, directoryName, CLASSPATH, scanner);
             } finally {
                 context.pop(TypeResolver.class);
                 context.pop(JavaArtifactFileDescriptor.class);
             }
         }
-        return artifactDescriptor;
     }
 
     /**
@@ -285,7 +321,8 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
      * @param scanner
      *            The scanner.
      */
-    private <F extends FileDescriptor> F scanPath(MavenProjectDirectoryDescriptor projectDescriptor, File directory, String path, Scope scope, Scanner scanner) {
+    private <F extends FileDescriptor> F scanPath(MavenProjectDirectoryDescriptor projectDescriptor, File directory, String path, Scope scope,
+            Scanner scanner) {
         scanner.getContext().push(MavenProjectDirectoryDescriptor.class, projectDescriptor);
         try {
             F fileDescriptor = scanner.scan(directory, path, scope);

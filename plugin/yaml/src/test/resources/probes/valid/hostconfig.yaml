@@ -1,0 +1,17 @@
+service::email_server_host: 'mail.server.org'
+service::email_server_port: 25
+
+# %{::uuu} is not a valid token but '%{:uuu}' is valid
+# see hostconfig-invalid.yml
+service::master_pattern: '%{::uuu}'
+service::cluster_id: 1
+
+service::listpusher_yps_enabled: true
+service::listpusher_yps_enabled: true
+xyz_hosts_int:
+  - 'hosta.somewhere.in.no'
+  - 'hostb.somewhere.in.no'
+
+service::b_enabled: true
+service::a_enabled: false
+

@@ -37,7 +37,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveType() throws IOException, AnalysisException {
+    public void resolveType() throws Exception {
         scanAndApply("classpath:ResolveType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("a1", "b").put("a2", "a").get();
@@ -61,7 +61,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveMember() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
+    public void resolveMember() throws Exception {
         scanAndApply("classpath:ResolveMember");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("a1", "b").put("a2", "a").get();
@@ -89,7 +89,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveDependency() throws IOException, AnalysisException {
+    public void resolveDependency() throws Exception {
         scanAndApply("classpath:ResolveDependency");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
@@ -113,7 +113,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveExtends() throws IOException, AnalysisException {
+    public void resolveExtends() throws Exception {
         scanAndApply("classpath:ResolveExtends");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
@@ -134,7 +134,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveImplements() throws IOException, AnalysisException {
+    public void resolveImplements() throws Exception {
         scanAndApply("classpath:ResolveImplements");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("a", "a").get();
@@ -155,7 +155,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveFieldType() throws IOException, AnalysisException {
+    public void resolveFieldType() throws Exception {
         scanAndApply("classpath:ResolveFieldType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("f", "field").put("a", "a").get();
@@ -176,7 +176,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveThrows() throws IOException, AnalysisException {
+    public void resolveThrows() throws Exception {
         scanAndApply("classpath:ResolveThrows");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "signature").put("a", "a")
@@ -198,7 +198,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveReturns() throws IOException, AnalysisException {
+    public void resolveReturns() throws Exception {
         scanAndApply("classpath:ResolveReturns");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "signature").put("a", "a")
@@ -220,7 +220,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveParameterType() throws IOException, AnalysisException {
+    public void resolveParameterType() throws Exception {
         scanAndApply("classpath:ResolveParameterType");
         store.beginTransaction();
         Map<String, Object> params = MapBuilder.<String, Object> create("dependentType", DependentType.class.getName()).put("m", "signature").put("a", "a")
@@ -242,7 +242,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveAnnotationType() throws IOException, AnalysisException {
+    public void resolveAnnotationType() throws Exception {
         scanAndApply("classpath:ResolveAnnotationType");
         store.beginTransaction();
         // type annotation
@@ -286,7 +286,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveValue() throws IOException, AnalysisException, NoSuchFieldException {
+    public void resolveValue() throws Exception {
         scanAndApply("classpath:ResolveValue");
         store.beginTransaction();
         // type value
@@ -315,7 +315,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveReads() throws IOException, AnalysisException {
+    public void resolveReads() throws Exception {
         scanAndApply("classpath:ResolveReads");
         store.beginTransaction();
         // type value
@@ -339,7 +339,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveWrites() throws IOException, AnalysisException {
+    public void resolveWrites() throws Exception {
         scanAndApply("classpath:ResolveWrites");
         store.beginTransaction();
         // type value
@@ -363,7 +363,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolveInvokes() throws IOException, AnalysisException {
+    public void resolveInvokes() throws Exception {
         scanAndApply("classpath:ResolveInvokes");
         store.beginTransaction();
         // type value
@@ -387,7 +387,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void resolve() throws IOException, AnalysisException {
+    public void resolve() throws Exception {
         scanAndApply("classpath:Resolve");
         store.beginTransaction();
         List<String> concepts = query("MATCH (c:Concept) RETURN c.id as id").getColumn("id");
@@ -399,7 +399,7 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
-    private void scanAndApply(String concept) throws IOException, AnalysisException {
+    private void scanAndApply(String concept) throws Exception {
         scanClasses("a", ClassType.class, InterfaceType.class, AnnotationType.class, EnumType.class, ExceptionType.class, ValueType.class);
         scanClasses("b", DependentType.class);
         assertThat(applyConcept(concept).getStatus(), equalTo(SUCCESS));

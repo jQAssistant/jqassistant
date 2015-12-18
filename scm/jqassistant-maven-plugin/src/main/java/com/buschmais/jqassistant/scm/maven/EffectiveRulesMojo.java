@@ -10,6 +10,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -18,6 +20,7 @@ import java.util.List;
  */
 @Mojo(name = "effective-rules", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class EffectiveRulesMojo extends AbstractProjectMojo {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EffectiveRulesMojo.class);
 
     @Override
     protected boolean isResetStoreBeforeExecution() {
@@ -29,7 +32,7 @@ public class EffectiveRulesMojo extends AbstractProjectMojo {
         getLog().info("Effective rules for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
-        RuleHelper ruleHelper = new RuleHelper(new MavenConsole(getLog()));
+        RuleHelper ruleHelper = new RuleHelper(LOGGER);
         try {
             ruleHelper.printRuleSet(ruleSet, ruleSelection);
         } catch (AnalysisException e) {

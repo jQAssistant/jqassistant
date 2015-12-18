@@ -12,12 +12,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,31 +22,13 @@ import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.ModelPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScopePluginRepository;
-import com.buschmais.jqassistant.core.plugin.impl.ModelPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ReportPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScannerPluginRepositoryImpl;
-import com.buschmais.jqassistant.core.plugin.impl.ScopePluginRepositoryImpl;
+import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.impl.*;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -59,13 +38,16 @@ import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.plugin.common.test.matcher.TestConsole;
 import com.buschmais.xo.api.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for analysis tests.
  */
 public abstract class AbstractPluginIT {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginIT.class);
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
@@ -141,7 +123,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    protected static RuleSet ruleSet;
+    protected RuleSet ruleSet;
 
     protected Analyzer analyzer;
 
@@ -154,22 +136,32 @@ public abstract class AbstractPluginIT {
     private ReportPluginRepository reportPluginRepository;
 
     @Before
-    public void readRules() throws PluginRepositoryException, RuleException {
+    public void configurePlugins() throws PluginRepositoryException, RuleException, IOException {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(AbstractPluginIT.class.getClassLoader());
         modelPluginRepository = new ModelPluginRepositoryImpl(pluginConfigurationReader);
         scannerPluginRepository = new ScannerPluginRepositoryImpl(pluginConfigurationReader);
         scopePluginRepository = new ScopePluginRepositoryImpl(pluginConfigurationReader);
         rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         reportPluginRepository = new ReportPluginRepositoryImpl(pluginConfigurationReader);
-        List<RuleSource> sources = rulePluginRepository.getRuleSources();
+
+        File selectedDirectory = new File(getClassesDirectory(this.getClass()), "rules");
+        // read rules from rules directory
+        List<RuleSource> sources = new LinkedList<>();
+        if (selectedDirectory.exists()) {
+            sources.addAll(FileRuleSource.getRuleSources(selectedDirectory));
+        }
+        // read rules from plugins
+        sources.addAll(rulePluginRepository.getRuleSources());
         RuleSetReader ruleSetReader = new CompoundRuleSetReader();
-        ruleSet = ruleSetReader.read(sources);
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
+        ruleSetReader.read(sources, ruleSetBuilder);
+        ruleSet = ruleSetBuilder.getRuleSet();
     }
 
     @Before
     public void initializeAnalyzer() {
         reportWriter = new InMemoryReportWriter();
-        analyzer = new AnalyzerImpl(store, reportWriter, new TestConsole());
+        analyzer = new AnalyzerImpl(store, reportWriter, LOGGER);
     }
 
     /**
@@ -182,8 +174,7 @@ public abstract class AbstractPluginIT {
      */
     @Before
     public void startStore() throws PluginRepositoryException {
-        store =
-                new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName());
+        store = new EmbeddedGraphStore("target/jqassistant/" + this.getClass().getSimpleName() + "-" + testContextRule.getTestMethod().getName());
         store.start(getDescriptorTypes());
         TestStore testStore = testContextRule.getTestMethod().getAnnotation(TestStore.class);
         boolean resetStore = true;
@@ -209,7 +200,7 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(Collections.<String, Object>emptyMap());
+        return getScanner(Collections.<String, Object> emptyMap());
     }
 
     /**
@@ -226,7 +217,8 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Determines the directory a class is located in (e.g. target/test-classes).
+     * Determines the directory a class is located in (e.g.
+     * target/test-classes).
      * 
      * @param rootClass
      *            The class.
@@ -242,7 +234,8 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Deletes the node representing the test class and all its relationships from the store.
+     * Deletes the node representing the test class and all its relationships
+     * from the store.
      * 
      * @throws IOException
      *             If an error occurs.
@@ -257,18 +250,20 @@ public abstract class AbstractPluginIT {
     }
 
     /**
-     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
+     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
+     * .
      * 
      * @param query
      *            The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object>emptyMap());
+        return query(query, Collections.<String, Object> emptyMap());
     }
 
     /**
-     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult} .
+     * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
+     * .
      * 
      * @param query
      *            The query.
@@ -307,9 +302,9 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws AnalysisException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
-        Concept concept = ruleSet.getConcepts().get(id);
+        Concept concept = ruleSet.getConceptBucket().getById(id);
         assertNotNull("The requested concept cannot be found: " + id, concept);
         analyzer.execute(ruleSet, ruleSelection);
         return reportWriter.getConceptResults().get(id);
@@ -324,9 +319,9 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws AnalysisException {
+    protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
-        Constraint constraint = ruleSet.getConstraints().get(id);
+        Constraint constraint = ruleSet.getConstraintBucket().getById(id);
         assertNotNull("The requested constraint cannot be found: " + id, constraint);
         analyzer.execute(ruleSet, ruleSelection);
         return reportWriter.getConstraintResults().get(id);
@@ -340,9 +335,9 @@ public abstract class AbstractPluginIT {
      * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
      *             If the analyzer reports an error.
      */
-    protected void executeGroup(String id) throws AnalysisException {
+    protected void executeGroup(String id) throws AnalysisException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
-        Group group = ruleSet.getGroups().get(id);
+        Group group = ruleSet.getGroupsBucket().getById(id);
         assertNotNull("The request group cannot be found: " + id, group);
         analyzer.execute(ruleSet, ruleSelection);
     }

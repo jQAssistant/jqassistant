@@ -5,23 +5,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+
 /**
  * Defines a group.
  */
-public class Group implements Rule {
+public class Group extends AbstractRule {
 
     /**
-     * The id of the group.
-     */
-    private String id;
-
-    /**
-     * The optional description.
-     */
-    private String description;
-
-    /**
-     * The set of concepts contained in the group.
+     * The set of rules contained in the group.
      */
     private Map<String, Severity> concepts = new HashMap<>();
 
@@ -42,27 +34,21 @@ public class Group implements Rule {
      *            The id of the group.
      * @param description
      *            The description.
+     * @param ruleSource
+     *            The rule source.
      * @param concepts
-     *            The included concepts.
+     *            The included rules.
      * @param constraints
      *            The included constraints.
      * @param groups
      *            The included groups.
      */
-    public Group(String id, String description, Map<String, Severity> concepts, Map<String, Severity> constraints, Set<String> groups) {
-        this.id = id;
-        this.description = description;
+    public Group(String id, String description, RuleSource ruleSource, Map<String, Severity> concepts, Map<String, Severity> constraints,
+            Set<String> groups) {
+        super(id, description, ruleSource);
         this.concepts = concepts;
         this.constraints = constraints;
         this.groups = groups;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public Map<String, Severity> getConcepts() {
@@ -75,27 +61,5 @@ public class Group implements Rule {
 
     public Set<String> getGroups() {
         return groups;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        Group that = (Group) o;
-        if (!id.equals(that.id))
-            return false;
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "Group{" + "id='" + id + '\'' + ", concepts=" + concepts + ", constraints=" + constraints + ", groups=" + groups + '}';
     }
 }

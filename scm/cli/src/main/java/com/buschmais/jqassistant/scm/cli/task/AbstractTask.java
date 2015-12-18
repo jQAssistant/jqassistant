@@ -9,16 +9,16 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.cli.Task;
 import com.buschmais.jqassistant.scm.common.report.RuleHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -29,7 +29,7 @@ public abstract class AbstractTask implements Task {
     protected static final String CMDLINE_OPTION_STOREDIRECTORY = "storeDirectory";
     protected static final String CMDLINE_OPTION_REPORTDIR = "reportDirectory";
 
-    private static final Console LOG = Log.getLog();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTask.class);
 
     protected String storeDirectory;
     protected PluginRepository pluginRepository;
@@ -41,8 +41,8 @@ public abstract class AbstractTask implements Task {
     public void initialize(PluginRepository pluginRepository, Map<String, Object> pluginProperties) throws CliExecutionException {
         this.pluginRepository = pluginRepository;
         this.pluginProperties = pluginProperties;
-        this.ruleHelper = new RuleHelper(Log.getLog());
-        this.reportHelper = new ReportHelper(Log.getLog());
+        this.ruleHelper = new RuleHelper(LOGGER);
+        this.reportHelper = new ReportHelper(LOGGER);
     }
 
     @Override
@@ -109,7 +109,7 @@ public abstract class AbstractTask implements Task {
      */
     protected Store getStore() {
         File directory = new File(storeDirectory);
-        LOG.info("Opening store in directory '" + directory.getAbsolutePath() + "'");
+        LOGGER.info("Opening store in directory '" + directory.getAbsolutePath() + "'");
         if (!directory.exists()) {
             directory.getParentFile().mkdirs();
         }

@@ -3,7 +3,6 @@ package com.buschmais.jqassistant.scm.common.report;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.Console;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -11,6 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.analysis.impl.RuleExecutor;
+import org.slf4j.Logger;
 
 /**
  * Provides utility functionality for creating reports.
@@ -18,16 +18,16 @@ import com.buschmais.jqassistant.core.analysis.impl.RuleExecutor;
 public final class RuleHelper {
 
     public static final String LOG_LINE_PREFIX = "  \"";
-    private Console console;
+    private Logger logger;
 
     /**
      * Constructor.
      *
-     * @param console
-     *            The console to use for printing messages.
+     * @param log
+     *            The logger to use for printing messages.
      */
-    public RuleHelper(Console console) {
-        this.console = console;
+    public RuleHelper(Logger log) {
+        this.logger = log;
     }
 
     /**
@@ -60,17 +60,17 @@ public final class RuleHelper {
      *            The visitor.
      */
     private void printValidRules(CollectRulesVisitor visitor) {
-        console.info("Groups [" + visitor.getGroups().size() + "]");
+        logger.info("Groups [" + visitor.getGroups().size() + "]");
         for (Group group : visitor.getGroups()) {
-            console.info(LOG_LINE_PREFIX + group.getId() + "\"");
+            logger.info(LOG_LINE_PREFIX + group.getId() + "\"");
         }
-        console.info("Constraints [" + visitor.getConstraints().size() + "]");
+        logger.info("Constraints [" + visitor.getConstraints().size() + "]");
         for (Constraint constraint : visitor.getConstraints().keySet()) {
-            console.info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
+            logger.info(LOG_LINE_PREFIX + constraint.getId() + "\" - " + constraint.getDescription());
         }
-        console.info("Concepts [" + visitor.getConcepts().size() + "]");
+        logger.info("Concepts [" + visitor.getConcepts().size() + "]");
         for (Concept concept : visitor.getConcepts().keySet()) {
-            console.info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
+            logger.info(LOG_LINE_PREFIX + concept.getId() + "\" - " + concept.getDescription());
         }
     }
 
@@ -99,23 +99,23 @@ public final class RuleHelper {
     private boolean printMissingRules(CollectRulesVisitor visitor) {
         Set<String> missingConcepts = visitor.getMissingConcepts();
         if (!missingConcepts.isEmpty()) {
-            console.info("Missing concepts [" + missingConcepts.size() + "]");
+            logger.info("Missing concepts [" + missingConcepts.size() + "]");
             for (String missingConcept : missingConcepts) {
-                console.warn(LOG_LINE_PREFIX + missingConcept);
+                logger.warn(LOG_LINE_PREFIX + missingConcept);
             }
         }
         Set<String> missingConstraints = visitor.getMissingConstraints();
         if (!missingConstraints.isEmpty()) {
-            console.info("Missing constraints [" + missingConstraints.size() + "]");
+            logger.info("Missing constraints [" + missingConstraints.size() + "]");
             for (String missingConstraint : missingConstraints) {
-                console.warn(LOG_LINE_PREFIX + missingConstraint);
+                logger.warn(LOG_LINE_PREFIX + missingConstraint);
             }
         }
         Set<String> missingGroups = visitor.getMissingGroups();
         if (!missingGroups.isEmpty()) {
-            console.info("Missing groups [" + missingGroups.size() + "]");
+            logger.info("Missing groups [" + missingGroups.size() + "]");
             for (String missingGroup : missingGroups) {
-                console.warn(LOG_LINE_PREFIX + missingGroup);
+                logger.warn(LOG_LINE_PREFIX + missingGroup);
             }
         }
         return missingConcepts.isEmpty() && missingConstraints.isEmpty() && missingGroups.isEmpty();

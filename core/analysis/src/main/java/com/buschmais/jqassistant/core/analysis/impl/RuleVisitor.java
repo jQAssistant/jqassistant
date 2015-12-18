@@ -6,19 +6,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
+/**
+ * Defines the visitor interface for executing rules.
+ */
 public interface RuleVisitor {
 
-    void visitConcept(Concept concept, Severity severity) throws AnalysisException;
+    void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException;
 
-    void visitConstraint(Constraint constraint, Severity severity) throws AnalysisException;
+    void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException;
 
     void beforeGroup(Group group) throws AnalysisException;
 
     void afterGroup(Group group) throws AnalysisException;
 
-    boolean missingConcept(String id);
-
-    boolean missingConstraint(String id);
-
-    boolean missingGroup(String id);
 }

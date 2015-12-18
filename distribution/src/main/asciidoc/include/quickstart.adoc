@@ -2,6 +2,24 @@
 
 === Command Line
 
+==== Requirements
+- Java Development Kit 7 or later
+- the environment variable JQASSISTANT_OPTS should be set to adjust memory settings
+
+[source]
+.Windows
+----
+set JQASSISTANT_OPTS=-Xmx1024M -XX:MaxPermSize=512m
+----
+
+[source]
+.Linux
+----
+export JQASSISTANT_OPTS=-Xmx1024M -XX:MaxPermSize=512m
+----
+
+NOTE: -XX:MaxPermSize=512M is only required for Java 7
+
 ==== Installation
 
 * Download and unpack the distribution, a directory "{projectArtifactId}-{projectVersion}" will be created.
@@ -52,6 +70,25 @@ LIMIT 20
 
 === Maven
 
+==== Requirements
+- Maven 3.2 or later
+- Java Development Kit 7 or later
+- the environment variable MAVEN_OPTS must be set to adjust memory settings
+
+[source]
+.Windows
+----
+set MAVEN_OPTS=-Xmx1024M -XX:MaxPermSize=512m
+----
+
+[source]
+.Linux
+----
+export MAVEN_OPTS=-Xmx1024M -XX:MaxPermSize=512m
+----
+
+NOTE: -XX:MaxPermSize=512M is only required for Java 7
+
 ==== Add the plugin
 
 Add the following lines to the parent pom.xml file of your project:
@@ -63,6 +100,7 @@ Add the following lines to the parent pom.xml file of your project:
         <plugin>
             <groupId>com.buschmais.jqassistant.scm</groupId>
             <artifactId>jqassistant-maven-plugin</artifactId>
+            <extensions>true</extensions>
             <executions>
                 <execution>
                     <goals>

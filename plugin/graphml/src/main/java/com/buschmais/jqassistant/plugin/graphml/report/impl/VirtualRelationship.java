@@ -1,40 +1,35 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.neo4j.graphdb.DynamicRelationshipType;
-import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 
 import com.buschmais.xo.api.CompositeObject;
 
-class VirtualRelationship implements Relationship {
+class VirtualRelationship extends VirtualPropertyContainer implements Relationship {
     static long REL_ID = -1;
 
     private final long id;
     private final Node start;
     private final Node end;
     private final RelationshipType type;
-    private final Map<String, Object> props = new LinkedHashMap<>();
     private final static String ROLE_RELATIONSHIP = "relationship";
 
-    public static boolean isRelationship(Map m) {
+    public static boolean isRelationship(Map<String, Object> m) {
         return ROLE_RELATIONSHIP.equals(m.get("role"));
     }
 
-    public VirtualRelationship(Map m) {
+    public VirtualRelationship(Map<String, Object> m) {
+        super(m);
         if (!isRelationship(m))
             throw new IllegalArgumentException("Not a relationship-map " + m);
         this.start = getDelegate(m.get("startNode"));
         this.end = getDelegate(m.get("endNode"));
         this.type = DynamicRelationshipType.withName((String) m.get("type"));
         this.id = m.containsKey("id") ? ((Number) m.get("id")).longValue() : REL_ID--;
-        if (m.containsKey("properties")) {
-            this.props.putAll((Map) m.get("properties"));
-        }
     }
 
     private Node getDelegate(Object object) {
@@ -89,38 +84,4 @@ class VirtualRelationship implements Relationship {
         return type.name().equals(this.type.name());
     }
 
-    @Override
-    public GraphDatabaseService getGraphDatabase() {
-        return null;
-    }
-
-    @Override
-    public boolean hasProperty(String key) {
-        return props.containsKey(key);
-    }
-
-    @Override
-    public Object getProperty(String key) {
-        return props.get(key);
-    }
-
-    @Override
-    public Object getProperty(String key, Object defaultValue) {
-        return props.containsKey(key) ? props.get(key) : defaultValue;
-    }
-
-    @Override
-    public void setProperty(String key, Object value) {
-        props.put(key, value);
-    }
-
-    @Override
-    public Object removeProperty(String key) {
-        return props.remove(key);
-    }
-
-    @Override
-    public Iterable<String> getPropertyKeys() {
-        return props.keySet();
-    }
 }

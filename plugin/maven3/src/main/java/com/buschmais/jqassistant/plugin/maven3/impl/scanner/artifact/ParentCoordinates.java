@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
 import org.apache.maven.model.Parent;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 
 /**
  * Created by dimahler on 5/5/2015.

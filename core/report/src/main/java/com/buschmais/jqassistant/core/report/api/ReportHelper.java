@@ -2,8 +2,10 @@ package com.buschmais.jqassistant.core.report.api;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.StringTokenizer;
 
-import com.buschmais.jqassistant.core.analysis.api.Console;
+import org.slf4j.Logger;
+
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -16,16 +18,25 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  */
 public final class ReportHelper {
 
-    private Console console;
+    private static String CONSTRAINT_VIOLATION_HEADER
+         = "--[ Constraint Violation ]-----------------------------------------";
+
+    private static String CONCEPT_FAILED_HEADER
+         = "--[ Concept Application Failure ]----------------------------------";
+
+    private static String FOOTER
+         = "-------------------------------------------------------------------";
+
+    private Logger logger;
 
     /**
      * Constructor.
      *
-     * @param console
-     *            The console to use for printing messages.
+     * @param log
+     *            The logger to use for logging messages.
      */
-    public ReportHelper(Console console) {
-        this.console = console;
+    public ReportHelper(Logger log) {
+        this.logger = log;
     }
 
     /**
@@ -44,10 +55,24 @@ public final class ReportHelper {
     public int verifyConceptResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
         int violations = 0;
+
         for (Result<Concept> conceptResult : conceptResults) {
             if (Result.Status.FAILURE.equals(conceptResult.getStatus())) {
                 Concept concept = conceptResult.getRule();
-                console.error("Concept '" + concept.getId() + "' could not be applied: " + concept.getDescription());
+                logger.error(CONCEPT_FAILED_HEADER);
+                logger.error("Concept: " + concept.getId());
+                logger.error("Severity: " + concept.getSeverity().getInfo(conceptResult.getSeverity()));
+                String description = concept.getDescription();
+
+                StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+
+                while (tokenizer.hasMoreTokens()) {
+                    logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+                }
+
+                logger.error(FOOTER);
+                logger.error(System.lineSeparator());
+
                 // severity level check
                 if (conceptResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;
@@ -73,7 +98,18 @@ public final class ReportHelper {
         for (Result<Constraint> constraintResult : constraintResults) {
             if (Result.Status.FAILURE.equals(constraintResult.getStatus())) {
                 Constraint constraint = constraintResult.getRule();
-                console.error("Constraint '" + constraint.getId() + "' validation failed: " + constraint.getDescription());
+
+                logger.error(CONSTRAINT_VIOLATION_HEADER);
+                logger.error("Constraint: " + constraint.getId());
+                logger.error("Severity: " + constraint.getSeverity().getInfo(constraintResult.getSeverity()));
+                String description = constraint.getDescription();
+
+                StringTokenizer tokenizer = new StringTokenizer(description, "\n");
+
+                while (tokenizer.hasMoreTokens()) {
+                    logger.error(tokenizer.nextToken().replaceAll("(\\r|\\n|\\t)", ""));
+                }
+
                 for (Map<String, Object> columns : constraintResult.getRows()) {
                     StringBuilder message = new StringBuilder();
                     for (Map.Entry<String, Object> entry : columns.entrySet()) {
@@ -85,8 +121,12 @@ public final class ReportHelper {
                         String stringValue = getStringValue(entry.getValue());
                         message.append(stringValue);
                     }
-                    console.error("  " + message.toString());
+                    logger.error("  " + message.toString());
                 }
+
+                logger.error(FOOTER);
+                logger.error(System.lineSeparator());
+
                 // severity level check
                 if (constraintResult.getSeverity().getLevel() <= violationSeverity.getLevel()) {
                     violations++;

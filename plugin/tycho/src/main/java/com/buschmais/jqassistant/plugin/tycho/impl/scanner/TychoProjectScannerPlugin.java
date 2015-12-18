@@ -12,8 +12,8 @@ import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollectio
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.util.AbstractScanner;
 import org.eclipse.tycho.core.TychoConstants;
-import org.eclipse.tycho.core.facade.BuildProperties;
 import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
+import org.eclipse.tycho.core.shared.BuildProperties;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;

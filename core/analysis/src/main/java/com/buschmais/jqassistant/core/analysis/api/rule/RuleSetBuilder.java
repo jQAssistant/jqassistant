@@ -12,85 +12,91 @@ public class RuleSetBuilder {
 
     private DefaultRuleSet ruleSet = new DefaultRuleSet();
 
+    /**
+     * Private constructor.
+     */
+    private RuleSetBuilder() {
+    }
+
     public static RuleSetBuilder newInstance() {
         return new RuleSetBuilder();
     }
 
     public RuleSetBuilder addTemplate(Template template) throws RuleException {
-        return put(ruleSet.templates, template);
+        ruleSet.templateBucket.add(template);
+        return this;
     }
 
-    public RuleSetBuilder addConcept(Concept concept) throws RuleException {
-        return put(ruleSet.concepts, concept);
+    public RuleSetBuilder addConcept(Concept concept) throws RuleHandlingException {
+        ruleSet.conceptBucket.add(concept);
+
+        return this;
     }
 
     public RuleSetBuilder addConstraint(Constraint constraint) throws RuleException {
-        return put(ruleSet.constraints, constraint);
+        ruleSet.constraintBucket.add(constraint);
+
+        return this;
     }
 
     public RuleSetBuilder addGroup(Group group) throws RuleException {
-        return put(ruleSet.groups, group);
+        ruleSet.groupsBucket.add(group);
+
+        return this;
     }
 
     public RuleSetBuilder addMetricGroup(MetricGroup metricGroup) throws RuleException {
-        return put(ruleSet.metricGroups, metricGroup);
+        ruleSet.getMetricGroupsBucket().add(metricGroup);
+
+        return this;
     }
 
     public RuleSet getRuleSet() {
         return ruleSet;
     }
 
-    private <T extends Rule> RuleSetBuilder put(Map<String, T> rules, T rule) throws RuleException {
-        T oldRule = rules.put(rule.getId(), rule);
-        if (oldRule != null) {
-            throw new RuleException("The id of a rule must be unique: " + rule.getId() + "(" + rule.getDescription() + ")");
-        }
-        return this;
-    }
-
     /**
-     * Defines a set of rules containing all resolved {@link Concept} s,
-     * {@link Constraint}s and {@link Group}s.
+     * Defines a set of rules containing all resolved {@link Concept} s, {@link Constraint}s and {@link Group}s.
      */
     private static class DefaultRuleSet implements RuleSet {
 
-        private Map<String, Template> templates = new HashMap<>();
-        private Map<String, Concept> concepts = new HashMap<>();
-        private Map<String, Constraint> constraints = new HashMap<>();
-        private Map<String, Group> groups = new HashMap<>();
-        private Map<String, MetricGroup> metricGroups = new HashMap<>();
+        private ConceptBucket conceptBucket = new ConceptBucket();
+        private ConstraintBucket constraintBucket = new ConstraintBucket();
+        private TemplateBucket templateBucket = new TemplateBucket();
+        private GroupsBucket groupsBucket = new GroupsBucket();
+        private MetricGroupsBucket metricGroupsBucket = new MetricGroupsBucket();
 
         private DefaultRuleSet() {
         }
 
         @Override
-        public Map<String, Template> getTemplates() {
-            return templates;
+        public TemplateBucket getTemplateBucket() {
+            return templateBucket;
+        }
+
+        public ConceptBucket getConceptBucket() {
+            return conceptBucket;
         }
 
         @Override
-        public Map<String, Concept> getConcepts() {
-            return concepts;
+        public ConstraintBucket getConstraintBucket() {
+            return constraintBucket;
         }
 
         @Override
-        public Map<String, Constraint> getConstraints() {
-            return constraints;
+        public GroupsBucket getGroupsBucket() {
+            return groupsBucket;
         }
 
         @Override
-        public Map<String, Group> getGroups() {
-            return groups;
-        }
-
-        @Override
-        public Map<String, MetricGroup> getMetricGroups() {
-            return metricGroups;
+        public MetricGroupsBucket getMetricGroupsBucket() {
+            return metricGroupsBucket;
         }
 
         @Override
         public String toString() {
-            return "RuleSet{" + "groups=" + groups + ", constraints=" + constraints + ", concepts=" + concepts + '}';
+            return "RuleSet{" + "groups=" + groupsBucket.size() + ", constraints=" + constraintBucket.size() +
+                    ", rules=" + conceptBucket.size() + ", metric groups=" + metricGroupsBucket.size() + "}";
         }
     }
 }

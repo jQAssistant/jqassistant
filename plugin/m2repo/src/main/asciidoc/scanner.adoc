@@ -27,6 +27,7 @@ TIP: For incremental scanning it is necessary that the exactly the same URL is p
 | m2repo.directory 		 | A directory path. This directory is the target for Maven indices and artifacts. 	   | ./jqassistant/data/m2repo
 | m2repo.filter.includes | A comma separated list of artifact patterns to include in the scan                  | include all artifacts
 | m2repo.filter.excludes | A comma separated list of artifact patterns to exclude from the scan                | exclude no artifacts
+| m2repo.artifacts.scan  | A boolean value. If true then the content of the artifacts is scanned.              | true
 | m2repo.artifacts.keep  | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
 |====
 
@@ -40,34 +41,23 @@ A remote Maven repository.
 |====
 | Name      	| Description
 | url 			| the remote URL
-| lastScanDate	| timestamp of the last successful scan
+| lastUpdate	| timestamp of the last scan
 |====
 
 .Relations of :Maven:Repository
 [options="header"]
 |====
-| Name          	| Target label(s)             	| Cardinality | Description
-| CONTAINS_ARTIFACT | <<:RepositoryArtifact:Maven>> | 0..n        | References repository artifacts
+| Name              | Target label(s)            | Cardinality | Description
+| CONTAINS_POM      | <<:Maven:Pom:Xml>>  | 0..n | References the POMs in the repository
+| CONTAINS_ARTIFACT | <<:Maven:Artifact>> | 0..n | References the artifacts in the repository
 |====
 
-=== :RepositoryArtifact:Maven
-A Maven artifact (e.g. *.pom, *.jar).
+<<MavenArtifactScanner>>
+[[MavenArtifactScanner]]
+== Scanner for remote maven artifacts
+Gets the maven artifact coordinates to retrieve the artifact from an repository and scans it. The scanner accepts org.apache.maven.index.ArtifactInfo-Items 
+with the scope "maven:repository".
 
-.Properties of :RepositoryArtifact:Maven
-[options="header"]
-|====
-| Name       		| Description
-| mavenCoordinates  | The maven coordinates <groupId>:<artifactId>:<type>:(<classifier>:)<version>.
-| group      		| The group id
-| name 		 		| The artifact id
-| type       		| The type, e.g. "jar"
-| classifier 		| The classifier
-| version    		| The version
-|====
+NOTE: This plugin needs some prerequisites to work properly. The context must contain a MavenRepositoryDescriptor to which the new Maven Artifact belongs and an
+ArtifactProvider-Object to load the artifact from the configured repository.
 
-.Relations of :RepositoryArtifact:Maven
-[options="header"]
-|====
-| Name          	| Target label(s)             	| Cardinality | Description
-| HAS_PREDECESSOR 	| <<:RepositoryArtifact:Maven>> | 0..1        | References a predecessor snapshot repository artifact
-|====

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.objectweb.asm.ClassReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -25,15 +27,17 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
 @Requires(FileDescriptor.class)
 public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, ClassFileDescriptor> {
 
-    private static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
+    public static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
             try (InputStream stream = file.createStream()) {
-                byte[] header = new byte[4];
-                stream.read(header);
-                return Arrays.equals(CAFEBABE, header);
+                byte[] header = new byte[CAFEBABE.length];
+                int read = stream.read(header);
+                return read == CAFEBABE.length && Arrays.equals(CAFEBABE, header);
             }
         }
         return false;
@@ -42,16 +46,26 @@ public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, 
     @Override
     public ClassFileDescriptor scan(FileResource file, String path, Scope scope, final Scanner scanner) throws IOException {
         final FileDescriptor fileDescriptor = scanner.getContext().peek(FileDescriptor.class);
+        VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
+        final ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
+        ClassFileDescriptor classFileDescriptor;
         try (InputStream stream = file.createStream()) {
-            return MD5DigestDelegate.getInstance().digest(stream, new MD5DigestDelegate.DigestOperation<ClassFileDescriptor>() {
+            classFileDescriptor = MD5DigestDelegate.getInstance().digest(stream, new MD5DigestDelegate.DigestOperation<ClassFileDescriptor>() {
                 @Override
                 public ClassFileDescriptor execute(InputStream inputStream) throws IOException {
-                    VisitorHelper visitorHelper = new VisitorHelper(scanner.getContext());
-                    ClassVisitor visitor = new ClassVisitor(fileDescriptor, visitorHelper);
                     new ClassReader(inputStream).accept(visitor, 0);
                     return visitor.getTypeDescriptor();
                 }
             });
+            classFileDescriptor.setValid(true);
+        } catch (RuntimeException e) {
+            LOGGER.warn("Cannot scan class '" + path + "'.", e);
+            classFileDescriptor = visitor.getTypeDescriptor();
+            if (classFileDescriptor == null) {
+                classFileDescriptor = scanner.getContext().getStore().addDescriptorType(fileDescriptor, ClassFileDescriptor.class);
+            }
+            classFileDescriptor.setValid(false);
         }
+        return classFileDescriptor;
     }
 }

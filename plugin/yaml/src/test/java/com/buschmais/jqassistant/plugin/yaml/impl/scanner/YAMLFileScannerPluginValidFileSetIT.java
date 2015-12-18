@@ -3,6 +3,8 @@ package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,22 +24,23 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
+             {"/probes/valid/hostconfig.yaml"},
              {"/probes/valid/simple-key-value-pair.yaml"},
              {"/probes/valid/two-simple-key-value-pairs.yaml"},
              {"/probes/valid/simple-list.yaml"},
              {"/probes/valid/dropwizard-configuration.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.1-example-2.1-sequence-of-scalars.yaml"},
+             {"/probes/yamlspec/1.1/sec-2.1-example-2.1-sequence-of-scalars.yaml"},
              {"/probes/yamlspec/1.1/sec-2.1-example-2.2-scalars-of-scalars.yaml"},
              {"/probes/yamlspec/1.1/sec-2.1-example-2.3-mapping-scalars-to-sequences.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.1-example-2.4-sequence-of-mappings.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.1-example-2.5-sequence-of-sequences.yaml"},
+             {"/probes/yamlspec/1.1/sec-2.1-example-2.4-sequence-of-mappings.yaml"},
+             {"/probes/yamlspec/1.1/sec-2.1-example-2.5-sequence-of-sequences.yaml"},
              {"/probes/yamlspec/1.1/sec-2.1-example-2.6-mapping-of-mappings.yaml"},
              {"/probes/yamlspec/1.1/sec-2.2-example-2.8-play-by-play.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.2-example-2.7-two-documensts-in-a-stream.yaml"},
+             {"/probes/yamlspec/1.1/sec-2.2-example-2.7-two-documensts-in-a-stream.yaml"},
              {"/probes/yamlspec/1.1/sec-2.2-example-2.9-single-document-with-comments.yaml"},
              {"/probes/yamlspec/1.1/sec-2.2-example-2.10-node-for-sammy-sosa-twice.yaml"},
-              // @todo  {"/probes/yamlspec/1.1/sec-2.2-example-2.11-mapping-betweend-sequences.yaml"},
-//             {"/probes/yamlspec/1.1/sec-2.2-example-2.12-in-line-nested-mapping.yaml"},
+             // @todo {"/probes/yamlspec/1.1/sec-2.2-example-2.11-mapping-betweend-sequences.yaml"},
+             {"/probes/yamlspec/1.1/sec-2.2-example-2.12-in-line-nested-mapping.yaml"},
              {"/probes/yamlspec/1.1/sec-2.3-example-2.13-in-literals-newlines-preserved.yaml"},
              {"/probes/yamlspec/1.1/sec-2.3-example-2.14-in-the-plain-scalar-newline-as-spaces.yaml"},
              {"/probes/yamlspec/1.1/sec-2.3-example-2.15-folded-newlines-are-preserved.yaml"},
@@ -57,14 +60,22 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
         });
     }
 
+    @Before
+    public void startTransaction() {
+        store.beginTransaction();
+    }
+
+    @After
+    public void commitTransaction() {
+        store.commitTransaction();
+    }
+
     public YAMLFileScannerPluginValidFileSetIT(String file) {
         pathToYAMLFile = file;
     }
 
     @Test
     public void canLoadYAMLFile() {
-        store.beginTransaction();
-
         File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class), pathToYAMLFile);
 
         Scanner scanner = getScanner();
@@ -72,8 +83,6 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
 
         assertThat("Scanner must be able to scan the resource and to return a descriptor.",
                    descriptor, notNullValue());
-
-        store.commitTransaction();
     }
 
 }

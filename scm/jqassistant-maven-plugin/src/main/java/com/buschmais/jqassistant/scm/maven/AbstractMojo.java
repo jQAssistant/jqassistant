@@ -4,12 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.DirectoryWalker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -21,6 +19,7 @@ import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
@@ -35,6 +34,8 @@ import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
     public static final String REPORT_XML = "jqassistant-report.xml";
+
+    public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
 
     /**
      * The store directory.
@@ -100,7 +101,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * cases MODULE shall be used.
      * </p>
      */
-    @Parameter(property = "jqassistant.store.lifecycle")
+    @Parameter(property = PROPERTY_STORE_LIFECYCLE)
     protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
 
     /**
@@ -108,6 +109,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "project")
     protected MavenProject currentProject;
+
+    /**
+     * Contains the full list of projects in the reactor.
+     */
+    @Parameter(property = "reactorProjects")
+    protected List<MavenProject> reactorProjects;
 
     @Inject
     protected PluginRepositoryProvider pluginRepositoryProvider;
@@ -134,11 +141,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (!runtimeInformation.isMavenVersion("[3.2,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.2.x or above.");
         }
-        if (skip) {
-            getLog().info("Skipping execution.");
-        } else {
-            doExecute();
-        }
+        doExecute();
     }
 
     /**
@@ -181,11 +184,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             List<RuleSource> ruleSources = pluginRepositoryProvider.getRulePluginRepository().getRuleSources();
             sources.addAll(ruleSources);
         }
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         try {
-            return ruleSetReader.read(sources);
+            ruleSetReader.read(sources, ruleSetBuilder);
         } catch (RuleException e) {
             throw new MojoExecutionException("Cannot read rules.", e);
         }
+        return ruleSetBuilder.getRuleSet();
     }
 
     /**
@@ -199,10 +204,10 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On error.
      */
     private void addRuleFiles(List<RuleSource> sources, File directory) throws MojoExecutionException {
-        List<File> ruleFiles = readRulesDirectory(directory);
-        for (final File ruleFile : ruleFiles) {
-            getLog().debug("Adding rules from file " + ruleFile.getAbsolutePath());
-            sources.add(new FileRuleSource(ruleFile));
+        List<RuleSource> ruleSources = readRulesDirectory(directory);
+        for (RuleSource ruleSource : ruleSources) {
+            getLog().debug("Adding rules from file " + ruleSource);
+            sources.add(ruleSource);
         }
     }
 
@@ -216,27 +221,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException
      *             If the rules directory cannot be read.
      */
-    private List<File> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
+    private List<RuleSource> readRulesDirectory(File rulesDirectory) throws MojoExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new MojoExecutionException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
         getLog().info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
-        final List<File> ruleFiles = new ArrayList<>();
         try {
-            new DirectoryWalker<File>() {
-
-                @Override
-                protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (RuleSource.Type.XML.matches(file) || RuleSource.Type.AsciiDoc.matches(file)) {
-                        results.add(file);
-                    }
-                }
-
-                public void scan(File directory) throws IOException {
-                    super.walk(directory, ruleFiles);
-                }
-            }.scan(rulesDirectory);
-            return ruleFiles;
+            return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {
             throw new MojoExecutionException("Cannot read rulesDirectory: " + rulesDirectory.getAbsolutePath(), e);
         }
@@ -273,15 +264,20 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      *             On execution failures.
      */
     protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
-        synchronized (storeFactory) {
-            Store store = getStore(rootModule);
-            if (isResetStoreBeforeExecution() && currentProject.equals(rootModule)) {
-                store.reset();
-            }
-            try {
-                storeOperation.run(rootModule, store);
-            } finally {
-                releaseStore(rootModule, store);
+        if (skip) {
+            getLog().info("Skipping execution.");
+        } else {
+            synchronized (storeFactory) {
+                Store store = getStore(rootModule);
+                boolean shouldReset = reactorProjects.contains(rootModule) ? currentProject.equals(rootModule) : currentProject.isExecutionRoot();
+                if (isResetStoreBeforeExecution() && shouldReset) {
+                    store.reset();
+                }
+                try {
+                    storeOperation.run(rootModule, store);
+                } finally {
+                    releaseStore(rootModule, store);
+                }
             }
         }
     }
@@ -304,7 +300,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
             Object existingStore = rootModule.getContextValue(Store.class.getName());
             if (existingStore != null) {
                 if (!Store.class.isAssignableFrom(existingStore.getClass())) {
-                    throw new MojoExecutionException("Cannot re-use cached store instance, switch to store life cycle " + StoreLifecycle.MODULE);
+                    throw new MojoExecutionException(
+                            "Cannot re-use store instance from reactor. Either declare the plugin as extension or execute Maven using the property -D"
+                                    + PROPERTY_STORE_LIFECYCLE + "=" + StoreLifecycle.MODULE + " on the command line.");
                 }
                 store = (Store) existingStore;
             }

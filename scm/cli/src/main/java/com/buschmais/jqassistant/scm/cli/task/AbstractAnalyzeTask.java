@@ -1,31 +1,32 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+
 import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.cli.Log;
 import com.buschmais.jqassistant.scm.cli.Task;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.DirectoryWalker;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for all tasks working with rules.
@@ -39,7 +40,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
     private static final String CMDLINE_OPTION_CONSTRAINTS = "constraints";
     private static final String CMDLINE_OPTION_CONCEPTS = "concepts";
 
-    private static final Log LOG = Log.getLog();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private final RuleSetReader ruleSetReader = new CompoundRuleSetReader();
     private URL rulesUrl;
@@ -55,11 +56,7 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         } else {
             File selectedDirectory = new File(ruleDirectory);
             // read rules from rules directory
-            List<File> ruleFiles = readRulesDirectory(selectedDirectory);
-            for (final File ruleFile : ruleFiles) {
-                LOG.debug("Adding rules from file " + ruleFile.getAbsolutePath());
-                sources.add(new FileRuleSource(ruleFile));
-            }
+            sources.addAll(readRulesDirectory(selectedDirectory));
             List<RuleSource> ruleSources;
             try {
                 ruleSources = pluginRepository.getRulePluginRepository().getRuleSources();
@@ -68,11 +65,13 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
             }
             sources.addAll(ruleSources);
         }
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         try {
-            return ruleSetReader.read(sources);
+            ruleSetReader.read(sources, ruleSetBuilder);
         } catch (RuleException e) {
             throw new CliExecutionException("Cannot read rules.", e);
         }
+        return ruleSetBuilder.getRuleSet();
     }
 
     /**
@@ -86,27 +85,13 @@ public abstract class AbstractAnalyzeTask extends AbstractTask {
         return RuleSelection.Builder.select(ruleSet, groupIds, constraintIds, conceptIds);
     }
 
-    private List<File> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
+    private List<RuleSource> readRulesDirectory(File rulesDirectory) throws CliExecutionException {
         if (rulesDirectory.exists() && !rulesDirectory.isDirectory()) {
             throw new RuntimeException(rulesDirectory.getAbsolutePath() + " does not exist or is not a directory.");
         }
-        LOG.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
-        final List<File> ruleFiles = new ArrayList<>();
+        LOGGER.info("Reading rules from directory " + rulesDirectory.getAbsolutePath());
         try {
-            new DirectoryWalker<File>() {
-
-                @Override
-                protected void handleFile(File file, int depth, Collection<File> results) throws IOException {
-                    if (!file.isDirectory() && file.getName().endsWith(".xml")) {
-                        results.add(file);
-                    }
-                }
-
-                public void scan(File directory) throws IOException {
-                    super.walk(directory, ruleFiles);
-                }
-            }.scan(rulesDirectory);
-            return ruleFiles;
+            return FileRuleSource.getRuleSources(rulesDirectory);
         } catch (IOException e) {
             throw new CliExecutionException("Cannot read rules directory: " + rulesDirectory.getAbsolutePath(), e);
         }

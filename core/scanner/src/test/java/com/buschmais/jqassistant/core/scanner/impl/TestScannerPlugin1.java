@@ -27,7 +27,7 @@ public class TestScannerPlugin1 implements ScannerPlugin<TestItem, TestDescripto
     }
 
     @Override
-    public Class<? extends TestDescriptor1> getDescriptorType() {
+    public Class<TestDescriptor1> getDescriptorType() {
         return TestDescriptor1.class;
     }
 

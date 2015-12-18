@@ -98,7 +98,7 @@ RETURN
 
 [[my-rules:MyConstraint]]
 .A human readable description of the constraint.
-[source,cypher,role=constraint,depends="my-rules:MyConcept",severity=blocker]
+[source,cypher,role=constraint,requiresConcepts="my-rules:MyConcept",severity=blocker]
 ----
 MATCH
   ...
@@ -108,6 +108,9 @@ RETURN
   ...
 ----
 
+[[my-rules:MyGroup]]
+[role=group,requiresConstraints="my-rules:MyConstraint(minor)"]
+A human readable description of the group.
 ....
 
 Each rule comes with an unique id (e.g. "my-rules:MyConstraint") which can be referenced by other rules. jQAssistant will take care about executing the rules in
@@ -126,11 +129,10 @@ Following severity levels are supported:
 - blocker
 
 ==== Groups
-A group is a set of rules that shall be executed together. This allows to adjust analysis depth for different types of builds, e.g. a Continuous Integration
-build (CI) can be configured to only execute rules with low costs (i.e. execution times) whereas a report build is allowed to run for a longer time with more
+A group is a set of rules that shall be executed together by including them with the option to overwrite their default severity.
+This allows to adjust analysis depth for different types of builds, e.g. a Continuous Integration build (CI) can be configured
+to only execute rules with low costs (i.e. execution times) whereas a report build is allowed to run for a longer time with more
 expensive checks.
-
-NOTE: Currently groups can only be defined in XML documents.
 
 ==== Concepts
 The information created by the scanner represents the structure of a software project on a raw level. _Concept_ rules allow enriching the database with higher

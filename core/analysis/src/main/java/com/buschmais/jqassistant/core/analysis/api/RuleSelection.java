@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 
@@ -49,8 +50,14 @@ public class RuleSelection {
          * @return The rule selection.
          */
         public static RuleSelection allOf(RuleSet ruleSet) {
-            return newInstance().addGroupIds(ruleSet.getGroups().keySet()).addConstraintIds(ruleSet.getConstraints().keySet())
-                    .addConceptIds(ruleSet.getConcepts().keySet()).get();
+            Set<String> conceptIds = ruleSet.getConceptBucket().getIds();
+            Set<String> constraintIds = ruleSet.getConstraintBucket().getIds();
+            Set<String> groupIds = ruleSet.getGroupsBucket().getIds();
+
+            return newInstance().addGroupIds(groupIds)
+                                .addConstraintIds(constraintIds)
+                                .addConceptIds(conceptIds)
+                                .get();
         }
 
         /**
@@ -63,7 +70,7 @@ public class RuleSelection {
          */
         public static RuleSelection newDefault(RuleSet ruleSet) {
             Builder builder = newInstance();
-            if (ruleSet.getGroups().containsKey(GROUP_DEFAULT)) {
+            if (ruleSet.getGroupsBucket().getIds().contains(GROUP_DEFAULT)) {
                 builder.addGroupId(GROUP_DEFAULT).get();
             }
             return builder.get();

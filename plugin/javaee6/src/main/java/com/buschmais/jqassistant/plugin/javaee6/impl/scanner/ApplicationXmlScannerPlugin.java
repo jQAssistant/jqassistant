@@ -1,30 +1,44 @@
 package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import java.io.IOException;
-import java.lang.String;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ClientModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.EjbModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.EnterpriseApplicationModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
-import com.sun.java.xml.ns.javaee.*;
+import com.sun.java.xml.ns.javaee.ApplicationType;
+import com.sun.java.xml.ns.javaee.DescriptionType;
+import com.sun.java.xml.ns.javaee.DisplayNameType;
+import com.sun.java.xml.ns.javaee.GenericBooleanType;
+import com.sun.java.xml.ns.javaee.IconType;
+import com.sun.java.xml.ns.javaee.ModuleType;
+import com.sun.java.xml.ns.javaee.PathType;
+import com.sun.java.xml.ns.javaee.SecurityRoleType;
+import com.sun.java.xml.ns.javaee.WebType;
 
 /**
  * Scanner plugin for the content of application XML descriptors (i.e.
  * APP-INF/application.xml)
  */
 @Requires(FileDescriptor.class)
-public class ApplicationXmlScannerPlugin extends AbstractScannerPlugin<FileResource, ApplicationXmlDescriptor> {
+public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor> {
 
-    private JAXBUnmarshaller<FileResource, ApplicationType> unmarshaller;
+    private JAXBUnmarshaller<ApplicationType> unmarshaller;
 
     @Override
     public void initialize() {
@@ -37,11 +51,9 @@ public class ApplicationXmlScannerPlugin extends AbstractScannerPlugin<FileResou
     }
 
     @Override
-    public ApplicationXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public ApplicationXmlDescriptor scan(FileResource item, ApplicationXmlDescriptor applicationXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         ApplicationType applicationType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        ApplicationXmlDescriptor applicationXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, ApplicationXmlDescriptor.class);
         com.sun.java.xml.ns.javaee.String applicationName = applicationType.getApplicationName();
         if (applicationName != null) {
             applicationXmlDescriptor.setName(applicationName.getValue());

@@ -9,10 +9,8 @@ import java.lang.annotation.Target;
 import java.util.List;
 
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
-import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor.RequiresType;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 
 /**
  * Describes a Java type.
@@ -28,7 +26,6 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor 
     @Target(ElementType.METHOD)
     @interface Declares {
     }
-
 
     /**
      * Return the declared methods.
@@ -65,22 +62,5 @@ public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor 
     @Outgoing
     @Declares
     List<TypeDescriptor> getDeclaredInnerClasses();
-
-    /**
-     * Return the artifact which requires this type.
-     * 
-     * @return The artifact which requires this type.
-     */
-    @Incoming
-    @RequiresType
-    JavaArtifactFileDescriptor getRequiredBy();
-
-    /**
-     * Set the artifact which requires this type.
-     * 
-     * @param javaArtifact
-     *            The artifact which requires this type.
-     */
-    void setRequiredBy(JavaArtifactFileDescriptor javaArtifact);
 
 }

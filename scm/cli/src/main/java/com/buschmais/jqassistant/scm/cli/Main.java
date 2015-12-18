@@ -7,6 +7,8 @@ import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
 import com.buschmais.jqassistant.scm.cli.task.DefaultTaskFactoryImpl;
 import org.apache.commons.cli.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
@@ -24,6 +26,7 @@ import java.util.*;
  * @author Dirk Mahler
  */
 public class Main {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final String ENV_JQASSISTANT_HOME = "JQASSISTANT_HOME";
     private static final String DIRECTORY_PLUGINS = "plugins";
@@ -44,7 +47,7 @@ public class Main {
             new Main(taskFactory).run(args);
         } catch (CliExecutionException e) {
             String message = getErrorMessage(e);
-            Log.getLog().error(message);
+            LOGGER.error(message);
             System.exit(e.getExitCode());
         }
     }
@@ -299,14 +302,14 @@ public class Main {
         if (dirName != null) {
             File dir = new File(dirName);
             if (dir.exists()) {
-                Log.getLog().debug("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
+                LOGGER.debug("Using JQASSISTANT_HOME '" + dir.getAbsolutePath() + "'.");
                 return dir;
             } else {
-                Log.getLog().warn("JQASSISTANT_HOME '" + dir.getAbsolutePath() + "' points to a non-existing directory.");
+                LOGGER.warn("JQASSISTANT_HOME '" + dir.getAbsolutePath() + "' points to a non-existing directory.");
                 return null;
             }
         }
-        Log.getLog().warn("JQASSISTANT_HOME is not set.");
+        LOGGER.warn("JQASSISTANT_HOME is not set.");
         return null;
     }
 

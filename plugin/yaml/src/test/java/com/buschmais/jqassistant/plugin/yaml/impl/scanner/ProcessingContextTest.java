@@ -24,7 +24,7 @@ public class ProcessingContextTest {
 
     @Test
     public void isContextReturnsFalseIfEventContextStackIsEmpty() {
-        assertThat(context.isContext(YAMLEmitter.EventType.MAPPING_START),
+        assertThat(context.isContext(YAMLEmitter.ParseContext.MAPPING_CXT),
                    equalTo(false));
     }
 
@@ -63,33 +63,33 @@ public class ProcessingContextTest {
 
     @Test
     public void isContextReturnsFalseIfRequestedContextPathIfLongerThenActualStack() {
-        context.pushContextEvent(YAMLEmitter.EventType.DOCUMENT_START);
-        context.pushContextEvent(YAMLEmitter.EventType.MAPPING_START);
+        context.pushContextEvent(YAMLEmitter.ParseContext.DOCUMENT_CTX);
+        context.pushContextEvent(YAMLEmitter.ParseContext.MAPPING_CXT);
 
-        assertThat(context.isContext(YAMLEmitter.EventType.DOCUMENT_START, YAMLEmitter.EventType.MAPPING_START,
-                                     YAMLEmitter.EventType.SCALAR),
+        assertThat(context.isContext(YAMLEmitter.ParseContext.DOCUMENT_CTX, YAMLEmitter.ParseContext.MAPPING_CXT,
+                                     YAMLEmitter.ParseContext.SEQUENCE_CXT),
                    equalTo(false));
     }
 
     @Test
     public void isContextReturnsTrueIfRequestedPathAndActualStackAreIdentically() {
-        context.pushContextEvent(YAMLEmitter.EventType.DOCUMENT_START);
-        context.pushContextEvent(YAMLEmitter.EventType.MAPPING_START);
-        context.pushContextEvent(YAMLEmitter.EventType.SCALAR);
+        context.pushContextEvent(YAMLEmitter.ParseContext.DOCUMENT_CTX);
+        context.pushContextEvent(YAMLEmitter.ParseContext.MAPPING_CXT);
+        context.pushContextEvent(YAMLEmitter.ParseContext.SEQUENCE_CXT);
 
-        assertThat(context.isContext(YAMLEmitter.EventType.DOCUMENT_START, YAMLEmitter.EventType.MAPPING_START,
-                                     YAMLEmitter.EventType.SCALAR),
+        assertThat(context.isContext(YAMLEmitter.ParseContext.DOCUMENT_CTX, YAMLEmitter.ParseContext.MAPPING_CXT,
+                                     YAMLEmitter.ParseContext.SEQUENCE_CXT),
                    equalTo(true));
     }
 
     @Test
     public void isContextReturnsFalseIfRequestedPathAndActualStackDifferInOneElement() {
-        context.pushContextEvent(YAMLEmitter.EventType.DOCUMENT_START);
-        context.pushContextEvent(YAMLEmitter.EventType.MAPPING_START);
-        context.pushContextEvent(YAMLEmitter.EventType.SCALAR);
+        context.pushContextEvent(YAMLEmitter.ParseContext.DOCUMENT_CTX);
+        context.pushContextEvent(YAMLEmitter.ParseContext.MAPPING_CXT);
+        context.pushContextEvent(YAMLEmitter.ParseContext.SEQUENCE_CXT);
 
-        assertThat(context.isContext(YAMLEmitter.EventType.DOCUMENT_START, YAMLEmitter.EventType.MAPPING_START,
-                                     YAMLEmitter.EventType.MAPPING_END),
+        assertThat(context.isContext(YAMLEmitter.ParseContext.DOCUMENT_CTX, YAMLEmitter.ParseContext.MAPPING_CXT,
+                                     YAMLEmitter.ParseContext.MAPPING_CXT),
                    equalTo(false));
 
     }

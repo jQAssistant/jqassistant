@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.java.api.scanner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -16,14 +17,16 @@ public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeRes
 
     protected AbstractArtifactScopedTypeResolver(JavaArtifactFileDescriptor artifact) {
         this.artifact = artifact;
-        for (FileDescriptor fileDescriptor : artifact.getContains()) {
+        addToCache(artifact.getContains());
+        addToCache(artifact.getRequires());
+    }
+
+    private void addToCache(List<FileDescriptor> fileDescriptors) {
+        for (FileDescriptor fileDescriptor : fileDescriptors) {
             if (fileDescriptor instanceof TypeDescriptor) {
                 TypeDescriptor typeDescriptor = (TypeDescriptor) fileDescriptor;
                 artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
             }
-        }
-        for (TypeDescriptor typeDescriptor : artifact.getRequiresTypes()) {
-            this.artifactTypes.put(typeDescriptor.getFullQualifiedName(), typeDescriptor);
         }
     }
 
@@ -44,11 +47,9 @@ public abstract class AbstractArtifactScopedTypeResolver extends AbstractTypeRes
     @Override
     protected void addRequiredType(String fqn, TypeDescriptor typeDescriptor) {
         artifactTypes.put(fqn, typeDescriptor);
-        typeDescriptor.setRequiredBy(artifact);
     }
 
     @Override
     protected <T extends TypeDescriptor> void removeRequiredType(String fqn, T typeDescriptor) {
-        typeDescriptor.setRequiredBy(null);
     }
 }

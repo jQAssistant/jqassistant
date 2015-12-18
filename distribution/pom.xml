@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant</groupId>
         <artifactId>jqassistant</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
     </parent>
     <groupId>com.buschmais.jqassistant.distribution</groupId>
     <artifactId>jqassistant.distribution</artifactId>
@@ -19,7 +19,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>${org.asciidoctor_version}</version>
+                <version>${org.asciidoctor-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>index</id>
@@ -147,13 +147,6 @@
             <version>${project.version}</version>
             <type>zip</type>
             <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Sonar -->
-        <dependency>
-            <groupId>com.buschmais.jqassistant.sonar</groupId>
-            <artifactId>jqassistant.sonar.plugin</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Plugins -->
@@ -360,79 +353,6 @@
             <artifactId>jqassistant.plugin.yaml</artifactId>
             <version>${project.version}</version>
             <classifier>javadoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Examples -->
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.rules.naming</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.rules.forbiddenmethod</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.rules.scripting</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.plugins.scanner</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.plugins.rule</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.plugins.report</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.plugins.project</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.sonar.ruleextension</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.examples</groupId>
-            <artifactId>jqassistant.examples.sonar.project</artifactId>
-            <version>${project.version}</version>
-            <type>zip</type>
-            <classifier>asciidoc</classifier>
             <scope>provided</scope>
         </dependency>
     </dependencies>

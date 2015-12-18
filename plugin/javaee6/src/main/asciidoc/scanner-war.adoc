@@ -2,17 +2,17 @@
 == Scanner for WAR files
 Imports WAR (Web Application Archive) files.
 
-=== :File:Web:Application:Archive
+=== :File:Web:Application:Archive:Container
 A file representing WAR file.
 
-.Properties of :File:Web:Application:Archive
+.Properties of :File:Web:Application:Archive:Container
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :File:Web:Application:Archive
+.Relations of :File:Web:Application:Archive:Container
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description

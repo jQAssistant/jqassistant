@@ -2,7 +2,7 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
 import org.eclipse.aether.artifact.Artifact;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.artifact.Coordinates;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 
 public class ArtifactCoordinates implements Coordinates {
 

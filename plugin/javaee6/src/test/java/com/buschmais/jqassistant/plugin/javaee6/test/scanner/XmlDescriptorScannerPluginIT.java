@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResol
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationArchiveDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
@@ -27,13 +28,15 @@ public class XmlDescriptorScannerPluginIT extends AbstractPluginIT {
      */
     @Test
     public void webXml() {
-        File webXml = new File(getClassesDirectory(XmlDescriptorScannerPluginIT.class), "WEB-INF/web.xml");
         store.beginTransaction();
         Scanner scanner = getScanner();
         WebApplicationArchiveDescriptor warDescriptor = store.create(WebApplicationArchiveDescriptor.class);
         scanner.getContext().push(TypeResolver.class, new ArtifactScopedTypeResolver(warDescriptor));
+        scanner.getContext().push(WebApplicationDescriptor.class, warDescriptor);
+        File webXml = new File(getClassesDirectory(XmlDescriptorScannerPluginIT.class), "WEB-INF/web.xml");
         WebXmlDescriptor descriptor = scanner.scan(webXml, "/WEB-INF/web.xml", WebApplicationScope.WAR);
         assertThat(descriptor.getVersion(), equalTo("3.0"));
+        scanner.getContext().pop(WebApplicationDescriptor.class);
         scanner.getContext().pop(TypeResolver.class);
         store.commitTransaction();
     }

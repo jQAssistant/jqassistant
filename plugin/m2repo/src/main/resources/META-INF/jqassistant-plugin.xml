@@ -3,9 +3,11 @@
     <description>Provides a scanner for maven repositories.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor</class>
-        <class>com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.m2repo.api.model.MavenReleaseDescriptor</class>
+        <class>com.buschmais.jqassistant.plugin.m2repo.api.model.MavenSnapshotDescriptor</class>
     </model>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenRepositoryScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.m2repo.impl.scanner.MavenArtifactScannerPlugin</class>
     </scanner>
 </jqa-plugin:jqassistant-plugin>

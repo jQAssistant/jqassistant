@@ -1,36 +1,33 @@
 package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
+
+import javax.xml.transform.stream.StreamSource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
+import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ApplicationXmlDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ClientModuleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.ConnectorModuleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DescriptionDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.DisplayNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.EjbModuleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.IconDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.RoleNameDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor;
-import com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor;
+import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin;
-import com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
+
+    @Mock
+    private FileDescriptor fileDescriptor;
 
     @Mock
     private ApplicationXmlDescriptor applicationXmlDescriptor;
@@ -67,12 +64,18 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
 
     @Test
     public void applicationXml() throws IOException {
-
         FileResource fileResource = mock(FileResource.class);
-        when(fileResource.createStream()).thenReturn(WebXmlScannerPlugin.class.getResourceAsStream("/META-INF/application.xml"));
+        when(fileResource.createStream()).thenAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return ApplicationXmlScannerPluginTest.class.getResourceAsStream("/META-INF/application.xml");
+            }
+        });
 
-        when(scanner.scan(fileResource, "/META-INF/application.xml", XmlScope.DOCUMENT)).thenReturn(applicationXmlDescriptor);
-        when(store.addDescriptorType(applicationXmlDescriptor, ApplicationXmlDescriptor.class)).thenReturn(applicationXmlDescriptor);
+        when(scannerContext.peek(FileDescriptor.class)).thenReturn(fileDescriptor);
+        when(store.addDescriptorType(fileDescriptor, ApplicationXmlDescriptor.class)).thenReturn(applicationXmlDescriptor);
+        when(scanner.scan(Mockito.any(StreamSource.class), Mockito.eq("/META-INF/application.xml"), Mockito.eq(EnterpriseApplicationScope.EAR)))
+                .thenReturn(applicationXmlDescriptor);
         when(applicationXmlDescriptor.getDescriptions()).thenReturn(mock(List.class));
         when(applicationXmlDescriptor.getDisplayNames()).thenReturn(mock(List.class));
         when(applicationXmlDescriptor.getIcons()).thenReturn(mock(List.class));
@@ -95,11 +98,11 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
 
         ApplicationXmlScannerPlugin scannerPlugin = new ApplicationXmlScannerPlugin();
         scannerPlugin.initialize();
-        scannerPlugin.configure(scannerContext, Collections.<String, Object>emptyMap());
+        scannerPlugin.configure(scannerContext, Collections.<String, Object> emptyMap());
         scannerPlugin.scan(fileResource, "/META-INF/application.xml", EnterpriseApplicationScope.EAR, scanner);
 
-        verify(scanner).scan(fileResource, "/META-INF/application.xml", XmlScope.DOCUMENT);
-        verify(store).addDescriptorType(applicationXmlDescriptor, ApplicationXmlDescriptor.class);
+        verify(store).addDescriptorType(fileDescriptor, ApplicationXmlDescriptor.class);
+        verify(scanner).scan(Mockito.any(StreamSource.class), Mockito.eq("/META-INF/application.xml"), Mockito.eq(EnterpriseApplicationScope.EAR));
         verify(applicationXmlDescriptor).setVersion("6");
         verify(applicationXmlDescriptor).setName("TestApplication");
         verify(applicationXmlDescriptor).setInitializeInOrder("true");

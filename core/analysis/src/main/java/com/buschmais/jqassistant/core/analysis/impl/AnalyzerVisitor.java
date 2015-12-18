@@ -1,20 +1,23 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.*;
-import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.xo.api.Query;
-import com.buschmais.xo.api.XOException;
+import java.util.*;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import org.slf4j.Logger;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.VerificationStrategy;
+import com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.xo.api.Query;
+import com.buschmais.xo.api.XOException;
 
 /**
  * Implementation of a rule visitor for analysis execution.
@@ -36,7 +39,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     private RuleSet ruleSet;
     private Store store;
     private AnalysisListener reportWriter;
-    private Console console;
+    private Logger logger;
     private ScriptEngineManager scriptEngineManager;
     private Map<Class<? extends Verification>, VerificationStrategy> verificationStrategies = new HashMap<>();
 
@@ -49,14 +52,14 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      *            The store.
      * @param reportWriter
      *            The report writer.
-     * @param console
-     *            The console
+     * @param log
+     *            The logger
      */
-    public AnalyzerVisitor(RuleSet ruleSet, Store store, AnalysisListener reportWriter, Console console) {
+    public AnalyzerVisitor(RuleSet ruleSet, Store store, AnalysisListener reportWriter, Logger log) {
         this.ruleSet = ruleSet;
         this.store = store;
         this.reportWriter = reportWriter;
-        this.console = console;
+        this.logger = log;
         this.scriptEngineManager = new ScriptEngineManager();
         registerVerificationStrategy(new RowCountVerificationStrategy());
         registerVerificationStrategy(new AggregationVerificationStrategy());
@@ -67,14 +70,14 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void visitConcept(Concept concept, Severity severity) throws AnalysisException {
+    public void visitConcept(Concept concept, Severity effectiveSeverity) throws AnalysisException {
         try {
             store.beginTransaction();
             ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
             if (conceptDescriptor == null) {
-                console.info("Applying concept '" + concept.getId() + "' with severity: '" + getSeverityInfo(concept, severity) + "'.");
+                logger.info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity().getInfo(effectiveSeverity) + "'.");
                 reportWriter.beginConcept(concept);
-                reportWriter.setResult(execute(concept, ruleSet, severity));
+                reportWriter.setResult(execute(concept, ruleSet, effectiveSeverity));
                 conceptDescriptor = store.create(ConceptDescriptor.class);
                 conceptDescriptor.setId(concept.getId());
                 reportWriter.endConcept();
@@ -87,12 +90,12 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void visitConstraint(Constraint constraint, Severity severity) throws AnalysisException {
-        console.info("Validating constraint '" + constraint.getId() + "' with severity: '" + getSeverityInfo(constraint, severity) + "'.");
+    public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
+        logger.info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity().getInfo(effectiveSeverity) + "'.");
         try {
             store.beginTransaction();
             reportWriter.beginConstraint(constraint);
-            reportWriter.setResult(execute(constraint, ruleSet, severity));
+            reportWriter.setResult(execute(constraint, ruleSet, effectiveSeverity));
             reportWriter.endConstraint();
             store.commitTransaction();
         } catch (XOException e) {
@@ -101,26 +104,9 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
         }
     }
 
-    /**
-     * Return a string representing the effective severity of a rule.
-     * 
-     * @param rule
-     *            The rule.
-     * @param severity
-     *            The severity to use.
-     * @return The string representation.
-     */
-    private String getSeverityInfo(ExecutableRule rule, Severity severity) {
-        StringBuffer result = new StringBuffer(severity.toString());
-        if (!severity.equals(rule.getSeverity())) {
-            result.append(" (from ").append(rule.getSeverity()).append(")");
-        }
-        return result.toString();
-    }
-
     @Override
     public void beforeGroup(Group group) throws AnalysisException {
-        console.info("Executing group '" + group.getId() + "'");
+        logger.info("Executing group '" + group.getId() + "'");
         store.beginTransaction();
         reportWriter.beginGroup(group);
         store.commitTransaction();
@@ -134,7 +120,8 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     /**
-     * Run the given executableRule and return a result which can be passed to a report writer.
+     * Run the given executableRule and return a result which can be passed to a
+     * report writer.
      *
      * @param executableRule
      *            The executableRule.
@@ -148,15 +135,19 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
         return execute(executableRule, executableRule.getExecutable(), ruleSet, severity);
     }
 
-    private <T extends ExecutableRule> Result<T> execute(T executableRule, Executable executable, RuleSet ruleSet, Severity severity)
-            throws AnalysisException {
+    private <T extends ExecutableRule> Result<T> execute(T executableRule, Executable executable, RuleSet ruleSet, Severity severity) throws AnalysisException {
         if (executable instanceof CypherExecutable) {
             return executeCypher(executableRule, (CypherExecutable) executable, severity);
         } else if (executable instanceof ScriptExecutable) {
             return executeScript(executableRule, (ScriptExecutable) executable, executableRule, severity);
         } else if (executable instanceof TemplateExecutable) {
             String templateId = ((TemplateExecutable) executable).getTemplateId();
-            Template template = ruleSet.getTemplates().get(templateId);
+            Template template;
+            try {
+                template = ruleSet.getTemplateBucket().getById(templateId);
+            } catch (NoTemplateException e) {
+                throw new AnalysisException("Unknown template with id " + templateId, e);
+            }
             return execute(executableRule, template.getExecutable(), ruleSet, severity);
         } else {
             throw new AnalysisException("Unsupported executable type " + executable);
@@ -176,8 +167,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @throws AnalysisException
      *             If execution fails.
      */
-    private <T extends ExecutableRule> Result<T> executeCypher(T executableRule, CypherExecutable executable, Severity severity)
-            throws AnalysisException {
+    private <T extends ExecutableRule> Result<T> executeCypher(T executableRule, CypherExecutable executable, Severity severity) throws AnalysisException {
         String cypher = executable.getStatement();
         List<Map<String, Object>> rows = new ArrayList<>();
         try (Query.Result<Query.Result.CompositeRowObject> compositeRowObjects = executeQuery(cypher, executableRule.getParameters())) {
@@ -186,7 +176,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
                 if (columnNames == null) {
                     columnNames = new ArrayList<>(rowObject.getColumns());
                 }
-                Map<String, Object> row = new HashMap<>();
+                Map<String, Object> row = new LinkedHashMap<>();
                 for (String columnName : columnNames) {
                     row.put(columnName, rowObject.get(columnName, Object.class));
                 }
@@ -195,7 +185,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             Result.Status status = verify(executableRule, columnNames, rows);
             return new Result<>(executableRule, status, severity, columnNames, rows);
         } catch (Exception e) {
-            throw new AnalysisException("Cannot execute query.", e);
+            throw new AnalysisException("Cannot execute query for rule '" + executableRule + "'.", e);
         }
     }
 
@@ -214,8 +204,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @throws AnalysisException
      *             If no valid verification strategy can be found.
      */
-    private <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows)
-            throws AnalysisException {
+    private <T extends ExecutableRule> Result.Status verify(T executable, List<String> columnNames, List<Map<String, Object>> rows) throws AnalysisException {
         Verification verification = executable.getVerification();
         VerificationStrategy strategy = verificationStrategies.get(verification.getClass());
         if (strategy == null) {
@@ -237,8 +226,8 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @throws AnalysisException
      *             If script execution fails.
      */
-    private <T extends ExecutableRule> Result<T> executeScript(T executableRule, ScriptExecutable scriptExecutable, T executable,
-            Severity severity) throws AnalysisException {
+    private <T extends ExecutableRule> Result<T> executeScript(T executableRule, ScriptExecutable scriptExecutable, T executable, Severity severity)
+            throws AnalysisException {
         String language = scriptExecutable.getLanguage();
         ScriptEngine scriptEngine = scriptEngineManager.getEngineByName(language);
         if (scriptEngine == null) {
@@ -258,8 +247,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             throw new AnalysisException("Cannot execute script.", e);
         }
         if (!(scriptResult instanceof Result)) {
-            throw new AnalysisException("Script returned an invalid result language, expected " + Result.class.getName() + " but got "
-                    + scriptResult);
+            throw new AnalysisException("Script returned an invalid result language, expected " + Result.class.getName() + " but got " + scriptResult);
         }
         return Result.class.cast(scriptResult);
     }
@@ -274,7 +262,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * @return The query result.
      */
     private com.buschmais.xo.api.Query.Result<Query.Result.CompositeRowObject> executeQuery(String cypher, Map<String, Object> parameters) {
-        console.debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
+        logger.debug("Executing query '" + cypher + "' with parameters [" + parameters + "]");
         return store.executeQuery(cypher, parameters);
     }
 }

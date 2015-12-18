@@ -34,14 +34,23 @@ public class ScannerContextImpl implements ScannerContext {
 
     @Override
     public <T> T peek(Class<T> key) {
-        return getValues(key).peek();
+        T value = getValues(key).peek();
+        if (value == null) {
+            throw new IllegalStateException("Cannot find a value for '" + key.getName() + "' in the context");
+        }
+        return value;
+    }
+
+    @Override
+    public <T> T peekOrDefault(Class<T> key, T defaultValue) {
+        T value = getValues(key).peek();
+        return value != null ? value : defaultValue;
     }
 
     @Override
     public <T> T pop(Class<T> key) {
         return getValues(key).pop();
     }
-
 
     /**
      * Determine the stack for the given key.

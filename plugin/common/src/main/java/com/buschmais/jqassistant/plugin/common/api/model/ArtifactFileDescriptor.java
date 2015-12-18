@@ -9,5 +9,4 @@ import com.buschmais.jqassistant.plugin.common.api.report.Generic;
  */
 @Generic(Generic.GenericLanguageElement.ArtifactFile)
 public interface ArtifactFileDescriptor extends ArtifactDescriptor, FileDescriptor, FileContainerDescriptor {
-
 }

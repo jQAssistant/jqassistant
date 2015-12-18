@@ -2,34 +2,21 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+
 /**
  * Represents a template.
  */
-public class Template implements Rule {
-
-    private String id;
-
-    private String description;
+public class Template extends AbstractRule {
 
     private Executable executable;
 
     private Map<String, Class<?>> parameterTypes;
 
-    public Template(String id, String description, Executable executable, Map<String, Class<?>> parameterTypes) {
-        this.id = id;
-        this.description = description;
+    public Template(String id, String description, RuleSource ruleSource, Executable executable, Map<String, Class<?>> parameterTypes) {
+        super(id, description, ruleSource);
         this.executable = executable;
         this.parameterTypes = parameterTypes;
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
     }
 
     public Executable getExecutable() {

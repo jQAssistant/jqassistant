@@ -16,19 +16,17 @@ import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 @Requires(FileDescriptor.class)
-public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, BeansXmlDescriptor> {
+public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXmlDescriptor> {
 
-    private JAXBUnmarshaller<FileResource, Beans> unmarshaller;
+    private JAXBUnmarshaller<Beans> unmarshaller;
 
     @Override
     public void initialize() {
@@ -41,10 +39,8 @@ public class BeansXmlScannerPlugin extends AbstractScannerPlugin<FileResource, B
     }
 
     @Override
-    public BeansXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public BeansXmlDescriptor scan(FileResource item, BeansXmlDescriptor beansXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         ScannerContext context = scanner.getContext();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        BeansXmlDescriptor beansXmlDescriptor = context.getStore().addDescriptorType(xmlFileDescriptor, BeansXmlDescriptor.class);
         Beans beans = unmarshaller.unmarshal(item);
         beansXmlDescriptor.setVersion(beans.getVersion());
         beansXmlDescriptor.setBeanDiscoveryMode(beans.getBeanDiscoveryMode());

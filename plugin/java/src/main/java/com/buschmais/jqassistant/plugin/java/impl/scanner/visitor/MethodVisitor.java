@@ -4,6 +4,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.signature.SignatureReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.plugin.java.api.model.AnnotationValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.FieldDescriptor;
@@ -13,6 +15,13 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VisitorHelper.class);
+
+    /**
+     * Annotation indicating a synthetic parameter of a method.
+     */
+    private static final String JAVA_LANG_SYNTHETIC = "java.lang.Synthetic";
 
     private TypeCache.CachedType containingType;
     private MethodDescriptor methodDescriptor;
@@ -31,12 +40,18 @@ public class MethodVisitor extends org.objectweb.asm.MethodVisitor {
     @Override
     public org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(final int parameter, final String desc, final boolean visible) {
         String annotationType = SignatureHelper.getType(desc);
-        if ("java.lang.Synthetic".equals(annotationType)) {
-            // Ignore synthetic parameters add the start of the signature.
-            syntheticParameters++;
+        if (JAVA_LANG_SYNTHETIC.equals(annotationType)) {
+            // Ignore synthetic parameters add the start of the signature, i.e.
+            // determine the number of synthetic parameters
+            syntheticParameters = Math.max(syntheticParameters, parameter + 1);
             return null;
         }
         ParameterDescriptor parameterDescriptor = visitorHelper.getParameterDescriptor(methodDescriptor, parameter - syntheticParameters);
+        if (parameterDescriptor == null) {
+            LOGGER.warn("Cannot find parameter with index " + (parameter - syntheticParameters) + " in method signature "
+                    + containingType.getTypeDescriptor().getFullQualifiedName() + "#" + methodDescriptor.getSignature());
+            return null;
+        }
         AnnotationValueDescriptor annotationDescriptor = visitorHelper.addAnnotation(containingType, parameterDescriptor, SignatureHelper.getType(desc));
         return new AnnotationVisitor(containingType, annotationDescriptor, visitorHelper);
     }

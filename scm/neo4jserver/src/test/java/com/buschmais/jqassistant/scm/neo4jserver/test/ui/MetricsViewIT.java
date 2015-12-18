@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.NoMetricGroupException;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
@@ -46,7 +47,7 @@ public class MetricsViewIT extends AbstractUITest {
     @Test
     public void testGetMetricIds() {
 
-        Set<String> ruleSetMetricGroupIds = ruleSet.getMetricGroups().keySet();
+        Set<String> ruleSetMetricGroupIds = ruleSet.getMetricGroupsBucket().getIds();
         assertFalse(ruleSetMetricGroupIds.isEmpty());
 
         Set<String> metricGroupIds = metricsPage.getMetricGroupIds();
@@ -70,7 +71,7 @@ public class MetricsViewIT extends AbstractUITest {
      * This test lets the metric service run a metric.
      */
     @Test
-    public void testMetricGroupSelection() throws IOException {
+    public void testMetricGroupSelection() throws IOException, NoMetricGroupException {
         scanClasses("core", Store.class);
         scanClassPathDirectory("server-test", getClassesDirectory(MetricsViewIT.class));
 
@@ -82,7 +83,7 @@ public class MetricsViewIT extends AbstractUITest {
         // is visible
         metricsPage.openMetricDetails();
 
-        MetricGroup metricGroup = ruleSet.getMetricGroups().get(METRIC_GROUP_ID_artifactDependencies);
+        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().getById(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
         // if running the metric succeeded, the metric ID field in the metric
         // page is filled with the metric ID
@@ -100,21 +101,16 @@ public class MetricsViewIT extends AbstractUITest {
      */
     @Test
     public void testDrillDown() throws Exception {
-        String artifactId = "server-test";
-        scanClassPathDirectory(artifactId, getClassesDirectory(MetricsViewIT.class));
-        scanClasses("core", Store.class);
-
-        // TODO Applying concept 'dependency:Package' doesn't work properly, as
-        // the classes are scanned directly. This is a workaround for that
-        // issue.
-        store.executeQuery("match " + "(a:Artifact)-[:CONTAINS]->(t:Type), " + "(p:Package)-[:CONTAINS*]->(t) " + "create (a)-[c:CONTAINS]->(p) "
-                + "return count(c)");
+        String artifactId1 = "a1";
+        String artifactId2 = "a2";
+        scanClassPathDirectory(artifactId1, getClassesDirectory(MetricsViewIT.class));
+        scanClassPathDirectory(artifactId2, getClassesDirectory(MetricsViewIT.class));
 
         // for test step explanation see testMetricGroupSelection()
         metricsPage.selectMetricGroup(METRIC_GROUP_ID_artifactDependencies);
         metricsPage.openMetricDetails();
 
-        MetricGroup metricGroup = ruleSet.getMetricGroups().get(METRIC_GROUP_ID_artifactDependencies);
+        MetricGroup metricGroup = ruleSet.getMetricGroupsBucket().getById(METRIC_GROUP_ID_artifactDependencies);
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
 
         List<String> breadcrumb = metricsPage.getBreadcrumb();
@@ -122,7 +118,7 @@ public class MetricsViewIT extends AbstractUITest {
         assertEquals(firstMetric.getId(), breadcrumb.get(0));
 
         // this triggers the AJAX call
-        metricsPage.selectNode(artifactId);
+        metricsPage.selectNode(artifactId1);
 
         // the breadcrumb now must contain the first and the second metric ID
         Metric secondMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(1);

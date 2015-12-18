@@ -1,21 +1,20 @@
 package com.buschmais.jqassistant.plugin.m2repo.test.scanner;
 
-import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.RepositoryArtifactDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Map;
+
 import org.apache.commons.io.FileUtils;
 import org.javastack.httpd.HttpServer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
+import com.buschmais.jqassistant.plugin.common.test.AbstractPluginIT;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 
@@ -23,9 +22,9 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
     private static final String REPO_SERVER_BASE_DIR = "./src/test/resources/maven-repository-";
 
     private static final String TEST_REPOSITORY_URL = "http://localhost:" + REPO_SERVER_PORT;
-    private HttpServer httpServer;
-
     private static final String M2REPO_DATA_DIR = "target/m2repo/data";
+
+    private HttpServer httpServer;
 
     protected Map<String, Object> getScannerProperties() {
         return MapBuilder.<String, Object>create("m2repo.directory", M2REPO_DATA_DIR).get();
@@ -84,7 +83,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             Assert.assertNotNull(repositoryDescriptor);
             Assert.assertEquals(TEST_REPOSITORY_URL, repositoryDescriptor.getUrl());
             final int expectedPomNodes = 9;
-            Assert.assertEquals(expectedPomNodes, repositoryDescriptor.getContainedArtifacts().size());
+            Assert.assertEquals(expectedPomNodes, repositoryDescriptor.getContainedModels().size());
         } finally {
             store.commitTransaction();
             stopServer();
@@ -98,31 +97,19 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             store.beginTransaction();
             getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
             Long countArtifactNodes =
-                    store.executeQuery("MATCH (n:RepositoryArtifact:Maven:Pom:Xml) RETURN count(n) as nodes").getSingleResult().get("nodes",
+ store.executeQuery("MATCH (:Repository)-[:CONTAINS_POM]->(n:Maven:Pom:Xml) RETURN count(n) as nodes").getSingleResult()
+                    .get("nodes",
                             Long.class);
-            Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(1), countArtifactNodes);
+            Assert.assertEquals("Number of POM nodes is wrong.", new Long(1), countArtifactNodes);
 
             startServer("3");
             getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
 
             countArtifactNodes =
-                    store.executeQuery("MATCH (n:RepositoryArtifact:Maven:Pom:Xml) RETURN count(n) as nodes").getSingleResult().get("nodes",
+ store.executeQuery("MATCH (:Repository)-[:CONTAINS_POM]->(n:Maven:Pom:Xml) RETURN count(n) as nodes").getSingleResult()
+                    .get("nodes",
                             Long.class);
-            Assert.assertEquals("Number of 'RepositoryArtifact' nodes is wrong.", new Long(2), countArtifactNodes);
-
-            // Check relations
-            MavenRepositoryDescriptor repositoryDescriptor =
-                    store.executeQuery("MATCH (n:Maven:Repository) RETURN n").getSingleResult().get("n", MavenRepositoryDescriptor.class);
-            List<RepositoryArtifactDescriptor> containedArtifacts = repositoryDescriptor.getContainedArtifacts();
-            Assert.assertEquals("Unexpected count of contained Artifacts", 1, containedArtifacts.size());
-            RepositoryArtifactDescriptor repositoryArtifactDescriptor = containedArtifacts.get(0);
-            RepositoryArtifactDescriptor predecessorArtifact = repositoryArtifactDescriptor.getPredecessorArtifact();
-            Assert.assertNotNull("Predecessor expected.", predecessorArtifact);
-            Assert.assertEquals("Equal fqn for artifact and predecessor expected.", repositoryArtifactDescriptor.getMavenCoordinates(),
-                    predecessorArtifact.getMavenCoordinates());
-            Assert.assertTrue("lastModified date from predecessor not smaller than current artifact modified date ("
-                    + predecessorArtifact.getLastModified() + "!<" + repositoryArtifactDescriptor.getLastModified() + ")", predecessorArtifact
-                    .getLastModified() < repositoryArtifactDescriptor.getLastModified());
+            Assert.assertEquals("Number of 'POM' nodes is wrong.", new Long(2), countArtifactNodes);
         } finally {
             store.commitTransaction();
             stopServer();

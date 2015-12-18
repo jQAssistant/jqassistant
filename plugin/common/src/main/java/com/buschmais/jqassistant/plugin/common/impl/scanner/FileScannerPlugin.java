@@ -30,7 +30,6 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         String normalizedPath = slashify(path);
         LOGGER.debug("Scanning '{}'.", normalizedPath);
-        FileDescriptor fileDescriptor;
         try (FileResource fileResource = new FileResource() {
 
             @Override
@@ -47,8 +46,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
             public void close() {
             }
         };) {
-            fileDescriptor = scanner.scan(fileResource, normalizedPath, scope);
-            return toFileDescriptor(new BufferedFileResource(fileResource), fileDescriptor, normalizedPath, scanner.getContext());
+            return scanner.scan(fileResource, normalizedPath, scope);
         }
     }
 }

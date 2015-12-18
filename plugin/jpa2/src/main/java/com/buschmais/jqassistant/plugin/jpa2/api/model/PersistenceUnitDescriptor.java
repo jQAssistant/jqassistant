@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
-import com.buschmais.jqassistant.core.store.api.model.NamedDescriptor;
+import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
@@ -58,4 +58,8 @@ public interface PersistenceUnitDescriptor extends Descriptor, NamedDescriptor, 
     @Relation("HAS")
     Set<PropertyDescriptor> getProperties();
 
+    @Property("excludeUnlistedClasses")
+    boolean isExcludingUnlistedClasses();
+
+    void setExcludingUnlistedClasses(boolean exclude);
 }

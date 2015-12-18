@@ -8,17 +8,13 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.tycho.core.TychoConstants;
-import org.eclipse.tycho.core.facade.BuildProperties;
 import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
+import org.eclipse.tycho.core.shared.BuildProperties;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;

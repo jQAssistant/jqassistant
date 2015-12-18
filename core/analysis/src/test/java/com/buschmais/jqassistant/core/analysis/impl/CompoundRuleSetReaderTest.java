@@ -13,6 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 
@@ -22,18 +23,20 @@ public class CompoundRuleSetReaderTest {
     public void testReadCompoundSources() throws Exception {
         File adocFile = new File(getClass().getResource("/junit-without-assert.adoc").getFile());
         File xmlFile = new File(getClass().getResource("/test-concepts.xml").getFile());
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         RuleSetReader reader = new CompoundRuleSetReader();
-        RuleSet ruleSet = reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)));
-        assertEquals(3, ruleSet.getConcepts().size());
-        assertEquals(2, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
+        assertEquals(3, ruleSet.getConceptBucket().size());
+        assertEquals(2, ruleSet.getConstraintBucket().size());
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, asList("junit4:TestClassOrMethod", "junit4:AssertMethod", "java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraints().keySet()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, asList("junit4:TestMethodWithoutAssertion", "example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
-        assertEquals(1, ruleSet.getGroups().size());
-        Group group = ruleSet.getGroups().values().iterator().next();
+        assertEquals(1, ruleSet.getGroupsBucket().size());
+        Group group = ruleSet.getGroupsBucket().getById("default");
         assertEquals("default", group.getId());
         assertEquals(1, group.getConcepts().size());
         assertEquals("java:Throwable", group.getConcepts().keySet().iterator().next());
@@ -43,19 +46,21 @@ public class CompoundRuleSetReaderTest {
 
     @Test
     public void testReadUrlSource() throws Exception {
+        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         URL url = getClass().getResource("/test-concepts.xml");
         RuleSetReader reader = new XmlRuleSetReader();
-        RuleSet ruleSet = reader.read(Arrays.asList(new UrlRuleSource(url)));
-        assertEquals(1, ruleSet.getConcepts().size());
-        assertEquals(1, ruleSet.getConstraints().size());
-        for (String id : ruleSet.getConcepts().keySet()) {
+        reader.read(Arrays.asList(new UrlRuleSource(url)), ruleSetBuilder);
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
+        assertEquals(1, ruleSet.getConceptBucket().size());
+        assertEquals(1, ruleSet.getConstraintBucket().size());
+        for (String id : ruleSet.getConceptBucket().getIds()) {
             assertEquals(true, asList("java:Throwable").contains(id));
         }
-        for (String id : ruleSet.getConstraints().keySet()) {
+        for (String id : ruleSet.getConstraintBucket().getIds()) {
             assertEquals(true, asList("example:ConstructorOfDateMustNotBeUsed").contains(id));
         }
-        assertEquals(1, ruleSet.getGroups().size());
-        Group group = ruleSet.getGroups().values().iterator().next();
+        assertEquals(1, ruleSet.getGroupsBucket().size());
+        Group group = ruleSet.getGroupsBucket().getById("default");
         assertEquals("default", group.getId());
     }
 }

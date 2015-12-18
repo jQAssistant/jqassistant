@@ -1,16 +1,9 @@
 package com.buschmais.jqassistant.plugin.java.api.model;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.util.List;
-
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactFileDescriptor;
 import com.buschmais.xo.api.annotation.ResultOf;
 import com.buschmais.xo.api.annotation.ResultOf.Parameter;
 import com.buschmais.xo.neo4j.api.annotation.Cypher;
-import com.buschmais.xo.neo4j.api.annotation.Relation;
-import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
 
 /**
  * Defines a Java artifact.
@@ -35,25 +28,6 @@ public interface JavaArtifactFileDescriptor extends JavaDescriptor, ArtifactFile
      * @return The type.
      */
     @ResultOf
-    @Cypher("MATCH (type:Type) WHERE type.fqn={fqn} WITH type MATCH (type)<-[:CONTAINS]-(dependency:Artifact), p=shortestPath((artifact)-[:DEPENDS_ON*]->(dependency)) WHERE id(artifact)={this} RETURN type LIMIT 1")
+    @Cypher("MATCH (type:Type) WHERE type.fqn={fqn} WITH type MATCH (type)<-[:CONTAINS|REQUIRES]-(dependency:Artifact), p=shortestPath((artifact)-[:DEPENDS_ON*]->(dependency)) WHERE id(artifact)={this} RETURN type LIMIT 1")
     TypeDescriptor resolveRequiredType(@Parameter("fqn") String fqn);
-
-    /**
-     * Return the list of Java types required by this artifact (i.e. which are
-     * referenced from it).
-     * 
-     * @return The list of required java types.
-     */
-    @Outgoing
-    @RequiresType
-    List<TypeDescriptor> getRequiresTypes();
-
-    /**
-     * Defines the REQUIRES relation.
-     */
-    @Relation("REQUIRES")
-    @Retention(RUNTIME)
-    public @interface RequiresType {
-    }
-
 }

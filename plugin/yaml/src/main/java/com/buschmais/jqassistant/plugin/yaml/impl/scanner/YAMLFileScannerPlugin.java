@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
 
 @Requires(FileDescriptor.class)
@@ -34,7 +35,7 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
-        return file.getFile().getName().toLowerCase().endsWith(YAML_FILE_EXTENSION);
+        return path.toLowerCase().endsWith(YAML_FILE_EXTENSION);
     }
 
     @Override
@@ -42,16 +43,14 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
         ScannerContext context = scanner.getContext();
         Store store = context.getStore();
 
-
-
-        Yaml yaml = new Yaml(new TagOverridingConstructor());
+        Yaml yaml = new Yaml(new TagOverridingConstructor(), new Representer(), new DumperOptions(),
+                             new NonResolvingResolver());
         Representer representer = new Representer();
         DumperOptions options = new DumperOptions();
 
         FileDescriptor fileDescriptor = context.peek(FileDescriptor.class);
         YAMLFileDescriptor yamlFileDescriptor = store.addDescriptorType(fileDescriptor, YAMLFileDescriptor.class);
 
-        yamlFileDescriptor.setFileName(item.getFile().getAbsolutePath());
 
         try (InputStream in = item.createStream()) {
             Iterable<Object> docs = yaml.loadAll(in);
@@ -65,9 +64,28 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
                 serializer.serialize(node);
                 serializer.close();
             }
+            // In case the content of the file is not parseable set parsed=false
+            // to help the user to identify nonparseable files
+            yamlFileDescriptor.setValid(true);
+        } catch (RuntimeException rt) {
+            yamlFileDescriptor.setValid(false);
+            for (YAMLDocumentDescriptor documentDescriptor : yamlFileDescriptor.getDocuments()) {
+                yamlFileDescriptor.getDocuments().remove(documentDescriptor);
+            }
+            // @todo Logging is desired here Oliver B. Fischer, 23.08.2015
         }
 
         return yamlFileDescriptor;
+    }
+
+    /**
+     * This resolver does not resolve any types, that means that there is not
+     * implicit type conversion as OFF -> true or YES -> true.
+     */
+    private static class NonResolvingResolver extends Resolver {
+        @Override
+        protected void addImplicitResolvers() {
+        }
     }
 
 
@@ -76,7 +94,6 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
              Arrays.asList(Tag.YAML, Tag.MERGE,
                            Tag.SET, Tag.PAIRS, Tag.OMAP,
                            Tag.BINARY, Tag.INT, Tag.FLOAT,
-//                           Tag.TIMESTAMP,
                            Tag.BOOL, Tag.NULL,
                            Tag.STR, Tag.SEQ, Tag.MAP);
 

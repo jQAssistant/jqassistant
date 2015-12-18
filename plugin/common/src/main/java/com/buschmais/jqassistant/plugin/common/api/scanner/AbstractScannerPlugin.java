@@ -43,7 +43,7 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     }
 
     @Override
-    public Class<? extends D> getDescriptorType() {
+    public Class<D> getDescriptorType() {
         return getTypeParameter(AbstractScannerPlugin.class, 1);
     }
 
