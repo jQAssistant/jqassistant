@@ -1,0 +1,11 @@
+[[jaxrs:GetMustBeIdempotent]]
+.An HTTP GET operation shall be idempotent. The following constraint verifies that the GET method returns a non-void type.
+[source,cypher,role=constraint,requiresConcepts="jaxrs:GetResourceMethod",severity=blocker]
+----
+MATCH
+    (c:JaxRS:Resource)-[:DECLARES]->(m:JaxRS:GetResourceMethod)
+WHERE
+    m.signature =~ "void.*"
+RETURN
+    DISTINCT c.fqn AS invalidResource, m.name AS invalidMethod
+----

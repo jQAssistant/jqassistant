@@ -3,5 +3,6 @@
     <rules>
         <resource>jaxrs-resource.xml</resource>
         <resource>jaxrs-provider.xml</resource>
+        <resource>jaxrs-rules.adoc</resource>
     </rules>
 </v1:jqassistant-plugin>
