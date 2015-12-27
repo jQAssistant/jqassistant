@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.xml.XMLConstants;
@@ -208,7 +209,7 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
 
         @Override
         public Iterator<String> getPrefixes(String namespaceURI) {
-            return Arrays.asList(getPrefix(namespaceURI)).iterator();
+            return Collections.singletonList(getPrefix(namespaceURI)).iterator();
         }
 
     }
