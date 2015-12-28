@@ -16,10 +16,15 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.model.DependentDirec
  * A dependent scanner plugin.
  */
 @Requires(DirectoryDescriptor.class)
-public class DependentDirectoryScannerPlugin extends AbstractScannerPlugin<File, DependentDirectoryDescriptor> {
+public class DependentDirectoryScannerPlugin extends AbstractScannerPlugin<File, DependentDirectoryDescriptor, DependentDirectoryScannerPlugin> {
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    protected DependentDirectoryScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(File item, String path, Scope scope) throws IOException {
         return DefaultScope.NONE.equals(scope) && item.isDirectory();
     }
 

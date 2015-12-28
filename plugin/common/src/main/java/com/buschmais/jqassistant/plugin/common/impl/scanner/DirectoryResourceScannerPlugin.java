@@ -8,10 +8,16 @@ import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.DirectoryResource;
 
-public class DirectoryResourceScannerPlugin extends AbstractScannerPlugin<DirectoryResource, DirectoryDescriptor> {
+public class DirectoryResourceScannerPlugin
+        extends AbstractScannerPlugin<DirectoryResource, DirectoryDescriptor, DirectoryResourceScannerPlugin> {
 
     @Override
-    public boolean accepts(DirectoryResource item, String path, Scope scope) throws IOException {
+    protected DirectoryResourceScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(DirectoryResource item, String path, Scope scope) throws IOException {
         return true;
     }
 

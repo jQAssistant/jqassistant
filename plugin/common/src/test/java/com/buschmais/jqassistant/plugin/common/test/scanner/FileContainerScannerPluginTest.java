@@ -119,14 +119,20 @@ public class FileContainerScannerPluginTest {
         assertThat(requires, equalTo(directoryDescriptor.getRequires()));
     }
 
-    private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
+    private static class TestContainerScannerPlugin
+            extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor, TestContainerScannerPlugin> {
 
         private List<FileDescriptor> contains = new ArrayList<>();
 
         private List<FileDescriptor> requires = new ArrayList<>();
 
         @Override
-        public boolean accepts(Collection<String> item, String path, Scope scope) throws IOException {
+        protected TestContainerScannerPlugin getThis() {
+            return this;
+        }
+
+        @Override
+        protected boolean doAccepts(Collection<String> item, String path, Scope scope) throws IOException {
             return true;
         }
 
