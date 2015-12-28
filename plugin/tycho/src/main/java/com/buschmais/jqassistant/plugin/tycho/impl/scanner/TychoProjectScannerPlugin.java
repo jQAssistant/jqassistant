@@ -28,12 +28,17 @@ import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDe
  * Implementation of a {@link ScannerPlugin} for tycho projects
  */
 @Requires(MavenProjectDirectoryDescriptor.class)
-public class TychoProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
+public class TychoProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor, TychoProjectScannerPlugin> {
 
     private static final String PACKAGING_ECLIPSE_PLUGIN = "eclipse-plugin";
 
     @Override
-    public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
+    protected TychoProjectScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(MavenProject item, String path, Scope scope) throws IOException {
         return PACKAGING_ECLIPSE_PLUGIN.equals(item.getPackaging());
     }
 

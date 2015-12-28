@@ -36,9 +36,14 @@ import com.sun.java.xml.ns.javaee.WebType;
  * APP-INF/application.xml)
  */
 @Requires(FileDescriptor.class)
-public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor> {
+public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor, ApplicationXmlScannerPlugin> {
 
     private JAXBUnmarshaller<ApplicationType> unmarshaller;
+
+    @Override
+    protected ApplicationXmlScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public void initialize() {
@@ -46,7 +51,7 @@ public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<Ap
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         return EnterpriseApplicationScope.EAR.equals(scope) && "/META-INF/application.xml".equals(path);
     }
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +28,17 @@ import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
  * file following which contains the plugin name.
  */
 @Requires(PropertyFileDescriptor.class)
-public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPlugin<FileResource, ConnectionDescriptor> {
+public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPlugin<FileResource, ConnectionDescriptor, ConnectionPropertyFileScannerPlugin> {
 
     public static final String PLUGIN_NAME = "jqassistant.plugin.rdbms";
     public static final String PROPERTIES_SUFFIX = ".properties";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPropertyFileScannerPlugin.class);
+
+    @Override
+    protected ConnectionPropertyFileScannerPlugin getThis() {
+        return this;
+    }
 
     /**
      * The supported JDBC properties.
@@ -53,7 +59,7 @@ public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPl
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         String lowerCase = path.toLowerCase();
         return lowerCase.contains(PLUGIN_NAME) && lowerCase.endsWith(PROPERTIES_SUFFIX);
     }

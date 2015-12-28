@@ -13,10 +13,15 @@ import com.buschmais.jqassistant.plugin.rdbms.api.RdbmsScope;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
 
-public class ConnectionUriScannerPlugin extends AbstractSchemaScannerPlugin<URI, ConnectionDescriptor> {
+public class ConnectionUriScannerPlugin extends AbstractSchemaScannerPlugin<URI, ConnectionDescriptor, ConnectionUriScannerPlugin> {
 
     @Override
-    public boolean accepts(URI item, String path, Scope scope) throws IOException {
+    protected ConnectionUriScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(URI item, String path, Scope scope) throws IOException {
         return RdbmsScope.CONNECTION.equals(scope);
     }
 

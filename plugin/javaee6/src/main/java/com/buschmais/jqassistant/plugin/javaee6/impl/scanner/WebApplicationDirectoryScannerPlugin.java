@@ -4,13 +4,20 @@ import java.io.File;
 import java.io.IOException;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScannerPlugin;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WebApplicationDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<WebApplicationDirectoryDescriptor> {
+public class WebApplicationDirectoryScannerPlugin
+        extends AbstractDirectoryScannerPlugin<WebApplicationDirectoryDescriptor, WebApplicationDirectoryScannerPlugin> {
+
+    @Override
+    protected WebApplicationDirectoryScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     protected Scope getRequiredScope() {

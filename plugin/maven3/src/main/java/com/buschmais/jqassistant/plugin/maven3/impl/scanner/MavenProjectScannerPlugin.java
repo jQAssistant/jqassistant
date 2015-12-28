@@ -38,12 +38,17 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifa
 /**
  * A scanner plugin for maven projects.
  */
-public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor> {
+public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProject, MavenProjectDirectoryDescriptor, MavenProjectScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenProjectScannerPlugin.class);
 
     @Override
-    public boolean accepts(MavenProject item, String path, Scope scope) throws IOException {
+    protected MavenProjectScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(MavenProject item, String path, Scope scope) throws IOException {
         return true;
     }
 

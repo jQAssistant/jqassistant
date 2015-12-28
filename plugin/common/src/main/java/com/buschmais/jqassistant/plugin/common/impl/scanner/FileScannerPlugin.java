@@ -17,13 +17,18 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 /**
  * Scanner plugin for instances of {@link File}.
  */
-public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileDescriptor> {
+public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileDescriptor, FileScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
     @Override
-    public boolean accepts(File item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(File item, String path, Scope scope) throws IOException {
         return !item.isDirectory();
+    }
+
+    @Override
+    protected FileScannerPlugin getThis() {
+        return this;
     }
 
     @Override

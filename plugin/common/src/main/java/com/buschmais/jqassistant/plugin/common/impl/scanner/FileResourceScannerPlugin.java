@@ -10,15 +10,20 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.DefaultFileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
-public class FileResourceScannerPlugin extends AbstractScannerPlugin<FileResource, FileDescriptor> {
+public class FileResourceScannerPlugin
+        extends AbstractScannerPlugin<FileResource, FileDescriptor, FileResourceScannerPlugin> {
 
     @Override
     protected void configure() {
         getScannerContext().push(FileResolver.class, new DefaultFileResolver());
     }
 
+    protected FileResourceScannerPlugin getThis() {
+        return this;
+    }
+
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         return true;
     }
 

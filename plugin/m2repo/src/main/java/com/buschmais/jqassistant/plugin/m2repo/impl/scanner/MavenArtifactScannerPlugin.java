@@ -39,7 +39,7 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
  * 
  * @author pherklotz
  */
-public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactInfo, MavenArtifactDescriptor> {
+public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactInfo, MavenArtifactDescriptor, MavenArtifactScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenArtifactScannerPlugin.class);
     private static final String PROPERTY_NAME_ARTIFACTS_KEEP = "m2repo.artifacts.keep";
@@ -50,6 +50,11 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     private boolean keepArtifacts;
     private boolean scanArtifacts;
     private ArtifactFilter artifactFilter;
+
+    @Override
+    protected MavenArtifactScannerPlugin getThis() {
+        return this;
+    }
 
     /**
      * {@inheritDoc}
@@ -69,7 +74,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      * {@inheritDoc}
      */
     @Override
-    public boolean accepts(ArtifactInfo item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(ArtifactInfo item, String path, Scope scope) throws IOException {
         return item != null && MavenScope.REPOSITORY.equals(scope);
     }
 

@@ -24,9 +24,14 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPl
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 
 @Requires(FileDescriptor.class)
-public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXmlDescriptor> {
+public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXmlDescriptor, BeansXmlScannerPlugin> {
 
     private JAXBUnmarshaller<Beans> unmarshaller;
+
+    @Override
+    protected BeansXmlScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public void initialize() {
@@ -34,7 +39,7 @@ public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXml
     }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && ("/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path));
     }
 

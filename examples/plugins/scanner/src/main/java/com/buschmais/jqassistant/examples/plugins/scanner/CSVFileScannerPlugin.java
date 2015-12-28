@@ -24,10 +24,15 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  */
 @Requires(FileDescriptor.class) // The file descriptor is created by another
                                 // plugin and used by this one
-public class CSVFileScannerPlugin extends AbstractScannerPlugin<FileResource, CSVFileDescriptor> {
+public class CSVFileScannerPlugin extends AbstractScannerPlugin<FileResource, CSVFileDescriptor, CSVFileScannerPlugin> {
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected CSVFileScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(".csv");
     }
 

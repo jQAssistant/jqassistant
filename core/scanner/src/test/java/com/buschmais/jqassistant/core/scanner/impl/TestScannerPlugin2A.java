@@ -24,6 +24,11 @@ public class TestScannerPlugin2A implements ScannerPlugin<TestItem, TestDescript
     }
 
     @Override
+    public String getName() {
+        return TestScannerPlugin2A.class.getSimpleName();
+    }
+
+    @Override
     public Class<? extends TestItem> getType() {
         return TestItem.class;
     }

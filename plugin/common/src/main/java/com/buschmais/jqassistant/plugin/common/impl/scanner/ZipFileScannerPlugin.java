@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 
@@ -16,7 +17,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDi
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
-public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipArchiveEntry, ZipArchiveDescriptor> {
+public class ZipFileScannerPlugin
+        extends AbstractContainerScannerPlugin<ZipFile, ZipArchiveEntry, ZipArchiveDescriptor, ZipFileScannerPlugin> {
 
     @Override
     public Class<? extends ZipFile> getType() {
@@ -29,7 +31,12 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    public boolean accepts(ZipFile item, String path, Scope scope) throws IOException {
+    protected ZipFileScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(ZipFile item, String path, Scope scope) throws IOException {
         return true;
     }
 
