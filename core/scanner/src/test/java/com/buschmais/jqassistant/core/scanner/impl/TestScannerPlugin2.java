@@ -44,4 +44,9 @@ public class TestScannerPlugin2 implements ScannerPlugin<TestItem, TestDescripto
         TestDescriptor2A testDescriptor2A = scanner.scan(item, path, TestScope.TEST);
         return scanner.getContext().getStore().addDescriptorType(testDescriptor2A, TestDescriptor2.class);
     }
+
+    @Override
+    public String getName() {
+        return TestScannerPlugin2.class.getSimpleName();
+    }
 }

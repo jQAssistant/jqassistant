@@ -47,4 +47,8 @@ public class TestScannerPlugin implements ScannerPlugin<File, Descriptor> {
         return properties;
     }
 
+    @Override
+    public String getName() {
+        return TestScannerPlugin.class.getSimpleName();
+    }
 }

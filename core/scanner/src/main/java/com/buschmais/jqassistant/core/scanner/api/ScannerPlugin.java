@@ -104,4 +104,14 @@ public interface ScannerPlugin<I, D extends Descriptor> {
      */
     D scan(I item, String path, Scope scope, Scanner scanner) throws IOException;
 
+    /**
+     * <p>Returns a unique name for the plugin.</p>
+     *
+     * <p>It is suggested to return the full qualified classname of the plugin
+     * to ensure the uniqueness of the name.</p>
+     *
+     * @return A unique name of the plugin.
+     */
+    String getName();
+
 }
