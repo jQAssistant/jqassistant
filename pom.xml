@@ -207,9 +207,9 @@
 
       <profile>
         <!--
-          ! This profile is automatically activated by using maven-release-plugin:perfom.
-          ! So this mean signing of artifacts is only done in case of running a release.
-        -->
+         ! This profile is automatically activated by using maven-release-plugin:perfom.
+         ! So this mean signing of artifacts is only done in case of running a release.
+         !-->
         <activation>
           <property>
             <name>performRelease</name>
