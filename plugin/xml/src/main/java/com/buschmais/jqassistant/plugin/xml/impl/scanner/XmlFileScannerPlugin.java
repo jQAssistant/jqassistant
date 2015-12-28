@@ -12,10 +12,14 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPl
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 
 @Requires(FileDescriptor.class)
-public class XmlFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDescriptor> {
+public class XmlFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDescriptor, XmlFileScannerPlugin> {
+    @Override
+    protected XmlFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         return XmlScope.DOCUMENT.equals(scope);
     }
 

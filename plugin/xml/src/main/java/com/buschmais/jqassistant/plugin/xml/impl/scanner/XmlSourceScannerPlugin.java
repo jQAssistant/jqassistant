@@ -21,11 +21,16 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.google.common.base.Strings;
 
-public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor> {
+public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor, XmlSourceScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlSourceScannerPlugin.class);
 
     private XMLInputFactory inputFactory;
+
+    @Override
+    protected XmlSourceScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public void initialize() {
@@ -34,7 +39,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
     }
 
     @Override
-    public boolean accepts(Source item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(Source item, String path, Scope scope) throws IOException {
         return true;
     }
 

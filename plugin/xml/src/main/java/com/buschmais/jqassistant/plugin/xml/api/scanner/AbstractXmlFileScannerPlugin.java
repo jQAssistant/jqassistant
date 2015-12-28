@@ -6,6 +6,7 @@ import java.io.InputStream;
 import javax.xml.transform.stream.StreamSource;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
@@ -19,9 +20,12 @@ import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
  * 
  * @param <D>
  *            The descriptor type.
+ * @param <P>
+ *            The type of the actuall plugin.
  */
 @Requires(FileDescriptor.class)
-public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> extends AbstractScannerPlugin<FileResource, D> {
+public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor, P extends ScannerPlugin<FileResource, D>> extends
+        AbstractScannerPlugin<FileResource, D, P> {
 
     @Override
     public Class<? extends FileResource> getType() {
