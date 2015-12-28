@@ -11,10 +11,15 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.ClassFileDescriptor;
 
-public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>, ClassFileDescriptor> {
+public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>, ClassFileDescriptor, ClassTypeScannerPlugin> {
 
     @Override
-    public boolean accepts(Class<?> item, String path, Scope scope) throws IOException {
+    protected ClassTypeScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(Class<?> item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope);
     }
 

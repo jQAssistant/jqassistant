@@ -25,14 +25,19 @@ import com.buschmais.jqassistant.plugin.java.impl.scanner.visitor.VisitorHelper;
  * Implementation of the {@link AbstractScannerPlugin} for Java classes.
  */
 @Requires(FileDescriptor.class)
-public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, ClassFileDescriptor> {
+public class ClassFileScannerPlugin extends AbstractScannerPlugin<FileResource, ClassFileDescriptor, ClassFileScannerPlugin> {
 
     public static final byte[] CAFEBABE = new byte[] { -54, -2, -70, -66 };
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClassFileScannerPlugin.class);
 
     @Override
-    public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
+    protected ClassFileScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    protected boolean doAccepts(FileResource file, String path, Scope scope) throws IOException {
         if (CLASSPATH.equals(scope) && path.endsWith(".class")) {
             try (InputStream stream = file.createStream()) {
                 byte[] header = new byte[CAFEBABE.length];
