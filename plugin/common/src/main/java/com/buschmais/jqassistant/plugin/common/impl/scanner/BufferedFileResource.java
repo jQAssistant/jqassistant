@@ -62,6 +62,15 @@ public class BufferedFileResource implements FileResource {
         fileResource.close();
     }
 
+    @Override
+    public String toString() {
+        try {
+            return fileResource.getFile().toString();
+        } catch (IOException e) {
+            return "unkown";
+        }
+    }
+
     /**
      * Implementation of a re-usable buffered stream.
      */

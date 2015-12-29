@@ -83,7 +83,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     @Override
     protected Resource getEntry(File container, final File entry) {
         if (entry.isDirectory()) {
-            return new DirectoryResource();
+            return new DirectoryResource(entry.getPath());
         } else {
             return new BufferedFileResource(new FileResource(entry));
         }
@@ -93,6 +93,9 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
      * A directory resource.
      */
     private static class DirectoryResource extends AbstractDirectoryResource {
+        public DirectoryResource(String entryPath) {
+            super(entryPath);
+        }
     }
 
     /**
