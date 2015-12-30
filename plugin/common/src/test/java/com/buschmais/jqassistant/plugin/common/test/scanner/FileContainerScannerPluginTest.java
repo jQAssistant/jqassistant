@@ -132,7 +132,7 @@ public class FileContainerScannerPluginTest {
         }
 
         @Override
-        protected boolean doAccepts(Collection<String> item, String path, Scope scope) throws IOException {
+        public boolean accepts(Collection<String> item, String path, Scope scope) throws IOException {
             return true;
         }
 

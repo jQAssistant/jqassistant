@@ -37,7 +37,7 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
     }
 
     @Override
-    protected boolean doAccepts(FileResource file, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(getExtension());
     }
 

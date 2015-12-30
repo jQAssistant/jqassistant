@@ -23,7 +23,7 @@ public class FileResourceScannerPlugin
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return true;
     }
 

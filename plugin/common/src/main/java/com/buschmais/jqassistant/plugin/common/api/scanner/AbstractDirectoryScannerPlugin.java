@@ -36,7 +36,7 @@ public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescript
     }
 
     @Override
-    protected boolean doAccepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(File item, String path, Scope scope) throws IOException {
         return item.isDirectory() && getRequiredScope().equals(scope);
     }
 

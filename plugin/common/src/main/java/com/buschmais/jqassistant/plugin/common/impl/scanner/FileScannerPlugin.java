@@ -22,7 +22,7 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
     @Override
-    protected boolean doAccepts(File item, String path, Scope scope) throws IOException {
+    public boolean accepts(File item, String path, Scope scope) throws IOException {
         return !item.isDirectory();
     }
 
