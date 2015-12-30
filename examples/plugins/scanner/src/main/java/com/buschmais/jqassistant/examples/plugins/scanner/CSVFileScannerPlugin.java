@@ -32,7 +32,7 @@ public class CSVFileScannerPlugin extends AbstractScannerPlugin<FileResource, CS
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(".csv");
     }
 

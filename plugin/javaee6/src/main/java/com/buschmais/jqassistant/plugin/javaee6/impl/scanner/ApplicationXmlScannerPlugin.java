@@ -51,7 +51,7 @@ public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<Ap
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return EnterpriseApplicationScope.EAR.equals(scope) && "/META-INF/application.xml".equals(path);
     }
 

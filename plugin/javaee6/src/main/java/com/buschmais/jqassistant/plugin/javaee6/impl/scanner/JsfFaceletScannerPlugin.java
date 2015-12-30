@@ -123,7 +123,7 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return filePattern.matcher(path).matches();
     }
 

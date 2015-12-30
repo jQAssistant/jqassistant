@@ -41,7 +41,7 @@ public class MavenRepositoryScannerPlugin
 
     /** {@inheritDoc} */
     @Override
-    protected boolean doAccepts(URL item, String path, Scope scope) throws IOException {
+    public boolean accepts(URL item, String path, Scope scope) throws IOException {
         return MavenScope.REPOSITORY == scope;
     }
 

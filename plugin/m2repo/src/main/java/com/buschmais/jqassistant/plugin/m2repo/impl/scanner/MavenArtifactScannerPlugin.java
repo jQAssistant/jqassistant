@@ -74,7 +74,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      * {@inheritDoc}
      */
     @Override
-    protected boolean doAccepts(ArtifactInfo item, String path, Scope scope) throws IOException {
+    public boolean accepts(ArtifactInfo item, String path, Scope scope) throws IOException {
         return item != null && MavenScope.REPOSITORY.equals(scope);
     }
 

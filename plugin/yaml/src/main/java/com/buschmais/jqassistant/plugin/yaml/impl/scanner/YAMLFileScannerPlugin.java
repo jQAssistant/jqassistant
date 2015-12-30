@@ -39,7 +39,7 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
     }
 
     @Override
-    protected boolean doAccepts(FileResource file, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource file, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(YAML_FILE_EXTENSION);
     }
 

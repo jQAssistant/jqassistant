@@ -17,7 +17,7 @@ public class DirectoryResourceScannerPlugin
     }
 
     @Override
-    protected boolean doAccepts(DirectoryResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(DirectoryResource item, String path, Scope scope) throws IOException {
         return true;
     }
 

@@ -103,7 +103,7 @@ public class WebXmlScannerPlugin extends AbstractXmlFileScannerPlugin<WebXmlDesc
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return WebApplicationScope.WAR.equals(scope) && "/WEB-INF/web.xml".equals(path);
     }
 

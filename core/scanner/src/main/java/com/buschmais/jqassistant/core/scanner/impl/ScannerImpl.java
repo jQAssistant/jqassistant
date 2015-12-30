@@ -103,6 +103,14 @@ public class ScannerImpl implements Scanner {
      */
     private <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
         try {
+            boolean accepted = selectedPlugin.accepts(item, path, scope);
+            String plugin = selectedPlugin.getName();
+
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Scanner plugin:='{}' accepted resource:='{}'. Item:='{}' Path:='{}' Scope:='{}'",
+                        plugin, (accepted ? "yes" : "no"), item, path, scope);
+            }
+
             return selectedPlugin.accepts(item, path, scope);
         } catch (IOException e) {
             LOGGER.error("Plugin " + selectedPlugin + " failed to check whether it can accept item " + path, e);
@@ -148,6 +156,7 @@ public class ScannerImpl implements Scanner {
         if (name == null) {
             return DefaultScope.NONE;
         }
+
         Scope scope = scopes.get(name);
         if (scope == null) {
             LOGGER.warn("No scope found for name '" + name + "'.");

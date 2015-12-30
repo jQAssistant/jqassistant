@@ -40,7 +40,7 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         boolean isMavenPOM = false;
         boolean hasXMLExtension = path.toLowerCase().endsWith(".xml");
         boolean isPomXML = path.toLowerCase().endsWith("pom.xml");

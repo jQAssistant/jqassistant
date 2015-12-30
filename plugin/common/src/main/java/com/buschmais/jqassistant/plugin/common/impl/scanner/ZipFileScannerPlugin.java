@@ -37,7 +37,7 @@ public class ZipFileScannerPlugin
     }
 
     @Override
-    protected boolean doAccepts(ZipFileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(ZipFileResource item, String path, Scope scope) throws IOException {
         return true;
     }
 

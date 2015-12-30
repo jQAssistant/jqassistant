@@ -38,7 +38,7 @@ public class DefaultUriScannerPlugin extends AbstractScannerPlugin<URI, Descript
     }
 
     @Override
-    protected boolean doAccepts(URI item, String path, Scope scope) throws IOException {
+    public boolean accepts(URI item, String path, Scope scope) throws IOException {
         String scheme = item.getScheme().toLowerCase();
         return schemes.contains(scheme);
     }

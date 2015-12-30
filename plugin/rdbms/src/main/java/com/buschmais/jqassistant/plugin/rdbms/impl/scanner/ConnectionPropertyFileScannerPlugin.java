@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPl
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         String lowerCase = path.toLowerCase();
         return lowerCase.contains(PLUGIN_NAME) && lowerCase.endsWith(PROPERTIES_SUFFIX);
     }

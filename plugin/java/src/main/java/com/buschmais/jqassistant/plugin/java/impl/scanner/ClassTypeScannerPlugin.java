@@ -19,7 +19,7 @@ public class ClassTypeScannerPlugin extends AbstractScannerPlugin<Class<?>, Clas
     }
 
     @Override
-    protected boolean doAccepts(Class<?> item, String path, Scope scope) throws IOException {
+    public boolean accepts(Class<?> item, String path, Scope scope) throws IOException {
         return CLASSPATH.equals(scope);
     }
 

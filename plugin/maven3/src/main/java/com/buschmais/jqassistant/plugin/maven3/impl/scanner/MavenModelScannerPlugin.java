@@ -57,7 +57,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
     }
 
     @Override
-    protected boolean doAccepts(Model item, String path, Scope scope) throws IOException {
+    public boolean accepts(Model item, String path, Scope scope) throws IOException {
         return true;
     }
 

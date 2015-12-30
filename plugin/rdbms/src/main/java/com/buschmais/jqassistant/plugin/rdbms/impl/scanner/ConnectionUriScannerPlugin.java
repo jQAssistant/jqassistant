@@ -21,7 +21,7 @@ public class ConnectionUriScannerPlugin extends AbstractSchemaScannerPlugin<URI,
     }
 
     @Override
-    protected boolean doAccepts(URI item, String path, Scope scope) throws IOException {
+    public boolean accepts(URI item, String path, Scope scope) throws IOException {
         return RdbmsScope.CONNECTION.equals(scope);
     }
 

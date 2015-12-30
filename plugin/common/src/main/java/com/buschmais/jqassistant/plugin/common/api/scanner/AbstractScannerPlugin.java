@@ -172,19 +172,4 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor, P extends S
     public final int hashCode() {
         return super.hashCode();
     }
-
-    @Override
-    public boolean accepts(I item, String path, Scope scope) throws IOException {
-        boolean accepted = doAccepts(item, path, scope);
-        String plugin = getName();
-
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Scanner plugin {} accepted resource: {}. Item: {} Path: {} Scope: {}",
-                         plugin, (accepted ? "yes" : "no"), item, path, scope);
-        }
-
-        return accepted;
-    }
-
-    protected abstract boolean doAccepts(I item, String path, Scope scope) throws IOException;
 }

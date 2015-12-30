@@ -39,7 +39,7 @@ public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXml
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return JavaScope.CLASSPATH.equals(scope) && ("/META-INF/beans.xml".equals(path) || "/WEB-INF/beans.xml".equals(path));
     }
 

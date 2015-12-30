@@ -22,7 +22,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor, UrlScannerPlugin> {
 
     @Override
-    protected boolean doAccepts(URL item, String path, Scope scope) throws IOException {
+    public boolean accepts(URL item, String path, Scope scope) throws IOException {
         return true;
     }
 
