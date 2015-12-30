@@ -45,7 +45,7 @@ public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSu
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return TESTREPORTS.equals(scope) && path.matches(".*TEST-.*\\.xml");
     }
 
