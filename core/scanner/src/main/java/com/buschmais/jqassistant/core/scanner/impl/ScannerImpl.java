@@ -101,21 +101,22 @@ public class ScannerImpl implements Scanner {
      *            The item type.
      * @return <code>true</code> if the plugin accepts the item for scanning.
      */
-    private <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
+    protected <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
+        boolean accepted = false;
+        String plugin = selectedPlugin.getName();
+
         try {
-            boolean accepted = selectedPlugin.accepts(item, path, scope);
-            String plugin = selectedPlugin.getName();
+            accepted = selectedPlugin.accepts(item, path, scope);
 
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Scanner plugin:='{}' accepted resource:='{}'. Item:='{}' Path:='{}' Scope:='{}'",
-                        plugin, (accepted ? "yes" : "no"), item, path, scope);
+                             plugin, (accepted ? "yes" : "no"), item, path, scope);
             }
-
-            return selectedPlugin.accepts(item, path, scope);
         } catch (IOException e) {
-            LOGGER.error("Plugin " + selectedPlugin + " failed to check whether it can accept item " + path, e);
-            return false;
+            LOGGER.error("Plugin " + plugin + " failed to check whether it can accept item " + path, e);
         }
+
+        return accepted;
     }
 
     /**
