@@ -5,6 +5,7 @@ target
 .project
 .classpath
 /.idea
+/scm/neo4jserver/neo4j-home/
 *~
 *.iml
 *.eml
