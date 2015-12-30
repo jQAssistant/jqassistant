@@ -39,7 +39,7 @@ public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDoc
     }
 
     @Override
-    protected boolean doAccepts(Source item, String path, Scope scope) throws IOException {
+    public boolean accepts(Source item, String path, Scope scope) throws IOException {
         return true;
     }
 
