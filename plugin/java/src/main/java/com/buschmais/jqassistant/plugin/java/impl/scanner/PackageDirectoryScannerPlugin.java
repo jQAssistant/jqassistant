@@ -25,7 +25,7 @@ public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<Directo
     }
 
     @Override
-    protected boolean doAccepts(DirectoryResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(DirectoryResource item, String path, Scope scope) throws IOException {
         return (CLASSPATH.equals(scope) && path != null && !path.startsWith("/META-INF"));
     }
 

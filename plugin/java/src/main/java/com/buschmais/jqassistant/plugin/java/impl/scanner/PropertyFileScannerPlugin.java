@@ -34,7 +34,7 @@ public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResourc
     }
 
     @Override
-    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
+    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(".properties");
     }
 
