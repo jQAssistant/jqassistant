@@ -137,7 +137,7 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
                    "WHERE f.fileName=~'.*/probes/valid/simple-key-value-pair-without-value.yaml' RETURN f")
                 .getColumn("f");
 
-        assertThat(fileDescriptors, IsEmptyCollection.<YAMLFileDescriptor>empty());
+        assertThat(fileDescriptors, nullValue());
     }
 
 
