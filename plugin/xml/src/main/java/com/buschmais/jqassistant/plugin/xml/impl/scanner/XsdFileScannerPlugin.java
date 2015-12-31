@@ -11,7 +11,12 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPl
 /**
  * Implementation of a scanner for XSD files containing XML schema definitions.
  */
-public class XsdFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDescriptor> {
+public class XsdFileScannerPlugin extends AbstractXmlFileScannerPlugin<XmlFileDescriptor, XsdFileScannerPlugin> {
+
+    @Override
+    protected XsdFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
