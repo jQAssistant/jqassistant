@@ -17,7 +17,12 @@ import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
  * Implementation of the {@link AbstractScannerPlugin} for java packages.
  */
 @Requires(DirectoryDescriptor.class)
-public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<DirectoryResource, PackageDescriptor> {
+public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<DirectoryResource, PackageDescriptor, PackageDirectoryScannerPlugin> {
+
+    @Override
+    protected PackageDirectoryScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(DirectoryResource item, String path, Scope scope) throws IOException {

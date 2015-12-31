@@ -26,9 +26,14 @@ import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor
  * for java MANIFEST.MF files.
  */
 @Requires(FileDescriptor.class)
-public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResource, ManifestFileDescriptor> {
+public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResource, ManifestFileDescriptor, ManifestFileScannerPlugin> {
 
     public static final String SECTION_MAIN = "Main";
+
+    @Override
+    protected ManifestFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {

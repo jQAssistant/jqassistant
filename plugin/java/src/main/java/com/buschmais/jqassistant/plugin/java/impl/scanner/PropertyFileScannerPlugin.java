@@ -24,9 +24,14 @@ import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
  * for property files.
  */
 @Requires(FileDescriptor.class)
-public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResource, PropertyFileDescriptor> {
+public class PropertyFileScannerPlugin extends AbstractScannerPlugin<FileResource, PropertyFileDescriptor, PropertyFileScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropertyFileScannerPlugin.class);
+
+    @Override
+    protected PropertyFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
