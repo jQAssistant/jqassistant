@@ -23,11 +23,16 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
  * 
  * @author ronald.kunzmann@buschmais.com
  */
-public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<MavenPomXmlDescriptor> {
+public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<MavenPomXmlDescriptor, MavenPomFileScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MavenPomFileScannerPlugin.class);
 
     private MavenXpp3Reader mavenXpp3Reader;
+
+    @Override
+    protected MavenPomFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public void initialize() {
