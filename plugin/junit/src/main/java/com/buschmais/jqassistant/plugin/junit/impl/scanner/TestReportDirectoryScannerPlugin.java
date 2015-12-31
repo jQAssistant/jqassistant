@@ -8,7 +8,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractDirectoryScan
 import com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope;
 
-public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<TestReportDirectoryDescriptor> {
+public class TestReportDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<TestReportDirectoryDescriptor, TestReportDirectoryScannerPlugin> {
+
+    @Override
+    protected TestReportDirectoryScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     protected Scope getRequiredScope() {
