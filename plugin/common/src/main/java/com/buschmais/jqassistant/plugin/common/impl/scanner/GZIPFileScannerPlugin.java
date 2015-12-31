@@ -19,7 +19,13 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  * Scanner plugin for GZipped file resources.
  */
 @Requires(FileDescriptor.class)
-public class GZIPFileScannerPlugin extends AbstractScannerPlugin<FileResource, GZipFileDescriptor> {
+public class GZIPFileScannerPlugin
+        extends AbstractScannerPlugin<FileResource, GZipFileDescriptor, GZIPFileScannerPlugin> {
+
+    @Override
+    protected GZIPFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {

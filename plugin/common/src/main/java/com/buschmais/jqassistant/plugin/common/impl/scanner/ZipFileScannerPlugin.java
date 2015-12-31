@@ -5,8 +5,8 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Iterator;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -16,11 +16,12 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDi
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
-public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile, ZipArchiveEntry, ZipArchiveDescriptor> {
+public class ZipFileScannerPlugin
+        extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor, ZipFileScannerPlugin> {
 
     @Override
-    public Class<? extends ZipFile> getType() {
-        return ZipFile.class;
+    public Class<? extends ZipFileResource> getType() {
+        return ZipFileResource.class;
     }
 
     @Override
@@ -29,48 +30,33 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    public boolean accepts(ZipFile item, String path, Scope scope) throws IOException {
+    protected ZipFileScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
+    public boolean accepts(ZipFileResource item, String path, Scope scope) throws IOException {
         return true;
     }
 
     @Override
-    protected ZipArchiveDescriptor getContainerDescriptor(ZipFile zipFile, ScannerContext scannerContext) {
+    protected ZipArchiveDescriptor getContainerDescriptor(ZipFileResource zipFile, ScannerContext scannerContext) {
         return scannerContext.peek(ZipArchiveDescriptor.class);
     }
 
     @Override
-    protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFile container) throws IOException {
-        final Enumeration<? extends ZipArchiveEntry> entries = container.getEntriesInPhysicalOrder();
-        return new Iterable<ZipArchiveEntry>() {
-            @Override
-            public Iterator<ZipArchiveEntry> iterator() {
-                return new Iterator<ZipArchiveEntry>() {
-                    @Override
-                    public boolean hasNext() {
-                        return entries.hasMoreElements();
-                    }
-
-                    @Override
-                    public ZipArchiveEntry next() {
-                        return entries.nextElement();
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("remove");
-                    }
-                };
-            }
-        };
+    protected Iterable<? extends ZipArchiveEntry> getEntries(ZipFileResource container) throws IOException {
+        final Enumeration<? extends ZipArchiveEntry> entries = container.getZipFile().getEntriesInPhysicalOrder();
+        return new ZipArchiveEntryIterable(entries);
     }
 
     @Override
-    protected String getContainerPath(ZipFile container, String path) {
+    protected String getContainerPath(ZipFileResource container, String path) {
         return path;
     }
 
     @Override
-    protected String getRelativePath(ZipFile container, ZipArchiveEntry entry) {
+    protected String getRelativePath(ZipFileResource container, ZipArchiveEntry entry) {
         String name = entry.getName();
         if (entry.isDirectory()) {
             // strip trailing slash from directory entries
@@ -81,27 +67,72 @@ public class ZipFileScannerPlugin extends AbstractContainerScannerPlugin<ZipFile
     }
 
     @Override
-    protected void enterContainer(ZipFile zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
+    protected void enterContainer(ZipFileResource zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext context) throws IOException {
     }
 
     @Override
-    protected void leaveContainer(ZipFile zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) throws IOException {
+    protected void leaveContainer(ZipFileResource zipFile, ZipArchiveDescriptor archiveDescriptor, ScannerContext scannerContext) throws IOException {
         zipFile.close();
     }
 
     @Override
-    protected Resource getEntry(final ZipFile container, final ZipArchiveEntry entry) {
+    protected Resource getEntry(final ZipFileResource container, final ZipArchiveEntry entry) {
         if (entry.isDirectory()) {
-            return new AbstractDirectoryResource() {
+            return new AbstractDirectoryResource(entry.getName()) {
             };
         } else {
-            return new AbstractFileResource() {
+            return new ZipArchiveEntryResource(container, entry);
+        }
+    }
+
+    private static class ZipArchiveEntryResource extends AbstractFileResource {
+        private final ZipFileResource container;
+        private final ZipArchiveEntry entry;
+
+        public ZipArchiveEntryResource(ZipFileResource container, ZipArchiveEntry entry) {
+            this.container = container;
+            this.entry = entry;
+        }
+
+        @Override
+        public InputStream createStream() throws IOException {
+            return container.getZipFile().getInputStream(entry);
+        }
+
+        @Override
+        public String toString() {
+            String containerPath = container.getPath();
+            String inContainerPath = entry.getName();
+
+            return String.format("%s!%s", containerPath, inContainerPath);
+        }
+    }
+
+    private static class ZipArchiveEntryIterable implements Iterable<ZipArchiveEntry> {
+        private final Enumeration<? extends ZipArchiveEntry> entries;
+
+        public ZipArchiveEntryIterable(Enumeration<? extends ZipArchiveEntry> entries) {
+            this.entries = entries;
+        }
+
+        @Override
+        public Iterator<ZipArchiveEntry> iterator() {
+            return new Iterator<ZipArchiveEntry>() {
                 @Override
-                public InputStream createStream() throws IOException {
-                    return container.getInputStream(entry);
+                public boolean hasNext() {
+                    return entries.hasMoreElements();
+                }
+
+                @Override
+                public ZipArchiveEntry next() {
+                    return entries.nextElement();
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException("remove");
                 }
             };
         }
     }
-
 }

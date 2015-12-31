@@ -22,9 +22,14 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPl
  * A scanner for JPA model units.
  */
 @Requires(FileDescriptor.class)
-public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<PersistenceXmlDescriptor> {
+public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<PersistenceXmlDescriptor, PersistenceXmlScannerPlugin> {
 
     private PersistanceXMLUnmarshaller unmarshaller = new PersistanceXMLUnmarshaller();
+
+    @Override
+    protected PersistenceXmlScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public void initialize() {

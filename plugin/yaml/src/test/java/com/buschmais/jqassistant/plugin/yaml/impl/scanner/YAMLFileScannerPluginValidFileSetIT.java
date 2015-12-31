@@ -26,6 +26,7 @@ public class YAMLFileScannerPluginValidFileSetIT extends AbstractPluginIT {
         return Arrays.asList(new Object[][] {
              {"/probes/valid/hostconfig.yaml"},
              {"/probes/valid/simple-key-value-pair.yaml"},
+             {"/probes/valid/simple-key-value-pair-without-value.yaml"},
              {"/probes/valid/two-simple-key-value-pairs.yaml"},
              {"/probes/valid/simple-list.yaml"},
              {"/probes/valid/dropwizard-configuration.yaml"},

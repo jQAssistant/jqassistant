@@ -27,12 +27,17 @@ import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
  * file following which contains the plugin name.
  */
 @Requires(PropertyFileDescriptor.class)
-public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPlugin<FileResource, ConnectionDescriptor> {
+public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPlugin<FileResource, ConnectionDescriptor, ConnectionPropertyFileScannerPlugin> {
 
     public static final String PLUGIN_NAME = "jqassistant.plugin.rdbms";
     public static final String PROPERTIES_SUFFIX = ".properties";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionPropertyFileScannerPlugin.class);
+
+    @Override
+    protected ConnectionPropertyFileScannerPlugin getThis() {
+        return this;
+    }
 
     /**
      * The supported JDBC properties.

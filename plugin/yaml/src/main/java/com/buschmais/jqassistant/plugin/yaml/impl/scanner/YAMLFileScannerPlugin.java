@@ -26,12 +26,17 @@ import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDocumentDescriptor;
 import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLFileDescriptor;
 
 @Requires(FileDescriptor.class)
-public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YAMLFileDescriptor> {
+public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, YAMLFileDescriptor, YAMLFileScannerPlugin> {
 
     /**
      * Supported file extension for YAML file resources.
      */
     public final static String YAML_FILE_EXTENSION = ".yaml";
+
+    @Override
+    protected YAMLFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(FileResource file, String path, Scope scope) throws IOException {

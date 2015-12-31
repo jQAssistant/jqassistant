@@ -32,9 +32,14 @@ import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.*;
  * 
  * @author ronald.kunzmann@buschmais.com
  */
-public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor> {
+public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenPomDescriptor, MavenModelScannerPlugin> {
 
     private ArtifactResolver defaultArtifactResolver;
+
+    @Override
+    protected MavenModelScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public void initialize() {

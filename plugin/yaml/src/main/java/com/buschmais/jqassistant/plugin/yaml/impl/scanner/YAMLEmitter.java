@@ -28,6 +28,7 @@ import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.Eve
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.MAPPING_VALUE_CXT;
 import static com.buschmais.jqassistant.plugin.yaml.impl.scanner.YAMLEmitter.ParseContext.SEQUENCE_CXT;
 import static java.lang.String.format;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.trimToEmpty;
 
 /**
@@ -195,9 +196,11 @@ class YAMLEmitter implements Emitable {
 
             String rawValue = event.getValue();
 
-            value.setValue(rawValue);
-            YAMLKeyDescriptor key = processingContext.peek();
-            key.getValues().add(value);
+            if (!isBlank(rawValue)) {
+                value.setValue(rawValue);
+                YAMLKeyDescriptor key = processingContext.peek();
+                key.getValues().add(value);
+            }
 
             processingContext.pushContextEvent(MAPPING_VALUE_CXT);
 

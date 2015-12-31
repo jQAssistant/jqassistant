@@ -21,7 +21,7 @@ public class CustomScannerPlugin extends AbstractScannerPlugin<FileResource, Cus
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomScannerPlugin.class);
 
     @Override
-    public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
+    protected boolean doAccepts(FileResource item, String path, Scope scope) throws IOException {
         return path.endsWith(".class");
     }
 

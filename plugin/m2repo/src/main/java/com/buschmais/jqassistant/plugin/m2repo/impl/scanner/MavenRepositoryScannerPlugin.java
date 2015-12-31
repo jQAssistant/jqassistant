@@ -23,7 +23,8 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
  * 
  * @author pherklotz
  */
-public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, MavenRepositoryDescriptor> {
+public class MavenRepositoryScannerPlugin
+        extends AbstractScannerPlugin<URL, MavenRepositoryDescriptor, MavenRepositoryScannerPlugin> {
 
     public static final String DEFAULT_M2REPO_DIR = "./jqassistant/data/m2repo";
 
@@ -32,6 +33,11 @@ public class MavenRepositoryScannerPlugin extends AbstractScannerPlugin<URL, Mav
     private static final String PROPERTY_NAME_DIRECTORY = "m2repo.directory";
 
     private File localDirectory;
+
+    @Override
+    protected MavenRepositoryScannerPlugin getThis() {
+        return this;
+    }
 
     /** {@inheritDoc} */
     @Override

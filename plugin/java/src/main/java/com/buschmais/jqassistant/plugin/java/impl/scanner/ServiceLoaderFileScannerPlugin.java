@@ -28,9 +28,14 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
  * for java packages.
  */
 @Requires(FileDescriptor.class)
-public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileResource, ServiceLoaderDescriptor> {
+public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileResource, ServiceLoaderDescriptor, ServiceLoaderFileScannerPlugin> {
 
     private static final Pattern PATTERN = Pattern.compile("(.*/)?META-INF/services/(.*)");
+
+    @Override
+    protected ServiceLoaderFileScannerPlugin getThis() {
+        return this;
+    }
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {

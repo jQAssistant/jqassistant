@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.slf4j.Logger;
@@ -27,7 +28,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
  * @param <D>
  *            The ArchiveDescriptor type.
  */
-public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveInputStream, E extends ArchiveEntry, D extends ArchiveDescriptor> extends AbstractContainerScannerPlugin<S, E, D> {
+public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveInputStream, E extends ArchiveEntry, D extends ArchiveDescriptor, P extends ScannerPlugin<S, D>>
+        extends AbstractContainerScannerPlugin<S, E, D, P> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveInputStreamScannerPlugin.class);
 
@@ -98,7 +100,7 @@ public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveI
     @Override
     protected Resource getEntry(final S container, final E entry) {
         if (entry.isDirectory()) {
-            return new AbstractDirectoryResource() {};
+            return new AbstractDirectoryResource(container.toString()) {};
         } else {
             return new AbstractFileResource() {
                 @Override
