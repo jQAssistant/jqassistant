@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 /**
  * Scanner plugin for instances of {@link File}.
  */
-public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileDescriptor> {
+public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileDescriptor, FileScannerPlugin> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileScannerPlugin.class);
 
@@ -27,26 +27,44 @@ public class FileScannerPlugin extends AbstractResourceScannerPlugin<File, FileD
     }
 
     @Override
+    protected FileScannerPlugin getThis() {
+        return this;
+    }
+
+    @Override
     public FileDescriptor scan(final File file, String path, Scope scope, Scanner scanner) throws IOException {
         String normalizedPath = slashify(path);
         LOGGER.debug("Scanning '{}'.", normalizedPath);
-        try (FileResource fileResource = new FileResource() {
-
-            @Override
-            public InputStream createStream() throws IOException {
-                return new FileInputStream(file);
-            }
-
-            @Override
-            public File getFile() {
-                return file;
-            }
-
-            @Override
-            public void close() {
-            }
-        };) {
+        try (FileResource fileResource = new RealFileResource(file);) {
             return scanner.scan(fileResource, normalizedPath, scope);
+        }
+    }
+
+    private static class RealFileResource implements FileResource {
+        private final File file;
+
+        public RealFileResource(File file) {
+            this.file = file;
+        }
+
+        @Override
+        public InputStream createStream() throws IOException {
+            return new FileInputStream(file);
+        }
+
+        @Override
+        public File getFile() {
+            return file;
+        }
+
+        @Override
+        public void close() {
+        }
+
+
+        @Override
+        public String toString() {
+            return file.toString();
         }
     }
 }

@@ -16,11 +16,16 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  * Scanner plugin for TAR file resources.
  */
 @Requires(FileDescriptor.class)
-public class TarFileScannerPlugin extends AbstractScannerPlugin<FileResource, TarArchiveDescriptor> {
+public class TarFileScannerPlugin extends AbstractScannerPlugin<FileResource, TarArchiveDescriptor, TarFileScannerPlugin> {
 
     @Override
     public boolean accepts(FileResource item, String path, Scope scope) throws IOException {
         return path.toLowerCase().endsWith(".tar");
+    }
+
+    @Override
+    protected TarFileScannerPlugin getThis() {
+        return this;
     }
 
     @Override
