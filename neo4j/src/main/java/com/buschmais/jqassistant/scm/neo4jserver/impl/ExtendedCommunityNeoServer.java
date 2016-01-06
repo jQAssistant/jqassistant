@@ -4,6 +4,7 @@ import static java.util.Collections.emptyList;
 
 import org.apache.commons.configuration.Configuration;
 import org.neo4j.server.configuration.ServerSettings;
+import org.neo4j.server.security.ssl.KeyStoreInformation;
 
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
@@ -38,7 +39,7 @@ public class ExtendedCommunityNeoServer extends AbstractServer {
      *            The port number of the server.
      */
     public ExtendedCommunityNeoServer(EmbeddedGraphStore graphStore, ScannerPluginRepository scannerPluginRepository,
-                                      RulePluginRepository rulePluginRepository, String address, int port) {
+            RulePluginRepository rulePluginRepository, String address, int port) {
         super(graphStore);
         init(scannerPluginRepository, rulePluginRepository, address, port);
     }
@@ -62,6 +63,12 @@ public class ExtendedCommunityNeoServer extends AbstractServer {
         configuration.setProperty(ServerSettings.webserver_address.name(), address);
         configuration.setProperty(ServerSettings.webserver_port.name(), Integer.toString(port));
         configuration.setProperty(ServerSettings.auth_enabled.name(), Boolean.FALSE.toString());
+    }
+
+    @Override
+    protected KeyStoreInformation createKeyStore() {
+        // fixes issue #255, the default implementation creates a directory "neo4j-home" containing SSL certificates.
+        return null;
     }
 
     @Override
