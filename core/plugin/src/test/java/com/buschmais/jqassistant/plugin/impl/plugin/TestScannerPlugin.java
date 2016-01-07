@@ -46,9 +46,4 @@ public class TestScannerPlugin implements ScannerPlugin<File, Descriptor> {
     public Map<String, Object> getProperties() {
         return properties;
     }
-
-    @Override
-    public String getName() {
-        return TestScannerPlugin.class.getSimpleName();
-    }
 }
