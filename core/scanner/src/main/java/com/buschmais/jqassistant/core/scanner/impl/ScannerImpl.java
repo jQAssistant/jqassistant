@@ -103,17 +103,11 @@ public class ScannerImpl implements Scanner {
      */
     protected <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
         boolean accepted = false;
-        String plugin = selectedPlugin.getName();
 
         try {
             accepted = selectedPlugin.accepts(item, path, scope);
-
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Scanner plugin:='{}' accepted resource:='{}'. Item:='{}' Path:='{}' Scope:='{}'",
-                             plugin, (accepted ? "yes" : "no"), item, path, scope);
-            }
         } catch (IOException e) {
-            LOGGER.error("Plugin " + plugin + " failed to check whether it can accept item " + path, e);
+            LOGGER.error("Plugin " + selectedPlugin + " failed to check whether it can accept item " + path, e);
         }
 
         return accepted;

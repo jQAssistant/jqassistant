@@ -52,11 +52,6 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor, P extends S
         return getTypeParameter(AbstractScannerPlugin.class, 1);
     }
 
-    @Override
-    public String getName() {
-        return getThis().getClass().getSimpleName();
-    }
-
     protected abstract P getThis();
 
     /**
