@@ -15,6 +15,28 @@ is intended to help to scan and validate YAML configuration files with the
 help of a simple graph model. If you need an better support for YAML files,
 please report a feature request.
 
+=== Activation of the plugin
+
+The YAML scanner is **not activated by default** for the jQAssistant Plugin for Maven,
+but for the commandline tool for jQAssistant. To activated for the jQAssistant for
+Maven it must be added to the list of dependencies as shown below.
+
+[source, xml]
+----
+<plugin>
+    <groupId>com.buschmais.jqassistant.scm</groupId>
+    <artifactId>jqassistant-maven-plugin</artifactId>
+    <version>{projectVersion}</version>
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.yaml</artifactId>
+            <version{projectVersion}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+----
+
 === :File:YAML
 
 A file with the file extension `.yaml` containing zero or more YAML documents.
