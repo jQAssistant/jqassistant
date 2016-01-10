@@ -5,7 +5,7 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractZipArchiveScannerPlugin;
 
-public class ZipScannerPlugin extends AbstractZipArchiveScannerPlugin<ZipArchiveDescriptor, ZipScannerPlugin> {
+public class ZipScannerPlugin extends AbstractZipArchiveScannerPlugin<ZipArchiveDescriptor> {
 
     @Override
     protected String getExtension() {
@@ -19,10 +19,5 @@ public class ZipScannerPlugin extends AbstractZipArchiveScannerPlugin<ZipArchive
 
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
-    }
-
-    @Override
-    protected ZipScannerPlugin getThis() {
-        return this;
     }
 }

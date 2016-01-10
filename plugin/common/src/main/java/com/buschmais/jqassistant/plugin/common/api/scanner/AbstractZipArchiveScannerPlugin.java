@@ -21,8 +21,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  * Abstract base implementation for archive scanners.
  */
 @Requires(FileDescriptor.class)
-public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescriptor, P extends ScannerPlugin<FileResource, D>>
-        extends AbstractScannerPlugin<FileResource, D, P> {
+public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescriptor>
+        extends AbstractScannerPlugin<FileResource, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractZipArchiveScannerPlugin.class);
 
