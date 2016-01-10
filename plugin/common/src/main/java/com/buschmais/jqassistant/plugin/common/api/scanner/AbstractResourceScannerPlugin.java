@@ -1,6 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
@@ -11,11 +10,9 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  *            The resource item type.
  * @param <D>
  *            The descriptor type representing the item type.
- * @param <P>
- *            The actuall plugin type.
  */
-public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor, P extends ScannerPlugin<I, D>>
-        extends AbstractScannerPlugin<I, D, P> {
+public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor>
+        extends AbstractScannerPlugin<I, D> {
 
     @Override
     public Class<? extends I> getType() {

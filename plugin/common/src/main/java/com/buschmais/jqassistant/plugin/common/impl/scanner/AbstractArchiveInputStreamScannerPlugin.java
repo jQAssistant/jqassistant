@@ -28,8 +28,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
  * @param <D>
  *            The ArchiveDescriptor type.
  */
-public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveInputStream, E extends ArchiveEntry, D extends ArchiveDescriptor, P extends ScannerPlugin<S, D>>
-        extends AbstractContainerScannerPlugin<S, E, D, P> {
+public abstract class AbstractArchiveInputStreamScannerPlugin<S extends ArchiveInputStream, E extends ArchiveEntry, D extends ArchiveDescriptor>
+        extends AbstractContainerScannerPlugin<S, E, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArchiveInputStreamScannerPlugin.class);
 

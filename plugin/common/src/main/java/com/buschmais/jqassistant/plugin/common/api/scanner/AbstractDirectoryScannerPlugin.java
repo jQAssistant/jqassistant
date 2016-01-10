@@ -12,7 +12,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.DirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractDirectoryResource;
@@ -22,8 +21,8 @@ import com.buschmais.jqassistant.plugin.common.impl.scanner.BufferedFileResource
 /**
  * Abstract base implementation for directory scanners.
  */
-public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescriptor, P extends ScannerPlugin<File, D>>
-        extends AbstractContainerScannerPlugin<File, File, D, P> {
+public abstract class AbstractDirectoryScannerPlugin<D extends DirectoryDescriptor>
+        extends AbstractContainerScannerPlugin<File, File, D> {
 
     @Override
     public Class<? extends File> getType() {

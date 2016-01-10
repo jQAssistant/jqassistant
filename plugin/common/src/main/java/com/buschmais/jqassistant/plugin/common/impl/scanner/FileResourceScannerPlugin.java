@@ -11,7 +11,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 public class FileResourceScannerPlugin
-        extends AbstractScannerPlugin<FileResource, FileDescriptor, FileResourceScannerPlugin> {
+        extends AbstractScannerPlugin<FileResource, FileDescriptor> {
 
     @Override
     protected void configure() {

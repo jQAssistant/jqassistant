@@ -120,16 +120,11 @@ public class FileContainerScannerPluginTest {
     }
 
     private static class TestContainerScannerPlugin
-            extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor, TestContainerScannerPlugin> {
+            extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
 
         private List<FileDescriptor> contains = new ArrayList<>();
 
         private List<FileDescriptor> requires = new ArrayList<>();
-
-        @Override
-        protected TestContainerScannerPlugin getThis() {
-            return this;
-        }
 
         @Override
         public boolean accepts(Collection<String> item, String path, Scope scope) throws IOException {
