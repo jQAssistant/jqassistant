@@ -26,17 +26,11 @@ import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 
 @Requires(FileDescriptor.class)
-public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSuiteDescriptor, TestReportScannerPlugin> {
+public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSuiteDescriptor> {
 
     private final NumberFormat timeFormat = NumberFormat.getInstance(Locale.US);
 
     private XMLInputFactory inputFactory;
-
-
-    @Override
-    protected TestReportScannerPlugin getThis() {
-        return this;
-    }
 
     @Override
     public void initialize() {

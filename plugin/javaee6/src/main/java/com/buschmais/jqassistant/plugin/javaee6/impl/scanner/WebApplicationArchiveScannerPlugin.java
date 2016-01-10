@@ -10,12 +10,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescript
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
 public class WebApplicationArchiveScannerPlugin
-        extends AbstractZipArchiveScannerPlugin<WebApplicationArchiveDescriptor, WebApplicationArchiveScannerPlugin> {
-
-    @Override
-    protected WebApplicationArchiveScannerPlugin getThis() {
-        return this;
-    }
+        extends AbstractZipArchiveScannerPlugin<WebApplicationArchiveDescriptor> {
 
     @Override
     protected String getExtension() {

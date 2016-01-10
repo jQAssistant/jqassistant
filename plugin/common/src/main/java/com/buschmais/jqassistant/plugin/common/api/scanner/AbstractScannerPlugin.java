@@ -1,14 +1,12 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base implementation of a {@link ScannerPlugin}.
  */
-public abstract class AbstractScannerPlugin<I, D extends Descriptor, P extends ScannerPlugin<I, D>> implements ScannerPlugin<I, D> {
+public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements ScannerPlugin<I, D> {
     private static Logger LOGGER = LoggerFactory.getLogger(AbstractScannerPlugin.class);
 
     private Map<String, Object> properties;
@@ -51,8 +49,6 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor, P extends S
     public Class<D> getDescriptorType() {
         return getTypeParameter(AbstractScannerPlugin.class, 1);
     }
-
-    protected abstract P getThis();
 
     /**
      * Determines the type parameter for a generic super class.

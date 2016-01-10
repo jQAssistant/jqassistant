@@ -88,14 +88,9 @@ import com.sun.java.xml.ns.javaee.XsdStringType;
  * WEB-INF/web.xml)
  */
 @Requires(FileDescriptor.class)
-public class WebXmlScannerPlugin extends AbstractXmlFileScannerPlugin<WebXmlDescriptor, WebXmlScannerPlugin> {
+public class WebXmlScannerPlugin extends AbstractXmlFileScannerPlugin<WebXmlDescriptor> {
 
     private JAXBUnmarshaller<WebAppType> unmarshaller;
-
-    @Override
-    protected WebXmlScannerPlugin getThis() {
-        return this;
-    }
 
     @Override
     public void initialize() {

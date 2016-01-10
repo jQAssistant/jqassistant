@@ -17,16 +17,11 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 /**
  * Scanner plugin which handles URIs with defined default schemas as input.
  */
-public class DefaultUriScannerPlugin extends AbstractScannerPlugin<URI, Descriptor, DefaultUriScannerPlugin> {
+public class DefaultUriScannerPlugin extends AbstractScannerPlugin<URI, Descriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultUriScannerPlugin.class);
 
     private Set<String> schemes;
-
-    @Override
-    protected DefaultUriScannerPlugin getThis() {
-        return this;
-    }
 
     @Override
     public void initialize() {
