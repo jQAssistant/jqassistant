@@ -4,7 +4,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import java.io.IOException;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +25,9 @@ import com.google.common.base.Stopwatch;
  *            The element type.
  * @param <D>
  *            The descriptor type.
- * @param <P>
- *            The actuall type of the plugin.
  */
-public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor, P extends ScannerPlugin<I, D>>
-        extends AbstractResourceScannerPlugin<I, D, P> {
+public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContainerDescriptor>
+        extends AbstractResourceScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractContainerScannerPlugin.class);
 

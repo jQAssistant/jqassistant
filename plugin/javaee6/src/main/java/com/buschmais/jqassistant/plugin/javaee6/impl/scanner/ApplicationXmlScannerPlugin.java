@@ -36,14 +36,9 @@ import com.sun.java.xml.ns.javaee.WebType;
  * APP-INF/application.xml)
  */
 @Requires(FileDescriptor.class)
-public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor, ApplicationXmlScannerPlugin> {
+public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor> {
 
     private JAXBUnmarshaller<ApplicationType> unmarshaller;
-
-    @Override
-    protected ApplicationXmlScannerPlugin getThis() {
-        return this;
-    }
 
     @Override
     public void initialize() {

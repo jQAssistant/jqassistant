@@ -21,16 +21,11 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.xml.api.model.*;
 import com.google.common.base.Strings;
 
-public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor, XmlSourceScannerPlugin> {
+public class XmlSourceScannerPlugin extends AbstractScannerPlugin<Source, XmlDocumentDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlSourceScannerPlugin.class);
 
     private XMLInputFactory inputFactory;
-
-    @Override
-    protected XmlSourceScannerPlugin getThis() {
-        return this;
-    }
 
     @Override
     public void initialize() {

@@ -8,16 +8,11 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor;
 
-public class TarArchiveInputStreamScannerPlugin extends AbstractArchiveInputStreamScannerPlugin<TarArchiveInputStream, TarArchiveEntry, TarArchiveDescriptor, TarArchiveInputStreamScannerPlugin> {
+public class TarArchiveInputStreamScannerPlugin extends AbstractArchiveInputStreamScannerPlugin<TarArchiveInputStream, TarArchiveEntry, TarArchiveDescriptor> {
 
     @Override
     public Class<? extends TarArchiveInputStream> getType() {
         return TarArchiveInputStream.class;
-    }
-
-    @Override
-    protected TarArchiveInputStreamScannerPlugin getThis() {
-        return this;
     }
 
     @Override

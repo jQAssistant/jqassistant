@@ -41,7 +41,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.JsfFaceletDescriptor;
  * @author peter.herklotz@buschmais.com
  */
 @Requires(FileDescriptor.class)
-public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource, JsfFaceletDescriptor, JsfFaceletScannerPlugin> {
+public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource, JsfFaceletDescriptor> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsfFaceletScannerPlugin.class);
 
@@ -51,11 +51,6 @@ public class JsfFaceletScannerPlugin extends AbstractScannerPlugin<FileResource,
     private DocumentBuilder documentBuilder;
     private Pattern filePattern;
     private XPath xPath;
-
-    @Override
-    protected JsfFaceletScannerPlugin getThis() {
-        return this;
-    }
 
     /** {@inheritDoc} */
     @Override

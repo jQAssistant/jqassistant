@@ -17,7 +17,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFi
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 
 public class ZipFileScannerPlugin
-        extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor, ZipFileScannerPlugin> {
+        extends AbstractContainerScannerPlugin<ZipFileResource, ZipArchiveEntry, ZipArchiveDescriptor> {
 
     @Override
     public Class<? extends ZipFileResource> getType() {
@@ -27,11 +27,6 @@ public class ZipFileScannerPlugin
     @Override
     public Class<ZipArchiveDescriptor> getDescriptorType() {
         return ZipArchiveDescriptor.class;
-    }
-
-    @Override
-    protected ZipFileScannerPlugin getThis() {
-        return this;
     }
 
     @Override

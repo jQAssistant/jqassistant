@@ -9,12 +9,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.DirectoryResource;
 
 public class DirectoryResourceScannerPlugin
-        extends AbstractScannerPlugin<DirectoryResource, DirectoryDescriptor, DirectoryResourceScannerPlugin> {
-
-    @Override
-    protected DirectoryResourceScannerPlugin getThis() {
-        return this;
-    }
+        extends AbstractScannerPlugin<DirectoryResource, DirectoryDescriptor> {
 
     @Override
     public boolean accepts(DirectoryResource item, String path, Scope scope) throws IOException {

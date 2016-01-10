@@ -19,16 +19,11 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 /**
  * Scanner plugin which handles URLs as input.
  */
-public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor, UrlScannerPlugin> {
+public class UrlScannerPlugin extends AbstractResourceScannerPlugin<URL, FileDescriptor> {
 
     @Override
     public boolean accepts(URL item, String path, Scope scope) throws IOException {
         return true;
-    }
-
-    @Override
-    protected UrlScannerPlugin getThis() {
-        return this;
     }
 
     @Override

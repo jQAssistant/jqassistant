@@ -26,8 +26,8 @@ import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 /**
  * Abstract base class for database schema scanners.
  */
-public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescriptor, P extends ScannerPlugin<I, D>>
-        extends AbstractScannerPlugin<I, D, P> {
+public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescriptor>
+        extends AbstractScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSchemaScannerPlugin.class);
 
