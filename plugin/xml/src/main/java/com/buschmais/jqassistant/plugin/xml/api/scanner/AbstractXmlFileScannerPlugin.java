@@ -24,8 +24,8 @@ import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
  *            The type of the actuall plugin.
  */
 @Requires(FileDescriptor.class)
-public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor, P extends ScannerPlugin<FileResource, D>> extends
-        AbstractScannerPlugin<FileResource, D, P> {
+public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> extends
+        AbstractScannerPlugin<FileResource, D> {
 
     @Override
     public Class<? extends FileResource> getType() {
