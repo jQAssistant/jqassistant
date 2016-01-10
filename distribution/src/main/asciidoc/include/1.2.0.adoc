@@ -4,7 +4,10 @@
 
 ==== Common
 - Added a plugin for scanning .tar archives
+- jQAssistants logs now debug information on which plugin accepted a resource or not. This
+  is helpfull if the result of the scan differs from your exceptation.
 
 ==== Maven
-- added a relation HAS_EFFECTIVE_MODEL from :Maven:Project to :Maven:Pom nodes representing the effective (i.e. interpolated)
+- added a relation `HAS_EFFECTIVE_MODEL` from `:Maven:Project` to
+  `:Maven:Pom` nodes representing the effective (i.e. interpolated)
   model of a Maven project containing all resolved dependencies, plugins, etc.
