@@ -8,11 +8,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.ArtifactScopedTypeResol
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 
-public class JarScannerPlugin extends AbstractZipArchiveScannerPlugin<JarArchiveDescriptor, JarScannerPlugin> {
-    @Override
-    protected JarScannerPlugin getThis() {
-        return this;
-    }
+public class JarScannerPlugin extends AbstractZipArchiveScannerPlugin<JarArchiveDescriptor> {
 
     @Override
     protected String getExtension() {
