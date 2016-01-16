@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
 import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
