@@ -2,9 +2,11 @@ package com.buschmais.jqassistant.core.analysis.impl;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import java.net.URL;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Test;
 
@@ -30,36 +33,40 @@ public class AsciiDocRuleSetReaderTest {
         RuleSource ruleSource = new UrlRuleSource(url);
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
+
         ConceptBucket concepts = ruleSet.getConceptBucket();
-        assertEquals(2, concepts.size());
+        assertThat(concepts.size(), equalTo(2));
+
         Concept concept1 = concepts.getById("junit4:TestClassOrMethod");
-        assertEquals("junit4:TestClassOrMethod", concept1.getId());
-        assertEquals(true, concept1.getDescription().contains("labels them and their containing classes with `:Test` and `:Junit4`."));
+        assertThat(concept1.getId(), equalTo("junit4:TestClassOrMethod"));
+        assertThat(concept1.getDescription(), CoreMatchers.containsString("labels them and their containing classes with `:Test` and `:Junit4`."));
+
         Executable executable1 = concept1.getExecutable();
         assertThat(executable1, instanceOf(CypherExecutable.class));
-        assertEquals(true, ((CypherExecutable) executable1).getStatement().contains("c:Test:Junit4, m:Test:Junit4"));
-        assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
+        assertThat(((CypherExecutable)executable1).getStatement(), containsString("c:Test:Junit4, m:Test:Junit4"));
+        assertThat(concept1.getRequiresConcepts(), IsEmptyCollection.<String>empty());
 
         Concept concept2 = concepts.getById("junit4:AssertMethod");
-        assertEquals("junit4:AssertMethod", concept2.getId());
-        assertEquals("Labels all assertion methods declared by `org.junit.Assert` with `:Assert`.", concept2.getDescription());
+        assertThat(concept2.getId(), containsString("junit4:AssertMethod"));
+        assertThat(concept2.getDescription(), containsString("Labels all assertion methods declared by `org.junit.Assert` with `:Assert`."));
+
         Executable executable2 = concept2.getExecutable();
         assertThat(executable2, instanceOf(CypherExecutable.class));
-        assertEquals(true, ((CypherExecutable) executable2).getStatement().contains("and assertMethod.signature =~ 'void assert.*'"));
-        assertEquals(Collections.emptySet(), concept2.getRequiresConcepts());
+        assertThat(((CypherExecutable)executable2).getStatement(), containsString("and assertMethod.signature =~ 'void assert.*'"));
+        assertThat(concept2.getRequiresConcepts(), IsEmptyCollection.<String>empty());
 
         ConstraintBucket constraints = ruleSet.getConstraintBucket();
-        assertEquals(1, constraints.size());
+        assertThat(constraints.size(), equalTo(1));
 
         Constraint constraint = constraints.getById("junit4:TestMethodWithoutAssertion");
+        assertThat(constraint.getId(), containsString("junit4:TestMethodWithoutAssertion"));
+        assertThat(constraint.getDescription(), containsString("All test methods must perform assertions."));
 
-        assertEquals("junit4:TestMethodWithoutAssertion", constraint.getId());
-        assertEquals("All test methods must perform assertions.", constraint.getDescription());
         Executable constraintExecutable = constraint.getExecutable();
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
-        assertEquals(true, ((CypherExecutable) constraintExecutable).getStatement().contains("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
-        assertEquals(new HashSet<>(ruleSet.getConceptBucket().getIds()), constraint.getRequiresConcepts());
+        assertThat(((CypherExecutable) constraintExecutable).getStatement(), containsString("not (testMethod)-[:INVOKES*]->(:Method:Assert)"));
 
+        assertThat(ruleSet.getConceptBucket().getIds(), containsInAnyOrder(constraint.getRequiresConcepts().toArray()));
     }
 
     @Test
@@ -70,18 +77,22 @@ public class AsciiDocRuleSetReaderTest {
         RuleSource ruleSource = new UrlRuleSource(url);
         reader.read(asList(ruleSource), ruleSetBuilder);
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
+
         ConceptBucket concepts = ruleSet.getConceptBucket();
-        assertEquals(1, concepts.size());
+        assertThat(concepts.size(), equalTo(1));
+
         Concept concept1 = concepts.getById("concept:JavaScript");
-        assertEquals("concept:JavaScript", concept1.getId());
-        assertEquals(true, concept1.getDescription().contains("Demonstrates a concept using JavaScript."));
+        assertThat(concept1.getId(), equalTo("concept:JavaScript"));
+        assertThat(concept1.getDescription(), containsString("Demonstrates a concept using JavaScript."));
+        assertThat(concept1.getRequiresConcepts(), IsEmptyCollection.<String>empty());
+
         Executable executable = concept1.getExecutable();
         assertThat(executable, instanceOf(ScriptExecutable.class));
+
         ScriptExecutable scriptExecutable = (ScriptExecutable) executable;
         assertThat(scriptExecutable, notNullValue());
         assertThat(scriptExecutable.getLanguage(), equalTo("javascript"));
         assertThat(scriptExecutable.getSource(), CoreMatchers.containsString("var row = new java.util.HashMap();"));
-        assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
     }
 
     @Test

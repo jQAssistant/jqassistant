@@ -1,6 +1,9 @@
 package com.buschmais.jqassistant.plugin.javaee6.test.scanner;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -63,13 +66,13 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
         scanFaceletDirectory();
 
         List<JsfFaceletDescriptor> descriptors = query("MATCH (n:File:Jsf:Facelet) WHERE n.fileName='/shop/productsite.jspx' RETURN n").getColumn("n");
-        assertThat(descriptors.size(), equalTo(1));
+        assertThat(descriptors, hasSize(1));
 
         JsfFaceletDescriptor descriptor = descriptors.iterator().next();
-        Assert.assertNotNull(descriptor);
+        assertThat(descriptor, not(nullValue()));
         Assert.assertEquals(descriptor.getIncludes().size(), 2);
 
-        List<String> fileNames = new ArrayList<String>();
+        List<String> fileNames = new ArrayList<>();
         fileNames.add("/shop/item.jspx");
         fileNames.add("/shop/short_info.jspx");
         containsAll(descriptor.getIncludes(), fileNames);
