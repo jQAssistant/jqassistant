@@ -34,7 +34,7 @@ public class ResourceIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_Resource_Concept() throws Exception {
+    public void resourceConcept() throws Exception {
         scanClasses(MyRestResource.class);
         assertThat(applyConcept("jaxrs:Resource").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

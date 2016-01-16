@@ -32,7 +32,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	 *             If the test fails.
 	 */
 	@Test
-	public void test_EventProducer_Concept() throws Exception {
+	public void eventProducerConcept() throws Exception {
 		scanClasses(CustomEventProducer.class);
         assertThat(applyConcept("cdi:EventProducer").getStatus(), equalTo(Result.Status.SUCCESS));
 		store.beginTransaction();
@@ -66,7 +66,7 @@ public class CdiEventIT extends AbstractJavaPluginIT {
 	 *             If the test fails.
 	 */
 	@Test
-	public void test_EventConsumer_Concept() throws Exception {
+	public void eventConsumerConcept() throws Exception {
 		scanClasses(CustomEventConsumer.class);
 		assertThat(applyConcept("cdi:EventConsumer").getStatus(), equalTo(Result.Status.SUCCESS));
 		store.beginTransaction();

@@ -35,7 +35,7 @@ public class RequestMethodDesignatorIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_RequestMethodDesignator_Concept() throws Exception {
+    public void requestMethodDesignatorConcept() throws Exception {
         scanClasses(GET.class, PUT.class, POST.class, DELETE.class, HEAD.class, OPTIONS.class);
         assertThat(applyConcept("jaxrs:RequestMethodDesignator").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

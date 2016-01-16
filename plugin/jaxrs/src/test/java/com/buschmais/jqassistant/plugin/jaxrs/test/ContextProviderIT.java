@@ -35,7 +35,7 @@ public class ContextProviderIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_ContextProvider_Concept() throws Exception {
+    public void contextProvider_Concept() throws Exception {
         scanClasses(BookResolver.class);
         assertThat(applyConcept("jaxrs:ContextProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
