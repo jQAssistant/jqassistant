@@ -65,6 +65,13 @@ public interface Store {
     void rollbackTransaction();
 
     /**
+     * Checks if there is a running transaction or not.
+     *
+     * @return {@code true} if there is a running transaction, otherwise {@code false}.
+     */
+    boolean hasActiveTransaction();
+
+    /**
      * Creates a {@link Descriptor} of the given type.
      * 
      * @param type

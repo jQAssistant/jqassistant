@@ -147,6 +147,17 @@ public abstract class AbstractGraphStore implements Store {
     }
 
     @Override
+    public boolean hasActiveTransaction() {
+        boolean activeTx = false;
+
+        if (xoManager.currentTransaction() != null && xoManager.currentTransaction().isActive()) {
+            activeTx = true;
+        }
+
+        return activeTx;
+    }
+
+    @Override
     public GraphDatabaseService getGraphDatabaseService() {
         return getGraphDatabaseService(xoManager);
     }
