@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,15 +71,15 @@ public class JsfFaceletScannerIT extends AbstractJavaPluginIT {
 
         JsfFaceletDescriptor descriptor = descriptors.iterator().next();
         assertThat(descriptor, not(nullValue()));
-        Assert.assertEquals(descriptor.getIncludes().size(), 2);
+        assertThat(descriptor.getIncludes(), hasSize(2));
 
         List<String> fileNames = new ArrayList<>();
         fileNames.add("/shop/item.jspx");
         fileNames.add("/shop/short_info.jspx");
         containsAll(descriptor.getIncludes(), fileNames);
 
-        Assert.assertNotNull(descriptor.getTemplate());
-        Assert.assertEquals(descriptor.getTemplate().getFileName(), "/templ/template.jspx");
+        assertThat(descriptor.getTemplate(), not(nullValue()));
+        assertThat(descriptor.getTemplate().getFileName(), equalTo("/templ/template.jspx"));
 
         store.commitTransaction();
     }

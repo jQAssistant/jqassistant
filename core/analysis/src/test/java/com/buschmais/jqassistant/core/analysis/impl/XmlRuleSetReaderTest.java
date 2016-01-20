@@ -1,7 +1,9 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 
@@ -20,15 +22,12 @@ public class XmlRuleSetReaderTest {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         RuleSetReader reader = new XmlRuleSetReader();
         reader.read(asList(new FileRuleSource(xmlFile)), ruleSetBuilder);
+
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-        assertEquals(1, ruleSet.getConceptBucket().size());
-        assertEquals(1, ruleSet.getConstraintBucket().size());
-        for (String id : ruleSet.getConceptBucket().getIds()) {
-            assertEquals(true, "test:JavaScriptConcept".equals(id));
-        }
-        for (String id : ruleSet.getConstraintBucket().getIds()) {
-            assertEquals(true, "test:JavaScriptConstraint".equals(id));
-        }
+        assertThat(ruleSet.getConceptBucket().size(), equalTo(1));
+        assertThat(ruleSet.getConstraintBucket().size(), equalTo(1));
+        assertThat(ruleSet.getConceptBucket().getIds(), contains("test:JavaScriptConcept"));
+        assertThat(ruleSet.getConstraintBucket().getIds(), contains("test:JavaScriptConstraint"));
     }
 
 }

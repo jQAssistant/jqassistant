@@ -24,6 +24,12 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
+
 public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
 
     private static final int REPO_SERVER_PORT = 9095;
@@ -97,15 +103,14 @@ public class MavenArtifactScannerPluginIT extends AbstractPluginIT {
             scanner.scan(info, info.toString(), MavenScope.REPOSITORY);
             context.pop(ArtifactProvider.class);
             context.pop(ArtifactResolver.class);
+
             Long countJarNodes = store.executeQuery("MATCH (n:Maven:Artifact:Jar) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
-            final int expectedJarNodes = 1;
-            Assert.assertEquals("Number of jar nodes is wrong.", new Long(expectedJarNodes), countJarNodes);
+            assertThat("Number of jar nodes is wrong.", countJarNodes, equalTo(1L));
 
             MavenRepositoryDescriptor repositoryDescriptor = store.executeQuery("MATCH (r:Maven:Repository) RETURN r").getSingleResult()
                     .get("r", MavenRepositoryDescriptor.class);
-            Assert.assertNotNull(repositoryDescriptor);
-            final int expectedNodes = 1;
-            Assert.assertEquals(expectedNodes, repositoryDescriptor.getContainedModels().size());
+            assertThat(repoDescriptor, not(nullValue()));
+            assertThat(repoDescriptor.getContainedModels(), hasSize(1));
         } finally {
             store.commitTransaction();
             stopServer();
