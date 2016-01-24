@@ -3,7 +3,7 @@
 
     <groupId>com.buschmais.jqassistant</groupId>
     <artifactId>jqassistant</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>jQAssistant</name>
