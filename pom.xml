@@ -50,9 +50,8 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>bintray</id>
+            <url>https://api.bintray.com/maven/buschmais/maven/jQAssistant;publish=1</url>
         </repository>
         <site>
             <id>github-pages-site</id>
@@ -82,10 +81,10 @@
         <maven.compiler.version>3.3</maven.compiler.version>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
-        <org.neo4j_version>2.3.1</org.neo4j_version>
+        <org.neo4j_version>2.3.2</org.neo4j_version>
         <org.asciidoctor_version>1.5.4</org.asciidoctor_version>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
-        <org.jruby_version>9.0.3.0</org.jruby_version>
+        <org.jruby_version>9.0.4.0</org.jruby_version>
         <org.ow2.asm_version>5.0.4</org.ow2.asm_version>
         <org.slf4j_version>1.7.13</org.slf4j_version>
         <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
@@ -118,33 +117,6 @@
                                     <argLine>-Xmx768M -XX:+HeapDumpOnOutOfMemoryError</argLine>
                                     <forkCount>1</forkCount>
                                     <reuseForks>false</reuseForks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>PT</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                                <configuration>
-                                    <argLine>-Xmx768M -XX:+HeapDumpOnOutOfMemoryError</argLine>
-                                    <forkCount>1</forkCount>
-                                    <reuseForks>false</reuseForks>
-                                    <includes>
-                                        <include>**/*PT.java</include>
-                                    </includes>
                                 </configuration>
                             </execution>
                         </executions>
@@ -205,36 +177,6 @@
             </build>
         </profile>
 
-      <profile>
-        <!--
-         ! This profile is automatically activated by using maven-release-plugin:perfom.
-         ! So this mean signing of artifacts is only done in case of running a release.
-         !-->
-        <activation>
-          <property>
-            <name>performRelease</name>
-            <value>true</value>
-          </property>
-        </activation>
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-gpg-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>sign-artifacts</id>
-                  <phase>verify</phase>
-                  <goals>
-                    <goal>sign</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
-        
     </profiles>
 
     <build>
@@ -488,12 +430,8 @@
                         <mavenExecutorId>forked-path</mavenExecutorId>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <tagNameFormat>@{version}</tagNameFormat>
+                        <goals>deploy</goals>
                     </configuration>
-                </plugin>
-                <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-gpg-plugin</artifactId>
-                  <version>1.6</version>
                 </plugin>
                 <!--
                   ! For the maven plugin area.

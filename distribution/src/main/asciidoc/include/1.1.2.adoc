@@ -1,5 +1,8 @@
 == 1.1.2
 
+=== Core
+- Upgraded to Neo4j 2.3.2
+
 === Integrated Server
 - do not create "neo4j-home" in working directory when starting the integrated server
 
