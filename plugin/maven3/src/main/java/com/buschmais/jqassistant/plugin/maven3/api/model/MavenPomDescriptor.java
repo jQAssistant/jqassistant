@@ -20,7 +20,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  */
 @Label(value = "Pom", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface MavenPomDescriptor
-        extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor, FullQualifiedNameDescriptor, NamedDescriptor {
+        extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor,
+                MavenDependentDescriptor, FullQualifiedNameDescriptor, NamedDescriptor {
 
     /**
      * Get the artifacts which are described by this POM.
