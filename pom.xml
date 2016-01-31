@@ -96,7 +96,7 @@
          ! previous version of jQAssistant.
          !                          Oliver B. Fischer, 2015-11-27
          !-->
-        <jqassistant.previous.version>1.1.1</jqassistant.previous.version>
+        <jqassistant.previous.version>1.1.2</jqassistant.previous.version>
     </properties>
 
     <profiles>
