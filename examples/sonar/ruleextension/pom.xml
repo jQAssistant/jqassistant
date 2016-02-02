@@ -11,7 +11,7 @@
 
     <!-- tag::projectBody[] -->
     <properties>
-        <org.codehaus.sonar_version>3.7.4</org.codehaus.sonar_version>
+        <org.codehaus.sonar_version>5.0</org.codehaus.sonar_version>
     </properties>
 
     <build>
@@ -23,7 +23,7 @@
             <plugin>
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
-                <version>1.9</version>
+                <version>1.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <basePlugin>jqassistant</basePlugin>

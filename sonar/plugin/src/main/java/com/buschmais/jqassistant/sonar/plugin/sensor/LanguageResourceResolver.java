@@ -25,5 +25,5 @@ public interface LanguageResourceResolver extends BatchExtension {
      *            The name of the element (e.g. the class name).
      * @return The resource.
      */
-    Resource<?> resolve(String type, String name);
+    Resource resolve(String type, String name);
 }

@@ -1,16 +1,12 @@
 package com.buschmais.jqassistant.sonar.plugin.rule;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
-import org.sonar.api.rules.AnnotationRuleParser;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleParam;
 import org.sonar.api.rules.RulePriority;
-import org.sonar.api.rules.RuleRepository;
-import org.sonar.api.utils.SonarException;
+import org.sonar.api.server.rule.RuleParamType;
+import org.sonar.api.server.rule.RulesDefinition;
+import org.sonar.api.server.rule.RulesDefinitionAnnotationLoader;
 import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
@@ -42,57 +38,49 @@ import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
  * <li>Template rules which can be configured by the user in the UI.</li>
  * </ul>
  */
-public final class JQAssistantRuleRepository extends RuleRepository {
+public final class JQAssistantRuleRepository implements RulesDefinition {
 
     @SuppressWarnings("rawtypes")
-    public static final Collection<Class> RULE_CLASSES = Arrays.<Class>asList(ConceptTemplateRule.class, ConstraintTemplateRule.class);
-
-    private final AnnotationRuleParser annotationRuleParser;
-
-    /**
-     * Constructor.
-     * 
-     * @param annotationRuleParser
-     *            The {@link AnnotationRuleParser} to use for template rules.
-     */
-    public JQAssistantRuleRepository(AnnotationRuleParser annotationRuleParser) {
-        super(JQAssistant.KEY, Java.KEY);
-        setName(JQAssistant.NAME);
-        this.annotationRuleParser = annotationRuleParser;
-    }
+    public static final Class[] RULE_CLASSES = new Class[] {ConceptTemplateRule.class, ConstraintTemplateRule.class};
 
     @Override
-    public List<Rule> createRules() {
+    public void define(Context context) {
+    	NewRepository newRepository = context.createRepository(JQAssistant.KEY, Java.KEY);
+    	newRepository.setName(JQAssistant.NAME);
+    	
+    	createRules(newRepository);
+    	RulesDefinitionAnnotationLoader annotationRuleParser = new RulesDefinitionAnnotationLoader();
+    	annotationRuleParser.load(newRepository, RULE_CLASSES);
+    	
+    	newRepository.done();
+    }
+    
+    public void createRules(NewRepository newRepository) {
         PluginConfigurationReader pluginConfigurationReader = new PluginConfigurationReaderImpl(JQAssistantRuleRepository.class
                 .getClassLoader());
         RulePluginRepository rulePluginRepository;
         try {
             rulePluginRepository = new RulePluginRepositoryImpl(pluginConfigurationReader);
         } catch (PluginRepositoryException e) {
-            throw new SonarException("Cannot read rules.", e);
+            throw new IllegalStateException("Cannot read rules.", e);
         }
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         RuleSetReader ruleSetReader = new XmlRuleSetReader();
-        RuleSet ruleSet;
         try {
             ruleSetReader.read(ruleSources, ruleSetBuilder);
         } catch (RuleException e) {
-            throw new SonarException("Cannot read rules", e);
+            throw new IllegalStateException("Cannot read rules", e);
         }
-        ruleSet = ruleSetBuilder.getRuleSet();
-        List<Rule> rules = new ArrayList<>();
+        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
 
         for (Concept concept : ruleSet.getConceptBucket().getAll()) {
-            rules.add(createRule(concept, RuleType.Concept));
+        	createRule(newRepository, concept, RuleType.Concept);
         }
 
         for (Constraint constraint : ruleSet.getConstraintBucket().getAll()) {
-            rules.add(createRule(constraint, RuleType.Constraint));
+        	createRule(newRepository, constraint, RuleType.Constraint);
         }
-
-        rules.addAll(annotationRuleParser.parse(JQAssistant.KEY, RULE_CLASSES));
-        return rules;
     }
 
     /**
@@ -104,11 +92,13 @@ public final class JQAssistantRuleRepository extends RuleRepository {
      *            The rule type.
      * @return The rule.
      */
-    private Rule createRule(ExecutableRule executableRule, RuleType ruleType) {
-        Rule rule = Rule.create(JQAssistant.KEY, executableRule.getId(), executableRule.getId());
-        rule.setDescription(executableRule.getDescription());
+    private void createRule(NewRepository newRepository, ExecutableRule executableRule, RuleType ruleType) {
+    	
+    	NewRule rule = newRepository.createRule(executableRule.getId());
+    	rule.setName(executableRule.getId());
         // set priority based on severity value
-        rule.setSeverity(RulePriority.valueOf(executableRule.getSeverity().name()));
+        rule.setSeverity(RulePriority.valueOf(executableRule.getSeverity().name()).name());
+        rule.setMarkdownDescription(executableRule.getDescription());
         StringBuilder requiresConcepts = new StringBuilder();
         for (String requiredConcept : executableRule.getRequiresConcepts()) {
             if (requiresConcepts.length() > 0) {
@@ -116,18 +106,23 @@ public final class JQAssistantRuleRepository extends RuleRepository {
             }
             requiresConcepts.append(requiredConcept);
         }
-        createRuleParameter(rule, RuleParameter.Type, ruleType.name());
-        createRuleParameter(rule, RuleParameter.RequiresConcepts, requiresConcepts.toString());
+        createRuleParameter(rule, RuleParameter.Type, ruleType.name(), RuleParamType.STRING);
+        
+        rule.addTags(ruleType.name().toLowerCase(Locale.ENGLISH));
+        createRuleParameter(rule, RuleParameter.Type, ruleType.name(), RuleParamType.STRING);
+        if(requiresConcepts.length() > 0)
+        {
+        	createRuleParameter(rule, RuleParameter.RequiresConcepts, requiresConcepts.toString(), RuleParamType.STRING);
+        }
         Executable executable = executableRule.getExecutable();
         String cypher = executable instanceof CypherExecutable ? ((CypherExecutable) executable).getStatement() : null;
-        createRuleParameter(rule, RuleParameter.Cypher, cypher);
+        createRuleParameter(rule, RuleParameter.Cypher, cypher, RuleParamType.TEXT);
         Verification verification = executableRule.getVerification();
         if (verification instanceof AggregationVerification) {
             String aggregationColumn = ((AggregationVerification) verification).getColumn();
-            createRuleParameter(rule, RuleParameter.Aggregation, Boolean.TRUE.toString());
-            createRuleParameter(rule, RuleParameter.AggregationColumn, aggregationColumn);
+            createRuleParameter(rule, RuleParameter.Aggregation, Boolean.TRUE.toString(), RuleParamType.BOOLEAN);
+            createRuleParameter(rule, RuleParameter.AggregationColumn, aggregationColumn, RuleParamType.STRING);
         }
-        return rule;
     }
 
     /**
@@ -141,9 +136,9 @@ public final class JQAssistantRuleRepository extends RuleRepository {
      *            The default value.
      * @return The parameter.
      */
-    private RuleParam createRuleParameter(Rule rule, RuleParameter ruleParameterDefinition, String value) {
-        RuleParam parameter = rule.createParameter(ruleParameterDefinition.getName());
+    private void createRuleParameter(NewRule rule, RuleParameter ruleParameterDefinition, String value, RuleParamType valueType) {
+    	NewParam parameter = rule.createParam(ruleParameterDefinition.getName());
         parameter.setDefaultValue(value);
-        return parameter;
+        parameter.setType(valueType);
     }
 }

@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.sonar.plugin.language;
 
-import static com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement;
-
 import org.sonar.api.BatchExtension;
-import org.sonar.api.resources.JavaFile;
-import org.sonar.api.resources.JavaPackage;
+import org.sonar.api.resources.Directory;
+import org.sonar.api.resources.File;
 import org.sonar.api.resources.Resource;
+import org.sonar.plugins.java.Java;
 
+import com.buschmais.jqassistant.plugin.java.api.report.Java.JavaLanguageElement;
 import com.buschmais.jqassistant.sonar.plugin.sensor.LanguageResourceResolver;
 
 /**
@@ -18,19 +18,20 @@ public class JavaResourceResolver implements LanguageResourceResolver, BatchExte
 
     @Override
     public String getLanguage() {
-        return "Java";
+        return Java.KEY;
     }
 
     @Override
-    public Resource<?> resolve(String type, String name) {
+    public Resource resolve(String type, String name) {
+    	//FIXME: The replacement of 'JavaFile' by 'File' could not work...
         if (JavaLanguageElement.Type.name().equals(type)) {
-            return new JavaFile(name);
+            return new File(name);
         } else if (JavaLanguageElement.Field.name().equals(type) || JavaLanguageElement.MethodInvocation.name().equals(type)
                 || JavaLanguageElement.ReadField.name().equals(type) || JavaLanguageElement.WriteField.name().equals(type)
                 || JavaLanguageElement.MethodInvocation.name().equals(type)) {
-            return new JavaFile(name.split("#")[0]);
+            return new File(name.split("#")[0]);
         } else if (JavaLanguageElement.Package.name().equals(type)) {
-            return new JavaPackage(name);
+            return new Directory(name);
         }
         return null;
     }
