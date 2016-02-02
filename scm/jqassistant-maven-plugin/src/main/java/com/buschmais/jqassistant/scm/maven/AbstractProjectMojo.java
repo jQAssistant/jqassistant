@@ -31,9 +31,8 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
 
         /**
          * Constructor.
-         * 
-         * @param mojoExecution
-         *            The mojo execution as provided by Maven.
+         *
+         * @param mojoExecution The mojo execution as provided by Maven.
          */
         private ExecutionKey(MojoExecution mojoExecution) {
             this.goal = mojoExecution.getGoal();
@@ -68,8 +67,8 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
 
     @Override
     public final void doExecute() throws MojoExecutionException, MojoFailureException {
-        Map<MavenProject, List<MavenProject>> modules = getModules(reactorProjects);
-        final MavenProject rootModule = ProjectResolver.getRootModule(currentProject, rulesDirectory);
+        final MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+        Map<MavenProject, List<MavenProject>> modules = ProjectResolver.getRootModules(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
         final List<MavenProject> currentModules = modules.get(rootModule);
         Set<MavenProject> executedModules = getExecutedModules(rootModule);
         executedModules.add(currentProject);
@@ -85,9 +84,8 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
 
     /**
      * Determine the already executed modules for a given root module.
-     * 
-     * @param rootModule
-     *            The root module.
+     *
+     * @param rootModule The root module.
      * @return The set of already executed modules belonging to the root module.
      */
     private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
@@ -108,35 +106,10 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     }
 
     /**
-     * Aggregate projects to their base projects
-     * 
-     * @param reactorProjects
-     *            The current reactor projects.
-     * @return A map containing resolved base projects and their aggregated projects.
-     * @throws MojoExecutionException
-     *             If aggregation fails.
-     */
-    private Map<MavenProject, List<MavenProject>> getModules(List<MavenProject> reactorProjects) throws MojoExecutionException {
-        Map<MavenProject, List<MavenProject>> rootModules = new HashMap<>();
-        for (MavenProject reactorProject : reactorProjects) {
-            MavenProject rootModule = ProjectResolver.getRootModule(reactorProject, rulesDirectory);
-            List<MavenProject> modules = rootModules.get(rootModule);
-            if (modules == null) {
-                modules = new ArrayList<>();
-                rootModules.put(rootModule, modules);
-            }
-            modules.add(reactorProject);
-        }
-        return rootModules;
-    }
-
-    /**
      * Execute the aggregated analysis.
-     * 
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *             If execution fails.
-     * @throws org.apache.maven.plugin.MojoFailureException
-     *             If execution fails.
+     *
+     * @throws org.apache.maven.plugin.MojoExecutionException If execution fails.
+     * @throws org.apache.maven.plugin.MojoFailureException   If execution fails.
      */
     protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store) throws MojoExecutionException,
             MojoFailureException;
