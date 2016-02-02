@@ -20,89 +20,18 @@ import com.buschmais.jqassistant.core.store.api.Store;
  */
 public abstract class AbstractProjectMojo extends AbstractMojo {
 
-    /**
-     * A marker for an already executed goal of a project.
-     */
-    private static class ExecutionKey {
-
-        private String goal;
-
-        private String execution;
-
-        /**
-         * Constructor.
-         *
-         * @param mojoExecution The mojo execution as provided by Maven.
-         */
-        private ExecutionKey(MojoExecution mojoExecution) {
-            this.goal = mojoExecution.getGoal();
-            this.execution = mojoExecution.getExecutionId();
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (!(o instanceof ExecutionKey))
-                return false;
-
-            ExecutionKey that = (ExecutionKey) o;
-
-            if (!execution.equals(that.execution))
-                return false;
-            return goal.equals(that.goal);
-
-        }
-
-        @Override
-        public int hashCode() {
-            int result = goal.hashCode();
-            result = 31 * result + execution.hashCode();
-            return result;
-        }
-    }
-
-    @Parameter(property = "mojoExecution")
-    protected MojoExecution execution;
-
     @Override
-    public final void doExecute() throws MojoExecutionException, MojoFailureException {
-        final MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+    public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
         Map<MavenProject, List<MavenProject>> modules = ProjectResolver.getRootModules(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
         final List<MavenProject> currentModules = modules.get(rootModule);
-        Set<MavenProject> executedModules = getExecutedModules(rootModule);
-        executedModules.add(currentProject);
-        if (currentModules != null && currentModules.size() == executedModules.size()) {
+        if (currentModules != null && currentModules.size() == executedModules.size() + 1) {
             execute(new StoreOperation() {
                 @Override
                 public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
                     aggregate(rootModule, currentModules, store);
                 }
-            }, rootModule);
+            }, rootModule, executedModules);
         }
-    }
-
-    /**
-     * Determine the already executed modules for a given root module.
-     *
-     * @param rootModule The root module.
-     * @return The set of already executed modules belonging to the root module.
-     */
-    private Set<MavenProject> getExecutedModules(MavenProject rootModule) {
-        ExecutionKey key = new ExecutionKey(execution);
-        String executedModulesContextKey = AbstractProjectMojo.class.getName() + "#executedModules";
-        Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey =
-                (Map<ExecutionKey, Set<MavenProject>>) rootModule.getContextValue(executedModulesContextKey);
-        if (executedProjectsPerExecutionKey == null) {
-            executedProjectsPerExecutionKey = new HashMap<>();
-            rootModule.setContextValue(executedModulesContextKey, executedProjectsPerExecutionKey);
-        }
-        Set<MavenProject> executedProjects = executedProjectsPerExecutionKey.get(key);
-        if (executedProjects == null) {
-            executedProjects = new HashSet<>();
-            executedProjectsPerExecutionKey.put(key, executedProjects);
-        }
-        return executedProjects;
     }
 
     /**

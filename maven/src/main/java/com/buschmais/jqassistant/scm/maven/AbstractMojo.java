@@ -3,11 +3,11 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.inject.Inject;
 
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
@@ -33,6 +33,45 @@ import com.buschmais.jqassistant.scm.maven.provider.StoreFactory;
  */
 public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo {
 
+    /**
+     * A marker for an already executed goal of a project.
+     */
+    private static class ExecutionKey {
+
+        private String goal;
+
+        private String execution;
+
+        /**
+         * Constructor.
+         *
+         * @param mojoExecution The mojo execution as provided by Maven.
+         */
+        private ExecutionKey(MojoExecution mojoExecution) {
+            this.goal = mojoExecution.getGoal();
+            this.execution = mojoExecution.getExecutionId();
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (!(o instanceof ExecutionKey))
+                return false;
+
+            ExecutionKey that = (ExecutionKey) o;
+
+            return execution.equals(that.execution) && goal.equals(that.goal);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = goal.hashCode();
+            result = 31 * result + execution.hashCode();
+            return result;
+        }
+    }
+
     public static final String REPORT_XML = "jqassistant-report.xml";
 
     public static final String PROPERTY_STORE_LIFECYCLE = "jqassistant.store.lifecycle";
@@ -42,7 +81,6 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      */
     @Parameter(property = "jqassistant.store.directory")
     protected File storeDirectory;
-
 
     /**
      * Determines if the execution root module shall be used as project root, i.e. to create the store and read the rules from.
@@ -123,6 +161,12 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     @Parameter(property = "reactorProjects")
     protected List<MavenProject> reactorProjects;
 
+    /**
+     * The current execution.
+     */
+    @Parameter(property = "mojoExecution")
+    protected MojoExecution execution;
+
     @Inject
     protected PluginRepositoryProvider pluginRepositoryProvider;
 
@@ -148,16 +192,21 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
         if (!runtimeInformation.isMavenVersion("[3.2,)")) {
             throw new MojoExecutionException("jQAssistant requires Maven 3.2.x or above.");
         }
-        doExecute();
+        MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+        Set<MavenProject> executedModules = getExecutedModules(rootModule);
+        execute(rootModule, executedModules);
+        executedModules.add(currentProject);
     }
 
     /**
      * Execute the mojo.
      *
+     * @param rootModule      The root module of the project.
+     * @param executedModules The already executed modules of the project.
      * @throws MojoExecutionException If a general execution problem occurs.
      * @throws MojoFailureException   If a failure occurs.
      */
-    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
+    protected abstract void execute(MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException;
 
     /**
      * Determine if the store shall be reset before execution of the mofo.
@@ -243,14 +292,14 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
      * @throws MojoExecutionException On execution errors.
      * @throws MojoFailureException   On execution failures.
      */
-    protected void execute(StoreOperation storeOperation, MavenProject rootModule) throws MojoExecutionException, MojoFailureException {
+    protected void execute(StoreOperation storeOperation, MavenProject rootModule, Set<MavenProject> executedModules) throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Skipping execution.");
         } else {
             synchronized (storeFactory) {
                 Store store = getStore(rootModule);
-                boolean shouldReset = reactorProjects.contains(rootModule) ? currentProject.equals(rootModule) : currentProject.isExecutionRoot();
-                if (isResetStoreBeforeExecution() && shouldReset) {
+//              boolean shouldReset = reactorProjects.contains(rootModule) ? currentProject.equals(rootModule) : currentProject.isExecutionRoot();
+                if (isResetStoreBeforeExecution() && executedModules.isEmpty()) {
                     store.reset();
                 }
                 try {
@@ -260,6 +309,29 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
                 }
             }
         }
+    }
+
+    /**
+     * Determine the already executed modules for a given root module.
+     *
+     * @param rootModule The root module.
+     * @return The set of already executed modules belonging to the root module.
+     */
+    protected Set<MavenProject> getExecutedModules(MavenProject rootModule) {
+        ExecutionKey key = new ExecutionKey(execution);
+        String executedModulesContextKey = AbstractProjectMojo.class.getName() + "#executedModules";
+        Map<ExecutionKey, Set<MavenProject>> executedProjectsPerExecutionKey =
+                (Map<ExecutionKey, Set<MavenProject>>) rootModule.getContextValue(executedModulesContextKey);
+        if (executedProjectsPerExecutionKey == null) {
+            executedProjectsPerExecutionKey = new HashMap<>();
+            rootModule.setContextValue(executedModulesContextKey, executedProjectsPerExecutionKey);
+        }
+        Set<MavenProject> executedProjects = executedProjectsPerExecutionKey.get(key);
+        if (executedProjects == null) {
+            executedProjects = new HashSet<>();
+            executedProjectsPerExecutionKey.put(key, executedProjects);
+        }
+        return executedProjects;
     }
 
     /**
