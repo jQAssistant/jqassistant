@@ -106,10 +106,8 @@ public final class JQAssistantRuleRepository implements RulesDefinition {
             }
             requiresConcepts.append(requiredConcept);
         }
-        createRuleParameter(rule, RuleParameter.Type, ruleType.name(), RuleParamType.STRING);
-        
+        createRuleParameter(rule, RuleParameter.Type, ruleType.name(), RuleParamType.STRING);        
         rule.addTags(ruleType.name().toLowerCase(Locale.ENGLISH));
-        createRuleParameter(rule, RuleParameter.Type, ruleType.name(), RuleParamType.STRING);
         if(requiresConcepts.length() > 0)
         {
         	createRuleParameter(rule, RuleParameter.RequiresConcepts, requiresConcepts.toString(), RuleParamType.STRING);
