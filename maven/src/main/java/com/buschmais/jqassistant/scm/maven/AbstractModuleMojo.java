@@ -13,12 +13,14 @@ public abstract class AbstractModuleMojo extends AbstractMojo {
 
     @Override
     public final void doExecute() throws MojoExecutionException, MojoFailureException {
-        execute(new StoreOperation() {
+        MavenProject rootModule = ProjectResolver.getRootModule(currentProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+        StoreOperation storeOperation = new StoreOperation() {
             @Override
             public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
                 execute(currentProject, store);
             }
-        });
+        };
+        execute(storeOperation, rootModule);
     }
 
     protected abstract void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException;
