@@ -16,6 +16,7 @@ public class JavaResourceResolverTest {
     @Ignore("Not compatible with API change in sonar 4.2")
     @Test
     public void type() {
+    	//FIXME
         File javaFile = (File) resourceResolver.resolve("Type", JavaResourceResolverTest.class.getName());
         assertThat(javaFile.getLongName(), equalTo(JavaResourceResolverTest.class.getName()));
     }
