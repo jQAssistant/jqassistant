@@ -1,0 +1,15 @@
+= Coding Rules
+
+[[default]]
+[role=group,includesConcepts="MavenProject"]
+== Default
+
+[[MavenProject]]
+.Return the count of Maven projects
+[source,cypher,role=concept]
+----
+MATCH
+  (p:Maven:Project)
+RETURN
+  p
+----
