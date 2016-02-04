@@ -2,6 +2,11 @@
 
 === Plugins
 
+==== All
+
+- removed the Maven POM `jqassistant.plugin:jqassistant.plugin.all` from
+  jQAssistant
+
 ==== Common
 - Added a plugin for scanning .tar archives
 - jQAssistants logs now debug information on which plugin accepted a resource or not. This
