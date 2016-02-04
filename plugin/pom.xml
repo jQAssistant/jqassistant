@@ -214,7 +214,6 @@
 	</dependencyManagement>
 
 	<modules>
-		<module>all</module>
 		<module>bom</module>
 		<module>common</module>
 		<module>java</module>
