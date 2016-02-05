@@ -6,10 +6,10 @@
         <artifactId>jqassistant.sonar</artifactId>
         <version>1.1.3-SNAPSHOT</version>
     </parent>
-    <artifactId>jqassistant.sonar.plugin</artifactId>
+    <artifactId>jqassistant.sonar.sonarrules</artifactId>
     <packaging>sonar-plugin</packaging>
 
-    <description>This plugin provides analysis results to be displayed in SonarQube.</description>
+    <description>Helper plugin for jQAssistant to manage concepts and constraints as rules in SonarQube.</description>
 
     <build>
         <plugins>
@@ -17,9 +17,11 @@
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <configuration>
-                    <pluginKey>jqassistantbase</pluginKey>
-                    <pluginName>jQAssistant</pluginName>
-                    <pluginClass>com.buschmais.jqassistant.sonar.plugin.JQAssistantPlugin</pluginClass>
+                    <basePlugin>jqassistantbase</basePlugin>
+                    <pluginKey>jqassistantsonarrules</pluginKey>
+                    <pluginName>jQAssistant SONAR centric rules</pluginName>
+                    <pluginClass>com.buschmais.jqassistant.sonar.sonarrules.JQAssistantSonarRulesPlugin</pluginClass>
+                    <addMavenDescriptor>false</addMavenDescriptor>
                 </configuration>
             </plugin>
             <plugin>
@@ -31,23 +33,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.plugin</artifactId>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
-        <!-- FIXME: Normally this sonar-plugin needs only the two modules below, but the 'sonarrules' module will parse all concepts/constraints 
-             from the ...plugin.all bundle, that's bringing us into trouble with duplicated jar's in the different sonar-plugins in same classpath -->
-        <dependency>
+        <!-- FIXME: We must declare that dependency in jqassistant.sonar.plugin to avoid duplicated /lib entries in both sonar-plugin's leading to parsing execption for duplicated concepts... -->
+        <!-- dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.all</artifactId>
-        </dependency>
-        <!-- dependency>
-            <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.report</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.java</artifactId>
-            <version>${project.version}</version>
         </dependency-->
         <dependency>
 	        <groupId>org.codehaus.sonar</groupId>

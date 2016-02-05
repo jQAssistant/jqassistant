@@ -1,15 +1,12 @@
 package com.buschmais.jqassistant.sonar.plugin;
 
-import static java.util.Arrays.asList;
-
 import java.util.List;
 
 import org.sonar.api.SonarPlugin;
 
 import com.buschmais.jqassistant.sonar.plugin.language.JavaResourceResolver;
-import com.buschmais.jqassistant.sonar.plugin.profile.JQAssistantProfileExporter;
-import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
 import com.buschmais.jqassistant.sonar.plugin.sensor.JQAssistantSensor;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Defines the jQAssistant plugin.
@@ -23,6 +20,11 @@ public class JQAssistantPlugin extends SonarPlugin {
      */
     @SuppressWarnings("rawtypes")
     public List getExtensions() {
-        return asList(JQAssistantRuleRepository.class, JQAssistantSensor.class, JQAssistantProfileExporter.class, JavaResourceResolver.class);
+        ImmutableList.Builder<Object> builder = ImmutableList.builder();
+        builder.add(JQAssistantSensor.class);
+        builder.add(JavaResourceResolver.class);
+        builder.add(JQAssistantConfiguration.class);
+        builder.addAll(JQAssistantConfiguration.getPropertyDefinitions());
+        return builder.build();
     }
 }

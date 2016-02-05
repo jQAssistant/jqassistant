@@ -128,5 +128,7 @@
 
 	<modules>
 		<module>plugin</module>
+		<module>projectrules</module>
+		<module>sonarrules</module>
 	</modules>
 </project>

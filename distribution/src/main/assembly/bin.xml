@@ -19,6 +19,8 @@
             <outputDirectory>sonar</outputDirectory>
             <includes>
                 <include>com.buschmais.jqassistant.sonar:jqassistant.sonar.plugin:jar:${project.version}</include>
+                <include>com.buschmais.jqassistant.sonar:jqassistant.sonar.sonarrules:jar:${project.version}</include>
+                <include>com.buschmais.jqassistant.sonar:jqassistant.sonar.projectrules:jar:${project.version}</include>
             </includes>
             <scope>provided</scope>
         </dependencySet>

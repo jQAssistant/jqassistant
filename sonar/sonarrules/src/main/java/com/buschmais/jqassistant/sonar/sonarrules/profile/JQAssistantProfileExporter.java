@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.plugin.profile;
+package com.buschmais.jqassistant.sonar.sonarrules.profile;
 
 import java.io.Writer;
 import java.util.Arrays;
@@ -38,12 +38,12 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
 import com.buschmais.jqassistant.core.analysis.impl.RuleSetWriterImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
-import com.buschmais.jqassistant.sonar.plugin.rule.AbstractTemplateRule;
-import com.buschmais.jqassistant.sonar.plugin.rule.ConceptTemplateRule;
-import com.buschmais.jqassistant.sonar.plugin.rule.ConstraintTemplateRule;
-import com.buschmais.jqassistant.sonar.plugin.rule.JQAssistantRuleRepository;
-import com.buschmais.jqassistant.sonar.plugin.rule.RuleParameter;
-import com.buschmais.jqassistant.sonar.plugin.rule.RuleType;
+import com.buschmais.jqassistant.sonar.plugin.sensor.JQAssistantRuleType;
+import com.buschmais.jqassistant.sonar.sonarrules.rule.AbstractTemplateRule;
+import com.buschmais.jqassistant.sonar.sonarrules.rule.ConceptTemplateRule;
+import com.buschmais.jqassistant.sonar.sonarrules.rule.ConstraintTemplateRule;
+import com.buschmais.jqassistant.sonar.sonarrules.rule.JQAssistantRuleRepository;
+import com.buschmais.jqassistant.sonar.sonarrules.rule.RuleParameter;
 
 /**
  * A {@link ProfileExporter} implementation which provides rules as permalink for direct usage by the jQAssistant analyzer.
@@ -206,7 +206,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         }
         AbstractExecutableRule executable;
         String type = typeParam.getDefaultValue();
-        RuleType ruleType = RuleType.valueOf(type);
+        JQAssistantRuleType ruleType = JQAssistantRuleType.valueOf(type);
         String id = rule.getName();
         String description = rule.getDescription();
         Severity severity = Severity.valueOf(rule.getSeverity().name());

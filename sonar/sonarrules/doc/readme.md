@@ -1,0 +1,2 @@
+Using this plugin in SONAR makes all jQAssistant concepts and constraints available as rules. You can activate the rules, assigning them to projects and these rules are used by the [jqassistant-maven-plugin](http://buschmais.github.io/jqassistant/doc/1.1.0/#_sonarqube) via `rulesUrl` attribute.
+Using this way is only useful for standalone execution of jQAssistant outside SonarQ, but using rules administered on SONAR.

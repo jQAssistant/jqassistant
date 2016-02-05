@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.plugin.rule;
+package com.buschmais.jqassistant.sonar.sonarrules.rule;
 
 import org.sonar.check.RuleProperty;
 
