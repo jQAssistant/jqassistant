@@ -9,8 +9,7 @@ import com.buschmais.jqassistant.core.analysis.impl.AsciiDocRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.impl.XmlRuleSetReader;
 
 /**
- * @author mh
- * @since 12.10.14
+ * @author Michael Hunger
  */
 public class CompoundRuleSetReader implements RuleSetReader {
 

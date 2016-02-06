@@ -89,12 +89,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Return an ascii doctor instance.
-     * <p>
+     * Return an Asciidoctor instance.
+     *
      * Initialization is quite expensive, therefore doing it lazy.
-     * </p>
-     * 
-     * @return The ascii doctor instance.
+     *
+     * @return The Asciidoctor instance.
      */
     private Asciidoctor getAsciidoctor() {
         if (cachedAsciidoctor == null) {
@@ -241,7 +240,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
      * @return A collection of content parts representing rules.
      */
     private static Collection<ContentPart> findExecutableRules(Collection<ContentPart> parts) {
-        Set<ContentPart> result = new LinkedHashSet<ContentPart>();
+        Set<ContentPart> result = new LinkedHashSet<>();
         if (parts != null) {
             for (ContentPart part : parts) {
                 if ("listing".equals(part.getContext()) && "source".equals(part.getStyle()) && EXECUTABLE_RULE_TYPES.contains(part.getRole())) {

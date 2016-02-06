@@ -7,8 +7,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * Defines a concept which can be applied.
- * 
- * Used to add information to the database.
  */
 public class Concept extends AbstractExecutableRule {
 
@@ -39,8 +37,10 @@ public class Concept extends AbstractExecutableRule {
      * @param report
      *            The report settings.
      */
-    public Concept(String id, String description, RuleSource ruleSource, Severity severity, String deprecated, Executable executable,
-            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
-        super(id, description, ruleSource, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
+    public Concept(String id, String description, RuleSource ruleSource, Severity severity,
+                   String deprecated, Executable executable, Map<String, Object> parameters,
+                   Set<String> requiresConcepts, Verification verification, Report report) {
+        super(id, description, ruleSource, severity, deprecated, executable, parameters,
+              requiresConcepts, verification, report);
     }
 }
