@@ -474,6 +474,19 @@
                             <packages>com.buschmais.${project.artifactId}.api.*</packages>
                         </group>
                     </groups>
+
+                    <source>1.7</source>
+                    <doclet>org.asciidoctor.Asciidoclet</doclet>
+                    <docletArtifact>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoclet</artifactId>
+                        <version>1.5.4</version>
+                    </docletArtifact>
+                    <!--<overview>src/main/java/overview.adoc</overview>-->
+                    <additionalparam>
+                        --base-dir ${project.basedir}
+                    </additionalparam>
+
                 </configuration>
             </plugin>
             <plugin>
