@@ -2,6 +2,8 @@ package com.buschmais.jqassistant.core.analysis.api;
 
 /**
  * Exception thrown by the {@link Analyzer}.
+ *
+ * @see Analyzer
  */
 public class AnalysisException extends Exception {
 

@@ -37,8 +37,10 @@ public class Constraint extends AbstractExecutableRule {
      * @param report
      *            The report settings.
      */
-    public Constraint(String id, String description, RuleSource ruleSource, Severity severity, String deprecated, Executable executable,
-            Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
-        super(id, description, ruleSource, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
+    public Constraint(String id, String description, RuleSource ruleSource, Severity severity,
+                      String deprecated, Executable executable, Map<String, Object> parameters,
+                      Set<String> requiresConcepts, Verification verification, Report report) {
+        super(id, description, ruleSource, severity, deprecated, executable, parameters,
+              requiresConcepts, verification, report);
     }
 }

@@ -10,8 +10,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 /**
  * The result of an executed {@link Rule}.
  * 
- * @param <T>
- *            The rule type.
+ * @param <T> The rule type.
+ *
+ * @see Rule
  */
 public class Result<T extends ExecutableRule> {
 

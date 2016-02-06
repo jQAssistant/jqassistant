@@ -6,7 +6,7 @@ import java.util.Set;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
- * Defines an abstract rule which is has an unique identifier and references a Query.
+ * Defines an abstract rule which is has an unique identifier and references a query.
  */
 public abstract class AbstractExecutableRule extends AbstractRule implements ExecutableRule {
 
