@@ -12,7 +12,7 @@ import com.buschmais.jqassistant.core.plugin.api.JQAssistantProperties;
  */
 public class JQAssistantPropertiesImpl implements JQAssistantProperties {
 
-    /** Property key for "{@value} ". */
+    /** Property key for `{@value}`. */
     private static final String PROPERTY_KEY_VERSION = "project.version";
 
     /** The properties. */
