@@ -4,7 +4,7 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 
 /**
  * Defines a provider which allows looking up source code information from
- * {@link com.buschmais.jqassistant.core.store.api.model.Descriptor}s.
+ * {@link com.buschmais.jqassistant.core.store.api.model.Descriptor Descriptors}.
  */
 public interface SourceProvider<D extends Descriptor> {
 
