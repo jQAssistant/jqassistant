@@ -23,6 +23,7 @@ public interface ScannerPluginRepository {
      * @throws PluginRepositoryException
      *             If the instances cannot be created.
      */
-    List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) throws PluginRepositoryException;
+    List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties)
+        throws PluginRepositoryException;
 
 }
