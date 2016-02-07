@@ -35,15 +35,13 @@ public final class ReportHelper {
     /**
      * Verifies the concept results returned by the
      * {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter} .
-     * <p>
+     *
      * An error message is logged for each concept which did not return a result
      * (i.e. has not been applied).
-     * </p>
      *
      * @param inMemoryReportWriter
      *            The
-     *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}
-     *            .
+     *            {@link com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter}.
      */
     public int verifyConceptResults(Severity violationSeverity, InMemoryReportWriter inMemoryReportWriter) {
         Collection<Result<Concept>> conceptResults = inMemoryReportWriter.getConceptResults().values();
@@ -81,8 +79,9 @@ public final class ReportHelper {
      *            if <code>true</code> log the result of the executable rule.
      * @return The number of detected violations.
      */
-    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results, Severity violationSeverity, String type, String header,
-            boolean logResult) {
+    private int verifyRuleResults(Collection<? extends Result<? extends ExecutableRule>> results,
+                                  Severity violationSeverity, String type, String header,
+                                  boolean logResult) {
         int violations = 0;
         for (Result<?> result : results) {
             if (Result.Status.FAILURE.equals(result.getStatus())) {
@@ -115,6 +114,7 @@ public final class ReportHelper {
                 }
             }
         }
+
         return violations;
     }
 
