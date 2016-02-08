@@ -18,25 +18,16 @@ import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.component.ResourcePerspectives;
-import org.sonar.api.issue.Issuable;
 import org.sonar.api.platform.ComponentContainer;
 import org.sonar.api.resources.Project;
-import org.sonar.api.resources.Resource;
 import org.sonar.api.rule.RuleKey;
 
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnHeaderType;
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
-import com.buschmais.jqassistant.core.report.schema.v1.ColumnsHeaderType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
 import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.report.schema.v1.ElementType;
 import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
 import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
 import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
-import com.buschmais.jqassistant.core.report.schema.v1.RowType;
 import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
-import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
 import com.buschmais.jqassistant.core.report.schema.v1.StatusEnumType;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistantConfiguration;
@@ -55,18 +46,18 @@ public class JQAssistantSensor implements Sensor {
 	private static String theReportFilePath = null;
 
 	private final FileSystem fileSystem;
-	private final ResourcePerspectives perspectives;
-	private final Map<String, LanguageResourceResolver> languageResourceResolvers;
 	private final JAXBContext reportContext;
 	private final JQAssistantConfiguration configuration;
 	private final RuleKeyResolver ruleResolver;
+
+	private final IssueConceptHandler conceptHandler;
+	private final IssueConstraintHandler constraintHandler;
 
 	public JQAssistantSensor(JQAssistantConfiguration configuration, ResourcePerspectives perspectives, ComponentContainer componentContainerc,
 			FileSystem moduleFileSystem) throws JAXBException {
 		this.configuration = configuration;
 		this.fileSystem = moduleFileSystem;
-		this.perspectives = perspectives;
-		this.languageResourceResolvers = new HashMap<>();
+		Map<String, LanguageResourceResolver> languageResourceResolvers = new HashMap<>();
 		for (LanguageResourceResolver resolver : componentContainerc.getComponentsByType(LanguageResourceResolver.class)) {
 			languageResourceResolvers.put(resolver.getLanguage().toLowerCase(Locale.ENGLISH), resolver);
 		}
@@ -86,7 +77,10 @@ public class JQAssistantSensor implements Sensor {
 			//only one present, perfect
 			this.ruleResolver = ruleResolvers.get(0);
 		}
+
 		this.reportContext = JAXBContext.newInstance(ObjectFactory.class);
+		this.conceptHandler = new IssueConceptHandler(perspectives, languageResourceResolvers);
+		this.constraintHandler = new IssueConstraintHandler(perspectives, languageResourceResolvers);
 	}
 
 	@Override
@@ -153,111 +147,11 @@ public class JQAssistantSensor implements Sensor {
 					if(configuration.suppressConceptFailures()) {
 						continue;
 					}
-					createIssue(project, null, "The concept "+ruleType.getId()+" could not be applied.", id, ruleKey, sensorContext);
+					conceptHandler.process(project, sensorContext, (ConceptType) ruleType, ruleKey);
 				} else if (ruleType instanceof ConstraintType) {
-					handleConstraint(project,sensorContext, ruleType, ruleKey);
+					constraintHandler.process(project, sensorContext,(ConstraintType) ruleType, ruleKey);
 				}
 			}
-		}
-	}
-
-	private void handleConstraint(Project project, SensorContext sensorContext, RuleType ruleType, RuleKey ruleKey) {
-		ResultType result = ruleType.getResult();
-		String primaryColumn = getPrimaryColumn(result);
-		for (RowType rowType : result.getRows().getRow()) {
-			Resource resource = null;
-			Integer lineNumber = null;
-			StringBuilder message = new StringBuilder();
-			//use project as anchor in case of not given resource
-			resource = project;
-			for (ColumnType column : rowType.getColumn()) {
-				String name = column.getName();
-				String value = column.getValue();
-				if (name.equals(primaryColumn)) {
-					ElementType languageElement = column.getElement();
-					SourceType source = column.getSource();
-					if (languageElement != null) {
-						final LanguageResourceResolver resourceResolver = languageResourceResolvers.get(languageElement.getLanguage().toLowerCase(Locale.ENGLISH));
-						if (resourceResolver != null) {
-							String element = languageElement.getValue();
-							resource = resourceResolver.resolve(project, element, source.getName(), value);
-						}
-					}
-					lineNumber = source.getLine();
-				}
-				if (message.length() > 0) {
-					message.append(", ");
-				}
-				message.append(name);
-				message.append('=');
-				message.append(value);
-			}
-			String issueDescription = ruleType.getDescription() + "\n" + message.toString();
-			if(resource != null) {
-				//report only violations for matching resources to avoid duplicated violations from other sub modules in same report
-				createIssue(resource, lineNumber, issueDescription, ruleType.getId(),ruleKey, sensorContext);
-			}
-		}
-	}
-
-	/**
-	 * Determine the primary column from the result, i.e. the column which
-	 * contains the resource to create an issue for.
-	 *
-	 * @param result
-	 *            The result.
-	 * @return The name of the primary column or <code>null</code>.
-	 */
-	private String getPrimaryColumn(ResultType result) {
-		if (result != null) {
-			ColumnsHeaderType columns = result.getColumns();
-			for (ColumnHeaderType columnHeaderType : columns.getColumn()) {
-				if (columnHeaderType.isPrimary()) {
-					return columnHeaderType.getValue();
-				}
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Creates an issue.
-	 *
-	 * @param resourceResolved
-	 *            The resource to create the issue for.
-	 * @param message
-	 *            The message to use.
-	 * @param rule
-	 *            The rule which has been violated.
-	 * @param sensorContext
-	 *            The sensor context.
-	 */
-	private void createIssue(Resource resourceResolved, Integer lineNumber, String message, String jQAssistantId, RuleKey ruleKey, SensorContext sensorContext) {
-		Issuable issuable;
-		Resource resourceIndex = sensorContext.getResource(resourceResolved);
-		if (resourceIndex == null)
-		{
-			LOGGER.warn("Resource '{}' not found, issue not created.", resourceResolved.getPath());
-			return;
-		}
-		issuable = perspectives.as(Issuable.class, resourceIndex);
-		if(issuable == null)
-		{
-			LOGGER.warn("Ressource {} isn't issueable; create no violation!",resourceIndex.getPath());
-			return;
-		}
-		Issuable.IssueBuilder issueBuilder = issuable.newIssueBuilder().ruleKey(ruleKey).message(message);
-		if (lineNumber != null) {
-			issueBuilder.line(lineNumber);
-		}
-		try
-		{
-			issuable.addIssue(issueBuilder.build());
-			LOGGER.info("Issue '{}' added for resource '{}'.", jQAssistantId, (resourceIndex.getPath() != null ? resourceIndex.getPath() : resourceIndex.getName()));
-		}
-		catch(Exception ex)
-		{
-			LOGGER.error("Problem creating violation", ex);
 		}
 	}
 

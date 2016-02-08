@@ -14,7 +14,7 @@ public final class JQAssistantProjectRulesRepository implements RulesDefinition 
 
 	public final static String GENERIC_CONSTRAINT_KEY = "structural problem";
 
-	static final String RULE_NAME = "Placeholder for project specific violations";
+	static final String RULE_NAME = JQAssistant.NAME+ " specific violations";
 
 	@Override
 	public void define(Context context) {
@@ -25,7 +25,7 @@ public final class JQAssistantProjectRulesRepository implements RulesDefinition 
 		rule.setName(RULE_NAME);
 		rule.setInternalKey(GENERIC_CONSTRAINT_KEY);
 		rule.setSeverity(Severity.MAJOR);
-		rule.setMarkdownDescription("This rule must be activated for every project receiving violations from jQAssistant.");
+		rule.setMarkdownDescription("*This rule must be activated for every project receiving violations from jQAssistant.*\nThere is no assignment to the jQAssistant rule possible.");
 
 		newRepository.done();
 	}
