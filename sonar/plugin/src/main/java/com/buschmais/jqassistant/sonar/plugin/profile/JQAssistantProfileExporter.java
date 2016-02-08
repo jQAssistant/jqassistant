@@ -19,7 +19,7 @@ import org.sonar.api.rules.ActiveRule;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.RuleParam;
-import org.sonar.api.utils.SonarException;
+import org.sonar.plugins.java.Java;
 
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
@@ -64,13 +64,14 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         super(JQAssistant.KEY, JQAssistant.NAME);
         this.ruleFinder = ruleFinder;
         super.setMimeType("application/xml");
+        setSupportedLanguages(Java.KEY);
     }
 
     @Override
     public void exportProfile(RulesProfile profile, Writer writer) {
         @SuppressWarnings("unchecked")
         CheckFactory<AbstractTemplateRule> annotationCheckFactory = AnnotationCheckFactory.create(profile, JQAssistant.KEY,
-                JQAssistantRuleRepository.RULE_CLASSES);
+                Arrays.asList(JQAssistantRuleRepository.RULE_CLASSES));
         Map<String, Concept> concepts = new HashMap<>();
         Map<String, Severity> conceptSeverities = new HashMap<>();
         Map<String, Severity> constraintSeverities = new HashMap<>();
@@ -106,11 +107,13 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             LOGGER.debug("Exporting rule set " + ruleSet.toString());
             ruleSetWriter.write(ruleSet, writer);
         } catch (RuleException e) {
-            throw new SonarException("Cannot export rules.", e);
+            throw new IllegalStateException("Cannot export rules.", e);
         }
     }
 
     private Set<String> getRequiresConcepts(String requiresConcepts) {
+    	if(requiresConcepts == null)
+    		return Collections.emptySet();
         return new HashSet<>(Arrays.asList(StringUtils.splitByWholeSeparator(requiresConcepts, ",")));
     }
 
@@ -178,7 +181,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
     private AbstractExecutableRule createExecutableFromRule(Rule rule) {
         RuleParam cypherParam = rule.getParam(RuleParameter.Cypher.getName());
         if (cypherParam == null) {
-            throw new SonarException("Cannot determine cypher for " + rule);
+            throw new IllegalStateException("Cannot determine cypher for " + rule);
         }
         String cypher = cypherParam.getDefaultValue();
         RuleParam requiresConceptsParam = rule.getParam(RuleParameter.RequiresConcepts.getName());
@@ -199,7 +202,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
     private AbstractExecutableRule createExecutableFromRule(Rule rule, String cypher, Set<String> requiresConcepts) {
         RuleParam typeParam = rule.getParam(RuleParameter.Type.getName());
         if (typeParam == null) {
-            throw new SonarException("Cannot determine type of rule for " + rule);
+            throw new IllegalStateException("Cannot determine type of rule for " + rule);
         }
         AbstractExecutableRule executable;
         String type = typeParam.getDefaultValue();
@@ -229,7 +232,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
                         verification, report);
                 break;
             default:
-                throw new SonarException("Rule type is not supported " + ruleType);
+                throw new IllegalStateException("Rule type is not supported " + ruleType);
         }
         return executable;
     }
@@ -264,7 +267,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             executable = new Constraint(id, description, null, severity, null, new CypherExecutable(cypher), null, requiresConcepts,
                     verification, report);
         } else {
-            throw new SonarException("Unknown type " + check.getClass());
+            throw new IllegalStateException("Unknown type " + check.getClass());
         }
         return executable;
     }

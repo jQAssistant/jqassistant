@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sonar.buildVersion>3.7.4</sonar.buildVersion>
+		<sonar.buildVersion>5.0</sonar.buildVersion>
 	</properties>
 
 	<build>
@@ -21,7 +21,7 @@
 				<plugin>
 					<groupId>org.codehaus.sonar</groupId>
 					<artifactId>sonar-packaging-maven-plugin</artifactId>
-					<version>1.9</version>
+					<version>1.13</version>
 					<extensions>true</extensions>
 				</plugin>
 				<plugin>
@@ -100,21 +100,29 @@
             <groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-plugin-api</artifactId>
 				<version>${sonar.buildVersion}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.codehaus.sonar-plugins.java</groupId>
 				<artifactId>sonar-java-plugin</artifactId>
-				<version>2.0</version>
-				<scope>provided</scope>
+				<version>3.2</version>
+			</dependency>
+	        <dependency>
+	        	<groupId>org.codehaus.sonar-plugins.java</groupId>
+	        	<artifactId>sonar-java-plugin</artifactId>
+	        	<type>sonar-plugin</type>
+				<version>3.2</version>
+	        </dependency>
+			<dependency>
+				<groupId>org.codehaus.sonar</groupId>
+				<artifactId>sonar-java-api</artifactId>
+				<version>${sonar.buildVersion}</version>
 			</dependency>
 			<!-- unit tests -->
 			<dependency>
 				<groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-testing-harness</artifactId>
 				<version>${sonar.buildVersion}</version>
-				<scope>test</scope>
-			</dependency>
+			</dependency>			
 		</dependencies>
 	</dependencyManagement>
 

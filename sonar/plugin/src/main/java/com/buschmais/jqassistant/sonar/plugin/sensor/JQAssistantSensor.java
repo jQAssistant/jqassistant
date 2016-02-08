@@ -11,8 +11,10 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonar.api.batch.Phase;
 import org.sonar.api.batch.Sensor;
 import org.sonar.api.batch.SensorContext;
+import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.component.ResourcePerspectives;
 import org.sonar.api.config.Settings;
 import org.sonar.api.issue.Issuable;
@@ -21,22 +23,34 @@ import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.rules.ActiveRule;
-import org.sonar.api.scan.filesystem.ModuleFileSystem;
-import org.sonar.api.utils.SonarException;
 
-import com.buschmais.jqassistant.core.report.schema.v1.*;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnHeaderType;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
+import com.buschmais.jqassistant.core.report.schema.v1.ColumnsHeaderType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConceptType;
+import com.buschmais.jqassistant.core.report.schema.v1.ConstraintType;
+import com.buschmais.jqassistant.core.report.schema.v1.ElementType;
+import com.buschmais.jqassistant.core.report.schema.v1.GroupType;
+import com.buschmais.jqassistant.core.report.schema.v1.JqassistantReport;
+import com.buschmais.jqassistant.core.report.schema.v1.ObjectFactory;
+import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
+import com.buschmais.jqassistant.core.report.schema.v1.RowType;
+import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
+import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
+import com.buschmais.jqassistant.core.report.schema.v1.StatusEnumType;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
 
 /**
  * {@link Sensor} implementation scanning for jqassistant-report.xml files.
  */
+@Phase(name = Phase.Name.DEFAULT)
 public class JQAssistantSensor implements Sensor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JQAssistantSensor.class);
 
     private final Settings settings;
 
-    private final ModuleFileSystem moduleFileSystem;
+    private final FileSystem fileSystem;
 
     private final ResourcePerspectives perspectives;
 
@@ -47,9 +61,9 @@ public class JQAssistantSensor implements Sensor {
     private final JAXBContext reportContext;
 
     public JQAssistantSensor(RulesProfile profile, ResourcePerspectives perspectives, ComponentContainer componentContainerc, Settings settings,
-            ModuleFileSystem moduleFileSystem) throws JAXBException {
+    		FileSystem moduleFileSystem) throws JAXBException {
         this.settings = settings;
-        this.moduleFileSystem = moduleFileSystem;
+        this.fileSystem = moduleFileSystem;
         this.perspectives = perspectives;
         this.languageResourceResolvers = new HashMap<>();
         for (LanguageResourceResolver resolver : componentContainerc.getComponentsByType(LanguageResourceResolver.class)) {
@@ -86,7 +100,7 @@ public class JQAssistantSensor implements Sensor {
             Unmarshaller unmarshaller = reportContext.createUnmarshaller();
             return unmarshaller.unmarshal(new StreamSource(reportFile), JqassistantReport.class).getValue();
         } catch (JAXBException e) {
-            throw new SonarException("Cannot read jQAssistant report from file " + reportFile, e);
+            throw new IllegalStateException("Cannot read jQAssistant report from file " + reportFile, e);
         }
     }
 
@@ -107,7 +121,7 @@ public class JQAssistantSensor implements Sensor {
                             createIssue(project, null, "The concept could not be applied.", activeRule, sensorContext);
                         } else if (ruleType instanceof ConstraintType) {
                             for (RowType rowType : result.getRows().getRow()) {
-                                Resource<?> resource = null;
+                                Resource resource = null;
                                 Integer lineNumber = null;
                                 StringBuilder message = new StringBuilder();
                                 for (ColumnType column : rowType.getColumn()) {
@@ -174,7 +188,7 @@ public class JQAssistantSensor implements Sensor {
      * @param sensorContext
      *            The sensor context.
      */
-    private void createIssue(Resource<?> resource, Integer lineNumber, String message, ActiveRule rule, SensorContext sensorContext) {
+    private void createIssue(Resource resource, Integer lineNumber, String message, ActiveRule rule, SensorContext sensorContext) {
         Issuable issuable;
         if (sensorContext.getResource(resource) != null) {
             issuable = perspectives.as(Issuable.class, resource);
@@ -204,9 +218,8 @@ public class JQAssistantSensor implements Sensor {
             LOGGER.info("Using setting '{}' = '{}' to find report file.", JQAssistant.SETTINGS_KEY_REPORT_PATH, configReportPath);
             reportFile = new File(configReportPath);
         } else {
-            File buildDir = moduleFileSystem.buildDir();
-            LOGGER.info("Using build directory '{}' to find report file.", buildDir);
-            reportFile = new File(buildDir, JQAssistant.REPORT_FILE_NAME);
+        	//resolve complete relative path with one step to ensure testability (mocking of filesystem)
+            reportFile = fileSystem.resolvePath("target/"+JQAssistant.REPORT_FILE_NAME);
         }
 
         if (reportFile.exists()) {
