@@ -69,8 +69,9 @@ public class JQAssistantSensor implements Sensor {
 		}
 		else if(ruleResolvers.size() > 1)
 		{
-			this.ruleResolver = ruleResolvers.get(0);
-			LOGGER.warn("Found more than one {} implementation, take the first one {}. Uninstall one of the providing plugins", RuleKeyResolver.class.getSimpleName(), ruleResolver.getClass().getSimpleName());
+			this.ruleResolver = null;
+			//this situation should never happen, because the both plugins are using the same repository name preventing the the start of SonarQ from the clash
+			LOGGER.error("Found more than one {} implementation. Uninstall one of the providing plugins ('sonarrules' or 'projectrules')", RuleKeyResolver.class.getSimpleName());
 		}
 		else
 		{
@@ -98,7 +99,7 @@ public class JQAssistantSensor implements Sensor {
 
 	@Override
 	public void analyse(Project project, SensorContext sensorContext) {
-		File reportFile = getReportFile(project, "");
+		File reportFile = findReportFile(project, "");
 		if (reportFile != null) {
 			LOGGER.debug("Use report found at '{}'.", reportFile.getAbsolutePath());
 			JqassistantReport report = readReport(reportFile);
@@ -106,7 +107,7 @@ public class JQAssistantSensor implements Sensor {
 		}
 		else
 		{
-			LOGGER.info("No report found at {} for project {}... (do nothing).", JQAssistant.SETTINGS_VALUE_DEFAULT_REPORT_FILE_PATH, project.getName());
+			LOGGER.info("No report found at {} for project {}... (do nothing).", determineConfiguredReportPath(), project.getName());
 		}
 	}
 
@@ -166,14 +167,11 @@ public class JQAssistantSensor implements Sensor {
 	 *
 	 * @return reportFile File object of report xml or null if not found.
 	 */
-	private File getReportFile(Project project, String pathPrefix) {
+	private File findReportFile(Project project, String pathPrefix) {
 		if(project == null) {
 			return null;
 		}
-		String configReportPath = configuration.getReportPath();
-		if(configReportPath == null || configReportPath.isEmpty()) {
-			configReportPath = JQAssistant.SETTINGS_VALUE_DEFAULT_REPORT_FILE_PATH;
-		}
+		String configReportPath = determineConfiguredReportPath();
 		//for untouched project the file system is not available, so we have to navigate via hardcoded '../' to parent projects
 		//TODO: Is there a alternative to '../' to resolve parent project paths?
 		File reportFile = fileSystem.resolvePath(pathPrefix+configReportPath);
@@ -181,8 +179,20 @@ public class JQAssistantSensor implements Sensor {
 			return reportFile;
 		}
 		if(project.isModule()) {
-			return getReportFile(project.getParent(), "../");
+			return findReportFile(project.getParent(), "../");
 		}
 		return null;
+	}
+
+	/**
+	 * The path is relative or absolute.
+	 */
+	private String determineConfiguredReportPath()
+	{
+		String configReportPath = configuration.getReportPath();
+		if(configReportPath == null || configReportPath.isEmpty()) {
+			configReportPath = JQAssistant.SETTINGS_VALUE_DEFAULT_REPORT_FILE_PATH;
+		}
+		return configReportPath;
 	}
 }

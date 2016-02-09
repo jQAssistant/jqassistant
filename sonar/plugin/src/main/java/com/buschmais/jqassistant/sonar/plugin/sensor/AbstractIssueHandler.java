@@ -12,6 +12,7 @@ import org.sonar.api.issue.Issue;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.rule.RuleKey;
+import org.sonar.api.rule.Severity;
 
 import com.buschmais.jqassistant.core.report.schema.v1.ColumnHeaderType;
 import com.buschmais.jqassistant.core.report.schema.v1.ColumnType;
@@ -20,6 +21,7 @@ import com.buschmais.jqassistant.core.report.schema.v1.ElementType;
 import com.buschmais.jqassistant.core.report.schema.v1.ResultType;
 import com.buschmais.jqassistant.core.report.schema.v1.RowType;
 import com.buschmais.jqassistant.core.report.schema.v1.RuleType;
+import com.buschmais.jqassistant.core.report.schema.v1.SeverityType;
 import com.buschmais.jqassistant.core.report.schema.v1.SourceType;
 
 /**
@@ -100,6 +102,10 @@ abstract class AbstractIssueHandler<T extends RuleType> {
 		}
 		try
 		{
+			String severity = mapSeverity2SonarQ(ruleType.getSeverity());
+			if(severity != null) {
+				issueBuilder.severity(severity);
+			}
 			String ruleId = ruleType.getId();
 			boolean doIt = fillIssue(issueBuilder, ruleId, ruleType.getDescription(), primaryColumn, rowType);
 			if(!doIt) {
@@ -112,6 +118,28 @@ abstract class AbstractIssueHandler<T extends RuleType> {
 		catch(Exception ex)
 		{
 			LOGGER.error("Problem creating violation", ex);
+		}
+	}
+
+	private String mapSeverity2SonarQ(SeverityType severity)
+	{
+		if(severity == null) {
+			return null;
+		}
+		switch(severity.getLevel())
+		{
+		case 0:
+			return Severity.BLOCKER;
+		case 1:
+			return Severity.CRITICAL;
+		case 2:
+			return Severity.MAJOR;
+		case 3:
+			return Severity.MINOR;
+		case 4:
+			return Severity.INFO;
+		default:
+			return null;
 		}
 	}
 
