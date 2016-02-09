@@ -141,7 +141,7 @@ public class JQAssistantSensor implements Sensor {
 				final RuleKey ruleKey = ruleResolver.resolve(project, (ruleType instanceof ConceptType)? JQAssistantRuleType.Concept : JQAssistantRuleType.Constraint, id);
 				if(ruleKey == null)
 				{
-					LOGGER.warn("Cannot resolve rule key for id '{}'. No issue will be created!", id);
+					LOGGER.warn("Cannot resolve rule key for id '{}'. No issue will be created! Rule not active?", id);
 					continue;
 				}
 				if (ruleType instanceof ConceptType) {
@@ -179,7 +179,7 @@ public class JQAssistantSensor implements Sensor {
 			return reportFile;
 		}
 		if(project.isModule()) {
-			return findReportFile(project.getParent(), "../");
+			return findReportFile(project.getParent(), pathPrefix+"../");
 		}
 		return null;
 	}
