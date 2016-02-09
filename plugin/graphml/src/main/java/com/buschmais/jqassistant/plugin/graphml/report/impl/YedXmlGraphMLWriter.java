@@ -14,10 +14,11 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
 
     private static final String Y_NAMESPACE_URI = "http://www.yworks.com/xml/graphml";
 
+    public YedXmlGraphMLWriter() {
+    }
+
     @Override
     protected void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException {
-        super.writeDefaultKeys(writer);
-
         writer.writeEmptyElement("key");
         writer.writeAttribute("for", "graphml");
         writer.writeAttribute("id", "d0");
@@ -51,14 +52,11 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
 
     @Override
     protected void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException {
-        super.writeAdditionalNodeAttribute(writer, node);
         writer.writeAttribute("yfiles.foldertype", "folder");
     }
 
     @Override
     protected void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
-        super.writeAdditionalNodeData(writer, nodeLabel);
-
         writer.writeStartElement("data");
         writer.writeAttribute("key", "d6");
         writer.writeStartElement(Y_NAMESPACE_URI, "ProxyAutoBoundsNode");
@@ -85,7 +83,6 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
 
     @Override
     protected void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException {
-        super.writeAdditionalNamespace(writer);
         writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "y", Y_NAMESPACE_URI);
         writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "yed", "http://www.yworks.com/xml/yed/3");
     }
@@ -186,7 +183,6 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
             case "yed":
                 return "http://www.yworks.com/xml/yed/3";
             }
-
             return XMLConstants.DEFAULT_NS_PREFIX;
         }
 

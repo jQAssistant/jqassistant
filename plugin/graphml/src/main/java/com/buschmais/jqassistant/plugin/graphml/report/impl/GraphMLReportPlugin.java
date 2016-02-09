@@ -8,8 +8,6 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.commons.lang.BooleanUtils;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -40,17 +38,13 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     @Override
     public void initialize() throws ReportException {
-        xmlGraphMLWriter = new XmlGraphMLWriter();
     }
 
     @Override
     public void configure(Map<String, Object> properties) throws ReportException {
         this.conceptPattern = getProperty(properties, CONCEPT_PATTERN, conceptPattern);
         this.directory = getProperty(properties, DIRECTORY, directory);
-        if (BooleanUtils.toBoolean(getProperty(properties, YED_GRAPHML, Boolean.TRUE.toString()))) {
-            xmlGraphMLWriter = new YedXmlGraphMLWriter();
-        }
-
+        xmlGraphMLWriter = new YedXmlGraphMLWriter();
     }
 
     private String getProperty(Map<String, Object> properties, String property, String defaultValue) throws ReportException {

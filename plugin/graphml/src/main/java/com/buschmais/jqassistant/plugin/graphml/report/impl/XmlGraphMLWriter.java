@@ -27,7 +27,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * @author mh
  * @since 21.01.14
  */
-public class XmlGraphMLWriter {
+public abstract class XmlGraphMLWriter {
 
     private XMLOutputFactory xmlOutputFactory;
 
@@ -66,14 +66,54 @@ public class XmlGraphMLWriter {
     }
 
     /**
-     * Creates a {@link NamespaceContext} for the xml writer. Return
-     * <code>null</code> to add no context.
-     * 
+     * Creates a {@link NamespaceContext} for the xml writer. Return <code>null</code> to add no context.
+     *
      * @return a {@link NamespaceContext}
      */
-    protected NamespaceContext createNamespaceContext() {
-        return null;
-    }
+    protected abstract NamespaceContext createNamespaceContext();
+
+    /**
+     * Writes a bunch of keys in the graphml-Tag that will be used for formating or so. This method can be overwritten if any special default keys are
+     * necessary. Please call super to ensure all needed keys will be created.
+     *
+     * @param writer
+     *            the XMLWriter
+     * @throws XMLStreamException
+     */
+    protected abstract void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException;
+
+    /**
+     * Can be overwritten to add additional node attributes. Please call super to ensure all necessary attributes will be written.
+     *
+     * @param writer
+     *            the xml writer
+     * @param node
+     *            the node
+     * @throws XMLStreamException
+     */
+    protected abstract void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException;
+
+    /**
+     * Used to insert additional elements inside a node-element. Can be overwriten, but please call super to ensure all needed elements will be
+     * created.
+     *
+     * @param writer
+     *            the xml writer
+     * @param nodeLabel
+     *            the label of the node
+     * @throws XMLStreamException
+     */
+    protected abstract void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException;
+
+    /**
+     * Can be used to add additional Namespace attriobutes to the graphml-root element. If you overwrite these methode please call super to ensure all
+     * needed namespaces will be added.
+     *
+     * @param writer
+     *            the XML Writer
+     * @throws XMLStreamException
+     */
+    protected abstract void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException;
 
     private void writeSubgraph(SimpleSubGraph graph, XMLStreamWriter writer) throws XMLStreamException, IOException {
         CompositeObject wrapperNode = graph.getParentNode();
@@ -99,19 +139,6 @@ public class XmlGraphMLWriter {
         if (wrapperNode != null) {
             writer.writeEndElement();
         }
-    }
-
-    /**
-     * Writes a bunch of keys in the graphml-Tag that will be used for formating
-     * or so. This method can be overwritten if any special default keys are
-     * necessary. Please call super to ensure all needed keys will be created.
-     * 
-     * @param writer
-     *            the XMLWriter
-     * @throws XMLStreamException
-     */
-    protected void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException {
-        // no keys written in the moment
     }
 
     private void writeKeyTypes(XMLStreamWriter writer, SimpleSubGraph ops) throws IOException, XMLStreamException {
@@ -148,7 +175,6 @@ public class XmlGraphMLWriter {
     }
 
     private void updateKeyTypes(Map<String, Class> keyTypes, PropertyContainer pc) {
-
         for (String prop : pc.getPropertyKeys()) {
             Object value = pc.getProperty(prop);
             Class storedClass = keyTypes.get(prop);
@@ -175,35 +201,6 @@ public class XmlGraphMLWriter {
             endElement(writer);
 
         return props;
-    }
-
-    /**
-     * Can be overwritten to add additional node attributes. Please call super
-     * to ensure all necessary attributes will be written.
-     * 
-     * @param writer
-     *            the xml writer
-     * @param node
-     *            the node
-     * @throws XMLStreamException
-     */
-    protected void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException {
-        // nothing todo here
-    }
-
-    /**
-     * Used to insert additional elements inside a node-element. Can be
-     * overwriten, but please call super to ensure all needed elements will be
-     * created.
-     * 
-     * @param writer
-     *            the xml writer
-     * @param nodeLabel
-     *            the label of the node
-     * @throws XMLStreamException
-     */
-    protected void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
-        // nothing to do here
     }
 
     private String id(Node node) {
@@ -276,20 +273,9 @@ public class XmlGraphMLWriter {
         writer.writeNamespace("xmlns", "http://graphml.graphdrawing.org/xmlns");
         writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "xsi", "http://www.w3.org/2001/XMLSchema-instance");
         writeAdditionalNamespace(writer);
-        writer.writeAttribute("xsi", "", "schemaLocation", "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
+        writer.writeAttribute("xsi", "", "schemaLocation",
+                "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
         newLine(writer);
-    }
-
-    /**
-     * Can be used to add additional Namespace attriobutes to the graphml-root
-     * element. If you overwrite these methode please call super to ensure all
-     * needed namespaces will be added.
-     * 
-     * @param writer
-     *            the XML Writer
-     * @throws XMLStreamException
-     */
-    protected void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException {
     }
 
     private void newLine(XMLStreamWriter writer) throws XMLStreamException {
