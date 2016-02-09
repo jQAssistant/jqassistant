@@ -18,11 +18,10 @@ public interface Store {
 
     /**
      * Start the store.
-     * <p>
+     *
      * This method must be called before any other method of this interface can
      * be used.
-     * </p>
-     * 
+     *
      * @param types
      *            The types to use.
      */
@@ -30,10 +29,9 @@ public interface Store {
 
     /**
      * Stop the store.
-     * <p>
+     *
      * After calling this method no other method defined within this interface
      * can be called.
-     * </p>
      */
     void stop();
 
@@ -44,18 +42,16 @@ public interface Store {
 
     /**
      * Begin a transaction.
-     * <p>
+     *
      * This method must be called before any write operation is performed.
-     * </p>
      */
     void beginTransaction();
 
     /**
      * Commit a transaction.
-     * <p>
+     *
      * This method must be called to permanently store the changes of executed
      * write operations.
-     * </p>
      */
     void commitTransaction();
 
@@ -67,7 +63,7 @@ public interface Store {
     /**
      * Checks if there is a running transaction or not.
      *
-     * @return {@code true} if there is a running transaction, otherwise {@code false}.
+     * @return `true` if there is a running transaction, otherwise `false`.
      */
     boolean hasActiveTransaction();
 
@@ -101,8 +97,7 @@ public interface Store {
      * @param fullQualifiedName
      *            The full qualified name of the descriptor.
      * @return The
-     *         {@link com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor}
-     *         .
+     *         {@link com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor}.
      */
     <T extends FullQualifiedNameDescriptor> T create(Class<T> type, String fullQualifiedName);
 
@@ -192,10 +187,9 @@ public interface Store {
 
     /**
      * Executes a CYPHER query.
-     * <p>
+     *
      * This method executes a CYPHER query.
-     * </p>
-     * 
+     *
      * @param query
      *            The CYPHER query.
      * @param parameters
@@ -206,9 +200,8 @@ public interface Store {
 
     /**
      * Executes a CYPHER query.
-     * <p>
+     *
      * This method executes a CYPHER query.
-     * </p>
      *
      * @param query
      *            The CYPHER query.
@@ -218,10 +211,9 @@ public interface Store {
 
     /**
      * Executes a typed CYPHER query.
-     * <p>
+     *
      * This method executes a CYPHER query.
-     * </p>
-     * 
+     *
      * @param query
      *            The typed CYPHER query.
      * @param parameters
