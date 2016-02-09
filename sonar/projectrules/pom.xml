@@ -8,9 +8,9 @@
     </parent>
     <artifactId>jqassistant.sonar.projectrules</artifactId>
     <packaging>sonar-plugin</packaging>
+    
     <description>Helper plugin for jQAssistant to import local detected issues into SonarQube.</description>
 
-    <!-- tag::projectBody[] -->
     <properties>
     </properties>
 
@@ -58,7 +58,4 @@
         	<scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <!-- end::projectBody[] -->
-
 </project>

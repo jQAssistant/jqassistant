@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-<modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.buschmais.jqassistant.sonar</groupId>
         <artifactId>jqassistant.sonar</artifactId>
@@ -9,7 +9,7 @@
     <artifactId>jqassistant.sonar.plugin</artifactId>
     <packaging>sonar-plugin</packaging>
 
-    <description>This plugin provides analysis results to be displayed in SonarQube.</description>
+    <description>This (base) plugin provides analysis results to be displayed in SonarQube.</description>
 
     <build>
         <plugins>
@@ -20,6 +20,7 @@
                     <pluginKey>jqassistantbase</pluginKey>
                     <pluginName>jQAssistant</pluginName>
                     <pluginClass>com.buschmais.jqassistant.sonar.plugin.JQAssistantPlugin</pluginClass>
+                    <addMavenDescriptor>false</addMavenDescriptor>
                 </configuration>
             </plugin>
             <plugin>
@@ -85,6 +86,5 @@
             <artifactId>mockito-core</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>
