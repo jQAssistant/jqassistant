@@ -1,5 +1,8 @@
 == 1.1.3
 
+=== Maven
+- added a configuration property useExecutionRootAsProject root for reactors missing parent hierarchies
+
 === Plugins
 
 ==== Java
