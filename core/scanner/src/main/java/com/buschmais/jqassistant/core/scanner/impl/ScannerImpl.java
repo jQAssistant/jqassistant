@@ -99,7 +99,7 @@ public class ScannerImpl implements Scanner {
      *            The scope.
      * @param <I>
      *            The item type.
-     * @return <code>true</code> if the plugin accepts the item for scanning.
+     * @return `true` if the plugin accepts the item for scanning.
      */
     protected <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
         boolean accepted = false;
