@@ -19,7 +19,7 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules) throws MojoExecutionException,
             MojoFailureException {
         Map<MavenProject, List<MavenProject>> modules =
-                ProjectResolver.getRootModules(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+                ProjectResolver.getRootModules(execution, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
         final List<MavenProject> currentModules = modules.get(rootModule);
         boolean isLastModuleInProject = currentModules != null && currentModules.size() == executedModules.size() + 1;
         getLog().debug(
