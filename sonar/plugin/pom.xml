@@ -39,16 +39,20 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.all</artifactId>
-        </dependency>
+        </dependency>        
         <!-- dependency>
+        	//TODO: Dependencies from 'report' to 'analysis' etc. does bloat the jar to much 
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.report</artifactId>
         </dependency>
         <dependency>
+        	//TODO: language support should be deployed as separate plugin (for every language?)
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
             <version>${project.version}</version>
         </dependency-->
+        
+        <!-- SonarQube -->
         <dependency>
 	        <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-plugin-api</artifactId>
@@ -75,12 +79,10 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-        	<scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-        	<scope>test</scope>
         </dependency>
     </dependencies>
 

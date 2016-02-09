@@ -81,6 +81,7 @@
 
 	<dependencyManagement>
         <dependencies>
+        	<!-- jQAssistant -->
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.plugin</artifactId>
@@ -96,8 +97,89 @@
                 <artifactId>jqassistant.plugin.all</artifactId>
                 <version>${project.version}</version>
             </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.cdi</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.ejb3</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.java</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.java8</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.javaee6</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.jaxrs</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.jpa2</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.junit</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.testng</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.m2repo</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.maven3</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.osgi</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.tycho</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.rdbms</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.xml</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.buschmais.jqassistant.plugin</groupId>
+	            <artifactId>jqassistant.plugin.yaml</artifactId>
+                <version>${project.version}</version>
+	        </dependency>
+            <!-- SonarQ -->
             <dependency>
-            <groupId>org.codehaus.sonar</groupId>
+	            <groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-plugin-api</artifactId>
 				<version>${sonar.buildVersion}</version>
 			</dependency>
@@ -121,6 +203,7 @@
 			<dependency>
 				<groupId>org.codehaus.sonar</groupId>
 				<artifactId>sonar-testing-harness</artifactId>
+	        	<scope>test</scope>
 				<version>${sonar.buildVersion}</version>
 			</dependency>			
 		</dependencies>

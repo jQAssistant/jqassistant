@@ -32,17 +32,18 @@
     </build>
 
     <dependencies>
+        <!-- The base plugin -->
         <dependency>
             <groupId>com.buschmais.jqassistant.sonar</groupId>
             <artifactId>jqassistant.sonar.plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- FIXME: We must declare that dependency in jqassistant.sonar.plugin to avoid duplicated /lib entries in both sonar-plugin's leading to parsing execption for duplicated concepts... -->
-        <!-- dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.all</artifactId>
-        </dependency-->
+        
+        <!-- FIXME: We must declare all dependencies in jqassistant.sonar.plugin to avoid duplicated /lib entries in both sonar-plugin's 
+             leading to parsing exception for duplicated concepts... -->
+        
+        <!-- SonarQ -->
         <dependency>
 	        <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-plugin-api</artifactId>
