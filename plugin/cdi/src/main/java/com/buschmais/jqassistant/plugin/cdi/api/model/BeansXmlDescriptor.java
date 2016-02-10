@@ -8,7 +8,7 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
- * Defines the label "Beans" representing a beans.xml descriptor.
+ * Defines the label "Beans" representing a `beans.xml` descriptor.
  */
 @Label("Beans")
 public interface BeansXmlDescriptor extends CdiDescriptor, XmlFileDescriptor {

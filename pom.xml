@@ -229,6 +229,7 @@
                             <configuration>
                                 <schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
                                 <args>
+                                    <arg>-mark-generated</arg>
                                     <arg>-Xdefault-value</arg>
                                 </args>
                                 <plugins>
