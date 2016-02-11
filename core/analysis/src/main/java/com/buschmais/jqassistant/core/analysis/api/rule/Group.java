@@ -1,16 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * Defines a group.
  */
-public class Group extends AbstractRule {
+public class Group extends AbstractSeverityRule {
 
     /**
      * The set of rules contained in the group.
@@ -25,30 +21,9 @@ public class Group extends AbstractRule {
     /**
      * The set of groups contained in the group.
      */
-    private Set<String> groups = new HashSet<>();
+    private Map<String, Severity> groups = new HashMap<>();
 
-    /**
-     * Constructor.
-     * 
-     * @param id
-     *            The id of the group.
-     * @param description
-     *            The description.
-     * @param ruleSource
-     *            The rule source.
-     * @param concepts
-     *            The included rules.
-     * @param constraints
-     *            The included constraints.
-     * @param groups
-     *            The included groups.
-     */
-    public Group(String id, String description, RuleSource ruleSource, Map<String, Severity> concepts, Map<String, Severity> constraints,
-            Set<String> groups) {
-        super(id, description, ruleSource);
-        this.concepts = concepts;
-        this.constraints = constraints;
-        this.groups = groups;
+    private Group() {
     }
 
     public Map<String, Severity> getConcepts() {
@@ -59,7 +34,34 @@ public class Group extends AbstractRule {
         return constraints;
     }
 
-    public Set<String> getGroups() {
+    public Map<String, Severity> getGroups() {
         return groups;
     }
+
+    public static class Builder extends AbstractSeverityRule.Builder<Group.Builder, Group> {
+
+        protected Builder(Group rule) {
+            super(rule);
+        }
+
+        public static Builder newGroup() {
+            return new Builder(new Group());
+        }
+
+        public Builder concepts(Map<String, Severity> concepts) {
+            get().concepts.putAll(concepts);
+            return builder();
+        }
+
+        public Builder constraints(Map<String, Severity> constraints) {
+            get().constraints.putAll(constraints);
+            return builder();
+        }
+
+        public Builder groups(Map<String, Severity> groups) {
+            get().groups.putAll(groups);
+            return builder();
+        }
+    }
+
 }
