@@ -75,7 +75,7 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         for (Group group : groups) {
             GroupType groupType = new GroupType();
             groupType.setId(group.getId());
-            for (String includeGroupId : group.getGroups()) {
+            for (String includeGroupId : group.getGroups().keySet()) {
                 ReferenceType groupReferenceType = new ReferenceType();
                 groupReferenceType.setRefId(includeGroupId);
                 groupType.getIncludeGroup().add(groupReferenceType);

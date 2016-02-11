@@ -1,24 +1,21 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
+import org.hamcrest.CoreMatchers;
+import org.junit.Test;
 
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class AsciiDocRuleSetReaderTest {
 
@@ -80,7 +77,7 @@ public class AsciiDocRuleSetReaderTest {
         ScriptExecutable scriptExecutable = (ScriptExecutable) executable;
         assertThat(scriptExecutable, notNullValue());
         assertThat(scriptExecutable.getLanguage(), equalTo("javascript"));
-        assertThat(scriptExecutable.getSource(), CoreMatchers.containsString("var row = new java.util.HashMap();"));
+        assertThat(scriptExecutable.getSource(), containsString("var row = new java.util.HashMap();"));
         assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
     }
 
@@ -107,8 +104,8 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(includedConstraints.get("test:Constraint"), nullValue());
         assertThat(includedConstraints.containsKey("test:CriticalConstraint"), equalTo(true));
         assertThat(includedConstraints.get("test:CriticalConstraint"), equalTo(Severity.CRITICAL));
-        Set<String> includedGroups = defaultGroup.getGroups();
-        assertThat(includedGroups, IsCollectionContaining.hasItems("test:Group"));
+        Map<String, Severity> includedGroups = defaultGroup.getGroups();
+        assertThat(includedGroups.keySet(), hasItems("test:Group"));
         Group group = groups.getById("test:Group");
         assertThat(group, notNullValue());
     }

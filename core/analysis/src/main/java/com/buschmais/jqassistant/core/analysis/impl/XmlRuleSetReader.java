@@ -1,14 +1,12 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.buschmais.jqassistant.core.analysis.api.RuleException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -16,50 +14,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.rule.AggregationVerification;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.CypherExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Executable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
-import com.buschmais.jqassistant.core.analysis.api.rule.Report;
-import com.buschmais.jqassistant.core.analysis.api.rule.RowCountVerification;
-import com.buschmais.jqassistant.core.analysis.api.rule.RuleSetBuilder;
-import com.buschmais.jqassistant.core.analysis.api.rule.ScriptExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.analysis.api.rule.Template;
-import com.buschmais.jqassistant.core.analysis.api.rule.TemplateExecutable;
-import com.buschmais.jqassistant.core.analysis.api.rule.Verification;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.AggregationVerificationType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConceptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ConstraintType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ExecutableRuleType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.GroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.IncludedReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.JqassistantRules;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricGroupType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.MetricType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ObjectFactory;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterDefinitionType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ParameterTypes;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReferenceableType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ReportType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.RowCountVerificationType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.ScriptType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.SeverityEnumType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.TemplateType;
-import com.buschmais.jqassistant.core.analysis.rules.schema.v1.VerificationType;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader} implementation.
@@ -98,9 +55,8 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     /**
      * Read rules from XML documents.
-     * 
-     * @param ruleSource
-     *            The available sources.
+     *
+     * @param ruleSource The available sources.
      * @return The list of found rules.
      */
     private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
@@ -121,13 +77,8 @@ public class XmlRuleSetReader implements RuleSetReader {
     /**
      * Converts a list of {@link JqassistantRules} to a rule set.
      *
-     * @param rules
-     *            The {@link JqassistantRules}.
-     *
-     * @return The corresponding rule set.
-     * @throws com.buschmais.jqassistant.core.analysis.api.RuleException
-     *             If rules are not consistent.
-     * 
+     * @param rules The {@link JqassistantRules}.
+     * @throws com.buschmais.jqassistant.core.analysis.api.RuleException If rules are not consistent.
      */
     private void convert(List<JqassistantRules> rules, RuleSource ruleSource, RuleSetBuilder builder) throws RuleException {
         for (JqassistantRules rule : rules) {
@@ -173,7 +124,7 @@ public class XmlRuleSetReader implements RuleSetReader {
             parameterTypes.put(parameterDefinitionType.getName(), parameterType);
         }
         Executable executable = createExecutable(templateType);
-        return new Template(templateType.getId(), templateType.getDescription(), ruleSource, executable, parameterTypes);
+        return Template.Builder.newTemplate().id(templateType.getId()).description(templateType.getDescription()).ruleSource(ruleSource).executable(executable).parameterTypes(parameterTypes).get();
     }
 
     private MetricGroup createMetricGroup(String id, RuleSource ruleSource, MetricGroupType referenceableType) {
@@ -183,20 +134,20 @@ public class XmlRuleSetReader implements RuleSetReader {
             String cypher = metricType.getCypher();
             String description = metricType.getDescription();
             Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
-            Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept());
+            Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept()).keySet();
             Metric metric =
-                    new Metric(metricType.getId(), description, ruleSource, new CypherExecutable(cypher), parameterTypes, requiresConcepts);
+                    Metric.Builder.newMetric().id(id).description(description).ruleSource(ruleSource).executable(new CypherExecutable(cypher)).parameterTypes(parameterTypes).requiresConcepts(requiresConcepts).get();
             metrics.put(metricType.getId(), metric);
         }
-        return new MetricGroup(id, metricGroupType.getDescription(), ruleSource, metrics);
+        return MetricGroup.Builder.newMetricGroup().id(id).description(metricGroupType.getDescription()).ruleSource(ruleSource).metrics(metrics).get();
     }
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
         GroupType groupType = referenceableType;
         Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), Concept.DEFAULT_SEVERITY);
         Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), Constraint.DEFAULT_SEVERITY);
-        Set<String> includeGroups = getReferences(groupType.getIncludeGroup());
-        return new Group(id, null, ruleSource, includeConcepts, includeConstraints, includeGroups);
+        Map<String, Severity> includeGroups = getReferences(groupType.getIncludeGroup());
+        return Group.Builder.newGroup().id(id).ruleSource(ruleSource).concepts(includeConcepts).constraints(includeConstraints).groups(includeGroups).get();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
@@ -207,18 +158,17 @@ public class XmlRuleSetReader implements RuleSetReader {
         SeverityEnumType severityType = conceptType.getSeverity();
         Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
-        Set<String> requiresConcepts = getReferences(requiresConcept);
+        Set<String> requiresConcepts = getReferences(requiresConcept).keySet();
         String deprecated = conceptType.getDeprecated();
         Verification verification = getVerification(conceptType.getVerify());
         Report report = getReport(conceptType.getReport());
-        return new Concept(id, description, ruleSource, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
+        return Concept.Builder.newConcept().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable).parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
     }
 
     /**
      * Read the report definition.
-     * 
-     * @param reportType
-     *            The report type.
+     *
+     * @param reportType The report type.
      * @return The report definition.
      */
     private Report getReport(ReportType reportType) {
@@ -237,11 +187,11 @@ public class XmlRuleSetReader implements RuleSetReader {
         SeverityEnumType severityType = constraintType.getSeverity();
         Severity severity = getSeverity(severityType, Constraint.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
-        Set<String> requiresConcepts = getReferences(requiresConcept);
+        Set<String> requiresConcepts = getReferences(requiresConcept).keySet();
         String deprecated = constraintType.getDeprecated();
         Verification verification = getVerification(constraintType.getVerify());
         Report report = getReport(constraintType.getReport());
-        return new Constraint(id, description, ruleSource, severity, deprecated, executable, parameters, requiresConcepts, verification, report);
+        return Constraint.Builder.newConstraint().id(id).description(description).severity(severity).deprecation(deprecated).executable(executable).parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
     }
 
     private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
@@ -277,10 +227,10 @@ public class XmlRuleSetReader implements RuleSetReader {
         return DEFAULT_VERIFICATION;
     }
 
-    private Set<String> getReferences(List<? extends ReferenceType> referenceTypes) {
-        Set<String> references = new HashSet<>();
+    private Map<String, Severity> getReferences(List<? extends ReferenceType> referenceTypes) {
+        Map<String, Severity> references = new HashMap<>();
         for (ReferenceType referenceType : referenceTypes) {
-            references.add(referenceType.getRefId());
+            references.put(referenceType.getRefId(), null);
         }
         return references;
     }
@@ -315,11 +265,9 @@ public class XmlRuleSetReader implements RuleSetReader {
 
     /**
      * Get the severity.
-     * 
-     * @param severityType
-     *            The severity type.
-     * @param defaultSeverity
-     *            The default severity.
+     *
+     * @param severityType    The severity type.
+     * @param defaultSeverity The default severity.
      * @return The severity.
      */
     private Severity getSeverity(SeverityEnumType severityType, Severity defaultSeverity) throws RuleException {
@@ -327,35 +275,9 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     /**
-     * Get a parameter value by its string representation and types.
-     *
-     * @param type
-     *            The {@link ParameterType}.
-     * @param stringValue
-     *            The string representation.
-     *
-     * @return The parameter value.
-     */
-    private Object getParameterType(ParameterTypes type, String stringValue) {
-        Object value;
-        switch (type) {
-            case INT:
-                value = Integer.valueOf(stringValue);
-                break;
-            case STRING:
-                value = stringValue;
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported parameter types: " + type);
-        }
-        return value;
-    }
-
-    /**
      * Get a map of parameters.
-     * 
-     * @param parameter
-     *            The parameters.
+     *
+     * @param parameter The parameters.
      * @return The map of parameters.
      */
     private Map<String, Object> getParameterValues(List<ParameterType> parameter) {
@@ -370,11 +292,8 @@ public class XmlRuleSetReader implements RuleSetReader {
     /**
      * Get a parameter value by its string representation and types.
      *
-     * @param type
-     *            The {@link ParameterType}.
-     * @param stringValue
-     *            The string representation.
-     *
+     * @param type        The {@link ParameterType}.
+     * @param stringValue The string representation.
      * @return The parameter value.
      */
     private Object getParameterValue(ParameterTypes type, String stringValue) {
