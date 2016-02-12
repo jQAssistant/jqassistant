@@ -61,11 +61,10 @@ public class VisitorHelper {
 
     /**
      * Return the type resolver.
-     * <p>
+     *
      * Looks up an instance in the scanner context. If none can be found the
      * default resolver is used.
-     * </p>
-     * 
+     *
      * @return The type resolver.
      */
     private TypeResolver getTypeResolver() {

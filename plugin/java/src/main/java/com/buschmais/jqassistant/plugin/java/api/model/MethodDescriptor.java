@@ -81,9 +81,9 @@ public interface MethodDescriptor extends MemberDescriptor, NamedDescriptor, Ann
     List<InvokesDescriptor> getInvokedBy();
 
     /**
-     * Return <code>true</code> if this method is native.
+     * Return `true` if this method is native.
      * 
-     * @return <code>true</code> if this method is native.
+     * @return `true` if this method is native.
      */
     Boolean isNative();
 

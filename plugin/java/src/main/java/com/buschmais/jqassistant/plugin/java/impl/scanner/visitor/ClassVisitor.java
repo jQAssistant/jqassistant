@@ -186,8 +186,8 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
      *            the value
      * @param flag
      *            the flag
-     * @return <code>true</code> if (value & flag) == flag, otherwise
-     *         <code>false</code>.
+     * @return `true` if (value & flag) == flag, otherwise
+     *         `false`.
      */
     private boolean hasFlag(int value, int flag) {
         return (value & flag) == flag;
