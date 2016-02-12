@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -20,6 +19,8 @@ import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
 import com.buschmais.xo.api.CompositeObject;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
@@ -27,9 +28,11 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  * @author mh
  * @since 21.01.14
  */
-public abstract class XmlGraphMLWriter {
+public class XmlGraphMLWriter {
 
     private XMLOutputFactory xmlOutputFactory;
+
+    private GraphMLDecorator decorator = new YedGraphMLDecorator();
 
     XmlGraphMLWriter() {
         xmlOutputFactory = XMLOutputFactory.newInstance();
@@ -38,13 +41,11 @@ public abstract class XmlGraphMLWriter {
     void write(SimpleSubGraph graph, Writer writer) throws IOException, XMLStreamException {
         Collection<CompositeObject> allCoNodes = graph.getAllNodes();
         XMLStreamWriter xmlWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(writer));
-        NamespaceContext context = createNamespaceContext();
-        if (context != null) {
-            xmlWriter.setNamespaceContext(context);
-        }
-        writeHeader(xmlWriter);
-        writeDefaultKeys(xmlWriter);
+        GraphMLNamespaceContext context = new GraphMLNamespaceContext(decorator.getNamespaces());
+        xmlWriter.setNamespaceContext(context);
+        writeHeader(xmlWriter, context);
         writeKeyTypes(xmlWriter, graph);
+        decorator.writeKeys(xmlWriter);
         writeSubgraph(graph, xmlWriter);
 
         // filter and write edges
@@ -64,56 +65,6 @@ public abstract class XmlGraphMLWriter {
 
         writeFooter(xmlWriter);
     }
-
-    /**
-     * Creates a {@link NamespaceContext} for the xml writer. Return <code>null</code> to add no context.
-     *
-     * @return a {@link NamespaceContext}
-     */
-    protected abstract NamespaceContext createNamespaceContext();
-
-    /**
-     * Writes a bunch of keys in the graphml-Tag that will be used for formating or so. This method can be overwritten if any special default keys are
-     * necessary. Please call super to ensure all needed keys will be created.
-     *
-     * @param writer
-     *            the XMLWriter
-     * @throws XMLStreamException
-     */
-    protected abstract void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException;
-
-    /**
-     * Can be overwritten to add additional node attributes. Please call super to ensure all necessary attributes will be written.
-     *
-     * @param writer
-     *            the xml writer
-     * @param node
-     *            the node
-     * @throws XMLStreamException
-     */
-    protected abstract void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException;
-
-    /**
-     * Used to insert additional elements inside a node-element. Can be overwriten, but please call super to ensure all needed elements will be
-     * created.
-     *
-     * @param writer
-     *            the xml writer
-     * @param nodeLabel
-     *            the label of the node
-     * @throws XMLStreamException
-     */
-    protected abstract void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException;
-
-    /**
-     * Can be used to add additional Namespace attriobutes to the graphml-root element. If you overwrite these methode please call super to ensure all
-     * needed namespaces will be added.
-     *
-     * @param writer
-     *            the XML Writer
-     * @throws XMLStreamException
-     */
-    protected abstract void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException;
 
     private void writeSubgraph(SimpleSubGraph graph, XMLStreamWriter writer) throws XMLStreamException, IOException {
         CompositeObject wrapperNode = graph.getParentNode();
@@ -192,10 +143,10 @@ public abstract class XmlGraphMLWriter {
         Node node = composite.getDelegate();
         writer.writeStartElement("node");
         writer.writeAttribute("id", id(node));
-        writeAdditionalNodeAttribute(writer, node);
+        decorator.writeNodeAttributes(writer, node);
         writeLabels(writer, node);
         writeLabelsAsData(writer, node);
-        writeAdditionalNodeData(writer, ReportHelper.getStringValue(composite));
+        decorator.writeNodeElements(writer, ReportHelper.getStringValue(composite));
         int props = writeProps(writer, node);
         if (withEnd)
             endElement(writer);
@@ -266,13 +217,18 @@ public abstract class XmlGraphMLWriter {
         writer.writeEndDocument();
     }
 
-    private void writeHeader(XMLStreamWriter writer) throws IOException, XMLStreamException {
+    private void writeHeader(XMLStreamWriter writer, GraphMLNamespaceContext context) throws IOException, XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
         newLine(writer);
         writer.writeStartElement("graphml");
         writer.writeNamespace("xmlns", "http://graphml.graphdrawing.org/xmlns");
-        writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        writeAdditionalNamespace(writer);
+        //writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
+        for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
+            writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", entry.getKey(), entry.getValue());
+        }
+
+        //decorator.writeAdditionalNamespace(writer);
         writer.writeAttribute("xsi", "", "schemaLocation",
                 "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
         newLine(writer);

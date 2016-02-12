@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
@@ -25,6 +28,8 @@ import com.buschmais.xo.api.CompositeObject;
  * @author Dirk Mahler
  */
 public class GraphMLReportPlugin implements ReportPlugin {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(GraphMLReportPlugin.class);
 
     private static final String CONCEPT_PATTERN = "graphml.report.conceptPattern";
     private static final String DIRECTORY = "graphml.report.directory";
@@ -44,7 +49,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
     public void configure(Map<String, Object> properties) throws ReportException {
         this.conceptPattern = getProperty(properties, CONCEPT_PATTERN, conceptPattern);
         this.directory = getProperty(properties, DIRECTORY, directory);
-        xmlGraphMLWriter = new YedXmlGraphMLWriter();
+        xmlGraphMLWriter = new XmlGraphMLWriter();
     }
 
     private String getProperty(Map<String, Object> properties, String property, String defaultValue) throws ReportException {
@@ -94,7 +99,9 @@ public class GraphMLReportPlugin implements ReportPlugin {
                     fileName = fileName + FILEEXTENSION_GRAPHML;
                 }
                 File directory = new File(this.directory);
-                directory.mkdirs();
+                if (directory.mkdirs()) {
+                    LOGGER.info("Created directory " + directory.getAbsolutePath());
+                }
                 File file = new File(directory, fileName);
                 PrintWriter writer = new PrintWriter(new FileWriter(file));
                 SimpleSubGraph subGraph = new SimpleSubGraph();
