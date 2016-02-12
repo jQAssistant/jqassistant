@@ -76,7 +76,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             for (Set<String> requiredConcepts : executables.values()) {
                 resolveRequiredConcepts(requiredConcepts, concepts);
             }
-            Group group = Group.Builder.newGroup().id(profile.getName()).concepts(conceptSeverities).constraints(constraintSeverities).get();
+            Group group = Group.Builder.newGroup().id(profile.getName()).conceptIds(conceptSeverities).constraintIds(constraintSeverities).get();
             builder.addGroup(group);
             RuleSet ruleSet = builder.getRuleSet();
             RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
@@ -195,10 +195,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Report report = new Report(primaryReportColumn);
         switch (ruleType) {
             case Concept:
-                executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
+                executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 break;
             case Constraint:
-                executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
+                executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 break;
             default:
                 throw new IllegalStateException("Rule type is not supported " + ruleType);
@@ -228,10 +228,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
         Report report = new Report(check.getPrimaryReportColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConcepts(requiresConcepts).verification(verification).report(
+            executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(
                     report).get();
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConcepts(requiresConcepts).verification(verification).report(
+            executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(
                     report).get();
         } else {
             throw new IllegalStateException("Unknown type " + check.getClass());

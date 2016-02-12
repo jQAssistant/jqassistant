@@ -17,7 +17,7 @@ public abstract class AbstractRuleVisitor implements RuleVisitor {
     }
 
     @Override
-    public void beforeGroup(Group group) throws AnalysisException {
+    public void beforeGroup(Group group, Severity effectiveSeverity) throws AnalysisException {
     }
 
     @Override

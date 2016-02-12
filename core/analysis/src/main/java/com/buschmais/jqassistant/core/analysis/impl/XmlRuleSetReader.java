@@ -128,41 +128,38 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private MetricGroup createMetricGroup(String id, RuleSource ruleSource, MetricGroupType referenceableType) {
-        MetricGroupType metricGroupType = referenceableType;
         Map<String, Metric> metrics = new LinkedHashMap<>();
-        for (MetricType metricType : metricGroupType.getMetric()) {
+        for (MetricType metricType : referenceableType.getMetric()) {
             String cypher = metricType.getCypher();
             String description = metricType.getDescription();
             Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
             Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept()).keySet();
             Metric metric =
-                    Metric.Builder.newMetric().id(id).description(description).ruleSource(ruleSource).executable(new CypherExecutable(cypher)).parameterTypes(parameterTypes).requiresConcepts(requiresConcepts).get();
+                    Metric.Builder.newMetric().id(id).description(description).ruleSource(ruleSource).executable(new CypherExecutable(cypher)).parameterTypes(parameterTypes).requiresConceptIds(requiresConcepts).get();
             metrics.put(metricType.getId(), metric);
         }
-        return MetricGroup.Builder.newMetricGroup().id(id).description(metricGroupType.getDescription()).ruleSource(ruleSource).metrics(metrics).get();
+        return MetricGroup.Builder.newMetricGroup().id(id).description(referenceableType.getDescription()).ruleSource(ruleSource).metrics(metrics).get();
     }
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
-        GroupType groupType = referenceableType;
-        Map<String, Severity> includeConcepts = getReferences(groupType.getIncludeConcept(), Concept.DEFAULT_SEVERITY);
-        Map<String, Severity> includeConstraints = getReferences(groupType.getIncludeConstraint(), Constraint.DEFAULT_SEVERITY);
-        Map<String, Severity> includeGroups = getReferences(groupType.getIncludeGroup());
-        return Group.Builder.newGroup().id(id).ruleSource(ruleSource).concepts(includeConcepts).constraints(includeConstraints).groups(includeGroups).get();
+        Map<String, Severity> includeConcepts = getReferences(referenceableType.getIncludeConcept(), Concept.DEFAULT_SEVERITY);
+        Map<String, Severity> includeConstraints = getReferences(referenceableType.getIncludeConstraint(), Constraint.DEFAULT_SEVERITY);
+        Map<String, Severity> includeGroups = getReferences(referenceableType.getIncludeGroup());
+        return Group.Builder.newGroup().id(id).ruleSource(ruleSource).conceptIds(includeConcepts).constraintIds(includeConstraints).groupIds(includeGroups).get();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
-        ConceptType conceptType = referenceableType;
-        String description = conceptType.getDescription();
+        String description = referenceableType.getDescription();
         Executable executable = createExecutable(referenceableType);
-        Map<String, Object> parameters = getParameterValues(conceptType.getParameter());
-        SeverityEnumType severityType = conceptType.getSeverity();
+        Map<String, Object> parameters = getParameterValues(referenceableType.getParameter());
+        SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
-        List<ReferenceType> requiresConcept = conceptType.getRequiresConcept();
+        List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept).keySet();
-        String deprecated = conceptType.getDeprecated();
-        Verification verification = getVerification(conceptType.getVerify());
-        Report report = getReport(conceptType.getReport());
-        return Concept.Builder.newConcept().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable).parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
+        String deprecated = referenceableType.getDeprecated();
+        Verification verification = getVerification(referenceableType.getVerify());
+        Report report = getReport(referenceableType.getReport());
+        return Concept.Builder.newConcept().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
     }
 
     /**
@@ -180,18 +177,17 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType referenceableType) throws RuleException {
-        ConstraintType constraintType = referenceableType;
-        Executable executable = createExecutable(constraintType);
-        String description = constraintType.getDescription();
-        Map<String, Object> parameters = getParameterValues(constraintType.getParameter());
-        SeverityEnumType severityType = constraintType.getSeverity();
+        Executable executable = createExecutable(referenceableType);
+        String description = referenceableType.getDescription();
+        Map<String, Object> parameters = getParameterValues(referenceableType.getParameter());
+        SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, Constraint.DEFAULT_SEVERITY);
-        List<ReferenceType> requiresConcept = constraintType.getRequiresConcept();
+        List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
         Set<String> requiresConcepts = getReferences(requiresConcept).keySet();
-        String deprecated = constraintType.getDeprecated();
-        Verification verification = getVerification(constraintType.getVerify());
-        Report report = getReport(constraintType.getReport());
-        return Constraint.Builder.newConstraint().id(id).description(description).severity(severity).deprecation(deprecated).executable(executable).parameters(parameters).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
+        String deprecated = referenceableType.getDeprecated();
+        Verification verification = getVerification(referenceableType.getVerify());
+        Report report = getReport(referenceableType.getReport());
+        return Constraint.Builder.newConstraint().id(id).description(description).ruleSource(ruleSource).severity(severity).deprecation(deprecated).executable(executable).parameters(parameters).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
     }
 
     private Executable createExecutable(ExecutableRuleType executableRuleType) throws RuleException {
