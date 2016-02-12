@@ -66,7 +66,7 @@ public abstract class AbstractExecutableRule extends AbstractSeverityRule implem
             super(rule);
         }
 
-        public B requiresConcepts(Set<String> requiresConcepts) {
+        public B requiresConceptIds(Set<String> requiresConcepts) {
             AbstractExecutableRule r = get();
             r.requiresConcepts.addAll(requiresConcepts);
             return builder();

@@ -136,11 +136,11 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
             if (CONCEPT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
-                Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
+                Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 builder.addConcept(concept);
             } else if (CONSTRAINT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Constraint.DEFAULT_SEVERITY);
-                Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable).requiresConcepts(requiresConcepts).verification(verification).report(report).get();
+                Constraint constraint = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 builder.addConstraint(constraint);
             }
         }
@@ -161,7 +161,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Map<String, Severity> concepts = getDependencies(attributes, INCLUDES_CONCEPTS);
             Map<String, Severity> groups = getDependencies(attributes, INCLUDES_GROUPS);
             Severity severity = getSeverity(contentPart, null);
-            Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource).concepts(concepts).constraints(constraints).groups(groups).get();
+            Group group = Group.Builder.newGroup().id(contentPart.getId()).description(contentPart.getTitle()).severity(severity).ruleSource(ruleSource).conceptIds(concepts).constraintIds(constraints).groupIds(groups).get();
             ruleSetBuilder.addGroup(group);
         }
     }

@@ -48,19 +48,46 @@ public class Group extends AbstractSeverityRule {
             return new Builder(new Group());
         }
 
-        public Builder concepts(Map<String, Severity> concepts) {
+        public Builder conceptIds(Map<String, Severity> concepts) {
             get().concepts.putAll(concepts);
             return builder();
         }
 
-        public Builder constraints(Map<String, Severity> constraints) {
+        public Builder conceptId(String id, Severity severity) {
+            get().concepts.put(id, severity);
+            return builder();
+        }
+
+        public Builder conceptId(String id) {
+            return conceptId(id, null);
+        }
+
+        public Builder constraintIds(Map<String, Severity> constraints) {
             get().constraints.putAll(constraints);
             return builder();
         }
 
-        public Builder groups(Map<String, Severity> groups) {
+        public Builder constraintId(String id, Severity severity) {
+            get().constraints.put(id, severity);
+            return builder();
+        }
+
+        public Builder constraintId(String id) {
+            return constraintId(id, null);
+        }
+
+        public Builder groupIds(Map<String, Severity> groups) {
             get().groups.putAll(groups);
             return builder();
+        }
+
+        public Builder groupId(String id, Severity severity) {
+            get().groups.put(id, severity);
+            return builder();
+        }
+
+        public Builder groupId(String id) {
+            return groupId(id, null);
         }
     }
 
