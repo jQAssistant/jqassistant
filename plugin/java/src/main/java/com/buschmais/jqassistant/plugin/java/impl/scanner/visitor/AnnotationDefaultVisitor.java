@@ -6,9 +6,8 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
  * Visitor for default values of annotation methods.
- * <p>
+ *
  * Creates dependencies of the method to the type of the default value.
- * </p>
  */
 public class AnnotationDefaultVisitor extends AbstractAnnotationVisitor<MethodDescriptor> {
 

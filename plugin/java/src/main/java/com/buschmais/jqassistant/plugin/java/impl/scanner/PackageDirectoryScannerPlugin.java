@@ -14,7 +14,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.DirectoryR
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 
 /**
- * Implementation of the {@link AbstractScannerPlugin} for java packages.
+ * Implementation of the {@link AbstractScannerPlugin} for Java packages.
  */
 @Requires(DirectoryDescriptor.class)
 public class PackageDirectoryScannerPlugin extends AbstractScannerPlugin<DirectoryResource, PackageDescriptor> {
