@@ -74,10 +74,9 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return an iterable which delivers the entries of the container.
-     * <p>
-     * The entries must not contain the relative root element, i.e. "/".
-     * </p>
-     * 
+     *
+     * The entries must not contain the relative root element, i.e. `/`.
+     *
      * @param container
      *            The container.
      * @return The iterable of entries.
@@ -97,16 +96,13 @@ public abstract class AbstractContainerScannerPlugin<I, E, D extends FileContain
 
     /**
      * Return the relative path of an element within the container.
-     * <p>
-     * The following conditions must be considered:
-     * <ul>
-     * <li>The separator to use is "/".</li>
-     * <li>The path must start with "/".</li>
-     * <li>The path must not end with "/".</li>
-     * </ul>
      *
-     * </p>
-     * 
+     * The following conditions must be considered:
+     *
+     * - The separator to use is `/`.
+     * - The path must start with `/`.
+     * - The path must not end with `/`.
+     *
      * @param container
      *            The container.
      * @param entry

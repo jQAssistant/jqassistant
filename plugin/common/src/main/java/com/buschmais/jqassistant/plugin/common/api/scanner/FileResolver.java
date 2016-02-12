@@ -12,15 +12,15 @@ public interface FileResolver {
      * Resolve an existing descriptor from the given information.
      *
      * This is usually done by evaluating the given path, e.g. if a path
-     * "com/buschmais/Test.class" is given a class file resolver might return an
+     * `com/buschmais/Test.class` is given a class file resolver might return an
      * existing class descriptor with the fully qualified name
-     * "com.buschmais.Test" which has been created before as a referenced class.
+     * `com.buschmais.Test` which has been created before as a referenced class.
      * 
      * @param path
      *            The path.
      * @param context
      *            The scanner context.
-     * @return The resolved descriptor or <code>null</code>.
+     * @return The resolved descriptor or `null`.
      */
     <D extends FileDescriptor> D require(String path, Class<D> type, ScannerContext context);
 
@@ -30,7 +30,7 @@ public interface FileResolver {
      * 
      * Example: A Java class might exist with a fully qualified name in the
      * database. The implementation of this method should check if the given
-     * path can be transformed into a class name (i.e. replacing '/' with '.')
+     * path can be transformed into a class name (i.e. replacing `/` with `.`)
      * that already exists as descriptor (i.e. node) and return it.
      * 
      * @param path
