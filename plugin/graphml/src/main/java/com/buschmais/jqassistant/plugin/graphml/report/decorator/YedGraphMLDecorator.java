@@ -1,24 +1,30 @@
-package com.buschmais.jqassistant.plugin.graphml.report.impl;
+package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.neo4j.graphdb.Node;
 
-public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+
+public class YedGraphMLDecorator implements GraphMLDecorator {
 
     private static final String Y_NAMESPACE_URI = "http://www.yworks.com/xml/graphml";
+    private static final String YED_NAMESPACE_URI = "http://www.yworks.com/xml/yed/3";
 
-    public YedXmlGraphMLWriter() {
+    @Override
+    public Map<String, String> getNamespaces() {
+        Map<String, String> namespaces = new HashMap<>();
+        namespaces.put("y", Y_NAMESPACE_URI);
+        namespaces.put("yed", YED_NAMESPACE_URI);
+        return namespaces;
     }
 
     @Override
-    protected void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException {
+    public void writeKeys(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeEmptyElement("key");
         writer.writeAttribute("for", "graphml");
         writer.writeAttribute("id", "d0");
@@ -51,12 +57,12 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
     }
 
     @Override
-    protected void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException {
+    public void writeNodeAttributes(XMLStreamWriter writer, Node node) throws XMLStreamException {
         writer.writeAttribute("yfiles.foldertype", "folder");
     }
 
     @Override
-    protected void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
+    public void writeNodeElements(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
         writer.writeStartElement("data");
         writer.writeAttribute("key", "d6");
         writer.writeStartElement(Y_NAMESPACE_URI, "ProxyAutoBoundsNode");
@@ -81,13 +87,7 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
         writer.writeEndElement();
     }
 
-    @Override
-    protected void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException {
-        writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "y", Y_NAMESPACE_URI);
-        writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "yed", "http://www.yworks.com/xml/yed/3");
-    }
-
-    private void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
+    public void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
         writer.writeStartElement(Y_NAMESPACE_URI, "GroupNode");
 
         writer.writeEmptyElement(Y_NAMESPACE_URI, "Fill");
@@ -164,48 +164,4 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
         private float topF = 0.0F;
     }
 
-    @Override
-    protected NamespaceContext createNamespaceContext() {
-        return new GraphMlNamespaceContext();
-    }
-
-    private class GraphMlNamespaceContext implements NamespaceContext {
-
-        @Override
-        public String getNamespaceURI(String prefix) {
-            switch (prefix) {
-            case XMLConstants.XMLNS_ATTRIBUTE:
-                return "http://graphml.graphdrawing.org/xmlns";
-            case "xsi":
-                return XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-            case "y":
-                return Y_NAMESPACE_URI;
-            case "yed":
-                return "http://www.yworks.com/xml/yed/3";
-            }
-            return XMLConstants.DEFAULT_NS_PREFIX;
-        }
-
-        @Override
-        public String getPrefix(String namespaceURI) {
-            switch (namespaceURI) {
-            case "http://graphml.graphdrawing.org/xmlns":
-                return XMLConstants.XMLNS_ATTRIBUTE;
-            case XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI:
-                return "xsi";
-            case Y_NAMESPACE_URI:
-                return "y";
-            case "http://www.yworks.com/xml/yed/3":
-                return "yed";
-            }
-
-            return XMLConstants.DEFAULT_NS_PREFIX;
-        }
-
-        @Override
-        public Iterator<String> getPrefixes(String namespaceURI) {
-            return Arrays.asList(getPrefix(namespaceURI)).iterator();
-        }
-
-    }
 }
