@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.slf4j.Logger;

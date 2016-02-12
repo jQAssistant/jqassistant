@@ -35,7 +35,7 @@ public class ZipFileResource implements Closeable {
     /**
      * Returns the underlying {@link ZipFile ZIP file}.
      *
-     * @return Returns the underlaying ZIP file, never {@code null}.
+     * @return Returns the underlaying ZIP file, never `null`.
      */
     public ZipFile getZipFile() {
         return zipFile;
