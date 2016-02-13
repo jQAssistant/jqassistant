@@ -44,7 +44,7 @@ public final class XMLFileFilter {
      *            The path of the file resource.
      * @param expectedRootElement
      *            The expected local name of the root element.
-     * @return <code>true</code> If the file is an XML file and contains the
+     * @return `true` If the file is an XML file and contains the
      *         expected root element.
      * @throws IOException
      *             If the file resource cannot be read.
