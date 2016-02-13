@@ -10,10 +10,9 @@ import java.util.List;
  * A configurable artifact filter which handles includes and excludes patterns.
  *
  * Supported patterns:
- * <ul>
- * <li>[groupId]:[artifactId]:[type]:[version]</li>
- * <li>[groupId]:[artifactId]:[type]:[classifier]:[version]</li>
- * </ul>
+ *
+ * - `[groupId]:[artifactId]:[type]:[version]`
+ * - `[groupId]:[artifactId]:[type]:[classifier]:[version]`
  */
 public class ArtifactFilter {
 
@@ -24,9 +23,9 @@ public class ArtifactFilter {
      * Constructor.
      * 
      * @param includes
-     *            The list of include patterns or <code>null</code> to include everything.
+     *            The list of include patterns or `null` to include everything.
      * @param excludes
-     *            The list of exclude patterns or <code>null</code> to exclude nothing.
+     *            The list of exclude patterns or `null` to exclude nothing.
      */
     public ArtifactFilter(List<String> includes, List<String> excludes) {
         includesFilter = includes != null ? new PatternIncludesArtifactFilter(includes) : null;
@@ -38,7 +37,7 @@ public class ArtifactFilter {
      * 
      * @param artifact
      *            The artifact.
-     * @return <code>true</code> if the artifact matches the filter.
+     * @return `true` if the artifact matches the filter.
      */
     public boolean match(Artifact artifact) {
         return (includesFilter == null || includesFilter.include(artifact)) && (excludesFilter == null || excludesFilter.include(artifact));
