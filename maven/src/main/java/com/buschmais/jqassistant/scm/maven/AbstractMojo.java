@@ -58,7 +58,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     protected List<String> rulesDirectories;
 
     /**
-     * The url to retrieve rules.
+     * The URL to retrieve rules.
      */
     @Parameter(property = "jqassistant.rules.url")
     protected URL rulesUrl;
@@ -95,11 +95,11 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Controls the life cycle of the data store.
-     * <p>
-     * REACTOR is the default value which provides caching of the initialized
+     *
+     * {@link StoreLifecycle.REACTOR} is the default value which provides caching of the initialized
      * store. There are configurations where this will cause problems, in such
-     * cases MODULE shall be used.
-     * </p>
+     * cases {@link StoreLifecycle.MODULE} shall be used.
+     *
      */
     @Parameter(property = PROPERTY_STORE_LIFECYCLE)
     protected StoreLifecycle storeLifecycle = StoreLifecycle.REACTOR;
@@ -157,7 +157,7 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
     /**
      * Determine if the store shall be reset before execution of the mofo.
      * 
-     * @return <code>true</code> if the store shall be reset.
+     * @return `true` if the store shall be reset.
      */
     protected abstract boolean isResetStoreBeforeExecution();
 
@@ -250,10 +250,9 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
     /**
      * Execute an operation with the store.
-     * <p>
+     *
      * This method enforces thread safety based on the store factory.
-     * </p>
-     * 
+     *
      * @param storeOperation
      *            The store.
      * @param rootModule
