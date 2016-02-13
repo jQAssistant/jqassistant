@@ -89,8 +89,8 @@ public class ScanTask extends AbstractTask {
      * Parses the given list of option values into a map of resources and their
      * associated (optional) scopes.
      *
-     * Example: "maven:repository::http://my-host/repo" will be an entry with
-     * key "maven:repository" and value "http://my-host/repo".
+     * Example: `maven:repository::http://my-host/repo` will be an entry with
+     * key `maven:repository` and value `http://my-host/repo`.
      *
      * @param optionValues
      *            The value.
