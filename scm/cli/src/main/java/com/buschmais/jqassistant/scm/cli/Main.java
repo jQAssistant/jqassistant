@@ -295,7 +295,7 @@ public class Main {
     /**
      * Determine the JQASSISTANT_HOME directory.
      *
-     * @return The directory or <code>null</code>.
+     * @return The directory or `null`.
      */
     private File getHomeDirectory() {
         String dirName = System.getenv(ENV_JQASSISTANT_HOME);
