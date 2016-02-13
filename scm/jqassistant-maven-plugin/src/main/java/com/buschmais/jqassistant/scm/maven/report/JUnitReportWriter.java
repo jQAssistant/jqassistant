@@ -18,9 +18,9 @@ import com.buschmais.jqassistant.plugin.junit.impl.schema.Error;
 
 /**
  * {@link AnalysisListener} implementation to write JUnit style reports.
- * <p>
+ *
  * Each group is rendered as a test suite to a separate file.
- * </p>
+ *
  */
 public class JUnitReportWriter implements AnalysisListener<AnalysisListenerException> {
 

@@ -29,11 +29,11 @@ public final class ProjectResolver {
     /**
      * Return the {@link MavenProject} which is the base module for scanning and
      * analysis.
-     * <p>
+     *
      * The base module is by searching with the module tree starting from the
      * current module over its parents until a module is found containing a
      * directory "jqassistant" or no parent can be determined.
-     * </p>
+     *
      * 
      * @param module
      *            The current module.
