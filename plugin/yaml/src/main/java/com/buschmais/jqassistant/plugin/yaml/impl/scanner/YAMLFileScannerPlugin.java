@@ -79,8 +79,11 @@ public class YAMLFileScannerPlugin extends AbstractScannerPlugin<FileResource, Y
     }
 
     /**
-     * This resolver does not resolve any types, that means that there is not
-     * implicit type conversion as OFF -> true or YES -> true.
+     * Non-resolving resolver to avoid automatic type conversion provided by
+     * the used SnakeYAML libary.
+     *
+     * One good example for this disabled automatic type coversion is the
+     * conversion of the string `OFF` to the boolean value `false`
      */
     private static class NonResolvingResolver extends Resolver {
         @Override
