@@ -12,9 +12,8 @@ import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * The customized Neo4j server.
- * <p>
+ *
  * The class adds the {@link JQAServerModule}
- * </p>
  */
 public class ExtendedCommunityNeoServer extends AbstractServer {
 
