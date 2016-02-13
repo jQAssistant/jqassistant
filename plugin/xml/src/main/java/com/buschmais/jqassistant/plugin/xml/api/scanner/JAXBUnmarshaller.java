@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  *
  * A constructor is provided that takes namespace mappings which may be used to
  * unmarshal documents using an older, i.e. compatible schema version (e.g. for
- * reading a persistence.xml 2.0 descriptor using a 2.1 JAXBContext).
+ * reading a `persistence.xml` 2.0 descriptor using a 2.1 JAXBContext).
  *
  * @param <X>
  *            The JAXB type of the root element.
