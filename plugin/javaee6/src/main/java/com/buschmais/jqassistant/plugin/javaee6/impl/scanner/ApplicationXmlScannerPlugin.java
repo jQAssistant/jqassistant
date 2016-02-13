@@ -33,7 +33,7 @@ import com.sun.java.xml.ns.javaee.WebType;
 
 /**
  * Scanner plugin for the content of application XML descriptors (i.e.
- * APP-INF/application.xml)
+ * `APP-INF/application.xml`)
  */
 @Requires(FileDescriptor.class)
 public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor> {

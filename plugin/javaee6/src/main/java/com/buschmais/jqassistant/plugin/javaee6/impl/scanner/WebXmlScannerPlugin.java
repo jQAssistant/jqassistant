@@ -85,7 +85,7 @@ import com.sun.java.xml.ns.javaee.XsdStringType;
 
 /**
  * Scanner plugin for the content of web application XML descriptors (i.e.
- * WEB-INF/web.xml)
+ * `WEB-INF/web.xml`)
  */
 @Requires(FileDescriptor.class)
 public class WebXmlScannerPlugin extends AbstractXmlFileScannerPlugin<WebXmlDescriptor> {
