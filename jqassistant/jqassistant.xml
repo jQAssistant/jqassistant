@@ -12,6 +12,7 @@
         <!-- @todo See #339 on Github Oliver B. Fischer, 2016-01-31 <includeConstraint refId="module:ApiMustNotDependOnImplementation"/>-->
         <!-- @todo See #339 on Github Oliver B. Fischer, 2016-01-31 <includeConstraint refId="module:ModuleMustDependOnApiOfOtherModule"/>-->
 
+        <includeGroup refId="distribution"/>
         <includeGroup refId="plugins"/>
     </group>
 
