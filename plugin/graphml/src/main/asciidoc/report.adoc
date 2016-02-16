@@ -1,6 +1,6 @@
 == GraphML Report
 
-This plugin generates graphml xml files for result data of concepts. Those files can be used with several graph rendering
+This plugin generates graphml XML files for result data of concepts. Those files can be used with several graph rendering
 and analytics tools like http://www.yworks.com/en/products/yfiles/yed/[yEd] and http://gephi.org[Gephi].
 
 By default all concepts ending in `.graphml` will be rendered (e.g. "module:modules.graphml").
@@ -77,7 +77,8 @@ store:
 </jqa:jqassistant-rules>
 ----
 
-Virtual nodes will be provided in the same way like virtual relationships. These are the properties to use in the JSON-Object:
+Virtual nodes will be provided in the same way like virtual relationships. These are the properties
+to use in the JSON-Object:
 
 role:: to identify the type of virtual element (value: node)
 properties:: node properties
@@ -107,7 +108,8 @@ The following example virtually aggregates some data without creating a node in 
 </jqa:jqassistant-rules>
 ----
 
-To get a better structured GraphML-File subgraphs can be generated. With this pattern it is possible to drill down in the graph. These are the properties to use in the JSON-Object:
+To get a better structured GraphML-File subgraphs can be generated. With this pattern it is possible
+to drill down in the graph. These are the properties to use in the JSON-Object:
 
 role:: to identify the type of virtual element (value: graph)
 parent:: subgraphs must be nested in a parent node
