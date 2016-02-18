@@ -1,115 +1,29 @@
 package com.buschmais.jqassistant.plugin.xml.api.scanner;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
 import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.util.StreamReaderDelegate;
-
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
 /**
  * Utility class for unmarshalling file resources.
- *
+ * <p>
  * A constructor is provided that takes namespace mappings which may be used to
  * unmarshal documents using an older, i.e. compatible schema version (e.g. for
  * reading a persistence.xml 2.0 descriptor using a 2.1 JAXBContext).
+ * <p>
+ * Note: This class has been deprecated and replaced by {@link FileResourceJAXBUnmarshaller}.
  *
- * @param <X>
- *            The JAXB type of the root element.
+ * @param <X> The JAXB type of the root element.
  */
-public class JAXBUnmarshaller<X> {
+@Deprecated
+@ToBeRemovedInVersion(major = 2, minor = 0)
+public class JAXBUnmarshaller<X> extends FileResourceJAXBUnmarshaller<X> {
 
-    private Class<X> rootElementType;
-
-    private Map<String, String> namespaceMapping;
-
-    private XMLInputFactory inputFactory;
-
-    private JAXBContext jaxbContext;
-
-    /**
-     * Constructor.
-     * 
-     * @param rootElementType
-     *            The expected root element type.
-     */
     public JAXBUnmarshaller(Class<X> rootElementType) {
-        this(rootElementType, Collections.<String, String> emptyMap());
+        super(rootElementType);
     }
 
-    /**
-     * Constructor.
-     * 
-     * @param rootElementType
-     *            The expected root element type.
-     * @param namespaceMapping
-     *            The namespace mappings. The key namespaces contained in the
-     *            map will be replaced their values while reading documents.
-     */
     public JAXBUnmarshaller(Class<X> rootElementType, Map<String, String> namespaceMapping) {
-        this.rootElementType = rootElementType;
-        this.namespaceMapping = namespaceMapping;
-        inputFactory = XMLInputFactory.newInstance();
-        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        try {
-            jaxbContext = JAXBContext.newInstance(rootElementType);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Cannot create JAXB context for " + rootElementType.getName(), e);
-        }
-    }
-
-    public X unmarshal(FileResource item) throws IOException {
-        try (InputStream stream = item.createStream()) {
-            XMLStreamReader xmlStreamReader = new NamespaceMappingStreamReader(inputFactory.createXMLStreamReader(stream), namespaceMapping);
-            return unmarshal(xmlStreamReader);
-        } catch (XMLStreamException e) {
-            throw new IOException("Cannot read XML document.", e);
-        }
-    }
-
-    private X unmarshal(XMLStreamReader xmlStreamReader) throws IOException {
-        try {
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return unmarshaller.unmarshal(xmlStreamReader, rootElementType).getValue();
-        } catch (JAXBException e) {
-            throw new IOException("Cannot unmarshal XML document.", e);
-        }
-    }
-
-    /**
-     * A {@link StreamReaderDelegate} which maps all namespaces from a document
-     * to a specified namespace.
-     */
-    private static class NamespaceMappingStreamReader extends StreamReaderDelegate {
-
-        private Map<String, String> namespaceMapping;
-
-        public NamespaceMappingStreamReader(XMLStreamReader reader, Map<String, String> namespaceMapping) {
-            super(reader);
-            this.namespaceMapping = namespaceMapping;
-        }
-
-        @Override
-        public String getAttributeNamespace(int index) {
-            return map(super.getAttributeNamespace(index));
-        }
-
-        @Override
-        public String getNamespaceURI() {
-            return map(super.getNamespaceURI());
-        }
-
-        private String map(String documentNamespace) {
-            String namespace = namespaceMapping.get(documentNamespace);
-            return namespace != null ? namespace : documentNamespace;
-        }
+        super(rootElementType, namespaceMapping);
     }
 }
