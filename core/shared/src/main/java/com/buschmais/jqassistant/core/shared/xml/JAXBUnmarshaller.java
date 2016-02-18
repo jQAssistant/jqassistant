@@ -7,6 +7,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
+import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -25,6 +26,8 @@ public class JAXBUnmarshaller<X> {
 
     private Class<X> rootElementType;
 
+    private Schema schema;
+
     private Map<String, String> namespaceMapping;
 
     private XMLInputFactory inputFactory;
@@ -37,7 +40,7 @@ public class JAXBUnmarshaller<X> {
      * @param rootElementType The expected root element type.
      */
     public JAXBUnmarshaller(Class<X> rootElementType) {
-        this(rootElementType, Collections.<String, String>emptyMap());
+        this(rootElementType, null, Collections.<String, String>emptyMap());
     }
 
     /**
@@ -48,7 +51,20 @@ public class JAXBUnmarshaller<X> {
      *                         map will be replaced their values while reading documents.
      */
     public JAXBUnmarshaller(Class<X> rootElementType, Map<String, String> namespaceMapping) {
+        this(rootElementType, null, namespaceMapping);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param rootElementType  The expected root element type.
+     * @param schema           The optional schema for validation.
+     * @param namespaceMapping The namespace mappings. The key namespaces contained in the
+     *                         map will be replaced their values while reading documents.
+     */
+    public JAXBUnmarshaller(Class<X> rootElementType, Schema schema, Map<String, String> namespaceMapping) {
         this.rootElementType = rootElementType;
+        this.schema = schema;
         this.namespaceMapping = namespaceMapping;
         inputFactory = XMLInputFactory.newInstance();
         inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
@@ -71,6 +87,9 @@ public class JAXBUnmarshaller<X> {
     private X unmarshal(XMLStreamReader xmlStreamReader) throws IOException {
         try {
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            if (schema != null) {
+                unmarshaller.setSchema(schema);
+            }
             return unmarshaller.unmarshal(xmlStreamReader, rootElementType).getValue();
         } catch (JAXBException e) {
             throw new IOException("Cannot unmarshal XML document.", e);

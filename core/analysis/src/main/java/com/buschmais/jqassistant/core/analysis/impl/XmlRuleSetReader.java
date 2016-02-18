@@ -5,14 +5,10 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,25 +19,20 @@ import java.util.*;
  */
 public class XmlRuleSetReader implements RuleSetReader {
 
-    public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.0.xsd";
+    public static final String RULES_SCHEMA_LOCATION = "/META-INF/xsd/jqassistant-rules-1.1.xsd";
     public static final Schema SCHEMA = XmlHelper.getSchema(RULES_SCHEMA_LOCATION);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(XmlRuleSetReader.class);
 
-    private static final JAXBContext JAXB_CONTEXT;
-
-    /**
-     * Static constructor.
-     */
-    static {
-        try {
-            JAXB_CONTEXT = JAXBContext.newInstance(ObjectFactory.class);
-        } catch (JAXBException e) {
-            throw new IllegalArgumentException("Cannot create JAXB context.", e);
-        }
-    }
+    private JAXBUnmarshaller<JqassistantRules> jaxbUnmarshaller;
 
     public static final RowCountVerification DEFAULT_VERIFICATION = new RowCountVerification();
+
+    public XmlRuleSetReader() {
+        Map<String, String> namespaceMappings = new HashMap<>();
+        namespaceMappings.put("http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0", "http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1");
+        this.jaxbUnmarshaller = new JAXBUnmarshaller<>(JqassistantRules.class, SCHEMA, namespaceMappings);
+    }
 
     @Override
     public void read(List<? extends RuleSource> sources, RuleSetBuilder ruleSetBuilder) throws RuleException {
@@ -62,13 +53,10 @@ public class XmlRuleSetReader implements RuleSetReader {
     private List<JqassistantRules> readXmlSource(RuleSource ruleSource) {
         List<JqassistantRules> rules = new ArrayList<>();
         try (InputStream inputStream = ruleSource.getInputStream()) {
-            Unmarshaller unmarshaller = JAXB_CONTEXT.createUnmarshaller();
-            unmarshaller.setSchema(SCHEMA);
             LOGGER.debug("Reading rules from '{}'.", ruleSource.getId());
-            StreamSource streamSource = new StreamSource(inputStream);
-            JAXBElement<JqassistantRules> jaxbElement = unmarshaller.unmarshal(streamSource, JqassistantRules.class);
-            rules.add(jaxbElement.getValue());
-        } catch (IOException | JAXBException e) {
+            JqassistantRules jqassistantRules = jaxbUnmarshaller.unmarshal(inputStream);
+            rules.add(jqassistantRules);
+        } catch (IOException e) {
             throw new IllegalArgumentException("Cannot read rules from '" + ruleSource.getId() + "'.", e);
         }
         return rules;
@@ -133,7 +121,7 @@ public class XmlRuleSetReader implements RuleSetReader {
             String cypher = metricType.getCypher();
             String description = metricType.getDescription();
             Map<String, Class<?>> parameterTypes = getParameterTypes(metricType.getParameterDefinition());
-            Set<String> requiresConcepts = getReferences(metricType.getRequiresConcept()).keySet();
+            Set<String> requiresConcepts = getRequiredReferences(metricType.getRequiresConcept());
             Metric metric =
                     Metric.Builder.newMetric().id(id).description(description).ruleSource(ruleSource).executable(new CypherExecutable(cypher)).parameterTypes(parameterTypes).requiresConceptIds(requiresConcepts).get();
             metrics.put(metricType.getId(), metric);
@@ -142,10 +130,12 @@ public class XmlRuleSetReader implements RuleSetReader {
     }
 
     private Group createGroup(String id, RuleSource ruleSource, GroupType referenceableType) throws RuleException {
-        Map<String, Severity> includeConcepts = getReferences(referenceableType.getIncludeConcept(), Concept.DEFAULT_SEVERITY);
-        Map<String, Severity> includeConstraints = getReferences(referenceableType.getIncludeConstraint(), Constraint.DEFAULT_SEVERITY);
-        Map<String, Severity> includeGroups = getReferences(referenceableType.getIncludeGroup());
-        return Group.Builder.newGroup().id(id).ruleSource(ruleSource).conceptIds(includeConcepts).constraintIds(includeConstraints).groupIds(includeGroups).get();
+        SeverityEnumType severityType = referenceableType.getSeverity();
+        Severity severity = getSeverity(severityType, Group.DEFAULT_SEVERITY);
+        Map<String, Severity> includeConcepts = getIncludedReferences(referenceableType.getIncludeConcept());
+        Map<String, Severity> includeConstraints = getIncludedReferences(referenceableType.getIncludeConstraint());
+        Map<String, Severity> includeGroups = getIncludedReferences(referenceableType.getIncludeGroup());
+        return Group.Builder.newGroup().id(id).severity(severity).ruleSource(ruleSource).conceptIds(includeConcepts).constraintIds(includeConstraints).groupIds(includeGroups).get();
     }
 
     private Concept createConcept(String id, RuleSource ruleSource, ConceptType referenceableType) throws RuleException {
@@ -155,7 +145,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, Concept.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
-        Set<String> requiresConcepts = getReferences(requiresConcept).keySet();
+        Set<String> requiresConcepts = getRequiredReferences(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
@@ -183,7 +173,7 @@ public class XmlRuleSetReader implements RuleSetReader {
         SeverityEnumType severityType = referenceableType.getSeverity();
         Severity severity = getSeverity(severityType, Constraint.DEFAULT_SEVERITY);
         List<ReferenceType> requiresConcept = referenceableType.getRequiresConcept();
-        Set<String> requiresConcepts = getReferences(requiresConcept).keySet();
+        Set<String> requiresConcepts = getRequiredReferences(requiresConcept);
         String deprecated = referenceableType.getDeprecated();
         Verification verification = getVerification(referenceableType.getVerify());
         Report report = getReport(referenceableType.getReport());
@@ -223,18 +213,18 @@ public class XmlRuleSetReader implements RuleSetReader {
         return DEFAULT_VERIFICATION;
     }
 
-    private Map<String, Severity> getReferences(List<? extends ReferenceType> referenceTypes) {
-        Map<String, Severity> references = new HashMap<>();
+    private Set<String> getRequiredReferences(List<? extends ReferenceType> referenceTypes) {
+        Set<String> references = new HashSet<>();
         for (ReferenceType referenceType : referenceTypes) {
-            references.put(referenceType.getRefId(), null);
+            references.add(referenceType.getRefId());
         }
         return references;
     }
 
-    private Map<String, Severity> getReferences(List<IncludedReferenceType> referenceType, Severity defaultSeverity) throws RuleException {
+    private Map<String, Severity> getIncludedReferences(List<IncludedReferenceType> referenceType) throws RuleException {
         Map<String, Severity> references = new HashMap<>();
         for (IncludedReferenceType includedReferenceType : referenceType) {
-            Severity severity = getSeverity(includedReferenceType.getSeverity(), defaultSeverity);
+            Severity severity = getSeverity(includedReferenceType.getSeverity(), null);
             references.put(includedReferenceType.getRefId(), severity);
         }
         return references;

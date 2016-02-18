@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import java.net.URL;
@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
@@ -22,7 +21,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void cypherRules() throws Exception {
-        RuleSet ruleSet = readRuleSet("/junit-without-assert.adoc");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/junit-without-assert.adoc");
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertEquals(2, concepts.size());
         Concept concept1 = concepts.getById("junit4:TestClassOrMethod");
@@ -57,7 +56,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void scriptRules() throws Exception {
-        RuleSet ruleSet = readRuleSet("/javascript-rules.adoc");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.adoc");
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertEquals(1, concepts.size());
         Concept concept1 = concepts.getById("concept:JavaScript");
@@ -74,7 +73,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void groups() throws Exception {
-        RuleSet ruleSet = readRuleSet("/group.adoc");
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/group.adoc");
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:Concept", "test:CriticalConcept"));
         assertThat(ruleSet.getConstraintBucket().getIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
         GroupsBucket groups = ruleSet.getGroupsBucket();
@@ -96,37 +95,4 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(group, notNullValue());
     }
 
-    @Test
-    public void severity() throws Exception {
-        RuleSet ruleSet = readRuleSet("/severity.adoc");
-        verifySeverities(ruleSet, "test:GroupWithoutSeverity", null, "test:Concept", null, "test:Constraint", null);
-        verifySeverities(ruleSet, "test:GroupWithSeverity", Severity.BLOCKER, "test:Concept", null, "test:Constraint", null);
-        verifySeverities(ruleSet, "test:GroupWithOverridenSeverities", Severity.BLOCKER, "test:Concept", Severity.CRITICAL, "test:Constraint", Severity.CRITICAL);
-    }
-
-    private void verifySeverities(RuleSet ruleSet, String groupId, Severity expectedGroupSeverity, String conceptId, Severity expectedConceptSeverity, String constraintId, Severity expectedConstraintSeverity) throws NoGroupException {
-        assertThat(ruleSet.getConceptBucket().getIds(), hasItems(conceptId));
-        assertThat(ruleSet.getConstraintBucket().getIds(), hasItems(constraintId));
-        GroupsBucket groups = ruleSet.getGroupsBucket();
-        // Group without any severity definition
-        Group group = groups.getById(groupId);
-        assertThat(group, notNullValue());
-        assertThat(group.getSeverity(), equalTo(expectedGroupSeverity));
-        Map<String, Severity> includedConcepts = group.getConcepts();
-        assertThat(includedConcepts.containsKey(conceptId), equalTo(true));
-        assertThat(includedConcepts.get(conceptId), equalTo(expectedConceptSeverity));
-        Map<String, Severity> includedConstraints = group.getConstraints();
-        assertThat(includedConstraints.containsKey(constraintId), equalTo(true));
-        assertThat(includedConstraints.get(constraintId), equalTo(expectedConstraintSeverity));
-    }
-
-
-    private RuleSet readRuleSet(String resource) throws RuleException {
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
-        final URL url = getClass().getResource(resource);
-        RuleSource ruleSource = new UrlRuleSource(url);
-        reader.read(Collections.singletonList(ruleSource), ruleSetBuilder);
-        return ruleSetBuilder.getRuleSet();
-    }
 }
