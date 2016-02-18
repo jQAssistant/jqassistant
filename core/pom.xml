@@ -92,6 +92,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>shared</module>
         <module>report</module>
         <module>analysis</module>
         <module>scanner</module>
