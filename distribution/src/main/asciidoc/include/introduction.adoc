@@ -36,7 +36,7 @@ Rules are expressed as Cypher queries and are specified either in XML or AsciiDo
 [source,xml]
 .my-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
 
     <group id="default">
         <includeConstraint refId="my-rules:MyConstraint"/>
@@ -110,7 +110,7 @@ RETURN
 
 [[my-rules:MyGroup]]
 .A human readable description of the group.
-[role=group,requiresConstraints="my-rules:MyConstraint(minor)"]
+[role=group,includesConstraints="my-rules:MyConstraint(minor)"]
 == My Group
 ....
 
@@ -158,21 +158,37 @@ A constraint can depend on one or more concepts and usually is referenced by one
 *NOTE* If a constraint returns a result jQAssistant will report an error including the provided description and information about the returned elements. This
 information shall help the developer to understand and fix the problem.
 
-==== Rule Severity
+==== Severity Of Rules
 
-A rule can optionally define the _severity_ level. jQAssistant allows to break the build if there are violations in the configured severity level (or higher).
+A rule may optionally define the _severity_ level. jQAssistant allows to break the build if there are violations in the configured severity level (or higher).
 For example, if the severity is set to critical, and if there are violated constraints with blocker and/or critical severity; the build will break.
 This feature allows projects to pay down their technical debt in an iterative manner.
 
 Following severity levels are supported:
 
 - info
-- minor
-- major
+- minor (default for concepts)
+- major (default for constraints)
 - critical
 - blocker
 
-Specifying a severity for a group applies it to all included elements without further specification of a severity, e.g.
+There is no default severity for groups. If a severity is specified then it is applied to all included elements where no
+further severity is given, e.g.
+
+[source,xml]
+.my-rules.xml
+----
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
+
+    <group id="my-rules:MyGroup" severity="blocker">
+        <includeConstraint refId="my-rules:MyConstraint1"/>
+        <includeConstraint refId="my-rules:MyConstraint2" severity="minor"/>
+    </group>
+
+<jqa:jqassistant-rules/>
+----
+
+or in Asciidoc:
 
 ....
 [[my-rules:MyGroup]]
@@ -181,10 +197,10 @@ Specifying a severity for a group applies it to all included elements without fu
 == My Group
 ....
 
-Execution of the group 'my-rules:MyGroup' will report a violation of constraint...
+Thus execution of the group 'my-rules:MyGroup' will report a violation of constraint...
 
-- 'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
-- 'my-rules-Constraint2' with severity 'minor'
+- ...'my-rules-Constraint1' with severity 'blocker' (inherited from the group)
+- ...'my-rules-Constraint2' with severity 'minor' (specified within the group)
 
 
 ==== Result verification
@@ -244,7 +260,7 @@ Instead of cypher scripting languages like JavaScript, Ruby or Groovy may be use
 [source,xml]
 .my-scripting-rules.xml
 ----
-<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
 
     <constraint id="my-scripting-rules:MyConcept">
         <description>A JavaScript based concept.</description>

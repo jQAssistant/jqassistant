@@ -13,7 +13,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 public class Concept extends AbstractExecutableRule {
 
     /**
-     * Default severity level for concept.
+     * Default severity level for concepts.
      */
     public static Severity DEFAULT_SEVERITY = Severity.MINOR;
 

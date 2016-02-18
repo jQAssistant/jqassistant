@@ -75,9 +75,10 @@ public class RuleSetWriterImpl implements RuleSetWriter {
         for (Group group : groups) {
             GroupType groupType = new GroupType();
             groupType.setId(group.getId());
-            for (String includeGroupId : group.getGroups().keySet()) {
-                ReferenceType groupReferenceType = new ReferenceType();
-                groupReferenceType.setRefId(includeGroupId);
+            for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
+                IncludedReferenceType groupReferenceType = new IncludedReferenceType();
+                groupReferenceType.setRefId(groupEntry.getKey());
+                groupType.setSeverity(getSeverity(groupEntry.getValue(), Group.DEFAULT_SEVERITY));
                 groupType.getIncludeGroup().add(groupReferenceType);
             }
             for (Map.Entry<String, Severity> conceptEntry : group.getConcepts().entrySet()) {
@@ -150,11 +151,9 @@ public class RuleSetWriterImpl implements RuleSetWriter {
 
     /**
      * Converts {@link Severity} to {@link SeverityEnumType}
-     * 
-     * @param severity
-     *            {@link Severity}
-     * @param defaultSeverity
-     *            default severity level
+     *
+     * @param severity        {@link Severity}
+     * @param defaultSeverity default severity level
      * @return {@link SeverityEnumType}
      */
     private SeverityEnumType getSeverity(Severity severity, Severity defaultSeverity) {
