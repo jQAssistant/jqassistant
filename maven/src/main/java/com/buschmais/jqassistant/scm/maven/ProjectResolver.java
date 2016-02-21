@@ -39,23 +39,22 @@ public final class ProjectResolver {
      * directory "jqassistant" or no parent can be determined.
      * </p>
      *
-     * @param module
-     *            The current module.
-     * @param rulesDirectory
-     *            The name of the directory used for identifying the root module
+     * @param execution                     The current execution.
+     * @param module                        The current module.
+     * @param rulesDirectory                The name of the directory used for identifying the root module.
+     * @param useExecutionRootAsProjectRoot <code>true</code> if the execution root shall be used as project root.
      * @return The {@link MavenProject} containing a rules directory.
-     * @throws MojoExecutionException
-     *             If the directory cannot be resolved.
+     * @throws MojoExecutionException If the directory cannot be resolved.
      */
-    static MavenProject getRootModule(MavenProject module, List<MavenProject> reactor, String rulesDirectory, boolean useReactorAsProjectRoot)
+    static MavenProject getRootModule(MojoExecution execution, MavenProject module, List<MavenProject> reactor, String rulesDirectory, boolean useExecutionRootAsProjectRoot)
             throws MojoExecutionException {
         String rootModuleContextKey = ProjectResolver.class.getName() + "#rootModule";
         MavenProject rootModule = (MavenProject) module.getContextValue(rootModuleContextKey);
         if (rootModule == null) {
-            if (useReactorAsProjectRoot) {
+            if (useExecutionRootAsProjectRoot) {
                 rootModule = getRootModule(reactor);
             } else {
-                rootModule = getRootModule(module, rulesDirectory);
+                rootModule = getRootModule(execution, module, rulesDirectory);
             }
             module.setContextValue(rootModuleContextKey, rootModule);
         }
@@ -71,15 +70,15 @@ public final class ProjectResolver {
         throw new MojoExecutionException("Cannot determine execution root.");
     }
 
-    private static MavenProject getRootModule(MavenProject module, String rulesDirectory) throws MojoExecutionException {
+    private static MavenProject getRootModule(MojoExecution execution, MavenProject module, String rulesDirectory) throws MojoExecutionException {
         MavenProject rootModule;
         File directory = getRulesDirectory(module, rulesDirectory);
         if (directory.exists() && directory.isDirectory()) {
             rootModule = module;
         } else {
             MavenProject parent = module.getParent();
-            if (parent != null && parent.getBasedir() != null) {
-                rootModule = getRootModule(parent, rulesDirectory);
+            if (parent != null && parent.getBasedir() != null && containsBuildPlugin(parent, execution.getPlugin())) {
+                rootModule = getRootModule(execution, parent, rulesDirectory);
             } else {
                 rootModule = module;
             }
@@ -90,25 +89,26 @@ public final class ProjectResolver {
     /**
      * Aggregate projects to their base projects
      *
-     * @param reactorProjects
-     *            The current reactor projects.
+     * @param execution                     The current execution.
+     * @param reactorProjects               The current reactor projects.
+     * @param rulesDirectory                The configured rules directory.
+     * @param useExecutionRootAsProjectRoot <code>true</code> if the execution root shall be used as project root.
      * @return A map containing resolved base projects and their aggregated projects.
-     * @throws MojoExecutionException
-     *             If aggregation fails.
+     * @throws MojoExecutionException If aggregation fails.
      */
     static Map<MavenProject, List<MavenProject>> getRootModules(MojoExecution execution, List<MavenProject> reactorProjects,
-            String rulesDirectory, boolean useExecutionRootAsProjectRoot) throws MojoExecutionException {
+                                                                String rulesDirectory, boolean useExecutionRootAsProjectRoot) throws MojoExecutionException {
         Plugin plugin = execution.getPlugin();
         Map<MavenProject, List<MavenProject>> rootModules = new HashMap<>();
         for (MavenProject reactorProject : reactorProjects) {
             MavenProject rootModule =
-                    ProjectResolver.getRootModule(reactorProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+                    ProjectResolver.getRootModule(execution, reactorProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
             List<MavenProject> modules = rootModules.get(rootModule);
             if (modules == null) {
                 modules = new ArrayList<>();
                 rootModules.put(rootModule, modules);
             }
-            if (reactorProject.getBuildPlugins().contains(plugin)) {
+            if (containsBuildPlugin(reactorProject, plugin)) {
                 // only take modules into account that have a the same jQA plugin declaration as the root module
                 modules.add(reactorProject);
             }
@@ -117,12 +117,21 @@ public final class ProjectResolver {
     }
 
     /**
+     * Determines if the given plugin is a build plugin of a maven project.
+     *
+     * @param project The project.
+     * @param plugin  The plugin
+     * @return <code>true</code> if the project uses the plugim.
+     */
+    private static boolean containsBuildPlugin(MavenProject project, Plugin plugin) {
+        return project.getBuildPlugins().contains(plugin);
+    }
+
+    /**
      * Returns the directory containing rules.
      *
-     * @param rootModule
-     *            The root module of the project.
-     * @param rulesDirectory
-     *            The name of the directory used for identifying the root module.
+     * @param rootModule     The root module of the project.
+     * @param rulesDirectory The name of the directory used for identifying the root module.
      * @return The file representing the directory.
      */
     static File getRulesDirectory(MavenProject rootModule, String rulesDirectory) {
@@ -133,8 +142,7 @@ public final class ProjectResolver {
     /**
      * Determines the directory for writing output files.
      *
-     * @param rootModule
-     *            The root module of the project.
+     * @param rootModule The root module of the project.
      * @return The report directory.
      */
     static File getOutputDirectory(MavenProject rootModule) {
@@ -147,13 +155,10 @@ public final class ProjectResolver {
     /**
      * Determines a report file name.
      *
-     * @param rootModule
-     *            The base project.
-     * @param reportFile
-     *            The report file as specified in the pom.xml file or on the command line.
+     * @param rootModule The base project.
+     * @param reportFile The report file as specified in the pom.xml file or on the command line.
      * @return The resolved {@link java.io.File}.
-     * @throws MojoExecutionException
-     *             If the file cannot be determined.
+     * @throws MojoExecutionException If the file cannot be determined.
      */
     static File getOutputFile(MavenProject rootModule, File reportFile, String defaultFile) throws MojoExecutionException {
         File selectedXmlReportFile;
