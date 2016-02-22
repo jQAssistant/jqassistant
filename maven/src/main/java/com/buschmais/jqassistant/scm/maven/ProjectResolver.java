@@ -1,15 +1,14 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Resolver for root modules in a multi-module hierarchy.
@@ -39,14 +38,13 @@ public final class ProjectResolver {
      * directory "jqassistant" or no parent can be determined.
      * </p>
      *
-     * @param execution                     The current execution.
      * @param module                        The current module.
      * @param rulesDirectory                The name of the directory used for identifying the root module.
      * @param useExecutionRootAsProjectRoot <code>true</code> if the execution root shall be used as project root.
      * @return The {@link MavenProject} containing a rules directory.
      * @throws MojoExecutionException If the directory cannot be resolved.
      */
-    static MavenProject getRootModule(MojoExecution execution, MavenProject module, List<MavenProject> reactor, String rulesDirectory, boolean useExecutionRootAsProjectRoot)
+    static MavenProject getRootModule(MavenProject module, List<MavenProject> reactor, String rulesDirectory, boolean useExecutionRootAsProjectRoot)
             throws MojoExecutionException {
         String rootModuleContextKey = ProjectResolver.class.getName() + "#rootModule";
         MavenProject rootModule = (MavenProject) module.getContextValue(rootModuleContextKey);
@@ -54,7 +52,7 @@ public final class ProjectResolver {
             if (useExecutionRootAsProjectRoot) {
                 rootModule = getRootModule(reactor);
             } else {
-                rootModule = getRootModule(execution, module, rulesDirectory);
+                rootModule = getRootModule(module, rulesDirectory);
             }
             module.setContextValue(rootModuleContextKey, rootModule);
         }
@@ -70,15 +68,15 @@ public final class ProjectResolver {
         throw new MojoExecutionException("Cannot determine execution root.");
     }
 
-    private static MavenProject getRootModule(MojoExecution execution, MavenProject module, String rulesDirectory) throws MojoExecutionException {
+    private static MavenProject getRootModule(MavenProject module, String rulesDirectory) throws MojoExecutionException {
         MavenProject rootModule;
         File directory = getRulesDirectory(module, rulesDirectory);
         if (directory.exists() && directory.isDirectory()) {
             rootModule = module;
         } else {
             MavenProject parent = module.getParent();
-            if (parent != null && parent.getBasedir() != null && containsBuildPlugin(parent, execution.getPlugin())) {
-                rootModule = getRootModule(execution, parent, rulesDirectory);
+            if (parent != null && parent.getBasedir() != null) {
+                rootModule = getRootModule(parent, rulesDirectory);
             } else {
                 rootModule = module;
             }
@@ -89,29 +87,24 @@ public final class ProjectResolver {
     /**
      * Aggregate projects to their base projects
      *
-     * @param execution                     The current execution.
      * @param reactorProjects               The current reactor projects.
      * @param rulesDirectory                The configured rules directory.
      * @param useExecutionRootAsProjectRoot <code>true</code> if the execution root shall be used as project root.
      * @return A map containing resolved base projects and their aggregated projects.
      * @throws MojoExecutionException If aggregation fails.
      */
-    static Map<MavenProject, List<MavenProject>> getRootModules(MojoExecution execution, List<MavenProject> reactorProjects,
-                                                                String rulesDirectory, boolean useExecutionRootAsProjectRoot) throws MojoExecutionException {
-        Plugin plugin = execution.getPlugin();
+    static Map<MavenProject, List<MavenProject>> getProjects(List<MavenProject> reactorProjects,
+                                                             String rulesDirectory, boolean useExecutionRootAsProjectRoot) throws MojoExecutionException {
         Map<MavenProject, List<MavenProject>> rootModules = new HashMap<>();
         for (MavenProject reactorProject : reactorProjects) {
             MavenProject rootModule =
-                    ProjectResolver.getRootModule(execution, reactorProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+                    ProjectResolver.getRootModule(reactorProject, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
             List<MavenProject> modules = rootModules.get(rootModule);
             if (modules == null) {
                 modules = new ArrayList<>();
                 rootModules.put(rootModule, modules);
             }
-            if (containsBuildPlugin(reactorProject, plugin)) {
-                // only take modules into account that have a the same jQA plugin declaration as the root module
-                modules.add(reactorProject);
-            }
+            modules.add(reactorProject);
         }
         return rootModules;
     }
@@ -123,7 +116,7 @@ public final class ProjectResolver {
      * @param plugin  The plugin
      * @return <code>true</code> if the project uses the plugim.
      */
-    private static boolean containsBuildPlugin(MavenProject project, Plugin plugin) {
+    static boolean containsBuildPlugin(MavenProject project, Plugin plugin) {
         return project.getBuildPlugins().contains(plugin);
     }
 
