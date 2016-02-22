@@ -255,7 +255,7 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
                 }
             }
         } else if (value != null) {
-            stringValue = ReportHelper.getStringValue(value);
+            stringValue = ReportHelper.getLabel(value);
         }
         xmlStreamWriter.writeStartElement("value");
         xmlStreamWriter.writeCharacters(stringValue);

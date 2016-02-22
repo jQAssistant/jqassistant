@@ -138,7 +138,7 @@ public final class ReportHelper {
                     }
                     row.append(entry.getKey());
                     row.append('=');
-                    String stringValue = getStringValue(entry.getValue());
+                    String stringValue = getLabel(entry.getValue());
                     row.append(stringValue);
                 }
                 rows.add("  " + row.toString());
@@ -168,7 +168,7 @@ public final class ReportHelper {
      *            The value.
      * @return The string representation
      */
-    public static String getStringValue(Object value) {
+    public static String getLabel(Object value) {
         if (value != null) {
             if (value instanceof Descriptor) {
                 Descriptor descriptor = (Descriptor) value;
@@ -183,7 +183,7 @@ public final class ReportHelper {
                     if (sb.length() > 0) {
                         sb.append(",");
                     }
-                    sb.append(getStringValue(o));
+                    sb.append(getLabel(o));
                 }
                 return "[" + sb.toString() + "]";
             } else if (value instanceof Map) {
@@ -194,7 +194,7 @@ public final class ReportHelper {
                     }
                     sb.append(entry.getKey());
                     sb.append(":");
-                    sb.append(getStringValue(entry.getValue()));
+                    sb.append(getLabel(entry.getValue()));
                 }
                 return "{" + sb.toString() + "}";
             }

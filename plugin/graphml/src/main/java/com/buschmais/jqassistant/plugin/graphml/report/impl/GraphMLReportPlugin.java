@@ -8,6 +8,9 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +26,7 @@ import com.buschmais.xo.api.CompositeObject;
 
 /**
  * A report plugin that creates GraphML files based on the results of a concept.
- * 
+ *
  * @author mh
  * @author Dirk Mahler
  */
@@ -33,13 +36,14 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     private static final String CONCEPT_PATTERN = "graphml.report.conceptPattern";
     private static final String DIRECTORY = "graphml.report.directory";
-    private static final String YED_GRAPHML = "graphml.report.yedgraphml";
+    private static final String GRAPHML_DECORATOR = "graphml.decorator";
     private static final String FILEEXTENSION_GRAPHML = ".graphml";
 
     private String conceptPattern = ".*\\.graphml$";
     private String directory = "jqassistant/report";
-
     private XmlGraphMLWriter xmlGraphMLWriter;
+
+    private Rule currentRule;
 
     @Override
     public void initialize() throws ReportException {
@@ -49,7 +53,9 @@ public class GraphMLReportPlugin implements ReportPlugin {
     public void configure(Map<String, Object> properties) throws ReportException {
         this.conceptPattern = getProperty(properties, CONCEPT_PATTERN, conceptPattern);
         this.directory = getProperty(properties, DIRECTORY, directory);
-        xmlGraphMLWriter = new XmlGraphMLWriter();
+        String graphMLDecorator = getProperty(properties, GRAPHML_DECORATOR, YedGraphMLDecorator.class.getName());
+        GraphMLDecorator decorator = new ClassHelper(GraphMLReportPlugin.class.getClassLoader()).createInstance(GraphMLDecorator.class, graphMLDecorator);
+        xmlGraphMLWriter = new XmlGraphMLWriter(decorator);
     }
 
     private String getProperty(Map<String, Object> properties, String property, String defaultValue) throws ReportException {
@@ -67,6 +73,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     @Override
     public void beginConcept(Concept concept) throws ReportException {
+        this.currentRule = concept;
     }
 
     @Override
@@ -83,6 +90,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     @Override
     public void beginConstraint(Constraint constraint) throws ReportException {
+        this.currentRule = constraint;
     }
 
     @Override
@@ -127,7 +135,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
                         }
                     }
                 }
-                xmlGraphMLWriter.write(subGraph, writer);
+                xmlGraphMLWriter.write(currentRule, subGraph, writer);
                 writer.close();
             } catch (IOException | XMLStreamException e) {
                 throw new ReportException("Cannot write custom report.", e);

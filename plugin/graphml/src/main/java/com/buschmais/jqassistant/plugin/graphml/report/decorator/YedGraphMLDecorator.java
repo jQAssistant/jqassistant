@@ -6,10 +6,15 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.neo4j.graphdb.Node;
+import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.xo.api.CompositeObject;
 
 import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
 
+/**
+ * A GraphML decorator for yEd.
+ */
 public class YedGraphMLDecorator implements GraphMLDecorator {
 
     private static final String Y_NAMESPACE_URI = "http://www.yworks.com/xml/graphml";
@@ -57,12 +62,12 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     }
 
     @Override
-    public void writeNodeAttributes(XMLStreamWriter writer, Node node) throws XMLStreamException {
+    public void writeNodeAttributes(XMLStreamWriter writer, Rule rule, CompositeObject node) throws XMLStreamException {
         writer.writeAttribute("yfiles.foldertype", "folder");
     }
 
     @Override
-    public void writeNodeElements(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
+    public void writeNodeElements(XMLStreamWriter writer, Rule rule, CompositeObject node) throws XMLStreamException {
         writer.writeStartElement("data");
         writer.writeAttribute("key", "d6");
         writer.writeStartElement(Y_NAMESPACE_URI, "ProxyAutoBoundsNode");
@@ -79,6 +84,7 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         borderInsets.leftF = 50.5F;
         borderInsets.rightF = 48.9443359375F;
 
+        String nodeLabel = ReportHelper.getLabel(node);
         writeGroupNodeElement(writer, nodeLabel, false, borderInsets);
         writeGroupNodeElement(writer, nodeLabel, true, new Insets());
 
@@ -87,7 +93,7 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         writer.writeEndElement();
     }
 
-    public void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
+    private void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
         writer.writeStartElement(Y_NAMESPACE_URI, "GroupNode");
 
         writer.writeEmptyElement(Y_NAMESPACE_URI, "Fill");
