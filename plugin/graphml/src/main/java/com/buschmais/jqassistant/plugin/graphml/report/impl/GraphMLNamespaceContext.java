@@ -34,12 +34,12 @@ class GraphMLNamespaceContext implements NamespaceContext {
 
     @Override
     public String getNamespaceURI(String prefix) {
-        return namespaceByPrefix.getOrDefault(prefix, XMLConstants.NULL_NS_URI);
+        return getOrDefault(namespaceByPrefix, prefix, XMLConstants.NULL_NS_URI);
     }
 
     @Override
     public String getPrefix(String namespaceURI) {
-        return prefixByNameSpace.getOrDefault(namespaceURI, XMLConstants.DEFAULT_NS_PREFIX);
+        return getOrDefault(prefixByNameSpace, namespaceURI, XMLConstants.DEFAULT_NS_PREFIX);
     }
 
     @Override
@@ -49,11 +49,17 @@ class GraphMLNamespaceContext implements NamespaceContext {
 
     /**
      * Return all registered namespaces and their prefixes.
-     * 
+     *
      * @return The registered namespaces.
      */
     Map<String, String> getNamespaces() {
         return namespaceByPrefix;
     }
 
+    private <K, V> V getOrDefault(Map<K, V> map, K key, V defaultValue) {
+        if (map.containsKey(key)) {
+            return map.get(key);
+        }
+        return defaultValue;
+    }
 }
