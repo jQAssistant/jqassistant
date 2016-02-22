@@ -18,30 +18,53 @@ public abstract class AbstractProjectMojo extends AbstractMojo {
     @Override
     public final void execute(final MavenProject rootModule, final Set<MavenProject> executedModules) throws MojoExecutionException,
             MojoFailureException {
-        Map<MavenProject, List<MavenProject>> modules =
-                ProjectResolver.getRootModules(execution, reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
-        final List<MavenProject> currentModules = modules.get(rootModule);
-        boolean isLastModuleInProject = currentModules != null && currentModules.size() == executedModules.size() + 1;
+        Map<MavenProject, List<MavenProject>> projects =
+                ProjectResolver.getProjects(reactorProjects, rulesDirectory, useExecutionRootAsProjectRoot);
+        final List<MavenProject> projectModules = projects.get(rootModule);
+        boolean isLastModuleInProject = isLastModuleInProject(executedModules, projectModules);
         getLog().debug(
                 "Verifying if '" + currentProject + "' is last module for project '" + rootModule + "': " + isLastModuleInProject
-                        + (" (project modules='" + currentModules + "')."));
+                        + (" (project modules='" + projectModules + "')."));
         if (isLastModuleInProject) {
             execute(new StoreOperation() {
                 @Override
                 public void run(MavenProject rootModule, Store store) throws MojoExecutionException, MojoFailureException {
-                    aggregate(rootModule, currentModules, store);
+                    aggregate(rootModule, projectModules, store);
                 }
             }, rootModule, executedModules);
         }
     }
 
     /**
+     * Determines if the last module for a project is currently executed.
+     *
+     * @param executedModules The executed modules.
+     * @param projectModules  The modules of the project.
+     * @return <code>true</code> if the current module is the last of the project.
+     */
+    private boolean isLastModuleInProject(Set<MavenProject> executedModules, List<MavenProject> projectModules) {
+        int modulesWithPluginConfiguration = 0;
+        for (MavenProject currentModule : projectModules) {
+            if (ProjectResolver.containsBuildPlugin(currentModule, execution.getPlugin())) {
+                modulesWithPluginConfiguration++;
+            }
+        }
+        int expectedModules;
+        if (modulesWithPluginConfiguration > 0) {
+            getLog().debug("Found " + modulesWithPluginConfiguration + " modules with a plugin configuration.");
+            expectedModules = modulesWithPluginConfiguration;
+        } else {
+            getLog().debug("No plugin configuration found in modules for current project.");
+            expectedModules = projectModules.size();
+        }
+        return (expectedModules == executedModules.size() + 1);
+    }
+
+    /**
      * Execute the aggregated analysis.
      *
-     * @throws org.apache.maven.plugin.MojoExecutionException
-     *             If execution fails.
-     * @throws org.apache.maven.plugin.MojoFailureException
-     *             If execution fails.
+     * @throws org.apache.maven.plugin.MojoExecutionException If execution fails.
+     * @throws org.apache.maven.plugin.MojoFailureException   If execution fails.
      */
     protected abstract void aggregate(MavenProject rootModule, List<MavenProject> modules, Store store) throws MojoExecutionException,
             MojoFailureException;

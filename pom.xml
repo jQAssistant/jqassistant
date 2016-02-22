@@ -221,6 +221,7 @@
                             </goals>
                             <configuration>
                                 <schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
+                                <markGenerated>true</markGenerated>
                                 <args>
                                     <arg>-Xdefault-value</arg>
                                 </args>
