@@ -1,16 +1,11 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
-import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
-import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +17,9 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
 import com.buschmais.xo.api.CompositeObject;
 
 /**
@@ -111,7 +109,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
                     LOGGER.info("Created directory " + directory.getAbsolutePath());
                 }
                 File file = new File(directory, fileName);
-                SimpleSubGraph subGraph = new SimpleSubGraph();
+                SubGraphImpl subGraph = new SubGraphImpl();
                 for (Map<String, Object> row : result.getRows()) {
                     for (Object value : row.values()) {
                         if (value instanceof Map) {
@@ -122,8 +120,8 @@ public class GraphMLReportPlugin implements ReportPlugin {
                             if (VirtualNode.isNode(m)) {
                                 subGraph.add(new VirtualNode(m));
                             }
-                            if (SimpleSubGraph.isSubgraph(m)) {
-                                subGraph.add(new SimpleSubGraph(m));
+                            if (SubGraphImpl.isSubgraph(m)) {
+                                subGraph.add(new SubGraphImpl(m));
                             }
                         }
                         if (value instanceof CompositeObject) {

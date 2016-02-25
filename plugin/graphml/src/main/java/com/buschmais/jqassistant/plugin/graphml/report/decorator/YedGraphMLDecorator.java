@@ -1,16 +1,17 @@
 package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
-import com.buschmais.xo.api.CompositeObject;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.xo.api.CompositeObject;
 
 /**
  * A GraphML decorator for yEd.
@@ -20,18 +21,11 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     private static final String Y_NAMESPACE_URI = "http://www.yworks.com/xml/graphml";
     private static final String YED_NAMESPACE_URI = "http://www.yworks.com/xml/yed/3";
 
-    private Result<?> result;
     private XMLStreamWriter writer;
-    private File file;
-    private Map<String, Object> properties;
-
 
     @Override
-    public void initialize(Result<?> result, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
-        this.result = result;
-        this.writer= xmlWriter;
-        this.file = file;
-        this.properties = properties;
+    public void initialize(Result<?> result, SubGraph subGraph, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
+        this.writer = xmlWriter;
     }
 
     @Override
@@ -44,7 +38,9 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
 
     @Override
     public Map<String, String> getSchemaLocations() {
-        return Collections.emptyMap();
+        Map<String, String> schemaLocations = new HashMap<>();
+        schemaLocations.put("http://graphml.graphdrawing.org/xmlns", "http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
+        return schemaLocations;
     }
 
     @Override

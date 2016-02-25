@@ -1,26 +1,31 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
-import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
-import com.buschmais.xo.api.CompositeObject;
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.PropertyContainer;
-import org.neo4j.graphdb.Relationship;
+import static com.buschmais.jqassistant.plugin.graphml.report.impl.MetaInformation.getLabelsString;
 
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import static com.buschmais.jqassistant.plugin.graphml.report.impl.MetaInformation.getLabelsString;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.PropertyContainer;
+import org.neo4j.graphdb.Relationship;
+
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.xo.api.CompositeObject;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
  * @author mh
@@ -35,41 +40,42 @@ public class XmlGraphMLWriter {
     /**
      * Constructor.
      *
-     * @param decoratorClass The decorator class.
-     * @param properties     The properties of the GraphML plugin.
+     * @param decoratorClass
+     *            The decorator class.
+     * @param properties
+     *            The properties of the GraphML plugin.
      */
     XmlGraphMLWriter(Class<? extends GraphMLDecorator> decoratorClass, Map<String, Object> properties) {
         this.decoratorClass = decoratorClass;
         this.properties = properties;
     }
 
-    void write(Result<?> result, SimpleSubGraph graph, File file) throws IOException, XMLStreamException {
-        ExecutableRule rule = result.getRule();
+    void write(Result<?> result, SubGraphImpl graph, File file) throws IOException, XMLStreamException {
         try (PrintWriter writer = new PrintWriter(new FileWriter(file));
-             GraphMLDecorator decorator = new ClassHelper(decoratorClass.getClassLoader()).createInstance(decoratorClass)) {
+                GraphMLDecorator decorator = new ClassHelper(decoratorClass.getClassLoader()).createInstance(decoratorClass)) {
             XMLStreamWriter xmlWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(writer));
-            decorator.initialize(result, xmlWriter, file, properties);
+            decorator.initialize(result, graph, xmlWriter, file, properties);
             GraphMLNamespaceContext context = new GraphMLNamespaceContext(decorator.getNamespaces(), decorator.getSchemaLocations());
             xmlWriter.setNamespaceContext(context);
             writeHeader(xmlWriter, context);
             writeKeyTypes(xmlWriter, graph);
             decorator.writeKeys();
 
-            writeSubgraph(rule, graph, xmlWriter, decorator);
+            writeSubgraph(graph, xmlWriter, decorator);
 
             // filter and write edges
-            Collection<CompositeObject> allCoNodes = graph.getAllNodes();
+            Collection<CompositeObject> allCoNodes = graph.getNodes();
             Set<Long> allNodes = new HashSet<>();
             for (CompositeObject compositeObject : allCoNodes) {
                 allNodes.add(((Node) compositeObject.getDelegate()).getId());
             }
 
-            for (CompositeObject coRel : graph.getAllRelationships()) {
+            for (CompositeObject coRel : graph.getRelationships()) {
                 Relationship rel = coRel.getDelegate();
                 long startId = rel.getStartNode().getId();
                 long endId = rel.getEndNode().getId();
                 if (allNodes.contains(startId) && allNodes.contains(endId)) {
-                    writeRelationship(xmlWriter, decorator, rule, coRel);
+                    writeRelationship(xmlWriter, decorator, coRel);
                 }
             }
 
@@ -79,11 +85,10 @@ public class XmlGraphMLWriter {
         }
     }
 
-
-    private void writeSubgraph(Rule rule, SimpleSubGraph graph, XMLStreamWriter writer, GraphMLDecorator decorator) throws XMLStreamException, IOException {
+    private void writeSubgraph(SubGraph graph, XMLStreamWriter writer, GraphMLDecorator decorator) throws XMLStreamException, IOException {
         CompositeObject wrapperNode = graph.getParentNode();
         if (wrapperNode != null) {
-            writeNode(writer, decorator, rule, wrapperNode, false);
+            writeNode(writer, decorator, wrapperNode, false);
         }
 
         writer.writeStartElement("graph");
@@ -92,11 +97,11 @@ public class XmlGraphMLWriter {
         newLine(writer);
 
         for (CompositeObject node : graph.getNodes()) {
-            writeNode(writer, decorator, rule, node, true);
+            writeNode(writer, decorator, node, true);
         }
 
-        for (SimpleSubGraph subgraph : graph.getSubgraphs()) {
-            writeSubgraph(rule, subgraph, writer, decorator);
+        for (SubGraph subgraph : graph.getSubGraphs()) {
+            writeSubgraph(subgraph, writer, decorator);
         }
 
         endElement(writer);
@@ -106,15 +111,15 @@ public class XmlGraphMLWriter {
         }
     }
 
-    private void writeKeyTypes(XMLStreamWriter writer, SimpleSubGraph ops) throws IOException, XMLStreamException {
+    private void writeKeyTypes(XMLStreamWriter writer, SubGraphImpl ops) throws IOException, XMLStreamException {
         Map<String, Class> keyTypes = new HashMap<>();
         keyTypes.put("labels", String.class);
-        for (CompositeObject node : ops.getAllNodes()) {
+        for (CompositeObject node : ops.getNodes()) {
             updateKeyTypes(keyTypes, node);
         }
         writeKeyTypes(writer, keyTypes, "node");
         keyTypes.clear();
-        for (CompositeObject rel : ops.getAllRelationships()) {
+        for (CompositeObject rel : ops.getRelationships()) {
             updateKeyTypes(keyTypes, rel);
         }
         writeKeyTypes(writer, keyTypes, "edge");
@@ -153,7 +158,8 @@ public class XmlGraphMLWriter {
         }
     }
 
-    private int writeNode(XMLStreamWriter writer, GraphMLDecorator decorator, Rule rule, CompositeObject composite, boolean withEnd) throws IOException, XMLStreamException {
+    private int writeNode(XMLStreamWriter writer, GraphMLDecorator decorator, CompositeObject composite, boolean withEnd) throws IOException,
+            XMLStreamException {
         Node node = composite.getDelegate();
         writer.writeStartElement("node");
         writer.writeAttribute("id", id(node));
@@ -185,7 +191,8 @@ public class XmlGraphMLWriter {
         writeData(writer, "labels", labelsString);
     }
 
-    private int writeRelationship(XMLStreamWriter writer, GraphMLDecorator decorator, Rule rule, CompositeObject coRel) throws IOException, XMLStreamException {
+    private int writeRelationship(XMLStreamWriter writer, GraphMLDecorator decorator, CompositeObject coRel) throws IOException,
+            XMLStreamException {
         Relationship rel = coRel.getDelegate();
         writer.writeStartElement("edge");
         writer.writeAttribute("id", id(rel));
@@ -237,19 +244,14 @@ public class XmlGraphMLWriter {
         newLine(writer);
         writer.writeStartElement("graphml");
         writer.writeNamespace("xmlns", "http://graphml.graphdrawing.org/xmlns");
-
         for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", entry.getKey(), entry.getValue());
         }
-
         if (!context.getSchemaLocations().isEmpty()) {
             StringBuilder schemaLocations = new StringBuilder();
-
             for (Map.Entry<String, String> entry : context.getSchemaLocations().entrySet()) {
-                schemaLocations.append(entry.getKey() + " " + entry.getValue());
+                schemaLocations.append(entry.getKey()).append(" ").append(entry.getValue());
             }
-//        writer.writeAttribute("xsi", "", "schemaLocation",
-//                "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
             writer.writeAttribute("xsi", "", "schemaLocation", schemaLocations.toString());
         }
         newLine(writer);

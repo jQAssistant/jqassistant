@@ -1,22 +1,24 @@
 package com.buschmais.jqassistant.plugin.graphml.test;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
-import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
-import com.buschmais.xo.api.CompositeObject;
+import java.io.File;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import java.io.File;
-import java.util.Map;
+
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
+import com.buschmais.xo.api.CompositeObject;
 
 public class CustomGraphMLDecorator implements GraphMLDecorator {
 
     private GraphMLDecorator delegate = new YedGraphMLDecorator();
 
     @Override
-    public void initialize(Result<?> result, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
-        delegate.initialize(result, xmlWriter, file, properties);
+    public void initialize(Result<?> result, SubGraph subGraph, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
+        delegate.initialize(result, subGraph, xmlWriter, file, properties);
     }
 
     @Override
