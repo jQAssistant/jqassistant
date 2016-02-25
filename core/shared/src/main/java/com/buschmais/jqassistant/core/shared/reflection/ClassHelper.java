@@ -32,7 +32,7 @@ public final class ClassHelper {
     }
 
     /**
-     * Create an instance of the given scanner plugin class.
+     * Create an instance of the given class.
      *
      * @param type     The type.
      * @param typeName The type name.
@@ -42,6 +42,21 @@ public final class ClassHelper {
     public <T> T createInstance(Class<T> type, String typeName) {
         try {
             return type.cast(getType(typeName).newInstance());
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalArgumentException("Cannot create instance of class " + type.getName(), e);
+        }
+    }
+
+    /**
+     * Create an instance of the given class.
+     *
+     * @param type The type.
+     * @param <T>  The type.
+     * @return The scanner plugin instance.
+     */
+    public <T> T createInstance(Class<T> type) {
+        try {
+            return type.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException("Cannot create instance of class " + type.getName(), e);
         }
