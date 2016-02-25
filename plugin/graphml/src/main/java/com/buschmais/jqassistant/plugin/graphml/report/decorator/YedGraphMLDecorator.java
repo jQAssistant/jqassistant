@@ -8,6 +8,7 @@ import com.buschmais.xo.api.CompositeObject;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +40,11 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         namespaces.put("y", Y_NAMESPACE_URI);
         namespaces.put("yed", YED_NAMESPACE_URI);
         return namespaces;
+    }
+
+    @Override
+    public Map<String, String> getSchemaLocations() {
+        return Collections.emptyMap();
     }
 
     @Override

@@ -17,9 +17,12 @@ class GraphMLNamespaceContext implements NamespaceContext {
 
     private Map<String, String> prefixByNameSpace;
 
-    public GraphMLNamespaceContext(Map<String, String> additionalNamespaces) {
+    private Map<String, String> schemaLocations;
+
+    public GraphMLNamespaceContext(Map<String, String> additionalNamespaces, Map<String, String> schemaLocations) {
         this.namespaceByPrefix = createDefaultNamespaces();
         this.namespaceByPrefix.putAll(additionalNamespaces);
+        this.schemaLocations = schemaLocations;
         this.prefixByNameSpace = new HashMap<>();
         for (Map.Entry<String, String> entry : this.namespaceByPrefix.entrySet()) {
             this.prefixByNameSpace.put(entry.getValue(), entry.getKey());
@@ -56,10 +59,20 @@ class GraphMLNamespaceContext implements NamespaceContext {
         return namespaceByPrefix;
     }
 
+    /**
+     * Return namespaces and their schema locatons.
+     *
+     * @return The schema locations.
+     */
+    public Map<String, String> getSchemaLocations() {
+        return schemaLocations;
+    }
+
     private <K, V> V getOrDefault(Map<K, V> map, K key, V defaultValue) {
         if (map.containsKey(key)) {
             return map.get(key);
         }
         return defaultValue;
     }
+
 }

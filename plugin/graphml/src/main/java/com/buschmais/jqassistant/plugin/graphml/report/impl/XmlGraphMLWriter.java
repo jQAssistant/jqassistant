@@ -49,7 +49,7 @@ public class XmlGraphMLWriter {
              GraphMLDecorator decorator = new ClassHelper(decoratorClass.getClassLoader()).createInstance(decoratorClass)) {
             XMLStreamWriter xmlWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(writer));
             decorator.initialize(result, xmlWriter, file, properties);
-            GraphMLNamespaceContext context = new GraphMLNamespaceContext(decorator.getNamespaces());
+            GraphMLNamespaceContext context = new GraphMLNamespaceContext(decorator.getNamespaces(), decorator.getSchemaLocations());
             xmlWriter.setNamespaceContext(context);
             writeHeader(xmlWriter, context);
             writeKeyTypes(xmlWriter, graph);
@@ -237,15 +237,21 @@ public class XmlGraphMLWriter {
         newLine(writer);
         writer.writeStartElement("graphml");
         writer.writeNamespace("xmlns", "http://graphml.graphdrawing.org/xmlns");
-        //writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "xsi", "http://www.w3.org/2001/XMLSchema-instance");
 
         for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
             writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", entry.getKey(), entry.getValue());
         }
 
-        //decorator.writeAdditionalNamespace(writer);
-        writer.writeAttribute("xsi", "", "schemaLocation",
-                "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
+        if (!context.getSchemaLocations().isEmpty()) {
+            StringBuilder schemaLocations = new StringBuilder();
+
+            for (Map.Entry<String, String> entry : context.getSchemaLocations().entrySet()) {
+                schemaLocations.append(entry.getKey() + " " + entry.getValue());
+            }
+//        writer.writeAttribute("xsi", "", "schemaLocation",
+//                "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
+            writer.writeAttribute("xsi", "", "schemaLocation", schemaLocations.toString());
+        }
         newLine(writer);
     }
 

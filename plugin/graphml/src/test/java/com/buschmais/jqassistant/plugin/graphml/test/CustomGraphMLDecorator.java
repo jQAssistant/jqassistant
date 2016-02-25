@@ -25,6 +25,11 @@ public class CustomGraphMLDecorator implements GraphMLDecorator {
     }
 
     @Override
+    public Map<String, String> getSchemaLocations() {
+        return delegate.getSchemaLocations();
+    }
+
+    @Override
     public void writeKeys() throws XMLStreamException {
         delegate.writeKeys();
     }

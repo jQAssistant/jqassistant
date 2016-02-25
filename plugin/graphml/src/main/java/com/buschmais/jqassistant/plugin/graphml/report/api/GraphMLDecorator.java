@@ -34,6 +34,13 @@ public interface GraphMLDecorator extends Closeable {
     Map<String, String> getNamespaces();
 
     /**
+     * Return the schema locations identified by their namespaces.
+     *
+     * @return The schema locations.
+     */
+    Map<String, String> getSchemaLocations();
+
+    /**
      * Writes a bunch of keys in the graphml-Tag that will be used for formating or so. This method can be overwritten if any special default keys are
      * necessary. Please call super to ensure all needed keys will be created.
      *
@@ -77,5 +84,6 @@ public interface GraphMLDecorator extends Closeable {
      * Finish writing the GraphML document for a rule.
      */
     void close();
+
 
 }
