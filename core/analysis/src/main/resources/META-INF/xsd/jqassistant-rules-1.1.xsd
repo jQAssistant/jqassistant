@@ -60,6 +60,14 @@
         <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="propertyType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
     <xs:simpleType name="severityEnumType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="blocker"/>
@@ -185,6 +193,10 @@
     </xs:complexType>
 
     <xs:complexType name="reportType">
+        <xs:sequence>
+            <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string" use="optional"/>
         <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
     </xs:complexType>
 
