@@ -53,9 +53,9 @@ public class GraphMLReportPlugin implements ReportPlugin {
     public void configure(Map<String, Object> properties) throws ReportException {
         this.conceptPattern = getProperty(properties, CONCEPT_PATTERN, conceptPattern);
         this.directory = getProperty(properties, DIRECTORY, directory);
-        String graphMLDecorator = getProperty(properties, GRAPHML_DECORATOR, YedGraphMLDecorator.class.getName());
-        GraphMLDecorator decorator = new ClassHelper(GraphMLReportPlugin.class.getClassLoader()).createInstance(GraphMLDecorator.class, graphMLDecorator);
-        xmlGraphMLWriter = new XmlGraphMLWriter(decorator);
+        String graphMLDecoratorClass = getProperty(properties, GRAPHML_DECORATOR, YedGraphMLDecorator.class.getName());
+        Class<GraphMLDecorator> type = new ClassHelper(GraphMLReportPlugin.class.getClassLoader()).getType(graphMLDecoratorClass);
+        xmlGraphMLWriter = new XmlGraphMLWriter(type, properties);
     }
 
     private String getProperty(Map<String, Object> properties, String property, String defaultValue) throws ReportException {
@@ -111,7 +111,6 @@ public class GraphMLReportPlugin implements ReportPlugin {
                     LOGGER.info("Created directory " + directory.getAbsolutePath());
                 }
                 File file = new File(directory, fileName);
-                PrintWriter writer = new PrintWriter(new FileWriter(file));
                 SimpleSubGraph subGraph = new SimpleSubGraph();
                 for (Map<String, Object> row : result.getRows()) {
                     for (Object value : row.values()) {
@@ -120,23 +119,19 @@ public class GraphMLReportPlugin implements ReportPlugin {
                             if (VirtualRelationship.isRelationship(m)) {
                                 subGraph.add(new VirtualRelationship(m));
                             }
-
                             if (VirtualNode.isNode(m)) {
                                 subGraph.add(new VirtualNode(m));
                             }
-
                             if (SimpleSubGraph.isSubgraph(m)) {
                                 subGraph.add(new SimpleSubGraph(m));
                             }
-
                         }
                         if (value instanceof CompositeObject) {
                             subGraph.add(value);
                         }
                     }
                 }
-                xmlGraphMLWriter.write(currentRule, subGraph, writer);
-                writer.close();
+                xmlGraphMLWriter.write(result, subGraph, file);
             } catch (IOException | XMLStreamException e) {
                 throw new ReportException("Cannot write custom report.", e);
             }

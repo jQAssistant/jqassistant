@@ -36,6 +36,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
  * Verifies functionality of the GraphML report plugin.
  */
 public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphMLReportPlugin.class);
 
     public static final String REPORT_DIR = "target/graphml";
@@ -59,6 +60,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     private Map<String, Object> getReportProperties() {
         Map<String, Object> properties = new HashMap<>();
         properties.put("graphml.report.directory", REPORT_DIR);
+        properties.put("graphml.decorator", CustomGraphMLDecorator.class.getName());
         return properties;
     }
 
@@ -80,7 +82,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         XPathExpression classExpression = xpath.compile("/graphml/graph/node[contains(@labels,':Class')]/data[@key='fqn']");
         NodeList classes = (NodeList) classExpression.evaluate(doc, XPathConstants.NODESET);
 
-        String[] classNames = { A.class.getName(), B.class.getName() };
+        String[] classNames = {A.class.getName(), B.class.getName()};
         for (int i = 0; i < classes.getLength(); i++) {
             Node item = classes.item(i);
             String value = item.getTextContent();
@@ -132,7 +134,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses)
-         throws Exception {
+            throws Exception {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.addAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);

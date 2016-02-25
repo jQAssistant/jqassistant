@@ -1,13 +1,30 @@
 package com.buschmais.jqassistant.plugin.graphml.report.api;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.xo.api.CompositeObject;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import java.io.Closeable;
+import java.io.File;
 import java.util.Map;
 
-public interface GraphMLDecorator {
+/**
+ * Defines the interface for a GraphML decorator.
+ * <p>
+ * Provides methods that are called if elements for nodes or relationships are written which may be implemented for adding attributes or XML elements.
+ */
+public interface GraphMLDecorator extends Closeable {
+
+    /**
+     * Initialize the decorator.
+     *
+     * @param result     The current result that is written as a graph.
+     * @param xmlWriter  The {@link XMLStreamWriter} that is used for writing.
+     * @param file       The output file.
+     * @param properties The properties from the GraphML plugin configuration.
+     */
+    void initialize(Result<?> result, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties);
 
     /**
      * Return the additional namespaces identified by their prefixes which are used by the decorator.
@@ -20,28 +37,45 @@ public interface GraphMLDecorator {
      * Writes a bunch of keys in the graphml-Tag that will be used for formating or so. This method can be overwritten if any special default keys are
      * necessary. Please call super to ensure all needed keys will be created.
      *
-     * @param writer the XMLWriter
-     * @throws XMLStreamException
+     * @throws XMLStreamException If writing fails.
      */
-    void writeKeys(XMLStreamWriter writer) throws XMLStreamException;
+    void writeKeys() throws XMLStreamException;
 
     /**
-     * Can be overwritten to add additional node attributes. Please call super to ensure all necessary attributes will be written.
+     * Add node attributes.
      *
-     * @param writer the xml writer
-     * @param node   the node
+     * @param node the node
      * @throws XMLStreamException
      */
-    void writeNodeAttributes(XMLStreamWriter writer, Rule rule, CompositeObject node) throws XMLStreamException;
+    void writeNodeAttributes(CompositeObject node) throws XMLStreamException;
 
     /**
-     * Used to insert additional elements inside a node-element. Can be overwriten, but please call super to ensure all needed elements will be
-     * created.
+     * Add elements inside a node-element.
      *
-     * @param writer the xml writer
-     * @param node   the node
+     * @param node the node
      * @throws XMLStreamException
      */
-    void writeNodeElements(XMLStreamWriter writer, Rule rule, CompositeObject node) throws XMLStreamException;
+    void writeNodeElements(CompositeObject node) throws XMLStreamException;
+
+    /**
+     * Add relationship attributes.
+     *
+     * @param relationship the relationship
+     * @throws XMLStreamException
+     */
+    void writeRelationshipAttributes(CompositeObject relationship) throws XMLStreamException;
+
+    /**
+     * Add elements inside a relationship-element.
+     *
+     * @param relationship the relationship
+     * @throws XMLStreamException
+     */
+    void writeRelationshipElements(CompositeObject relationship) throws XMLStreamException;
+
+    /**
+     * Finish writing the GraphML document for a rule.
+     */
+    void close();
 
 }

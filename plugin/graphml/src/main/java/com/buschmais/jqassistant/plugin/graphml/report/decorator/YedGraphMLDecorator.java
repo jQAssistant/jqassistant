@@ -1,16 +1,15 @@
 package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.xo.api.CompositeObject;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.xo.api.CompositeObject;
-
-import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A GraphML decorator for yEd.
@@ -19,6 +18,20 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
 
     private static final String Y_NAMESPACE_URI = "http://www.yworks.com/xml/graphml";
     private static final String YED_NAMESPACE_URI = "http://www.yworks.com/xml/yed/3";
+
+    private Result<?> result;
+    private XMLStreamWriter writer;
+    private File file;
+    private Map<String, Object> properties;
+
+
+    @Override
+    public void initialize(Result<?> result, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
+        this.result = result;
+        this.writer= xmlWriter;
+        this.file = file;
+        this.properties = properties;
+    }
 
     @Override
     public Map<String, String> getNamespaces() {
@@ -29,7 +42,7 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     }
 
     @Override
-    public void writeKeys(XMLStreamWriter writer) throws XMLStreamException {
+    public void writeKeys() throws XMLStreamException {
         writer.writeEmptyElement("key");
         writer.writeAttribute("for", "graphml");
         writer.writeAttribute("id", "d0");
@@ -62,12 +75,12 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     }
 
     @Override
-    public void writeNodeAttributes(XMLStreamWriter writer, Rule rule, CompositeObject node) throws XMLStreamException {
+    public void writeNodeAttributes(CompositeObject node) throws XMLStreamException {
         writer.writeAttribute("yfiles.foldertype", "folder");
     }
 
     @Override
-    public void writeNodeElements(XMLStreamWriter writer, Rule rule, CompositeObject node) throws XMLStreamException {
+    public void writeNodeElements(CompositeObject node) throws XMLStreamException {
         writer.writeStartElement("data");
         writer.writeAttribute("key", "d6");
         writer.writeStartElement(Y_NAMESPACE_URI, "ProxyAutoBoundsNode");
@@ -91,6 +104,18 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
+    }
+
+    @Override
+    public void writeRelationshipAttributes(CompositeObject relationship) throws XMLStreamException {
+    }
+
+    @Override
+    public void writeRelationshipElements(CompositeObject relationship) throws XMLStreamException {
+    }
+
+    @Override
+    public void close() {
     }
 
     private void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
