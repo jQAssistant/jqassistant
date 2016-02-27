@@ -62,7 +62,7 @@
 										</fileMappers>
 										<parameters>
 											<parameter>
-												<name>pluginName</name>
+												<name>artifactId</name>
 												<value>${project.artifactId}</value>
 											</parameter>
 										</parameters>
@@ -82,6 +82,12 @@
 												<replacement>$1.xml.adoc</replacement>
 											</fileMapper>
 										</fileMappers>
+                                        <parameters>
+                                            <parameter>
+                                                <name>dirOfPluginXML</name>
+                                                <value>${project.basedir}/src/main/resources/META-INF</value>
+                                            </parameter>
+                                        </parameters>
 									</transformationSet>
 								</transformationSets>
 							</configuration>
