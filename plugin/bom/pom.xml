@@ -15,6 +15,11 @@
         <dependencies>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.cdi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>jqassistant.plugin.java</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -148,6 +153,11 @@
                 <version>${project.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.xml</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
