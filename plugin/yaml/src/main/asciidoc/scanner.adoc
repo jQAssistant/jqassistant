@@ -9,7 +9,7 @@ Each node can have one of the following values as content: scalar value, sequenc
 or mapping. This plugin imports a YAML file in a simplified manner as simply
 model of keys and values. See section <<yaml-examples>> for examples.
 
-IMPORTANT: This YAML scanner supports not the full YAML 1.1 specification as is
+IMPORTANT: This YAML scanner does not support the full YAML 1.1 specification as is
 is intended to help to scan and validate YAML configuration files with the
 help of a simple graph model. If you need an better support for YAML files,
 please report a feature request.
@@ -36,18 +36,18 @@ Maven it must be added to the list of dependencies as shown below.
 </plugin>
 ----
 
-=== :File:YAML
+=== Nodes labled with `:File:YAML`
 
 A file with the file extension `.yaml` containing zero or more YAML documents.
 
-.Relations of :File:Xml
+.Relations of `:File:Xml`
 [options="header"]
 |====
 | Name              | Target label(s)    | Cardinality    | Description
 | CONTAINS_DOCUMENT | <<:Document:YAML>> | 0..n           | References a document in the file
 |====
 
-.Properties of :File:YAML
+.Properties of `:File:YAML`
 [options="header"]
 |====
 | Name    | Description
@@ -59,13 +59,13 @@ A file with the file extension `.yaml` containing zero or more YAML documents.
 |====
 
 An non-parsable file with YAML documents will not have any outgoing relationships
-to any dependent <<:Document:YAML,YAML documents>>. Please consider this aspect
+to any dependent `<<:Document:YAML,YAML documents>>`. Please consider this aspect
 when writing your queries.
 
 [[:Document:YAML]]
 === :Document:YAML
 
-.Relations of :Document:YAML
+.Relations of `:Document:YAML`
 [options="header"]
 |===
 | Name           | Target label(s)  | Cardinality | Description
@@ -74,9 +74,9 @@ when writing your queries.
 |===
 
 [[:Key:YAML]]
-=== :Key:YAML
+=== Nodes labled with `:Key:YAML`
 
-.Properties of :Key:YAML
+.Properties of `:Key:YAML`
 [options="header"]
 |====
 | Name   | Description
@@ -86,7 +86,7 @@ when writing your queries.
 |====
 
 
-.Relations of :Key:YAML
+.Relations of `:Key:YAML`
 |===
 | Name           | Target label(s)  | Cardinality | Description
 | CONTAINS_KEY   | <<:Key:YAML>>    | 0..n        | References a child key of the containing key
@@ -95,17 +95,17 @@ when writing your queries.
 
 
 [[:Value:YAML]]
-=== :Value:YAML
+=== Nodes labled with `:Value:YAML`
 
 Nodes tagged with `:Value:YAML` represents YAML scalars assigned to a <<:Key:YAML>>.
 
-.Properties of :Value:YAML
+.Properties of `:Value:YAML`
 |===
 | Name  | Description
 | value | The value itself.
 |===
 
-.Relations of :Value:YAML
+.Relations of `:Value:YAML`
 |===
 | Name           | Target label(s) | Cardinality | Description
 | CONTAINS_VALUE | <<:Value:YAML>> | 0..n        | References a child value assigned to this value

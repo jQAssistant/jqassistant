@@ -2,17 +2,17 @@
 == Scanner for WAR files
 Imports WAR (Web Application Archive) files.
 
-=== :File:Web:Application:Archive:Container
+=== Nodes labled with `:File:Web:Application:Archive:Container`
 A file representing WAR file.
 
-.Properties of :File:Web:Application:Archive:Container
+.Properties of `:File:Web:Application:Archive:Container`
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :File:Web:Application:Archive:Container
+.Relations of `:File:Web:Application:Archive:Container`
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description
@@ -20,10 +20,10 @@ A file representing WAR file.
 |====
 
 [[WebXmlScanner]]
-=== :File:Web:Xml
+=== Nodes labled with `:File:Web:Xml`
 Represents a web application descriptor.
 
-.Relations of :File:Web:Xml
+.Relations of `:File:Web:Xml`
 [options="header"]
 |====
 | Name                    | Target label(s)     | Cardinality | Description
@@ -42,10 +42,10 @@ Represents a web application descriptor.
 
 
 [[:SessionConfig]]
-=== :SessionConfig
+=== Nodes labled with `:SessionConfig`
 Represents a session configuration.
 
-.Properties of :SessionConfig
+.Properties of `:SessionConfig`
 [options="header"]
 |====
 | Name           | Description
@@ -54,10 +54,10 @@ Represents a session configuration.
 
 
 [[:Servlet]]
-=== :Servlet
+=== Nodes labled with `:Servlet`
 Represents a servlet declaration.
 
-.Properties of :Servlet
+.Properties of `:Servlet`
 [options="header"]
 |====
 | Name          | Description
@@ -66,7 +66,7 @@ Represents a servlet declaration.
 | loadOnStartup | Indicates whether the servlet will be loaded on startup.
 |====
 
-.Relations of :Servlet
+.Relations of `:Servlet`
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description

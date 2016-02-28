@@ -1,19 +1,20 @@
 [[PersistenceScanner]]
 == Scanner for persistence.xml files
-Imports persistence descriptors from META-INF/persistence.xml or WEB-INF/persistence.xml files.
+Imports persistence descriptors from `META-INF/persistence.xml` or
+`WEB-INF/persistence.xml` files.
 
-=== :File:Jpa:Persistence
-A persistence.xml file containing persistence units.
+=== `:File:Jpa:Persistence`
+A `persistence.xml` file containing persistence units.
 
-.Properties of :File:Jpa:Persistence
+.Properties of `:File:Jpa:Persistence`
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
-| version  | The version of the JPA specification this descriptor represents, e.g. '2.0'
+| version  | The version of the JPA specification this descriptor represents, e.g. `2.0`
 |====
 
-.Relations of :File:Jpa:Persistence
+.Relations of `:File:Jpa:Persistence`
 [options="header"]
 |====
 | Name     | Target label(s)          | Cardinality | Description
@@ -24,21 +25,21 @@ A persistence.xml file containing persistence units.
 === :Jpa:PersistenceUnit
 A persistence unit.
 
-.Properties of :Jpa:PersistenceUnit
+.Properties of `:Jpa:PersistenceUnit`
 [options="header"]
 |====
 | Name                   | Description
 | description            | The description of the persistence unit.
 | excludeUnlistedClasses | If the persistence unit should only contain listed classes or all entities.
-| transactionType        | The transaction type, can be 'RESOURCE_LOCAL' or 'JTA'
+| transactionType        | The transaction type, can be `RESOURCE_LOCAL` or `JTA`
 | provider               | The class name of the JPA provider.
 | jtaDatasource          | The JNDI name of the transactional datasource
 | nonJtaDatasource       | The JNDI name of the non-transactional datasource
-| validationMode         | The validation mode, can be 'NONE', 'CALLBACK' or 'AUTO'
-| sharedCacheMode        | The shared cache mode, e.g. 'NONE'
+| validationMode         | The validation mode, can be `NONE`, `CALLBACK` or `AUTO`
+| sharedCacheMode        | The shared cache mode, e.g. `NONE`
 |====
 
-.Relations of :Jpa:PersistenceUnit
+.Relations of `:Jpa:PersistenceUnit`
 [options="header"]
 |====
 | Name      | Target label(s)     | Cardinality | Description

@@ -2,11 +2,12 @@
 == Scanner for metadata of a relational database schema
 Imports the metadata of a relational database schema, i.e. schemas, tables and columns.
 
-*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g. as dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
+*NOTE* The JDBC driver must be available on the jQAssistant classpath, e.g.
+as dependency of the Maven plugin or copied to the plugins/ folder of the distribution.
 
 === Connection URI scanner
 
-The connection information may be specified as URI using scope "rdbms:connection", e.g. on the command line
+The connection information may be specified as URI using scope `rdbms:connection`, e.g. on the command line
 
 ----
 jqassistant.sh scan -u rdbms:connection::jdbc:oracle:thin:username/password@host:1521:sid
@@ -14,8 +15,10 @@ jqassistant.sh scan -u rdbms:connection::jdbc:oracle:thin:username/password@host
 
 === Connection property file scanner
 
-The connection properties can also be read from property files having a file name with prefix ${project.ArtifactId},
- e.g. "${project.ArtifactId}_test.properties". Each of them must contain at least the properties "driver", "url", "user" and "password", e.g.
+The connection properties can also be read from property files having
+a file name with prefix `${project.ArtifactId}`, e.g.
+`${project.ArtifactId}_test.properties`. Each of them must contain at
+least the properties `driver`, `url`, `user` and `password`, e.g.
 
 [source]
 .${project.ArtifactId}_test.properties
@@ -56,11 +59,12 @@ password=
 
 
 [[:Rdbms:Connection:Properties]]
-=== :Rdbms:Connection:Properties
-Represents a file containing the connection properties described above which have been used to read the schema metadata. It provides the same
+=== Nodes labled with `:Rdbms:Connection:Properties`
+Represents a file containing the connection properties described above which
+have been used to read the schema metadata. It provides the same
 properties and relations as <<:File:Properties>>.
 
-.Relations of :Rdbms:Connection:Properties
+.Relations of `:Rdbms:Connection:Properties`
 [options="header"]
 |====
 | Name             | Target label(s)   | Cardinality | Description
@@ -68,37 +72,37 @@ properties and relations as <<:File:Properties>>.
 |====
 
 [[:Rdbms:Schema]]
-=== :Rdbms:Schema
+=== Nodes labled with `:Rdbms:Schema`
 Describes a database schema.
 
-.Properties of :Rdbms:Schema
+.Properties of `:Rdbms:Schema`
 [options="header"]
 |====
 | Name | Description
 | name | The name of the schema.
 |====
 
-.Relations of :Rdbms:Schema
+.Relations of `:Rdbms:Schema`
 [options="header"]
 |====
 | Name         | Target label(s)     | Cardinality | Description
 | HAS_TABLE    | <<:Rdbms:Table>>    | 0..n        | References the tables in the schema
-| HAS_VIEW     | <<:Rdbms:View>>    | 0..n         | References the views in the schema
+| HAS_VIEW     | <<:Rdbms:View>>     | 0..n         | References the views in the schema
 | HAS_SEQUENCE | <<:Rdbms:Sequence>> | 0..n        | References the sequences in the schema
 |====
 
 [[:Rdbms:Table]]
-=== :Rdbms:Table
+=== Nodes labled with `:Rdbms:Table`
 Describes a database table.
 
-.Properties of :Rdbms:Table
+.Properties of `:Rdbms:Table`
 [options="header"]
 |====
 | Name | Description
 | name | The name of the table.
 |====
 
-.Relations of :Rdbms:Table
+.Relations of `:Rdbms:Table`
 [options="header"]
 |====
 | Name            | Target label(s)       | Cardinality | Description
@@ -109,17 +113,17 @@ Describes a database table.
 
 
 [[:Rdbms:View]]
-=== :Rdbms:View
+=== Nodes labled with `:Rdbms:View`
 Describes a database view.
 
-.Properties of :Rdbms:View
+.Properties of `.Rdbms:View`
 [options="header"]
 |====
 | Name | Description
 | name | The name of the view.
 |====
 
-.Relations of :Rdbms:View
+.Relations of `:Rdbms:View`
 [options="header"]
 |====
 | Name            | Target label(s)       | Cardinality | Description
@@ -127,10 +131,10 @@ Describes a database view.
 |====
 
 [[:Rdbms:Column]]
-=== :Rdbms:Column
+=== Nodes labled with `:Rdbms:Column
 Describes a column of a table.
 
-.Properties of :Rdbms:Column
+.Properties of `:Rdbms:Column`
 [options="header"]
 |====
 | Name             | Description
@@ -145,7 +149,7 @@ Describes a column of a table.
 | partOfForeignKey | Indicates that the column is part of a foreign key
 |====
 
-.Relations of :Rdbms:Column
+.Relations of `:Rdbms:Column`
 [options="header"]
 |====
 | Name           | Target label(s)       | Cardinality | Description
@@ -153,10 +157,10 @@ Describes a column of a table.
 |====
 
 [[:Rdbms:ColumnType]]
-=== :Rdbms:ColumnType
-Describes a column data type, e.g. VARCHAR.
+=== Nodes labled with `:Rdbms:ColumnType`
+Describes a column data type, e.g. `VARCHAR`.
 
-.Properties of :Rdbms:ColumnType
+.Properties of `:Rdbms:ColumnType`
 [options="header"]
 |====
 | Name                  | Description
@@ -174,21 +178,21 @@ Describes a column data type, e.g. VARCHAR.
 
 
 [[:Rdbms:PrimaryKey]]
-=== :Rdbms:PrimaryKey
+=== Nodes labled with `:Rdbms:PrimaryKey`
 Describes a primary key of a table.
 
-.Properties of :Rdbms:PrimaryKey
+.Properties of `:Rdbms:PrimaryKey`
 [options="header"]
 |====
 | Name | Description
 | name | The name of the primary key.
 |====
 
-.Relations of :Rdbms:PrimaryKey
+.Relations of `:Rdbms:PrimaryKey`
 [options="header"]
 |====
 | Name                       | Target label(s)       | Cardinality | Description
-| <<ON_PRIMARY_KEY_COLUMN>> | <<:Rdbms:ColumnType>> | 1           | References a primary key column
+| <<ON_PRIMARY_KEY_COLUMN>> | <<:Rdbms:ColumnType>>  | 1           | References a primary key column
 |====
 
 
@@ -196,7 +200,7 @@ Describes a primary key of a table.
 === ON_PRIMARY_KEY_COLUMN
 Describes the properties of a column in a primary key.
 
-.Properties of ON_PRIMARY_KEY_COLUMN
+.Properties of `ON_PRIMARY_KEY_COLUMN`
 [options="header"]
 |====
 | Name                 | Description
@@ -206,21 +210,21 @@ Describes the properties of a column in a primary key.
 
 
 [[:Rdbms:Index]]
-=== :Rdbms:Index
+=== Nodes labled with `:Rdbms:Index`
 Describes an index defined for table.
 
-.Properties of :Rdbms:Index
+.Properties of `:Rdbms:Index`
 [options="header"]
 |====
 | Name        | Description
 | name        | The name of the index.
-| unique      | "true" if the index is unique.
+| unique      | `true` if the index is unique.
 | cardinality | The cardinality of the index.
 | indexType   | The index type.
 | pages       | The pages.
 |====
 
-.Relations of :Rdbms:Index
+.Relations of `:Rdbms:Index`
 [options="header"]
 |====
 | Name                | Target label(s)       | Cardinality | Description
@@ -232,17 +236,17 @@ Describes an index defined for table.
 === ON_INDEX_COLUMN
 Describes the properties of a column used by an index.
 
-.Properties of ON_INDEX_COLUMN
+.Properties of `ON_INDEX_COLUMN`
 [options="header"]
 |====
 | Name                 | Description
 | indexOrdinalPosition | The ordinal position of the column in the primary key.
-| sortSequence         | The sort sequence, i.e. "ascending" or "descending".
+| sortSequence         | The sort sequence, i.e. `ascending` or `descending`.
 |====
 
 
 [[:Rdbms:ForeignKey]]
-=== :Rdbms:ForeignKey
+=== Nodes labled with `:Rdbms:ForeignKey
 Describes a foreign key.
 
 .Properties of :Rdbms:ForeignKey
@@ -251,7 +255,7 @@ Describes a foreign key.
 | Name          | Description
 | name          | The name of the foreign key
 | deferrability | The deferrability
-| deleteRule    | The delete rule, e.g. "cascade"
+| deleteRule    | The delete rule, e.g. `cascade`
 | updateRule    | The update rule
 |====
 
@@ -264,10 +268,11 @@ Describes a foreign key.
 
 
 [[:Rdbms:ForeignKeyReference]]
-=== :Rdbms:ForeignKeyReference
-Describes a foreign key reference, i.e. a pair consisting of a foreign key referencing a primary key.
+=== Nodes labled with `:Rdbms:ForeignKeyReference`
+Describes a foreign key reference, i.e. a pair consisting of a foreign key
+referencing a primary key.
 
-.Relations of :Rdbms:ForeignKeyReference
+.Relations of `:Rdbms:ForeignKeyReference`
 [options="header"]
 |====
 | Name                    | Target label(s)   | Cardinality | Description
@@ -277,10 +282,10 @@ Describes a foreign key reference, i.e. a pair consisting of a foreign key refer
 
 
 [[:Rdbms:Sequence]]
-=== :Rdbms:Sequence
+=== Nodes labled with `:Rdbms:Sequence`
 Describes a database sequence.
 
-.Properties of :Rdbms:Sequence
+.Properties of `:Rdbms:Sequence`
 [options="header"]
 |====
 | Name         | Description

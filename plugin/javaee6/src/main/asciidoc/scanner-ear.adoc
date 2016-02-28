@@ -2,17 +2,17 @@
 == Scanner for EAR files
 Imports EAR (Enterprise ARchive) files.
 
-=== :File:Enterprise:Application:Archive:Container
+=== Nodes labled with `:File:Enterprise:Application:Archive:Container`
 A file representing an EAR file.
 
-.Properties of :File:Enterprise:Application:Archive:Container
+.Properties of `:File:Enterprise:Application:Archive:Container`
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :File:Enterprise:Application:Archive:Container
+.Relations of `:File:Enterprise:Application:Archive:Container`
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description
@@ -20,10 +20,10 @@ A file representing an EAR file.
 |====
 
 [[ApplicationXmlScanner]]
-=== :File:Enterprise:Application:Xml
+=== Nodes labled with `:File:Enterprise:Application:Xml`
 Represents a Java EE application.xml descriptor.
 
-.Properties of :File:Enterprise:Application:Xml
+.Properties of `:File:Enterprise:Application:Xml`
 [options="header"]
 |====
 | Name              | Description
@@ -32,7 +32,7 @@ Represents a Java EE application.xml descriptor.
 | libraryDirectory  | The path to the library directory.
 |====
 
-.Relations of :File:Enterprise:Application:Xml
+.Relations of `:File:Enterprise:Application:Xml`
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description
@@ -44,10 +44,11 @@ Represents a Java EE application.xml descriptor.
 |====
 
 [[:Enterprise:Application:Module]]
-=== :Enterprise:Application:Module
-Represents a declared module of a Java EE Java application. Can be qualified by either :Ejb, :Web, :Connector or :JavaClient.
+=== Nodes labled with `:Enterprise:Application:Module`
+Represents a declared module of a Java EE Java application. Can be qualified by either
+`:Ejb`, `:Web`, `:Connector` or `:JavaClient`.
 
-.Properties of :Enterprise:Application:Module
+.Properties of `:Enterprise:Application:Module`
 [options="header"]
 |====
 | Name | Description
@@ -55,10 +56,10 @@ Represents a declared module of a Java EE Java application. Can be qualified by 
 |====
 
 [[:Enterprise:Application:Module:Web]]
-=== :Enterprise:Application:Module:Web
+=== Nodes labled with `:Enterprise:Application:Module:Web`
 Represents a declared web module of a Java EE Java application.
 
-.Properties of :Enterprise:Application:Module:Web
+.Properties of `:Enterprise:Application:Module:Web`
 [options="header"]
 |====
 | Name        | Description
