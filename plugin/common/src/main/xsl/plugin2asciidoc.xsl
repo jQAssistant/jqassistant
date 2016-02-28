@@ -43,6 +43,9 @@ include::{docRoot}/<xsl:value-of select="$artifactId"/>/scanner.adoc[]
     </xsl:template>
 
     <xsl:template match="model">
+
+== Model of the Plugin
+
         <xsl:value-of select="$newline"/>
 Refer to the link:javadoc/<xsl:value-of select="$artifactId"/>/index.html[plugin Javadoc] for details
 about the model.
