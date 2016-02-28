@@ -1,4 +1,3 @@
-<<PersistenceScanner>>
 [[PersistenceScanner]]
 == Scanner for persistence.xml files
 Imports persistence descriptors from META-INF/persistence.xml or WEB-INF/persistence.xml files.

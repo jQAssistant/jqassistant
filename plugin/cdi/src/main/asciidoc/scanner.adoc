@@ -1,4 +1,3 @@
-<<BeansScanner>>
 [[BeansScanner]]
 == Scanner for beans.xml files
 Imports beans descriptors from META-INF/beans.xml or WEB-INF/beans.xml files.

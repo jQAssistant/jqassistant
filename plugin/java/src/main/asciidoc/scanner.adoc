@@ -1,5 +1,3 @@
-<<ArtifactScanner>> <<PackageScanner>> <<ClassScanner>> <<ManifestFileScanner>> <<PropertyFileScanner>> <<ServiceLoaderFileScanner>>
-
 == Artifact Scanner
 
 [[:Java:Artifact]]

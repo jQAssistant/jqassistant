@@ -47,7 +47,6 @@
                     <sourceHighlighter>coderay</sourceHighlighter>
                     <attributes>
                         <toc>auto</toc>
-                        <toclevels>3</toclevels>
                         <tabsize>4</tabsize>
                         <stylesheet>jqassistant.css</stylesheet>
                         <docRoot>/${asciidoc.directory}</docRoot>

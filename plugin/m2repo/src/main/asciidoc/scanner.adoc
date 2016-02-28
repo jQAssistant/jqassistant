@@ -1,4 +1,3 @@
-<<MavenRepositoryScanner>>
 [[MavenRepositoryScanner]]
 == Scanner for remote maven repositories
 Downloads the repository index and retrieves all available new artifacts for scanning.

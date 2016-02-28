@@ -1,4 +1,3 @@
-<<SchemaScanner>>
 [[SchemaScanner]]
 == Scanner for metadata of a relational database schema
 Imports the metadata of a relational database schema, i.e. schemas, tables and columns.

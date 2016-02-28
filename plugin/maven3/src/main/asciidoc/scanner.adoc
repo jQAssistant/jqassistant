@@ -1,4 +1,3 @@
-<<MavenProjectScanner>>
 [[MavenProjectScanner]]
 == Scanner for Maven projects
 Imports information from Maven projects.

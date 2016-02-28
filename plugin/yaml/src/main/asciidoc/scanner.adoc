@@ -1,4 +1,3 @@
-<<YAMLFileScanner>>
 [[YAMLFileScanner]]
 == Generic scanner for YAML files
 

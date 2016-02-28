@@ -18,12 +18,13 @@
 <xsl:value-of select="$newline"/>
         <xsl:apply-templates select="//description"/>
 <xsl:value-of select="$newline"/>
-<xsl:value-of select="$newline"/>
-<xsl:for-each select="//resource">&lt;&lt;<xsl:value-of select="text()"/>&gt;&gt; </xsl:for-each>
         <xsl:apply-templates select="//scanner"/>
-        <xsl:apply-templates select="//model"/>
-        <xsl:apply-templates select="//resource"/>
+
+        <xsl:if test="//resource">
+include::{docRoot}/<xsl:value-of select="$artifactId"/>/concepts-and-constraints.adoc[]
+        </xsl:if>
         <xsl:apply-templates select="//report"/>
+        <xsl:apply-templates select="//model"/>
     </xsl:template>
 
     <xsl:template match="description">
@@ -45,13 +46,6 @@ include::{docRoot}/<xsl:value-of select="$artifactId"/>/scanner.adoc[]
         <xsl:value-of select="$newline"/>
 Refer to the link:javadoc/<xsl:value-of select="$artifactId"/>/index.html[plugin Javadoc] for details
 about the model.
-    </xsl:template>
-
-    <xsl:template match="resource">
-[[<xsl:value-of select="text()"/>]]
-== <xsl:value-of select="text()"/>
-include::{docRoot}/<xsl:value-of select="$artifactId"/>/<xsl:value-of select="text()"/>.adoc[]
-<xsl:value-of select="$newline"/>
     </xsl:template>
 
     <xsl:template match="report">

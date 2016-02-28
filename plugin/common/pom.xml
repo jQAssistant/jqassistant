@@ -29,6 +29,11 @@
                                     <classifier>rules2asciidoc</classifier>
                                 </artifact>
                                 <artifact>
+                                    <file>src/main/xsl/rules2asciidoc-v2.xsl</file>
+                                    <type>xsl</type>
+                                    <classifier>rules2asciidoc-v2</classifier>
+                                </artifact>
+                                <artifact>
                                     <file>src/main/xsl/plugin2asciidoc.xsl</file>
                                     <type>xsl</type>
                                     <classifier>plugin2asciidoc</classifier>

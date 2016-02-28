@@ -1,4 +1,3 @@
-<<XmlFileScanner>>
 [[XmlFileScanner]]
 == Generic scanner for XML and XSD files
 Imports all XML or XSD files in a generic representation, e.g. namespaces, elements, attributes and text.

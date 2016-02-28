@@ -1,4 +1,3 @@
-<<Junit4TestSuiteScanner>>
 [[Junit4TestSuiteScanner]]
 == Scanner for JUnit4 test suite results
 Imports results from JUnit4 test suites matching the file name '*TEST-*.xml'.
