@@ -68,28 +68,6 @@
 										</parameters>
 									</transformationSet>
 									<transformationSet>
-										<dir>src/main/resources/META-INF/jqassistant-rules</dir>
-										<includes>
-											<include>*.xml</include>
-										</includes>
-										<stylesheet>
-											${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-rules2asciidoc.xsl
-										</stylesheet>
-										<outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
-										<fileMappers>
-											<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-												<pattern>^(.*)\.xml$</pattern>
-												<replacement>$1.xml.adoc</replacement>
-											</fileMapper>
-										</fileMappers>
-                                        <parameters>
-                                            <parameter>
-                                                <name>dirOfPluginXML</name>
-                                                <value>${project.basedir}/src/main/resources/META-INF</value>
-                                            </parameter>
-                                        </parameters>
-									</transformationSet>
-									<transformationSet>
 										<dir>src/main/resources/META-INF/</dir>
                                         <includes>
                                             <include>jqassistant-plugin.xml</include>
