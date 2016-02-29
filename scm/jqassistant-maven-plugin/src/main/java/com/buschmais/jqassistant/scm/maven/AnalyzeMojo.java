@@ -22,6 +22,7 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Analyzer;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -55,6 +56,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
      */
     @Parameter(property = "jqassistant.failOnViolations", defaultValue = "false")
     protected boolean failOnViolations;
+
+    /**
+     * If set also execute concepts which have already been applied.
+     */
+    @Parameter(property = "jqassistant.executeAppliedConcepts")
+    protected boolean executeAppliedConcepts = false;
 
     /**
      * Severity level for constraint violation failure check. Default value is {@code Severity.INFO}
@@ -110,7 +117,7 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             }
         }
         Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object>emptyMap();
-        List<ReportPlugin> reportPlugins = null;
+        List<ReportPlugin> reportPlugins;
         try {
             reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
         } catch (PluginRepositoryException e) {
@@ -118,7 +125,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         }
         reportWriters.addAll(reportPlugins);
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, logger);
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
+        Analyzer analyzer = new AnalyzerImpl(configuration, store, reportWriter, logger);
         try {
             analyzer.execute(ruleSet, ruleSelection);
         } catch (AnalysisException e) {
