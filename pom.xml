@@ -84,7 +84,7 @@
         <org.neo4j_version>2.3.2</org.neo4j_version>
         <org.asciidoctor_version>1.5.4</org.asciidoctor_version>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
-        <org.jruby_version>9.0.4.0</org.jruby_version>
+        <org.jruby_version>9.0.5.0</org.jruby_version>
         <org.ow2.asm_version>5.0.4</org.ow2.asm_version>
         <org.slf4j_version>1.7.13</org.slf4j_version>
         <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
@@ -221,6 +221,7 @@
                             </goals>
                             <configuration>
                                 <schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
+                                <markGenerated>true</markGenerated>
                                 <args>
                                     <arg>-Xdefault-value</arg>
                                 </args>
@@ -310,7 +311,7 @@
                     <executions>
                         <execution>
                             <id>attach-asciidoc</id>
-                            <phase />
+                            <phase>none</phase>
                             <goals>
                                 <goal>single</goal>
                             </goals>
@@ -532,6 +533,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.store</artifactId>

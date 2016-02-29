@@ -2,15 +2,16 @@ package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
 import static com.buschmais.jqassistant.plugin.graphml.report.impl.MetaInformation.getLabelsString;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -19,7 +20,10 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.PropertyContainer;
 import org.neo4j.graphdb.Relationship;
 
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
@@ -29,56 +33,62 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  */
 public class XmlGraphMLWriter {
 
-    private XMLOutputFactory xmlOutputFactory;
-
-    XmlGraphMLWriter() {
-        xmlOutputFactory = XMLOutputFactory.newInstance();
-    }
-
-    void write(SimpleSubGraph graph, Writer writer) throws IOException, XMLStreamException {
-        Collection<CompositeObject> allCoNodes = graph.getAllNodes();
-        XMLStreamWriter xmlWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(writer));
-        NamespaceContext context = createNamespaceContext();
-        if (context != null) {
-            xmlWriter.setNamespaceContext(context);
-        }
-        writeHeader(xmlWriter);
-        writeDefaultKeys(xmlWriter);
-        writeKeyTypes(xmlWriter, graph);
-        writeSubgraph(graph, xmlWriter);
-
-        // filter and write edges
-        Set<Long> allNodes = new HashSet<>();
-        for (CompositeObject compositeObject : allCoNodes) {
-            allNodes.add(((Node) compositeObject.getDelegate()).getId());
-        }
-
-        for (CompositeObject coRel : graph.getAllRelationships()) {
-            Relationship rel = coRel.getDelegate();
-            long startId = rel.getStartNode().getId();
-            long endId = rel.getEndNode().getId();
-            if (allNodes.contains(startId) && allNodes.contains(endId)) {
-                writeRelationship(xmlWriter, coRel);
-            }
-        }
-
-        writeFooter(xmlWriter);
-    }
+    private static final XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
+    private Class<? extends GraphMLDecorator> decoratorClass;
+    private Map<String, Object> properties;
 
     /**
-     * Creates a {@link NamespaceContext} for the xml writer. Return
-     * <code>null</code> to add no context.
-     * 
-     * @return a {@link NamespaceContext}
+     * Constructor.
+     *
+     * @param decoratorClass
+     *            The decorator class.
+     * @param properties
+     *            The properties of the GraphML plugin.
      */
-    protected NamespaceContext createNamespaceContext() {
-        return null;
+    XmlGraphMLWriter(Class<? extends GraphMLDecorator> decoratorClass, Map<String, Object> properties) {
+        this.decoratorClass = decoratorClass;
+        this.properties = properties;
     }
 
-    private void writeSubgraph(SimpleSubGraph graph, XMLStreamWriter writer) throws XMLStreamException, IOException {
+    void write(Result<?> result, SubGraphImpl graph, File file) throws IOException, XMLStreamException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(file));
+                GraphMLDecorator decorator = new ClassHelper(decoratorClass.getClassLoader()).createInstance(decoratorClass)) {
+            XMLStreamWriter xmlWriter = new IndentingXMLStreamWriter(xmlOutputFactory.createXMLStreamWriter(writer));
+            decorator.initialize(result, graph, xmlWriter, file, properties);
+            GraphMLNamespaceContext context = new GraphMLNamespaceContext(decorator.getNamespaces(), decorator.getSchemaLocations());
+            xmlWriter.setNamespaceContext(context);
+            writeHeader(xmlWriter, context);
+            writeKeyTypes(xmlWriter, graph);
+            decorator.writeKeys();
+
+            writeSubgraph(graph, xmlWriter, decorator);
+
+            // filter and write edges
+            Collection<CompositeObject> allCoNodes = graph.getNodes();
+            Set<Long> allNodes = new HashSet<>();
+            for (CompositeObject compositeObject : allCoNodes) {
+                allNodes.add(((Node) compositeObject.getDelegate()).getId());
+            }
+
+            for (CompositeObject coRel : graph.getRelationships()) {
+                Relationship rel = coRel.getDelegate();
+                long startId = rel.getStartNode().getId();
+                long endId = rel.getEndNode().getId();
+                if (allNodes.contains(startId) && allNodes.contains(endId)) {
+                    writeRelationship(xmlWriter, decorator, coRel);
+                }
+            }
+
+            writeFooter(xmlWriter);
+
+            decorator.close();
+        }
+    }
+
+    private void writeSubgraph(SubGraph graph, XMLStreamWriter writer, GraphMLDecorator decorator) throws XMLStreamException, IOException {
         CompositeObject wrapperNode = graph.getParentNode();
         if (wrapperNode != null) {
-            writeNode(writer, wrapperNode, false);
+            writeNode(writer, decorator, wrapperNode, false);
         }
 
         writer.writeStartElement("graph");
@@ -87,11 +97,11 @@ public class XmlGraphMLWriter {
         newLine(writer);
 
         for (CompositeObject node : graph.getNodes()) {
-            writeNode(writer, node, true);
+            writeNode(writer, decorator, node, true);
         }
 
-        for (SimpleSubGraph subgraph : graph.getSubgraphs()) {
-            writeSubgraph(subgraph, writer);
+        for (SubGraph subgraph : graph.getSubGraphs()) {
+            writeSubgraph(subgraph, writer, decorator);
         }
 
         endElement(writer);
@@ -101,28 +111,15 @@ public class XmlGraphMLWriter {
         }
     }
 
-    /**
-     * Writes a bunch of keys in the graphml-Tag that will be used for formating
-     * or so. This method can be overwritten if any special default keys are
-     * necessary. Please call super to ensure all needed keys will be created.
-     * 
-     * @param writer
-     *            the XMLWriter
-     * @throws XMLStreamException
-     */
-    protected void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException {
-        // no keys written in the moment
-    }
-
-    private void writeKeyTypes(XMLStreamWriter writer, SimpleSubGraph ops) throws IOException, XMLStreamException {
+    private void writeKeyTypes(XMLStreamWriter writer, SubGraphImpl ops) throws IOException, XMLStreamException {
         Map<String, Class> keyTypes = new HashMap<>();
         keyTypes.put("labels", String.class);
-        for (CompositeObject node : ops.getAllNodes()) {
+        for (CompositeObject node : ops.getNodes()) {
             updateKeyTypes(keyTypes, node);
         }
         writeKeyTypes(writer, keyTypes, "node");
         keyTypes.clear();
-        for (CompositeObject rel : ops.getAllRelationships()) {
+        for (CompositeObject rel : ops.getRelationships()) {
             updateKeyTypes(keyTypes, rel);
         }
         writeKeyTypes(writer, keyTypes, "edge");
@@ -148,7 +145,6 @@ public class XmlGraphMLWriter {
     }
 
     private void updateKeyTypes(Map<String, Class> keyTypes, PropertyContainer pc) {
-
         for (String prop : pc.getPropertyKeys()) {
             Object value = pc.getProperty(prop);
             Class storedClass = keyTypes.get(prop);
@@ -162,48 +158,20 @@ public class XmlGraphMLWriter {
         }
     }
 
-    private int writeNode(XMLStreamWriter writer, CompositeObject composite, boolean withEnd) throws IOException, XMLStreamException {
+    private int writeNode(XMLStreamWriter writer, GraphMLDecorator decorator, CompositeObject composite, boolean withEnd) throws IOException,
+            XMLStreamException {
         Node node = composite.getDelegate();
         writer.writeStartElement("node");
         writer.writeAttribute("id", id(node));
-        writeAdditionalNodeAttribute(writer, node);
+        decorator.writeNodeAttributes(composite);
         writeLabels(writer, node);
         writeLabelsAsData(writer, node);
-        writeAdditionalNodeData(writer, ReportHelper.getStringValue(composite));
+        decorator.writeNodeElements(composite);
         int props = writeProps(writer, node);
         if (withEnd)
             endElement(writer);
 
         return props;
-    }
-
-    /**
-     * Can be overwritten to add additional node attributes. Please call super
-     * to ensure all necessary attributes will be written.
-     * 
-     * @param writer
-     *            the xml writer
-     * @param node
-     *            the node
-     * @throws XMLStreamException
-     */
-    protected void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException {
-        // nothing todo here
-    }
-
-    /**
-     * Used to insert additional elements inside a node-element. Can be
-     * overwriten, but please call super to ensure all needed elements will be
-     * created.
-     * 
-     * @param writer
-     *            the xml writer
-     * @param nodeLabel
-     *            the label of the node
-     * @throws XMLStreamException
-     */
-    protected void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
-        // nothing to do here
     }
 
     private String id(Node node) {
@@ -223,15 +191,17 @@ public class XmlGraphMLWriter {
         writeData(writer, "labels", labelsString);
     }
 
-    private int writeRelationship(XMLStreamWriter writer, CompositeObject coRel) throws IOException, XMLStreamException {
+    private int writeRelationship(XMLStreamWriter writer, GraphMLDecorator decorator, CompositeObject coRel) throws IOException,
+            XMLStreamException {
         Relationship rel = coRel.getDelegate();
-
         writer.writeStartElement("edge");
         writer.writeAttribute("id", id(rel));
         writer.writeAttribute("source", id(rel.getStartNode()));
         writer.writeAttribute("target", id(rel.getEndNode()));
         writer.writeAttribute("label", rel.getType().name());
+        decorator.writeRelationshipAttributes(coRel);
         writeData(writer, "label", rel.getType().name());
+        decorator.writeRelationshipElements(coRel);
         int props = writeProps(writer, rel);
         endElement(writer);
         return props;
@@ -269,27 +239,22 @@ public class XmlGraphMLWriter {
         writer.writeEndDocument();
     }
 
-    private void writeHeader(XMLStreamWriter writer) throws IOException, XMLStreamException {
+    private void writeHeader(XMLStreamWriter writer, GraphMLNamespaceContext context) throws IOException, XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
         newLine(writer);
         writer.writeStartElement("graphml");
         writer.writeNamespace("xmlns", "http://graphml.graphdrawing.org/xmlns");
-        writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        writeAdditionalNamespace(writer);
-        writer.writeAttribute("xsi", "", "schemaLocation", "http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
+        for (Map.Entry<String, String> entry : context.getNamespaces().entrySet()) {
+            writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", entry.getKey(), entry.getValue());
+        }
+        if (!context.getSchemaLocations().isEmpty()) {
+            StringBuilder schemaLocations = new StringBuilder();
+            for (Map.Entry<String, String> entry : context.getSchemaLocations().entrySet()) {
+                schemaLocations.append(entry.getKey()).append(" ").append(entry.getValue());
+            }
+            writer.writeAttribute("xsi", "", "schemaLocation", schemaLocations.toString());
+        }
         newLine(writer);
-    }
-
-    /**
-     * Can be used to add additional Namespace attriobutes to the graphml-root
-     * element. If you overwrite these methode please call super to ensure all
-     * needed namespaces will be added.
-     * 
-     * @param writer
-     *            the XML Writer
-     * @throws XMLStreamException
-     */
-    protected void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException {
     }
 
     private void newLine(XMLStreamWriter writer) throws XMLStreamException {

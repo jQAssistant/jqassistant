@@ -27,6 +27,7 @@ public class PojoIT extends AbstractJavaPluginIT {
         ClassFileDescriptor typeDescriptor = (ClassFileDescriptor) testResult.getRows().get(0).get("types");
         assertThat(typeDescriptor, is(typeDescriptor(Pojo.class)));
         assertThat(typeDescriptor.getFileName(), equalTo("/" + Pojo.class.getName().replace('.', '/') + ".class"));
+        assertThat(typeDescriptor.getSourceFileName(), equalTo(Pojo.class.getSimpleName() + ".java"));
         assertThat(query("MATCH (t:Type:Class) WHERE t.fqn =~ '.*Pojo' RETURN t.name as name").getColumn("name"), hasItem(equalTo("Pojo")));
 
         testResult = query("MATCH (t:Type:Class)-[:DECLARES]->(f:Field) RETURN f.signature as signature, f.name as name");

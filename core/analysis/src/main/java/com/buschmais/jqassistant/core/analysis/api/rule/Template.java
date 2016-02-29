@@ -2,28 +2,31 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-
 /**
  * Represents a template.
  */
-public class Template extends AbstractRule {
-
-    private Executable executable;
+public class Template extends AbstractExecutableRule {
 
     private Map<String, Class<?>> parameterTypes;
 
-    public Template(String id, String description, RuleSource ruleSource, Executable executable, Map<String, Class<?>> parameterTypes) {
-        super(id, description, ruleSource);
-        this.executable = executable;
-        this.parameterTypes = parameterTypes;
-    }
-
-    public Executable getExecutable() {
-        return executable;
-    }
-
     public Map<String, Class<?>> getParameterTypes() {
         return parameterTypes;
+    }
+
+    public static class Builder extends AbstractExecutableRule.Builder<Template.Builder, Template> {
+
+        protected Builder(Template rule) {
+            super(rule);
+        }
+
+        public static Builder newTemplate() {
+            return new Builder(new Template());
+        }
+
+        public Builder parameterTypes(Map<String, Class<?>> parameterTypes) {
+            get().parameterTypes = parameterTypes;
+            return builder();
+        }
+
     }
 }

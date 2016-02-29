@@ -105,7 +105,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void beforeGroup(Group group) throws AnalysisException {
+    public void beforeGroup(Group group, Severity effectiveSeverity) throws AnalysisException {
         logger.info("Executing group '" + group.getId() + "'");
         store.beginTransaction();
         reportWriter.beginGroup(group);

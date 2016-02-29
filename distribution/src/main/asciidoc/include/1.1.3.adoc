@@ -1,0 +1,15 @@
+== 1.1.3
+
+=== Core
+- Added support for severity on groups
+- Upgraded the XML schema for rules to 1.1 keeping backward compatibility to 1.0
+
+=== Maven
+- Added a configuration property useExecutionRootAsProjectRoot for reactors with incomplete parent hierarchies.
+
+=== Plugins
+
+==== Java
+
+- Added an attribute sourceFileName to Java types representing the name of the file the class has been compiled from.
+

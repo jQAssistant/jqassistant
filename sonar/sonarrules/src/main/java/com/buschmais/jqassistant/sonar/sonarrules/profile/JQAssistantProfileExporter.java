@@ -100,7 +100,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             for (Set<String> requiredConcepts : executables.values()) {
                 resolveRequiredConcepts(requiredConcepts, concepts);
             }
-            Group group = new Group(profile.getName(), null, null, conceptSeverities, constraintSeverities, Collections.<String>emptySet());
+            Group group = Group.Builder.newGroup().groupId(profile.getName()).conceptIds(conceptSeverities).constraintIds(constraintSeverities).get();
             builder.addGroup(group);
             RuleSet ruleSet = builder.getRuleSet();
             RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
@@ -224,12 +224,10 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Report report = new Report(primaryReportColumn);
         switch (ruleType) {
             case Concept:
-                executable = new Concept(id, description, null, severity, null, new CypherExecutable(cypher), null, requiresConcepts,
-                        verification, report);
+            	executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 break;
             case Constraint:
-                executable = new Constraint(id, description, null, severity, null, new CypherExecutable(cypher), null, requiresConcepts,
-                        verification, report);
+            	executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 break;
             default:
                 throw new IllegalStateException("Rule type is not supported " + ruleType);
@@ -261,11 +259,9 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
         Report report = new Report(check.getPrimaryReportColumn());
         if (check instanceof ConceptTemplateRule) {
-            executable = new Concept(id, description, null, severity, null, new CypherExecutable(cypher), null, requiresConcepts, verification,
-                    report);
+        	executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
         } else if (check instanceof ConstraintTemplateRule) {
-            executable = new Constraint(id, description, null, severity, null, new CypherExecutable(cypher), null, requiresConcepts,
-                    verification, report);
+        	executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
         } else {
             throw new IllegalStateException("Unknown type " + check.getClass());
         }

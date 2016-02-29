@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
 import org.jcp.xmlns.xml.ns.persistence.Persistence;
 import org.jcp.xmlns.xml.ns.persistence.PersistenceUnitCachingType;
 import org.jcp.xmlns.xml.ns.persistence.PersistenceUnitTransactionType;
@@ -33,13 +34,13 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 @Requires(FileDescriptor.class)
 public class PersistenceXmlScannerPlugin extends AbstractXmlFileScannerPlugin<PersistenceXmlDescriptor> {
 
-    private JAXBUnmarshaller<Persistence> unmarshaller;
+    private FileResourceJAXBUnmarshaller<Persistence> unmarshaller;
 
     @Override
     public void initialize() {
         Map<String, String> namespaceMapping = new HashMap<>();
         namespaceMapping.put("http://java.sun.com/xml/ns/persistence", "http://xmlns.jcp.org/xml/ns/persistence");
-        unmarshaller = new JAXBUnmarshaller<>(Persistence.class, namespaceMapping);
+        unmarshaller = new FileResourceJAXBUnmarshaller<>(Persistence.class, namespaceMapping);
     }
 
     @Override

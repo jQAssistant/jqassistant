@@ -1,23 +1,50 @@
-package com.buschmais.jqassistant.plugin.graphml.report.impl;
+package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.neo4j.graphdb.Node;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.xo.api.CompositeObject;
 
-public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
+/**
+ * A GraphML decorator for yEd.
+ */
+public class YedGraphMLDecorator implements GraphMLDecorator {
 
     private static final String Y_NAMESPACE_URI = "http://www.yworks.com/xml/graphml";
+    private static final String YED_NAMESPACE_URI = "http://www.yworks.com/xml/yed/3";
+
+    private XMLStreamWriter writer;
 
     @Override
-    protected void writeDefaultKeys(XMLStreamWriter writer) throws XMLStreamException {
-        super.writeDefaultKeys(writer);
+    public void initialize(Result<?> result, SubGraph subGraph, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
+        this.writer = xmlWriter;
+    }
 
+    @Override
+    public Map<String, String> getNamespaces() {
+        Map<String, String> namespaces = new HashMap<>();
+        namespaces.put("y", Y_NAMESPACE_URI);
+        namespaces.put("yed", YED_NAMESPACE_URI);
+        return namespaces;
+    }
+
+    @Override
+    public Map<String, String> getSchemaLocations() {
+        Map<String, String> schemaLocations = new HashMap<>();
+        schemaLocations.put("http://graphml.graphdrawing.org/xmlns", "http://www.yworks.com/xml/schema/graphml/1.1/ygraphml.xsd");
+        return schemaLocations;
+    }
+
+    @Override
+    public void writeKeys() throws XMLStreamException {
         writer.writeEmptyElement("key");
         writer.writeAttribute("for", "graphml");
         writer.writeAttribute("id", "d0");
@@ -50,15 +77,12 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
     }
 
     @Override
-    protected void writeAdditionalNodeAttribute(XMLStreamWriter writer, Node node) throws XMLStreamException {
-        super.writeAdditionalNodeAttribute(writer, node);
+    public void writeNodeAttributes(CompositeObject node) throws XMLStreamException {
         writer.writeAttribute("yfiles.foldertype", "folder");
     }
 
     @Override
-    protected void writeAdditionalNodeData(XMLStreamWriter writer, String nodeLabel) throws XMLStreamException {
-        super.writeAdditionalNodeData(writer, nodeLabel);
-
+    public void writeNodeElements(CompositeObject node) throws XMLStreamException {
         writer.writeStartElement("data");
         writer.writeAttribute("key", "d6");
         writer.writeStartElement(Y_NAMESPACE_URI, "ProxyAutoBoundsNode");
@@ -75,6 +99,7 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
         borderInsets.leftF = 50.5F;
         borderInsets.rightF = 48.9443359375F;
 
+        String nodeLabel = ReportHelper.getLabel(node);
         writeGroupNodeElement(writer, nodeLabel, false, borderInsets);
         writeGroupNodeElement(writer, nodeLabel, true, new Insets());
 
@@ -84,10 +109,15 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
     }
 
     @Override
-    protected void writeAdditionalNamespace(XMLStreamWriter writer) throws XMLStreamException {
-        super.writeAdditionalNamespace(writer);
-        writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "y", Y_NAMESPACE_URI);
-        writer.writeAttribute("xmlns", "http://graphml.graphdrawing.org/xmlns", "yed", "http://www.yworks.com/xml/yed/3");
+    public void writeRelationshipAttributes(CompositeObject relationship) throws XMLStreamException {
+    }
+
+    @Override
+    public void writeRelationshipElements(CompositeObject relationship) throws XMLStreamException {
+    }
+
+    @Override
+    public void close() {
     }
 
     private void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
@@ -167,49 +197,4 @@ public class YedXmlGraphMLWriter extends XmlGraphMLWriter {
         private float topF = 0.0F;
     }
 
-    @Override
-    protected NamespaceContext createNamespaceContext() {
-        return new GraphMlNamespaceContext();
-    }
-
-    private class GraphMlNamespaceContext implements NamespaceContext {
-
-        @Override
-        public String getNamespaceURI(String prefix) {
-            switch (prefix) {
-            case XMLConstants.XMLNS_ATTRIBUTE:
-                return "http://graphml.graphdrawing.org/xmlns";
-            case "xsi":
-                return XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI;
-            case "y":
-                return Y_NAMESPACE_URI;
-            case "yed":
-                return "http://www.yworks.com/xml/yed/3";
-            }
-
-            return XMLConstants.DEFAULT_NS_PREFIX;
-        }
-
-        @Override
-        public String getPrefix(String namespaceURI) {
-            switch (namespaceURI) {
-            case "http://graphml.graphdrawing.org/xmlns":
-                return XMLConstants.XMLNS_ATTRIBUTE;
-            case XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI:
-                return "xsi";
-            case Y_NAMESPACE_URI:
-                return "y";
-            case "http://www.yworks.com/xml/yed/3":
-                return "yed";
-            }
-
-            return XMLConstants.DEFAULT_NS_PREFIX;
-        }
-
-        @Override
-        public Iterator<String> getPrefixes(String namespaceURI) {
-            return Arrays.asList(getPrefix(namespaceURI)).iterator();
-        }
-
-    }
 }

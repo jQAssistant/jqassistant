@@ -1,5 +1,6 @@
 package com.buschmais.jqassistant.examples.plugins.report;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,7 +68,9 @@ public class CustomReportPlugin implements ReportPlugin {
         Rule rule = result.getRule();
         if (rule instanceof Concept && "example:MethodsPerType".equals(rule.getId())) {
             try {
-                PrintWriter writer = new PrintWriter(new FileWriter(fileName));
+                File file = new File(fileName).getAbsoluteFile();
+                file.getParentFile().mkdirs();
+                PrintWriter writer = new PrintWriter(new FileWriter(file));
                 writer.println("Methods per Type");
                 writer.println("================");
                 for (Map<String, Object> row : result.getRows()) {

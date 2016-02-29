@@ -1,25 +1,30 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
 
-class SimpleSubGraph {
+class SubGraphImpl implements SubGraph {
 
     private static final String ROLE_GRAPH = "graph";
 
     private CompositeObject parentNode;
-    private Map<Long, SimpleSubGraph> subgraphs = new LinkedHashMap<>(1000);
+    private Map<Long, SubGraph> subgraphs = new LinkedHashMap<>(1000);
     private Map<Long, CompositeObject> nodes = new LinkedHashMap<>(1000);
     private Map<Long, CompositeObject> relationships = new LinkedHashMap<>(1000);
 
-    public SimpleSubGraph() {
+    public SubGraphImpl() {
     }
 
-    public SimpleSubGraph(Map m) {
+    public SubGraphImpl(Map m) {
         if (!isSubgraph(m))
             throw new IllegalArgumentException("the argument m (" + m + ") is not a subgraph map");
         if (m.containsKey("nodes"))
@@ -30,12 +35,9 @@ class SimpleSubGraph {
             parentNode = (CompositeObject) m.get("parent");
     }
 
+    @Override
     public CompositeObject getParentNode() {
         return parentNode;
-    }
-
-    public Iterable<CompositeObject> getNodes() {
-        return nodes.values();
     }
 
     /**
@@ -43,15 +45,16 @@ class SimpleSubGraph {
      *
      * @return a list of all nodes
      */
-    public Collection<CompositeObject> getAllNodes() {
+    @Override
+    public Collection<CompositeObject> getNodes() {
         Set<CompositeObject> allNodes = new LinkedHashSet<>(1000);
         if (parentNode != null) {
             allNodes.add(parentNode);
         }
 
         allNodes.addAll(nodes.values());
-        for (SimpleSubGraph subgraph : subgraphs.values()) {
-            allNodes.addAll(subgraph.getAllNodes());
+        for (SubGraph subgraph : subgraphs.values()) {
+            allNodes.addAll(subgraph.getNodes());
         }
 
         return allNodes;
@@ -62,11 +65,11 @@ class SimpleSubGraph {
      *
      * @return a list of all nodes
      */
-    public Collection<CompositeObject> getAllRelationships() {
+    public Collection<CompositeObject> getRelationships() {
         Set<CompositeObject> allRels = new LinkedHashSet<>(1000);
         allRels.addAll(relationships.values());
-        for (SimpleSubGraph subgraph : subgraphs.values()) {
-            allRels.addAll(subgraph.getAllRelationships());
+        for (SubGraph subgraph : subgraphs.values()) {
+            allRels.addAll(subgraph.getRelationships());
         }
         return allRels;
     }
@@ -83,8 +86,8 @@ class SimpleSubGraph {
             } else {
                 add(o);
             }
-        } else if (value instanceof SimpleSubGraph) {
-            SimpleSubGraph subGraph = (SimpleSubGraph) value;
+        } else if (value instanceof SubGraphImpl) {
+            SubGraph subGraph = (SubGraph) value;
             subgraphs.put(subGraph.getId(), subGraph);
         } else if (value instanceof Relationship) {
             Relationship rel = (Relationship) value;
@@ -102,10 +105,12 @@ class SimpleSubGraph {
         return ROLE_GRAPH.equals(m.get("role"));
     }
 
-    public Collection<SimpleSubGraph> getSubgraphs() {
+    @Override
+    public Collection<SubGraph> getSubGraphs() {
         return subgraphs.values();
     }
 
+    @Override
     public Long getId() {
         return parentNode.getId();
     }

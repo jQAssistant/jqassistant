@@ -1,0 +1,48 @@
+= Rules
+
+== Concepts
+
+[[test:Concept]]
+.Test Concept
+[source,cypher,role=concept,severity=major]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+== Constraints
+
+[[test:Constraint]]
+.Test Constraint
+[source,cypher,role=constraint,severity=major]
+----
+match
+  (n)
+where
+  n.name = {name}
+return
+  n
+limit
+  {limit}
+----
+
+== Groups
+
+[[test:GroupWithoutSeverity]]
+[role=group,includesConcepts="test:Concept",includesConstraints="test:Constraint"]
+=== Group With Default Severities
+
+[[test:GroupWithSeverity]]
+[role=group,severity=blocker,includesConcepts="test:Concept",includesConstraints="test:Constraint"]
+=== Group With Severity
+
+[[test:GroupWithOverridenSeverities]]
+[role=group,severity=blocker,includesConcepts="test:Concept(critical)",includesConstraints="test:Constraint(critical)"]
+=== Group With Overriden Severities
+
