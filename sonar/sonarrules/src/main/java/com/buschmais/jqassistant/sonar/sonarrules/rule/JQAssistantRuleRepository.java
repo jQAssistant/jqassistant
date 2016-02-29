@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.plugin.rule;
+package com.buschmais.jqassistant.sonar.sonarrules.rule;
 
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +28,7 @@ import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.sonar.plugin.JQAssistant;
+import com.buschmais.jqassistant.sonar.plugin.sensor.JQAssistantRuleType;
 
 /**
  * The jQAssistant rule repository.
@@ -48,9 +49,15 @@ public final class JQAssistantRuleRepository implements RulesDefinition {
     	NewRepository newRepository = context.createRepository(JQAssistant.KEY, Java.KEY);
     	newRepository.setName(JQAssistant.NAME);
     	
-    	createRules(newRepository);
+    	//load template rules at first, so we can mark all now existing rules in repository as 'template'
     	RulesDefinitionAnnotationLoader annotationRuleParser = new RulesDefinitionAnnotationLoader();
     	annotationRuleParser.load(newRepository, RULE_CLASSES);
+    	for(NewRule rule: newRepository.rules())
+    	{
+    		rule.setTemplate(true);
+    	}
+    	
+    	createRules(newRepository);
     	
     	newRepository.done();
     }
@@ -75,11 +82,11 @@ public final class JQAssistantRuleRepository implements RulesDefinition {
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
 
         for (Concept concept : ruleSet.getConceptBucket().getAll()) {
-        	createRule(newRepository, concept, RuleType.Concept);
+        	createRule(newRepository, concept, JQAssistantRuleType.Concept);
         }
 
         for (Constraint constraint : ruleSet.getConstraintBucket().getAll()) {
-        	createRule(newRepository, constraint, RuleType.Constraint);
+        	createRule(newRepository, constraint, JQAssistantRuleType.Constraint);
         }
     }
 
@@ -92,10 +99,11 @@ public final class JQAssistantRuleRepository implements RulesDefinition {
      *            The rule type.
      * @return The rule.
      */
-    private void createRule(NewRepository newRepository, ExecutableRule executableRule, RuleType ruleType) {
+    private void createRule(NewRepository newRepository, ExecutableRule executableRule, JQAssistantRuleType ruleType) {
     	
     	NewRule rule = newRepository.createRule(executableRule.getId());
     	rule.setName(executableRule.getId());
+    	rule.setInternalKey(executableRule.getId());
         // set priority based on severity value
         rule.setSeverity(RulePriority.valueOf(executableRule.getSeverity().name()).name());
         rule.setMarkdownDescription(executableRule.getDescription());
@@ -106,6 +114,7 @@ public final class JQAssistantRuleRepository implements RulesDefinition {
             }
             requiresConcepts.append(requiredConcept);
         }
+        //FIXME parameters are changable by the user activating the rule for an project; so It's not safe to parse the parameter in the exporter!
         createRuleParameter(rule, RuleParameter.Type, ruleType.name(), RuleParamType.STRING);        
         rule.addTags(ruleType.name().toLowerCase(Locale.ENGLISH));
         if(requiresConcepts.length() > 0)

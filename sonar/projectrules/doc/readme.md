@@ -1,0 +1,2 @@
+Using this plugin in SONAR imports the issues from a previous executed jQAssistant run as violations into SONAR. jQAssistant will use concepts and constraint from the local environment.
+Using this way is useful for seamless integration of jQAssistant violations into SonarQ via `SonarQube Scanner` (as example available as [sonar-maven-plugin](http://docs.sonarqube.org/display/SONAR/Analyzing+with+SonarQube+Scanner+for+Maven)) without managing the concepts in SonarQ and under complete control of the project team.

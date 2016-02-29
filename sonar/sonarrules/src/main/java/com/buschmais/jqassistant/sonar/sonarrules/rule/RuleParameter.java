@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.sonar.plugin.rule;
+package com.buschmais.jqassistant.sonar.sonarrules.rule;
 
 /**
  * Defines the parameters of a rule (i.e. concept, constraint).

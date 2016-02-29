@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant.sonar</groupId>
+        <artifactId>jqassistant.sonar</artifactId>
+        <version>1.1.3-SNAPSHOT</version>
+    </parent>
+    <artifactId>jqassistant.sonar.projectrules</artifactId>
+    <packaging>sonar-plugin</packaging>
+    
+    <description>Helper plugin for jQAssistant to import local detected issues into SonarQube.</description>
+
+    <properties>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.sonar</groupId>
+                <artifactId>sonar-packaging-maven-plugin</artifactId>
+                <configuration>
+                    <basePlugin>jqassistantbase</basePlugin>
+                    <pluginKey>jqassistantprojectrules</pluginKey>
+                    <pluginName>jQAssistant project centric rules</pluginName>
+                    <pluginClass>com.buschmais.jqassistant.sonar.projectrules.JQAssistantProjectRulesPlugin</pluginClass>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.sonar</groupId>
+            <artifactId>jqassistant.sonar.plugin</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+       <dependency>
+	        <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-plugin-api</artifactId>
+			<scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.codehaus.sonar</groupId>
+			<artifactId>sonar-java-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+        	<groupId>org.codehaus.sonar-plugins.java</groupId>
+        	<artifactId>sonar-java-plugin</artifactId>
+        	<type>sonar-plugin</type>
+        	<scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
