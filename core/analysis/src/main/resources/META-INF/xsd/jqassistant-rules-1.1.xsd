@@ -194,7 +194,7 @@
 
     <xs:complexType name="reportType">
         <xs:sequence>
-            <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0"/>
+            <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="type" type="xs:string" use="optional"/>
         <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>

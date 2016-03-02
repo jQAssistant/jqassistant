@@ -34,7 +34,7 @@ public final class XmlReportTestHelper {
         XmlReportWriter xmlReportWriter = new XmlReportWriter(writer);
         xmlReportWriter.begin();
         Concept concept = Concept.Builder.newConcept().id("my:concept").description("My concept description").severity(Severity.MAJOR)
-                .executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(new Report("c2")).get();
+                .executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(new Report("default", "c2", new Properties())).get();
         Map<String, Severity> concepts = new HashMap<>();
         concepts.put("my:concept", Severity.INFO);
         Group group = Group.Builder.newGroup().id("default").description("My group").conceptIds(concepts).get();
@@ -62,7 +62,7 @@ public final class XmlReportTestHelper {
         xmlReportWriter.begin();
 
         Constraint constraint = Constraint.Builder.newConstraint().id("my:Constraint").description("My constraint description")
-                .severity(Severity.BLOCKER).executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(new Report(null)).get();
+                .severity(Severity.BLOCKER).executable(new CypherExecutable("match...")).verification(new RowCountVerification()).report(new Report("default", null, new Properties())).get();
         Map<String, Severity> constraints = new HashMap<>();
         constraints.put("my:Constraint", Severity.INFO);
         Group group = Group.Builder.newGroup().id("default").description("My group").constraintIds(constraints).get();
