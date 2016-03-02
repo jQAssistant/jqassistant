@@ -42,7 +42,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
     public static final String SEVERITY = "severity";
     public static final String DEPENDS = "depends";
     public static final String REQUIRES_CONCEPTS = "requiresConcepts";
-    public static final String PRIMARY_REPORT_COLUM = "primaryReportColum";
+    public static final String REPORT_TYPE = "reportType";
+    public static final String PRIMARY_REPORT_COLUM = "primaryReportColumn";
+    public static final String REPORT_PROPERTIES = "reportProperties";
     public static final String VERIFY = "verify";
     public static final String AGGREGATION = "aggregation";
     public static final String AGGREGATION_COLUMN = "aggregationColumn";
@@ -133,7 +135,9 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
                 verification = new RowCountVerification();
             }
             Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
-            Report report = new Report(primaryReportColum != null ? primaryReportColum.toString() : null);
+            Object reportType = part.getAttributes().get(REPORT_TYPE);
+            Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
+            Report report = new Report(reportType != null ? reportType.toString() : Report.DEFAULT_TYPE, primaryReportColum != null ? primaryReportColum.toString() : null, reportProperties);
             if (CONCEPT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
@@ -145,6 +149,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             }
         }
     }
+
 
     /**
      * Extract the defined groups from a document.
@@ -250,5 +255,33 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             }
         }
         return result;
+    }
+
+    /**
+     * Parse properties from an attribute.
+     *
+     * @param part          The content part containing the attribute.
+     * @param attributeName The attribute name.
+     * @return The properties.
+     */
+    private Properties parseProperties(ContentPart part, String attributeName) {
+        Properties properties = new Properties();
+        Object attribute = part.getAttributes().get(attributeName);
+        if (attribute == null) {
+            return properties;
+        }
+        Scanner propertiesScanner = new Scanner(attribute.toString());
+        propertiesScanner.useDelimiter(";");
+        while (propertiesScanner.hasNext()) {
+            String next = propertiesScanner.next().trim();
+            if (next.length() > 0) {
+                Scanner propertyScanner = new Scanner(next);
+                propertyScanner.useDelimiter("=");
+                String key = propertyScanner.next().trim();
+                String value = propertyScanner.next().trim();
+                properties.setProperty(key, value);
+            }
+        }
+        return properties;
     }
 }

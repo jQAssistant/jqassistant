@@ -1,12 +1,7 @@
 package com.buschmais.jqassistant.sonar.sonarrules.profile;
 
 import java.io.Writer;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -221,7 +216,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         }
         RuleParam primaryReportColumnParam = rule.getParam(RuleParameter.PrimaryReportColumn.getName());
         String primaryReportColumn = primaryReportColumnParam != null ? primaryReportColumnParam.getDefaultValue() : null;
-        Report report = new Report(primaryReportColumn);
+        Report report = new Report("default", primaryReportColumn, new Properties());
         switch (ruleType) {
             case Concept:
             	executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
@@ -257,7 +252,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             verification = new RowCountVerification();
         }
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
-        Report report = new Report(check.getPrimaryReportColumn());
+        Report report = new Report("default", check.getPrimaryReportColumn(), new Properties());
         if (check instanceof ConceptTemplateRule) {
         	executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
         } else if (check instanceof ConstraintTemplateRule) {

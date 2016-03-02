@@ -12,9 +12,27 @@
             limit
               {limit}
         ]]></cypher>
-        <report>
-            <property name="key">value</property>
+        <report type="custom" primaryColumn="n">
+            <property name="key1">value1</property>
+            <property name="key2">value2</property>
         </report>
     </concept>
 
+    <constraint id="test:Constraint">
+        <description>Test Constraint.</description>
+        <cypher><![CDATA[
+            match
+              (n)
+            where
+              n.name = {name}
+            return
+              n
+            limit
+              {limit}
+        ]]></cypher>
+        <report type="custom" primaryColumn="n">
+            <property name="key1">value1</property>
+            <property name="key2">value2</property>
+        </report>
+    </constraint>
 </jqa:jqassistant-rules>
