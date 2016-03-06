@@ -22,12 +22,10 @@ public class ScannerTest {
     @Test
     public void resolveScope() {
         ScannerContext scannerContext = mock(ScannerContext.class);
-        Map<String, Scope> scopes = new HashMap<>();
-        scopes.put("default:none", DefaultScope.NONE);
-        Scanner scanner = new ScannerImpl(scannerContext, Collections.<ScannerPlugin<?, ?>> emptyList(), Collections.<String, Scope> emptyMap());
-        assertThat(scanner.resolveScope("default:none"), CoreMatchers.<Scope> equalTo(DefaultScope.NONE));
-        assertThat(scanner.resolveScope("unknown"), CoreMatchers.<Scope> equalTo(DefaultScope.NONE));
-        assertThat(scanner.resolveScope(null), CoreMatchers.<Scope> equalTo(DefaultScope.NONE));
+        Scanner scanner = new ScannerImpl(scannerContext, Collections.<String, ScannerPlugin<?, ?>>emptyMap(), Collections.<String, Scope>emptyMap());
+        assertThat(scanner.resolveScope("default:none"), CoreMatchers.<Scope>equalTo(DefaultScope.NONE));
+        assertThat(scanner.resolveScope("unknown"), CoreMatchers.<Scope>equalTo(DefaultScope.NONE));
+        assertThat(scanner.resolveScope(null), CoreMatchers.<Scope>equalTo(DefaultScope.NONE));
     }
 
     @Test
@@ -49,11 +47,11 @@ public class ScannerTest {
                 return mock(descriptorType);
             }
         });
-        List<ScannerPlugin<?, ?>> scannerPlugins = new ArrayList<>();
-        scannerPlugins.add(new TestScannerPlugin1());
-        scannerPlugins.add(new TestScannerPlugin2());
-        scannerPlugins.add(new TestScannerPlugin2A());
-        Scanner scanner = new ScannerImpl(scannerContext, scannerPlugins, Collections.<String, Scope> emptyMap());
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = new HashMap<>();
+        scannerPlugins.put("TestScanner1", new TestScannerPlugin1());
+        scannerPlugins.put("TestScanner2", new TestScannerPlugin2());
+        scannerPlugins.put("TestScanner2A", new TestScannerPlugin2A());
+        Scanner scanner = new ScannerImpl(scannerContext, scannerPlugins, Collections.<String, Scope>emptyMap());
 
         Descriptor descriptor = scanner.scan(new TestItem(), "/", DefaultScope.NONE);
 

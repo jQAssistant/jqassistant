@@ -55,7 +55,7 @@ public abstract class AbstractPluginRepository {
      * @throws com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException
      */
     protected <T> T createInstance(String typeName) throws PluginRepositoryException {
-        Class<T> type = getType(typeName);
+        Class<T> type = getType(typeName.trim());
         try {
             return type.newInstance();
         } catch (InstantiationException e) {

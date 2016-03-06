@@ -30,10 +30,6 @@
             <plugin>
                 <groupId>org.jvnet.jaxb2.maven2</groupId>
                 <artifactId>maven-jaxb2-plugin</artifactId>
-                <configuration>
-                    <schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
-                    <bindingDirectory>src/main/resources/META-INF/bindings</bindingDirectory>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -23,7 +23,7 @@ public class ScannerImplTest {
     @Test
     public void acceptReturnTrueIfPluginAcceptsResource() throws IOException {
         ScannerContext context = Mockito.mock(ScannerContext.class);
-        List<ScannerPlugin<?, ?>> plugins = Collections.emptyList();
+        Map<String, ScannerPlugin<?, ?>> plugins = Collections.emptyMap();
         Map<String, Scope> scopes = Collections.emptyMap();
 
         ScannerImpl scanner = new ScannerImpl(context, plugins, scopes);
@@ -44,7 +44,7 @@ public class ScannerImplTest {
     @Test
     public void acceptReturnFalseIfPluginRefusesResource() throws IOException {
         ScannerContext context = Mockito.mock(ScannerContext.class);
-        List<ScannerPlugin<?, ?>> plugins = Collections.emptyList();
+        Map<String, ScannerPlugin<?, ?>> plugins = Collections.emptyMap();
         Map<String, Scope> scopes = Collections.emptyMap();
 
         ScannerImpl scanner = new ScannerImpl(context, plugins, scopes);
