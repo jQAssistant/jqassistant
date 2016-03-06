@@ -63,7 +63,7 @@ public class ScanMojo extends AbstractModuleMojo {
 
     @Override
     public void execute(MavenProject mavenProject, Store store) throws MojoExecutionException, MojoFailureException {
-        List<ScannerPlugin<?, ?>> scannerPlugins;
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins;
         ScannerContext scannerContext = new ScannerContextImpl(store);
         ScannerPluginRepository scannerPluginRepository = pluginRepositoryProvider.getScannerPluginRepository();
         try {
