@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -66,7 +67,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         List<AnalysisListener> reportWriters = new LinkedList<>();
         reportWriters.add(inMemoryReportWriter);
         reportWriters.add(xmlReportWriter);
-        reportWriters.addAll(getReportPlugins());
+        reportWriters.addAll(getReportPlugins().values());
         try {
             CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
             AnalyzerConfiguration configuration = new AnalyzerConfiguration();
@@ -103,7 +104,7 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
      * @throws CliExecutionException
      *             If the plugins cannot be loaded or configured.
      */
-    private List<ReportPlugin> getReportPlugins() throws CliExecutionException {
+    private Map<String, ReportPlugin> getReportPlugins() throws CliExecutionException {
         ReportPluginRepository reportPluginRepository;
         try {
             reportPluginRepository = pluginRepository.getReportPluginRepository();
