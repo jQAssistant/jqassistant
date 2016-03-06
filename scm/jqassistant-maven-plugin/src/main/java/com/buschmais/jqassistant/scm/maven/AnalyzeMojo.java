@@ -117,13 +117,13 @@ public class AnalyzeMojo extends AbstractProjectMojo {
             }
         }
         Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object>emptyMap();
-        List<ReportPlugin> reportPlugins;
+        Map<String, ReportPlugin> reportPlugins;
         try {
             reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot get report plugins.", e);
         }
-        reportWriters.addAll(reportPlugins);
+        reportWriters.addAll(reportPlugins.values());
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
         AnalyzerConfiguration configuration = new AnalyzerConfiguration();
         configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
@@ -169,10 +169,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
     /**
      * Returns the {@link File} to write the XML report to.
-     * 
+     *
      * @return The {@link File} to write the XML report to.
-     * @throws MojoExecutionException
-     *             If the file cannot be determined.
+     * @throws MojoExecutionException If the file cannot be determined.
      */
     private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
         File selectedXmlReportFile = ProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);

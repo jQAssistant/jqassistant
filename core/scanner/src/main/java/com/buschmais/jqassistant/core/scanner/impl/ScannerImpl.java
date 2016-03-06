@@ -1,18 +1,17 @@
 package com.buschmais.jqassistant.core.scanner.impl;
 
-import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
-import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
-
-import java.io.IOException;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.xo.spi.reflection.DependencyResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.*;
+
+import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+import static com.buschmais.xo.spi.reflection.DependencyResolver.DependencyProvider;
 
 /**
  * Implementation of the {@link Scanner}.
@@ -23,7 +22,7 @@ public class ScannerImpl implements Scanner {
 
     private final ScannerContext scannerContext;
 
-    private final List<ScannerPlugin<?, ?>> scannerPlugins;
+    private final Map<String, ScannerPlugin<?, ?>> scannerPlugins;
 
     private final Map<Class<?>, List<ScannerPlugin<?, ?>>> scannerPluginsPerType = new HashMap<>();
 
@@ -37,7 +36,7 @@ public class ScannerImpl implements Scanner {
      * @param scannerPlugins
      *            The configured plugins.
      */
-    public ScannerImpl(ScannerContext scannerContext, List<ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
+    public ScannerImpl(ScannerContext scannerContext, Map<String, ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
         this.scannerContext = scannerContext;
         this.scannerPlugins = scannerPlugins;
         this.scopes = scopes;
@@ -174,7 +173,7 @@ public class ScannerImpl implements Scanner {
             final List<ScannerPlugin<?, ?>> candidates = new LinkedList<>();
             // The map of scanner plugins which produce a descriptor type
             final Map<Class<? extends Descriptor>, Set<ScannerPlugin<?, ?>>> pluginsByDescriptor = new HashMap<>();
-            for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins) {
+            for (ScannerPlugin<?, ?> scannerPlugin : scannerPlugins.values()) {
                 Class<?> scannerPluginType = scannerPlugin.getType();
                 if (scannerPluginType.isAssignableFrom(type)) {
                     Class<? extends Descriptor> descriptorType = scannerPlugin.getDescriptorType();

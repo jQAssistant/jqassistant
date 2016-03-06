@@ -17,6 +17,6 @@ public interface ReportPluginRepository {
      * @throws PluginRepositoryException
      *             If the instances cannot be created.
      */
-    List<ReportPlugin> getReportPlugins(Map<String, Object> properties) throws PluginRepositoryException;
+    Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) throws PluginRepositoryException;
 
 }

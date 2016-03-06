@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+           xmlns:jqassistant-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
            elementFormDefault="unqualified">
 
     <xs:element name="jqassistant-plugin">
@@ -26,7 +26,7 @@
 
     <xs:complexType name="ScannerType">
         <xs:sequence>
-            <xs:element name="class" type="xs:string" maxOccurs="unbounded"/>
+            <xs:element name="class" type="jqassistant-plugin:IdClassType" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -44,8 +44,16 @@
 
     <xs:complexType name="ReportType">
         <xs:sequence>
-            <xs:element name="class" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="class" type="jqassistant-plugin:IdClassType" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="IdClassType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="id" type="xs:string" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
 </xs:schema>

@@ -41,8 +41,6 @@ public class GraphMLReportPlugin implements ReportPlugin {
     private String directory = "jqassistant/report";
     private XmlGraphMLWriter xmlGraphMLWriter;
 
-    private Rule currentRule;
-
     @Override
     public void initialize() throws ReportException {
     }
@@ -71,7 +69,6 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     @Override
     public void beginConcept(Concept concept) throws ReportException {
-        this.currentRule = concept;
     }
 
     @Override
@@ -88,7 +85,6 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     @Override
     public void beginConstraint(Constraint constraint) throws ReportException {
-        this.currentRule = constraint;
     }
 
     @Override
