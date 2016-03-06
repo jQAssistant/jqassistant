@@ -130,7 +130,7 @@ public abstract class AbstractPluginIT {
 
         /**
          * Return all rows.
-         * 
+         *
          * @return All rows.
          */
         public List<Map<String, Object>> getRows() {
@@ -139,9 +139,8 @@ public abstract class AbstractPluginIT {
 
         /**
          * Return a column identified by its name.
-         * 
-         * @param <T>
-         *            The expected type.
+         *
+         * @param <T> The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {
@@ -227,28 +226,26 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(Collections.<String, Object> emptyMap());
+        return getScanner(Collections.<String, Object>emptyMap());
     }
 
     /**
      * Return an initialized scanner instance.
      *
-     * @param properties
-     *            The properties to be used to configure the plugins.
+     * @param properties The properties to be used to configure the plugins.
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        List<ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
         return new ScannerImpl(scannerContext, scannerPlugins, scopePluginRepository.getScopes());
     }
 
     /**
      * Determines the directory a class is located in (e.g.
      * target/test-classes).
-     * 
-     * @param rootClass
-     *            The class.
+     *
+     * @param rootClass The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
@@ -263,9 +260,8 @@ public abstract class AbstractPluginIT {
     /**
      * Deletes the node representing the test class and all its relationships
      * from the store.
-     * 
-     * @throws IOException
-     *             If an error occurs.
+     *
+     * @throws IOException If an error occurs.
      */
     protected void removeTestClass() throws IOException {
         store.beginTransaction();
@@ -279,23 +275,20 @@ public abstract class AbstractPluginIT {
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
-     * 
-     * @param query
-     *            The query.
+     *
+     * @param query The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object> emptyMap());
+        return query(query, Collections.<String, Object>emptyMap());
     }
 
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
-     * 
-     * @param query
-     *            The query.
-     * @param parameters
-     *            The query parameters.
+     *
+     * @param query      The query.
+     * @param parameters The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -322,12 +315,10 @@ public abstract class AbstractPluginIT {
 
     /**
      * Applies the concept identified by id.
-     * 
-     * @param id
-     *            The id.
+     *
+     * @param id The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
@@ -339,12 +330,10 @@ public abstract class AbstractPluginIT {
 
     /**
      * Validates the constraint identified by id.
-     * 
-     * @param id
-     *            The id.
+     *
+     * @param id The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
@@ -356,11 +345,9 @@ public abstract class AbstractPluginIT {
 
     /**
      * Executes the group identified by id.
-     * 
-     * @param id
-     *            The id.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
+     *
+     * @param id The id.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
      */
     protected void executeGroup(String id) throws AnalysisException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
@@ -377,7 +364,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    private List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
+    private Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
         try {
             return scannerPluginRepository.getScannerPlugins(scannerContext, properties);
         } catch (PluginRepositoryException e) {
@@ -385,7 +372,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    protected List<ReportPlugin> getReportPlugins(Map<String, Object> properties) {
+    protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
         try {
             return reportPluginRepository.getReportPlugins(properties);
         } catch (PluginRepositoryException e) {
