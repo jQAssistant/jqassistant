@@ -75,6 +75,11 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     @Test
+    public void renderGraphMLUsingReportType() throws Exception {
+        reportAndVerify("test:DeclaredMembers", 4);
+    }
+
+    @Test
     public void renderGraphMLUsingVirtualRelation() throws Exception {
         reportAndVerify("test:DeclaredMembersWithVirtualRelation.graphml", 4);
     }
@@ -140,13 +145,17 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
 
     private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses)
             throws Exception {
-        List<AnalysisListener> reportWriters = new LinkedList<>();
-        reportWriters.addAll(getReportPlugins(getReportProperties()).values());
+        Map<String, AnalysisListener> reportWriters = new HashMap<>();
+        reportWriters.putAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
         this.analyzer = new AnalyzerImpl(new AnalyzerConfiguration(), this.store, compositeReportWriter, LOGGER);
         scanClasses(scanClasses);
         applyConcept(conceptName);
-        File reportFile = new File(REPORT_DIR, conceptName.replace(':', '_'));
+        String fileName = conceptName.replace(':', '_');
+        if (!conceptName.endsWith(GraphMLReportPlugin.FILEEXTENSION_GRAPHML)) {
+            fileName = fileName + GraphMLReportPlugin.FILEEXTENSION_GRAPHML;
+        }
+        File reportFile = new File(REPORT_DIR, fileName);
         assertThat(reportFile.exists(), equalTo(true));
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

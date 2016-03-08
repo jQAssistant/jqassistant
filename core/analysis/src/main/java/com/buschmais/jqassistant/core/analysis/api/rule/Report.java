@@ -7,8 +7,6 @@ import java.util.Properties;
  */
 public class Report {
 
-    public static final String DEFAULT_TYPE = "default";
-
     private String type;
 
     private String primaryColumn;

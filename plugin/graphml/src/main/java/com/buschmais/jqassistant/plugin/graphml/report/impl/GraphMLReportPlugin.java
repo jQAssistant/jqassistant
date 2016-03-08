@@ -32,10 +32,13 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphMLReportPlugin.class);
 
+    public static final String GRAPHML = "graphml";
+
+    public static final String FILEEXTENSION_GRAPHML = ".graphml";
+
     private static final String CONCEPT_PATTERN = "graphml.report.conceptPattern";
     private static final String DIRECTORY = "graphml.report.directory";
     private static final String GRAPHML_DECORATOR = "graphml.decorator";
-    private static final String FILEEXTENSION_GRAPHML = ".graphml";
 
     private String conceptPattern = ".*\\.graphml$";
     private String directory = "jqassistant/report";
@@ -94,7 +97,8 @@ public class GraphMLReportPlugin implements ReportPlugin {
     @Override
     public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         Rule rule = result.getRule();
-        if (rule instanceof Concept && rule.getId().matches(conceptPattern)) {
+        if (GRAPHML.equalsIgnoreCase(result.getRule().getReport().getType())
+                || (rule instanceof Concept && rule.getId().matches(conceptPattern))) {
             try {
                 String fileName = rule.getId().replaceAll("\\:", "_");
                 if (!fileName.endsWith(FILEEXTENSION_GRAPHML)) {
