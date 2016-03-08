@@ -239,11 +239,16 @@
                                         <artifactId>jaxb2-default-value</artifactId>
                                         <version>1.1</version>
                                     </plugin>
+                                    <!--
+                                     ! Plugin is not available at the moment at Maven Central.
+                                     ! Oliver B. Fischer, 2016-03-08
+                                     !
                                     <plugin>
                                         <groupId>com.buschmais.x2j.nocomment</groupId>
                                         <artifactId>nocomment-plugin</artifactId>
                                         <version>0.1-SNAPSHOT</version>
                                     </plugin>
+                                     !-->
                                 </plugins>
                             </configuration>
                         </execution>
