@@ -1,4 +1,4 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
                                name="Custom Plugin">
     <description>Custom plugins.</description>
     <model>
@@ -8,6 +8,6 @@
         <class>com.buschmais.jqassistant.scm.maven.integration.plugin.CustomScannerPlugin</class>
     </scanner>
     <report>
-        <class>com.buschmais.jqassistant.scm.maven.integration.plugin.CustomReportPlugin</class>
+        <class id="custom">com.buschmais.jqassistant.scm.maven.integration.plugin.CustomReportPlugin</class>
     </report>
 </jqa-plugin:jqassistant-plugin>
