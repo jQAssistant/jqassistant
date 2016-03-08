@@ -137,7 +137,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
             Object reportType = part.getAttributes().get(REPORT_TYPE);
             Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
-            Report report = new Report(reportType != null ? reportType.toString() : Report.DEFAULT_TYPE, primaryReportColum != null ? primaryReportColum.toString() : null, reportProperties);
+            Report report = new Report(reportType != null ? reportType.toString() : null, primaryReportColum != null ? primaryReportColum.toString() : null, reportProperties);
             if (CONCEPT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();

@@ -8,22 +8,26 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 
+import java.util.*;
+
 /**
- * A {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}
- * implementation which delegates all method calls to the
- * {@link com.buschmais.jqassistant.core.analysis.api.AnalysisListener}s
- * provided by the {@link Iterable} constructor argument.
+ * A {@link AnalysisListener} implementation which delegates all method calls to the {@link AnalysisListener}s.
+ * <p>
+ * A rule (i.e. concept or concept) may explicitly select one or more reports by their id to delegate to.
  */
 public class CompositeReportWriter implements AnalysisListener<AnalysisListenerException> {
 
-    private static interface DelegateOperation {
+    private interface DelegateOperation {
         void run(AnalysisListener reportWriter) throws AnalysisListenerException;
     }
 
-    private Iterable<AnalysisListener> reportWriters;
+    private Map<String, AnalysisListener> reportWriters;
 
-    public CompositeReportWriter(Iterable<AnalysisListener> reportWriters) {
+    private Iterable<AnalysisListener> selectedReportWriters = Collections.emptyList();
+
+    public CompositeReportWriter(Map<String, AnalysisListener> reportWriters) {
         this.reportWriters = reportWriters;
+        this.selectedReportWriters = reportWriters.values();
     }
 
     @Override
@@ -48,6 +52,7 @@ public class CompositeReportWriter implements AnalysisListener<AnalysisListenerE
 
     @Override
     public void beginConcept(final Concept concept) throws AnalysisListenerException {
+        selectReportWriter(concept);
         run(new DelegateOperation() {
             @Override
             public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
@@ -64,6 +69,7 @@ public class CompositeReportWriter implements AnalysisListener<AnalysisListenerE
                 reportWriter.endConcept();
             }
         });
+        resetReportWriter();
     }
 
     @Override
@@ -88,6 +94,7 @@ public class CompositeReportWriter implements AnalysisListener<AnalysisListenerE
 
     @Override
     public void beginConstraint(final Constraint constraint) throws AnalysisListenerException {
+        selectReportWriter(constraint);
         run(new DelegateOperation() {
             @Override
             public void run(AnalysisListener reportWriter) throws AnalysisListenerException {
@@ -104,6 +111,7 @@ public class CompositeReportWriter implements AnalysisListener<AnalysisListenerE
                 reportWriter.endConstraint();
             }
         });
+        resetReportWriter();
     }
 
     @Override
@@ -117,8 +125,38 @@ public class CompositeReportWriter implements AnalysisListener<AnalysisListenerE
     }
 
     private void run(DelegateOperation operation) throws AnalysisListenerException {
-        for (AnalysisListener reportWriter : reportWriters) {
+        for (AnalysisListener reportWriter : selectedReportWriters) {
             operation.run(reportWriter);
         }
+    }
+
+    /**
+     * Select the report writers for the given rule.
+     *
+     * @param rule The rule.
+     * @throws AnalysisListenerException If no writer exists for a specified id.
+     */
+    private void selectReportWriter(ExecutableRule rule) throws AnalysisListenerException {
+        String type = rule.getReport().getType();
+        if (type == null) {
+            // no writer explicitly selected, use all registered.
+            selectedReportWriters = reportWriters.values();
+        } else {
+            List<AnalysisListener> selectedReportWriters = new ArrayList<>();
+            Scanner scanner = new Scanner(type).useDelimiter(",");
+            while (scanner.hasNext()) {
+                String reportType = scanner.next();
+                AnalysisListener analysisListener = this.reportWriters.get(reportType.trim());
+                if (analysisListener == null) {
+                    throw new AnalysisListenerException("Unknown report type '" + reportType + "' selected for '" + rule + "'");
+                }
+                selectedReportWriters.add(analysisListener);
+            }
+            this.selectedReportWriters = selectedReportWriters;
+        }
+    }
+
+    private void resetReportWriter() {
+        selectedReportWriters = reportWriters.values();
     }
 }

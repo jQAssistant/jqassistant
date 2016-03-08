@@ -15,49 +15,63 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
  */
 public class InMemoryReportWriter implements AnalysisListener<AnalysisListenerException> {
 
+    private AnalysisListener<AnalysisListenerException> delegate;
+
     private Map<String, Result<Concept>> conceptResults = new TreeMap<>();
 
     private Map<String, Result<Constraint>> constraintResults = new TreeMap<>();
-
     private Result<? extends Rule> currentResult;
+
+    public InMemoryReportWriter(AnalysisListener<AnalysisListenerException> delegate) {
+        this.delegate = delegate;
+    }
 
     @Override
     public void begin() throws AnalysisListenerException {
+        delegate.begin();
     }
 
     @Override
     public void end() throws AnalysisListenerException {
+        delegate.end();
     }
 
     @Override
     public void beginConcept(Concept concept) throws AnalysisListenerException {
+        delegate.beginConcept(concept);
     }
 
     @Override
     public void endConcept() throws AnalysisListenerException {
         addResult(this.conceptResults);
+        delegate.endConcept();
     }
 
     @Override
     public void beginGroup(Group group) throws AnalysisListenerException {
+        delegate.beginGroup(group);
     }
 
     @Override
     public void endGroup() throws AnalysisListenerException {
+        delegate.endGroup();
     }
 
     @Override
     public void beginConstraint(Constraint constraint) throws AnalysisListenerException {
+        delegate.beginConstraint(constraint);
     }
 
     @Override
     public void endConstraint() throws AnalysisListenerException {
         addResult(this.constraintResults);
+        delegate.endConstraint();
     }
 
     @Override
     public void setResult(Result<? extends ExecutableRule> result) throws AnalysisListenerException {
         this.currentResult = result;
+        delegate.setResult(result);
     }
 
     public Map<String, Result<Concept>> getConceptResults() {

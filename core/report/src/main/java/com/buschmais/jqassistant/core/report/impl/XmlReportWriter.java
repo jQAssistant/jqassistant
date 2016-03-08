@@ -29,6 +29,8 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
  */
 public class XmlReportWriter implements AnalysisListener<AnalysisListenerException> {
 
+    public static final String TYPE = "xml";
+
     public static final String NAMESPACE_URL = "http://www.buschmais.com/jqassistant/core/report/schema/v1.0";
     public static final String NAMESPACE_PREFIX = "jqa-report";
 
@@ -206,9 +208,8 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     /**
      * Write the status of the current result.
-     * 
-     * @throws XMLStreamException
-     *             If a problem occurs.
+     *
+     * @throws XMLStreamException If a problem occurs.
      */
     private void writeStatus(Result.Status status) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("status");
@@ -219,15 +220,11 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
     /**
      * Determines the language and language element of a descriptor from a
      * result column.
-     * 
-     * @param columnName
-     *            The name of the column.
-     * @param value
-     *            The value.
-     * @throws XMLStreamException
-     *             If a problem occurs.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
-     *             If a problem occurs.
+     *
+     * @param columnName The name of the column.
+     * @param value      The value.
+     * @throws XMLStreamException                                                    If a problem occurs.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException If a problem occurs.
      */
     private void writeColumn(String columnName, Object value) throws XMLStreamException, AnalysisListenerException {
         xmlStreamWriter.writeStartElement("column");
@@ -265,11 +262,9 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     /**
      * Writes the duration.
-     * 
-     * @param beginTime
-     *            The begin time.
-     * @throws XMLStreamException
-     *             If writing fails.
+     *
+     * @param beginTime The begin time.
+     * @throws XMLStreamException If writing fails.
      */
     private void writeDuration(long beginTime) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("duration");
@@ -279,11 +274,9 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     /**
      * Writes the severity of the rule.
-     * 
-     * @param severity
-     *            The severity the rule has been executed with
-     * @throws XMLStreamException
-     *             If writing fails.
+     *
+     * @param severity The severity the rule has been executed with
+     * @throws XMLStreamException If writing fails.
      */
     private void writeSeverity(Severity severity) throws XMLStreamException {
         xmlStreamWriter.writeStartElement("severity");
@@ -294,11 +287,9 @@ public class XmlReportWriter implements AnalysisListener<AnalysisListenerExcepti
 
     /**
      * Defines an operation to write XML elements.
-     * 
-     * @param operation
-     *            The operation.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException
-     *             If writing fails.
+     *
+     * @param operation The operation.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException If writing fails.
      */
     private void run(XmlOperation operation) throws AnalysisListenerException {
         try {
