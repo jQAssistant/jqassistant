@@ -42,7 +42,7 @@ public class JavaResourceResolverTest {
 		when(fileSystem.inputFiles(Matchers.any(FilePredicate.class))).thenReturn(it);
 		JavaResourceResolver resourceResolver = new JavaResourceResolver(fileSystem);
 		Resource result = resourceResolver.resolve(project, JavaLanguageElement.Type.name(), JavaResourceResolverTest.class.getName().replace('.', '/').concat(".class"), JavaResourceResolverTest.class.getName());
-		assertEquals(result.getPath(), javaFile.getPath());
+		assertEquals(new File(result.getPath()), javaFile);
 	}
 
 }
