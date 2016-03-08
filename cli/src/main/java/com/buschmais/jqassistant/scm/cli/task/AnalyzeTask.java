@@ -1,24 +1,6 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -33,6 +15,19 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -51,7 +46,6 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         LOGGER.info("Executing analysis.");
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
             xmlReportFileWriter = new FileWriter(getXmlReportFile());
@@ -64,21 +58,19 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         } catch (AnalysisListenerException e) {
             throw new RuntimeException("Cannot create XML report file writer.", e);
         }
-        List<AnalysisListener> reportWriters = new LinkedList<>();
-        reportWriters.add(inMemoryReportWriter);
-        reportWriters.add(xmlReportWriter);
-        reportWriters.addAll(getReportPlugins().values());
+        Map<String, AnalysisListener> reportWriters = new HashMap<>();
+        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
+        reportWriters.putAll(getReportPlugins());
+        CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
+        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            AnalyzerConfiguration configuration = new AnalyzerConfiguration();
-            configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
-            Analyzer analyzer = new AnalyzerImpl(configuration, store, reportWriter, LOGGER);
-            try {
-                RuleSet availableRules = getAvailableRules();
-                analyzer.execute(availableRules, getRuleSelection(availableRules));
-            } catch (AnalysisException e) {
-                throw new CliExecutionException("Analysis failed.", e);
-            }
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, LOGGER);
+            RuleSet availableRules = getAvailableRules();
+            analyzer.execute(availableRules, getRuleSelection(availableRules));
+        } catch (AnalysisException e) {
+            throw new CliExecutionException("Analysis failed.", e);
         } finally {
             IOUtils.closeQuietly(xmlReportFileWriter);
         }
@@ -99,10 +91,9 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     /**
      * Get all configured report plugins.
-     * 
+     *
      * @return The list of report plugins.
-     * @throws CliExecutionException
-     *             If the plugins cannot be loaded or configured.
+     * @throws CliExecutionException If the plugins cannot be loaded or configured.
      */
     private Map<String, ReportPlugin> getReportPlugins() throws CliExecutionException {
         ReportPluginRepository reportPluginRepository;
