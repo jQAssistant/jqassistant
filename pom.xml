@@ -231,7 +231,10 @@
                                 <args>
                                     <arg>-mark-generated</arg>
                                     <arg>-Xdefault-value</arg>
-                                    <arg>-Xno-comment</arg>
+                                    <!-- Uncomment this to enable the nocomment-plugin
+                                     !   Oliver B. Fischer, 2016-03-08
+                                     ! <arg>-Xno-comment</arg>
+                                     !-->
                                 </args>
                                 <plugins>
                                     <plugin>
