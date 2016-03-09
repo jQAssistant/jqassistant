@@ -134,10 +134,7 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             } else {
                 verification = new RowCountVerification();
             }
-            Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
-            Object reportType = part.getAttributes().get(REPORT_TYPE);
-            Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
-            Report report = new Report(reportType != null ? reportType.toString() : null, primaryReportColum != null ? primaryReportColum.toString() : null, reportProperties);
+            Report report = getReport(part);
             if (CONCEPT.equals(part.getRole())) {
                 Severity severity = getSeverity(part, Concept.DEFAULT_SEVERITY);
                 Concept concept = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(executable).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
@@ -149,7 +146,6 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             }
         }
     }
-
 
     /**
      * Extract the defined groups from a document.
@@ -255,6 +251,26 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
             }
         }
         return result;
+    }
+
+    /**
+     * Create the report part of a rule.
+     *
+     * @param part The content part.
+     * @return The report.
+     */
+    private Report getReport(ContentPart part) {
+        Object primaryReportColum = part.getAttributes().get(PRIMARY_REPORT_COLUM);
+        Object reportType = part.getAttributes().get(REPORT_TYPE);
+        Properties reportProperties = parseProperties(part, REPORT_PROPERTIES);
+        Report.Builder reportBuilder = Report.Builder.newInstance();
+        if (reportType != null) {
+            reportBuilder.selectTypes(reportType.toString());
+        }
+        if (primaryReportColum != null) {
+            reportBuilder.primaryColumn(primaryReportColum.toString());
+        }
+        return reportBuilder.properties(reportProperties).get();
     }
 
     /**
