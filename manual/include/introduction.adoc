@@ -290,6 +290,43 @@ Refer to the examples section for a detailed explanation.
 
 ==== Report
 
+A rule may select a specific report plugin and pass properties to it:
+
+[source,xml]
+----
+<concept id="my-rules:MyConcept">
+    <description>A human readable description of the concept.</description>
+    <cypher><![CDATA[
+        MATCH
+          (m)-[]->(n)
+          ...
+        RETURN
+          m, n
+    ]]></cypher>
+    <report reportType="myReport">
+        <property name="key">value</property>
+    </report>
+</concept>
+----
+
+[source,asciidoc]
+....
+
+[[my-rules:MyConcept]]
+.A human readable description of the concept.
+[source,cypher,role=concept,reportType="myReport",reportProperties="key1=value1;key2=value2"]
+----
+    MATCH
+      (m)-[]->(n)
+      ...
+    RETURN
+      m, n
+----
+
+....
+
+===== Primary Column
+
 If a rule reports more than one column it might be necessary to specify the column which contains the primary element
 the rule refers to, e.g. the Java class. The information may be evaluated by reporting tools, e.g. for creating issues
 in SonarQube:
