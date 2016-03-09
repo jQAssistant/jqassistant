@@ -137,18 +137,16 @@ public class CompositeReportWriter implements AnalysisListener<AnalysisListenerE
      * @throws AnalysisListenerException If no writer exists for a specified id.
      */
     private void selectReportWriter(ExecutableRule rule) throws AnalysisListenerException {
-        String type = rule.getReport().getType();
-        if (type == null) {
+        Set<String> selection = rule.getReport().getSelectedTypes();
+        if (selection == null) {
             // no writer explicitly selected, use all registered.
             selectedReportWriters = reportWriters.values();
         } else {
             List<AnalysisListener> selectedReportWriters = new ArrayList<>();
-            Scanner scanner = new Scanner(type).useDelimiter(",");
-            while (scanner.hasNext()) {
-                String reportType = scanner.next();
-                AnalysisListener analysisListener = this.reportWriters.get(reportType.trim());
+            for (String type : selection) {
+                AnalysisListener analysisListener = this.reportWriters.get(type);
                 if (analysisListener == null) {
-                    throw new AnalysisListenerException("Unknown report type '" + reportType + "' selected for '" + rule + "'");
+                    throw new AnalysisListenerException("Unknown report selection '" + type + "' selected for '" + rule + "'");
                 }
                 selectedReportWriters.add(analysisListener);
             }

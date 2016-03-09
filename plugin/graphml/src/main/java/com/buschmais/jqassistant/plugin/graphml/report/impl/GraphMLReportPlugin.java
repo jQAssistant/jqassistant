@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.plugin.graphml.report.impl;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -38,7 +39,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     private static final String CONCEPT_PATTERN = "graphml.report.conceptPattern";
     private static final String DIRECTORY = "graphml.report.directory";
-    private static final String GRAPHML_DECORATOR = "graphml.decorator";
+    private static final String GRAPHML_DECORATOR = "graphml.report.decorator";
 
     private String conceptPattern = ".*\\.graphml$";
     private String directory = "jqassistant/report";
@@ -97,7 +98,8 @@ public class GraphMLReportPlugin implements ReportPlugin {
     @Override
     public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
         Rule rule = result.getRule();
-        if (GRAPHML.equalsIgnoreCase(result.getRule().getReport().getType())
+        Set<String> selectedReports = result.getRule().getReport().getSelectedTypes();
+        if ((selectedReports != null && selectedReports.contains(GRAPHML))
                 || (rule instanceof Concept && rule.getId().matches(conceptPattern))) {
             try {
                 String fileName = rule.getId().replaceAll("\\:", "_");

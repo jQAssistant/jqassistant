@@ -169,7 +169,11 @@ public class XmlRuleSetReader implements RuleSetReader {
                 properties.setProperty(propertyType.getName(), propertyType.getValue());
             }
         }
-        return new Report(type != null ? type : null, primaryColumn, properties);
+        Report.Builder reportBuilder = Report.Builder.newInstance().primaryColumn(primaryColumn).properties(properties);
+        if (type != null) {
+            reportBuilder.selectTypes(type);
+        }
+        return reportBuilder.get();
     }
 
     private Constraint createConstraint(String id, RuleSource ruleSource, ConstraintType referenceableType) throws RuleException {

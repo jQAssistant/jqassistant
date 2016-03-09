@@ -51,9 +51,8 @@ public class JQAssistantProfileExporter extends ProfileExporter {
 
     /**
      * Constructor.
-     * 
-     * @param ruleFinder
-     *            The {@link org.sonar.api.rules.RuleFinder} to use.
+     *
+     * @param ruleFinder The {@link org.sonar.api.rules.RuleFinder} to use.
      */
     public JQAssistantProfileExporter(RuleFinder ruleFinder) {
         super(JQAssistant.KEY, JQAssistant.NAME);
@@ -107,16 +106,15 @@ public class JQAssistantProfileExporter extends ProfileExporter {
     }
 
     private Set<String> getRequiresConcepts(String requiresConcepts) {
-    	if(requiresConcepts == null)
-    		return Collections.emptySet();
+        if (requiresConcepts == null)
+            return Collections.emptySet();
         return new HashSet<>(Arrays.asList(StringUtils.splitByWholeSeparator(requiresConcepts, ",")));
     }
 
     /**
      * Resolves and adds required concepts for an executable.
-     * 
-     * @param requiresConcepts
-     *            The string containing the comma separated is of required concepts.
+     *
+     * @param requiresConcepts The string containing the comma separated is of required concepts.
      */
     private Set<String> getRequiredConcepts(String requiresConcepts) {
         Set<String> result = new HashSet<>();
@@ -157,9 +155,8 @@ public class JQAssistantProfileExporter extends ProfileExporter {
 
     /**
      * Creates an executable from an active rule and its parameters.
-     * 
-     * @param activeRule
-     *            The active rule.
+     *
+     * @param activeRule The active rule.
      * @return The executable.
      */
     private AbstractExecutableRule createExecutableFromActiveRule(ActiveRule activeRule) {
@@ -168,9 +165,8 @@ public class JQAssistantProfileExporter extends ProfileExporter {
 
     /**
      * Creates an executable from a rule.
-     * 
-     * @param rule
-     *            The rule.
+     *
+     * @param rule The rule.
      * @return The executable.
      */
     private AbstractExecutableRule createExecutableFromRule(Rule rule) {
@@ -187,11 +183,9 @@ public class JQAssistantProfileExporter extends ProfileExporter {
 
     /**
      * Creates an executable from a rule.
-     * 
-     * @param rule
-     *            The rule.
-     * @param cypher
-     *            The cypher expression.
+     *
+     * @param rule   The rule.
+     * @param cypher The cypher expression.
      * @return The executable.
      */
     private AbstractExecutableRule createExecutableFromRule(Rule rule, String cypher, Set<String> requiresConcepts) {
@@ -216,13 +210,13 @@ public class JQAssistantProfileExporter extends ProfileExporter {
         }
         RuleParam primaryReportColumnParam = rule.getParam(RuleParameter.PrimaryReportColumn.getName());
         String primaryReportColumn = primaryReportColumnParam != null ? primaryReportColumnParam.getDefaultValue() : null;
-        Report report = new Report("default", primaryReportColumn, new Properties());
+        Report report = Report.Builder.newInstance().primaryColumn(primaryReportColumn).get();
         switch (ruleType) {
             case Concept:
-            	executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+                executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 break;
             case Constraint:
-            	executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+                executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
                 break;
             default:
                 throw new IllegalStateException("Rule type is not supported " + ruleType);
@@ -232,11 +226,9 @@ public class JQAssistantProfileExporter extends ProfileExporter {
 
     /**
      * Creates an executable from a check based on a template.
-     * 
-     * @param activeRule
-     *            The active rule.
-     * @param check
-     *            The check.
+     *
+     * @param activeRule The active rule.
+     * @param check      The check.
      * @return The executable.
      */
     private AbstractExecutableRule createExecutableFromTemplate(ActiveRule activeRule, AbstractTemplateRule check) {
@@ -252,11 +244,11 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             verification = new RowCountVerification();
         }
         Set<String> requiresConcepts = getRequiresConcepts(check.getRequiresConcepts());
-        Report report = new Report("default", check.getPrimaryReportColumn(), new Properties());
+        Report report = Report.Builder.newInstance().primaryColumn(check.getPrimaryReportColumn()).get();
         if (check instanceof ConceptTemplateRule) {
-        	executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+            executable = Concept.Builder.newConcept().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
         } else if (check instanceof ConstraintTemplateRule) {
-        	executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
+            executable = Constraint.Builder.newConstraint().id(id).description(description).severity(severity).executable(new CypherExecutable(cypher)).requiresConceptIds(requiresConcepts).verification(verification).report(report).get();
         } else {
             throw new IllegalStateException("Unknown type " + check.getClass());
         }

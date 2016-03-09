@@ -27,5 +27,5 @@ The plugin implementation must be declared in the jQAssistant plugin descriptor:
 include::{docRoot}/jqassistant.examples.plugins.report/src/src/main/resources/META-INF/jqassistant-plugin.xml[]
 ----
 
-The plugin is automatically loaded by the analyzer if it can be found on the classpath, e.g. by adding it as dependency to the maven plugin.
-
+The plugin is automatically loaded by the analyzer if it can be found on the classpath, e.g. by adding it as dependency to the maven plugin. The report
+plugin will be used automatically or may be explicitly selected per rule by its id (i.e. "custom").

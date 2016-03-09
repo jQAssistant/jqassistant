@@ -12,9 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -48,8 +46,8 @@ public class CompositeReportWriterTest {
 
     @Test
     public void noSelection() throws AnalysisListenerException {
-        Concept concept = getRule(Concept.class, null);
-        Constraint constraint = getRule(Constraint.class, null);
+        Concept concept = getRule(Concept.class);
+        Constraint constraint = getRule(Constraint.class);
 
         write(concept, constraint);
 
@@ -76,8 +74,8 @@ public class CompositeReportWriterTest {
 
     @Test
     public void selectMultipleWriters() throws AnalysisListenerException {
-        Concept concept = getRule(Concept.class, " writer1, writer2 ");
-        Constraint constraint = getRule(Constraint.class, " writer1, writer2 ");
+        Concept concept = getRule(Concept.class, "writer1", "writer2");
+        Constraint constraint = getRule(Constraint.class, "writer1", "writer2");
 
         write(concept, constraint);
 
@@ -96,7 +94,6 @@ public class CompositeReportWriterTest {
             verify(reportWriter).endGroup();
         }
     }
-
 
     private void verifyInvoked(AnalysisListener reportWriter, Concept concept) throws AnalysisListenerException {
         verify(reportWriter).beginConcept(concept);
@@ -140,10 +137,16 @@ public class CompositeReportWriterTest {
         compositeReportWriter.end();
     }
 
-    private <T extends ExecutableRule> T getRule(Class<T> type, String reportType) {
+    private <T extends ExecutableRule> T getRule(Class<T> type, String... reportTypes) {
         T rule = mock(type);
         Report report = mock(Report.class);
-        when(report.getType()).thenReturn(reportType);
+        if (reportTypes.length > 0) {
+            Set<String> selection = new HashSet<>(Arrays.asList(reportTypes));
+            when(report.getSelectedTypes()).thenReturn(selection);
+        } else {
+            when(report.getSelectedTypes()).thenReturn(null);
+        }
+
         when(rule.getReport()).thenReturn(report);
         return rule;
     }

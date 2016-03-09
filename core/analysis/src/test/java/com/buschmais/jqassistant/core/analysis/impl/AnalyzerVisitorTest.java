@@ -137,7 +137,7 @@ public class AnalyzerVisitorTest {
     private Concept createConcept(String statement) {
         Executable executable = new CypherExecutable(statement);
         Verification verification = new RowCountVerification();
-        Report report = new Report(null, "primaryColumn", new Properties());
+        Report report = Report.Builder.newInstance().primaryColumn("primaryColumn").get();
         return Concept.Builder.newConcept().id("test:Concept").description("Test Concept").ruleSource(new FileRuleSource(new File(RULESOURCE))).severity(Severity.MINOR).executable(executable).verification(verification)
                 .report(report).get();
     }

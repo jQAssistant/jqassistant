@@ -3,6 +3,9 @@
 === Core
 - Added support for severity on groups
 - Upgraded the XML schema for rules to 1.1 keeping backward compatibility to 1.0
+- Upgraded the XML schema for plugins to 1.1 keeping backward compatibility to 1.0
+- Added rule specific report properties
+- Allow selection of a specific report type per rule
 
 === Maven
 - Added a configuration property useExecutionRootAsProjectRoot for reactors with incomplete parent hierarchies.
@@ -12,4 +15,11 @@
 ==== Java
 
 - Added an attribute sourceFileName to Java types representing the name of the file the class has been compiled from.
+
+==== GraphML
+
+- Replaced report plugin property "graphml.report.yedgraphml" with "graphml.report.decorator" which specifies the name
+  of a class implementing the 'GraphMLDecorator' interface for layouting a graph (default: YedGraphMLDecoratorAdded)
+
+=== SonarQube
 

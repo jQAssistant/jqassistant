@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
+import java.util.Properties;
 
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
@@ -25,6 +26,7 @@ public class CustomReportPlugin implements ReportPlugin {
 
     @Override
     public void configure(Map<String, Object> properties) throws ReportException {
+        // general report properties
         this.fileName = (String) properties.get(PROPERTY_FILENAME);
         if (this.fileName == null) {
             throw new ReportException("Property " + PROPERTY_FILENAME + " is not specified.");
@@ -65,12 +67,12 @@ public class CustomReportPlugin implements ReportPlugin {
 
     @Override
     public void setResult(Result<? extends ExecutableRule> result) throws ReportException {
-        Rule rule = result.getRule();
+        ExecutableRule rule = result.getRule();
+        Properties properties = rule.getReport().getProperties(); // rule specific report properties
         if (rule instanceof Concept && "example:MethodsPerType".equals(rule.getId())) {
-            try {
-                File file = new File(fileName).getAbsoluteFile();
-                file.getParentFile().mkdirs();
-                PrintWriter writer = new PrintWriter(new FileWriter(file));
+            File file = new File(fileName).getAbsoluteFile();
+            file.getParentFile().mkdirs();
+            try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
                 writer.println("Methods per Type");
                 writer.println("================");
                 for (Map<String, Object> row : result.getRows()) {
@@ -78,7 +80,6 @@ public class CustomReportPlugin implements ReportPlugin {
                     Long methodCount = (Long) row.get("MethodCount");
                     writer.println(type.getFullQualifiedName() + ":" + methodCount);
                 }
-                writer.close();
             } catch (IOException e) {
                 throw new ReportException("Cannot write custom report.", e);
             }
