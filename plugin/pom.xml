@@ -26,7 +26,7 @@
 							<configuration>
 								<outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
 								<includeTypes>xsl</includeTypes>
-								<includeClassifiers>rules2asciidoc,rules2asciidoc-v2,plugin2asciidoc</includeClassifiers>
+								<includeClassifiers>rules2asciidoc-v2,plugin2asciidoc</includeClassifiers>
 								<stripVersion>true</stripVersion>
 							</configuration>
 						</execution>
