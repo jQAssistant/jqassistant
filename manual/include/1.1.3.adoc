@@ -19,7 +19,7 @@
 
 ==== Java
 
-- Added an attribute sourceFileName to Java types representing the name of the file the class has been compiled from.
+- Added an attribute 'sourceFileName' to Java types representing the name of the file the class has been compiled from.
 
 ==== GraphML
 
