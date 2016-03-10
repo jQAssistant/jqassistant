@@ -82,6 +82,9 @@ Executes an analysis.
 ** specifies the severity of a problem for the analysis to fail. The program will return with exit code 2.
 ** values: 'info', 'minor', 'major', 'critical' or 'blocker'
 ** default: 'minor'
+* -executeAppliedConcepts
+** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
+   same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
 
 [[cli:available-rules]]
 ==== available-rules
