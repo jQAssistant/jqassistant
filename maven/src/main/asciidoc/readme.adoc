@@ -287,6 +287,10 @@ Executes an analysis.
 * severity
 ** determines if jQAssistant shall break the build when constraint with higher severity level are violated and _failOnViolations_ is set to _true_
 ** default: 'info'
+* executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
+** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
+   same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
+** default 'false'
 
 [[effective-rules]]
 ==== jqassistant:effective-rules
