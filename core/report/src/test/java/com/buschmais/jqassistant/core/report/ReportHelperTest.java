@@ -1,14 +1,13 @@
 package com.buschmais.jqassistant.core.report;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
-import org.hamcrest.core.StringContains;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.report.model.TestDescriptorWithLanguageElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,13 +18,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
-import com.buschmais.jqassistant.core.report.api.ReportHelper;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import java.util.*;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Verifies functionality of the report helper.
@@ -91,7 +91,7 @@ public class ReportHelperTest {
     public void failedConceptsWithOverriddenSeverity() {
         Result<Concept> minorConceptResult = mockResult("test:minorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR);
         Result<Concept> majorConceptResult = mockResult("test:majorConcept", Concept.class, Result.Status.FAILURE, Severity.MINOR, Severity.MAJOR,
-                Collections.<Map<String, Object>> emptyList());
+                Collections.<Map<String, Object>>emptyList());
         Map<String, Result<Concept>> conceptResults = new HashMap<>();
         conceptResults.put("test:minorConcept", minorConceptResult);
         conceptResults.put("test:majorConcept", majorConceptResult);
@@ -161,17 +161,31 @@ public class ReportHelperTest {
         assertThat(errorMessages, hasItem(containsString("MajorElement=MajorValue")));
     }
 
+    @Test
+    public void label() {
+        TestDescriptorWithLanguageElement descriptorWithLabel = mock(TestDescriptorWithLanguageElement.class);
+        when(descriptorWithLabel.getValue()).thenReturn("value");
+        assertThat(ReportHelper.getLabel(descriptorWithLabel), equalTo("value"));
+        assertThat(ReportHelper.getLabel(Collections.singletonList(descriptorWithLabel)), equalTo("[value]"));
+        Map<String, Object> map = new HashMap<>();
+        map.put("key1", descriptorWithLabel);
+        map.put("key2", "simpleValue");
+        assertThat(ReportHelper.getLabel(map), equalTo("{key1:value,key2:simpleValue}"));
+        TestDescriptorWithLanguageElement descriptorWithEmptyLanguageLabel = mock(TestDescriptorWithLanguageElement.class);
+        assertThat(ReportHelper.getLabel(descriptorWithEmptyLanguageLabel), notNullValue());
+    }
+
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity) {
-        return mockResult(id, ruleType, status, ruleSeverity, ruleSeverity, Collections.<Map<String, Object>> emptyList());
+        return mockResult(id, ruleType, status, ruleSeverity, ruleSeverity, Collections.<Map<String, Object>>emptyList());
     }
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
-            List<Map<String, Object>> rows) {
+                                                            List<Map<String, Object>> rows) {
         return mockResult(id, ruleType, status, ruleSeverity, ruleSeverity, rows);
     }
 
     private <T extends ExecutableRule> Result<T> mockResult(String id, Class<T> ruleType, Result.Status status, Severity ruleSeverity,
-            Severity effectiveSeverity, List<Map<String, Object>> rows) {
+                                                            Severity effectiveSeverity, List<Map<String, Object>> rows) {
         Result<T> ruleResult = mock(Result.class);
         T rule = mock(ruleType);
         when(rule.getId()).thenReturn(id);
