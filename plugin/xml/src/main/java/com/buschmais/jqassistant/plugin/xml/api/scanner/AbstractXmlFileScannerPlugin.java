@@ -49,10 +49,10 @@ public abstract class AbstractXmlFileScannerPlugin<D extends XmlFileDescriptor> 
         } finally {
             scanner.getContext().pop(XmlDocumentDescriptor.class);
         }
-        if (xmlFileDescriptor.isXmlWellFormed()) {
-            return scan(item, xmlFileDescriptor, path, scope, scanner);
-        } else {
+        if (!xmlFileDescriptor.isXmlWellFormed()) {
             LOGGER.warn("XML content is not well-formed for item '{}', skipping.", path);
+        } else {
+            return scan(item, xmlFileDescriptor, path, scope, scanner);
         }
         return xmlFileDescriptor;
     }

@@ -115,6 +115,7 @@ public class PersistenceXmlScannerPluginTest {
         doReturn(fileDescriptor).when(context).peek(FileDescriptor.class);
         doReturn(persistenceDescriptor).when(store).addDescriptorType(fileDescriptor, PersistenceXmlDescriptor.class);
         doReturn(persistenceUnitList).when(persistenceDescriptor).getContains();
+        doReturn(true).when(persistenceDescriptor).isXmlWellFormed();
         doReturn(unitDescriptor).when(store).create(PersistenceUnitDescriptor.class);
     }
 

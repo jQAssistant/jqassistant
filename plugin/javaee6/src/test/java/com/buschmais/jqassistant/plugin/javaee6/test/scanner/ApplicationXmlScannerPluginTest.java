@@ -76,6 +76,7 @@ public class ApplicationXmlScannerPluginTest extends AbstractXmlScannerTest {
         when(store.addDescriptorType(fileDescriptor, ApplicationXmlDescriptor.class)).thenReturn(applicationXmlDescriptor);
         when(scanner.scan(Mockito.any(StreamSource.class), Mockito.eq("/META-INF/application.xml"), Mockito.eq(EnterpriseApplicationScope.EAR)))
                 .thenReturn(applicationXmlDescriptor);
+        when(applicationXmlDescriptor.isXmlWellFormed()).thenReturn(true);
         when(applicationXmlDescriptor.getDescriptions()).thenReturn(mock(List.class));
         when(applicationXmlDescriptor.getDisplayNames()).thenReturn(mock(List.class));
         when(applicationXmlDescriptor.getIcons()).thenReturn(mock(List.class));
