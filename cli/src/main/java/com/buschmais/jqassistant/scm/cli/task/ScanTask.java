@@ -1,10 +1,7 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.api.Scope;
+import com.buschmais.jqassistant.core.scanner.api.*;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
 import com.buschmais.jqassistant.core.store.api.Store;
@@ -33,9 +30,11 @@ public class ScanTask extends AbstractTask {
     public static final String CMDLINE_OPTION_FILES = "f";
     public static final String CMDLINE_OPTION_URIS = "u";
     public static final String CMDLINE_OPTION_RESET = "reset";
+    public static final String CMDLINE_OPTION_CONTINUEONERROR = "continueOnError";
     private Map<String, String> files = Collections.emptyMap();
     private Map<String, String> urls = Collections.emptyMap();
     private boolean reset = false;
+    private boolean continueOnError = true;
 
     @SuppressWarnings("static-access")
     @Override
@@ -48,6 +47,8 @@ public class ScanTask extends AbstractTask {
                 .create(CMDLINE_OPTION_URIS));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_RESET).withDescription("Reset store before scanning (default=false).")
                 .create(CMDLINE_OPTION_RESET));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_CONTINUEONERROR).withDescription("Continue scanning if an error is encountered. (default=false).")
+                .create(CMDLINE_OPTION_CONTINUEONERROR));
     }
 
     @Override
@@ -87,12 +88,11 @@ public class ScanTask extends AbstractTask {
     /**
      * Parses the given list of option values into a map of resources and their
      * associated (optional) scopes.
-     *
+     * <p>
      * Example: "maven:repository::http://my-host/repo" will be an entry with
      * key "maven:repository" and value "http://my-host/repo".
      *
-     * @param optionValues
-     *            The value.
+     * @param optionValues The value.
      * @return The map of resources and scopes.
      */
     private Map<String, String> parseResources(List<String> optionValues) {
@@ -113,11 +113,13 @@ public class ScanTask extends AbstractTask {
     }
 
     private <T> void scan(ScannerContext scannerContext, T element, String path, String scopeName, Map<String, ScannerPlugin<?, ?>> scannerPlugins) throws CliExecutionException {
+        ScannerConfiguration configuration = new ScannerConfiguration();
+        configuration.setContinueOnError(continueOnError);
         Store store = scannerContext.getStore();
         store.beginTransaction();
         Scanner scanner;
         try {
-            scanner = new ScannerImpl(scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
+            scanner = new ScannerImpl(configuration, scannerContext, scannerPlugins, pluginRepository.getScopePluginRepository().getScopes());
         } catch (PluginRepositoryException e) {
             throw new CliExecutionException("Cannot get scope plugins.", e);
         }
@@ -131,8 +133,8 @@ public class ScanTask extends AbstractTask {
 
     @Override
     public void withOptions(final CommandLine options) throws CliConfigurationException {
-        files = parseResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String> emptyList()));
-        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URIS, Collections.<String> emptyList()));
+        files = parseResources(getOptionValues(options, CMDLINE_OPTION_FILES, Collections.<String>emptyList()));
+        urls = parseResources(getOptionValues(options, CMDLINE_OPTION_URIS, Collections.<String>emptyList()));
         if (files.isEmpty() && urls.isEmpty()) {
             throw new CliConfigurationException("No files, directories or urls given.");
         }

@@ -59,6 +59,11 @@ jqassistant.sh scan -u maven:repository::http://my.maven.repository
 * -reset
 ** reset the database before scanning
 
+* -continueOnError
+** continue scanning even if a plugin fails with an unrecoverable error
+
+NOTE: Using -continueOnError might create inconsistent data. Any reported errors should be reported to the plugin developer.
+
 [[cli:available-scopes]]
 ==== available-scopes
 ===== Description
