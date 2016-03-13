@@ -20,6 +20,8 @@ public class ScannerImpl implements Scanner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScannerImpl.class);
 
+    private final ScannerConfiguration configuration;
+
     private final ScannerContext scannerContext;
 
     private final Map<String, ScannerPlugin<?, ?>> scannerPlugins;
@@ -32,11 +34,14 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Constructor.
-     * 
-     * @param scannerPlugins
-     *            The configured plugins.
+     *
+     * @param configuration  The configuration.
+     * @param scannerContext The scanner context.
+     * @param scannerPlugins The registered plugins.
+     * @param scopes         The registered scopes.
      */
-    public ScannerImpl(ScannerContext scannerContext, Map<String, ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
+    public ScannerImpl(ScannerConfiguration configuration, ScannerContext scannerContext, Map<String, ScannerPlugin<?, ?>> scannerPlugins, Map<String, Scope> scopes) {
+        this.configuration = configuration;
         this.scannerContext = scannerContext;
         this.scannerPlugins = scannerPlugins;
         this.scopes = scopes;
@@ -69,14 +74,19 @@ public class ScannerImpl implements Scanner {
                 } catch (IOException e) {
                     LOGGER.warn("Cannot scan item " + path, e);
                 } catch (RuntimeException e) {
-                    throw new IllegalStateException(
-                            "Unexpected problem while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='" + pipeline + "'.",
-                            e);
+                    String message = "Unexpected problem encountered while scanning: item='" + item + "', path='" + path + "', scope='" + scope + "', pipeline='" + pipeline + "'. Please report this error including the full stacktrace (continueOnError=" + configuration.isContinueOnError() + ").";
+                    if (configuration.isContinueOnError()) {
+                        LOGGER.error(message, e);
+                        LOGGER.info("Continuing scan after error. NOTE: Data might be inconsistent.");
+                    } else {
+                        throw new IllegalStateException(message, e);
+                    }
+                } finally {
+                    leaveScope(scope);
+                    popDescriptor(type, descriptor);
+                    descriptor = newDescriptor;
+                    type = selectedPlugin.getDescriptorType();
                 }
-                leaveScope(scope);
-                popDescriptor(type, descriptor);
-                descriptor = newDescriptor;
-                type = selectedPlugin.getDescriptorType();
             }
         }
         if (pipelineCreated) {
@@ -87,17 +97,12 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Checks whether a plugin accepts an item.
-     * 
-     * @param selectedPlugin
-     *            The plugin.
-     * @param item
-     *            The item.
-     * @param path
-     *            The path.
-     * @param scope
-     *            The scope.
-     * @param <I>
-     *            The item type.
+     *
+     * @param selectedPlugin The plugin.
+     * @param item           The item.
+     * @param path           The path.
+     * @param scope          The scope.
+     * @param <I>            The item type.
      * @return <code>true</code> if the plugin accepts the item for scanning.
      */
     protected <I> boolean accepts(ScannerPlugin<I, ?> selectedPlugin, I item, String path, Scope scope) {
@@ -114,11 +119,9 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Push the given descriptor with all it's types to the context.
-     * 
-     * @param descriptor
-     *            The descriptor.
-     * @param <D>
-     *            The descriptor type.
+     *
+     * @param descriptor The descriptor.
+     * @param <D>        The descriptor type.
      */
     private <D extends Descriptor> void pushDesriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
@@ -128,11 +131,9 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Pop the given descriptor from the context.
-     * 
-     * @param descriptor
-     *            The descriptor.
-     * @param <D>
-     *            The descriptor type.
+     *
+     * @param descriptor The descriptor.
+     * @param <D>        The descriptor type.
      */
     private <D extends Descriptor> void popDescriptor(Class<D> type, D descriptor) {
         if (descriptor != null) {
@@ -161,9 +162,8 @@ public class ScannerImpl implements Scanner {
 
     /**
      * Determine the list of scanner plugins that handle the given type.
-     * 
-     * @param type
-     *            The type.
+     *
+     * @param type The type.
      * @return The list of plugins.
      */
     private List<ScannerPlugin<?, ?>> getScannerPluginsForType(final Class<?> type) {

@@ -8,12 +8,14 @@
 - Allow selection of a specific report type per rule
 
 === Maven
-- Added a configuration property 'useExecutionRootAsProjectRoot' for reactors with incomplete parent hierarchies.
-- Added a configuration property 'executeAppliedConcepts' for repeated execution of concepts that have already beend
+- Added configuration property 'useExecutionRootAsProjectRoot' for reactors with incomplete parent hierarchies
+- Added configuration property 'executeAppliedConcepts' for repeated execution of concepts that have already beend
   applied before (to ease development of concepts)
+- Added configuration property 'continueOnError' to continue scanning even if a plugin fails with an unrecoverable error
 
 === CLI
 - Added command line switch '-executeAppliedConcepts' (same functionality as for Maven plugin)
+- Added command line switch '-continueOnError' to continue scanning even if a plugin fails with an unrecoverable error
 
 === Plugins
 
