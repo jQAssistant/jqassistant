@@ -166,7 +166,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     public void invalidPomFile() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH,"/invalid/pom.xml");
         store.beginTransaction();
-        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.valid=false RETURN n").getColumn("n");
+        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.xmlWellFormed=false RETURN n").getColumn("n");
         assertEquals(1, mavenPomDescriptors.size());
         store.commitTransaction();
     }
