@@ -11,6 +11,7 @@ import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
@@ -211,7 +212,16 @@ public abstract class AbstractPluginIT {
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
         Map<String, ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
-        return new ScannerImpl(scannerContext, scannerPlugins, scopePluginRepository.getScopes());
+        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, scopePluginRepository.getScopes());
+    }
+
+    /**
+     * Return the scanner configuration for the test.
+     *
+     * @return The scanner configuration.
+     */
+    protected ScannerConfiguration getScannerConfiguration() {
+        return new ScannerConfiguration();
     }
 
     /**
