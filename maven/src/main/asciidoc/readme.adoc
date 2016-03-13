@@ -104,6 +104,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <scanProperties>
                                 <customScanner.property>value</customScanner.property>
                             </scanProperties>
+                            <continueOnError>false</continueOnError>
                         </configuration>
                         -->
                     </execution>
@@ -220,7 +221,8 @@ mvn jqassistant:available-rules
 [[scan]]
 ==== jqassistant:scan
 ===== Description
-Scans the directories of compiled classes and test classes and stores the gathered information in database.
+Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
+gathered information in database.
 
 ===== Configuration
 * <<skip>>
@@ -231,7 +233,11 @@ Scans the directories of compiled classes and test classes and stores the gather
 ** add directories or files to be included while scanning
 ** wildcards are not supported
 * scanProperties
-** allows passing properties to scanner plugins.
+** allows passing properties to scanner plugins
+* continueOnError
+** continue scanning even if a plugin fails with an unrecoverable error
+
+NOTE: Using 'continueOnError' might create inconsistent data. Any reported errors should be reported to the plugin developer.
 
 [[available-scopes]]
 ==== jqassistant:available-scopes
