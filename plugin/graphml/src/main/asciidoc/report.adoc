@@ -18,7 +18,7 @@ By default all concepts ending in `.graphml` will be rendered (e.g. "module:modu
 
 === Example
 
-The following concept will return package dependencies as GraphML document:
+The following concept will return package dependencies (as provided by the concept <<dependency:Package>>) as GraphML document:
 
 [source,xml]
 .reports.xml
@@ -94,7 +94,7 @@ The following example virtually aggregates some data without creating a node in 
         <description>Aggregates data in a virtual node.</description>
         <cypher><![CDATA[
             MATCH
-			    (m:Method)
+              (m:Method)
             RETURN
               {
                 role: "node",
