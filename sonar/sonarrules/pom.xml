@@ -45,21 +45,26 @@
         
         <!-- SonarQ -->
         <dependency>
-	        <groupId>org.codehaus.sonar</groupId>
+            <groupId>org.codehaus.sonar</groupId>
             <artifactId>sonar-plugin-api</artifactId>
-			<scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-        	<groupId>org.codehaus.sonar-plugins.java</groupId>
-        	<artifactId>sonar-java-plugin</artifactId>
-        	<type>sonar-plugin</type>
-        	<scope>provided</scope>
+            <groupId>org.codehaus.sonar</groupId>
+            <artifactId>sonar-java-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-		<dependency>
-			<groupId>org.codehaus.sonar</groupId>
-			<artifactId>sonar-java-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-java-plugin</artifactId>
+            <type>sonar-plugin</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.sonar-plugins.java</groupId>
+            <artifactId>sonar-java-plugin</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- unit tests -->
         <dependency>
