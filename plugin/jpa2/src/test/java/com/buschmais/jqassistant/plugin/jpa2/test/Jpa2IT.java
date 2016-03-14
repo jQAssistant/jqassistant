@@ -121,7 +121,7 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void namedQuery() throws Exception {
+    public void namedQueries() throws Exception {
         scanClasses(JpaEntity.class);
         assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

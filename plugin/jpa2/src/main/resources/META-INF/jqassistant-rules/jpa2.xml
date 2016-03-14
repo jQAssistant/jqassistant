@@ -62,13 +62,15 @@
 
     <concept id="jpa2:NamedQuery">
         <requiresConcept refId="jpa2:Entity"/>
-        <description>Creates a node labeled with "Jpa" and "NamedQuery" for each @NamedQuery defined for an entity. Furthermore a relation DEFINES is created
-            between the entity and the named query.
+        <description>Creates a node labeled with "Jpa" and "NamedQuery" for each @NamedQuery defined for an entity.
+            Furthermore a relation DEFINES is created between the entity and the named query.
         </description>
         <cypher><![CDATA[
             MATCH
-              (entity:Jpa:Entity)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:Type),
-              (namedQueries)-[:HAS]->(:Value:Array)-[:CONTAINS]->(namedQuery:Value:Annotation)-[:OF_TYPE]->(namedQueryType:Type),
+              (entity:Jpa:Entity),
+              (entity)-[:ANNOTATED_BY]->(namedQueries)-[:OF_TYPE]->(namedQueriesType:Type),
+              (namedQueries)-[:HAS]->(:Value:Array)-[:CONTAINS]->(namedQuery),
+              (namedQuery:Value:Annotation)-[:OF_TYPE]->(namedQueryType:Type),
               (namedQuery)-[:HAS]->(nameAttribute:Value),
               (namedQuery)-[:HAS]->(queryAttribute:Value)
             WHERE
@@ -76,7 +78,7 @@
               and namedQueryType.fqn = 'javax.persistence.NamedQuery'
               and nameAttribute.name = 'name'
               and queryAttribute.name = 'query'
-            CREATE UNIQUE
+            MERGE
               (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value, query:queryAttribute.value})
             RETURN
               entity AS Entity, n.name AS Name, n.query AS Query
