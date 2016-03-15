@@ -1,5 +1,26 @@
 package com.buschmais.jqassistant.plugin.jpa2.test;
 
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
+import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
+import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
+import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEmbeddable;
+import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
+import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.SingleNamedQueryEntity;
+import org.hamcrest.Matcher;
+import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.FAILURE;
 import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
@@ -12,26 +33,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.hamcrest.Matcher;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
-import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceUnitDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.api.model.PersistenceXmlDescriptor;
-import com.buschmais.jqassistant.plugin.jpa2.test.matcher.PersistenceUnitMatcher;
-import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEmbeddable;
-import com.buschmais.jqassistant.plugin.jpa2.test.set.entity.JpaEntity;
-
 /**
  * Tests for the JPA concepts.
  */
@@ -42,11 +43,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "jpa2:Entity".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void entity() throws Exception {
@@ -59,11 +58,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "jpa2:Embeddable".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void embeddable() throws Exception {
@@ -76,11 +73,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "jpa2:Embedded".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void embedded() throws Exception {
@@ -95,11 +90,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "jpa2:EmbeddedId".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void embeddedId() throws Exception {
@@ -114,33 +107,43 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "jpa2:NamedQuery".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void namedQueries() throws Exception {
-        scanClasses(JpaEntity.class);
+        scanClasses(JpaEntity.class, SingleNamedQueryEntity.class);
         assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        TestResult query = query("MATCH (e:Entity)-[:DEFINES]->(n:Jpa:NamedQuery) RETURN n.name as name, n.query as query");
-        List<Map<String, Object>> rows = query.getRows();
-        assertThat(rows.size(), equalTo(1));
-        Map<String, Object> row = rows.get(0);
-        assertThat((String) row.get("name"), equalTo(JpaEntity.TESTQUERY_NAME));
-        assertThat((String) row.get("query"), equalTo(JpaEntity.TESTQUERY_QUERY));
+        verifyNamedQuery(JpaEntity.class, JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY);
+        verifyNamedQuery(SingleNamedQueryEntity.class, SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY);
         store.commitTransaction();
     }
 
     /**
+     * Verify the result
+     *
+     * @param entity The entity class to verify.
+     * @param name   The name of the defined query.
+     * @param query  The query.
+     */
+    private void verifyNamedQuery(Class<?> entity, String name, String query) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("entity", entity.getName());
+        TestResult result = query("MATCH (e:Entity {fqn:{entity}})-[:DEFINES]->(n:Jpa:NamedQuery) RETURN n.name as name, n.query as query", params);
+        List<Map<String, Object>> rows = result.getRows();
+        assertThat(rows.size(), equalTo(1));
+        Map<String, Object> row = rows.get(0);
+        assertThat((String) row.get("name"), equalTo(name));
+        assertThat((String) row.get("query"), equalTo(query));
+    }
+
+    /**
      * Verifies scanning of persistence descriptors.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException If the test fails.
+     * @throws AnalysisException   If the test fails.
      */
     @Test
     public void fullPersistenceDescriptor_2_0() throws IOException, AnalysisException {
@@ -158,11 +161,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of persistence unit descriptors.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void fullPersistenceUnitDescriptor_2_1() throws IOException, AnalysisException {
@@ -188,11 +189,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
 
     /**
      * Verifies scanning of persistence descriptors.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void minimalPersistenceDescriptor() throws IOException, AnalysisException {
@@ -211,11 +210,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     /**
      * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if
      * it is not set.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void validationModeNotSpecified() throws Exception {
@@ -234,11 +231,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     /**
      * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified" if
      * it is set to AUTO.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void validationModeAuto() throws Exception {
@@ -257,11 +252,9 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     /**
      * Verifies the constraint "jpa2:ValidationModeMustBeExplicitlySpecified"
      * for values NONE and CALLBACK.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void validationModeSpecified() throws Exception {
