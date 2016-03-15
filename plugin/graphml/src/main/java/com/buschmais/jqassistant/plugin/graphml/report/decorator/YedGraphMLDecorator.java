@@ -1,17 +1,21 @@
 package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
 import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
+import org.graphstream.algorithm.APSP;
+import org.graphstream.algorithm.Toolkit;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.SingleGraph;
+import org.neo4j.graphdb.Relationship;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.File;
+import java.util.*;
 
 /**
  * A GraphML decorator for yEd.
@@ -22,10 +26,97 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     private static final String YED_NAMESPACE_URI = "http://www.yworks.com/xml/yed/3";
 
     private XMLStreamWriter writer;
+    private SingleGraph graph;
 
     @Override
     public void initialize(Result<?> result, SubGraph subGraph, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties) {
         this.writer = xmlWriter;
+
+        if((result.getRule().getReport() != null) && (result.getRule().getReport().getProperties() != null)) {
+            Properties reportProperties = result.getRule().getReport().getProperties();
+            if(reportProperties.containsKey("layout")) {
+                // Create a new graph mirroring the subGraph.
+                graph = new SingleGraph("layout helper");
+                Set<String> nodeIds = new HashSet<>();
+                for (CompositeObject node : subGraph.getNodes()) {
+                    String nodeId = node.getId().toString();
+                    if (!nodeIds.contains(nodeId)) {
+                        graph.addNode(nodeId);
+                        nodeIds.add(nodeId);
+                    }
+                }
+
+                Set<String> edgeIds = new HashSet<>();
+                for (CompositeObject node : subGraph.getRelationships()) {
+                    String edgeId = node.getId().toString();
+                    String startId = Long.toString(((Relationship) node.getDelegate()).getStartNode().getId());
+                    if (!nodeIds.contains(startId)) {
+                        throw new RuntimeException("Could not find edge start-node");
+                    }
+                    String endId = Long.toString(((Relationship) node.getDelegate()).getEndNode().getId());
+                    if (!nodeIds.contains(endId)) {
+                        throw new RuntimeException("Could not find edge end-node");
+                    }
+                    if (!edgeIds.contains(edgeId)) {
+                        graph.addEdge(node.getId().toString(), startId, endId, true);
+                        edgeIds.add(edgeId);
+                    }
+                }
+
+                // Dump the graph so we can experiment with it.
+                /*FileSink fs = new FileSinkDGS();
+                try {
+                    fs.writeAll(graph, "graph-data.dgs");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+
+                // Filter out any redundant edges
+                // (direct edges, that can be replaced by a sequence of other edges)
+                if("true".equalsIgnoreCase(reportProperties.get("strip-redundant-edges").toString())) {
+                    // Filter out redundant edges.
+                    for(Edge edge : graph.getEdgeSet()) {
+                        edge.addAttribute("weight", 1);
+                    }
+                    APSP apsp = new APSP();
+                    apsp.init(graph);
+                    apsp.setDirected(true);
+                    apsp.setWeightAttributeName("weight");
+                    apsp.compute();
+
+                    Set<Edge> redundantEdges = new HashSet<>();
+                    for(Node source : graph.getNodeSet()) {
+                        // Remove any remaining redundant edges
+                        for (Edge leavingEdge : source.getLeavingEdgeSet()) {
+                            if (leavingEdge != null) {
+                                Node target = leavingEdge.getTargetNode();
+                                // For every other outgoing edge, check if we can reach target from that node.
+                                for (Edge otherLeavingEdge : source.getLeavingEdgeSet()) {
+                                    if ((otherLeavingEdge != null) && (otherLeavingEdge != leavingEdge)) {
+                                        Node otherTarget = otherLeavingEdge.getTargetNode();
+                                        APSP.APSPInfo info = otherTarget.getAttribute(APSP.APSPInfo.ATTRIBUTE_NAME);
+                                        // if there is a path from otherTarget to target, then
+                                        // the path from source to target is obsolete.
+                                        double lengthTo = info.getLengthTo(target.getId());
+                                        if (lengthTo != -1) {
+                                            redundantEdges.add(leavingEdge);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    for(Edge redundantEdge : redundantEdges) {
+                        graph.removeEdge(redundantEdge);
+                    }
+                }
+
+                if("hierarchical".equals(reportProperties.getProperty("layout"))) {
+                    // Apply hierarchical layout to the mirror graph.
+                    Toolkit.computeLayout(graph, new HierarchicalLayout(600, 600), 0.5);
+                }
+            }
+        }
     }
 
     @Override
@@ -83,6 +174,19 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
 
     @Override
     public void writeNodeElements(CompositeObject node) throws XMLStreamException {
+        // Get the node from the mirror graph in order to get it's position.
+        Geometry geometry = null;
+        if(graph != null) {
+            Node graphNode = graph.getNode(node.getId().toString());
+            if(graphNode != null) {
+                double[] xyz = graphNode.getAttribute("xyz");
+                geometry = new Geometry();
+                geometry.x = (float) (xyz[0]);
+                geometry.y = (float) (xyz[1]);
+                geometry.width = 80;
+                geometry.height = 100;
+            }}
+
         writer.writeStartElement("data");
         writer.writeAttribute("key", "d6");
         writer.writeStartElement(Y_NAMESPACE_URI, "ProxyAutoBoundsNode");
@@ -100,8 +204,8 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         borderInsets.rightF = 48.9443359375F;
 
         String nodeLabel = ReportHelper.getLabel(node);
-        writeGroupNodeElement(writer, nodeLabel, false, borderInsets);
-        writeGroupNodeElement(writer, nodeLabel, true, new Insets());
+        writeGroupNodeElement(writer, nodeLabel, false, geometry, borderInsets);
+        writeGroupNodeElement(writer, nodeLabel, true, geometry, new Insets());
 
         writer.writeEndElement();
         writer.writeEndElement();
@@ -120,8 +224,17 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     public void close() {
     }
 
-    private void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed, Insets borderInsets) throws XMLStreamException {
+    private void writeGroupNodeElement(XMLStreamWriter writer, String nodeLabel, boolean closed,
+                                       Geometry geometry, Insets borderInsets) throws XMLStreamException {
         writer.writeStartElement(Y_NAMESPACE_URI, "GroupNode");
+
+        if(geometry != null) {
+            writer.writeEmptyElement(Y_NAMESPACE_URI, "Geometry");
+            writer.writeAttribute("x", Float.toString(geometry.x));
+            writer.writeAttribute("y", Float.toString(geometry.y));
+            writer.writeAttribute("width", Float.toString(geometry.width));
+            writer.writeAttribute("height", Float.toString(geometry.height));
+        }
 
         writer.writeEmptyElement(Y_NAMESPACE_URI, "Fill");
         writer.writeAttribute("color", "#FFFFFF");
@@ -183,6 +296,14 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         writer.writeAttribute("topF", Float.toString(borderInsets.topF));
 
         writer.writeEndElement();
+    }
+
+    private class Geometry {
+        private float x;
+        private float y;
+
+        private float width;
+        private float height;
     }
 
     private class Insets {
