@@ -1,5 +1,5 @@
 <jqa-plugin:jqassistant-plugin
-        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="Core Analysis">
+        xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1" name="Core Analysis">
     <description>Provides elements for storing analysis results.</description>
     <model>
         <class>com.buschmais.jqassistant.core.analysis.api.model.ConceptDescriptor</class>
