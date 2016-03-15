@@ -28,5 +28,10 @@
 - Replaced report plugin property "graphml.report.yedgraphml" with "graphml.report.decorator" which specifies the name
   of a class implementing the 'GraphMLDecorator' interface for layouting a graph (default: YedGraphMLDecoratorAdded)
 
+==== JPA2
+
+- Fixed concept "jpa2:NamedQuery" to also support @NamedQuery annotations which are directly applied to an entity (e.g.
+  without surrounding @NamedQueries)
+
 === SonarQube
 
