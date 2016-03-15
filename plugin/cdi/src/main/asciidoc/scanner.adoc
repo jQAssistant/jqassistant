@@ -2,7 +2,7 @@
 == Scanner for beans.xml files
 
 Imports bean descriptors from `META-INF/beans.xml` or `WEB-INF/beans.xml` files.
-                       1
+
 === Nodes labled with `:File:Cdi:Beans`
 
 Represents a `beans.xml` file.
