@@ -1,4 +1,4 @@
-<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="JUnit">
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1" name="JUnit">
     <description>Provides scanner for JUnit test reports and rules (e.g. for test classes/methods and ignored tests).</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.junit.api.model.TestReportDirectoryDescriptor</class>

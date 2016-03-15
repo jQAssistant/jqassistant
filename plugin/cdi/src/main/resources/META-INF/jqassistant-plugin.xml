@@ -1,4 +1,4 @@
-<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0" name="CDI">
+<v1:jqassistant-plugin xmlns:v1="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1" name="CDI">
     <description>Provides rules for CDI.</description>
     <model>
         <class>com.buschmais.jqassistant.plugin.cdi.api.model.CdiDescriptor</class>
