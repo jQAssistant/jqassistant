@@ -7,8 +7,8 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 @Label("TestCase")
 public interface TestCaseDescriptor extends NamedDescriptor {
 
-    public enum Result {
-        SUCCESS, FAILURE, ERROR, SKIPPED;
+    enum Result {
+        SUCCESS, FAILURE, ERROR, SKIPPED
     }
 
     @Property("className")

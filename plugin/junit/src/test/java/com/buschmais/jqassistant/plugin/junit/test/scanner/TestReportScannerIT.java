@@ -44,11 +44,12 @@ public class TestReportScannerIT extends AbstractJavaPluginIT {
         assertThat(testSuiteDescriptor.getErrors(), equalTo(1));
         assertThat(testSuiteDescriptor.getSkipped(), equalTo(1));
         assertThat(testSuiteDescriptor.getTime(), equalTo(0.058f));
-        assertThat(testSuiteDescriptor.getTestCases().size(), equalTo(4));
+        assertThat(testSuiteDescriptor.getTestCases().size(), equalTo(5));
         verifyTestCase("success", TestCaseDescriptor.Result.SUCCESS, 0.001f);
+        verifyTestCase("inherited", TestCaseDescriptor.Result.SUCCESS, 0.002f);
         verifyTestCase("failure", TestCaseDescriptor.Result.FAILURE, 0.003f);
-        verifyTestCase("error", TestCaseDescriptor.Result.ERROR, 0.001f);
-        verifyTestCase("skipped", TestCaseDescriptor.Result.SKIPPED, 0.001f);
+        verifyTestCase("error", TestCaseDescriptor.Result.ERROR, 0.004f);
+        verifyTestCase("skipped", TestCaseDescriptor.Result.SKIPPED, 0.005f);
         store.commitTransaction();
     }
 
