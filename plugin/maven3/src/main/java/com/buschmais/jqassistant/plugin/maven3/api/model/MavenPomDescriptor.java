@@ -55,6 +55,14 @@ public interface MavenPomDescriptor
     List<MavenLicenseDescriptor> getLicenses();
 
     /**
+     * Get referenced developers.
+     *
+     * @return The developers.
+     */
+    @Relation("HAS_DEVELOPER")
+    List<MavenDeveloperDescriptor> getDevelopers();
+
+    /**
      * Get profile information.
      * 
      * @return The profiles.
