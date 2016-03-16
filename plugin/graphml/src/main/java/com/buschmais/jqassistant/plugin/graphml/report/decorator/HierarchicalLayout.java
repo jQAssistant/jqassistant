@@ -60,9 +60,11 @@ public class HierarchicalLayout extends PipeBase implements Layout {
         // on the current layer and eventually continue swapping till
         // a minimum force is reached.
         boolean changed = false;
-        for(Integer levelNumber : levels.keySet()) {
-            List<Node> level = levels.get(levelNumber);
-            changed |= sortNodes(level);
+        if(levels != null) {
+            for (Integer levelNumber : levels.keySet()) {
+                List<Node> level = levels.get(levelNumber);
+                changed |= sortNodes(level);
+            }
         }
 
         // If changes were applied, update the nodes positions.

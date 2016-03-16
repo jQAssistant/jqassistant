@@ -28,6 +28,10 @@ public class TopologicalSort implements Algorithm {
     @Override
     public void init(Graph graph) {
         this.graph = graph;
+        // Make sure previous level markers are removed.
+        for(Node node : graph.getNodeSet()) {
+            node.removeAttribute(levelAttributeName);
+        }
     }
 
     @Override
