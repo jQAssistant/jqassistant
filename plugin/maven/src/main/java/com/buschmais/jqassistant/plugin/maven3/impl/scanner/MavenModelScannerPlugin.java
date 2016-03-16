@@ -71,6 +71,7 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addManagedPlugins(pomDescriptor, model.getBuild(), scannerContext);
         addPlugins(pomDescriptor, model.getBuild(), scannerContext);
         addLicenses(pomDescriptor, model, store);
+        addDevelopers(pomDescriptor, model, store);
         return pomDescriptor;
     }
 
@@ -251,6 +252,38 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
             licenseDescriptor.setDistribution(license.getDistribution());
 
             pomDescriptor.getLicenses().add(licenseDescriptor);
+        }
+    }
+
+    /**
+     * Adds information about developers.
+     *
+     * @param pomDescriptor
+     *            The descriptor for the current POM.
+     * @param model
+     *            The Maven Model.
+     * @param store
+     *            The database.
+     */
+    private void addDevelopers(MavenPomDescriptor pomDescriptor, Model model, Store store) {
+        List<Developer> developers = model.getDevelopers();
+        for (Developer developer : developers) {
+            MavenDeveloperDescriptor developerDescriptor = store.create(MavenDeveloperDescriptor.class);
+            developerDescriptor.setId(developer.getId());
+            developerDescriptor.setName(developer.getName());
+            developerDescriptor.setEmail(developer.getEmail());
+            developerDescriptor.setUrl(developer.getUrl());
+            developerDescriptor.setOrganization(developer.getOrganization());
+            developerDescriptor.setOrganizationUrl(developer.getOrganizationUrl());
+            developerDescriptor.setTimezone(developer.getTimezone());
+            if(developer.getRoles() != null) {
+                for(String role : developer.getRoles()) {
+                    MavenDeveloperRoleDescriptor developerRoleDescriptor = store.create(MavenDeveloperRoleDescriptor.class);
+                    developerRoleDescriptor.setName(role);
+                    developerDescriptor.getRoles().add(developerRoleDescriptor);
+                }
+            }
+            pomDescriptor.getDevelopers().add(developerDescriptor);
         }
     }
 
