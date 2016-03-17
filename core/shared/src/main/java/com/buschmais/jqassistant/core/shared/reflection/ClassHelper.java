@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.core.shared.reflection;
 /**
  * Provides functionality related to class loading and instance creation.
  */
-public final class ClassHelper {
+public class ClassHelper {
 
     private ClassLoader classLoader;
 
