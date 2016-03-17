@@ -81,7 +81,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
     <build>
         <plugins>
             <plugin>
-            <groupId>${project.groupId}</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>${project.artifactId}</artifactId>
                 <version>${project.version}</version>
                 <executions>

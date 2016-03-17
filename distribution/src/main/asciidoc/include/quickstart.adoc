@@ -100,7 +100,6 @@ Add the following lines to the parent pom.xml file of your project:
         <plugin>
             <groupId>com.buschmais.jqassistant.scm</groupId>
             <artifactId>jqassistant-maven-plugin</artifactId>
-            <extensions>true</extensions>
             <executions>
                 <execution>
                     <goals>
