@@ -26,12 +26,18 @@
 ==== GraphML
 
 - Replaced report plugin property "graphml.report.yedgraphml" with "graphml.report.decorator" which specifies the name
-  of a class implementing the 'GraphMLDecorator' interface for layouting a graph (default: YedGraphMLDecoratorAdded)
+  of a class implementing the 'GraphMLDecorator' interface for layouting a graph (default: YedGraphMLDecorator)
 
 ==== JPA2
 
 - Fixed concept "jpa2:NamedQuery" to also support @NamedQuery annotations which are directly applied to an entity (e.g.
   without surrounding @NamedQueries)
+
+==== JUnit
+
+- Added label "JUnit" to all nodes created by the test report scanner (e.g. ":JUnit:TestSuite", ":JUnit:TestCase")
+- Test report scanner now creates (:JUnit:TestCase)-[:HAS_FAILURE]->(:JUnit:Failure) and (:JUnit:TestCase)-[:HAS_ERROR]->(:JUnit:Error)
+  providing detail information for test cases that have a result "FAILURE" or "ERROR"
 
 === SonarQube
 

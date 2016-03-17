@@ -20,16 +20,11 @@ public interface GraphMLDecorator extends Closeable {
     /**
      * Initialize the decorator.
      *
-     * @param result
-     *            The current result that is written as a graph.
-     * @param subGraph
-     *            The sub graph to render.
-     * @param xmlWriter
-     *            The {@link XMLStreamWriter} that is used for writing.
-     * @param file
-     *            The output file.
-     * @param properties
-     *            The properties from the GraphML plugin configuration.
+     * @param result     The current result that is written as a graph.
+     * @param subGraph   The sub graph to render.
+     * @param xmlWriter  The {@link XMLStreamWriter} that is used for writing.
+     * @param file       The output file.
+     * @param properties The properties from the GraphML plugin configuration.
      */
     void initialize(Result<?> result, SubGraph subGraph, XMLStreamWriter xmlWriter, File file, Map<String, Object> properties);
 
@@ -51,16 +46,22 @@ public interface GraphMLDecorator extends Closeable {
      * Writes a bunch of keys in the graphml-Tag that will be used for formating or so. This method can be overwritten if any special default keys are
      * necessary. Please call super to ensure all needed keys will be created.
      *
-     * @throws XMLStreamException
-     *             If writing fails.
+     * @throws XMLStreamException If writing fails.
      */
     void writeKeys() throws XMLStreamException;
 
     /**
+     * Determine if a node shall be written.
+     *
+     * @param node The node.
+     * @return <code>true</code> if the node shall be written.
+     */
+    boolean isWriteNode(CompositeObject node);
+
+    /**
      * Add node attributes.
      *
-     * @param node
-     *            the node
+     * @param node the node
      * @throws XMLStreamException
      */
     void writeNodeAttributes(CompositeObject node) throws XMLStreamException;
@@ -68,17 +69,23 @@ public interface GraphMLDecorator extends Closeable {
     /**
      * Add elements inside a node-element.
      *
-     * @param node
-     *            the node
+     * @param node the node
      * @throws XMLStreamException
      */
     void writeNodeElements(CompositeObject node) throws XMLStreamException;
 
     /**
+     * Determine if a relationship shall be written.
+     *
+     * @param relationship The relationship.
+     * @return <code>true</code> if the relationship shall be written.
+     */
+    boolean isWriteRelationship(CompositeObject relationship);
+
+    /**
      * Add relationship attributes.
      *
-     * @param relationship
-     *            the relationship
+     * @param relationship the relationship
      * @throws XMLStreamException
      */
     void writeRelationshipAttributes(CompositeObject relationship) throws XMLStreamException;
@@ -86,8 +93,7 @@ public interface GraphMLDecorator extends Closeable {
     /**
      * Add elements inside a relationship-element.
      *
-     * @param relationship
-     *            the relationship
+     * @param relationship the relationship
      * @throws XMLStreamException
      */
     void writeRelationshipElements(CompositeObject relationship) throws XMLStreamException;

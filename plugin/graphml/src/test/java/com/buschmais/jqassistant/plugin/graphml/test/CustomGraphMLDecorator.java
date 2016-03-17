@@ -37,6 +37,11 @@ public class CustomGraphMLDecorator implements GraphMLDecorator {
     }
 
     @Override
+    public boolean isWriteNode(CompositeObject node) {
+        return true;
+    }
+
+    @Override
     public void writeNodeAttributes(CompositeObject node) throws XMLStreamException {
         delegate.writeNodeAttributes(node);
     }
@@ -44,6 +49,11 @@ public class CustomGraphMLDecorator implements GraphMLDecorator {
     @Override
     public void writeNodeElements(CompositeObject node) throws XMLStreamException {
         delegate.writeNodeElements(node);
+    }
+
+    @Override
+    public boolean isWriteRelationship(CompositeObject relationship) {
+        return true;
     }
 
     @Override

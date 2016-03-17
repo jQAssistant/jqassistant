@@ -1,27 +1,22 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
-import javax.xml.stream.XMLStreamException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
-import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
-import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
 import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
 import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
 import com.buschmais.jqassistant.plugin.graphml.report.decorator.YedGraphMLDecorator;
 import com.buschmais.xo.api.CompositeObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.stream.XMLStreamException;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A report plugin that creates GraphML files based on the results of a concept.
@@ -39,7 +34,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
 
     private static final String CONCEPT_PATTERN = "graphml.report.conceptPattern";
     private static final String DIRECTORY = "graphml.report.directory";
-    private static final String GRAPHML_DECORATOR = "graphml.report.decorator";
+    private static final String GRAPHML_DEFAULT_DECORATOR = "graphml.report.defaultDecorator";
 
     private String conceptPattern = ".*\\.graphml$";
     private String directory = "jqassistant/report";
@@ -53,9 +48,10 @@ public class GraphMLReportPlugin implements ReportPlugin {
     public void configure(Map<String, Object> properties) throws ReportException {
         this.conceptPattern = getProperty(properties, CONCEPT_PATTERN, conceptPattern);
         this.directory = getProperty(properties, DIRECTORY, directory);
-        String graphMLDecoratorClass = getProperty(properties, GRAPHML_DECORATOR, YedGraphMLDecorator.class.getName());
-        Class<GraphMLDecorator> type = new ClassHelper(GraphMLReportPlugin.class.getClassLoader()).getType(graphMLDecoratorClass);
-        xmlGraphMLWriter = new XmlGraphMLWriter(type, properties);
+        String defaultDecorator = getProperty(properties, GRAPHML_DEFAULT_DECORATOR, YedGraphMLDecorator.class.getName());
+        ClassHelper classHelper = new ClassHelper(GraphMLReportPlugin.class.getClassLoader());
+        Class<GraphMLDecorator> defaultDecoratorType = classHelper.getType(defaultDecorator);
+        xmlGraphMLWriter = new XmlGraphMLWriter(classHelper, defaultDecoratorType, properties);
     }
 
     private String getProperty(Map<String, Object> properties, String property, String defaultValue) throws ReportException {
@@ -101,6 +97,7 @@ public class GraphMLReportPlugin implements ReportPlugin {
         Set<String> selectedReports = result.getRule().getReport().getSelectedTypes();
         if ((selectedReports != null && selectedReports.contains(GRAPHML))
                 || (rule instanceof Concept && rule.getId().matches(conceptPattern))) {
+            SubGraph subGraph = getSubGraph(result);
             try {
                 String fileName = rule.getId().replaceAll("\\:", "_");
                 if (!fileName.endsWith(FILEEXTENSION_GRAPHML)) {
@@ -111,30 +108,34 @@ public class GraphMLReportPlugin implements ReportPlugin {
                     LOGGER.info("Created directory " + directory.getAbsolutePath());
                 }
                 File file = new File(directory, fileName);
-                SubGraphImpl subGraph = new SubGraphImpl();
-                for (Map<String, Object> row : result.getRows()) {
-                    for (Object value : row.values()) {
-                        if (value instanceof Map) {
-                            Map m = (Map) value;
-                            if (VirtualRelationship.isRelationship(m)) {
-                                subGraph.add(new VirtualRelationship(m));
-                            }
-                            if (VirtualNode.isNode(m)) {
-                                subGraph.add(new VirtualNode(m));
-                            }
-                            if (SubGraphImpl.isSubgraph(m)) {
-                                subGraph.add(new SubGraphImpl(m));
-                            }
-                        }
-                        if (value instanceof CompositeObject) {
-                            subGraph.add(value);
-                        }
-                    }
-                }
                 xmlGraphMLWriter.write(result, subGraph, file);
             } catch (IOException | XMLStreamException e) {
                 throw new ReportException("Cannot write custom report.", e);
             }
         }
+    }
+
+    private SubGraph getSubGraph(Result<? extends ExecutableRule> result) {
+        SubGraphImpl subGraph = new SubGraphImpl();
+        for (Map<String, Object> row : result.getRows()) {
+            for (Object value : row.values()) {
+                if (value instanceof Map) {
+                    Map m = (Map) value;
+                    if (VirtualRelationship.isRelationship(m)) {
+                        subGraph.add(new VirtualRelationship(m));
+                    }
+                    if (VirtualNode.isNode(m)) {
+                        subGraph.add(new VirtualNode(m));
+                    }
+                    if (SubGraphImpl.isSubgraph(m)) {
+                        subGraph.add(new SubGraphImpl(m));
+                    }
+                }
+                if (value instanceof CompositeObject) {
+                    subGraph.add(value);
+                }
+            }
+        }
+        return subGraph;
     }
 }

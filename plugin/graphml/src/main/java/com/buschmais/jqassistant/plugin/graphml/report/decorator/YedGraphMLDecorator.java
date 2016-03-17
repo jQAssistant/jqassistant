@@ -1,17 +1,16 @@
 package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
 import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A GraphML decorator for yEd.
@@ -77,6 +76,11 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
     }
 
     @Override
+    public boolean isWriteNode(CompositeObject node) {
+        return true;
+    }
+
+    @Override
     public void writeNodeAttributes(CompositeObject node) throws XMLStreamException {
         writer.writeAttribute("yfiles.foldertype", "folder");
     }
@@ -106,6 +110,11 @@ public class YedGraphMLDecorator implements GraphMLDecorator {
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
+    }
+
+    @Override
+    public boolean isWriteRelationship(CompositeObject relationship) {
+        return true;
     }
 
     @Override
