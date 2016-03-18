@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.plugin.graphml.report.decorator;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
-import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.jqassistant.core.store.api.model.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
 
 import javax.xml.stream.XMLStreamException;

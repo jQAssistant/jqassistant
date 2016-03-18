@@ -20,7 +20,7 @@ import org.neo4j.graphdb.StopEvaluator;
 import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
 
-import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.jqassistant.core.store.api.model.SubGraph;
 
 public class VirtualNode extends VirtualPropertyContainer implements Node {
 

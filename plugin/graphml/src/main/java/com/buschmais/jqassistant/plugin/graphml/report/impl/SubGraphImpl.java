@@ -9,7 +9,7 @@ import java.util.Set;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 
-import com.buschmais.jqassistant.plugin.graphml.report.api.SubGraph;
+import com.buschmais.jqassistant.core.store.api.model.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
 
 class SubGraphImpl implements SubGraph {
@@ -17,9 +17,9 @@ class SubGraphImpl implements SubGraph {
     private static final String ROLE_GRAPH = "graph";
 
     private CompositeObject parentNode;
-    private Map<Long, SubGraph> subgraphs = new LinkedHashMap<>(1000);
-    private Map<Long, CompositeObject> nodes = new LinkedHashMap<>(1000);
-    private Map<Long, CompositeObject> relationships = new LinkedHashMap<>(1000);
+    private Map<Long, SubGraph> subgraphs = new LinkedHashMap<>();
+    private Map<Long, CompositeObject> nodes = new LinkedHashMap<>();
+    private Map<Long, CompositeObject> relationships = new LinkedHashMap<>();
 
     public SubGraphImpl() {
     }
@@ -47,7 +47,7 @@ class SubGraphImpl implements SubGraph {
      */
     @Override
     public Collection<CompositeObject> getNodes() {
-        Set<CompositeObject> allNodes = new LinkedHashSet<>(1000);
+        Set<CompositeObject> allNodes = new LinkedHashSet<>();
         if (parentNode != null) {
             allNodes.add(parentNode);
         }
@@ -66,7 +66,7 @@ class SubGraphImpl implements SubGraph {
      * @return a list of all nodes
      */
     public Collection<CompositeObject> getRelationships() {
-        Set<CompositeObject> allRels = new LinkedHashSet<>(1000);
+        Set<CompositeObject> allRels = new LinkedHashSet<>();
         allRels.addAll(relationships.values());
         for (SubGraph subgraph : subgraphs.values()) {
             allRels.addAll(subgraph.getRelationships());
