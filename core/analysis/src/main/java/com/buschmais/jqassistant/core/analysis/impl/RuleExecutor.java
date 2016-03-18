@@ -1,13 +1,23 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
+import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
+import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.Group;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
+import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
+import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.SeverityRule;
+import com.buschmais.jqassistant.core.analysis.api.rule.Template;
 
 /**
  * Implementation of the
@@ -57,7 +67,7 @@ public class RuleExecutor {
             for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
                 String groupId = groupEntry.getKey();
                 Group includedGroup = resolveGroup(ruleSet, groupId);
-                executeGroup(ruleSet, group, getEffectiveSeverity(includedGroup, severity, groupEntry.getValue()));
+                executeGroup(ruleSet, includedGroup, getEffectiveSeverity(includedGroup, severity, groupEntry.getValue()));
             }
             Map<String, Severity> concepts = group.getConcepts();
             for (Map.Entry<String, Severity> conceptEntry : concepts.entrySet()) {
@@ -65,7 +75,8 @@ public class RuleExecutor {
                 Concept concept = resolveConcept(ruleSet, conceptId);
                 applyConcept(ruleSet, concept, getEffectiveSeverity(concept, severity, conceptEntry.getValue()));
             }
-            for (Map.Entry<String, Severity> constraintEntry : group.getConstraints().entrySet()) {
+            Map<String, Severity> constraints = group.getConstraints();
+            for (Map.Entry<String, Severity> constraintEntry : constraints.entrySet()) {
                 String constraintId = constraintEntry.getKey();
                 Constraint constraint = resolveConstraint(ruleSet, constraintId);
                 validateConstraint(ruleSet, constraint, getEffectiveSeverity(constraint, severity, constraintEntry.getValue()));
