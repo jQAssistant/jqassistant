@@ -4,10 +4,10 @@
 Imports results from JUnit4 test suites matching the file name '*TEST-*.xml'.
 
 [[:File:TestSuite]]
-=== :File:TestSuite
+=== :File:JUnit:TestSuite
 A file containing results of a JUnit4 test suite.
 
-.Properties of :File:TestSuite
+.Properties of :File:JUnit:TestSuite
 [options="header"]
 |====
 | Name     | Description
@@ -20,18 +20,18 @@ A file containing results of a JUnit4 test suite.
 | time     | The time it took to run the suite
 |====
 
-.Relations of :File:TestSuite
+.Relations of :File:JUnit:TestSuite
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description
-| CONTAINS | <<:TestCase>>   | 0..n        | References a test case
+| CONTAINS | <<:JUnit:TestCase>>   | 0..n        | References test cases
 |====
 
-[[:TestCase]]
-=== :TestCase
+[[:JUnit:TestCase]]
+=== :JUnit:TestCase
 A test case.
 
-.Properties of :TestCase
+.Properties of :JUnit:TestCase
 [options="header"]
 |====
 | Name             | Description
@@ -39,4 +39,38 @@ A test case.
 | className        | The name of the class containing the test
 | time             | The time it took to run the test
 | result           | The result of the test, either 'SUCCESS', 'FAILURE', 'ERROR' or 'SKIPPED'
+|====
+
+.Relations of :JUnit:TestCase
+[options="header"]
+|====
+| Name        | Target label(s)    | Cardinality | Description
+| HAS_FAILURE | <<:JUnit:Failure>> | 0..1        | References failure details
+| HAS_ERROR   | <<:JUnit:Error>>   | 0..1        | References error details
+|====
+
+
+[[:JUnit:Failure]]
+=== :JUnit:Failure
+Provides detail information about a test case with result "FAILURE".
+
+.Properties of :JUnit:Failure
+[options="header"]
+|====
+| Name             | Description
+| type             | The failure type, e.g. "java.lang.AssertionError"
+| details          | Detail information, e.g. the stack trace.
+|====
+
+
+[[:JUnit:Error]]
+=== :JUnit:Error
+Provides detail information about a test case with result "ERROR".
+
+.Properties of :JUnit:Error
+[options="header"]
+|====
+| Name             | Description
+| type             | The error type, e.g. "java.lang.RuntimeException"
+| details          | Detail information, e.g. the stack trace.
 |====
