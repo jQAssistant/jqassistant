@@ -87,7 +87,7 @@ public class MavenPomFileScannerPluginTest {
 
         boolean result = plugin.accepts(fileResource, path, DUMMY_SCOPE);
 
-        assertThat(result, is(true));
+        assertThat(result, is(false));
     }
 
     @Test

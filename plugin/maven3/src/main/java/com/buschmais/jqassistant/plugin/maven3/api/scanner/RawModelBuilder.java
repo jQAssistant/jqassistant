@@ -26,7 +26,9 @@ public class RawModelBuilder implements PomModelBuilder {
         try (InputStream stream = new FileInputStream(pomFile)) {
             return mavenXpp3Reader.read(stream);
         } catch (XmlPullParserException e) {
-            throw new IOException("Cannot read POM descriptor.", e);
+            String msg = "Cannot read POM descriptor from " +
+                         pomFile.getAbsolutePath() + ".";
+            throw new IOException(msg, e);
         }
     }
 }
