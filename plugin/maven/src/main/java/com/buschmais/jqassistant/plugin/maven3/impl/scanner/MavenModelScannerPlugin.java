@@ -72,7 +72,32 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         addPlugins(pomDescriptor, model.getBuild(), scannerContext);
         addLicenses(pomDescriptor, model, store);
         addDevelopers(pomDescriptor, model, store);
+        addContributors(pomDescriptor, model, store);
         return pomDescriptor;
+    }
+
+    private void addContributors(MavenPomDescriptor pomDescriptor, Model model, Store store) {
+        List<Contributor> contributors = model.getContributors();
+
+        for (Contributor contributor : contributors) {
+            MavenContributorDescriptor contributorDescriptor = store.create(MavenContributorDescriptor.class);
+            contributorDescriptor.setName(contributor.getName());
+            contributorDescriptor.setEmail(contributor.getEmail());
+            contributorDescriptor.setUrl(contributor.getUrl());
+            contributorDescriptor.setOrganization(contributor.getOrganization());
+            contributorDescriptor.setOrganizationUrl(contributor.getOrganizationUrl());
+            contributorDescriptor.setTimezone(contributor.getTimezone());
+
+            if (contributor.getRoles() != null) {
+                for (String role : contributor.getRoles()) {
+                    MavenDeveloperRoleDescriptor developerRoleDescriptor = store.create(MavenDeveloperRoleDescriptor.class);
+                    developerRoleDescriptor.setName(role);
+                    contributorDescriptor.getRoles().add(developerRoleDescriptor);
+                }
+            }
+
+            pomDescriptor.getContributors().add(contributorDescriptor);
+        }
     }
 
     /**

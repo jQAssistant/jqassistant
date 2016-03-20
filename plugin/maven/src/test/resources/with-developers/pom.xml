@@ -8,6 +8,24 @@
 
     <name>The Name</name>
 
+    <contributors>
+        <contributor>
+            <name>Till Eulenspiegel</name>
+            <organization>Familie Eulenspiegel</organization>
+            <organizationUrl>http://www.eulenspiegel.org</organizationUrl>
+            <email>till@eulenspiegel.org</email>
+            <roles>
+                <role>Narr</role>
+            </roles>
+            <timezone>+1</timezone>
+            <url>http://www.eulenspiegel.org/~till/</url>
+            <properties>
+                <a>A</a>
+                <b>B</b>
+            </properties>
+        </contributor>
+    </contributors>
+
     <developers>
         <developer>
             <id>he</id>
