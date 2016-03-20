@@ -81,24 +81,34 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
 
         for (Contributor contributor : contributors) {
             MavenContributorDescriptor contributorDescriptor = store.create(MavenContributorDescriptor.class);
-            contributorDescriptor.setName(contributor.getName());
-            contributorDescriptor.setEmail(contributor.getEmail());
-            contributorDescriptor.setUrl(contributor.getUrl());
-            contributorDescriptor.setOrganization(contributor.getOrganization());
-            contributorDescriptor.setOrganizationUrl(contributor.getOrganizationUrl());
-            contributorDescriptor.setTimezone(contributor.getTimezone());
 
-            if (contributor.getRoles() != null) {
-                for (String role : contributor.getRoles()) {
-                    MavenDeveloperRoleDescriptor developerRoleDescriptor = store.create(MavenDeveloperRoleDescriptor.class);
-                    developerRoleDescriptor.setName(role);
-                    contributorDescriptor.getRoles().add(developerRoleDescriptor);
-                }
-            }
+            addCommonParticipantAttributes(contributorDescriptor, contributor, store);
 
             pomDescriptor.getContributors().add(contributorDescriptor);
         }
     }
+
+    private void addCommonParticipantAttributes(MavenProjectParticipantDescriptor participant,
+                                                Contributor contributor, Store store) {
+        participant.setName(contributor.getName());
+
+        participant.setEmail(contributor.getEmail());
+        participant.setUrl(contributor.getUrl());
+        participant.setOrganization(contributor.getOrganization());
+        participant.setOrganizationUrl(contributor.getOrganizationUrl());
+        participant.setTimezone(contributor.getTimezone());
+
+        if (contributor.getRoles() != null) {
+            for (String role : contributor.getRoles()) {
+                MavenParticipantRoleDescriptor developerRoleDescriptor = store.create(MavenParticipantRoleDescriptor.class);
+                developerRoleDescriptor.setName(role);
+                participant.getRoles().add(developerRoleDescriptor);
+            }
+        }
+
+
+    }
+
 
     /**
      * Create the descriptor and set base information.
@@ -296,20 +306,8 @@ public class MavenModelScannerPlugin extends AbstractScannerPlugin<Model, MavenP
         for (Developer developer : developers) {
             MavenDeveloperDescriptor developerDescriptor = store.create(MavenDeveloperDescriptor.class);
             developerDescriptor.setId(developer.getId());
-            developerDescriptor.setName(developer.getName());
-            developerDescriptor.setEmail(developer.getEmail());
-            developerDescriptor.setUrl(developer.getUrl());
-            developerDescriptor.setOrganization(developer.getOrganization());
-            developerDescriptor.setOrganizationUrl(developer.getOrganizationUrl());
-            developerDescriptor.setTimezone(developer.getTimezone());
 
-            if (developer.getRoles() != null) {
-                for (String role : developer.getRoles()) {
-                    MavenDeveloperRoleDescriptor developerRoleDescriptor = store.create(MavenDeveloperRoleDescriptor.class);
-                    developerRoleDescriptor.setName(role);
-                    developerDescriptor.getRoles().add(developerRoleDescriptor);
-                }
-            }
+            addCommonParticipantAttributes(developerDescriptor, developer, store);
 
             pomDescriptor.getDevelopers().add(developerDescriptor);
         }
