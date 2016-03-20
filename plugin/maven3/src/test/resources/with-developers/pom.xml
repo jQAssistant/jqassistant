@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>a.b.c</groupId>
+    <artifactId>d</artifactId>
+    <version>1.2.3</version>
+
+    <name>The Name</name>
+
+    <developers>
+        <developer>
+            <id>he</id>
+            <name>Alexej Alexandrowitsch Karenin</name>
+            <organization>Tolstoi's World</organization>
+            <organizationUrl>http://www.tolstoi.org</organizationUrl>
+            <email>aak@tolstoi.org</email>
+            <roles>
+                <role>husband</role>
+                <role>father</role>
+                <role>public officer</role>
+            </roles>
+            <timezone>+2</timezone>
+            <url>http://www.tolstoi.org/~aak/</url>
+            <properties>
+                <a>A</a>
+                <b>B</b>
+            </properties>
+        </developer>
+    </developers>
+</project>
