@@ -48,17 +48,20 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
     }
 
     @Override
-    public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner) throws IOException {
+    public MavenProjectDirectoryDescriptor scan(MavenProject project, String path, Scope scope, Scanner scanner)
+        throws IOException {
         ScannerContext context = scanner.getContext();
         ArtifactResolver artifactResolver = new MavenArtifactResolver();
         context.push(ArtifactResolver.class, artifactResolver);
         try {
-            MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class, context);
+            MavenProjectDirectoryDescriptor projectDescriptor = resolveProject(project, MavenProjectDirectoryDescriptor.class,
+                                                                               context);
             // resolve dependencies
             Map<ArtifactFileDescriptor, Artifact> mainArtifactDependencies = new HashMap<>();
             Map<ArtifactFileDescriptor, Artifact> testArtifactDependencies = new HashMap<>();
             for (Artifact dependency : project.getDependencyArtifacts()) {
-                ArtifactFileDescriptor dependencyDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(dependency, false), artifactResolver, scanner);
+                ArtifactFileDescriptor dependencyDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(dependency, false),
+                                                                                         artifactResolver, scanner);
                 if (!Artifact.SCOPE_TEST.equals(dependency.getScope())) {
                     mainArtifactDependencies.put(dependencyDescriptor, dependency);
                 }
@@ -66,14 +69,16 @@ public class MavenProjectScannerPlugin extends AbstractScannerPlugin<MavenProjec
             }
             Artifact artifact = project.getArtifact();
             // main artifact
-            MavenArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, false), artifactResolver, scanner);
+            MavenArtifactDescriptor mainArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, false),
+                                                                                        artifactResolver, scanner);
             projectDescriptor.getCreatesArtifacts().add(mainArtifactDescriptor);
             addDependencies(mainArtifactDescriptor, mainArtifactDependencies, scanner.getContext());
             // test artifact
             MavenArtifactDescriptor testArtifactDescriptor = null;
             String testOutputDirectory = project.getBuild().getTestOutputDirectory();
             if (testOutputDirectory != null) {
-                testArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, true), artifactResolver, scanner);
+                testArtifactDescriptor = getMavenArtifactDescriptor(new ArtifactCoordinates(artifact, true),
+                                                                    artifactResolver, scanner);
                 projectDescriptor.getCreatesArtifacts().add(testArtifactDescriptor);
                 testArtifactDependencies.put(mainArtifactDescriptor, artifact);
                 addDependencies(testArtifactDescriptor, testArtifactDependencies, scanner.getContext());
