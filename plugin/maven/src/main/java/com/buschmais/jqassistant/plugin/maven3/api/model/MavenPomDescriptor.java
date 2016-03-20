@@ -67,6 +67,7 @@ public interface MavenPomDescriptor
      *
      * @return A list of all mentioned contributors.
      */
+    @Relation("HAS_CONTRIBUTOR")
     List<MavenContributorDescriptor> getContributors();
 
     /**
