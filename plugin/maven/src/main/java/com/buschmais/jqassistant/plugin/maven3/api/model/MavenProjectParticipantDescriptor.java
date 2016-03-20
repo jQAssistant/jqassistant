@@ -109,5 +109,5 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
      * @return The roles.
      */
     @Relation("HAS_ROLES")
-    List<MavenDeveloperRoleDescriptor> getRoles();
+    List<MavenParticipantRoleDescriptor> getRoles();
 }

@@ -22,7 +22,7 @@ import java.util.Properties;
 
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperRoleDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -209,7 +209,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         assertThat(developer.getRoles(), hasSize(3));
 
-        List<MavenDeveloperRoleDescriptor> roles = developer.getRoles();
+        List<MavenParticipantRoleDescriptor> roles = developer.getRoles();
 
         assertThat(roles.stream().map(role -> role.getName()).collect(toList()),
                    containsInAnyOrder("husband", "public officer", "father"));
@@ -253,7 +253,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         assertThat(contributor.getRoles(), hasSize(1));
 
-        List<MavenDeveloperRoleDescriptor> roles = contributor.getRoles();
+        List<MavenParticipantRoleDescriptor> roles = contributor.getRoles();
 
         assertThat(roles.stream().map(role -> role.getName()).collect(toList()),
                    containsInAnyOrder("Narr"));

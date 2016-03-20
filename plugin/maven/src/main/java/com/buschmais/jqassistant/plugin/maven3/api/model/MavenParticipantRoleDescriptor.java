@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
  * @author christofer.dutz@codecentric.de
  */
 @Label("Role")
-public interface MavenDeveloperRoleDescriptor extends MavenDescriptor {
+public interface MavenParticipantRoleDescriptor extends MavenDescriptor {
 
     /**
      * Get the name of the role.
