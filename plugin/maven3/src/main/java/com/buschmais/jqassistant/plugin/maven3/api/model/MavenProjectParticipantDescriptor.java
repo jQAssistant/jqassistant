@@ -7,6 +7,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 import java.util.List;
 
 /**
+ * Descriptor for a person participating taking part in
+ * a project as contributor or developer.
  *
  * @see MavenDeveloperDescriptor
  * @see MavenContributorDescriptor
@@ -14,7 +16,7 @@ import java.util.List;
 @Label("Participant")
 public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     /**
-     * Get the name of the developer.
+     * Get the name of the participant.
      *
      * @return The name.
      */
@@ -22,14 +24,14 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     String getName();
 
     /**
-     * Set the name of the developer.
+     * Set the name of the participant.
      *
      * @param name The name.
      */
     void setName(String name);
 
     /**
-     * Get the email of the developer.
+     * Get the email of the participant.
      *
      * @return The email.
      */
@@ -37,14 +39,14 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     String getEmail();
 
     /**
-     * Set the email of the developer.
+     * Set the email of the participant.
      *
      * @param email The email.
      */
     void setEmail(String email);
 
     /**
-     * Get the url of the developer.
+     * Get the url of the participant.
      *
      * @return The url.
      */
@@ -52,14 +54,14 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     String getUrl();
 
     /**
-     * Set the url of the developer.
+     * Set the url of the participant.
      *
      * @param url The url.
      */
     void setUrl(String url);
 
     /**
-     * Get the organization of the developer.
+     * Get the organization of the participant.
      *
      * @return The organization.
      */
@@ -67,14 +69,14 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     String getOrganization();
 
     /**
-     * Set the organization of the developer.
+     * Set the organization of the participant.
      *
      * @param organization The organization.
      */
     void setOrganization(String organization);
 
     /**
-     * Get the organizationUrl of the developer.
+     * Get the organizationUrl of the participant.
      *
      * @return The organizationUrl.
      */
@@ -82,7 +84,7 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     String getOrganizationUrl();
 
     /**
-     * Set the organizationUrl of the developer.
+     * Set the organizationUrl of the participant.
      *
      * @param organizationUrl The organizationUrl.
      */
@@ -97,14 +99,14 @@ public interface MavenProjectParticipantDescriptor extends MavenDescriptor {
     String getTimezone();
 
     /**
-     * Set the timezone of the developer.
+     * Set the timezone of the participant.
      *
      * @param timezone The timezone.
      */
     void setTimezone(String timezone);
 
     /**
-     * Get roles of the developer.
+     * Get roles of the participant.
      *
      * @return The roles.
      */
