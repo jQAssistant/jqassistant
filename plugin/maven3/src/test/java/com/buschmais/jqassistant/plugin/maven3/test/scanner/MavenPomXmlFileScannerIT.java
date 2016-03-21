@@ -1,8 +1,11 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -17,6 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -169,6 +175,95 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.xmlWellFormed=false RETURN n").getColumn("n");
         assertEquals(1, mavenPomDescriptors.size());
         store.commitTransaction();
+    }
+
+    /**
+     * Checks if all developers in a given pom.xml will be found and
+     * added to the model.
+     */
+    @Test
+    public void allDevelopersAreFound() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenPomXmlDescriptor> pomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) " +
+                                                           "WHERE n.fileName='/with-developers/pom.xml' " +
+                                                           "RETURN n").getColumn("n");
+
+        assertThat(pomDescriptors, hasSize(1));
+
+        MavenPomDescriptor descriptor = pomDescriptors.get(0);
+
+        assertThat(descriptor.getDevelopers(), hasSize(1));
+
+        MavenDeveloperDescriptor developer = descriptor.getDevelopers().stream().findFirst().get();
+
+        assertThat(developer.getId(), equalTo("he"));
+        assertThat(developer.getName(), equalTo("Alexej Alexandrowitsch Karenin"));
+        assertThat(developer.getOrganization(), equalTo("Tolstoi's World"));
+        assertThat(developer.getOrganizationUrl(), equalTo("http://www.tolstoi.org"));
+        assertThat(developer.getEmail(), equalTo("aak@tolstoi.org"));
+        assertThat(developer.getTimezone(), equalTo("+2"));
+        assertThat(developer.getUrl(), equalTo("http://www.tolstoi.org/~aak/"));
+
+        assertThat(developer.getRoles(), hasSize(3));
+
+        List<MavenParticipantRoleDescriptor> roles = developer.getRoles();
+
+        assertThat(roles.stream().map(role -> role.getName()).collect(toList()),
+                   containsInAnyOrder("husband", "public officer", "father"));
+
+        List<MavenDeveloperDescriptor> developers = query("MATCH (d:Maven:Developer:Participant) " +
+                                                          "WHERE not(d:Contributor) RETURN d")
+                                                        .getColumn("d");
+
+        assertThat(developers, hasSize(1));
+        assertThat(developers.get(0).getId(), equalTo("he"));
+    }
+
+    /**
+     * Checks if all contributors in a given pom.xml will be found and
+     * added to the model.
+     */
+    @Test
+    public void allContributorsAreFound() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenPomXmlDescriptor> pomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) " +
+                                                           "WHERE n.fileName='/with-developers/pom.xml' " +
+                                                           "RETURN n").getColumn("n");
+
+        assertThat(pomDescriptors, hasSize(1));
+
+        MavenPomDescriptor descriptor = pomDescriptors.get(0);
+
+        assertThat(descriptor.getContributors(), hasSize(1));
+
+        MavenContributorDescriptor contributor = descriptor.getContributors().stream().findFirst().get();
+
+        assertThat(contributor.getName(), equalTo("Till Eulenspiegel"));
+        assertThat(contributor.getOrganization(), equalTo("Familie Eulenspiegel"));
+        assertThat(contributor.getOrganizationUrl(), equalTo("http://www.eulenspiegel.org"));
+        assertThat(contributor.getEmail(), equalTo("till@eulenspiegel.org"));
+        assertThat(contributor.getTimezone(), equalTo("+1"));
+        assertThat(contributor.getUrl(), equalTo("http://www.eulenspiegel.org/~till/"));
+
+        assertThat(contributor.getRoles(), hasSize(1));
+
+        List<MavenParticipantRoleDescriptor> roles = contributor.getRoles();
+
+        assertThat(roles.stream().map(role -> role.getName()).collect(toList()),
+                   containsInAnyOrder("Narr"));
+
+        List<MavenContributorDescriptor> developers = query("MATCH (c:Maven:Contributor:Participant) " +
+                                                            "WHERE not(c:Developer) RETURN c")
+            .getColumn("c");
+
+        assertThat(developers, hasSize(1));
+        assertThat(developers.get(0).getEmail(), equalTo("till@eulenspiegel.org"));
     }
 
     /**

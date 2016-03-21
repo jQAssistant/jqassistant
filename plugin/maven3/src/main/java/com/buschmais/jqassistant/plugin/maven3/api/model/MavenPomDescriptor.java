@@ -63,6 +63,14 @@ public interface MavenPomDescriptor
     List<MavenDeveloperDescriptor> getDevelopers();
 
     /**
+     * Returns all mentioned contributors.
+     *
+     * @return A list of all mentioned contributors.
+     */
+    @Relation("HAS_CONTRIBUTOR")
+    List<MavenContributorDescriptor> getContributors();
+
+    /**
      * Get profile information.
      * 
      * @return The profiles.
