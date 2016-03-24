@@ -33,7 +33,7 @@ Implementation types of a module are located in "impl" packages:
 match
   (p:Package)
 where
-  p.name="api"
+  p.name="impl"
 set
   p:Impl
 return
