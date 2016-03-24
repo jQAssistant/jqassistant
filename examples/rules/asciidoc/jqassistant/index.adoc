@@ -47,7 +47,7 @@ return
 match
   (:Api:Package)-[:CONTAINS*0..]->(t1:Type),
   (:Impl:Package)-[:CONTAINS*0..]->(t2:Type),
-  (t1)-[:DEPENDS_ON]-(t2)
+  (t1)-[:DEPENDS_ON]->(t2)
 return
   t1 as ApiType, t2 as ImplementationType
 ----
