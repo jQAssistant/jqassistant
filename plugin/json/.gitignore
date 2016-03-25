@@ -1,0 +1,9 @@
+.DS_Store
+target
+/.idea
+/.jqa-database
+*~
+*.iml
+*.eml
+*.log
+
