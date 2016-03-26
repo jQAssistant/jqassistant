@@ -1,0 +1,120 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.buschmais.jqassistant.plugin</groupId>
+        <artifactId>jqassistant.plugin.plugin-parent</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.buschmais.jqassistant.plugins</groupId>
+    <artifactId>jqa-json-plugin</artifactId>
+    <version>1.2.0-SNAPSHOT</version>
+
+    <name>jQAssistant JSON Plugin</name>
+
+    <description>
+        The jQAssistant JSON Plugin allows jQAssistant
+        to scan also JSON files.
+    </description>
+
+    <properties>
+        <org.antlr.version>4.5.1-1</org.antlr.version>
+        <jqassistant.skip>false</jqassistant.skip>
+        <jqassistant.version>1.2.0-SNAPSHOT</jqassistant.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${jqassistant.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
+            <type>xsl</type>
+            <classifier>plugin2asciidoc</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
+            <type>xsl</type>
+            <classifier>rules2asciidoc-v2</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.common</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqassistant.plugin.java</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${org.antlr.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${org.antlr.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/generated-sources/antlr4/com/buschmais/jqassistant/plugins/json/impl/parser
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

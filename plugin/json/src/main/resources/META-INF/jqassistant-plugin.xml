@@ -1,0 +1,20 @@
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+                               name="JSON">
+    <description>Provides a scanner for JSON files</description>
+    <model>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONArrayDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONContainer</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONDocumentDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONFileDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONKeyDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONObjectDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONArrayValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONObjectValueDescriptor</class>
+        <class>com.buschmais.jqassistant.plugins.json.api.model.JSONScalarValueDescriptor</class>
+    </model>
+    <scanner>
+        <class>com.buschmais.jqassistant.plugins.json.impl.scanner.JSONFileScannerPlugin</class>
+    </scanner>
+</jqa-plugin:jqassistant-plugin>
