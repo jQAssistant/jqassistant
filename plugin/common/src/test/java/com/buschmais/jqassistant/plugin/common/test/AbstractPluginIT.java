@@ -1,8 +1,32 @@
 package com.buschmais.jqassistant.plugin.common.test;
 
-import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
+import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
+import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
+import com.buschmais.jqassistant.core.plugin.api.*;
+import com.buschmais.jqassistant.core.plugin.impl.*;
+import com.buschmais.jqassistant.core.report.api.ReportPlugin;
+import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
+import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
+import com.buschmais.jqassistant.core.scanner.api.Scanner;
+import com.buschmais.jqassistant.core.scanner.api.ScannerConfiguration;
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.xo.api.Query;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,33 +38,9 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
-
-import com.buschmais.jqassistant.core.analysis.api.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.FileRuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
-import com.buschmais.jqassistant.core.plugin.api.*;
-import com.buschmais.jqassistant.core.plugin.impl.*;
-import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
-import com.buschmais.jqassistant.core.scanner.api.Scanner;
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
-import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
-import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.xo.api.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.buschmais.xo.api.Query.Result.CompositeRowObject;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Abstract base class for analysis tests.
@@ -104,7 +104,7 @@ public abstract class AbstractPluginIT {
 
         /**
          * Return all rows.
-         * 
+         *
          * @return All rows.
          */
         public List<Map<String, Object>> getRows() {
@@ -113,9 +113,8 @@ public abstract class AbstractPluginIT {
 
         /**
          * Return a column identified by its name.
-         * 
-         * @param <T>
-         *            The expected type.
+         *
+         * @param <T> The expected type.
          * @return All columns.
          */
         public <T> List<T> getColumn(String name) {
@@ -160,8 +159,9 @@ public abstract class AbstractPluginIT {
 
     @Before
     public void initializeAnalyzer() {
-        reportWriter = new InMemoryReportWriter();
-        analyzer = new AnalyzerImpl(store, reportWriter, LOGGER);
+        reportWriter = new InMemoryReportWriter(new CompositeReportWriter(Collections.<String, AnalysisListener>emptyMap()));
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        analyzer = new AnalyzerImpl(configuration, store, reportWriter, LOGGER);
     }
 
     /**
@@ -200,28 +200,35 @@ public abstract class AbstractPluginIT {
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner() {
-        return getScanner(Collections.<String, Object> emptyMap());
+        return getScanner(Collections.<String, Object>emptyMap());
     }
 
     /**
      * Return an initialized scanner instance.
      *
-     * @param properties
-     *            The properties to be used to configure the plugins.
+     * @param properties The properties to be used to configure the plugins.
      * @return The artifact scanner instance.
      */
     protected Scanner getScanner(Map<String, Object> properties) {
         ScannerContext scannerContext = new ScannerContextImpl(store);
-        List<ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
-        return new ScannerImpl(scannerContext, scannerPlugins, scopePluginRepository.getScopes());
+        Map<String, ScannerPlugin<?, ?>> scannerPlugins = getScannerPlugins(scannerContext, properties);
+        return new ScannerImpl(getScannerConfiguration(), scannerContext, scannerPlugins, scopePluginRepository.getScopes());
+    }
+
+    /**
+     * Return the scanner configuration for the test.
+     *
+     * @return The scanner configuration.
+     */
+    protected ScannerConfiguration getScannerConfiguration() {
+        return new ScannerConfiguration();
     }
 
     /**
      * Determines the directory a class is located in (e.g.
      * target/test-classes).
-     * 
-     * @param rootClass
-     *            The class.
+     *
+     * @param rootClass The class.
      * @return The directory.
      */
     protected File getClassesDirectory(Class<?> rootClass) {
@@ -236,9 +243,8 @@ public abstract class AbstractPluginIT {
     /**
      * Deletes the node representing the test class and all its relationships
      * from the store.
-     * 
-     * @throws IOException
-     *             If an error occurs.
+     *
+     * @throws IOException If an error occurs.
      */
     protected void removeTestClass() throws IOException {
         store.beginTransaction();
@@ -252,23 +258,20 @@ public abstract class AbstractPluginIT {
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
-     * 
-     * @param query
-     *            The query.
+     *
+     * @param query The query.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query) {
-        return query(query, Collections.<String, Object> emptyMap());
+        return query(query, Collections.<String, Object>emptyMap());
     }
 
     /**
      * Executes a CYPHER query and returns a {@link AbstractPluginIT.TestResult}
      * .
-     * 
-     * @param query
-     *            The query.
-     * @param parameters
-     *            The query parameters.
+     *
+     * @param query      The query.
+     * @param parameters The query parameters.
      * @return The {@link AbstractPluginIT.TestResult}.
      */
     protected TestResult query(String query, Map<String, Object> parameters) {
@@ -295,12 +298,10 @@ public abstract class AbstractPluginIT {
 
     /**
      * Applies the concept identified by id.
-     * 
-     * @param id
-     *            The id.
+     *
+     * @param id The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Concept> applyConcept(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptId(id).get();
@@ -312,12 +313,10 @@ public abstract class AbstractPluginIT {
 
     /**
      * Validates the constraint identified by id.
-     * 
-     * @param id
-     *            The id.
+     *
+     * @param id The id.
      * @return The result.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
      */
     protected com.buschmais.jqassistant.core.analysis.api.Result<Constraint> validateConstraint(String id) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConstraintId(id).get();
@@ -329,11 +328,9 @@ public abstract class AbstractPluginIT {
 
     /**
      * Executes the group identified by id.
-     * 
-     * @param id
-     *            The id.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the analyzer reports an error.
+     *
+     * @param id The id.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the analyzer reports an error.
      */
     protected void executeGroup(String id) throws AnalysisException, NoGroupException {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addGroupId(id).get();
@@ -350,7 +347,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    private List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
+    private Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties) {
         try {
             return scannerPluginRepository.getScannerPlugins(scannerContext, properties);
         } catch (PluginRepositoryException e) {
@@ -358,7 +355,7 @@ public abstract class AbstractPluginIT {
         }
     }
 
-    protected List<ReportPlugin> getReportPlugins(Map<String, Object> properties) {
+    protected Map<String, ReportPlugin> getReportPlugins(Map<String, Object> properties) {
         try {
             return reportPluginRepository.getReportPlugins(properties);
         } catch (PluginRepositoryException e) {
