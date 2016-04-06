@@ -92,7 +92,73 @@ A POM describing a Maven project.
 | HAS_MODULE          | <<:Maven:Module>>       | 0..n        | References a sub module
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>       | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>       | 0..n        | References a plugin that is used during maven lifecycle
+| HAS_CONTRIBUTOR     | <<:Maven:Contributor>>  | 0..n        | References a contributor
+| HAS_DEVELOPER       | <<:Maven:Developer>>    | 0..n        | References a developer
 |====
+
+[[:Maven:Contributor]]
+=== :Maven:Contributor
+
+A contributor of the project.
+
+.Properties of :Maven:Contributor
+[options="header"]
+|====
+| Name            | Description
+| id              | The unique ID of the developer in the SCM
+| email           | The email address of the developer.
+| name            | The full name of the developer.
+| organization    | The organization to which the contributor belongs.
+| organizationUrl | The URL of the organization.
+| timezone        | The timezone the developer is in.
+| url             | The URL for the homepage of the developer.
+|====
+
+.Relations of :Maven:Contributor
+[options="header"]
+|====
+| Name                | Target label(s)         | Cardinality | Description
+| HAS_ROLES           | <<:Maven:Role>>         | 0..n        | References a role the contributor has in the project.
+|====
+
+
+[[:Maven:Developer]]
+=== :Maven:Developer
+
+A developer taking part in the development of the project.
+
+.Properties of :Maven:Developer
+[options="header"]
+|====
+| Name            | Description
+| id              | The unique ID of the developer in the SCM
+| email           | The email address of the developer.
+| name            | The full name of the developer.
+| organization    | The organization to which the contributor belongs.
+| organizationUrl | The URL of the organization.
+| timezone        | The timezone the developer is in.
+| url             | The URL for the homepage of the developer.
+|====
+
+.Relations of :Maven:Developer
+[options="header"]
+|====
+| Name                | Target label(s)         | Cardinality | Description
+| HAS_ROLES           | <<:Maven:Role>>         | 0..n        | References a role the developer has in the project.
+|====
+
+[[:Maven:Role]]
+=== :Maven:Role
+
+The roles a person plays in the project.
+
+.Properties of :Maven:Role
+[options="header"]
+|====
+| Name | Description
+| name | The name of the role a person plays in the project.
+|====
+
 
 [[:Maven:Profile]]
 === Nodes labled with `:Maven:Profile`
