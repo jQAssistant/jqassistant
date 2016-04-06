@@ -1,16 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.io.IOUtils;
-
 import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
@@ -26,8 +15,19 @@ import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.CliRuleViolationException;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
@@ -35,16 +35,17 @@ import org.slf4j.LoggerFactory;
 public class AnalyzeTask extends AbstractAnalyzeTask {
 
     private static final String CMDLINE_OPTION_SEVERITY = "severity";
+    protected static final String CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS = "executeAppliedConcepts";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnalyzeTask.class);
 
     private String reportDirectory;
     private Severity severity;
+    private boolean executeAppliedConcepts;
 
     @Override
     protected void executeTask(final Store store) throws CliExecutionException {
         LOGGER.info("Executing analysis.");
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
         FileWriter xmlReportFileWriter;
         try {
             xmlReportFileWriter = new FileWriter(getXmlReportFile());
@@ -57,19 +58,19 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         } catch (AnalysisListenerException e) {
             throw new RuntimeException("Cannot create XML report file writer.", e);
         }
-        List<AnalysisListener> reportWriters = new LinkedList<>();
-        reportWriters.add(inMemoryReportWriter);
-        reportWriters.add(xmlReportWriter);
-        reportWriters.addAll(getReportPlugins());
+        Map<String, AnalysisListener> reportWriters = new HashMap<>();
+        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
+        reportWriters.putAll(getReportPlugins());
+        CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
+        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
         try {
-            CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-            Analyzer analyzer = new AnalyzerImpl(store, reportWriter, LOGGER);
-            try {
-                RuleSet availableRules = getAvailableRules();
-                analyzer.execute(availableRules, getRuleSelection(availableRules));
-            } catch (AnalysisException e) {
-                throw new CliExecutionException("Analysis failed.", e);
-            }
+            Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, LOGGER);
+            RuleSet availableRules = getAvailableRules();
+            analyzer.execute(availableRules, getRuleSelection(availableRules));
+        } catch (AnalysisException e) {
+            throw new CliExecutionException("Analysis failed.", e);
         } finally {
             IOUtils.closeQuietly(xmlReportFileWriter);
         }
@@ -80,7 +81,8 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
             final int conceptViolations = reportHelper.verifyConceptResults(severity, inMemoryReportWriter);
             final int constraintViolations = reportHelper.verifyConstraintResults(severity, inMemoryReportWriter);
             if (conceptViolations > 0 || constraintViolations > 0) {
-                throw new CliRuleViolationException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations + " constraints");
+                throw new CliRuleViolationException("Violations detected: " + conceptViolations + " concepts, " + constraintViolations
+                        + " constraints");
             }
         } finally {
             store.commitTransaction();
@@ -89,12 +91,11 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
 
     /**
      * Get all configured report plugins.
-     * 
+     *
      * @return The list of report plugins.
-     * @throws CliExecutionException
-     *             If the plugins cannot be loaded or configured.
+     * @throws CliExecutionException If the plugins cannot be loaded or configured.
      */
-    private List<ReportPlugin> getReportPlugins() throws CliExecutionException {
+    private Map<String, ReportPlugin> getReportPlugins() throws CliExecutionException {
         ReportPluginRepository reportPluginRepository;
         try {
             reportPluginRepository = pluginRepository.getReportPluginRepository();
@@ -120,14 +121,17 @@ public class AnalyzeTask extends AbstractAnalyzeTask {
         super.withOptions(options);
         reportDirectory = getOptionValue(options, CMDLINE_OPTION_REPORTDIR, DEFAULT_REPORT_DIRECTORY);
         severity = Severity.valueOf(getOptionValue(options, CMDLINE_OPTION_SEVERITY, Severity.CRITICAL.name()).toUpperCase());
+        executeAppliedConcepts = options.hasOption(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS);
     }
 
     @Override
     protected void addTaskOptions(final List<Option> options) {
         super.addTaskOptions(options);
-        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs()
-                .create(CMDLINE_OPTION_REPORTDIR));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_REPORTDIR).withDescription("The directory for writing reports.").hasArgs().create(
+                CMDLINE_OPTION_REPORTDIR));
         options.add(OptionBuilder.withArgName(CMDLINE_OPTION_SEVERITY).withDescription("The severity threshold to report a failure.").hasArgs()
                 .create(CMDLINE_OPTION_SEVERITY));
+        options.add(OptionBuilder.withArgName(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS).withDescription(
+                "If set also execute concepts which have already been applied.").create(CMDLINE_OPTION_EXECUTEAPPLIEDCONCEPTS));
     }
 }
