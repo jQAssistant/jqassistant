@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl.rest;
 
+import java.util.Collections;
 import java.util.List;
 
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.CompoundRuleSetReader;
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
-import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
+import com.buschmais.jqassistant.core.analysis.api.*;
+import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
@@ -21,8 +22,6 @@ import com.buschmais.jqassistant.core.plugin.impl.RulePluginRepositoryImpl;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractJQARestService {
     private static Logger logger = LoggerFactory.getLogger(AbstractJQARestService.class);
@@ -41,7 +40,7 @@ public abstract class AbstractJQARestService {
         List<RuleSource> ruleSources = rulePluginRepository.getRuleSources();
         RuleSetReader ruleSetReader = new CompoundRuleSetReader();
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        ruleSetReader.read(ruleSources,ruleSetBuilder);
+        ruleSetReader.read(ruleSources, ruleSetBuilder);
         availableRules = ruleSetBuilder.getRuleSet();
     }
 
@@ -56,8 +55,9 @@ public abstract class AbstractJQARestService {
     public InMemoryReportWriter analyze(List<String> conceptNames, List<String> constraintNames, List<String> groupNames) throws Exception {
         RuleSelection ruleSelection = RuleSelection.Builder.newInstance().addConceptIds(conceptNames).addConstraintIds(constraintNames).addGroupIds(groupNames)
                 .get();
-        InMemoryReportWriter reportWriter = new InMemoryReportWriter();
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, logger);
+        InMemoryReportWriter reportWriter = new InMemoryReportWriter(new CompositeReportWriter(Collections.<String, AnalysisListener>emptyMap()));
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        Analyzer analyzer = new AnalyzerImpl(configuration, store, reportWriter, logger);
         analyzer.execute(getAvailableRules(), ruleSelection);
         store.beginTransaction();
         ReportHelper reportHelper = new ReportHelper(logger);
