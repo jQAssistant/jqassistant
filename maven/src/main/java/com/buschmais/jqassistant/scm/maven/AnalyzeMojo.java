@@ -1,29 +1,6 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
-import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
-import com.buschmais.jqassistant.core.analysis.api.Analyzer;
-import com.buschmais.jqassistant.core.analysis.api.RuleException;
-import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
+import com.buschmais.jqassistant.core.analysis.api.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
@@ -35,6 +12,19 @@ import com.buschmais.jqassistant.core.report.impl.InMemoryReportWriter;
 import com.buschmais.jqassistant.core.report.impl.XmlReportWriter;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.maven.report.JUnitReportWriter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Runs analysis according to the defined rules.
@@ -55,6 +45,12 @@ public class AnalyzeMojo extends AbstractProjectMojo {
      */
     @Parameter(property = "jqassistant.failOnViolations", defaultValue = "false")
     protected boolean failOnViolations;
+
+    /**
+     * If set also execute concepts which have already been applied.
+     */
+    @Parameter(property = "jqassistant.executeAppliedConcepts")
+    protected boolean executeAppliedConcepts = false;
 
     /**
      * Severity level for constraint violation failure check. Default value is {@code Severity.INFO}
@@ -81,12 +77,11 @@ public class AnalyzeMojo extends AbstractProjectMojo {
         getLog().info("Executing analysis for '" + rootModule.getName() + "'.");
         RuleSet ruleSet = readRules(rootModule);
         RuleSelection ruleSelection = RuleSelection.Builder.select(ruleSet, groups, constraints, concepts);
-        List<AnalysisListener> reportWriters = new LinkedList<>();
-        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter();
-        reportWriters.add(inMemoryReportWriter);
+        Map<String, AnalysisListener> reportWriters = new HashMap<>();
         if (reportTypes == null || reportTypes.isEmpty()) {
             reportTypes = Collections.singletonList(ReportType.JQA);
         }
+        AnalysisListener xmlReportWriter = null;
         for (ReportType reportType : reportTypes) {
             switch (reportType) {
                 case JQA:
@@ -96,29 +91,33 @@ public class AnalyzeMojo extends AbstractProjectMojo {
                     } catch (IOException e) {
                         throw new MojoExecutionException("Cannot create XML report file.", e);
                     }
-                    XmlReportWriter xmlReportWriter;
                     try {
                         xmlReportWriter = new XmlReportWriter(xmlReportFileWriter);
                     } catch (AnalysisListenerException e) {
                         throw new MojoExecutionException("Cannot create XML report file writer.", e);
                     }
-                    reportWriters.add(xmlReportWriter);
                     break;
                 case JUNIT:
-                    reportWriters.add(getJunitReportWriter(rootModule));
+                    xmlReportWriter = getJunitReportWriter(rootModule);
                     break;
+                default:
+                    throw new MojoExecutionException("Unknown report type " + reportType);
             }
         }
+        reportWriters.put(XmlReportWriter.TYPE, xmlReportWriter);
         Map<String, Object> properties = reportProperties != null ? reportProperties : Collections.<String, Object>emptyMap();
-        List<ReportPlugin> reportPlugins = null;
+        Map<String, ReportPlugin> reportPlugins;
         try {
             reportPlugins = pluginRepositoryProvider.getReportPluginRepository().getReportPlugins(properties);
         } catch (PluginRepositoryException e) {
             throw new MojoExecutionException("Cannot get report plugins.", e);
         }
-        reportWriters.addAll(reportPlugins);
+        reportWriters.putAll(reportPlugins);
         CompositeReportWriter reportWriter = new CompositeReportWriter(reportWriters);
-        Analyzer analyzer = new AnalyzerImpl(store, reportWriter, logger);
+        InMemoryReportWriter inMemoryReportWriter = new InMemoryReportWriter(reportWriter);
+        AnalyzerConfiguration configuration = new AnalyzerConfiguration();
+        configuration.setExecuteAppliedConcepts(executeAppliedConcepts);
+        Analyzer analyzer = new AnalyzerImpl(configuration, store, inMemoryReportWriter, logger);
         try {
             analyzer.execute(ruleSet, ruleSelection);
         } catch (AnalysisException e) {
@@ -160,10 +159,9 @@ public class AnalyzeMojo extends AbstractProjectMojo {
 
     /**
      * Returns the {@link File} to write the XML report to.
-     * 
+     *
      * @return The {@link File} to write the XML report to.
-     * @throws MojoExecutionException
-     *             If the file cannot be determined.
+     * @throws MojoExecutionException If the file cannot be determined.
      */
     private File getXmlReportFile(MavenProject baseProject) throws MojoExecutionException {
         File selectedXmlReportFile = ProjectResolver.getOutputFile(baseProject, xmlReportFile, REPORT_XML);

@@ -39,10 +39,13 @@
                                 <pomInclude>multimodule/singleparent/customruledir/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/multipleruledirs/pom.xml</pomInclude>
                                 <pomInclude>multimodule/singleparent/parentasmodule/pom.xml</pomInclude>
+                                <pomInclude>multimodule/singleparent/execrootasprojectroot/pom.xml</pomInclude>
+                                <pomInclude>multimodule/singleparent/cliwithoutplugin/pom.xml</pomInclude>
                                 <pomInclude>multimodule/multiparent/site/pom.xml</pomInclude>
                                 <pomInclude>multimodule/multiparent/singlestore/pom.xml</pomInclude>
                                 <pomInclude>plugin/pom.xml</pomInclude>
                                 <pomInclude>tycho/additionalfiles/pom.xml</pomInclude>
+                                <pomInclude>plugin/pom.xml</pomInclude>
                             </pomIncludes>
                         </configuration>
                         <executions>

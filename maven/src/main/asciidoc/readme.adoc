@@ -65,6 +65,10 @@ root
                     |-pom.xml
 ----
 
+NOTE: The described mechanism is designed to work for Maven module structures which are organized in hierarchies with
+consistent parent relations. For other setups it is possible to enforce using the module where the mvn goal is invoked
+as root module by setting the configuration option <<useExecutionRootAsProjectRoot>>.
+
 ==== Plugin Configuration
 
 The jQAssistant Maven plugin must be configured in the pom.xml of the root module, it should not be overwritten by sub-modules.
@@ -77,7 +81,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
     <build>
         <plugins>
             <plugin>
-            <groupId>${project.groupId}</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>${project.artifactId}</artifactId>
                 <version>${project.version}</version>
                 <executions>
@@ -100,6 +104,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <scanProperties>
                                 <customScanner.property>value</customScanner.property>
                             </scanProperties>
+                            <continueOnError>false</continueOnError>
                         </configuration>
                         -->
                     </execution>
@@ -110,6 +115,8 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </goals>
                         <!--
                         <configuration>
+                            <failOnViolations>true</failOnViolations>
+                            <severity>critical</severity>
                             <concepts>
                                 <concept>junit4:TestClass</concept>
                             </concepts>
@@ -119,8 +126,9 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                             <groups>
                                 <group>default</group>
                             </groups>
-                            <failOnViolations>true</failOnViolations>
-                            <severity>critical</severity>
+                            <reportProperties>
+                                <customReport.fileName>target/customReport.txt</customReport.fileName>
+                            </reportProperties>
                         </configuration>
                          -->
                     </execution>
@@ -128,6 +136,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                 <!--
                 <configuration>
                     <skip>false</skip>
+                    <useExecutionRootAsProjectRoot>false</useExecutionRootAsProjectRoot>
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rulesDirectory>jqassistant</rulesDirectory>
                     <rulesDirectories>
@@ -166,13 +175,6 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                         </reports>
                     </reportSet>
                 </reportSets>
-                <!--
-                <configuration>
-                    <reportProperties>
-                        <customReport.fileName>target/customReport.txt</customReport.fileName>
-                    </reportProperties>
-                </configuration>
-                -->
             </plugin>
         </plugins>
     </reporting>
@@ -219,17 +221,23 @@ mvn jqassistant:available-rules
 [[scan]]
 ==== jqassistant:scan
 ===== Description
-Scans the directories of compiled classes and test classes and stores the gathered information in database.
+Scans the project directories according to the given configuration (e.g. compiled classes and test classes) and stores the
+gathered information in database.
 
 ===== Configuration
 * <<skip>>
+* <<useExecutionRootAsProjectRoot>>
 * <<storeDirectory>>
 * <<storeLifecycle>>
 * scanIncludes
 ** add directories or files to be included while scanning
 ** wildcards are not supported
 * scanProperties
-** allows passing properties to scanner plugins.
+** allows passing properties to scanner plugins
+* continueOnError
+** continue scanning even if a plugin fails with an unrecoverable error
+
+NOTE: Using 'continueOnError' might create inconsistent data. Any reported errors should be reported to the plugin developer.
 
 [[available-scopes]]
 ==== jqassistant:available-scopes
@@ -243,6 +251,7 @@ Resets the database by deleting all nodes and relationships.
 
 ===== Configuration
 * <<skip>>
+* <<useExecutionRootAsProjectRoot>>
 * <<storeDirectory>>
 * <<storeLifecycle>>
 
@@ -253,6 +262,7 @@ Starts the integrated Neo4j web server (default address: http://localhost:7474).
 
 ===== Configuration
 * <<skip>>
+* <<useExecutionRootAsProjectRoot>>
 * <<storeDirectory>>
 * <<storeLifecycle>>
 * serverAddress <address> (-Djqassistant.server.address=<address>)
@@ -267,6 +277,7 @@ Executes an analysis.
 
 ===== Configuration
 * <<skip>>
+* <<useExecutionRootAsProjectRoot>>
 * <<storeDirectory>>
 * <<storeLifecycle>>
 * <<concepts>>
@@ -282,6 +293,10 @@ Executes an analysis.
 * severity
 ** determines if jQAssistant shall break the build when constraint with higher severity level are violated and _failOnViolations_ is set to _true_
 ** default: 'info'
+* executeAppliedConcepts (-Djqassistant.executeAppliedConcepts)
+** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
+   same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
+** default 'false'
 
 [[effective-rules]]
 ==== jqassistant:effective-rules
@@ -293,6 +308,7 @@ List the rules which would be executed for an analysis and the given concepts, c
 * <<concepts>>
 * <<constraints>>
 * <<groups>>
+* <<useExecutionRootAsProjectRoot>>
 * <<rulesDirectory>>
 * <<rulesDirectories>>
 * <<rulesUrl>>
@@ -304,6 +320,7 @@ List all available rules.
 
 ===== Configuration
 * <<skip>>
+* <<useExecutionRootAsProjectRoot>>
 * <<rulesDirectory>>
 * <<rulesDirectories>>
 * <<rulesUrl>>
@@ -324,18 +341,25 @@ Transforms the XML report into HTML (i.e. for generating a Maven site).
 * skip execution of the plugin
 * default: 'false'
 
+[[useExecutionRootAsProjectRoot]]
+===== useExecutionRootAsProjectRoot (-Djqassistant.useExecutionRootAsProjectRoot)
+* force the module where 'mvn' is being executed to be used as root module
+** the database will be created in this module and contain all information of the reactor
+** rules will be read from the <<rulesDirectory>> of this module
+* default: 'false'
+
 ==== Store
 
 [[storeDirectory]]
 ===== storeDirectory (-Djqassistant.store.directory)
-* specifies the location of the database
+* specifies the location of the database, either a relative path to the root module directory or an absolute path
 * default: '{rootModule}/target/jqassistant/store'
 
 [[storeLifecycle]]
 ===== storeLifecycle (-Djqassistant.store.lifecycle)
 * specifies the lifecycle of the data store
-** 'REACTOR': cache the store for the execution time of the reactor for fast operations
-** 'MODULE': open and close the store for each module
+** 'REACTOR': cache the store for the execution time of the reactor for fast execution
+** 'MODULE': open and close the store for each module, slower but required for maven reactors containing extensions
 * default: 'REACTOR'
 
 ==== Analysis And Report
