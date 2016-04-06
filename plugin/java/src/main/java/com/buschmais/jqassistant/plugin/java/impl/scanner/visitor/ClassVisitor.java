@@ -151,6 +151,7 @@ public class ClassVisitor extends org.objectweb.asm.ClassVisitor {
 
     @Override
     public void visitSource(final String source, final String debug) {
+       cachedType.getTypeDescriptor().setSourceFileName(source);
     }
 
     @Override

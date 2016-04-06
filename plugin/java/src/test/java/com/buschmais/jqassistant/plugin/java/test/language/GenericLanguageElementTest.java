@@ -20,7 +20,7 @@ public class GenericLanguageElementTest {
     public void packageName() {
         PackageDescriptor descriptor = mock(PackageDescriptor.class);
         when(descriptor.getFullQualifiedName()).thenReturn("com.buschmais");
-        SourceProvider<PackageDescriptor> sourceProvider = (SourceProvider<PackageDescriptor>) Package.getSourceProvider();
+        SourceProvider<PackageDescriptor> sourceProvider = Package.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais"));
     }
@@ -29,7 +29,7 @@ public class GenericLanguageElementTest {
     public void typeName() {
         ClassFileDescriptor descriptor = mock(ClassFileDescriptor.class);
         when(descriptor.getFullQualifiedName()).thenReturn("com.buschmais.Type");
-        SourceProvider<ClassFileDescriptor> sourceProvider = (SourceProvider<ClassFileDescriptor>) Type.getSourceProvider();
+        SourceProvider<ClassFileDescriptor> sourceProvider = Type.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type"));
     }
@@ -41,7 +41,7 @@ public class GenericLanguageElementTest {
         when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(descriptor.getDeclaringType()).thenReturn(type);
         when(descriptor.getSignature()).thenReturn("int value");
-        SourceProvider<FieldDescriptor> sourceProvider = (SourceProvider<FieldDescriptor>) Field.getSourceProvider();
+        SourceProvider<FieldDescriptor> sourceProvider = Field.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#int value"));
     }
@@ -56,7 +56,7 @@ public class GenericLanguageElementTest {
         when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(descriptor.getLineNumber()).thenReturn(42);
-        SourceProvider<ReadsDescriptor> sourceProvider = (SourceProvider<ReadsDescriptor>) ReadField.getSourceProvider();
+        SourceProvider<ReadsDescriptor> sourceProvider = ReadField.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
     }
@@ -71,7 +71,7 @@ public class GenericLanguageElementTest {
         when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(descriptor.getLineNumber()).thenReturn(42);
-        SourceProvider<WritesDescriptor> sourceProvider = (SourceProvider<WritesDescriptor>) WriteField.getSourceProvider();
+        SourceProvider<WritesDescriptor> sourceProvider = WriteField.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
     }
@@ -83,7 +83,7 @@ public class GenericLanguageElementTest {
         when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(descriptor.getDeclaringType()).thenReturn(type);
         when(descriptor.getSignature()).thenReturn("int getValue()");
-        SourceProvider<MethodDescriptor> sourceProvider = (SourceProvider<MethodDescriptor>) Method.getSourceProvider();
+        SourceProvider<MethodDescriptor> sourceProvider = Method.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#int getValue()"));
     }
@@ -98,7 +98,7 @@ public class GenericLanguageElementTest {
         when(type.getFullQualifiedName()).thenReturn("com.buschmais.Type");
         when(method.getSignature()).thenReturn("void doSomething()");
         when(descriptor.getLineNumber()).thenReturn(42);
-        SourceProvider<InvokesDescriptor> sourceProvider = (SourceProvider<InvokesDescriptor>) MethodInvocation.getSourceProvider();
+        SourceProvider<InvokesDescriptor> sourceProvider = MethodInvocation.getSourceProvider();
         String name = sourceProvider.getName(descriptor);
         assertThat(name, equalTo("com.buschmais.Type#void doSomething(), line 42"));
     }
