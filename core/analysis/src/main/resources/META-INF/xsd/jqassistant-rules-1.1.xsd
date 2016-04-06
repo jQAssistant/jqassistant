@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0"
-           targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0"
+           xmlns:jqassistant-rules="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1"
+           targetNamespace="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1"
            elementFormDefault="unqualified">
 
     <xs:element name="jqassistant-rules">
@@ -21,10 +21,6 @@
 
     <xs:complexType name="referenceableType" abstract="true">
         <xs:attribute name="id" type="xs:string" use="required"/>
-    </xs:complexType>
-
-    <xs:complexType name="referenceType">
-        <xs:attribute name="refId" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="templateType">
@@ -64,6 +60,14 @@
         <xs:attribute name="value" type="xs:string" use="required"/>
     </xs:complexType>
 
+    <xs:complexType name="propertyType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
     <xs:simpleType name="severityEnumType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="blocker"/>
@@ -73,6 +77,10 @@
             <xs:enumeration value="info"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:complexType name="referenceType">
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+    </xs:complexType>
 
     <xs:complexType name="includedReferenceType">
         <xs:complexContent>
@@ -95,9 +103,17 @@
         <xs:attribute name="column" type="xs:string" use="optional"/>
     </xs:complexType>
 
-    <xs:complexType name="executableRuleType" abstract="true">
+    <xs:complexType name="severityRuleType" abstract="true">
         <xs:complexContent>
             <xs:extension base="jqassistant-rules:referenceableType">
+                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="executableRuleType" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="jqassistant-rules:severityRuleType">
                 <xs:sequence>
                     <xs:element name="requiresConcept" type="jqassistant-rules:referenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
@@ -113,7 +129,6 @@
                     <xs:element name="verify" type="jqassistant-rules:verificationType" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="report" type="jqassistant-rules:reportType" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
-                <xs:attribute name="severity" type="jqassistant-rules:severityEnumType"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -132,13 +147,13 @@
 
     <xs:complexType name="groupType">
         <xs:complexContent>
-            <xs:extension base="jqassistant-rules:referenceableType">
+            <xs:extension base="jqassistant-rules:severityRuleType">
                 <xs:sequence>
                     <xs:element name="includeConcept" type="jqassistant-rules:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                     <xs:element name="includeConstraint" type="jqassistant-rules:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
-                    <xs:element name="includeGroup" type="jqassistant-rules:referenceType" minOccurs="0"
+                    <xs:element name="includeGroup" type="jqassistant-rules:includedReferenceType" minOccurs="0"
                                 maxOccurs="unbounded"/>
                 </xs:sequence>
             </xs:extension>
@@ -178,6 +193,10 @@
     </xs:complexType>
 
     <xs:complexType name="reportType">
+        <xs:sequence>
+            <xs:element name="property" type="jqassistant-rules:propertyType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="type" type="xs:string" use="optional"/>
         <xs:attribute name="primaryColumn" type="xs:string" use="optional"/>
     </xs:complexType>
 

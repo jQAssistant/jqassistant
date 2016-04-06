@@ -15,7 +15,7 @@ public interface RuleVisitor {
 
     void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException;
 
-    void beforeGroup(Group group) throws AnalysisException;
+    void beforeGroup(Group group, Severity effectiveSeverity) throws AnalysisException;
 
     void afterGroup(Group group) throws AnalysisException;
 

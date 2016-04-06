@@ -17,6 +17,6 @@ public interface LanguageElement {
      */
     String name();
 
-    SourceProvider<? extends Descriptor> getSourceProvider();
+    <D extends Descriptor> SourceProvider<D> getSourceProvider();
 
 }

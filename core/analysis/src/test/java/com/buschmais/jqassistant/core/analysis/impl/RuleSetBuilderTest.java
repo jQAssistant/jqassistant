@@ -24,8 +24,9 @@ public class RuleSetBuilderTest {
     public void duplicateRules() throws RuleException {
         RuleSource ruleSource = new FileRuleSource(new File("test.xml"));
         // Concepts
-        Concept concept1 = new Concept("test", null,ruleSource, null, null, null, null, null, null, null);
-        Concept concept2 = new Concept("test", null, ruleSource, null, null, null, null, null, null, null);
+
+        Concept concept1 = Concept.Builder.newConcept().id("test").ruleSource(ruleSource).get();
+        Concept concept2 = Concept.Builder.newConcept().id("test").ruleSource(ruleSource).get();
         RuleSetBuilder builder = RuleSetBuilder.newInstance();
         builder.addConcept(concept1);
         try {
@@ -34,8 +35,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Constraints
-        Constraint constraint1 = new Constraint("test", null, ruleSource, null, null, null, null, null, null, null);
-        Constraint constraint2 = new Constraint("test", null, ruleSource, null, null, null, null, null, null, null);
+        Constraint constraint1 = Constraint.Builder.newConstraint().id("test").ruleSource(ruleSource).get();
+        Constraint constraint2 = Constraint.Builder.newConstraint().id("test").ruleSource(ruleSource).get();
         builder.addConstraint(constraint1);
         try {
             builder.addConstraint(constraint2);
@@ -43,8 +44,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Groups
-        Group group1 = new Group("test", null, ruleSource, null, null, null);
-        Group group2 = new Group("test", null, ruleSource, null, null, null);
+        Group group1 = Group.Builder.newGroup().id("test").ruleSource(ruleSource).get();
+        Group group2 = Group.Builder.newGroup().id("test").ruleSource(ruleSource).get();
         builder.addGroup(group1);
         try {
             builder.addGroup(group2);
@@ -52,8 +53,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Templates
-        Template template1 = new Template("test", null, ruleSource, null, null);
-        Template template2 = new Template("test", null, ruleSource, null, null);
+        Template template1 = Template.Builder.newTemplate().id("test").ruleSource(ruleSource).get();
+        Template template2 = Template.Builder.newTemplate().id("test").ruleSource(ruleSource).get();
         builder.addTemplate(template1);
         try {
             builder.addTemplate(template2);
@@ -61,8 +62,8 @@ public class RuleSetBuilderTest {
         } catch (RuleException e) {
         }
         // Metric Groups
-        MetricGroup metricGroup1 = new MetricGroup("test", null, ruleSource, null);
-        MetricGroup metricGroup2 = new MetricGroup("test", null, ruleSource, null);
+        MetricGroup metricGroup1 = MetricGroup.Builder.newMetricGroup().id("test").ruleSource(ruleSource).get();
+        MetricGroup metricGroup2 = MetricGroup.Builder.newMetricGroup().id("test").ruleSource(ruleSource).get();
         builder.addMetricGroup(metricGroup1);
         try {
             builder.addMetricGroup(metricGroup2);

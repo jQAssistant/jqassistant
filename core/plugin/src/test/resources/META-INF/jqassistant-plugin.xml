@@ -1,4 +1,4 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
                                name="Test">
     <description>Test plugin.</description>
     <scope>
@@ -6,8 +6,10 @@
     </scope>
     <scanner>
         <class>com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin</class>
+        <class id="testScanner">com.buschmais.jqassistant.plugin.impl.plugin.TestScannerPlugin</class>
     </scanner>
     <report>
         <class>com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin</class>
+        <class id="testReport">com.buschmais.jqassistant.plugin.impl.plugin.TestReportPlugin</class>
     </report>
 </jqa-plugin:jqassistant-plugin>
