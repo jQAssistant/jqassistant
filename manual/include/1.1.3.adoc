@@ -1,0 +1,43 @@
+== 1.1.3
+
+=== Core
+- Added support for severity on groups
+- Upgraded the XML schema for rules to 1.1 keeping backward compatibility to 1.0
+- Upgraded the XML schema for plugins to 1.1 keeping backward compatibility to 1.0
+- Added rule specific report properties
+- Allow selection of a specific report type per rule
+
+=== Maven
+- Added configuration property 'useExecutionRootAsProjectRoot' for reactors with incomplete parent hierarchies
+- Added configuration property 'executeAppliedConcepts' for repeated execution of concepts that have already beend
+  applied before (to ease development of concepts)
+- Added configuration property 'continueOnError' to continue scanning even if a plugin fails with an unrecoverable error
+
+=== CLI
+- Added command line switch '-executeAppliedConcepts' (same functionality as for Maven plugin)
+- Added command line switch '-continueOnError' to continue scanning even if a plugin fails with an unrecoverable error
+
+=== Plugins
+
+==== Java
+
+- Added an attribute 'sourceFileName' to Java types representing the name of the file the class has been compiled from.
+
+==== GraphML
+
+- Replaced report plugin property "graphml.report.yedgraphml" with "graphml.report.decorator" which specifies the name
+  of a class implementing the 'GraphMLDecorator' interface for layouting a graph (default: YedGraphMLDecorator)
+
+==== JPA2
+
+- Fixed concept "jpa2:NamedQuery" to also support @NamedQuery annotations which are directly applied to an entity (e.g.
+  without surrounding @NamedQueries)
+
+==== JUnit
+
+- Added label "JUnit" to all nodes created by the test report scanner (e.g. ":JUnit:TestSuite", ":JUnit:TestCase")
+- Test report scanner now creates (:JUnit:TestCase)-[:HAS_FAILURE]->(:JUnit:Failure) and (:JUnit:TestCase)-[:HAS_ERROR]->(:JUnit:Error)
+  providing detail information for test cases that have a result "FAILURE" or "ERROR"
+
+=== SonarQube
+
