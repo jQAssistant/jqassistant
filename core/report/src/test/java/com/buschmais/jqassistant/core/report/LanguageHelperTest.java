@@ -20,7 +20,7 @@ import com.buschmais.jqassistant.core.report.model.TestLanguage.TestLanguageElem
 public class LanguageHelperTest {
 
     @Test
-         public void resolveNameFromDescriptorWithLanguageElement() {
+    public void resolveNameFromDescriptorWithLanguageElement() {
         TestDescriptorWithLanguageElement testDescriptor = Mockito.mock(TestDescriptorWithLanguageElement.class);
         resolveName(testDescriptor, TestLanguageElement.TestElement);
     }
@@ -42,7 +42,7 @@ public class LanguageHelperTest {
         LanguageElement languageElement = LanguageHelper.getLanguageElement(testDescriptor);
         assertThat(languageElement, notNullValue());
         assertThat(languageElement, is(expectedLanguageElement));
-        SourceProvider<TestDescriptorWithLanguageElement> sourceProvider = (SourceProvider<TestDescriptorWithLanguageElement>) languageElement.getSourceProvider();
+        SourceProvider<TestDescriptorWithLanguageElement> sourceProvider = languageElement.getSourceProvider();
         String name = sourceProvider.getName(testDescriptor);
         assertThat(name, equalTo("value"));
     }

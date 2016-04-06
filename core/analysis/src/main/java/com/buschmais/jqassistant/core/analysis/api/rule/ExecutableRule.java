@@ -16,13 +16,6 @@ public interface ExecutableRule extends Rule {
     Severity getSeverity();
 
     /**
-     * Return the (optional) deprecation message.
-     * 
-     * @return The deprecation message.
-     */
-    String getDeprecation();
-
-    /**
      * Return the ids of required rules.
      * 
      * @return The ids of required rules.

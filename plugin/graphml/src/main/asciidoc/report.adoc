@@ -11,14 +11,14 @@ By default all concepts ending in `.graphml` will be rendered (e.g. "module:modu
 [options="header"]
 |====
 | Property     			        | Description														                                 | Default
-| graphml.report.conceptPattern | Regular expression that describes the concept ids to use for rendering the result as GraphML file. | `.*\.graphml$`
-| graphml.report.directory      | The directory where the .graphml files will be created                                             | `jqassistant/report`
+| graphml.report.conceptPattern | Regular expression that describes the concept ids to use for rendering the result as GraphML file. | .*\.graphml$
+| graphml.report.directory      | The directory where the .graphml files will be created                                             | jqassistant/report
 | graphml.report.yedgraphml     | Flag to enable/disable the generation of yEd specific GraphML-Elements for labeling.               | true
 |====
 
 === Example
 
-The following concept will return package dependencies as GraphML document:
+The following concept will return package dependencies (as provided by the concept <<dependency:Package>>) as GraphML document:
 
 [source,xml]
 .reports.xml
@@ -95,7 +95,7 @@ The following example virtually aggregates some data without creating a node in 
         <description>Aggregates data in a virtual node.</description>
         <cypher><![CDATA[
             MATCH
-			    (m:Method)
+              (m:Method)
             RETURN
               {
                 role: "node",

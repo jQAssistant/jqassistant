@@ -17,23 +17,15 @@ public abstract class AbstractRule implements Rule {
      */
     private String description;
 
+    /**
+     * The rule source.
+     */
     private RuleSource ruleSource;
 
     /**
-     * Constructor.
-     * 
-     * @param id
-     *            The id of the rule.
-     * @param description
-     *            The descripton of the rule.
-     * @param ruleSource
-     *            The rule source.
+     * The optional deprecation message.
      */
-    public AbstractRule(String id, String description, RuleSource ruleSource) {
-        this.id = id;
-        this.description = description;
-        this.ruleSource = ruleSource;
-    }
+    private String deprecation;
 
     @Override
     public String getId() {
@@ -48,6 +40,11 @@ public abstract class AbstractRule implements Rule {
     @Override
     public RuleSource getSource() {
         return ruleSource;
+    }
+
+    @Override
+    public String getDeprecation() {
+        return deprecation;
     }
 
     @Override
@@ -70,6 +67,43 @@ public abstract class AbstractRule implements Rule {
 
     @Override
     public final String toString() {
-        return "AbstractRule{" + "id='" + id + '\'' + ", description='" + description + '\'' + ", ruleSource=" + ruleSource + '}';
+        return this.getClass().getSimpleName() + "{" + "id='" + id + '\'' + ", description='" + description + '\'' + ", ruleSource=" + ruleSource + '}';
+    }
+
+    protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractRule> {
+
+        protected AbstractRule rule;
+
+        protected Builder(R rule) {
+            this.rule = rule;
+        }
+
+        public R get() {
+            return (R) rule;
+        }
+
+        protected B builder() {
+            return (B) this;
+        }
+
+        public B id(String id) {
+            rule.id = id;
+            return builder();
+        }
+
+        public B description(String description) {
+            rule.description = description;
+            return builder();
+        }
+
+        public B ruleSource(RuleSource ruleSource) {
+            rule.ruleSource = ruleSource;
+            return builder();
+        }
+
+        public B deprecation(String deprecation) {
+            rule.deprecation = deprecation;
+            return builder();
+        }
     }
 }

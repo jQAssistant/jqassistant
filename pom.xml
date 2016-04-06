@@ -84,8 +84,8 @@
         <org.neo4j_version>2.3.2</org.neo4j_version>
         <org.asciidoctor_version>1.5.4</org.asciidoctor_version>
         <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
-        <org.jruby_version>9.0.4.0</org.jruby_version>
-        <org.ow2.asm_version>5.0.4</org.ow2.asm_version>
+        <org.jruby_version>9.0.5.0</org.jruby_version>
+        <org.ow2.asm_version>5.1</org.ow2.asm_version>
         <org.slf4j_version>1.7.13</org.slf4j_version>
         <org.codehaus.groovy_version>2.4.0</org.codehaus.groovy_version>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
@@ -331,7 +331,7 @@
                     <executions>
                         <execution>
                             <id>attach-asciidoc</id>
-                            <phase />
+                            <phase>none</phase>
                             <goals>
                                 <goal>single</goal>
                             </goals>
@@ -371,7 +371,7 @@
                 <plugin>
                   <groupId>org.apache.maven.plugins</groupId>
                   <artifactId>maven-javadoc-plugin</artifactId>
-                  <version>2.10.1</version>
+                  <version>2.10.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -570,6 +570,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
                 <artifactId>jqassistant.core.store</artifactId>

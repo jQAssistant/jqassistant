@@ -5,6 +5,7 @@
         <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     </properties>
     <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="success"/>
+    <testcase time="0.002" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="inherited"/>
     <testcase time="0.003" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="failure">
         <failure type="java.lang.AssertionError">java.lang.AssertionError
             at org.junit.Assert.fail(Assert.java:86)
@@ -41,7 +42,7 @@
             at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
         </failure>
     </testcase>
-    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="error">
+    <testcase time="0.004" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="error">
         <error type="java.lang.RuntimeException">java.lang.RuntimeException
             at com.buschmais.jqassistant.plugin.junit.test.set.report.Example.error(Example.java:20)
             at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
@@ -75,7 +76,7 @@
             at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:68)
         </error>
     </testcase>
-    <testcase time="0.001" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="skipped">
+    <testcase time="0.005" classname="com.buschmais.jqassistant.plugin.junit.test.set.report.Example" name="skipped">
         <skipped/>
     </testcase>
 </testsuite>

@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.SecurityRoleDescriptor
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.sun.java.xml.ns.javaee.ApplicationType;
 import com.sun.java.xml.ns.javaee.DescriptionType;
@@ -38,11 +39,11 @@ import com.sun.java.xml.ns.javaee.WebType;
 @Requires(FileDescriptor.class)
 public class ApplicationXmlScannerPlugin extends AbstractXmlFileScannerPlugin<ApplicationXmlDescriptor> {
 
-    private JAXBUnmarshaller<ApplicationType> unmarshaller;
+    private FileResourceJAXBUnmarshaller<ApplicationType> unmarshaller;
 
     @Override
     public void initialize() {
-        unmarshaller = new JAXBUnmarshaller<>(ApplicationType.class);
+        unmarshaller = new FileResourceJAXBUnmarshaller<>(ApplicationType.class);
     }
 
     @Override

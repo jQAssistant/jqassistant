@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
+import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
 import org.jcp.xmlns.xml.ns.javaee.Alternatives;
 import org.jcp.xmlns.xml.ns.javaee.Beans;
 import org.jcp.xmlns.xml.ns.javaee.Decorators;
@@ -26,11 +27,11 @@ import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 @Requires(FileDescriptor.class)
 public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXmlDescriptor> {
 
-    private JAXBUnmarshaller<Beans> unmarshaller;
+    private FileResourceJAXBUnmarshaller<Beans> unmarshaller;
 
     @Override
     public void initialize() {
-        unmarshaller = new JAXBUnmarshaller<>(Beans.class);
+        unmarshaller = new FileResourceJAXBUnmarshaller<>(Beans.class);
     }
 
     @Override

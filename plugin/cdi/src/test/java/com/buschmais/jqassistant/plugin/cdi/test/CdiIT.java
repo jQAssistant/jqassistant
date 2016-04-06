@@ -1,31 +1,26 @@
 package com.buschmais.jqassistant.plugin.cdi.test;
 
-import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
-import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.List;
-
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.plugin.cdi.api.model.BeansXmlDescriptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.alternative.AlternativeStereotype;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.decorator.DecoratorBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.DefaultBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.inject.NewBean;
-import com.buschmais.jqassistant.plugin.cdi.test.set.beans.interceptor.CustomInterceptor;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.CustomQualifier;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.qualifier.NamedBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.scope.*;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.specializes.SpecializesBean;
 import com.buschmais.jqassistant.plugin.cdi.test.set.beans.stereotype.CustomStereotype;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
+import org.junit.Test;
+
+import java.util.List;
+
+import static com.buschmais.jqassistant.plugin.java.test.matcher.FieldDescriptorMatcher.fieldDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
+import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for the CDI concepts.
@@ -34,11 +29,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Dependent".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void dependent() throws Exception {
@@ -54,11 +47,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:RequestScoped".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void requestScoped() throws Exception {
@@ -74,11 +65,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:SessionScoped".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void sessionScoped() throws Exception {
@@ -94,11 +83,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:ConversationScoped".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void conversationScoped() throws Exception {
@@ -114,11 +101,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:ApplicationScoped".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void applicationScoped() throws Exception {
@@ -134,11 +119,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:SingletonScoped".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void singletonScoped() throws Exception {
@@ -152,11 +135,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Stereotype".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void stereotype() throws Exception {
@@ -170,11 +151,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Alternative".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void alternative() throws Exception {
@@ -188,11 +167,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Specializes".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void specializes() throws Exception {
@@ -207,11 +184,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Qualifier".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void qualifier() throws Exception {
@@ -226,11 +201,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Produces".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void produces() throws Exception {
@@ -253,11 +226,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Disposes".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void disposes() throws Exception {
@@ -271,11 +242,9 @@ public class CdiIT extends AbstractJavaPluginIT {
 
     /**
      * Verifies the concept "cdi:Named".
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     *
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void named() throws Exception {
@@ -291,10 +260,8 @@ public class CdiIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "cdi:Any".
      *
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void any() throws Exception {
@@ -309,10 +276,8 @@ public class CdiIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "cdi:New".
      *
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void newQualifier() throws Exception {
@@ -327,10 +292,8 @@ public class CdiIT extends AbstractJavaPluginIT {
     /**
      * Verifies the concept "cdi:Default".
      *
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
+     * @throws java.io.IOException                                           If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException If the test fails.
      */
     @Test
     public void defaultQualifier() throws Exception {
@@ -339,31 +302,6 @@ public class CdiIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         List<Object> column = query("MATCH (e:Cdi:Default) RETURN e").getColumn("e");
         assertThat(column, hasItem(fieldDescriptor(DefaultBean.class, "bean")));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies scanning of the beans descriptor.
-     * 
-     * @throws java.io.IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void beansDescriptor() throws IOException, AnalysisException, NoSuchMethodException, NoSuchFieldException {
-        scanClassPathDirectory(getClassesDirectory(CdiIT.class));
-        store.beginTransaction();
-        List<Object> column = query("MATCH (beans:Cdi:Beans:Xml:File) RETURN beans").getColumn("beans");
-        assertThat(column.size(), equalTo(1));
-        BeansXmlDescriptor beansXmlDescriptor = (BeansXmlDescriptor) column.get(0);
-        assertThat(beansXmlDescriptor.getFileName(), equalTo("/META-INF/beans.xml"));
-        assertThat(beansXmlDescriptor.getVersion(), equalTo("1.1"));
-        assertThat(beansXmlDescriptor.getBeanDiscoveryMode(), equalTo("annotated"));
-        assertThat(beansXmlDescriptor.getAlternatives(),
-                allOf(hasItem(typeDescriptor(AlternativeBean.class)), hasItem(typeDescriptor(AlternativeStereotype.class))));
-        assertThat(beansXmlDescriptor.getDecorators(), hasItem(typeDescriptor(DecoratorBean.class)));
-        assertThat(beansXmlDescriptor.getInterceptors(), hasItem(typeDescriptor(CustomInterceptor.class)));
         store.commitTransaction();
     }
 }

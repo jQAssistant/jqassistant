@@ -1,11 +1,18 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
-import static java.util.Arrays.asList;
+import com.buschmais.jqassistant.core.analysis.api.rule.*;
+import org.junit.Test;
+
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
+import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 import java.util.Collections;
@@ -26,13 +33,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void cypherRules() throws Exception {
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
-        final URL url = getClass().getResource("/junit-without-assert.adoc");
-        RuleSource ruleSource = new UrlRuleSource(url);
-        reader.read(asList(ruleSource), ruleSetBuilder);
-        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/junit-without-assert.adoc");
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertThat(concepts.size(), equalTo(2));
 
@@ -60,6 +61,8 @@ public class AsciiDocRuleSetReaderTest {
         Constraint constraint = constraints.getById("junit4:TestMethodWithoutAssertion");
         assertThat(constraint.getId(), containsString("junit4:TestMethodWithoutAssertion"));
         assertThat(constraint.getDescription(), containsString("All test methods must perform assertions."));
+        assertEquals("junit4:TestMethodWithoutAssertion", constraint.getId());
+        assertEquals("All test methods must perform assertions.", constraint.getDescription());
 
         Executable constraintExecutable = constraint.getExecutable();
         assertThat(constraintExecutable, instanceOf(CypherExecutable.class));
@@ -70,13 +73,7 @@ public class AsciiDocRuleSetReaderTest {
 
     @Test
     public void scriptRules() throws Exception {
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
-        final URL url = getClass().getResource("/javascript-rules.adoc");
-        RuleSource ruleSource = new UrlRuleSource(url);
-        reader.read(asList(ruleSource), ruleSetBuilder);
-        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
-
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/javascript-rules.adoc");
         ConceptBucket concepts = ruleSet.getConceptBucket();
         assertThat(concepts.size(), equalTo(1));
 
@@ -92,16 +89,12 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(scriptExecutable, notNullValue());
         assertThat(scriptExecutable.getLanguage(), equalTo("javascript"));
         assertThat(scriptExecutable.getSource(), CoreMatchers.containsString("var row = new java.util.HashMap();"));
+        assertEquals(Collections.emptySet(), concept1.getRequiresConcepts());
     }
 
     @Test
     public void groups() throws Exception {
-        RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
-        AsciiDocRuleSetReader reader = new AsciiDocRuleSetReader();
-        URL url = getClass().getResource("/group.adoc");
-        RuleSource ruleSource = new UrlRuleSource(url);
-        reader.read(asList(ruleSource), ruleSetBuilder);
-        RuleSet ruleSet = ruleSetBuilder.getRuleSet();
+        RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/group.adoc");
         assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:Concept", "test:CriticalConcept"));
         assertThat(ruleSet.getConstraintBucket().getIds(), hasItems("test:Constraint", "test:CriticalConstraint"));
         GroupsBucket groups = ruleSet.getGroupsBucket();
@@ -117,8 +110,8 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(includedConstraints.get("test:Constraint"), nullValue());
         assertThat(includedConstraints.containsKey("test:CriticalConstraint"), equalTo(true));
         assertThat(includedConstraints.get("test:CriticalConstraint"), equalTo(Severity.CRITICAL));
-        Set<String> includedGroups = defaultGroup.getGroups();
-        assertThat(includedGroups, IsCollectionContaining.hasItems("test:Group"));
+        Map<String, Severity> includedGroups = defaultGroup.getGroups();
+        assertThat(includedGroups.keySet(), hasItems("test:Group"));
         Group group = groups.getById("test:Group");
         assertThat(group, notNullValue());
     }

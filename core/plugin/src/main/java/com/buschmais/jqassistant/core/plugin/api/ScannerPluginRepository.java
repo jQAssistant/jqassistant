@@ -13,17 +13,13 @@ public interface ScannerPluginRepository {
 
     /**
      * Return the instances of the configured scanner plugins.
-     * 
-     * @param scannerContext
-     *            The scannerContext.
-     * @param properties
-     *            The configuration properties.
      *
+     * @param scannerContext The scannerContext.
+     * @param properties     The configuration properties.
      * @return The instances of the configured scanner plugins.
-     * @throws PluginRepositoryException
-     *             If the instances cannot be created.
+     * @throws PluginRepositoryException If the instances cannot be created.
      */
-    List<ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties)
+    Map<String, ScannerPlugin<?, ?>> getScannerPlugins(ScannerContext scannerContext, Map<String, Object> properties)
         throws PluginRepositoryException;
 
 }

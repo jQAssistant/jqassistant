@@ -79,6 +79,7 @@ A Java type. Can be qualified by either `:Class`, `:Interface`, `:Enum` or `:Ann
 | Name            | Description
 | fqn             | Fully qualified name, e.g. `java.lang.Object`
 | name            | The local name, e.g. `Object`
+| sourceFileName  | The name of the source file, e.g. `Object.java` (optional).
 | visibility      | optional, the visibility of the type, can be either `public`, `protected`, `default` or `private`
 | abstract        | optional, `true` indicates that the type is abstract, e.g. `public abstract class ...`
 | static          | optional, `true` indicates that the type has the static modifier, e.g. `private static class ...`

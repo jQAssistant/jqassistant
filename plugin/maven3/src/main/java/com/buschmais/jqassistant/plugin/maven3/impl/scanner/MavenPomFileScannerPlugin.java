@@ -43,7 +43,8 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
         boolean identifiedByExtension = isPomXML || hasPomExtension;
 
         if (!identifiedByExtension && hasXMLExtension) {
-            isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project");
+            isMavenPOM = XMLFileFilter.rootElementMatches(item, path, "project",
+                                                          "http://maven.apache.org/POM/4.0.0");
         } else {
             isMavenPOM = identifiedByExtension;
         }
@@ -53,7 +54,8 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
 
     /** {@inheritDoc} */
     @Override
-    public MavenPomXmlDescriptor scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor, String path, Scope scope, Scanner scanner)
+    public MavenPomXmlDescriptor scan(FileResource item, MavenPomXmlDescriptor mavenPomXmlDescriptor,
+                                      String path, Scope scope, Scanner scanner)
             throws IOException {
         Model model = getModel(item, scanner);
         if (model != null) {
@@ -91,7 +93,10 @@ public class MavenPomFileScannerPlugin extends AbstractXmlFileScannerPlugin<Mave
         try (InputStream stream = item.createStream()) {
             model = mavenXpp3Reader.read(stream);
         } catch (XmlPullParserException e) {
-            LOGGER.warn("Cannot read POM descriptor.", e);
+            String msg = "Cannot read POM descriptor from " +
+                         item.getFile().getAbsolutePath() + ".";
+
+            LOGGER.warn(msg, e);
         }
         return model;
     }

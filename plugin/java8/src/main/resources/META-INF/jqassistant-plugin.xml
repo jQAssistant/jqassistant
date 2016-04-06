@@ -1,4 +1,4 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
                                name="Java 8">
     <description>Provides Java 8 specific rules, e.g. concepts for functional interfaces and default methods.</description>
     <rules>

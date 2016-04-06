@@ -9,7 +9,7 @@ import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 @Label("TestSuite")
-public interface TestSuiteDescriptor extends NamedDescriptor, XmlFileDescriptor {
+public interface TestSuiteDescriptor extends JUnitDescriptor, NamedDescriptor, XmlFileDescriptor {
 
     @Property("tests")
     int getTests();

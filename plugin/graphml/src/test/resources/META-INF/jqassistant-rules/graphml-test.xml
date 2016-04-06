@@ -1,29 +1,40 @@
 <jqa:jqassistant-rules
-	xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+        xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.1">
 
-	<concept id="test:DeclaredMembers.graphml">
-		<description>A type and its declarations</description>
-		<cypher><![CDATA[
+    <concept id="test:DeclaredMembers.graphml">
+        <description>A type and its declarations</description>
+        <cypher><![CDATA[
             MATCH
               (t:Class)-[r:DECLARES]->(m)
             RETURN
               t, r as rel, m
         ]]></cypher>
-	</concept>
+    </concept>
 
-	<concept id="test:DeclaredMembersWithVirtualRelation.graphml">
-		<description>A type and its declarations</description>
-		<cypher><![CDATA[
+    <concept id="test:DeclaredMembers">
+        <description>A type and its declarations</description>
+        <cypher><![CDATA[
+            MATCH
+              (t:Class)-[r:DECLARES]->(m)
+            RETURN
+              t, r as rel, m
+        ]]></cypher>
+        <report type="graphml"/>
+    </concept>
+
+    <concept id="test:DeclaredMembersWithVirtualRelation.graphml">
+        <description>A type and its declarations</description>
+        <cypher><![CDATA[
             MATCH
               (t:Class)-[r:DECLARES]->(m)
             RETURN
               t, {role: "relationship", type:"DECLARES", startNode:startNode(r), endNode:endNode(r), properties: { name : m.name }} as rel, m
         ]]></cypher>
-	</concept>
+    </concept>
 
-	<concept id="test:DeclaredMembersWithSubgraph.graphml">
-		<description>A type with methods as subgraph</description>
-		<cypher><![CDATA[
+    <concept id="test:DeclaredMembersWithSubgraph.graphml">
+        <description>A type with methods as subgraph</description>
+        <cypher><![CDATA[
 			MATCH
 			  (t:Class),
 			  (t)-[:DECLARES]->(m1:Method)
@@ -34,25 +45,25 @@
 			RETURN
 			  {role: "graph", parent: t, nodes: methods, relationships: invocations} as subgraph
          ]]></cypher>
-	</concept>
+    </concept>
 
-	<concept id="test:DeclaredMembersWithVirtualNode.graphml">
-		<description>A type with methods as subgraph</description>
-		<cypher><![CDATA[
+    <concept id="test:DeclaredMembersWithVirtualNode.graphml">
+        <description>A type with methods as subgraph</description>
+        <cypher><![CDATA[
            	MATCH
 				(m:Method)
 			RETURN
 				{role: "node", properties: {totalCyclomaticComplexity : sum(m.cyclomaticComplexity)}, labels: ["Metrics", "CyclomaticComplexity"] } 
         ]]></cypher>
-	</concept>
+    </concept>
 
-	<concept id="test:RedundantNodesAndRelations.graphml">
-		<description>A type with methods as subgraph</description>
-		<cypher><![CDATA[
+    <concept id="test:RedundantNodesAndRelations.graphml">
+        <description>A type with methods as subgraph</description>
+        <cypher><![CDATA[
            	MATCH
 			  (t:Class:Type)-[d:DECLARES]->(c:Method:Constructor)
 			RETURN
 			  t as t1, t as t2, d as d1, d as d2, c as c1, c as c2
         ]]></cypher>
-	</concept>
+    </concept>
 </jqa:jqassistant-rules>

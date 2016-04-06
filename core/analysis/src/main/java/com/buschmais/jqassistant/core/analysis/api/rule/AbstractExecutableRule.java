@@ -1,24 +1,14 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * Defines an abstract rule which is has an unique identifier and references a query.
  */
-public abstract class AbstractExecutableRule extends AbstractRule implements ExecutableRule {
-
-    /**
-     * The severity of the constraint.
-     */
-    private Severity severity;
-
-    /**
-     * The optional deprecation message.
-     */
-    private String deprecation;
+public abstract class AbstractExecutableRule extends AbstractSeverityRule implements ExecutableRule {
 
     /**
      * The executable.
@@ -28,70 +18,22 @@ public abstract class AbstractExecutableRule extends AbstractRule implements Exe
     /**
      * The parameters to use.
      */
-    private Map<String, Object> parameters;
+    private Map<String, Object> parameters = new HashMap<>();
 
     /**
      * The rules which must be applied before this rule can be executed.
      */
-    private Set<String> requiresConcepts;
+    private Set<String> requiresConcepts = new HashSet<>();
 
     /**
      * Describes the verification of the result of an executable rule.
      */
     private Verification verification;
 
+    /**
+     * Describes report settings.
+     */
     private Report report;
-
-    /**
-     * Constructor.
-     *
-     * @param id
-     *            The id.
-     * @param description
-     *            The human readable description.
-     * @param ruleSource
-     *            The rule source.
-     * @param severity
-     *            The severity.
-     * @param deprecation
-     *            The deprecation message.
-     * @param executable
-     *            The executable.
-     * @param parameters
-     *            The parametes.
-     * @param requiresConcepts
-     *            The required concept ids.
-     * @param verification
-     *            The result verification.
-     * @param report
-     *            The report definition.
-     */
-    protected AbstractExecutableRule(String id, String description, RuleSource ruleSource, Severity severity, String deprecation,
-            Executable executable, Map<String, Object> parameters, Set<String> requiresConcepts, Verification verification, Report report) {
-        super(id, description, ruleSource);
-        this.severity = severity;
-        this.deprecation = deprecation;
-        this.executable = executable;
-        this.parameters = parameters;
-        this.requiresConcepts = requiresConcepts;
-        this.verification = verification;
-        this.report = report;
-    }
-
-    /**
-     * Returns the severity.
-     *
-     * @return {@link Severity}
-     */
-    @Override
-    public Severity getSeverity() {
-        return severity;
-    }
-
-    @Override
-    public String getDeprecation() {
-        return deprecation;
-    }
 
     @Override
     public Set<String> getRequiresConcepts() {
@@ -116,5 +58,42 @@ public abstract class AbstractExecutableRule extends AbstractRule implements Exe
     @Override
     public Report getReport() {
         return report;
+    }
+
+    protected abstract static class Builder<B extends Builder<B, R>, R extends AbstractExecutableRule> extends AbstractSeverityRule.Builder<B, R> {
+
+        protected Builder(R rule) {
+            super(rule);
+        }
+
+        public B requiresConceptIds(Set<String> requiresConcepts) {
+            AbstractExecutableRule r = get();
+            r.requiresConcepts.addAll(requiresConcepts);
+            return builder();
+        }
+
+        public B executable(Executable executable) {
+            AbstractExecutableRule r = get();
+            r.executable = executable;
+            return builder();
+        }
+
+        public B parameters(Map<String, Object> parameters) {
+            AbstractExecutableRule r = get();
+            r.parameters.putAll(parameters);
+            return builder();
+        }
+
+        public B verification(Verification verification) {
+            AbstractExecutableRule r = get();
+            r.verification = verification;
+            return builder();
+        }
+
+        public B report(Report report) {
+            AbstractExecutableRule r = get();
+            r.report = report;
+            return builder();
+        }
     }
 }
