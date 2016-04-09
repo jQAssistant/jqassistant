@@ -1,15 +1,5 @@
 package com.buschmais.jqassistant.core.store.impl;
 
-import java.io.File;
-import java.util.Collection;
-
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.kernel.GraphDatabaseAPI;
-import org.neo4j.tooling.GlobalGraphOperations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
@@ -18,6 +8,15 @@ import com.buschmais.xo.api.bootstrap.XOUnit;
 import com.buschmais.xo.api.bootstrap.XOUnitBuilder;
 import com.buschmais.xo.neo4j.api.Neo4jXOProvider;
 import com.buschmais.xo.neo4j.impl.datastore.EmbeddedNeo4jDatastoreSession;
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.tooling.GlobalGraphOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Collection;
 
 /**
  * {@link Store} implementation using an embedded Neo4j instance.
@@ -45,8 +44,8 @@ public class EmbeddedGraphStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseAPI getGraphDatabaseService(XOManager xoManager) {
-        return (GraphDatabaseAPI) xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
+    protected GraphDatabaseService getGraphDatabaseService(XOManager xoManager) {
+        return xoManager.getDatastoreSession(EmbeddedNeo4jDatastoreSession.class).getGraphDatabaseService();
     }
 
     @Override
