@@ -15,14 +15,15 @@ import static org.junit.Assert.assertThat;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.PackageDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
@@ -80,6 +81,31 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the uniqueness of concept "osgi-bundle:ExportPackage" with keeping existing properties.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void exportedPackagesUnique() throws Exception {
+    	scanClassPathDirectory(getClassesDirectory(Service.class));
+      	store.beginTransaction();
+        // create existing relations with and without properties
+        Map<String, Object> params = MapBuilder.<String, Object> create("package", Service.class.getPackage().getName()).get();
+        assertThat(query("MATCH (a:Artifact {fqn:'artifact'}), (p:Package) WHERE p.fqn={package} MERGE (a)-[r:EXPORTS {prop: 'value'}]->(p) RETURN r", params).getColumn("r").size(), equalTo(1));
+        params = MapBuilder.<String, Object> create("package", Request.class.getPackage().getName()).get();
+        assertThat(query("MATCH (a:Artifact {fqn:'artifact'}), (p:Package) WHERE p.fqn={package} MERGE (a)-[r:EXPORTS]->(p) RETURN r", params).getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("EXPORTS", 2);
+        store.commitTransaction();
+        assertThat(applyConcept("osgi-bundle:ExportPackage").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("EXPORTS", 2);
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies the concept "osgi-bundle:ImportPackage".
      * 
      * @throws IOException
@@ -100,6 +126,29 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the uniqueness of concept "osgi-bundle:ImportPackage" with keeping existing properties.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void importedPackagesUnique() throws Exception {
+		scanClassPathDirectory(getClassesDirectory(Service.class));
+		store.beginTransaction();
+		// create existing relations with property
+		query("create (:File:Container:Directory:Package{fqn:'org.junit'})");
+		assertThat(query("MATCH (a:Artifact {fqn:'artifact'}), (p:Package {fqn:'org.junit'}) MERGE (a)-[r:IMPORTS {prop: 'value'}]->(p) RETURN r").getColumn("r").size(), equalTo(1));
+		verifyUniqueRelation("IMPORTS", 1);
+		store.commitTransaction();
+		assertThat(applyConcept("osgi-bundle:ImportPackage").getStatus(), equalTo(SUCCESS));
+		store.beginTransaction();
+		verifyUniqueRelation("IMPORTS", 1);
+		store.commitTransaction();
+    }
+
+    /**
      * Verifies the concept "osgi-bundle:Activator".
      * 
      * @throws IOException
@@ -115,6 +164,29 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         List<TypeDescriptor> activators = query("MATCH (a:Class)-[:ACTIVATES]->(b:Osgi:Bundle) RETURN a").getColumn("a");
         assertThat(activators.size(), equalTo(1));
         assertThat(activators, hasItems(typeDescriptor(Activator.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the uniqueness of concept "osgi-bundle:Activator" with keeping existing properties.
+     * 
+     * @throws IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void activatorUnique() throws Exception {
+    	scanClassPathDirectory(getClassesDirectory(Service.class));
+        store.beginTransaction();
+        // create existing relations with property
+        Map<String, Object> params = MapBuilder.<String, Object> create("activator", Activator.class.getName()).get();
+		assertThat(query("MATCH (a:Artifact {fqn:'artifact'}), (c:Class) WHERE c.fqn={activator} MERGE (c)-[r:ACTIVATES {prop: 'value'}]->(a) RETURN r", params).getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("ACTIVATES", 1);
+        store.commitTransaction();
+        assertThat(applyConcept("osgi-bundle:Activator").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("ACTIVATES", 1);
         store.commitTransaction();
     }
 
@@ -198,5 +270,15 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
         assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(UsedPublicClass.class)))))));
         assertThat(constraintViolations, Matchers.<Iterable<? super Result<Constraint>>>not(hasItem(result(constraintMatcher, hasItem(hasValue(typeDescriptor(Activator.class)))))));
         store.commitTransaction();
+    }
+
+    /**
+     * Verifies a unique relation with property. An existing transaction is assumed.
+     * @param relationName The name of the relation.
+     * @param total The total of relations with the given name.
+     */
+    private void verifyUniqueRelation(String relationName, int total) {
+    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
+    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
     }
 }
