@@ -6,10 +6,10 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
 
 /**
  * An annotation visitor.
- * <p>
+ *
  * Adds a dependency from the annotated types to the types of the annotation
  * values.
- * </p>
+ *
  */
 public class AnnotationVisitor extends AbstractAnnotationVisitor<AnnotationValueDescriptor> {
 

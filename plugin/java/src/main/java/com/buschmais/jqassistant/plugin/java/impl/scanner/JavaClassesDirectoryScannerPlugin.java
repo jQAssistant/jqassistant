@@ -14,7 +14,8 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 /**
  * A scanner plugin for directories containing java classes.
  */
-public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<JavaClassesDirectoryDescriptor> {
+public class JavaClassesDirectoryScannerPlugin
+        extends AbstractDirectoryScannerPlugin<JavaClassesDirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {
@@ -30,6 +31,7 @@ public class JavaClassesDirectoryScannerPlugin extends AbstractDirectoryScannerP
     protected void leaveContainer(File directory, JavaClassesDirectoryDescriptor javaClassesDirectoryDescriptor, ScannerContext context) {
         context.pop(JavaArtifactFileDescriptor.class);
     }
+
 
     @Override
     protected JavaClassesDirectoryDescriptor getContainerDescriptor(File classPathDirectory, ScannerContext scannerContext) {

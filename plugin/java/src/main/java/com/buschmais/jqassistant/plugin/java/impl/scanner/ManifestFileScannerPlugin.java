@@ -23,7 +23,7 @@ import com.buschmais.jqassistant.plugin.java.api.model.ManifestSectionDescriptor
 /**
  * Implementation of the
  * {@link com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin}
- * for java MANIFEST.MF files.
+ * for Java `MANIFEST.MF` files.
  */
 @Requires(FileDescriptor.class)
 public class ManifestFileScannerPlugin extends AbstractScannerPlugin<FileResource, ManifestFileDescriptor> {
