@@ -1,4 +1,3 @@
-<<EarArchiveScanner>> <<ApplicationXmlScanner>> <<WarArchiveScanner>> <<WebXmlScanner>> <<FaceletScanner>>
 
 include::{docRoot}/jqassistant.plugin.javaee6/scanner-ear.adoc[]
 

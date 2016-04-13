@@ -5,6 +5,7 @@ import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 
 @Label(value = "Project", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface MavenProjectDescriptor extends MavenDescriptor, MavenCoordinatesDescriptor, FullQualifiedNameDescriptor, NamedDescriptor {
+public interface MavenProjectDescriptor extends MavenDescriptor, MavenCoordinatesDescriptor,
+                                                FullQualifiedNameDescriptor, NamedDescriptor {
 
 }

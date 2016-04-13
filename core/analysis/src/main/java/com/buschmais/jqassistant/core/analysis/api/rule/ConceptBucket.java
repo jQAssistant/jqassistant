@@ -1,15 +1,10 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Collection;
-import java.util.Set;
-
 /**
  * Container for a set of unique concepts.
  *
- * <p>
- *     A collection of unique rules identified by their id. That means that this bucket
- *     cannot contain a concept with the same id twice.
- * </p>
+ * A collection of unique rules identified by their id. That means that this bucket
+ * cannot contain a concept with the same id twice.
  */
 public class ConceptBucket extends AbstractRuleBucket<Concept, NoConceptException, DuplicateConceptException> {
 

@@ -5,8 +5,8 @@ import static com.buschmais.jqassistant.core.analysis.api.Result.Status.SUCCESS;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMatcher.constraint;
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,19 +39,22 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_ConstructorInjection() throws Exception {
+    public void constructorInjection() throws Exception {
         scanClasses(BeanWithFieldInjection.class);
         String ruleName = "cdi:BeansMustUseConstructorInjection";
         assertThat(validateConstraint(ruleName).getStatus(), equalTo(FAILURE));
+
         store.beginTransaction();
 
         List<Result<Constraint>> constraintViolations = new ArrayList<>(reportWriter.getConstraintResults().values());
         assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
+
         Result<Constraint> result = constraintViolations.get(0);
         assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
+
         List<Map<String, Object>> violatedBeans = result.getRows();
         assertThat("Unexpected number of violations", violatedBeans.size(), equalTo(1));
-        assertEquals("Unexpected bean name", violatedBeans.get(0).get("invalidBean"), BeanWithFieldInjection.class.getName());
+        assertThat("Unexpected bean name", BeanWithFieldInjection.class.getName(), equalTo(violatedBeans.get(0).get("invalidBean")));
 
         store.commitTransaction();
     }
@@ -66,7 +69,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_ConstructorInjection_No_Violation() throws Exception {
+    public void constructorInjection_No_Violation() throws Exception {
         scanClasses(BeanWithConstructorInjection.class);
         String ruleName = "cdi:BeansMustUseConstructorInjection";
         assertThat(validateConstraint(ruleName).getStatus(), equalTo(SUCCESS));
@@ -92,7 +95,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_FieldInjection_No_Violation() throws Exception {
+    public void fieldInjection_No_Violation() throws Exception {
         scanClasses(BeanWithConstructorInjection.class);
         scanClasses(BeanWithSetterInjection.class);
         String ruleName = "cdi:BeansMustNotUseFieldInjection";
@@ -118,7 +121,7 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_BeanInjection() throws Exception {
+    public void beanInjection() throws Exception {
         scanClasses(BeanWithFieldInjection.class);
         String ruleName = "cdi:BeansMustNotUseFieldInjection";
         assertThat(validateConstraint(ruleName).getStatus(), equalTo(FAILURE));
@@ -128,9 +131,10 @@ public class CdiInjectionIT extends AbstractJavaPluginIT {
         assertThat("Unexpected number of violated constraints", constraintViolations.size(), equalTo(1));
         Result<Constraint> result = constraintViolations.get(0);
         assertThat("Expected constraint " + ruleName, result, result(constraint(ruleName)));
+
         List<Map<String, Object>> violations = result.getRows();
-        assertThat("Unexpected number of violations", violations.size(), equalTo(1));
-        assertEquals("Unexpected bean name", violations.get(0).get("invalidBean"), BeanWithFieldInjection.class.getName());
+        assertThat("Unexpected number of violations", violations, hasSize(1));
+        assertThat("Unexpected bean name", BeanWithFieldInjection.class.getName(), equalTo(violations.get(0).get("invalidBean")));
 
         store.commitTransaction();
     }

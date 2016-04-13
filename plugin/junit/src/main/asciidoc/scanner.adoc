@@ -1,13 +1,12 @@
-<<Junit4TestSuiteScanner>>
 [[Junit4TestSuiteScanner]]
 == Scanner for JUnit4 test suite results
-Imports results from JUnit4 test suites matching the file name '*TEST-*.xml'.
+Imports results from JUnit4 test suites matching the file name `*TEST-*.xml`.
 
 [[:File:TestSuite]]
-=== :File:TestSuite
+=== Nodes labled with `:File:TestSuite`
 A file containing results of a JUnit4 test suite.
 
-.Properties of :File:TestSuite
+.Properties of `:File:TestSuite`
 [options="header"]
 |====
 | Name     | Description
@@ -20,7 +19,7 @@ A file containing results of a JUnit4 test suite.
 | time     | The time it took to run the suite
 |====
 
-.Relations of :File:TestSuite
+.Relations of `:File:TestSuite`
 [options="header"]
 |====
 | Name     | Target label(s) | Cardinality | Description
@@ -31,12 +30,12 @@ A file containing results of a JUnit4 test suite.
 === :TestCase
 A test case.
 
-.Properties of :TestCase
+.Properties of `:TestCase`
 [options="header"]
 |====
 | Name             | Description
 | name             | The name of the test, e.g. the name of the test method
 | className        | The name of the class containing the test
 | time             | The time it took to run the test
-| result           | The result of the test, either 'SUCCESS', 'FAILURE', 'ERROR' or 'SKIPPED'
+| result           | The result of the test, either `SUCCESS`, `FAILURE`, `ERROR` or `SKIPPED`
 |====

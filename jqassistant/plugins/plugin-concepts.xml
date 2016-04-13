@@ -1,0 +1,26 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <concept id="plugin:pluginParentProject">
+        <description>Marks the Maven module POM for all plugins of jQAssistant as PluginParentProject.</description>
+        <cypher><![CDATA[
+            MATCH   (p:Maven:Project)
+            WHERE   p.artifactId = 'jqassistant.plugin'
+            SET     p:JQA:PluginParentProject
+            RETURN  p
+        ]]></cypher>
+    </concept>
+
+    <concept id="plugin:pluginProject">
+        <description>Marks all Maven child modules of the plugin parent POM als PluginProject.</description>
+        <cypher><![CDATA[
+            MATCH   (pp:Maven:Project)-[:HAS_PARENT]->(ppp:JQA:PluginParentProject)
+            SET     pp:JQA:PluginProject
+            RETURN  pp
+        ]]></cypher>
+    </concept>
+
+
+
+
+
+</jqa:jqassistant-rules>

@@ -6,7 +6,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractZipArchiveSca
 import com.buschmais.jqassistant.plugin.javaee6.api.model.EnterpriseApplicationArchiveDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 
-public class EarArchiveScannerPlugin extends AbstractZipArchiveScannerPlugin<EnterpriseApplicationArchiveDescriptor> {
+public class EarArchiveScannerPlugin
+        extends AbstractZipArchiveScannerPlugin<EnterpriseApplicationArchiveDescriptor> {
 
     @Override
     protected String getExtension() {
@@ -21,5 +22,4 @@ public class EarArchiveScannerPlugin extends AbstractZipArchiveScannerPlugin<Ent
     @Override
     protected void destroyScope(ScannerContext scannerContext) {
     }
-
 }

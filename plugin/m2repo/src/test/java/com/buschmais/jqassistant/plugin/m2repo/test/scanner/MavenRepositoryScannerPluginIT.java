@@ -16,6 +16,11 @@ import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.notNullValue;
+
 public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
 
     private static final int REPO_SERVER_PORT = 9090;
@@ -76,14 +81,13 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
             Long countJarNodes =
                     store.executeQuery("MATCH (n:Maven:Artifact:Jar) RETURN count(n) as nodes").getSingleResult().get("nodes", Long.class);
             final int expectedJarNodes = 40;
-            Assert.assertEquals("Number of jar nodes is wrong.", new Long(expectedJarNodes), countJarNodes);
+            assertThat("Number of jar nodes is wrong.", countJarNodes, equalTo(40L));
 
             MavenRepositoryDescriptor repositoryDescriptor =
                     store.executeQuery("MATCH (r:Maven:Repository) RETURN r").getSingleResult().get("r", MavenRepositoryDescriptor.class);
-            Assert.assertNotNull(repositoryDescriptor);
-            Assert.assertEquals(TEST_REPOSITORY_URL, repositoryDescriptor.getUrl());
-            final int expectedPomNodes = 9;
-            Assert.assertEquals(expectedPomNodes, repositoryDescriptor.getContainedModels().size());
+            assertThat(repositoryDescriptor, notNullValue());
+            assertThat(repositoryDescriptor.getUrl(), equalTo(TEST_REPOSITORY_URL));
+            assertThat(repositoryDescriptor.getContainedModels(), hasSize(9));
         } finally {
             store.commitTransaction();
             stopServer();
@@ -100,7 +104,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
  store.executeQuery("MATCH (:Repository)-[:CONTAINS_POM]->(n:Maven:Pom:Xml) RETURN count(n) as nodes").getSingleResult()
                     .get("nodes",
                             Long.class);
-            Assert.assertEquals("Number of POM nodes is wrong.", new Long(1), countArtifactNodes);
+            assertThat("Number of POM nodes is wrong.", countArtifactNodes, equalTo(1L));
 
             startServer("3");
             getScanner(getScannerProperties()).scan(new URL(TEST_REPOSITORY_URL), TEST_REPOSITORY_URL, MavenScope.REPOSITORY);
@@ -109,7 +113,7 @@ public class MavenRepositoryScannerPluginIT extends AbstractPluginIT {
  store.executeQuery("MATCH (:Repository)-[:CONTAINS_POM]->(n:Maven:Pom:Xml) RETURN count(n) as nodes").getSingleResult()
                     .get("nodes",
                             Long.class);
-            Assert.assertEquals("Number of 'POM' nodes is wrong.", new Long(2), countArtifactNodes);
+            assertThat("Number of 'POM' nodes is wrong.", countArtifactNodes, equalTo(2L));
         } finally {
             store.commitTransaction();
             stopServer();

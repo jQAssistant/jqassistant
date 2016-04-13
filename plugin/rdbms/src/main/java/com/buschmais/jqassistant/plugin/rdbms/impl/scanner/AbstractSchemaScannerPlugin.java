@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,8 @@ import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 /**
  * Abstract base class for database schema scanners.
  */
-public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescriptor> extends AbstractScannerPlugin<I, D> {
+public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescriptor>
+        extends AbstractScannerPlugin<I, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSchemaScannerPlugin.class);
 

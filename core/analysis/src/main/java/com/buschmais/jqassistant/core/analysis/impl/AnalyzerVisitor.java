@@ -54,6 +54,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     private RuleSet ruleSet;
+    private boolean executeAppliedConcepts;
     private Store store;
     private AnalysisListener reportWriter;
     private Logger logger;
@@ -65,15 +66,18 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
      * 
      * @param ruleSet
      *            The rule set to execute.
+     * @param executeAppliedConcepts
+     *            If <code>true</code> then execute a concept even if it has already been applied.
      * @param store
      *            The store.
      * @param reportWriter
      *            The report writer.
      * @param log
-     *            The logger
+     *            The logger.
      */
-    public AnalyzerVisitor(RuleSet ruleSet, Store store, AnalysisListener reportWriter, Logger log) {
+    public AnalyzerVisitor(RuleSet ruleSet, boolean executeAppliedConcepts, Store store, AnalysisListener reportWriter, Logger log) {
         this.ruleSet = ruleSet;
+        this.executeAppliedConcepts = executeAppliedConcepts;
         this.store = store;
         this.reportWriter = reportWriter;
         this.logger = log;
@@ -91,13 +95,15 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
         try {
             store.beginTransaction();
             ConceptDescriptor conceptDescriptor = store.find(ConceptDescriptor.class, concept.getId());
-            if (conceptDescriptor == null) {
-                logger.info("Applying concept '" + concept.getId() + "' with severity: '"
-                        + concept.getSeverity().getInfo(effectiveSeverity) + "'.");
+            if (conceptDescriptor == null || executeAppliedConcepts) {
+                logger.info("Applying concept '" + concept.getId() + "' with severity: '" + concept.getSeverity().getInfo(effectiveSeverity)
+                        + "'.");
                 reportWriter.beginConcept(concept);
                 reportWriter.setResult(execute(concept, ruleSet, effectiveSeverity));
-                conceptDescriptor = store.create(ConceptDescriptor.class);
-                conceptDescriptor.setId(concept.getId());
+                if (conceptDescriptor == null) {
+                    conceptDescriptor = store.create(ConceptDescriptor.class);
+                    conceptDescriptor.setId(concept.getId());
+                }
                 reportWriter.endConcept();
             }
             store.commitTransaction();
@@ -109,8 +115,8 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
 
     @Override
     public void visitConstraint(Constraint constraint, Severity effectiveSeverity) throws AnalysisException {
-        logger.info("Validating constraint '" + constraint.getId() + "' with severity: '"
-                + constraint.getSeverity().getInfo(effectiveSeverity) + "'.");
+        logger.info("Validating constraint '" + constraint.getId() + "' with severity: '" + constraint.getSeverity().getInfo(effectiveSeverity)
+                + "'.");
         try {
             store.beginTransaction();
             reportWriter.beginConstraint(constraint);
@@ -124,7 +130,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
     }
 
     @Override
-    public void beforeGroup(Group group) throws AnalysisException {
+    public void beforeGroup(Group group, Severity effectiveSeverity) throws AnalysisException {
         logger.info("Executing group '" + group.getId() + "'");
         store.beginTransaction();
         reportWriter.beginGroup(group);
@@ -161,7 +167,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             return executeScript(executableRule, (ScriptExecutable) executable, executableRule, severity);
         } else if (executable instanceof TemplateExecutable) {
             String templateId = ((TemplateExecutable) executable).getTemplateId();
-            Template template = null;
+            Template template;
             try {
                 template = ruleSet.getTemplateBucket().getById(templateId);
             } catch (NoTemplateException e) {
@@ -205,7 +211,7 @@ public class AnalyzerVisitor extends AbstractRuleVisitor {
             Result.Status status = verify(executableRule, columnNames, rows);
             return new Result<>(executableRule, status, severity, columnNames, rows);
         } catch (Exception e) {
-            throw new AnalysisException("Cannot execute query.", e);
+            throw new AnalysisException("Cannot execute query for rule '" + executableRule + "'.", e);
         }
     }
 

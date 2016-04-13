@@ -102,7 +102,9 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      *            informations about the searches artifact
      * @throws IOException
      */
-    private MavenArtifactDescriptor resolveAndScan(Scanner scanner, ArtifactProvider artifactProvider, ArtifactInfo artifactInfo) throws IOException {
+    private MavenArtifactDescriptor resolveAndScan(Scanner scanner, ArtifactProvider artifactProvider,
+                                                   ArtifactInfo artifactInfo)
+        throws IOException {
 
         PomModelBuilder pomModelBuilder = new EffectiveModelBuilder(artifactProvider);
 
@@ -118,7 +120,8 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
 
         if (artifactFilter.match(RepositoryUtils.toArtifact(artifact))) {
             try {
-                ArtifactResult modelArtifactResult = artifactProvider.getArtifact(new DefaultArtifact(groupId, artifactId, null, "pom", version));
+                DefaultArtifact defaultArtifact = new DefaultArtifact(groupId, artifactId, null, "pom", version);
+                ArtifactResult modelArtifactResult = artifactProvider.getArtifact(defaultArtifact);
                 Artifact resolvedModelArtifact = modelArtifactResult.getArtifact();
                 MavenRepositoryDescriptor repositoryDescriptor = artifactProvider.getRepositoryDescriptor();
                 MavenPomXmlDescriptor modelDescriptor = findModel(repositoryDescriptor, resolvedModelArtifact);
@@ -133,7 +136,8 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
                             modelArtifactFile.delete();
                         }
                     }
-                    modelDescriptor = markReleaseOrSnaphot(modelDescriptor, MavenPomXmlDescriptor.class, resolvedModelArtifact, lastModified, store);
+                    modelDescriptor = markReleaseOrSnaphot(modelDescriptor, MavenPomXmlDescriptor.class,
+                                                           resolvedModelArtifact, lastModified, store);
                     repositoryDescriptor.getContainedModels().add(modelDescriptor);
                 }
                 if (scanArtifacts && !artifact.getExtension().equals("pom")) {
@@ -147,8 +151,10 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
                             artifactFile.delete();
                         }
                     }
-                    MavenArtifactDescriptor mavenArtifactDescriptor = markReleaseOrSnaphot(store.addDescriptorType(descriptor, MavenArtifactDescriptor.class),
-                            MavenArtifactDescriptor.class, artifact, lastModified, store);
+                    MavenArtifactDescriptor descriptorToAdd = store.addDescriptorType(descriptor, MavenArtifactDescriptor.class);
+                    MavenArtifactDescriptor mavenArtifactDescriptor = markReleaseOrSnaphot(descriptorToAdd,
+                                                                                           MavenArtifactDescriptor.class,
+                                                                                           artifact, lastModified, store);
                     MavenArtifactHelper.setId(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
                     MavenArtifactHelper.setCoordinates(mavenArtifactDescriptor, new RepositoryArtifactCoordinates(artifact, lastModified));
                     modelDescriptor.getDescribes().add(mavenArtifactDescriptor);
@@ -171,7 +177,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
      * @param resolvedModelArtifact
      *            The resolved model artifact (i.e. in case of a snapshot
      *            containing the timestamp/buildnumber in the version.)
-     * @return a {@link MavenPomXmlDescriptor} or <code>null</code>.
+     * @return a {@link MavenPomXmlDescriptor} or `null`.
      */
     private MavenPomXmlDescriptor findModel(MavenRepositoryDescriptor repositoryDescriptor, Artifact resolvedModelArtifact) {
         Artifact resolvedMainArtifact = new DefaultArtifact(resolvedModelArtifact.getGroupId(), resolvedModelArtifact.getArtifactId(),
@@ -181,7 +187,7 @@ public class MavenArtifactScannerPlugin extends AbstractScannerPlugin<ArtifactIn
     }
 
     /**
-     * Adds a "Release" or "Snapshot" label to the given maven descriptor
+     * Adds a `Release` or `Snapshot` label to the given maven descriptor
      * depending on the artifact version type.
      * 
      * @param descriptor

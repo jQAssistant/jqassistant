@@ -3,22 +3,24 @@ package com.buschmais.jqassistant.core.analysis.api;
 import java.util.List;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Rule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
 
 /**
  * The result of an executed {@link Rule}.
  * 
- * @param <T>
- *            The rule type.
+ * @param <T> The rule type.
+ *
+ * @see Rule
  */
-public class Result<T extends Rule> {
+public class Result<T extends ExecutableRule> {
 
     /**
      * The defined status for the result of a rule.
      */
     public enum Status {
-        SUCCESS, FAILURE;
+        SUCCESS, FAILURE
     }
 
     /**

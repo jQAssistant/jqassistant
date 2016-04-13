@@ -6,5 +6,6 @@ import com.buschmais.jqassistant.plugin.common.api.model.ZipArchiveDescriptor;
 /**
  * Describes an EAR archive.
  */
-public interface EnterpriseApplicationArchiveDescriptor extends EnterpriseDescriptor, ApplicationDescriptor, ZipArchiveDescriptor {
+public interface EnterpriseApplicationArchiveDescriptor extends EnterpriseDescriptor, ApplicationDescriptor,
+                                                                ZipArchiveDescriptor {
 }

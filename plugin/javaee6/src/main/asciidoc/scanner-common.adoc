@@ -1,47 +1,47 @@
 [[:Description]]
-=== :Description
+=== Nodes labled with `:Description`
 Represents an internationalized description.
 
-.Properties of :Description
+.Properties of `:Description`
 [options="header"]
 |====
 | Name     | Description
-| lang     | The language, e.g. "en"
+| lang     | The language, e.g. `en`
 | value    | The description.
 |====
 
 
 [[:DisplayName]]
-=== :DisplayName
+=== Nodes labled with `:DisplayName`
 Represents an internationalized display name.
 
-.Properties of :DisplayName
+.Properties of `:DisplayName`
 [options="header"]
 |====
 | Name     | Description
-| lang     | The language, e.g. "en"
+| lang     | The language, e.g. `en`
 | value    | The description.
 |====
 
 
 [[:Icon]]
-=== :Icon
+=== Nodes labled with `:Icon`
 Represents an icon.
 
-.Properties of :Icon
+.Properties of `:Icon`
 [options="header"]
 |====
 | Name      | Description
-| smallIcon | The file name of the small icon, e.g. "smallIcon.png".
-| largeIcon | The file name of the large icon, e.g. "largeIcon.png".
+| smallIcon | The file name of the small icon, e.g. `smallIcon.png`.
+| largeIcon | The file name of the large icon, e.g. `largeIcon.png`.
 |====
 
 
 [[:SecurityRole]]
-=== :SecurityRole
+=== Nodes labled with `:SecurityRole`
 Represents a security role.
 
-.Relations of :SecurityRole
+.Relations of `:SecurityRole`
 [options="header"]
 |====
 | Name            | Target label(s)  | Cardinality | Description
@@ -51,11 +51,11 @@ Represents a security role.
 
 
 [[:RoleName]]
-=== :RoleName
+=== Nodes labled with `:RoleName`
 Represents a role name.
 
-.Properties of :RoleName
-[options="header"]
+.Properties of `:RoleName`
+[options="header`]
 |====
 | Name | Description
 | name | The name of the role.

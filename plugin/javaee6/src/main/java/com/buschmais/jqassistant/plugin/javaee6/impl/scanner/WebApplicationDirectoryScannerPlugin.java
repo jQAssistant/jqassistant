@@ -10,7 +10,8 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDescript
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebApplicationDirectoryDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 
-public class WebApplicationDirectoryScannerPlugin extends AbstractDirectoryScannerPlugin<WebApplicationDirectoryDescriptor> {
+public class WebApplicationDirectoryScannerPlugin
+        extends AbstractDirectoryScannerPlugin<WebApplicationDirectoryDescriptor> {
 
     @Override
     protected Scope getRequiredScope() {

@@ -45,7 +45,7 @@ public class ConnectionPropertyFileScannerPlugin extends AbstractSchemaScannerPl
          * 
          * @param name
          *            The property.
-         * @return <code>true</code> if the name matches.
+         * @return `true` if the name matches.
          */
         boolean matches(String name) {
             return this.name().equals(LOWER_UNDERSCORE.to(UPPER_CAMEL, name));

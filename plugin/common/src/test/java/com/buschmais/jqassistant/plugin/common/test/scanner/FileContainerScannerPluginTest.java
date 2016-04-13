@@ -119,7 +119,8 @@ public class FileContainerScannerPluginTest {
         assertThat(requires, equalTo(directoryDescriptor.getRequires()));
     }
 
-    private static class TestContainerScannerPlugin extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
+    private static class TestContainerScannerPlugin
+            extends AbstractContainerScannerPlugin<Collection<String>, String, DirectoryDescriptor> {
 
         private List<FileDescriptor> contains = new ArrayList<>();
 

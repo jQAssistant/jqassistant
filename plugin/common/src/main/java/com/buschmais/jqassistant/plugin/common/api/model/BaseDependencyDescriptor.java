@@ -5,15 +5,13 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 public interface BaseDependencyDescriptor extends Descriptor {
 
     /**
-     * Get the scope of the dependency - <code>compile</code>,
-     * <code>runtime</code>, <code>test</code>, <code>system</code>, and
-     * <code>provided</code>. Used to calculate the various classpaths used for
+     * Get the scope of the dependency - `compile`,
+     * `runtime`, `test`, `system`, and
+     * `provided`. Used to calculate the various classpaths used for
      * compilation, testing, and so on. It also assists in determining which
-     * artifacts to include in a distribution of this project. For more
-     * information, see <a href=
-     * "http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html"
-     * >the dependency mechanism</a>.
-     * 
+     * artifacts to include in a distribution of this project.
+     *
+     * @see http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html[Introduction to the Dependency Mechanism^]
      * @return The scope.
      */
     String getScope();

@@ -66,7 +66,7 @@ public class AnalysisService extends AbstractJQARestService {
         InMemoryReportWriter report;
 
         try {
-            report = analyze(Arrays.asList(conceptId), Collections.<String> emptyList(), Collections.<String> emptyList());
+            report = analyze(Collections.singletonList(conceptId), Collections.<String> emptyList(), Collections.<String> emptyList());
 
             Result<Concept> conceptResult = report.getConceptResults().get(conceptId);
 
@@ -92,7 +92,7 @@ public class AnalysisService extends AbstractJQARestService {
         InMemoryReportWriter report;
 
         try {
-            report = analyze(Collections.<String> emptyList(), Arrays.asList(constraintId), Collections.<String> emptyList());
+            report = analyze(Collections.<String> emptyList(), Collections.singletonList(constraintId), Collections.<String> emptyList());
 
             int effectedRows = report.getConstraintResults().get(constraintId).getRows().size();
             return Response.status(Response.Status.OK).entity((Integer.toString(effectedRows))).build();
@@ -111,7 +111,7 @@ public class AnalysisService extends AbstractJQARestService {
         InMemoryReportWriter report;
 
         try {
-            report = analyze(Collections.<String> emptyList(), Collections.<String> emptyList(), Arrays.asList(groupId));
+            report = analyze(Collections.<String> emptyList(), Collections.<String> emptyList(), Collections.singletonList(groupId));
 
             int effectedRows = 0;
 

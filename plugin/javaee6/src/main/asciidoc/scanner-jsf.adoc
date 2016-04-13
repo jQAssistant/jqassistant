@@ -1,6 +1,6 @@
 [[FaceletScanner]]
 == Scanner for JSF-template files
-Imports JSF template files (e.g. *.jspx) and builds references between them (template/includes).
+Imports JSF template files (e.g. `*.jspx`) and builds references between them (template/includes).
 
 === Configuration
 
@@ -8,23 +8,23 @@ Imports JSF template files (e.g. *.jspx) and builds references between them (tem
 [options="header"]
 |====
 | Property     			| Description														| Default
-| facelet.file.pattern 	| Regular expression that describes scanable JSF template files.	| .*\\.jspx
+| facelet.file.pattern 	| Regular expression that describes scanable JSF template files.	| `.*\\.jspx`
 |====
 
-=== :File:Jsf:Facelet
+=== Nodes labled with `:File:Jsf:Facelet`
 A JSF template file.
 
-.Properties of :File:Jsf:Facelet
+.Properties of `:File:Jsf:Facelet`
 [options="header"]
 |====
 | Name     | Description
 | fileName | The file name
 |====
 
-.Relations of :File:Jsf:Facelet
+.Relations of `:File:Jsf:Facelet`
 [options="header"]
 |====
 | Name          | Target label(s)             | Cardinality | Description
-| INCLUDES      | <<:File:Jsf:Facelet>> 	  | 0..n        | References a included JSF template file (e.g. <ui:include src="include.jspx"/>)
-| WITH_TEMPLATE | <<:File:Jsf:Facelet>> 	  | 0..1        | References a used JSF template file (e.g. <ui:composition template="template.jspx" ...>)
+| INCLUDES      | <<:File:Jsf:Facelet>> 	  | 0..n        | References a included JSF template file (e.g. `<ui:include src="include.jspx"/>`)
+| WITH_TEMPLATE | <<:File:Jsf:Facelet>> 	  | 0..1        | References a used JSF template file (e.g. `<ui:composition template="template.jspx" ...>`)
 |====

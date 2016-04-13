@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matchers;
+import org.hamcrest.collection.IsEmptyCollection;
 import org.junit.*;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
@@ -91,6 +92,52 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(value.getValue(), equalTo("value"));
         assertThat(value.getPosition(), equalTo(0));
+    }
+
+    @Test
+    public void scanSimpleKeyValuePairWithoutValueYAML() {
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/simple-key-value-pair-without-value.yaml");
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        List<YAMLFileDescriptor> fileDescriptors =
+             query("MATCH (f:YAML:File) WHERE f.fileName=~'.*/probes/valid/simple-key-value-pair-without-value.yaml' RETURN f")
+                .getColumn("f");
+
+        assertThat(fileDescriptors, hasSize(1));
+
+        YAMLFileDescriptor file = fileDescriptors.get(0);
+        assertThat(file.getDocuments(), hasSize(1));
+
+        YAMLDocumentDescriptor document = file.getDocuments().get(0);
+
+        assertThat(document.getValues(), hasSize(0));
+        assertThat(document.getKeys(), hasSize(2));
+
+        YAMLKeyDescriptor key = findKeyByName(document.getKeys(), "b");
+
+        assertThat(key.getName(), equalTo("b"));
+        assertThat(key.getFullQualifiedName(), equalTo("b"));
+        assertThat(key.getValues(), hasSize(0));
+        assertThat(key.getPosition(), equalTo(0));
+    }
+
+    @Test
+    public void scanSimpleKeyValuePairWithoutValueYAMLCyperDoesNotFindValueNode() {
+        File yamlFile = new File(getClassesDirectory(YAMLFileScannerPluginValidFileSetIT.class),
+                                 "/probes/valid/simple-key-value-pair-without-value.yaml");
+
+        getScanner().scan(yamlFile, yamlFile.getAbsolutePath(), null);
+
+        // Must return an empty result set as there is not YAML value node
+        List<YAMLFileDescriptor> fileDescriptors =
+             query("MATCH (f:YAML:File)-[:CONTAINS_DOCUMENT]->(d)-[:CONTAINS_KEY]->(k:YAML:Key {name: 'b'})" +
+                   "-[:CONTAINS_VALUE]->(value:YAML:Value) " +
+                   "WHERE f.fileName=~'.*/probes/valid/simple-key-value-pair-without-value.yaml' RETURN f")
+                .getColumn("f");
+
+        assertThat(fileDescriptors, nullValue());
     }
 
 
@@ -367,10 +414,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         YAMLKeyDescriptor keyA1 = findKeyByName(keyA.getKeys(), "hr");
 
-
-        System.out.println(keyA1.getName());
-        System.out.println(keyA1.getFullQualifiedName());
-
         assertThat(keyA1.getName(), equalTo("hr"));
         assertThat(keyA1.getFullQualifiedName(), CoreMatchers.equalTo("Mark McGwire.hr"));
         assertThat(keyA1.getKeys(), empty());
@@ -379,9 +422,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
 
         YAMLKeyDescriptor keyA2 = findKeyByName(keyA.getKeys(), "avg");
-
-        System.out.println(keyA2.getName());
-        System.out.println(keyA2.getFullQualifiedName());
 
         assertThat(keyA2.getName(), equalTo("avg"));
         assertThat(keyA2.getFullQualifiedName(), CoreMatchers.equalTo("Mark McGwire.avg"));
@@ -477,11 +517,6 @@ public class YAMLFileScannerPluginIT extends AbstractPluginIT {
 
         assertThat(rbiNode, Matchers.notNullValue());
         assertThat(rbiNode.getValues(), hasSize(2));
-
-        for (YAMLValueDescriptor valueDescriptor : rbiNode.getValues()) {
-            System.out.println(valueDescriptor.getValue());
-        }
-
         assertThat(rbiNode.getValues(), hasItem(hasValue("Sammy Sosa")));
     }
 

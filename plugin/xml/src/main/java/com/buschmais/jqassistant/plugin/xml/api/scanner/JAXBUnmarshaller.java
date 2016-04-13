@@ -1,48 +1,29 @@
 package com.buschmais.jqassistant.plugin.xml.api.scanner;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Map;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
+import com.buschmais.jqassistant.core.shared.annotation.ToBeRemovedInVersion;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-
-public class JAXBUnmarshaller<I extends FileResource, X> {
-
-    private Class<X> rootElementType;
-
-    private XMLInputFactory inputFactory;
-
-    private JAXBContext jaxbContext;
+/**
+ * Utility class for unmarshalling file resources.
+ *
+ * A constructor is provided that takes namespace mappings which may be used to
+ * unmarshal documents using an older, i.e. compatible schema version (e.g. for
+ * reading a `persistence.xml` 2.0 descriptor using a 2.1 JAXBContext).
+ *
+ * Note: This class has been deprecated and replaced by {@link FileResourceJAXBUnmarshaller}.
+ *
+ * @param <X> The JAXB type of the root element.
+ */
+@Deprecated
+@ToBeRemovedInVersion(major = 2, minor = 0)
+public class JAXBUnmarshaller<X> extends FileResourceJAXBUnmarshaller<X> {
 
     public JAXBUnmarshaller(Class<X> rootElementType) {
-        this.rootElementType = rootElementType;
-        inputFactory = XMLInputFactory.newInstance();
-        inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
-        try {
-            jaxbContext = JAXBContext.newInstance(rootElementType);
-        } catch (JAXBException e) {
-            throw new IllegalStateException("Cannot create JAXB context for " + rootElementType.getName(), e);
-        }
+        super(rootElementType);
     }
 
-    public X unmarshal(I item) throws IOException {
-        JAXBElement<X> rootElement;
-        try (InputStream stream = item.createStream()) {
-            XMLEventReader xmlEventReader = inputFactory.createXMLEventReader(stream);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            rootElement = unmarshaller.unmarshal(xmlEventReader, rootElementType);
-        } catch (JAXBException e) {
-            throw new IOException("Cannot read XML document.", e);
-        } catch (XMLStreamException e) {
-            throw new IOException("Cannot read XML document.", e);
-        }
-        return rootElement.getValue();
+    public JAXBUnmarshaller(Class<X> rootElementType, Map<String, String> namespaceMapping) {
+        super(rootElementType, namespaceMapping);
     }
 }

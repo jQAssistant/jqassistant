@@ -1,6 +1,5 @@
-<<MavenRepositoryScanner>>
 [[MavenRepositoryScanner]]
-== Scanner for remote maven repositories
+== Scanner for remote Maven repositories
 Downloads the repository index and retrieves all available new artifacts for scanning.
 
 This plugin should be triggered on the command line by providing an URL and a specific scope:
@@ -24,19 +23,20 @@ TIP: For incremental scanning it is necessary that the exactly the same URL is p
 [options="header"]
 |====
 | Property     			 | Description																		   | Default
-| m2repo.directory 		 | A directory path. This directory is the target for Maven indices and artifacts. 	   | ./jqassistant/data/m2repo
+| m2repo.directory 		 | A directory path. This directory is the target for Maven indices and artifacts. 	   | `./jqassistant/data/m2repo`
 | m2repo.filter.includes | A comma separated list of artifact patterns to include in the scan                  | include all artifacts
 | m2repo.filter.excludes | A comma separated list of artifact patterns to exclude from the scan                | exclude no artifacts
 | m2repo.artifacts.scan  | A boolean value. If true then the content of the artifacts is scanned.              | true
 | m2repo.artifacts.keep  | A boolean value. If true then all downloaded artifacts where deleted after scanning.| false
 |====
 
-TIP: The artifact patterns follow the Maven syntax, i.e. "[groupId]:[artifactId]:[type]:[version]" or "[groupId]:[artifactId]:[type]:[classifier]:[version]" and allow using wildcards.
+TIP: The artifact patterns follow the Maven syntax, i.e. `[groupId]:[artifactId]:[type]:[version]`
+or `[groupId]:[artifactId]:[type]:[classifier]:[version]` and allow using wildcards.
 
-=== :Maven:Repository
+=== Nodes labled with `:Maven:Repository`
 A remote Maven repository.
 
-.Properties of :Maven:Repository
+.Properties of `:Maven:Repository`
 [options="header"]
 |====
 | Name      	| Description
@@ -44,7 +44,7 @@ A remote Maven repository.
 | lastUpdate	| timestamp of the last scan
 |====
 
-.Relations of :Maven:Repository
+.Relations of `:Maven:Repository`
 [options="header"]
 |====
 | Name              | Target label(s)            | Cardinality | Description
@@ -55,9 +55,12 @@ A remote Maven repository.
 <<MavenArtifactScanner>>
 [[MavenArtifactScanner]]
 == Scanner for remote maven artifacts
-Gets the maven artifact coordinates to retrieve the artifact from an repository and scans it. The scanner accepts org.apache.maven.index.ArtifactInfo-Items 
-with the scope "maven:repository".
 
-NOTE: This plugin needs some prerequisites to work properly. The context must contain a MavenRepositoryDescriptor to which the new Maven Artifact belongs and an
+Gets the maven artifact coordinates to retrieve the artifact from an repository and scans it.
+The scanner accepts `org.apache.maven.index.ArtifactInfo-Items`
+with the scope `maven:repository`.
+
+NOTE: This plugin needs some prerequisites to work properly. The context must
+contain a MavenRepositoryDescriptor to which the new Maven Artifact belongs and an
 ArtifactProvider-Object to load the artifact from the configured repository.
 

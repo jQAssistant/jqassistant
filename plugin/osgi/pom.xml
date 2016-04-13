@@ -75,7 +75,7 @@
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.common</artifactId>
             <type>xsl</type>
-            <classifier>rules2asciidoc</classifier>
+            <classifier>rules2asciidoc-v2</classifier>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -119,7 +119,7 @@
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
+            <artifactId>java-hamcrest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

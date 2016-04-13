@@ -6,7 +6,10 @@ import static com.buschmais.jqassistant.core.analysis.test.matcher.ConstraintMat
 import static com.buschmais.jqassistant.core.analysis.test.matcher.ResultMatcher.result;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.MethodDescriptorMatcher.methodDescriptor;
 import static com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher.typeDescriptor;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
@@ -14,13 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
 import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
@@ -31,6 +34,7 @@ import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTest;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.IgnoredTestWithMessage;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestClass;
 import com.buschmais.jqassistant.plugin.junit.test.set.junit4.TestSuite;
+import com.buschmais.jqassistant.plugin.junit.test.set.report.AbstractExample;
 import com.buschmais.jqassistant.plugin.junit.test.set.report.Example;
 
 /**
@@ -111,9 +115,10 @@ public class Junit4IT extends AbstractJavaPluginIT {
         scanClasses(TestSuite.class, TestClass.class);
         assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        Map<String, Object> params = MapBuilder.<String, Object> create("testClass", TestClass.class.getName()).get();
-        List<Object> suites = query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn={testClass} RETURN s", params)
-                .getColumn("s");
+        Map<String, Object> params = MapBuilder.<String, Object>create("testClass", TestClass.class.getName()).get();
+        List<Object> suites =
+                query("MATCH (s:Junit4:Suite:Class)-[:CONTAINS_TESTCLASS]->(testClass) WHERE testClass.fqn={testClass} RETURN s", params)
+                        .getColumn("s");
         assertThat(suites, hasItem(typeDescriptor(TestSuite.class)));
         store.commitTransaction();
     }
@@ -209,14 +214,15 @@ public class Junit4IT extends AbstractJavaPluginIT {
      */
     @Test
     public void testCaseImplementedByMethod() throws Exception {
-        scanClasses(Example.class);
+        scanClasses(AbstractExample.class, Example.class);
         scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
         assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyTestCaseImplementedByMethod("success");
-        verifyTestCaseImplementedByMethod("failure");
-        verifyTestCaseImplementedByMethod("error");
-        verifyTestCaseImplementedByMethod("skipped");
+        verifyTestCaseImplementedByMethod(Example.class, "success");
+        verifyTestCaseImplementedByMethod(AbstractExample.class, "inherited");
+        verifyTestCaseImplementedByMethod(Example.class, "failure");
+        verifyTestCaseImplementedByMethod(Example.class, "error");
+        verifyTestCaseImplementedByMethod(Example.class, "skipped");
         store.commitTransaction();
     }
 
@@ -264,10 +270,8 @@ public class Junit4IT extends AbstractJavaPluginIT {
         assertThat(applyConcept("junit4:AssertMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         List<Object> methods = query("match (m:Assert:Junit4:Method) return m").getColumn("m");
-        assertThat(
-                methods,
-                allOf(hasItem(methodDescriptor(Assert.class, "assertTrue", boolean.class)),
-                        hasItem(methodDescriptor(Assert.class, "assertTrue", String.class, boolean.class))));
+        assertThat(methods, allOf(hasItem(methodDescriptor(Assert.class, "assertTrue", boolean.class)), hasItem(methodDescriptor(Assert.class,
+                "assertTrue", String.class, boolean.class))));
         store.commitTransaction();
     }
 
@@ -423,22 +427,26 @@ public class Junit4IT extends AbstractJavaPluginIT {
     public void defaultGroup() throws AnalysisException, NoGroupException {
         executeGroup("junit4:Default");
         Map<String, Result<Constraint>> constraintViolations = reportWriter.getConstraintResults();
-        assertThat(constraintViolations.keySet(),
-                hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion", "junit4:IgnoreWithoutMessage"));
+        assertThat(constraintViolations.keySet(), hasItems("junit4:AssertionMustProvideMessage", "junit4:TestMethodWithoutAssertion",
+                "junit4:IgnoreWithoutMessage"));
     }
 
     /**
-     * Verifies if a IMPLEMENTED_BY relation exists between a test case and and
-     * test method.
+     * Verifies if a IMPLEMENTED_BY relation exists between a test case and and test method.
      * 
+     * @param declaringType
+     *            The class declaring the test method.
      * @param testcase
      *            The name of the test case.
      * @throws NoSuchMethodException
      *             If the test fails.
      */
-    private void verifyTestCaseImplementedByMethod(String testcase) throws NoSuchMethodException {
-        assertThat(query("MATCH (testcase:TestCase)-[:IMPLEMENTED_BY]->(testmethod:Method) WHERE testcase.name ='" + testcase + "' RETURN testmethod")
-                .getColumn("testmethod"), hasItem(methodDescriptor(Example.class, testcase)));
+    private void verifyTestCaseImplementedByMethod(Class<?> declaringType, String testcase) throws NoSuchMethodException {
+        assertThat(query("MATCH (testcase:TestCase)-[:DEFINED_BY]->(testclass:Type) WHERE testcase.name ='" + testcase + "' RETURN testclass")
+                .getColumn("testclass"), hasItem(typeDescriptor(Example.class)));
+        assertThat(query(
+                "MATCH (testcase:TestCase)-[:IMPLEMENTED_BY]->(testmethod:Method) WHERE testcase.name ='" + testcase + "' RETURN testmethod")
+                .getColumn("testmethod"), hasItem(methodDescriptor(declaringType, testcase)));
     }
 
     /**

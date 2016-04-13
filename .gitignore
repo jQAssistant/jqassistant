@@ -6,6 +6,8 @@ target
 .classpath
 jqassistant.datastore
 /.idea
+/neo4j-home/
+/scm/neo4jserver/neo4j-home/
 *~
 *.iml
 *.eml

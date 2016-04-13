@@ -24,9 +24,9 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>src/main/xsl/rules2asciidoc.xsl</file>
+                                    <file>src/main/xsl/rules2asciidoc-v2.xsl</file>
                                     <type>xsl</type>
-                                    <classifier>rules2asciidoc</classifier>
+                                    <classifier>rules2asciidoc-v2</classifier>
                                 </artifact>
                                 <artifact>
                                     <file>src/main/xsl/plugin2asciidoc.xsl</file>
@@ -90,6 +90,10 @@
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.analysis</artifactId>
             <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>java-hamcrest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

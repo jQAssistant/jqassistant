@@ -22,12 +22,12 @@ public interface YAMLValueDescriptor extends YAMLDescriptor, YAMLValueBucket {
 
 
     /**
-     * <p>Returns the position of the value relative to its parent
-     * in document order.</p>
+     * Returns the position of the value relative to its parent
+     * in document order.
      *
-     * <p>The position starts with zero and is relative to
+     * The position starts with zero and is relative to
      * it's parent. The parent could either be the containing
-     * document or a key.</p>
+     * document or a key.
      *
      * @return the position of the key relative to it's parent.
      */

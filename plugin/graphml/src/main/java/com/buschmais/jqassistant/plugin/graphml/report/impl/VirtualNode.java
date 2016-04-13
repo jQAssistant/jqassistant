@@ -1,9 +1,26 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Direction;
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
+import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.graphdb.ReturnableEvaluator;
+import org.neo4j.graphdb.StopEvaluator;
+import org.neo4j.graphdb.Traverser;
 import org.neo4j.graphdb.Traverser.Order;
+
+import com.buschmais.jqassistant.core.store.api.model.SubGraph;
 
 public class VirtualNode extends VirtualPropertyContainer implements Node {
 
@@ -13,7 +30,7 @@ public class VirtualNode extends VirtualPropertyContainer implements Node {
     private long id;
     private final List<Relationship> relationships = new ArrayList<>();
     private final List<Label> labels = new ArrayList<>();
-    private final Set<SimpleSubGraph> subgraphs = new LinkedHashSet<>();
+    private final Set<SubGraph> subgraphs = new LinkedHashSet<>();
 
     public static boolean isNode(Map<String, Object> m) {
         return ROLE_NODE.equals(m.get("role"));
@@ -44,8 +61,8 @@ public class VirtualNode extends VirtualPropertyContainer implements Node {
     }
 
     public void add(Object o) {
-        if (o instanceof SimpleSubGraph) {
-            subgraphs.add((SimpleSubGraph) o);
+        if (o instanceof SubGraphImpl) {
+            subgraphs.add((SubGraph) o);
         } else if (o instanceof Iterable) {
             for (Object iterOb : (Iterable) o) {
                 add(iterOb);

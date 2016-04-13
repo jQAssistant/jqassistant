@@ -59,6 +59,11 @@ jqassistant.sh scan -u maven:repository::http://my.maven.repository
 * -reset
 ** reset the database before scanning
 
+* -continueOnError
+** continue scanning even if a plugin fails with an unrecoverable error
+
+NOTE: Using -continueOnError might create inconsistent data. Any reported errors should be reported to the plugin developer.
+
 [[cli:available-scopes]]
 ==== available-scopes
 ===== Description
@@ -82,6 +87,9 @@ Executes an analysis.
 ** specifies the severity of a problem for the analysis to fail. The program will return with exit code 2.
 ** values: 'info', 'minor', 'major', 'critical' or 'blocker'
 ** default: 'minor'
+* -executeAppliedConcepts
+** Execute concepts which have already been applied before. The default is 'false' to save time on repeated runs of "analyze" on the
+   same data. Setting this flag to 'true' is useful for creating and trying out new concepts.
 
 [[cli:available-rules]]
 ==== available-rules

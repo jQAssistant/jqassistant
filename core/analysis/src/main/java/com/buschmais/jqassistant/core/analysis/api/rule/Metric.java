@@ -1,38 +1,35 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 
 /**
  * Defines a metric that can be executed.
  */
 public class Metric extends AbstractExecutableRule {
 
-    private Map<String, Class<?>> parameterTypes;
+    private Map<String, Class<?>> parameterTypes = new HashMap<>();
 
-    /**
-     * Constructor.
-     *
-     * @param id
-     *            The id.
-     * @param description
-     *            The human readable description.
-     * @param ruleSource
-     *            The rule source.
-     * @param cypherExecutable
-     *            The cypher executable.
-     * @param requiresConcepts
-     *            The required rules.
-     */
-    public Metric(String id, String description, RuleSource ruleSource, CypherExecutable cypherExecutable, Map<String, Class<?>> parameterTypes,
-            Set<String> requiresConcepts) {
-        super(id, description, ruleSource, null, null, cypherExecutable, null, requiresConcepts, null, null);
-        this.parameterTypes = parameterTypes;
+    private Metric() {
     }
 
     public Map<String, Class<?>> getParameterTypes() {
         return parameterTypes;
+    }
+
+    public static class Builder extends AbstractExecutableRule.Builder<Metric.Builder, Metric> {
+
+        protected Builder(Metric rule) {
+            super(rule);
+        }
+
+        public static Builder newMetric() {
+            return new Builder(new Metric());
+        }
+
+        public Builder parameterTypes(Map<String, Class<?>> parameterTypes) {
+            get().parameterTypes.putAll(parameterTypes);
+            return builder();
+        }
     }
 }

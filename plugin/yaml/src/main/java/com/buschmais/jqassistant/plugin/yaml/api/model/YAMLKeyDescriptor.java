@@ -23,9 +23,9 @@ public interface YAMLKeyDescriptor extends YAMLDescriptor, NamedDescriptor,
      * Returns the position of the key relative to its parent
      * in document order.
      *
-     * <p>The position starts with zero and is relative to
+     * The position starts with zero and is relative to
      * it's parent. The parent could either be the containing
-     * document or an other key.</p>
+     * document or an other key.
      *
      * @return the position of the key relative to it's parent.
      */

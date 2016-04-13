@@ -24,9 +24,8 @@ import com.sun.jersey.api.core.HttpContext;
 
 /**
  * Abstract base class for the customized Neo4j server.
- * <p>
+ *
  * The class adds the {@link JQAServerModule}
- * </p>
  */
 public abstract class AbstractServer extends WrappingNeoServer implements Server {
 

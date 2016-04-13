@@ -14,7 +14,6 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
@@ -47,9 +46,9 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.UserDataConstraintDesc
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebResourceCollectionDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
-import com.buschmais.jqassistant.plugin.xml.api.model.XmlFileDescriptor;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope;
 import com.sun.java.xml.ns.javaee.AuthConstraintType;
 import com.sun.java.xml.ns.javaee.AuthMethodType;
 import com.sun.java.xml.ns.javaee.DescriptionType;
@@ -87,16 +86,16 @@ import com.sun.java.xml.ns.javaee.XsdStringType;
 
 /**
  * Scanner plugin for the content of web application XML descriptors (i.e.
- * WEB-INF/web.xml)
+ * `WEB-INF/web.xml`)
  */
 @Requires(FileDescriptor.class)
-public class WebXmlScannerPlugin extends AbstractScannerPlugin<FileResource, WebXmlDescriptor> {
+public class WebXmlScannerPlugin extends AbstractXmlFileScannerPlugin<WebXmlDescriptor> {
 
-    private JAXBUnmarshaller<FileResource, WebAppType> unmarshaller;
+    private FileResourceJAXBUnmarshaller<WebAppType> unmarshaller;
 
     @Override
     public void initialize() {
-        unmarshaller = new JAXBUnmarshaller<>(WebAppType.class);
+        unmarshaller = new FileResourceJAXBUnmarshaller<>(WebAppType.class);
     }
 
     @Override
@@ -105,11 +104,9 @@ public class WebXmlScannerPlugin extends AbstractScannerPlugin<FileResource, Web
     }
 
     @Override
-    public WebXmlDescriptor scan(FileResource item, String path, Scope scope, Scanner scanner) throws IOException {
+    public WebXmlDescriptor scan(FileResource item, WebXmlDescriptor  webXmlDescriptor, String path, Scope scope, Scanner scanner) throws IOException {
         WebAppType webAppType = unmarshaller.unmarshal(item);
         Store store = scanner.getContext().getStore();
-        XmlFileDescriptor xmlFileDescriptor = scanner.scan(item, path, XmlScope.DOCUMENT);
-        WebXmlDescriptor webXmlDescriptor = store.addDescriptorType(xmlFileDescriptor, WebXmlDescriptor.class);
         webXmlDescriptor.setVersion(webAppType.getVersion());
         Map<String, ServletDescriptor> servlets = new HashMap<>();
         Map<String, FilterDescriptor> filters = new HashMap<>();

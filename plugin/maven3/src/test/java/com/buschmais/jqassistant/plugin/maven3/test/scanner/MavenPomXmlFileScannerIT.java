@@ -1,10 +1,16 @@
 package com.buschmais.jqassistant.plugin.maven3.test.scanner;
 
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
@@ -17,6 +23,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenContributorDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenDeveloperDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.model.MavenParticipantRoleDescriptor;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -132,7 +142,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         // Precondition that parent POM can be found
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
-        assertEquals(1, mavenPomDescriptors.size());
+        assertThat(mavenPomDescriptors, hasSize(1));
 
         // Now let us see if we can find a plugin with given labels Plugin and
         // Maven
@@ -151,7 +161,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         store.beginTransaction();
 
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName=~ \".*/dependency-reduced-pom-file.xml\" RETURN n").getColumn("n");
-        assertEquals(1, mavenPomDescriptors.size());
+        assertThat(mavenPomDescriptors, hasSize(1));
 
         store.commitTransaction();
     }
@@ -166,9 +176,99 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     public void invalidPomFile() throws IOException {
         scanClassPathResource(JavaScope.CLASSPATH,"/invalid/pom.xml");
         store.beginTransaction();
-        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.valid=false RETURN n").getColumn("n");
-        assertEquals(1, mavenPomDescriptors.size());
+        List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.xmlWellFormed=false RETURN n").getColumn("n");
+        assertThat(mavenPomDescriptors, hasSize(1));
+
         store.commitTransaction();
+    }
+
+    /**
+     * Checks if all developers in a given pom.xml will be found and
+     * added to the model.
+     */
+    @Test
+    public void allDevelopersAreFound() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenPomXmlDescriptor> pomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) " +
+                                                           "WHERE n.fileName='/with-developers/pom.xml' " +
+                                                           "RETURN n").getColumn("n");
+
+        assertThat(pomDescriptors, hasSize(1));
+
+        MavenPomDescriptor descriptor = pomDescriptors.get(0);
+
+        assertThat(descriptor.getDevelopers(), hasSize(1));
+
+        MavenDeveloperDescriptor developer = descriptor.getDevelopers().stream().findFirst().get();
+
+        assertThat(developer.getId(), equalTo("he"));
+        assertThat(developer.getName(), equalTo("Alexej Alexandrowitsch Karenin"));
+        assertThat(developer.getOrganization(), equalTo("Tolstoi's World"));
+        assertThat(developer.getOrganizationUrl(), equalTo("http://www.tolstoi.org"));
+        assertThat(developer.getEmail(), equalTo("aak@tolstoi.org"));
+        assertThat(developer.getTimezone(), equalTo("+2"));
+        assertThat(developer.getUrl(), equalTo("http://www.tolstoi.org/~aak/"));
+
+        assertThat(developer.getRoles(), hasSize(3));
+
+        List<MavenParticipantRoleDescriptor> roles = developer.getRoles();
+
+        assertThat(roles.stream().map(role -> role.getName()).collect(toList()),
+                   containsInAnyOrder("husband", "public officer", "father"));
+
+        List<MavenDeveloperDescriptor> developers = query("MATCH (d:Maven:Developer:Participant) " +
+                                                          "WHERE not(d:Contributor) RETURN d")
+                                                        .getColumn("d");
+
+        assertThat(developers, hasSize(1));
+        assertThat(developers.get(0).getId(), equalTo("he"));
+    }
+
+    /**
+     * Checks if all contributors in a given pom.xml will be found and
+     * added to the model.
+     */
+    @Test
+    public void allContributorsAreFound() throws Exception {
+        scanClassPathResource(JavaScope.CLASSPATH, "/with-developers/pom.xml");
+
+        store.beginTransaction();
+
+        List<MavenPomXmlDescriptor> pomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) " +
+                                                           "WHERE n.fileName='/with-developers/pom.xml' " +
+                                                           "RETURN n").getColumn("n");
+
+        assertThat(pomDescriptors, hasSize(1));
+
+        MavenPomDescriptor descriptor = pomDescriptors.get(0);
+
+        assertThat(descriptor.getContributors(), hasSize(1));
+
+        MavenContributorDescriptor contributor = descriptor.getContributors().stream().findFirst().get();
+
+        assertThat(contributor.getName(), equalTo("Till Eulenspiegel"));
+        assertThat(contributor.getOrganization(), equalTo("Familie Eulenspiegel"));
+        assertThat(contributor.getOrganizationUrl(), equalTo("http://www.eulenspiegel.org"));
+        assertThat(contributor.getEmail(), equalTo("till@eulenspiegel.org"));
+        assertThat(contributor.getTimezone(), equalTo("+1"));
+        assertThat(contributor.getUrl(), equalTo("http://www.eulenspiegel.org/~till/"));
+
+        assertThat(contributor.getRoles(), hasSize(1));
+
+        List<MavenParticipantRoleDescriptor> roles = contributor.getRoles();
+
+        assertThat(roles.stream().map(role -> role.getName()).collect(toList()),
+                   containsInAnyOrder("Narr"));
+
+        List<MavenContributorDescriptor> developers = query("MATCH (c:Maven:Contributor:Participant) " +
+                                                            "WHERE not(c:Developer) RETURN c")
+            .getColumn("c");
+
+        assertThat(developers, hasSize(1));
+        assertThat(developers.get(0).getEmail(), equalTo("till@eulenspiegel.org"));
     }
 
     /**
@@ -176,31 +276,32 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      */
     private void validateChildPom() {
         List<MavenPomXmlDescriptor> pomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/child/pom.xml' RETURN n").getColumn("n");
-        assertEquals(1, pomDescriptors.size());
+        assertThat(pomDescriptors, hasSize(1));
 
         MavenPomXmlDescriptor pomDescriptor = pomDescriptors.get(0);
         Assert.assertNull(pomDescriptor.getGroupId());
-        assertEquals("jqassistant.child", pomDescriptor.getArtifactId());
-        Assert.assertNull(pomDescriptor.getVersion());
+        assertThat(pomDescriptor.getArtifactId(), equalTo("jqassistant.child"));
+        assertThat(pomDescriptor.getVersion(), nullValue());
 
         ArtifactDescriptor parentDescriptor = pomDescriptor.getParent();
-        assertEquals("com.buschmais.jqassistant", parentDescriptor.getGroup());
-        assertEquals("jqassistant.parent", parentDescriptor.getName());
-        assertEquals("1.0.0-RC-SNAPSHOT", parentDescriptor.getVersion());
+        assertThat(parentDescriptor.getGroup(), equalTo("com.buschmais.jqassistant"));
+        assertThat(parentDescriptor.getName(), equalTo("jqassistant.parent"));
+        assertThat(parentDescriptor.getVersion(), equalTo("1.0.0-RC-SNAPSHOT"));
 
         // validate dependencies
         List<PomDependsOnDescriptor> dependencyDescriptors = pomDescriptor.getDependencies();
-        assertEquals(4, dependencyDescriptors.size());
+        assertThat(dependencyDescriptors, hasSize(4));
+
         List<Dependency> dependencyList = createChildDependencies();
         for (Dependency dependency : dependencyList) {
             checkDependency(dependencyDescriptors, dependency);
         }
 
-        assertEquals(0, pomDescriptor.getProperties().size());
-        assertEquals(0, pomDescriptor.getManagedDependencies().size());
-        assertEquals(0, pomDescriptor.getManagedPlugins().size());
-        assertEquals(0, pomDescriptor.getPlugins().size());
-        assertEquals(0, pomDescriptor.getModules().size());
+        assertThat(pomDescriptor.getProperties(), empty());
+        assertThat(pomDescriptor.getManagedDependencies(), empty());
+        assertThat(pomDescriptor.getManagedPlugins(), empty());
+        assertThat(pomDescriptor.getPlugins(), empty());
+        assertThat(pomDescriptor.getModules(), empty());
     }
 
     /**
@@ -256,31 +357,32 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
      */
     private void validateParentPom() {
         List<MavenPomXmlDescriptor> mavenPomDescriptors = query("MATCH (n:File:Maven:Xml:Pom) WHERE n.fileName='/pom.xml' RETURN n").getColumn("n");
-        assertEquals(1, mavenPomDescriptors.size());
+        assertThat(mavenPomDescriptors, hasSize(1));
 
         MavenPomXmlDescriptor pomDescriptor = mavenPomDescriptors.iterator().next();
-        assertEquals("com.buschmais.jqassistant", pomDescriptor.getGroupId());
-        assertEquals("jqassistant.parent", pomDescriptor.getArtifactId());
-        assertEquals("1.0.0-RC-SNAPSHOT", pomDescriptor.getVersion());
+        assertThat(pomDescriptor.getGroupId(), equalTo("com.buschmais.jqassistant"));
+        assertThat(pomDescriptor.getArtifactId(), equalTo("jqassistant.parent"));
+        assertThat(pomDescriptor.getVersion(), equalTo("1.0.0-RC-SNAPSHOT"));
 
         ArtifactDescriptor parentDescriptor = pomDescriptor.getParent();
-        Assert.assertNull(parentDescriptor);
+        assertThat(parentDescriptor, nullValue());
 
         List<MavenLicenseDescriptor> licenseDescriptors = pomDescriptor.getLicenses();
-        assertEquals(1, mavenPomDescriptors.size());
+        assertThat(mavenPomDescriptors, hasSize(1));
         MavenLicenseDescriptor licenseDescriptor = licenseDescriptors.iterator().next();
-        assertEquals("GNU General Public License, v3", licenseDescriptor.getName());
-        assertEquals("http://www.gnu.org/licenses/gpl-3.0.html", licenseDescriptor.getUrl());
+        assertThat(licenseDescriptor.getName(), equalTo("GNU General Public License, v3"));
+        assertThat(licenseDescriptor.getUrl(), equalTo("http://www.gnu.org/licenses/gpl-3.0.html"));
 
         // dependency management
         List<PomManagesDependencyDescriptor> managedDependencyDescriptors = pomDescriptor.getManagedDependencies();
         List<Dependency> managedDependencies = createManagedParentDependencies();
-        assertEquals(managedDependencies.size(), managedDependencyDescriptors.size());
+        assertThat(managedDependencies, hasSize(managedDependencyDescriptors.size()));
+
         for (Dependency dependency : managedDependencies) {
             checkManagedDependency(managedDependencyDescriptors, dependency);
         }
 
-        assertEquals(0, pomDescriptor.getDependencies().size());
+        assertThat(pomDescriptor.getDependencies(), empty());
 
         // properties
         List<PropertyDescriptor> propertyDescriptors = pomDescriptor.getProperties();
@@ -292,13 +394,14 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
 
         // modules
         List<MavenModuleDescriptor> modules = pomDescriptor.getModules();
-        assertEquals(1, modules.size());
-        assertEquals("child", modules.get(0).getName());
+        assertThat(modules, hasSize(1));
+        assertThat(modules.get(0).getName(), equalTo("child"));
 
         // plugins
         List<MavenPluginDescriptor> pluginDescriptors = pomDescriptor.getPlugins();
         List<Plugin> plugins = createParentPlugins();
-        assertEquals(plugins.size(), pluginDescriptors.size());
+        assertThat(plugins, hasSize(pluginDescriptors.size()));
+
         for (Plugin plugin : plugins) {
             checkPlugin(pluginDescriptors, plugin);
         }
@@ -306,7 +409,8 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         // managed plugins
         List<MavenPluginDescriptor> managedPluginDescriptors = pomDescriptor.getManagedPlugins();
         List<Plugin> managedPlugins = createManagedParentPlugins();
-        assertEquals(managedPlugins.size(), managedPluginDescriptors.size());
+        assertThat(managedPlugins, hasSize(managedPluginDescriptors.size()));
+
         for (Plugin plugin : managedPlugins) {
             checkPlugin(managedPluginDescriptors, plugin);
         }
@@ -314,7 +418,8 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         // profiles
         List<MavenProfileDescriptor> profileDescriptors = pomDescriptor.getProfiles();
         List<Profile> parentProfiles = createParentProfiles();
-        assertEquals(2, profileDescriptors.size());
+        assertThat(profileDescriptors, hasSize(2));
+
         for (Profile profile : parentProfiles) {
             checkProfile(profileDescriptors, profile);
         }
@@ -322,11 +427,12 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     }
 
     private void validateProperties(List<PropertyDescriptor> propertyDescriptors, Properties properties) {
-        assertEquals(properties.size(), propertyDescriptors.size());
+        assertThat(propertyDescriptors, hasSize(properties.size()));
+
         for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
             String value = properties.getProperty(propertyDescriptor.getName());
-            Assert.assertNotNull(value);
-            assertEquals(value, propertyDescriptor.getValue());
+            assertThat(value, not(nullValue()));
+            assertThat(propertyDescriptor.getValue(), equalTo(value));
         }
     }
 
@@ -362,25 +468,32 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
                 for (Dependency dependency : dependencies) {
                     checkProfileDependency(mavenProfileDescriptor.getDependencies(), dependency);
                 }
+
                 // modules
                 List<MavenModuleDescriptor> modules = mavenProfileDescriptor.getModules();
-                assertEquals(profile.modules.size(), modules.size());
+                assertThat(profile.modules, hasSize(modules.size()));
+
                 for (MavenModuleDescriptor mavenModuleDescriptor : modules) {
-                    Assert.assertTrue(profile.modules.contains(mavenModuleDescriptor.getName()));
+                    assertThat(profile.modules, hasItem(mavenModuleDescriptor.getName()));
                 }
+
                 // properties
                 validateProperties(mavenProfileDescriptor.getProperties(), profile.properties);
+
                 // plugins
                 List<Plugin> plugins = profile.plugins;
                 for (Plugin plugin : plugins) {
                     checkPlugin(mavenProfileDescriptor.getPlugins(), plugin);
                 }
+
                 // managed plugins
                 List<MavenPluginDescriptor> managedPlugins = mavenProfileDescriptor.getManagedPlugins();
-                assertEquals(profile.managedPlugins.size(), managedPlugins.size());
+                assertThat(profile.managedPlugins, hasSize(managedPlugins.size()));
+
                 for (Plugin plugin : profile.managedPlugins) {
                     checkPlugin(managedPlugins, plugin);
                 }
+
                 checkActivation(mavenProfileDescriptor.getActivation(), profile.activation);
             }
         }
@@ -390,27 +503,31 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
     private void checkActivation(MavenProfileActivationDescriptor activationDescriptor, ProfileActivation activation) {
         if (null != activation) {
             Assert.assertNotNull(activationDescriptor);
-            assertEquals(activation.jdk, activationDescriptor.getJdk());
-            assertEquals(activation.activeByDefault, activationDescriptor.isActiveByDefault());
+            assertThat(activation.jdk, equalTo(activationDescriptor.getJdk()));
+            assertThat(activation.activeByDefault, equalTo(activationDescriptor.isActiveByDefault()));
+
             if (null != activation.fileExists || null != activation.fileMissing) {
                 MavenActivationFileDescriptor activationFileDescriptor = activationDescriptor.getActivationFile();
                 Assert.assertNotNull(activationFileDescriptor);
-                assertEquals(activation.fileExists, activationFileDescriptor.getExists());
-                assertEquals(activation.fileMissing, activationFileDescriptor.getMissing());
+                assertThat(activationFileDescriptor, notNullValue());
+                assertThat(activation.fileExists, equalTo(activationFileDescriptor.getExists()));
+                assertThat(activation.fileMissing, equalTo(activationFileDescriptor.getMissing()));
             }
+
             if (null != activation.propertyName || null != activation.propertyValue) {
                 PropertyDescriptor propertyDescriptor = activationDescriptor.getProperty();
-                Assert.assertNotNull(propertyDescriptor);
-                assertEquals(activation.propertyName, propertyDescriptor.getName());
-                assertEquals(activation.propertyValue, propertyDescriptor.getValue());
+                assertThat(propertyDescriptor, notNullValue());
+                assertThat(activation.propertyName, equalTo(propertyDescriptor.getName()));
+                assertThat(activation.propertyValue, equalTo(propertyDescriptor.getValue()));
             }
+
             if (null != activation.osArch || null != activation.osFamily || null != activation.osName || null != activation.osVersion) {
                 MavenActivationOSDescriptor activationOSDescriptor = activationDescriptor.getActivationOS();
-                Assert.assertNotNull(activationOSDescriptor);
-                assertEquals(activation.osArch, activationOSDescriptor.getArch());
-                assertEquals(activation.osFamily, activationOSDescriptor.getFamily());
-                assertEquals(activation.osName, activationOSDescriptor.getName());
-                assertEquals(activation.osVersion, activationOSDescriptor.getVersion());
+                assertThat(activationOSDescriptor, notNullValue());
+                assertThat(activation.osArch, equalTo(activationOSDescriptor.getArch()));
+                assertThat(activation.osFamily, equalTo(activationOSDescriptor.getFamily()));
+                assertThat(activation.osName, equalTo(activationOSDescriptor.getName()));
+                assertThat(activation.osVersion, equalTo(activationOSDescriptor.getVersion()));
             }
         }
     }
@@ -419,13 +536,15 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         MavenPluginDescriptor mavenPluginDescriptor = validatePlugin(managedPluginDescriptors, plugin);
         checkConfiguration(mavenPluginDescriptor.getConfiguration(), plugin.configuration);
         List<MavenPluginExecutionDescriptor> executionDescriptors = mavenPluginDescriptor.getExecutions();
-        assertEquals(plugin.executions.size(), executionDescriptors.size());
+        assertThat(plugin.executions, hasSize(executionDescriptors.size()));
+
         for (Execution execution : plugin.executions) {
             MavenPluginExecutionDescriptor pluginExecutionDescriptor = validatePluginExecution(executionDescriptors, execution);
             List<MavenExecutionGoalDescriptor> goalDescriptors = pluginExecutionDescriptor.getGoals();
-            assertEquals(execution.goals.size(), goalDescriptors.size());
+            assertThat(execution.goals, hasSize(goalDescriptors.size()));
+
             for (MavenExecutionGoalDescriptor goalDescriptor : goalDescriptors) {
-                Assert.assertTrue("Unexpected goal: " + goalDescriptor.getName(), execution.goals.contains(goalDescriptor.getName()));
+                assertThat("Unexpected goal: " + goalDescriptor.getName(), execution.goals, hasItem(goalDescriptor.getName()));
             }
             checkConfiguration(pluginExecutionDescriptor.getConfiguration(), execution.configuration);
         }
@@ -445,7 +564,7 @@ public class MavenPomXmlFileScannerIT extends AbstractJavaPluginIT {
         for (ValueDescriptor<?> valueDescriptor : descriptors) {
             if (valueDescriptor.getName().equals(entry.name)) {
                 if (entry instanceof SimpleConfigEntry) {
-                    assertEquals(((SimpleConfigEntry) entry).value, valueDescriptor.getValue());
+                    assertThat(((SimpleConfigEntry) entry).value, equalTo(valueDescriptor.getValue()));
                     return;
                 }
                 List<ConfigEntry> entries = ((ComplexConfigEntry) entry).entries;

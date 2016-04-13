@@ -1,13 +1,12 @@
-<<MavenProjectScanner>>
 [[MavenProjectScanner]]
 == Scanner for Maven projects
 Imports information from Maven projects.
 
 [[:Maven:Project]]
-=== :Maven:Project:File:Directory
-A pom.xml file describing a single Maven project.
+=== Nodes labled with `:Maven:Project:File:Directory`
+A `pom.xml` file describing a single Maven project.
 
-.Properties of :Maven:Project:File:Directory
+.Properties of `:Maven:Project:File:Directory`
 [options="header"]
 |====
 | Name       | Description
@@ -15,11 +14,11 @@ A pom.xml file describing a single Maven project.
 | name       | The name
 | groupId    | The group id
 | artifactId | The artifact id
-| packaging  | The packaging type, e.g. "jar"
+| packaging  | The packaging type, e.g. `jar`
 | version    | The version
 |====
 
-.Relations of :Maven:Project:File:Directory
+.Relations of `:Maven:Project:File:Directory`
 [options="header"]
 |====
 | Name                | Target label(s)         | Cardinality | Description
@@ -31,21 +30,21 @@ A pom.xml file describing a single Maven project.
 |====
 
 [[:Maven:Artifact]]
-=== :Maven:Artifact
+=== Nodes labled with `:Maven:Artifact`
 Represents an artifact, e.g. a JAR-File.
 
-.Properties of :Maven:Artifact
+.Properties of `:Maven:Artifact`
 [options="header"]
 |====
 | Name       | Description
 | group      | The group name
 | name       | The artifact name
-| type       | The type, e.g. "jar"
+| type       | The type, e.g. `jar`
 | classifier | The classifier
 | version    | The version
 |====
 
-.Relations of :Maven:Artifact
+.Relations of `:Maven:Artifact`
 [options="header"]
 |====
 | Name       | Target label(s) | Cardinality | Description
@@ -53,35 +52,34 @@ Represents an artifact, e.g. a JAR-File.
 | DEPENDS_ON | <<:Maven:Artifact>>   | 0..n        | References an artifact which is a declared dependency
 |====
 
-.Properties of :DEPENDS_ON
+.Properties of `:DEPENDS_ON`
 [options="header"]
 |====
 | Name     | Description
-| scope    | The declared scope, e.g. "compile"
-| optional | "true" indicates that this dependency is optional.
+| scope    | The declared scope, e.g. `compile`
+| optional | `true` indicates that this dependency is optional.
 |====
 
-<<MavenPomScanner>>
 [[MavenPomScanner]]
 == Scanner for Maven POMs
-Imports information from Maven POMs (e.g. pom.xml) files.
+Imports information from Maven POMs (e.g. `pom.xml`) files.
 
 [[:Maven:Pom]]
-=== :Maven:Pom
+=== Nodes labled with `:Maven:Pom`
 A POM describing a Maven project.
 
-.Properties of :Maven:Pom
+.Properties of `:Maven:Pom`
 [options="header"]
 |====
 | Name       | Description
 | group      | The group id
 | name       | The artifact id
-| type       | The type, e.g. "jar"
+| type       | The type, e.g. `jar`
 | classifier | The classifier (optional)
 | version    | The version
 |====
 
-.Relations of :Maven:Pom
+.Relations of `:Maven:Pom`
 [options="header"]
 |====
 | Name                | Target label(s)         | Cardinality | Description
@@ -94,20 +92,86 @@ A POM describing a Maven project.
 | HAS_MODULE          | <<:Maven:Module>>       | 0..n        | References a sub module
 | MANAGES_PLUGIN      | <<:Maven:Plugin>>       | 0..n        | References a managed plugin
 | USES_PLUGIN         | <<:Maven:Plugin>>       | 0..n        | References a plugin that is used during maven lifecycle
+| HAS_CONTRIBUTOR     | <<:Maven:Contributor>>  | 0..n        | References a contributor
+| HAS_DEVELOPER       | <<:Maven:Developer>>    | 0..n        | References a developer
 |====
 
+[[:Maven:Contributor]]
+=== :Maven:Contributor
+
+A contributor of the project.
+
+.Properties of :Maven:Contributor
+[options="header"]
+|====
+| Name            | Description
+| id              | The unique ID of the developer in the SCM
+| email           | The email address of the developer.
+| name            | The full name of the developer.
+| organization    | The organization to which the contributor belongs.
+| organizationUrl | The URL of the organization.
+| timezone        | The timezone the developer is in.
+| url             | The URL for the homepage of the developer.
+|====
+
+.Relations of :Maven:Contributor
+[options="header"]
+|====
+| Name                | Target label(s)         | Cardinality | Description
+| HAS_ROLES           | <<:Maven:Role>>         | 0..n        | References a role the contributor has in the project.
+|====
+
+
+[[:Maven:Developer]]
+=== :Maven:Developer
+
+A developer taking part in the development of the project.
+
+.Properties of :Maven:Developer
+[options="header"]
+|====
+| Name            | Description
+| id              | The unique ID of the developer in the SCM
+| email           | The email address of the developer.
+| name            | The full name of the developer.
+| organization    | The organization to which the contributor belongs.
+| organizationUrl | The URL of the organization.
+| timezone        | The timezone the developer is in.
+| url             | The URL for the homepage of the developer.
+|====
+
+.Relations of :Maven:Developer
+[options="header"]
+|====
+| Name                | Target label(s)         | Cardinality | Description
+| HAS_ROLES           | <<:Maven:Role>>         | 0..n        | References a role the developer has in the project.
+|====
+
+[[:Maven:Role]]
+=== :Maven:Role
+
+The roles a person plays in the project.
+
+.Properties of :Maven:Role
+[options="header"]
+|====
+| Name | Description
+| name | The name of the role a person plays in the project.
+|====
+
+
 [[:Maven:Profile]]
-=== :Maven:Profile
+=== Nodes labled with `:Maven:Profile`
 A maven profile
 
-.Properties of :Maven:Profile
+.Properties of `:Maven:Profile`
 [options="header"]
 |====
 | Name    | Description
 | id     | The profile id
 |====
 
-.Relations of :Maven:Profile
+.Relations of `:Maven:Profile`
 [options="header"]
 |====
 | Name                | Target label(s)              | Cardinality | Description
@@ -121,10 +185,10 @@ A maven profile
 |====
 
 [[:Maven:ProfileActivation]]
-=== :Maven:ProfileActivation
+=== Nodes labled with `:Maven:ProfileActivation`
 A maven profile activation
 
-.Properties of :Maven:ProfileActivation
+.Properties of `:Maven:ProfileActivation`
 [options="header"]
 |====
 | Name            | Description
@@ -132,7 +196,7 @@ A maven profile activation
 | jdk             | Specifies jdk needed to activate the profile
 |====
 
-.Relations of :Maven:ProfileActivation
+.Relations of `:Maven:ProfileActivation`
 [options="header"]
 |====
 | Name              | Target label(s)           | Cardinality | Description
@@ -142,10 +206,10 @@ A maven profile activation
 |====
 
 [[:Maven:ActivationFile]]
-=== :Maven:ActivationFile
+=== Nodes labled with `:Maven:ActivationFile`
 File specification used to activate a profile
 
-.Properties of :Maven:ActivationFile
+.Properties of `:Maven:ActivationFile`
 [options="header"]
 |====
 | Name    | Description
@@ -154,10 +218,10 @@ File specification used to activate a profile
 |====
 
 [[:Maven:ActivationOS]]
-=== :Maven:ActivationOS
+=== Nodes labled with `:Maven:ActivationOS`
 Defines operating system's attributes to activate a profile
 
-.Properties of :Maven:ActivationOS
+.Properties of `:Maven:ActivationOS`
 [options="header"]
 |====
 | Name    | Description
@@ -168,10 +232,11 @@ Defines operating system's attributes to activate a profile
 |====
 
 [[:Maven:Module]]
-=== :Maven:Module
-A maven module
+=== Nodes labled with `:Maven:Module`
 
-.Properties of :Maven:Module
+A Maven module
+
+.Properties of `:Maven:Module`
 [options="header"]
 |====
 | Name | Description
@@ -179,22 +244,23 @@ A maven module
 |====
 
 [[:Maven:Plugin]]
-=== :Maven:Plugin
-A maven plugin
+=== Nodes labled with `:Maven:Plugin`
 
-.Properties of :Maven:Plugin
+A Maven plugin
+
+.Properties of `:Maven:Plugin`
 [options="header"]
 |====
 | Name       | Description
 | group      | The group id
 | name       | The artifact id
-| type       | The type, e.g. "jar"
+| type       | The type, e.g. `jar`
 | classifier | The classifiert
 | version    | The version
 | inherited  | Whether any configuration should be propagated to child POMs
 |====
 
-.Relations of :Maven:Plugin
+.Relations of `:Maven:Plugin`
 [options="header"]
 |====
 | Name              | Target label(s)            | Cardinality | Description
@@ -204,10 +270,10 @@ A maven plugin
 |====
 
 [[:Maven:License]]
-=== :Maven:License
+=== Nodes labled with `:Maven:License`
 A used license
 
-.Properties of :Maven:License
+.Properties of `:Maven:License`
 [options="header"]
 |====
 | Name         | Description
@@ -218,10 +284,10 @@ A used license
 |====
 
 [[:Maven:PluginExecution]]
-=== :Maven:PluginExecution
+=== Nodes labled with `:Maven:PluginExecution`
 A plugin execution
 
-.Properties of :Maven:PluginExecution
+.Properties of `:Maven:PluginExecution`
 [options="header"]
 |====
 | Name      | Description
@@ -230,7 +296,7 @@ A plugin execution
 | phase     | The build lifecycle phase to bind the goals in this execution to.
 |====
 
-.Relations of :Maven:PluginExecution
+.Relations of `:Maven:PluginExecution`
 [options="header"]
 |====
 | Name              | Target label(s)          | Cardinality | Description
@@ -239,7 +305,7 @@ A plugin execution
 |====
 
 [[:Maven:Configuration]]
-=== :Maven:Configuration
+=== Nodes labled with `:Maven:Configuration`
 A configuration for plugins, executions
 
 .Relations of :Maven:Configuration
@@ -250,10 +316,10 @@ A configuration for plugins, executions
 |====
 
 [[:Maven:ExecutionGoal]]
-=== :Maven:ExecutionGoal
+=== Nodes labled with `:Maven:ExecutionGoal`
 A goal for plugin executions
 
-.Properties of :Maven:ExecutionGoal
+.Properties of `:Maven:ExecutionGoal`
 [options="header"]
 |====
 | Name | Description

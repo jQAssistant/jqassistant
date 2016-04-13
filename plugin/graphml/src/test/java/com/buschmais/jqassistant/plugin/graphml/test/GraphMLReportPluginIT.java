@@ -5,7 +5,11 @@ import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,7 +18,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-import com.buschmais.jqassistant.plugin.graphml.report.impl.GraphMLReportPlugin;
 import org.apache.commons.lang.ArrayUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,8 +29,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
+import com.buschmais.jqassistant.core.analysis.api.AnalyzerConfiguration;
 import com.buschmais.jqassistant.core.analysis.impl.AnalyzerImpl;
 import com.buschmais.jqassistant.core.report.impl.CompositeReportWriter;
+import com.buschmais.jqassistant.plugin.graphml.report.impl.GraphMLReportPlugin;
 import com.buschmais.jqassistant.plugin.graphml.test.set.a.A;
 import com.buschmais.jqassistant.plugin.graphml.test.set.b.B;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
@@ -36,6 +41,7 @@ import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
  * Verifies functionality of the GraphML report plugin.
  */
 public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphMLReportPlugin.class);
 
     public static final String REPORT_DIR = "target/graphml";
@@ -59,12 +65,18 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     private Map<String, Object> getReportProperties() {
         Map<String, Object> properties = new HashMap<>();
         properties.put("graphml.report.directory", REPORT_DIR);
+        properties.put("graphml.decorator", CustomGraphMLDecorator.class.getName());
         return properties;
     }
 
     @Test
     public void renderGraphML() throws Exception {
         reportAndVerify("test:DeclaredMembers.graphml", 4);
+    }
+
+    @Test
+    public void renderGraphMLUsingReportType() throws Exception {
+        reportAndVerify("test:DeclaredMembers", 4);
     }
 
     @Test
@@ -80,7 +92,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
         XPathExpression classExpression = xpath.compile("/graphml/graph/node[contains(@labels,':Class')]/data[@key='fqn']");
         NodeList classes = (NodeList) classExpression.evaluate(doc, XPathConstants.NODESET);
 
-        String[] classNames = { A.class.getName(), B.class.getName() };
+        String[] classNames = {A.class.getName(), B.class.getName()};
         for (int i = 0; i < classes.getLength(); i++) {
             Node item = classes.item(i);
             String value = item.getTextContent();
@@ -132,14 +144,18 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     private Document scanAndWriteReport(String conceptName, Class<?>... scanClasses)
-         throws Exception {
-        List<AnalysisListener> reportWriters = new LinkedList<>();
-        reportWriters.addAll(getReportPlugins(getReportProperties()));
+            throws Exception {
+        Map<String, AnalysisListener> reportWriters = new HashMap<>();
+        reportWriters.putAll(getReportPlugins(getReportProperties()));
         CompositeReportWriter compositeReportWriter = new CompositeReportWriter(reportWriters);
-        this.analyzer = new AnalyzerImpl(this.store, compositeReportWriter, LOGGER);
+        this.analyzer = new AnalyzerImpl(new AnalyzerConfiguration(), this.store, compositeReportWriter, LOGGER);
         scanClasses(scanClasses);
         applyConcept(conceptName);
-        File reportFile = new File(REPORT_DIR, conceptName.replace(':', '_'));
+        String fileName = conceptName.replace(':', '_');
+        if (!conceptName.endsWith(GraphMLReportPlugin.FILEEXTENSION_GRAPHML)) {
+            fileName = fileName + GraphMLReportPlugin.FILEEXTENSION_GRAPHML;
+        }
+        File reportFile = new File(REPORT_DIR, fileName);
         assertThat(reportFile.exists(), equalTo(true));
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();

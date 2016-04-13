@@ -9,7 +9,6 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSelection;
 import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
-import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoConceptException;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoGroupException;
@@ -17,6 +16,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.NoRuleException;
 import com.buschmais.jqassistant.core.analysis.api.rule.NoTemplateException;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.Severity;
+import com.buschmais.jqassistant.core.analysis.api.rule.SeverityRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Template;
 
 /**
@@ -47,38 +47,39 @@ public class RuleExecutor {
             validateConstraint(ruleSet, constraint, constraint.getSeverity());
         }
         for (String groupId : ruleSelection.getGroupIds()) {
-            executeGroup(ruleSet, resolveGroup(ruleSet, groupId));
+            Group group = resolveGroup(ruleSet, groupId);
+            executeGroup(ruleSet, group, group.getSeverity());
         }
     }
 
     /**
      * Executes the given group.
-     * 
-     * @param group
-     *            The group.
-     * @throws AnalysisListenerException
-     *             If the report cannot be written.
-     * @throws AnalysisException
-     *             If the group cannot be executed.
+     *
+     * @param ruleSet  The rule set.
+     * @param group    The group.
+     * @param severity The severity.
+     * @throws AnalysisListenerException If the report cannot be written.
+     * @throws AnalysisException         If the group cannot be executed.
      */
-    private void executeGroup(RuleSet ruleSet, Group group) throws AnalysisException {
+    private void executeGroup(RuleSet ruleSet, Group group, Severity severity) throws AnalysisException {
         if (!executedGroups.contains(group)) {
-            ruleVisitor.beforeGroup(group);
-            for (String includedGroupId : group.getGroups()) {
-                Group includedGroup = resolveGroup(ruleSet, includedGroupId);
-                executeGroup(ruleSet, includedGroup);
+            ruleVisitor.beforeGroup(group, getEffectiveSeverity(group, severity, severity));
+            for (Map.Entry<String, Severity> groupEntry : group.getGroups().entrySet()) {
+                String groupId = groupEntry.getKey();
+                Group includedGroup = resolveGroup(ruleSet, groupId);
+                executeGroup(ruleSet, includedGroup, getEffectiveSeverity(includedGroup, severity, groupEntry.getValue()));
             }
-
             Map<String, Severity> concepts = group.getConcepts();
             for (Map.Entry<String, Severity> conceptEntry : concepts.entrySet()) {
                 String conceptId = conceptEntry.getKey();
                 Concept concept = resolveConcept(ruleSet, conceptId);
-                applyConcept(ruleSet, concept, getSeverity(conceptEntry.getValue(), concept));
+                applyConcept(ruleSet, concept, getEffectiveSeverity(concept, severity, conceptEntry.getValue()));
             }
-            for (Map.Entry<String, Severity> constraintEntry : group.getConstraints().entrySet()) {
+            Map<String, Severity> constraints = group.getConstraints();
+            for (Map.Entry<String, Severity> constraintEntry : constraints.entrySet()) {
                 String constraintId = constraintEntry.getKey();
                 Constraint constraint = resolveConstraint(ruleSet, constraintId);
-                validateConstraint(ruleSet, constraint, getSeverity(constraintEntry.getValue(), constraint));
+                validateConstraint(ruleSet, constraint, getEffectiveSeverity(constraint, severity, constraintEntry.getValue()));
             }
 
             executedGroups.add(group);
@@ -86,19 +87,25 @@ public class RuleExecutor {
         }
     }
 
-    private Severity getSeverity(Severity severity, ExecutableRule rule) {
-        return severity != null ? severity : rule.getSeverity();
+    /**
+     * Determines the effective severity for a rule to be executed.
+     *
+     * @param rule           The rule.
+     * @param parentSeverity The severity inherited from the parent group.
+     * @param ruleSeverity   The severity as specified on the rule in the parent group.
+     * @return The effective severity.
+     */
+    private Severity getEffectiveSeverity(SeverityRule rule, Severity parentSeverity, Severity ruleSeverity) {
+        Severity managedSeverity = ruleSeverity != null ? ruleSeverity : parentSeverity;
+        return managedSeverity != null ? managedSeverity : rule.getSeverity();
     }
 
     /**
      * Validates the given constraint.
-     * 
-     * @param constraint
-     *            The constraint.
-     * @throws AnalysisListenerException
-     *             If the report cannot be written.
-     * @throws AnalysisException
-     *             If the constraint cannot be validated.
+     *
+     * @param constraint The constraint.
+     * @throws AnalysisListenerException If the report cannot be written.
+     * @throws AnalysisException         If the constraint cannot be validated.
      */
     private void validateConstraint(RuleSet ruleSet, Constraint constraint, Severity severity) throws AnalysisException {
         if (!executedConstraints.contains(constraint)) {
@@ -113,13 +120,10 @@ public class RuleExecutor {
 
     /**
      * Applies the given concept.
-     * 
-     * @param concept
-     *            The concept.
-     * @throws AnalysisListenerException
-     *             If the report cannot be written.
-     * @throws AnalysisException
-     *             If the concept cannot be applied.
+     *
+     * @param concept The concept.
+     * @throws AnalysisListenerException If the report cannot be written.
+     * @throws AnalysisException         If the concept cannot be applied.
      */
     private void applyConcept(RuleSet ruleSet, Concept concept, Severity severity) throws AnalysisException {
         if (!executedConcepts.contains(concept)) {
@@ -134,8 +138,7 @@ public class RuleExecutor {
 
     public Template resolveTemplate(RuleSet ruleSet, String queryTemplateId) throws AnalysisException {
         try {
-            Template template = ruleSet.getTemplateBucket().getById(queryTemplateId);
-            return template;
+            return ruleSet.getTemplateBucket().getById(queryTemplateId);
         } catch (NoTemplateException e) {
             throw new AnalysisException("Query template '" + queryTemplateId + " is not defined.", e);
         }
@@ -143,8 +146,7 @@ public class RuleExecutor {
 
     public Concept resolveConcept(RuleSet ruleSet, String requiredConceptId) throws AnalysisException {
         try {
-            Concept requiredConcept = ruleSet.getConceptBucket().getById(requiredConceptId);
-            return requiredConcept;
+            return ruleSet.getConceptBucket().getById(requiredConceptId);
         } catch (NoConceptException e) {
             throw new AnalysisException("Concept '" + requiredConceptId + "' is not defined.");
         }
@@ -152,8 +154,7 @@ public class RuleExecutor {
 
     public Constraint resolveConstraint(RuleSet ruleSet, String constraintId) throws AnalysisException {
         try {
-            Constraint constraint = ruleSet.getConstraintBucket().getById(constraintId);
-            return constraint;
+            return ruleSet.getConstraintBucket().getById(constraintId);
         } catch (NoRuleException e) {
             throw new AnalysisException("Constraint '" + constraintId + "' not found.");
         }
@@ -161,10 +162,9 @@ public class RuleExecutor {
 
     public Group resolveGroup(RuleSet ruleSet, String groupId) throws AnalysisException {
         try {
-            Group group = ruleSet.getGroupsBucket().getById(groupId);
-            return group;
+            return ruleSet.getGroupsBucket().getById(groupId);
         } catch (NoGroupException e) {
-            throw  new AnalysisException("Group '" +  groupId + "' is not defined.", e);
+            throw new AnalysisException("Group '" + groupId + "' is not defined.", e);
         }
     }
 

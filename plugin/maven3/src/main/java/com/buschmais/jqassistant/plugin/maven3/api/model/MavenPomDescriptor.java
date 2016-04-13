@@ -20,7 +20,8 @@ import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
  */
 @Label(value = "Pom", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
 public interface MavenPomDescriptor
-        extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor, MavenDependentDescriptor, FullQualifiedNameDescriptor, NamedDescriptor {
+        extends MavenDescriptor, BaseProfileDescriptor, MavenCoordinatesDescriptor,
+                MavenDependentDescriptor, FullQualifiedNameDescriptor, NamedDescriptor {
 
     /**
      * Get the artifacts which are described by this POM.
@@ -53,6 +54,22 @@ public interface MavenPomDescriptor
      */
     @Relation("USES_LICENSE")
     List<MavenLicenseDescriptor> getLicenses();
+
+    /**
+     * Get referenced developers.
+     *
+     * @return The developers.
+     */
+    @Relation("HAS_DEVELOPER")
+    List<MavenDeveloperDescriptor> getDevelopers();
+
+    /**
+     * Returns all mentioned contributors.
+     *
+     * @return A list of all mentioned contributors.
+     */
+    @Relation("HAS_CONTRIBUTOR")
+    List<MavenContributorDescriptor> getContributors();
 
     /**
      * Get profile information.

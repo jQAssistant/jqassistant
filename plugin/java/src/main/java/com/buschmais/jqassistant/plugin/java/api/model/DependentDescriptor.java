@@ -7,7 +7,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
 
 /**
  * Interface describing a {@link Descriptor} which depends on other
- * {@link TypeDescriptor}s.
+ * {@link TypeDescriptor} instances.
  */
 public interface DependentDescriptor extends Descriptor {
 

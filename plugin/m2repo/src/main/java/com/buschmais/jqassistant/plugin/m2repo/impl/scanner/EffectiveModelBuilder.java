@@ -89,7 +89,7 @@ public class EffectiveModelBuilder implements PomModelBuilder {
          * @param field
          *            The field to clear.
          * @param logValue
-         *            <code>true</code> if the value shall be logged.
+         *            `true` if the value shall be logged.
          */
         private void clearProblems(ModelProblemCollector problems, String field, boolean logValue) {
             try {

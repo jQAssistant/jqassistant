@@ -19,10 +19,9 @@ import com.buschmais.xo.api.XOManagerFactory;
 
 /**
  * Abstract base implementation of a {@link Store}.
- * <p>
+ *
  * Provides methods for managing the life packages of a store, transactions,
  * resolving descriptors and executing CYPHER queries.
- * </p>
  */
 public abstract class AbstractGraphStore implements Store {
 
@@ -144,6 +143,17 @@ public abstract class AbstractGraphStore implements Store {
     @Override
     public void rollbackTransaction() {
         xoManager.currentTransaction().rollback();
+    }
+
+    @Override
+    public boolean hasActiveTransaction() {
+        boolean activeTx = false;
+
+        if (xoManager.currentTransaction() != null && xoManager.currentTransaction().isActive()) {
+            activeTx = true;
+        }
+
+        return activeTx;
     }
 
     @Override

@@ -25,7 +25,7 @@ import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 /**
  * Implementation of the
  * {@link com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin}
- * for java packages.
+ * for Java packages.
  */
 @Requires(FileDescriptor.class)
 public class ServiceLoaderFileScannerPlugin extends AbstractScannerPlugin<FileResource, ServiceLoaderDescriptor> {

@@ -62,6 +62,15 @@ public class BufferedFileResource implements FileResource {
         fileResource.close();
     }
 
+    @Override
+    public String toString() {
+        try {
+            return fileResource.getFile().toString();
+        } catch (IOException e) {
+            return "unkown";
+        }
+    }
+
     /**
      * Implementation of a re-usable buffered stream.
      */
@@ -90,10 +99,10 @@ public class BufferedFileResource implements FileResource {
         }
 
         /**
-         * Return <code>true</code> if this stream instance can be re-used by
+         * Return `true` if this stream instance can be re-used by
          * another request.
          * 
-         * @return <code>true</code> if this stream instance can be re-used by
+         * @return `true` if this stream instance can be re-used by
          *         another request.
          */
         boolean isReUsable() {

@@ -1,4 +1,4 @@
-<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.0"
+<jqa-plugin:jqassistant-plugin xmlns:jqa-plugin="http://www.buschmais.com/jqassistant/core/plugin/schema/v1.1"
                                name="XML">
     <description>Provides scanners for XML and XSD documents.</description>
     <model>
@@ -14,6 +14,7 @@
         <class>com.buschmais.jqassistant.plugin.xml.api.scanner.XmlScope</class>
     </scope>
     <scanner>
+        <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlSourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XmlFileScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.xml.impl.scanner.XsdFileScannerPlugin</class>
     </scanner>

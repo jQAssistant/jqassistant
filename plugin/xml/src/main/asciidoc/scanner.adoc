@@ -1,22 +1,22 @@
-<<XmlFileScanner>>
 [[XmlFileScanner]]
 == Generic scanner for XML and XSD files
-Imports all XML or XSD files in a generic representation, e.g. namespaces, elements, attributes and text.
+Imports all XML or XSD files in a generic representation, e.g. namespaces,
+elements, attributes and text.
 
-=== :File:Xml
+=== Nodes labled with `:File:Xml:Document`
 Represents an XML file.
 
-.Properties of :File:Xml
+.Properties of `:File:Xml:Document`
 [options="header"]
 |====
 | Name                    | Description
 | xmlVersion              | The XML version
-| standalone              | The "standalone" attribute of the XML declaration.
+| standalone              | The `standalone` attribute of the XML declaration.
 | characterEncodingScheme | The encoding of the XML file.
 | xmlWellFormed           | Indicates if the document is well-formed, i.e. could be parsed.
 |====
 
-.Relations of :File:Xml
+.Relations of :File:Xml:Document
 [options="header"]
 |====
 | Name             | Target label(s)  | Cardinality | Description
@@ -24,10 +24,10 @@ Represents an XML file.
 |====
 
 [[:Xml:Element]]
-=== :Xml:Element
+=== Nodes labled with `:Xml:Element`
 An XML element.
 
-.Relations of :Xml:Element
+.Relations of `:Xml:Element`
 [options="header"]
 |====
 | Name      | Target label(s)             | Cardinality  | Description
@@ -39,10 +39,10 @@ An XML element.
 |====
 
 [[:Xml:Namespace]]
-=== :Xml:Namespace
+=== Nodes labled with `:Xml:Namespace`
 A XML namespace declaration.
 
-.Properties of :Xml:Namespace
+.Properties of `:Xml:Namespace`
 [options="header"]
 |====
 | Name   | Description
@@ -52,10 +52,10 @@ A XML namespace declaration.
 
 
 [[:Xml:Attribute]]
-=== :Xml:Attribute
+=== Nodes labled with `:Xml:Attribute`
 An XML attribute.
 
-.Properties of :Xml:Attribute
+.Properties of `:Xml:Attribute`
 [options="header"]
 |====
 | Name   | Description
@@ -63,7 +63,7 @@ An XML attribute.
 | value  | The value of the attribute.
 |====
 
-.Relations of :Xml:Attribute
+.Relations of `:Xml:Attribute`
 [options="header"]
 |====
 | Name         | Target label(s)    | Cardinality | Description
@@ -72,10 +72,10 @@ An XML attribute.
 
 
 [[:Xml:Text]]
-=== :Xml:Text
+=== Nodes labled with `:Xml:Text`
 A text value of an XML element.
 
-.Properties of :Xml:Element
+.Properties of `:Xml:Element`
 [options="header"]
 |====
 | Name   | Description

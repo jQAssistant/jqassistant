@@ -3,7 +3,8 @@ package com.buschmais.jqassistant.plugin.common.api.scanner;
 import java.io.IOException;
 import java.util.zip.ZipException;
 
-import org.apache.commons.compress.archivers.zip.ZipFile;
+import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.ZipFileResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,8 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
  * Abstract base implementation for archive scanners.
  */
 @Requires(FileDescriptor.class)
-public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescriptor> extends AbstractScannerPlugin<FileResource, D> {
+public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescriptor>
+        extends AbstractScannerPlugin<FileResource, D> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractZipArchiveScannerPlugin.class);
 
@@ -45,7 +47,8 @@ public abstract class AbstractZipArchiveScannerPlugin<D extends ZipArchiveDescri
         D archive = scannerContext.getStore().addDescriptorType(fileDescriptor, getDescriptorType());
         scannerContext.push(ZipArchiveDescriptor.class, archive);
         Scope archiveScope = createScope(currentScope, archive, scannerContext);
-        try (ZipFile zipFile = new ZipFile(file.getFile())){
+
+        try (ZipFileResource zipFile = new ZipFileResource(file.getFile())) {
             scanner.scan(zipFile, path, archiveScope);
             archive.setValid(true);
         } catch (ZipException e) {

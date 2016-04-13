@@ -16,7 +16,6 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.7</version>
 					<executions>
 						<execution>
 							<id>copy-asciidoc-stylesheets</id>
@@ -27,7 +26,7 @@
 							<configuration>
 								<outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
 								<includeTypes>xsl</includeTypes>
-								<includeClassifiers>rules2asciidoc,plugin2asciidoc</includeClassifiers>
+								<includeClassifiers>rules2asciidoc-v2,plugin2asciidoc</includeClassifiers>
 								<stripVersion>true</stripVersion>
 							</configuration>
 						</execution>
@@ -63,26 +62,32 @@
 										</fileMappers>
 										<parameters>
 											<parameter>
-												<name>pluginName</name>
+												<name>artifactId</name>
 												<value>${project.artifactId}</value>
 											</parameter>
 										</parameters>
 									</transformationSet>
 									<transformationSet>
-										<dir>src/main/resources/META-INF/jqassistant-rules</dir>
-										<includes>
-											<include>*.xml</include>
+										<dir>src/main/resources/META-INF/</dir>
+                                        <includes>
+                                            <include>jqassistant-plugin.xml</include>
 										</includes>
 										<stylesheet>
-											${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-rules2asciidoc.xsl
+											${project.build.directory}/xml2asciidoc/jqassistant.plugin.common-rules2asciidoc-v2.xsl
 										</stylesheet>
 										<outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
 										<fileMappers>
-											<fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
-												<pattern>^(.*)\.xml$</pattern>
-												<replacement>$1.xml.adoc</replacement>
-											</fileMapper>
-										</fileMappers>
+                                            <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                                <pattern>^jqassistant-plugin\.xml$</pattern>
+                                                <replacement>concepts-and-constraints.adoc</replacement>
+                                            </fileMapper>
+                                        </fileMappers>
+                                        <parameters>
+                                            <parameter>
+                                                <name>dirOfRules</name>
+                                                <value>${project.basedir}/src/main/resources/META-INF/jqassistant-rules</value>
+                                            </parameter>
+                                        </parameters>
 									</transformationSet>
 								</transformationSets>
 							</configuration>
@@ -126,113 +131,32 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.core</groupId>
-				<artifactId>jqassistant.core.store</artifactId>
-				<version>${project.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.core</groupId>
-				<artifactId>jqassistant.core.scanner</artifactId>
-				<version>${project.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.core</groupId>
-				<artifactId>jqassistant.core.analysis</artifactId>
-				<version>${project.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.core</groupId>
-				<artifactId>jqassistant.core.report</artifactId>
-				<version>${project.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.core</groupId>
-				<artifactId>jqassistant.core.plugin</artifactId>
-				<version>${project.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.cdi</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.ejb3</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.jaxrs</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.jpa2</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.junit</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.osgi</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.m2repo</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.maven3</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.tycho</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.xml</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.buschmais.jqassistant.plugin</groupId>
-				<artifactId>jqassistant.plugin.yaml</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+			<!-- Never ever add here common dependencies for plugins
+			 !   of jQAssistant! Common dependencies must be declared
+             !   in the BOM!
+             !   Oliver B. Fischer, 2016-02-27
+             !-->
 		</dependencies>
 	</dependencyManagement>
 
 	<modules>
-		<module>all</module>
 		<module>bom</module>
+		<module>cdi</module>
 		<module>common</module>
+		<module>ejb3</module>
+		<module>graphml</module>
 		<module>java</module>
 		<module>java8</module>
 		<module>jpa2</module>
-		<module>cdi</module>
-		<module>ejb3</module>
-		<module>graphml</module>
-		<module>jaxrs</module>
 		<module>javaee6</module>
+		<module>jaxrs</module>
 		<module>junit</module>
-		<module>testng</module>
 		<module>m2repo</module>
 		<module>maven3</module>
 		<module>osgi</module>
 		<module>tycho</module>
 		<module>rdbms</module>
+		<module>testng</module>
 		<module>xml</module>
 		<module>yaml</module>
 	</modules>

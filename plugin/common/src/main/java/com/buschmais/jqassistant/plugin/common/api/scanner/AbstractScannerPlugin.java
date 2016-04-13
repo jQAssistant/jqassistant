@@ -8,11 +8,14 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base implementation of a {@link ScannerPlugin}.
  */
 public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements ScannerPlugin<I, D> {
+    private static Logger LOGGER = LoggerFactory.getLogger(AbstractScannerPlugin.class);
 
     private Map<String, Object> properties;
 
@@ -45,6 +48,11 @@ public abstract class AbstractScannerPlugin<I, D extends Descriptor> implements 
     @Override
     public Class<D> getDescriptorType() {
         return getTypeParameter(AbstractScannerPlugin.class, 1);
+    }
+
+    @Override
+    public String getName() {
+        return getClass().getSimpleName();
     }
 
     /**

@@ -35,7 +35,7 @@ public class ExceptionMappingProviderIT extends AbstractJavaPluginIT {
      *             If the test fails.
      */
     @Test
-    public void test_ExceptionMappingProvider_Concept() throws Exception {
+    public void exceptionMappingProviderConcept() throws Exception {
         scanClasses(NotFoundExceptionMapper.class, BookResolver.class);
         assertThat(applyConcept("jaxrs:ExceptionMappingProvider").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();

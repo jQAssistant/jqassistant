@@ -58,7 +58,7 @@ public @interface Generic {
                 return new SourceProvider<ArtifactFileDescriptor>() {
                     @Override
                     public String getName(ArtifactFileDescriptor descriptor) {
-                        return descriptor.getFullQualifiedName();
+                        return descriptor.getFullQualifiedName() != null ? descriptor.getFullQualifiedName() : descriptor.getFileName();
                     }
 
                     @Override

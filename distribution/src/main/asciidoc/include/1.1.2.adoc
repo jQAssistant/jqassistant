@@ -1,0 +1,17 @@
+== 1.1.2
+
+=== Core
+- Upgraded to Neo4j 2.3.2
+
+=== Integrated Server
+- do not create "neo4j-home" in working directory when starting the integrated server
+
+=== Plugins
+
+==== YAML
+
+- No `:YAML:Value` node created for non-existing value anymore.
+
+==== Maven
+- added a relation HAS_EFFECTIVE_MODEL from :Maven:Project to :Maven:Pom nodes representing the effective (i.e. interpolated)
+  model of a Maven project containing all resolved dependencies, plugins, etc.

@@ -11,7 +11,8 @@ import com.buschmais.jqassistant.core.store.api.model.Descriptor;
  * @param <D>
  *            The descriptor type representing the item type.
  */
-public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor> extends AbstractScannerPlugin<I, D> {
+public abstract class AbstractResourceScannerPlugin<I, D extends Descriptor>
+        extends AbstractScannerPlugin<I, D> {
 
     @Override
     public Class<? extends I> getType() {

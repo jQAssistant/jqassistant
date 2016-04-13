@@ -40,4 +40,9 @@ public class TestScannerPlugin1 implements ScannerPlugin<TestItem, TestDescripto
     public TestDescriptor1 scan(TestItem item, String path, Scope scope, Scanner scanner) throws IOException {
         return scanner.getContext().getStore().create(TestDescriptor1.class);
     }
+
+    @Override
+    public String getName() {
+        return TestScannerPlugin1.class.getSimpleName();
+    }
 }

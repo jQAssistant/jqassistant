@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -87,13 +89,13 @@ public class MetricsViewIT extends AbstractUITest {
         Metric firstMetric = new ArrayList<>(metricGroup.getMetrics().values()).get(0);
         // if running the metric succeeded, the metric ID field in the metric
         // page is filled with the metric ID
-        assertEquals(firstMetric.getId(), metricsPage.getCurrentMetricId());
+        assertThat(metricsPage.getCurrentMetricId(), equalTo(firstMetric.getId()));
 
         // the breadcrumb is updated and shows only one element: the first
         // metric id
         List<String> breadcrumb = metricsPage.getBreadcrumb();
-        assertEquals("The breadcrumb must have one element.", 1, breadcrumb.size());
-        assertEquals(firstMetric.getId(), breadcrumb.get(0));
+        assertThat("The breadcrumb must have one element.", breadcrumb, hasSize(1));
+        assertThat(breadcrumb.get(0), equalTo(firstMetric.getId()));
     }
 
     /**
