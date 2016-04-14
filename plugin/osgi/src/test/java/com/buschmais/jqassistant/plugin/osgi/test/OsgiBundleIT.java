@@ -90,10 +90,10 @@ public class OsgiBundleIT extends AbstractJavaPluginIT {
     @Test
     public void importedPackages() throws Exception {
         scanClassPathDirectory(getClassesDirectory(Service.class));
-        query("create (:File:Container:Directory:Package{fqn:'org.junit'})");
+        query("create (:File:Container:Directory:Java:Package{fqn:'org.junit'})");
         assertThat(applyConcept("osgi-bundle:ImportPackage").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Package) RETURN p").getColumn("p");
+        List<PackageDescriptor> packages = query("MATCH (b:Osgi:Bundle)-[:IMPORTS]->(p:Java:Package) RETURN p").getColumn("p");
         assertThat(packages.size(), equalTo(1));
         assertThat(packages, hasItems(packageDescriptor("org.junit")));
         store.commitTransaction();
