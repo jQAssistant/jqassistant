@@ -17,17 +17,16 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.buschmais.jqassistant.scm</groupId>
-                <artifactId>jqassistant-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.sonar</groupId>
                 <artifactId>sonar-packaging-maven-plugin</artifactId>
                 <version>1.13</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <basePlugin>jqassistant</basePlugin>
+                    <basePlugin>jqassistantbase</basePlugin>
+                    <pluginKey>examplerules</pluginKey>
+                    <pluginName>jQAssistant example rules</pluginName>
                     <pluginClass>com.buschmais.jqassistant.examples.sonar.ruleextension.MyJQAssistantExtension</pluginClass>
+                    <addMavenDescriptor>false</addMavenDescriptor>
                 </configuration>
             </plugin>
             <plugin>

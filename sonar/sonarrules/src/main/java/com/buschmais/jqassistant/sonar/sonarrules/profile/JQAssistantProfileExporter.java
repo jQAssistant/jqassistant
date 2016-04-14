@@ -94,7 +94,7 @@ public class JQAssistantProfileExporter extends ProfileExporter {
             for (Set<String> requiredConcepts : executables.values()) {
                 resolveRequiredConcepts(requiredConcepts, concepts);
             }
-            Group group = Group.Builder.newGroup().groupId(profile.getName()).conceptIds(conceptSeverities).constraintIds(constraintSeverities).get();
+            Group group = Group.Builder.newGroup().id(profile.getName()).conceptIds(conceptSeverities).constraintIds(constraintSeverities).get();
             builder.addGroup(group);
             RuleSet ruleSet = builder.getRuleSet();
             RuleSetWriter ruleSetWriter = new RuleSetWriterImpl();
