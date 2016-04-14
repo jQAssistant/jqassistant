@@ -150,16 +150,19 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void namedQueryUniqueDifferentQuery() throws Exception {
-        scanClasses(JpaEntity.class);
+        scanClasses(JpaEntity.class, SingleNamedQueryEntity.class);
         assertThat(applyConcept("jpa2:Entity").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        assertThat(query("MATCH (e:Jpa:Entity {name: 'JpaEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'testQuery', prop: 'value', query: 'foo'}) RETURN n").getColumn("n").size(), equalTo(1));
+        assertThat(query("MATCH (e:Jpa:Entity {name: 'JpaEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'namedQueries', prop: 'value', query: 'foo'}) RETURN n").getColumn("n").size(), equalTo(1));
+        assertThat(query("MATCH (e:Jpa:Entity {name: 'SingleNamedQueryEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'namedQuery', prop: 'value', query: 'foo'}) RETURN n").getColumn("n").size(), equalTo(1));
         assertThat(query("CREATE (n:Jpa:NamedQuery {name: 'otherQuery', query: 'SELECT e'}) RETURN n").getColumn("n").size(), equalTo(1));
-        verifyUniqueRelation(1, 0, 0);
+        verifyUniqueRelation(JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY, 2, 0, 0);
+        verifyUniqueRelation(SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY, 2, 0, 0);
         store.commitTransaction();
         assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation(1, 1, 0);
+        verifyUniqueRelation(JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY, 2, 1, 0);
+        verifyUniqueRelation(SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY, 2, 1, 0);
         store.commitTransaction();
     }
 
@@ -173,16 +176,19 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void namedQueryUniqueSameQuery() throws Exception {
-        scanClasses(JpaEntity.class);
+        scanClasses(JpaEntity.class, SingleNamedQueryEntity.class);
         assertThat(applyConcept("jpa2:Entity").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        assertThat(query("MATCH (e:Jpa:Entity {name: 'JpaEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'testQuery', prop: 'value', query: 'SELECT e FROM JpaEntity e'}) RETURN n").getColumn("n").size(), equalTo(1));
+        assertThat(query("MATCH (e:Jpa:Entity {name: 'JpaEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'namedQueries', prop: 'value', query: 'SELECT e FROM JpaEntity e'}) RETURN n").getColumn("n").size(), equalTo(1));
+        assertThat(query("MATCH (e:Jpa:Entity {name: 'SingleNamedQueryEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'namedQuery', prop: 'value', query: 'SELECT e FROM SingleNamedQueryEntity e'}) RETURN n").getColumn("n").size(), equalTo(1));
         assertThat(query("CREATE (n:Jpa:NamedQuery {name: 'otherQuery', query: 'SELECT e'}) RETURN n").getColumn("n").size(), equalTo(1));
-        verifyUniqueRelation(1, 1, 0);
+        verifyUniqueRelation(JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY, 2, 1, 0);
+        verifyUniqueRelation(SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY, 2, 1, 0);
         store.commitTransaction();
         assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation(1, 1, 0);
+        verifyUniqueRelation(JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY, 2, 1, 0);
+        verifyUniqueRelation(SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY, 2, 1, 0);
         store.commitTransaction();
     }
 
@@ -196,16 +202,19 @@ public class Jpa2IT extends AbstractJavaPluginIT {
      */
     @Test
     public void namedQueryUniqueWithoutQuery() throws Exception {
-        scanClasses(JpaEntity.class);
+        scanClasses(JpaEntity.class, SingleNamedQueryEntity.class);
         assertThat(applyConcept("jpa2:Entity").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        assertThat(query("MATCH (e:Jpa:Entity {name: 'JpaEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'testQuery', prop: 'value'}) RETURN n").getColumn("n").size(), equalTo(1));
+        assertThat(query("MATCH (e:Jpa:Entity {name: 'JpaEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'namedQueries', prop: 'value'}) RETURN n").getColumn("n").size(), equalTo(1));
+        assertThat(query("MATCH (e:Jpa:Entity {name: 'SingleNamedQueryEntity'}) CREATE (e)-[:DEFINES]->(n:Jpa:NamedQuery {name: 'namedQuery', prop: 'value'}) RETURN n").getColumn("n").size(), equalTo(1));
         assertThat(query("CREATE (n:Jpa:NamedQuery {name: 'otherQuery', query: 'SELECT e'}) RETURN n").getColumn("n").size(), equalTo(1));
-        verifyUniqueRelation(1, 0, 1);
+        verifyUniqueRelation(JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY, 2, 0, 1);
+        verifyUniqueRelation(SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY, 2, 0, 1);
         store.commitTransaction();
         assertThat(applyConcept("jpa2:NamedQuery").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
-        verifyUniqueRelation(1, 1, 0);
+        verifyUniqueRelation(JpaEntity.TESTQUERY_NAME, JpaEntity.TESTQUERY_QUERY, 2, 1, 0);
+        verifyUniqueRelation(SingleNamedQueryEntity.TESTQUERY_NAME, SingleNamedQueryEntity.TESTQUERY_QUERY, 2, 1, 0);
         store.commitTransaction();
     }
 
@@ -430,25 +439,27 @@ public class Jpa2IT extends AbstractJavaPluginIT {
     
     /**
      * Verifies a unique NamedQuery with property.
+     * @param queryName The query name.
+     * @param query The query.
      * @param relationCount The number of :DEFINES relations to named query nodes.
      * @param withQueryCount The number of nodes with the query attribute.
      * @param withoutQueryCount The number of nodes without the query attribute.
      */
-    private void verifyUniqueRelation(int relationCount, int withQueryCount, int withoutQueryCount) {
+    private void verifyUniqueRelation(String queryName, String query, int relationCount, int withQueryCount, int withoutQueryCount) {
     	List<Object> column = query("MATCH ()-[r:DEFINES]->(:Jpa:NamedQuery) RETURN r").getColumn("r");
     	if (relationCount == 0) {
     		assertNull(column);
     	} else {
     		assertThat(column.size(), equalTo(relationCount));
     	}
-    	assertThat(query("MATCH (q:Jpa:NamedQuery {prop: 'value'}) RETURN q").getColumn("q").size(), equalTo(1));
-    	column = query("MATCH ()-[:DEFINES]->(q:Jpa:NamedQuery {name: 'testQuery', query: 'SELECT e FROM JpaEntity e'}) RETURN q").getColumn("q");
+    	assertThat(query("MATCH (q:Jpa:NamedQuery {prop: 'value'}) RETURN q").getColumn("q").size(), equalTo(2));
+    	column = query("MATCH ()-[:DEFINES]->(q:Jpa:NamedQuery {name: '" + queryName + "', query: '" + query + "'}) RETURN q").getColumn("q");
     	if (withQueryCount == 0) {
     		assertNull(column);
     	} else {
     		assertThat(column.size(), equalTo(withQueryCount));
     	}
-    	column = query("MATCH (q:Jpa:NamedQuery {name: 'testQuery'}) WHERE q.query IS NULL RETURN q").getColumn("q");
+    	column = query("MATCH (q:Jpa:NamedQuery {name: '" + queryName + "'}) WHERE q.query IS NULL RETURN q").getColumn("q");
     	if (withoutQueryCount == 0) {
     		assertNull(column);
     	} else {

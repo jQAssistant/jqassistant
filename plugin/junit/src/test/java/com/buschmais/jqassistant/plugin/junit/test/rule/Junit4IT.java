@@ -244,11 +244,15 @@ public class Junit4IT extends AbstractJavaPluginIT {
         // create existing relations with and without properties
         assertThat(query("MATCH (t:TestCase {name: 'success'}), (m:Method {name: 'success'}) MERGE (t)-[r:IMPLEMENTED_BY {prop: 'value'}]->(m) RETURN r").getColumn("r").size(), equalTo(1));
         assertThat(query("MATCH (t:TestCase {name: 'failure'}), (m:Method {name: 'failure'}) MERGE (t)-[r:IMPLEMENTED_BY]->(m) RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (t:TestCase {name: 'success'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY {prop: 'value'}]->(c) RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY]->(c) RETURN r").getColumn("r").size(), equalTo(1));
         verifyUniqueRelation("IMPLEMENTED_BY", 2);
+        verifyUniqueRelation("DEFINED_BY", 2);
         store.commitTransaction();
         assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
         store.beginTransaction();
         verifyUniqueRelation("IMPLEMENTED_BY", 4);
+        verifyUniqueRelation("DEFINED_BY", 5);
         store.commitTransaction();
     }
 
