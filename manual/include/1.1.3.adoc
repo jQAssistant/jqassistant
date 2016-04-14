@@ -22,6 +22,7 @@
 ==== Java
 
 - Added an attribute 'sourceFileName' to Java types representing the name of the file the class has been compiled from.
+- Fixed a bug to add a label 'Java' to nodes representing Java packages (e.g. :Java:Package)
 
 ==== GraphML
 
