@@ -16,7 +16,7 @@ import com.buschmais.xo.neo4j.api.annotation.Relation;
  * Describes a Java type.
  */
 @Label(value = "Type", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface TypeDescriptor extends JavaDescriptor, PackageMemberDescriptor {
+public interface TypeDescriptor extends PackageMemberDescriptor {
 
     /**
      * Defines the declares relation used for fields, methods and inner classes.
