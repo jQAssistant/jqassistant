@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.buschmais.jqassistant.examples</groupId>
         <artifactId>jqassistant.examples.plugins</artifactId>
-        <version>1.1.3</version>
+        <version>1.1.4-SNAPSHOT</version>
     </parent>
     <artifactId>jqassistant.examples.plugins.project</artifactId>
 
