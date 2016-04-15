@@ -13,6 +13,15 @@
             <id>sonar</id>
             <!-- tag::build[] -->
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.sonarsource.scanner.maven</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <version>3.0.1</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>com.buschmais.jqassistant.scm</groupId>
@@ -30,12 +39,22 @@
                                     <goal>analyze</goal>
                                 </goals>
                                 <configuration>
+                                    <!--
+                                    General configuration
+                                    -->
+                                    <failOnViolations>false</failOnViolations>
+                                    <severity>critical</severity>
+                                    <!--
+                                    rulesUrl must be set for the jqassistant.sonar.sonarrules extension
+                                    -->
                                     <rulesUrl>http://localhost:9000/profiles/export?format=jqassistant&amp;language=java&amp;name=MyQualityProfile</rulesUrl>
+                                    <!--
+                                    The group name must be set to the name of the quality profile if the jqassistant.sonar.sonarrules
+                                    extension is used
+                                    -->
                                     <groups>
                                         <group>MyQualityProfile</group>
                                     </groups>
-                                    <failOnViolations>false</failOnViolations>
-                                    <severity>critical</severity>
                                 </configuration>
                             </execution>
                         </executions>
@@ -45,13 +64,5 @@
             <!-- end::build[] -->
         </profile>
     </profiles>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.sonar</groupId>
-            <artifactId>jqassistant.sonar.plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-    </dependencies>
 
 </project>
