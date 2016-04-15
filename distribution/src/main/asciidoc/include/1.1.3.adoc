@@ -44,5 +44,5 @@
 
 - Split-up of provisioning of rules into two mutually exclusive plugins "projectrules" (rules are defined within the
   Maven project) and "sonarrules" (administration of rules within SonarQube)
-- Migrated jQAssistant SonarQube plugins to support SonarQube 4.x/5.x (Note: compatibility with 3.x has been dropped)
+- Migrated jQAssistant SonarQube plugins to support SonarQube 4.x/5.1.x (Note: compatibility with 3.x has been dropped)
 

@@ -1,18 +1,42 @@
 ==== jQAssistant Plugin
 
-Projects may retrieve jQAssistant rules from a SonarQube instance using a permalink. Furthermore a sensor is provided
-which will create issues on violated constraints.
+jQAssistant comes with an integration for SonarQube 4.x and 5.1.x which allows creating issues for detected violations.
+The required artifacts are available from the standalone distribution in the folder "sonar/":
 
-The plugin is available from the standalone distribution in the folder "sonar/" and must be copied to the directory
-"extensions/plugins" of the SonarQube server. After startup a repository 'jQAssistant' is available in the view
-'Coding rules' providing all rules which are distributed with jQAssistant.
+- jqassistant.sonar.plugin-${project.version}.jar (plugin)
+- jqassistant.sonar.projectrules-${project.version}.jar (extension)
+- jqassistant.sonar.sonarrules-${project.version}.jar (extension)
 
-New rules can be added or created in the following ways:
+For the installation the plugin and one of the mutually exclusive extensions must be copied to the directory
+"extensions/plugins" of the SonarQube server.
+
+After startup a repository 'jQAssistant' is available in the view 'Coding rules'.
+
+===== Project Rules (jqassistant.sonar.projectrules-${project.version}.jar)
+
+This extension imports issues from an executed jQAssistant run as violations into SonarQube. jQAssistant will use
+concepts and constraints from the local build environment (i.e. rules in Asciidoc or XML documents).
+This setup is useful for seamless integration of jQAssistant violations via 'SonarQube Scanner' (see
+http://docs.sonarqube.org/display/SONAR/Analyzing+with+SonarQube+Scanner+for+Maven[sonar-maven-plugin]) without managing
+the rules in SonarQube and under complete control of the project team.
+
+===== Sonar Rules (jqassistant.sonar.sonarrules-${project.version}.jar)
+
+This extension makes all jQAssistant builtin concepts and constraints available as rules via a permalink that can be
+used by the jQAssistant Maven plugin or CLI via the 'rulesUrl' option. You can activate or define rules within SonarQube
+and assign them to projects. New rules can be added or created in the following ways:
 
 - by creating new concepts and constraints from the pre-defined templates (i.e. "Concept Template" and "Constraint Template")
 - by deploying a custom rule extension (demonstrated by the example "Custom Rule Extension")
 
-Next the following settings must be applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
+This setup is useful for execution of jQAssistant using rules which are managed centrally withing SonarQube.
+
+===== Example Setup
+
+The example demonstrates a setup using rules which are administered within SonarQube, i.e. the extension
+jqassistant.sonar.sonarrules-${project.version}.jar needs to be deployed.
+
+The following settings are applied to the jQAssistant Maven plugin in the pom.xml of the project to be analyzed:
 
 [source,xml]
 .pom.xml
@@ -25,5 +49,5 @@ include::{docRoot}/jqassistant.examples.sonar.project/src/pom.xml[tags=build,ind
 * Using the URL will deactivate all local rules (i.e. from a rule directory or plugins).
 * The specified 'group' must be the name of the quality profile used to analyze the project.
 * The build shall break if a violation is detected, therefore 'failOnViolations' is set to 'true'.
-* The build shall break only if violation is detected with severity equal to or higher than _critical_, therefore severity is set to _critical_
+* The build shall break only if violation is detected with severity equal to or higher than _critical_, therefore severity is set to _critical_.
 

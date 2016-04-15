@@ -5,3 +5,5 @@ This is the base SonarQ plugin for jQAssistant integration. To work this with pl
 There are additional plugins providing that, so you have to combine always two of them exclusive:
 - `sonarrules` + this base plugin
 - `projectrules` + this base plugin
+
+The plugin has been verified to work with SonarQ 5.1.2.

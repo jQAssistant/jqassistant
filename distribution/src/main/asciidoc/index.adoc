@@ -27,6 +27,4 @@ include::include/examples.adoc[]
 
 include::include/plugins.adoc[]
 
-////
-include::devguide.adoc[]
-////
+
