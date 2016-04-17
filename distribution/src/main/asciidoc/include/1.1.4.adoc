@@ -1,0 +1,7 @@
+== 1.1.4
+
+=== Plugins
+
+==== JavaEE6
+
+- Fixed a bug where 'Package' label has not been added to for packages located in the WEB-INF/classes folder of a WAR file

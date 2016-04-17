@@ -53,7 +53,7 @@
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.EarArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebApplicationArchiveScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebApplicationDirectoryScannerPlugin</class>
-        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesScannerPlugin</class>
+        <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WarClassesResourceScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.WebXmlScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.ApplicationXmlScannerPlugin</class>
         <class>com.buschmais.jqassistant.plugin.javaee6.impl.scanner.JsfFaceletScannerPlugin</class>
