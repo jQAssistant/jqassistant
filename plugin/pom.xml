@@ -154,6 +154,8 @@
 		<module>m2repo</module>
 		<module>maven3</module>
 		<module>osgi</module>
+		<module>plugin-parent</module>
+		<module>plugin-rules</module>
 		<module>tycho</module>
 		<module>rdbms</module>
 		<module>testng</module>
