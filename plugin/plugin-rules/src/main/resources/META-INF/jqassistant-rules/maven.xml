@@ -1,0 +1,161 @@
+<jqa:jqassistant-rules xmlns:jqa="http://www.buschmais.com/jqassistant/core/analysis/rules/schema/v1.0">
+
+    <group id="jqa-plugins:maven">
+        <includeConcept refId="jqa-plugins:maven:mark-parent-pom"/>
+
+        <includeConstraint refId="jqa-plugins:maven:artifactid-must-be-given"/>
+        <includeConstraint refId="jqa-plugins:maven:groupid-must-be-given"/>
+        <includeConstraint refId="jqa-plugins:maven:name-must-be-given"/>
+        <includeConstraint refId="jqa-plugins:maven:order-of-pom-elements"/>
+    </group>
+
+    <concept id="jqa-plugins:maven:mark-parent-pom">
+        <description><![CDATA[
+        Marks the parent POM of a jQAssistant plugin project
+        with the label 'ProjectParent'. This will help
+        to simplify all futher queries.
+            ]]></description>
+        <cypher><![CDATA[
+            MATCH           (p:Pom:Maven)
+            WHERE           p.groupId = 'com.buschmais.jqassistant.plugins' AND
+                            p.fileName = '/pom.xml'
+            SET             p:ProjectParent
+            RETURN          p
+        ]]></cypher>
+    </concept>
+
+    <constraint id="jqa-plugins:maven:name-must-be-given">
+        <requiresConcept refId="jqa-plugins:maven:mark-parent-pom"/>
+        <description><![CDATA[
+        The name of the Maven project must be given via the
+        name element. The name must start with 'jQAssistant' and
+        must end with 'Plugin'.
+
+        Examples for valid names are:
+            - jQAssistant Archivers Plugin
+            - jQAssistant Super Hero Plugin
+            ]]>
+        </description>
+        <cypher>
+            MATCH       (n:ProjectParent)-[:HAS_ROOT_ELEMENT]->(r:Xml:Element)
+                            -[:HAS_ELEMENT]->(e {name: 'name'})
+                            -[:HAS_TEXT]->(t)
+            WHERE       t.value STARTS WITH 'jQAssistant' AND
+                        t.value ENDS WITH 'Plugin'
+
+            RETURN
+                CASE count(t)
+                    WHEN 1 THEN 0
+                    ELSE 1
+                END AS missing
+        </cypher>
+        <verify>
+            <aggregation column="missing"/>
+        </verify>
+
+    </constraint>
+
+    <constraint id="jqa-plugins:maven:groupid-must-be-given">
+        <requiresConcept refId="jqa-plugins:maven:mark-parent-pom"/>
+        <description><![CDATA[
+                The Maven group id must be 'com.buschmais.jqassistant.plugins'.
+            ]]>
+        </description>
+        <cypher>
+            MATCH (n:ProjectParent)-[:HAS_ROOT_ELEMENT]->(r:Xml:Element)
+            -[:HAS_ELEMENT]->(e {name: 'artifactId'})
+            -[:HAS_TEXT]->(t)
+            WHERE t.value STARTS WITH 'jqa-' AND
+            t.value ENDS WITH '-plugin'
+
+            RETURN
+            CASE count(t)
+            WHEN 1 THEN 0
+            ELSE 1
+            END AS missing
+        </cypher>
+        <verify>
+            <aggregation column="missing"/>
+        </verify>
+
+    </constraint>
+
+    <constraint id="jqa-plugins:maven:artifactid-must-be-given">
+        <requiresConcept refId="jqa-plugins:maven:mark-parent-pom"/>
+        <description><![CDATA[
+        The Maven artifact id must start with 'jqa-' and must
+        end with '-plugin'.
+
+        Examples for valid artifact ids are:
+            - jqa-superduper-plugin
+            - jqa-archives-plugin
+            ]]>
+        </description>
+        <cypher>
+            MATCH       (n:ProjectParent)-[:HAS_ROOT_ELEMENT]->(r:Xml:Element)
+                            -[:HAS_ELEMENT]->(e {name: 'groupId'})
+                            -[:HAS_TEXT]->(t)
+            WHERE       t.value = 'com.buschmais.jqassistant.plugins'
+
+            RETURN
+                CASE count(t)
+                    WHEN 1 THEN 0
+                    ELSE 1
+                END AS missing
+        </cypher>
+        <verify>
+            <aggregation column="missing"/>
+        </verify>
+
+    </constraint>
+
+
+    <!-- Ordering of elements in the POM -->
+    
+    <constraint id="jqa-plugins:maven:order-of-pom-elements">
+        <requiresConcept refId="jqa-plugins:maven:mark-parent-pom"/>
+        <description>ORDERING
+            &lt;project&gt;
+               &lt;modelVersion&gt;
+               &lt;parent&gt;
+               &lt;groupId&gt;
+               &lt;artifactId&gt;
+               &lt;version&gt;
+               &lt;name&gt;
+               &lt;description&gt;
+               &lt;properties&gt;
+               &lt;dependencyManagement&gt;
+               &lt;dependencies&gt;
+               &lt;build&gt;
+        </description>
+        <cypher>
+            MATCH (n:ProjectParent)-[:HAS_ROOT_ELEMENT]->
+                  (r:Xml:Element {name: 'project'})-[:HAS_FIRST_CHILD]->
+                  (modelVersion:Xml:Element {name: 'modelVersion'})-[:HAS_SIBLING]->
+                  (parentId:Xml:Element {name: 'parent'})-[:HAS_SIBLING]->
+                  (groupId:Xml:Element {name: 'groupId'})-[:HAS_SIBLING]->
+                  (artifactId:Xml:Element {name: 'artifactId'})-[:HAS_SIBLING]->
+                  (version:Xml:Element {name: 'version'})-[:HAS_SIBLING]->
+                  (name:Xml:Element {name: 'name'})-[:HAS_SIBLING]->
+                  (description:Xml:Element {name: 'description'})-[:HAS_SIBLING]->
+                  (properties:Xml:Element {name: 'properties'})-[:HAS_SIBLING]->
+                  (dependencyManagement:Xml:Element {name: 'dependencyManagement'})-[:HAS_SIBLING]->
+                  (dependencies:Xml:Element {name: 'dependencies'})-[:HAS_SIBLING]->
+                  (build:Xml:Element {name: 'build'})
+
+            RETURN
+            CASE count(n)
+                WHEN 1 THEN 0
+                ELSE 1
+            END AS missing
+        </cypher>
+        <verify>
+            <aggregation column="missing"/>
+        </verify>
+
+    </constraint>
+
+
+
+
+</jqa:jqassistant-rules>
