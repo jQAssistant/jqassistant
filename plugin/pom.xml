@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.buschmais.jqassistant.plugin</groupId>
+        <artifactId>jqassistant.plugin</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jqassistant.plugin.plugin-parent</artifactId>
+    <packaging>pom</packaging>
+
+    <inceptionYear>2016</inceptionYear>
+
+    <description>
+        The parent POM for all plugins developed by the jQAssistant team.
+        It defines a standard of actions, checks and dependencies
+        required by each jQAssistant plugin.
+    </description>
+
+    <properties>
+        <!-- This is tricky. This POM configures the jQAssistant run for
+         !   external plugins. The jQAssistant plugin configuration
+         !   can not be applied to this module. Therefore we have to
+         !   skip the execution for this modul!
+         !   Hence this property must be set to false in each plugin
+         !   repository.
+         !-->
+        <jqassistant.skip>true</jqassistant.skip>
+
+        <!-- Create the database not at jqassistant/store
+         !   We should not mix versioned artifacts and temporary data
+         !-->
+        <jqassistant.store.directory>${project.basedir}/.jqa-database</jqassistant.store.directory>
+        <jqassistant.rules.directory>${project.basedir}/jqa-rules</jqassistant.rules.directory>
+    </properties>
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <configuration>
+                        <!-- Remove the Neo4j database also -->
+                        <filesets>
+                            <fileset>
+                                <directory>${jqassistant.store.directory}</directory>
+                            </fileset>
+                        </filesets>
+
+                    </configuration>
+                </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>run-integration-tests</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+
+                <plugin>
+                    <groupId>com.buschmais.jqassistant.scm</groupId>
+                    <artifactId>jqassistant-maven-plugin</artifactId>
+                    <configuration>
+                        <scanIncludes>
+                            <scanInclude>
+                                <path>${project.basedir}</path>
+                            </scanInclude>
+                        </scanIncludes>
+                        <groups>
+                            <group>jqa-plugins:directories-and-files</group>
+                            <group>jqa-plugins:maven</group>
+                        </groups>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant.plugin</groupId>
+                            <artifactId>jqassistant.plugin.plugin-rules</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <!-- Copies the XSL stylesheets to a subdirectory of the
+                 !   the build directory. They are needed to process the XML
+                 !   descriptors of jQAssistant during the generation of the
+                 !   documentation.
+                 !-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-asciidoc-stylesheets</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>transform-xml2asciidoc</id>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- Builds a jar with the Asciidoctor based documenation
+                 !   of the plugin and all needed stuff. This artifact
+                 !   is required for building the user manual of the
+                 !   jQAssistant distribution.
+                 !-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-asciidoc</id>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+</project>
