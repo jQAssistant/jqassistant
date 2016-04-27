@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import com.buschmais.jqassistant.plugin.common.test.scanner.MapBuilder;
+import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.api.model.MethodDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
@@ -77,39 +77,5 @@ public class MethodOverridesIT extends AbstractJavaPluginIT {
         assertThat((MethodDescriptor) row2.get("method"), methodDescriptor(SubClassType.class, "doSomething", String.class));
         assertThat((MethodDescriptor) row2.get("otherMethod"), methodDescriptor(ClassType.class, "doSomething", String.class));
         store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of concept "java:MethodOverrides" with keeping existing properties.
-     * 
-     * @throws IOException
-     *             If the test fails.
-     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void methodOverridesUnique() throws Exception {
-    	scanClasses(ClassType.class, InterfaceType.class);
-        Map<String, Object> params = MapBuilder.<String, Object> create("class", ClassType.class.getName()).put("interface", InterfaceType.class.getName()).get();
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(int)' MERGE (m1)-[r:OVERRIDES {prop: 'value'}]->(m2) RETURN r", params).getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t1:Type)-[:DECLARES]->(m1:Method), (t2:Type)-[:DECLARES]->(m2:Method) WHERE t1.fqn={class} AND t2.fqn={interface} AND m1.name = m2.name AND m1.signature = m2.signature AND m1.signature='void doSomething(java.lang.String)' MERGE (m1)-[r:OVERRIDES]->(m2) RETURN r", params).getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("OVERRIDES", 2);
-        store.commitTransaction();
-        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("OVERRIDES", 2);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies a unique relation with property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
-     */
-    private void verifyUniqueRelation(String relationName, int total) {
-    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
-    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
     }
 }
