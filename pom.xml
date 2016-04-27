@@ -66,6 +66,11 @@
             <name>Dirk Mahler</name>
             <email>dirk.mahler@buschmais.com</email>
         </developer>
+        <developer>
+            <id>plexus</id>
+            <name>Oliver B. Fischer</name>
+            <email>o.b.fischer@swe-blog.net</email>
+        </developer>
     </developers>
 
     <prerequisites>
