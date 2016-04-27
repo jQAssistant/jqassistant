@@ -9,7 +9,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,30 +53,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of concept "classpath:resolveType" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveTypeUnique() throws Exception {
-        scanClasses("a", ClassType.class, InterfaceType.class, ExceptionType.class);
-        scanClasses("b", DependentType.class);
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (:Artifact {fqn: 'b'})-[:REQUIRES]->(t1:Type {name: 'ClassType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Class {name: 'ClassType'}) MERGE (t1)-[r:RESOLVES_TO {prop: 'value'}]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (:Artifact {fqn: 'b'})-[:REQUIRES]->(t1:Type {name: 'InterfaceType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Interface {name: 'InterfaceType'}) MERGE (t1)-[r:RESOLVES_TO]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("RESOLVES_TO", 2);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("RESOLVES_TO", 3);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveMember".
      *
      * @throws IOException
@@ -106,31 +81,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of concept "classpath:resolveMember" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveMemberUnique() throws Exception {
-        scanClasses("a", ClassType.class, EnumType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (f1:Field)<-[:DECLARES]-(:Type)-[:RESOLVES_TO]->(:Type)-[:DECLARES]->(f2:Field) WHERE f1.signature=f2.signature AND f2.name='foo' MERGE (f1)-[r:RESOLVES_TO {prop: 'value', resolved: false}]->(f2) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (f1:Field)<-[:DECLARES]-(:Type)-[:RESOLVES_TO]->(:Type)-[:DECLARES]->(f2:Field) WHERE f1.signature=f2.signature AND f2.name='B' MERGE (f1)-[r:RESOLVES_TO]->(f2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("RESOLVES_TO", 4, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("RESOLVES_TO", 6, 4, 0);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveDependency".
      *
      * @throws IOException
@@ -155,31 +105,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of concept "classpath:resolveDependency" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveDependencyUnique() throws Exception {
-        scanClasses("a", ClassType.class, InterfaceType.class, EnumType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-    	store.beginTransaction();
-    	// create existing relations with and without properties
-        assertThat(query("MATCH (t1:Type {name: 'DependentType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Type {name: 'ClassType'}) MERGE (t1)-[r:DEPENDS_ON {prop: 'value', resolved: false}]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t1:Type {name: 'DependentType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Type {name: 'EnumType'}) MERGE (t1)-[r:DEPENDS_ON]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-      	verifyUniqueRelation("DEPENDS_ON", 19, 0, 1);
-      	store.commitTransaction();
-		assertThat(applyConcept("classpath:ResolveDependency").getStatus(), equalTo(SUCCESS));
-		store.beginTransaction();
-		verifyUniqueRelation("DEPENDS_ON", 20, 3, 0);
-		store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveExtends".
      *
      * @throws IOException
@@ -198,30 +123,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         assertThat(extendedTypes.size(), equalTo(1));
         assertThat(extendedTypes, hasItems(typeDescriptor(ClassType.class)));
         store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of concept "classpath:resolveExtends" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveExtendsUnique() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-    	store.beginTransaction();
-    	// create existing relations with properties
-        assertThat(query("MATCH (t1:Type {name: 'DependentType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Type {name: 'ClassType'}) MERGE (t1)-[r:EXTENDS {prop: 'value', resolved: false}]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-		verifyUniqueRelation("EXTENDS", 3, 0, 1);
-		store.commitTransaction();
-		assertThat(applyConcept("classpath:ResolveExtends").getStatus(), equalTo(SUCCESS));
-		store.beginTransaction();
-		verifyUniqueRelation("EXTENDS", 3, 1, 0);
-		store.commitTransaction();
     }
 
     /**
@@ -246,30 +147,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of concept "classpath:resolveImplements" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveImplementsUnique() throws Exception {
-        scanClasses("a", InterfaceType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-    	store.beginTransaction();
-    	// create existing relations with properties
-        assertThat(query("MATCH (t1:Type {name: 'DependentType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Type {name: 'InterfaceType'}) MERGE (t1)-[r:IMPLEMENTS {prop: 'value', resolved: false}]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-		verifyUniqueRelation("IMPLEMENTS", 2, 0, 1);
-		store.commitTransaction();
-		assertThat(applyConcept("classpath:ResolveImplements").getStatus(), equalTo(SUCCESS));
-		store.beginTransaction();
-		verifyUniqueRelation("IMPLEMENTS", 2, 1, 0);
-		store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveFieldType".
      *
      * @throws IOException
@@ -287,30 +164,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
                 params).getColumn("t");
         assertThat(fieldTypes.size(), equalTo(1));
         assertThat(fieldTypes, hasItems(typeDescriptor(ClassType.class)));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of concept "classpath:resolveFieldType" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveFieldTypeUnique() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties
-        assertThat(query("MATCH (f:Field {name: 'field'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t:Type {name: 'ClassType'}) MERGE (f)-[r:OF_TYPE {prop: 'value', resolved: false}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("OF_TYPE", 11, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveFieldType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("OF_TYPE", 11, 1, 0);
         store.commitTransaction();
     }
 
@@ -337,30 +190,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of the concept "classpath:resolveThrows" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveThrowsUnique() throws Exception {
-        scanClasses("a", ExceptionType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-      	// create existing relations with properties
-        assertThat(query("MATCH (m:Method {name: 'signature'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t:Type {name: 'ExceptionType'}) MERGE (m)-[r:THROWS {prop: 'value', resolved: false}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("THROWS", 2, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveThrows").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("THROWS", 2, 1, 0);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveReturns".
      *
      * @throws IOException
@@ -383,30 +212,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of the concept "classpath:resolveReturns" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveReturnsUnique() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (m:Method {name: 'signature'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t:Type {name: 'ClassType'}) MERGE (m)-[r:RETURNS {prop: 'value', resolved: false}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("RETURNS", 7, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveReturns").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("RETURNS", 7, 1, 0);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveParameterType".
      *
      * @throws IOException
@@ -425,31 +230,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
                 params).getColumn("t");
         assertThat(parameterTypes.size(), equalTo(1));
         assertThat(parameterTypes, hasItems(typeDescriptor(ClassType.class)));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveParameterType" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveParameterTypeUnique() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (:Method {name: 'signature'})-[:HAS]->(p:Parameter), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t:Type {name: 'ClassType'}) MERGE (p)-[r:OF_TYPE {prop: 'value', resolved: false}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (:Method {name: 'fieldAccess'})-[:HAS]->(p:Parameter), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t:Type {name: 'ClassType'}) MERGE (p)-[r:OF_TYPE]->(t) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("OF_TYPE", 12, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveParameterType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("OF_TYPE", 13, 3, 0);
         store.commitTransaction();
     }
 
@@ -498,31 +278,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of the concept "classpath:resolveAnnotationType" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveAnnotationTypeUnique() throws Exception {
-        scanClasses("a", AnnotationType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (:Class {name: 'DependentType'})-[:ANNOTATED_BY]->(t:Annotation), (:Artifact {fqn: 'a'})-[:CONTAINS]->(a:Annotation {name: 'AnnotationType'}) MERGE (t)-[r:OF_TYPE {prop: 'value', resolved: false}]->(a) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (:Field {name: 'field'})-[:ANNOTATED_BY]->(t:Annotation), (:Artifact {fqn: 'a'})-[:CONTAINS]->(a:Annotation {name: 'AnnotationType'}) MERGE (t)-[r:OF_TYPE]->(a) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("OF_TYPE", 14, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveAnnotationType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("OF_TYPE", 16, 4, 0);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveValue".
      *
      * @throws IOException
@@ -552,31 +307,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of the concept "classpath:resolveValue" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveValueUnique() throws Exception {
-        scanClasses("a", ValueType.class, EnumType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveType").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (v:Value {name: 'classValue'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t:Type {name: 'ValueType'}) MERGE (v)-[r:IS {prop: 'value', resolved: false}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (v:Value {name: 'enumValue'}), (f:Field {name: 'B'}) MERGE (v)-[r:IS]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("IS", 4, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveValue").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("IS", 4, 2, 0);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveReads".
      *
      * @throws IOException
@@ -597,78 +327,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         assertThat(reads.size(), equalTo(1));
         ReadsDescriptor readsDescriptor = reads.get(0);
         assertThat(readsDescriptor.getLineNumber(), greaterThan(0));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveReads" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveReadsUniqueSameLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and correct line number
-        assertThat(query("MATCH (m:Method {name: 'fieldAccess'}), (f:Field {name: 'foo'}) MERGE (m)-[r:READS {lineNumber: 17, prop: 'value', resolved: false}]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("READS", 2, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveReads").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("READS", 2, 1, 0);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveReads" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveReadsUniqueDifferentLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and different line number
-        assertThat(query("MATCH (m:Method {name: 'fieldAccess'}), (f:Field {name: 'foo'}) MERGE (m)-[r:READS {lineNumber: 20, prop: 'value', resolved: false}]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("READS", 2, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveReads").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("READS", 3, 1, 1);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveReads" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveReadsUniqueWithoutLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and without line number
-        assertThat(query("MATCH (m:Method {name: 'fieldAccess'}), (f:Field {name: 'foo'}) MERGE (m)-[r:READS {prop: 'value', resolved: false}]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("READS", 2, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveReads").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("READS", 3, 1, 1);
         store.commitTransaction();
     }
 
@@ -697,78 +355,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of the concept "classpath:resolveWrites" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveWritesUniqueSameLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and correct line number
-        assertThat(query("MATCH (m:Method {name: 'fieldAccess'}), (f:Field {name: 'foo'}) MERGE (m)-[r:WRITES {lineNumber: 18, prop: 'value', resolved: false}]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("WRITES", 3, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveWrites").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("WRITES", 3, 1, 0);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveWrites" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveWritesUniqueDifferentLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and different line number
-        assertThat(query("MATCH (m:Method {name: 'fieldAccess'}), (f:Field {name: 'foo'}) MERGE (m)-[r:WRITES {lineNumber: 10, prop: 'value', resolved: false}]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("WRITES", 3, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveWrites").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("WRITES", 4, 1, 1);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveWrites" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveWritesUniqueWithoutLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and without line number
-        assertThat(query("MATCH (m:Method {name: 'fieldAccess'}), (f:Field {name: 'foo'}) MERGE (m)-[r:WRITES {prop: 'value', resolved: false}]->(f) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("WRITES", 3, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveWrites").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("WRITES", 4, 1, 1);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "classpath:resolveInvokes".
      *
      * @throws IOException
@@ -789,78 +375,6 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         assertThat(invocations.size(), equalTo(1));
         InvokesDescriptor invokesDescriptor = invocations.get(0);
         assertThat(invokesDescriptor.getLineNumber(), greaterThan(0));
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveInvokes" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveInvokesUniqueSameLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and correct line number
-        assertThat(query("MATCH (m1:Method {name: 'methodInvocation'}), (m2:Method {name: 'bar'}) MERGE (m1)-[r:INVOKES {lineNumber: 22, prop: 'value', resolved: false}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("INVOKES", 4, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveInvokes").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("INVOKES", 5, 2, 0);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveInvokes" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveInvokesUniqueDifferentLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and different line number
-        assertThat(query("MATCH (m1:Method {name: 'methodInvocation'}), (m2:Method {name: 'bar'}) MERGE (m1)-[r:INVOKES {lineNumber: 10, prop: 'value', resolved: false}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("INVOKES", 4, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveInvokes").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("INVOKES", 6, 2, 1);
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of the concept "classpath:resolveInvokes" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     */
-    @Test
-    public void resolveInvokesUniqueWithoutLine() throws Exception {
-        scanClasses("a", ClassType.class);
-        scanClasses("b", DependentType.class);
-        assertThat(applyConcept("classpath:ResolveMember").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        // create existing relations with properties and without line number
-        assertThat(query("MATCH (m1:Method {name: 'methodInvocation'}), (m2:Method {name: 'bar'}) MERGE (m1)-[r:INVOKES {prop: 'value', resolved: false}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("INVOKES", 4, 0, 1);
-        store.commitTransaction();
-        assertThat(applyConcept("classpath:ResolveInvokes").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("INVOKES", 6, 2, 1);
         store.commitTransaction();
     }
 
@@ -889,38 +403,5 @@ public class ClasspathIT extends AbstractJavaPluginIT {
         scanClasses("a", ClassType.class, InterfaceType.class, AnnotationType.class, EnumType.class, ExceptionType.class, ValueType.class);
         scanClasses("b", DependentType.class);
         assertThat(applyConcept(concept).getStatus(), equalTo(SUCCESS));
-    }
-
-    /**
-     * Verifies a unique relation with property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
-     */
-    private void verifyUniqueRelation(String relationName, int total) {
-    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
-    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
-    }
-
-    /**
-     * Verifies a unique relation with resolved property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
-     * @param resolvedPositive The number of resolved relations with positive property.
-     * @param resolvedNegative The number of resolved relations with negative property.
-     */
-    private void verifyUniqueRelation(String relationName, int total, int resolvedPositive, int resolvedNegative) {
-    	verifyUniqueRelation(relationName, total);
-    	List<Object> column = query("MATCH ()-[r:" + relationName + " {resolved: true}]->() RETURN r").getColumn("r");
-    	if (resolvedPositive == 0) {
-    		assertNull(column);
-    	} else {
-    		assertThat(column.size(), equalTo(resolvedPositive));
-    	}
-    	column = query("MATCH ()-[r:" + relationName + " {resolved: false}]->() RETURN r").getColumn("r");
-    	if (resolvedNegative == 0) {
-    		assertNull(column);
-    	} else {
-    		assertThat(column.size(), equalTo(resolvedNegative));
-    	}
     }
 }
