@@ -15,6 +15,8 @@ import com.buschmais.jqassistant.core.analysis.api.AnalysisException;
 import com.buschmais.jqassistant.plugin.java.api.model.InvokesDescriptor;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
 import com.buschmais.jqassistant.plugin.java.test.matcher.TypeDescriptorMatcher;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.a.ExceptionType;
+import com.buschmais.jqassistant.plugin.java.test.set.rules.classpath.resolve.b.DependentType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.ClassType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InterfaceType;
 import com.buschmais.jqassistant.plugin.java.test.set.rules.java.InvokeClient;
@@ -105,4 +107,82 @@ public class InvokesOverriddenMethodIT extends AbstractJavaPluginIT {
         store.commitTransaction();
     }
 
+    /**
+     * Verifies the uniqueness of the concept "java:InvokeOverriddenMethod" with keeping existing properties.
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveWritesUniqueSameLine() throws Exception {
+        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        // create existing relations with properties and correct line number
+        assertThat(query("MATCH (m1:Method {name: 'invokeInterfaceTypeMethod'})-[:INVOKES {lineNumber: 9}]->(:Method)<-[:OVERRIDES]-(m2:Method {name: 'doSomething'}) MERGE (m1)-[r:INVOKES {lineNumber: 9, prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("INVOKES", 7);
+        store.commitTransaction();
+        assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("INVOKES", 8);
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the uniqueness of the concept "java:InvokeOverriddenMethod" with keeping existing properties.
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveWritesUniqueDifferentLine() throws Exception {
+        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        // create existing relations with properties and different line number
+        assertThat(query("MATCH (m1:Method {name: 'invokeInterfaceTypeMethod'})-[:INVOKES {lineNumber: 9}]->(:Method)<-[:OVERRIDES]-(m2:Method {name: 'doSomething'}) MERGE (m1)-[r:INVOKES {lineNumber: 90, prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("INVOKES", 7);
+        store.commitTransaction();
+        assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("INVOKES", 9);
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the uniqueness of the concept "java:InvokeOverriddenMethod" with keeping existing properties.
+     *
+     * @throws IOException
+     *             If the test fails.
+     * @throws AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void resolveWritesUniqueWithoutLine() throws Exception {
+        scanClasses(ClassType.class, InterfaceType.class, InvokeClient.class);
+        assertThat(applyConcept("java:MethodOverrides").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        // create existing relations with properties and without line number
+        assertThat(query("MATCH (m1:Method {name: 'invokeInterfaceTypeMethod'})-[:INVOKES {lineNumber: 9}]->(:Method)<-[:OVERRIDES]-(m2:Method {name: 'doSomething'}) MERGE (m1)-[r:INVOKES {prop: 'value'}]->(m2) RETURN r").getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("INVOKES", 7);
+        store.commitTransaction();
+        assertThat(applyConcept("java:InvokesOverriddenMethod").getStatus(), equalTo(SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("INVOKES", 9);
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies a unique relation with property. An existing transaction is assumed.
+     * @param relationName The name of the relation.
+     * @param total The total of relations with the given name.
+     */
+    private void verifyUniqueRelation(String relationName, int total) {
+    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
+    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
+    }
 }

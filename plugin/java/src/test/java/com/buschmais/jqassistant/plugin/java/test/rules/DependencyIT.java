@@ -114,6 +114,29 @@ public class DependencyIT extends AbstractJavaPluginIT {
     }
 
     /**
+     * Verifies the uniqueness of concept "dependency:Package" with keeping existing properties.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void packagesUnique() throws Exception {
+        scanClassPathDirectory(getClassesDirectory(DependencyIT.class));
+        store.beginTransaction();
+        // create existing relations with and without properties
+        assertThat(query("MATCH (p1:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test.rules'}), (p2:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test.matcher'}) MERGE (p1)-[r:DEPENDS_ON {prop: 'value'}]->(p2) RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (p1:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test.rules'}), (p2:Package {fqn: 'com.buschmais.jqassistant.plugin.java.test'}) MERGE (p1)-[r:DEPENDS_ON]->(p2) RETURN r").getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("DEPENDS_ON", 2);
+        store.commitTransaction();
+        assertThat(applyConcept("dependency:Package").getStatus(), Matchers.equalTo(SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("DEPENDS_ON", 28);
+        store.commitTransaction();
+    }
+
+    /**
      * Verifies the concept "dependency:Artifact".
      * 
      * @throws java.io.IOException
@@ -193,5 +216,15 @@ public class DependencyIT extends AbstractJavaPluginIT {
         Matcher<Iterable<? super Result<Constraint>>> matcher = hasItem(result(constraint("dependency:ArtifactCycles")));
         assertThat(constraintViolations, matcher);
         store.commitTransaction();
+    }
+
+    /**
+     * Verifies a unique relation with property. An existing transaction is assumed.
+     * @param relationName The name of the relation.
+     * @param total The total of relations with the given name.
+     */
+    private void verifyUniqueRelation(String relationName, int total) {
+    	assertThat(query("MATCH (:Package)-[r:" + relationName + " {prop: 'value'}]->(:Package) RETURN r").getColumn("r").size(), equalTo(1));
+    	assertThat(query("MATCH (:Package)-[r:" + relationName + "]->(:Package) RETURN r").getColumn("r").size(), equalTo(total));
     }
 }

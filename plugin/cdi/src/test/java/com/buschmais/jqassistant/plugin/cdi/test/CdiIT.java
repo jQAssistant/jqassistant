@@ -223,6 +223,29 @@ public class CdiIT extends AbstractJavaPluginIT {
         assertThat(column, hasItem(fieldDescriptor(SessionScopedBean.class, "producerField")));
         store.commitTransaction();
     }
+    
+    /**
+     * Verifies the uniqueness of concept "cdi:Produces" with keeping existing properties.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void producesUnique() throws Exception {
+    	scanClasses(ApplicationScopedBean.class);
+        store.beginTransaction();
+        // create existing relations with and without properties
+        assertThat(query("MATCH (m:Method {name: 'producerMethod'}), (t {fqn:'java.lang.String'}) MERGE (m)-[r:PRODUCES {prop: 'value'}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
+        assertThat(query("MATCH (f:Field {name: 'producerField'}), (t {fqn:'java.lang.String'}) MERGE (f)-[r:PRODUCES]->(t) RETURN r").getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("PRODUCES", 2);
+        store.commitTransaction();
+    	assertThat(applyConcept("cdi:Produces").getStatus(), equalTo(Result.Status.SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("PRODUCES", 2);
+        store.commitTransaction();
+    }
 
     /**
      * Verifies the concept "cdi:Disposes".
@@ -237,6 +260,28 @@ public class CdiIT extends AbstractJavaPluginIT {
         store.beginTransaction();
         assertThat(query("MATCH (p:Parameter)-[:DISPOSES]->(disposedType:Type) RETURN disposedType").getColumn("disposedType"),
                 hasItem(typeDescriptor(String.class)));
+        store.commitTransaction();
+    }
+
+    /**
+     * Verifies the uniqueness of concept "cdi:Disposes" with keeping existing properties.
+     * 
+     * @throws java.io.IOException
+     *             If the test fails.
+     * @throws com.buschmais.jqassistant.core.analysis.api.AnalysisException
+     *             If the test fails.
+     */
+    @Test
+    public void disposesUnique() throws Exception {
+    	scanClasses(DisposesBean.class);
+        store.beginTransaction();
+        // create existing relation with property
+        assertThat(query("MATCH (p:Parameter), (t {fqn:'java.lang.String'}) MERGE (p)-[r:DISPOSES {prop: 'value'}]->(t) RETURN r").getColumn("r").size(), equalTo(1));
+        verifyUniqueRelation("DISPOSES", 1);
+        store.commitTransaction();
+    	assertThat(applyConcept("cdi:Disposes").getStatus(), equalTo(Result.Status.SUCCESS));
+        store.beginTransaction();
+        verifyUniqueRelation("DISPOSES", 1);
         store.commitTransaction();
     }
 
@@ -303,5 +348,15 @@ public class CdiIT extends AbstractJavaPluginIT {
         List<Object> column = query("MATCH (e:Cdi:Default) RETURN e").getColumn("e");
         assertThat(column, hasItem(fieldDescriptor(DefaultBean.class, "bean")));
         store.commitTransaction();
+    }
+    
+    /**
+     * Verifies a unique relation with property. An existing transaction is assumed.
+     * @param relationName The name of the relation.
+     * @param total The total of relations with the given name.
+     */
+    private void verifyUniqueRelation(String relationName, int total) {
+    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
+    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
     }
 }
