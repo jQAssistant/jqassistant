@@ -124,31 +124,6 @@ public class Junit4IT extends AbstractJavaPluginIT {
     }
 
     /**
-     * Verifies the uniqueness of concept "junit4:SuiteClass" with keeping existing properties.
-     *
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void suiteClassUnique() throws Exception {
-        Map<String, Object> params = MapBuilder.<String, Object> create("testClass", TestClass.class.getName()).put("suiteClass", TestSuite.class.getName()).get();
-    	scanClasses(TestSuite.class, TestClass.class);
-        store.beginTransaction();
-        // create existing relation with property
-        assertThat(query("MATCH (s:Type), (c:Type) WHERE s.fqn={suiteClass} AND c.fqn={testClass} MERGE (s)-[r:CONTAINS_TESTCLASS {prop: 'value'}]->(c) RETURN r", params).getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("CONTAINS_TESTCLASS", 1);
-        store.commitTransaction();
-        assertThat(applyConcept("junit4:SuiteClass").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("CONTAINS_TESTCLASS", 1);
-        store.commitTransaction();
-    }
-
-    /**
      * Verifies the concept "junit4:IgnoreTestClassOrMethod".
      * 
      * @throws IOException
@@ -223,36 +198,6 @@ public class Junit4IT extends AbstractJavaPluginIT {
         verifyTestCaseImplementedByMethod(Example.class, "failure");
         verifyTestCaseImplementedByMethod(Example.class, "error");
         verifyTestCaseImplementedByMethod(Example.class, "skipped");
-        store.commitTransaction();
-    }
-
-    /**
-     * Verifies the uniqueness of concept "junit4:TestCaseImplementedByMethod" with keeping existing properties.
-     * 
-     * @throws IOException
-     *             If the test fails.
-     * @throws AnalysisException
-     *             If the test fails.
-     * @throws NoSuchMethodException
-     *             If the test fails.
-     */
-    @Test
-    public void testCaseImplementedByMethodUnique() throws Exception {
-        scanClasses(Example.class);
-        scanClassPathResource(JunitScope.TESTREPORTS, "/TEST-com.buschmais.jqassistant.plugin.junit4.test.set.Example.xml");
-        store.beginTransaction();
-        // create existing relations with and without properties
-        assertThat(query("MATCH (t:TestCase {name: 'success'}), (m:Method {name: 'success'}) MERGE (t)-[r:IMPLEMENTED_BY {prop: 'value'}]->(m) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (m:Method {name: 'failure'}) MERGE (t)-[r:IMPLEMENTED_BY]->(m) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'success'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY {prop: 'value'}]->(c) RETURN r").getColumn("r").size(), equalTo(1));
-        assertThat(query("MATCH (t:TestCase {name: 'failure'}), (c:Type {name: 'Example'}) MERGE (t)-[r:DEFINED_BY]->(c) RETURN r").getColumn("r").size(), equalTo(1));
-        verifyUniqueRelation("IMPLEMENTED_BY", 2);
-        verifyUniqueRelation("DEFINED_BY", 2);
-        store.commitTransaction();
-        assertThat(applyConcept("junit4:TestCaseImplementedByMethod").getStatus(), equalTo(SUCCESS));
-        store.beginTransaction();
-        verifyUniqueRelation("IMPLEMENTED_BY", 4);
-        verifyUniqueRelation("DEFINED_BY", 5);
         store.commitTransaction();
     }
 
@@ -451,15 +396,5 @@ public class Junit4IT extends AbstractJavaPluginIT {
         assertThat(query(
                 "MATCH (testcase:TestCase)-[:IMPLEMENTED_BY]->(testmethod:Method) WHERE testcase.name ='" + testcase + "' RETURN testmethod")
                 .getColumn("testmethod"), hasItem(methodDescriptor(declaringType, testcase)));
-    }
-
-    /**
-     * Verifies a unique relation with property. An existing transaction is assumed.
-     * @param relationName The name of the relation.
-     * @param total The total of relations with the given name.
-     */
-    private void verifyUniqueRelation(String relationName, int total) {
-    	assertThat(query("MATCH ()-[r:" + relationName + " {prop: 'value'}]->() RETURN r").getColumn("r").size(), equalTo(1));
-    	assertThat(query("MATCH ()-[r:" + relationName + "]->() RETURN r").getColumn("r").size(), equalTo(total));
     }
 }
