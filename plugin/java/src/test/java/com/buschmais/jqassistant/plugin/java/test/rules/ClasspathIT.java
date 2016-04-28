@@ -171,11 +171,11 @@ public class ClasspathIT extends AbstractJavaPluginIT {
     	// create existing relations with and without properties
         assertThat(query("MATCH (t1:Type {name: 'DependentType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Type {name: 'ClassType'}) MERGE (t1)-[r:DEPENDS_ON {prop: 'value', resolved: false}]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
         assertThat(query("MATCH (t1:Type {name: 'DependentType'}), (:Artifact {fqn: 'a'})-[:CONTAINS]->(t2:Type {name: 'EnumType'}) MERGE (t1)-[r:DEPENDS_ON]->(t2) RETURN r").getColumn("r").size(), equalTo(1));
-      	verifyUniqueRelation("DEPENDS_ON", 19, 0, 1);
+      	verifyUniqueRelation("DEPENDS_ON", 17, 0, 1);
       	store.commitTransaction();
 		assertThat(applyConcept("classpath:ResolveDependency").getStatus(), equalTo(SUCCESS));
 		store.beginTransaction();
-		verifyUniqueRelation("DEPENDS_ON", 20, 3, 0);
+		verifyUniqueRelation("DEPENDS_ON", 18, 3, 0);
 		store.commitTransaction();
     }
 
