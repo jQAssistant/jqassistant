@@ -37,7 +37,9 @@
               (m1:Field or m1:Method)
               and m1.signature = m2.signature
             MERGE
-              (m1)-[:RESOLVES_TO{resolved:true}]->(m2)
+              (m1)-[r:RESOLVES_TO]->(m2)
+            SET
+              r.resolved=true
             RETURN
               count(m1) as ResolvedMembers
         ]]></cypher>
@@ -55,7 +57,9 @@
             MATCH
               (t:Type)-[:DEPENDS_ON]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[:DEPENDS_ON{resolved:true}]->(t2)
+              (t)-[d:DEPENDS_ON]->(t2)
+            SET
+              d.resolved=true
             RETURN
               count(t) as ResolvedDependencies
         ]]></cypher>
@@ -73,7 +77,9 @@
             MATCH
               (t:Type)-[:EXTENDS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[:EXTENDS{resolved:true}]->(t2)
+              (t)-[e:EXTENDS]->(t2)
+            SET
+              e.resolved=true
             RETURN
               count(t) as ResolvedSuperClass
         ]]></cypher>
@@ -91,7 +97,9 @@
             MATCH
               (t:Type)-[:IMPLEMENTS]->(t1:Type)-[:RESOLVES_TO]->(t2:Type)
             MERGE
-              (t)-[:IMPLEMENTS{resolved:true}]->(t2)
+              (t)-[i:IMPLEMENTS]->(t2)
+            SET
+              i.resolved=true
             RETURN
               count(t1) as ResolvedInterfaces
         ]]></cypher>
@@ -109,7 +117,9 @@
             MATCH
               (f:Field)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (f)-[:OF_TYPE{resolved:true}]->(t)
+              (f)-[o:OF_TYPE]->(t)
+            SET
+              o.resolved=true
             RETURN
               count(t) as ResolvedFieldTypes
         ]]></cypher>
@@ -127,7 +137,9 @@
             MATCH
               (m:Method)-[:THROWS]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (m)-[:THROWS{resolved:true}]->(t)
+              (m)-[r:THROWS]->(t)
+            SET
+              r.resolved=true
             RETURN
               count(t) as ResolvedExceptionTypes
         ]]></cypher>
@@ -145,7 +157,9 @@
             MATCH
               (m:Method)-[:RETURNS]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (m)-[:RETURNS{resolved:true}]->(t)
+              (m)-[r:RETURNS]->(t)
+            SET
+              r.resolved=true
             RETURN
               count(t) as ResolvedReturnTypes
         ]]></cypher>
@@ -163,7 +177,9 @@
             MATCH
               (m:Parameter)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (m)-[:OF_TYPE{resolved:true}]->(t)
+              (m)-[o:OF_TYPE]->(t)
+            SET
+              o.resolved=true
             RETURN
               count(t) as ResolvedParameterTypes
         ]]></cypher>
@@ -181,7 +197,9 @@
             MATCH
               (a:Annotation)-[:OF_TYPE]->(:Type)-[:RESOLVES_TO]->(t:Type)
             MERGE
-              (a)-[:OF_TYPE{resolved:true}]->(t)
+              (a)-[o:OF_TYPE]->(t)
+            SET
+              o.resolved=true
             RETURN
               count(t) as ResolvedAnnotationTypes
         ]]></cypher>
@@ -200,7 +218,9 @@
             MATCH
               (v:Value)-[:IS]->(e)-[:RESOLVES_TO]->(e2)
             MERGE
-              (v)-[:IS{resolved:true}]->(e2)
+              (v)-[i:IS]->(e2)
+            SET
+              i.resolved=true
             RETURN
               count(v) as ResolvedValueTypes
         ]]></cypher>
@@ -218,7 +238,9 @@
             MATCH
               (m:Method)-[r:READS]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
             MERGE
-              (m)-[:READS{lineNumber:r.lineNumber,resolved:true}]->(f2)
+              (m)-[r1:READS {lineNumber: r.lineNumber}]->(f2)
+            SET
+              r1.resolved=true
             RETURN
               count(r) as ResolvedReads
         ]]></cypher>
@@ -236,7 +258,9 @@
             MATCH
               (m:Method)-[w:WRITES]->(f1:Field)-[:RESOLVES_TO]->(f2:Field)
             MERGE
-              (m)-[:WRITES{lineNumber:w.lineNumber,resolved:true}]->(f2)
+              (m)-[w1:WRITES {lineNumber: w.lineNumber}]->(f2)
+            SET
+              w1.resolved=true
             RETURN
               count(w) as ResolvedWrites
         ]]></cypher>
@@ -254,7 +278,9 @@
             MATCH
               (m:Method)-[i:INVOKES]->(m1:Method)-[:RESOLVES_TO]->(m2:Method)
             MERGE
-              (m)-[:INVOKES{lineNumber:i.lineNumber,resolved:true}]->(m2)
+              (m)-[i1:INVOKES {lineNumber: i.lineNumber}]->(m2)
+            SET
+              i1.resolved=true
             RETURN
               count(i) as ResolvedInvocations
         ]]></cypher>

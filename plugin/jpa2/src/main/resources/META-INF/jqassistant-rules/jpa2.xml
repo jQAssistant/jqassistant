@@ -74,7 +74,9 @@
               (namedQuery)-[:HAS]->(nameAttribute:Value{name:'name'}),
               (namedQuery)-[:HAS]->(queryAttribute:Value{name:'query'})
             MERGE
-              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value, query:queryAttribute.value})
+              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value})
+            SET
+              n.query=queryAttribute.value
             RETURN
               entity as Entity, n.name as Name, n.query as Query
             UNION ALL
@@ -84,7 +86,9 @@
               (namedQuery)-[:HAS]->(nameAttribute:Value{name:'name'}),
               (namedQuery)-[:HAS]->(queryAttribute:Value{name:'query'})
             MERGE
-              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value, query:queryAttribute.value})
+              (entity)-[:DEFINES]->(n:Jpa:NamedQuery {name:nameAttribute.value})
+            SET
+              n.query=queryAttribute.value
             RETURN
               entity as Entity, n.name as Name, n.query as Query
         ]]></cypher>
