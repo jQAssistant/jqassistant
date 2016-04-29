@@ -167,6 +167,7 @@ public class ReportHelperTest {
         when(descriptorWithLabel.getValue()).thenReturn("value");
         assertThat(ReportHelper.getLabel(descriptorWithLabel), equalTo("value"));
         assertThat(ReportHelper.getLabel(Collections.singletonList(descriptorWithLabel)), equalTo("[value]"));
+        assertThat(ReportHelper.getLabel(new String[]{"value1", "value2"}), equalTo("[value1,value2]"));
         Map<String, Object> map = new HashMap<>();
         map.put("key1", descriptorWithLabel);
         map.put("key2", "simpleValue");
