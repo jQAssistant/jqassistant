@@ -1,17 +1,8 @@
 package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 
-import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
-import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
-import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import schemacrawler.tools.options.InfoLevel;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -21,6 +12,15 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResour
 import com.buschmais.jqassistant.plugin.java.api.model.PropertyFileDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import schemacrawler.tools.options.InfoLevel;
+
+import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+
+import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
+import static com.google.common.base.CaseFormat.UPPER_CAMEL;
 
 /**
  * Scans a database schema, the connection properties are taken from a property

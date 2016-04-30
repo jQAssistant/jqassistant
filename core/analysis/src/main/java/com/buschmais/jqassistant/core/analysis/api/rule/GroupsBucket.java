@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Collection;
-
 public class GroupsBucket extends AbstractRuleBucket<Group, NoGroupException, DuplicateGroupException> {
     @Override
     protected String getRuleTypeName() {

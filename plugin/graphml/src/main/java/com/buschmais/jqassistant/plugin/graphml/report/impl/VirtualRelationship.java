@@ -1,13 +1,14 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
+
 import java.util.Map;
+
+import com.buschmais.xo.api.CompositeObject;
 
 import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
-
-import com.buschmais.xo.api.CompositeObject;
 
 class VirtualRelationship extends VirtualPropertyContainer implements Relationship {
     static long REL_ID = -1;

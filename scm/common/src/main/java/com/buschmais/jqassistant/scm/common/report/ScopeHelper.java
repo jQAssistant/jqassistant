@@ -3,6 +3,7 @@ package com.buschmais.jqassistant.scm.common.report;
 import java.util.Map;
 
 import com.buschmais.jqassistant.core.scanner.api.Scope;
+
 import org.slf4j.Logger;
 
 /**

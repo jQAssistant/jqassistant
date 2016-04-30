@@ -5,13 +5,13 @@ import java.net.URI;
 import java.util.List;
 import java.util.Properties;
 
-import schemacrawler.tools.options.InfoLevel;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.rdbms.api.RdbmsScope;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.ConnectionDescriptor;
 import com.buschmais.jqassistant.plugin.rdbms.api.model.SchemaDescriptor;
+
+import schemacrawler.tools.options.InfoLevel;
 
 public class ConnectionUriScannerPlugin extends AbstractSchemaScannerPlugin<URI, ConnectionDescriptor> {
 

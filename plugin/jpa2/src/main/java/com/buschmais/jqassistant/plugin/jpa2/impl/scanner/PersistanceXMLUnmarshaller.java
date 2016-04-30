@@ -1,12 +1,13 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.XMLFileFilter;
-import com.sun.java.xml.ns.persistence.Persistence;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.sun.java.xml.ns.persistence.Persistence;
 
 public class PersistanceXMLUnmarshaller {
     private static String JPA_20_NAMESPACE = "http://java.sun.com/xml/ns/persistence";

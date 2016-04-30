@@ -6,6 +6,7 @@ import java.util.List;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.Task;
 import com.buschmais.jqassistant.scm.cli.TaskFactory;
+
 import com.google.common.base.CaseFormat;
 
 /**

@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.core.report.impl;
 
+import java.util.*;
+
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListener;
 import com.buschmais.jqassistant.core.analysis.api.AnalysisListenerException;
 import com.buschmais.jqassistant.core.analysis.api.Result;
@@ -7,8 +9,6 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Concept;
 import com.buschmais.jqassistant.core.analysis.api.rule.Constraint;
 import com.buschmais.jqassistant.core.analysis.api.rule.ExecutableRule;
 import com.buschmais.jqassistant.core.analysis.api.rule.Group;
-
-import java.util.*;
 
 /**
  * A {@link AnalysisListener} implementation which delegates all method calls to the {@link AnalysisListener}s.

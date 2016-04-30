@@ -1,23 +1,25 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import com.buschmais.jqassistant.core.analysis.api.Result;
-import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
-import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
-import com.buschmais.jqassistant.core.store.api.model.SubGraph;
-import com.buschmais.xo.api.CompositeObject;
-import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.PropertyContainer;
-import org.neo4j.graphdb.Relationship;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import com.buschmais.jqassistant.core.analysis.api.Result;
+import com.buschmais.jqassistant.core.shared.reflection.ClassHelper;
+import com.buschmais.jqassistant.core.store.api.model.SubGraph;
+import com.buschmais.jqassistant.plugin.graphml.report.api.GraphMLDecorator;
+import com.buschmais.xo.api.CompositeObject;
+
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.PropertyContainer;
+import org.neo4j.graphdb.Relationship;
 
 import static com.buschmais.jqassistant.plugin.graphml.report.impl.MetaInformation.getLabelsString;
 

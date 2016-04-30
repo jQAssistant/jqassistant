@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
+import java.util.List;
+
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
-
-import java.util.List;
 
 /**
  * Descriptor for a person participating taking part in

@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-
 /**
  * Abstract base class for rules with a severity.
  */

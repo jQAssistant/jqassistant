@@ -5,12 +5,6 @@ import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 
-import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
-import org.jcp.xmlns.xml.ns.javaee.Alternatives;
-import org.jcp.xmlns.xml.ns.javaee.Beans;
-import org.jcp.xmlns.xml.ns.javaee.Decorators;
-import org.jcp.xmlns.xml.ns.javaee.Interceptors;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
@@ -22,7 +16,12 @@ import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeResolver;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
+import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
+
+import org.jcp.xmlns.xml.ns.javaee.Alternatives;
+import org.jcp.xmlns.xml.ns.javaee.Beans;
+import org.jcp.xmlns.xml.ns.javaee.Decorators;
+import org.jcp.xmlns.xml.ns.javaee.Interceptors;
 
 @Requires(FileDescriptor.class)
 public class BeansXmlScannerPlugin extends AbstractXmlFileScannerPlugin<BeansXmlDescriptor> {

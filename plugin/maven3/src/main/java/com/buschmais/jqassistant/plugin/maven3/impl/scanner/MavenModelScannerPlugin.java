@@ -7,9 +7,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.maven.model.*;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -23,6 +20,9 @@ import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.model.*;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.*;
+
+import org.apache.maven.model.*;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 /**
  * Scans Maven model instances.

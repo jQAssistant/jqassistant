@@ -3,9 +3,9 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.eclipse.aether.artifact.Artifact;
-
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+
+import org.eclipse.aether.artifact.Artifact;
 
 public class RepositoryArtifactCoordinates implements Coordinates {
 

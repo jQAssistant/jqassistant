@@ -2,11 +2,12 @@ package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
 import java.io.IOException;
 
+import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
+import com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor;
+
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
-import com.buschmais.jqassistant.plugin.common.api.model.TarArchiveDescriptor;
 
 public class TarArchiveInputStreamScannerPlugin extends AbstractArchiveInputStreamScannerPlugin<TarArchiveInputStream, TarArchiveEntry, TarArchiveDescriptor> {
 

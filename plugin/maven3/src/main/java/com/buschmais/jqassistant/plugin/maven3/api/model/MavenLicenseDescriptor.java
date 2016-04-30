@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import org.apache.maven.model.License;
-
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
+
+import org.apache.maven.model.License;
 
 /**
  * Descriptor for a license entry defined in a pom.xml.

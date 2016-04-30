@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.scm.neo4jserver.impl;
 
-import static java.util.Collections.emptyList;
+import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
+import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 import org.apache.commons.configuration.Configuration;
 import org.neo4j.server.configuration.ServerSettings;
 import org.neo4j.server.security.ssl.KeyStoreInformation;
 
-import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
-import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import static java.util.Collections.emptyList;
 
 /**
  * The customized Neo4j server.

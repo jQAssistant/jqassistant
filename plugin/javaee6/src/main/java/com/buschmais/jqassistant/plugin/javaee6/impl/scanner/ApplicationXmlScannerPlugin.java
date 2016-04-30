@@ -21,7 +21,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.WebModuleDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.EnterpriseApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
+
 import com.sun.java.xml.ns.javaee.ApplicationType;
 import com.sun.java.xml.ns.javaee.DescriptionType;
 import com.sun.java.xml.ns.javaee.DisplayNameType;

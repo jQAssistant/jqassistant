@@ -1,11 +1,6 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-
 import java.io.IOException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -13,7 +8,12 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.plugin.common.api.model.FileContainerDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
+
 import com.google.common.base.Stopwatch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Abstract base implementation for scanner plugins that handle containers of

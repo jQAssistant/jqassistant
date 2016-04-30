@@ -48,7 +48,7 @@ import com.buschmais.jqassistant.plugin.javaee6.api.model.WebXmlDescriptor;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.FileResourceJAXBUnmarshaller;
-import com.buschmais.jqassistant.plugin.xml.api.scanner.JAXBUnmarshaller;
+
 import com.sun.java.xml.ns.javaee.AuthConstraintType;
 import com.sun.java.xml.ns.javaee.AuthMethodType;
 import com.sun.java.xml.ns.javaee.DescriptionType;

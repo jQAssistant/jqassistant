@@ -6,6 +6,11 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
+import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
+import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
+import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -28,11 +33,6 @@ import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.plugin.common.api.scanner.FileResolver;
-import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
-import com.buschmais.jqassistant.plugin.m2repo.api.model.MavenRepositoryDescriptor;
-import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 
 /**
  * Transfers artifacts from a remote repository to a local repository.

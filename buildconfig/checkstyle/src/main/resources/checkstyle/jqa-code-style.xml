@@ -1,0 +1,29 @@
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
+<module name="Checker">
+
+    <module name="TreeWalker">
+
+        <module name="ImportOrder">
+            <property name="groups" value="/^java?./,/^javax?./,/^com.buschmais?./"/>
+            <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
+            <property name="option" value="bottom"/>
+            <!--<property name="sortStaticImportsAlphabetically" value="true"/>-->
+        </module>
+
+        <module name="RedundantImport"/>
+
+        <module name="UnusedImports">
+            <!-- See http://checkstyle.sourceforge.net/config_imports.html#UnusedImports
+             !   for more.
+             !-->
+            <property name="processJavadoc" value="true"/>
+        </module>
+
+
+
+    </module>
+
+</module>

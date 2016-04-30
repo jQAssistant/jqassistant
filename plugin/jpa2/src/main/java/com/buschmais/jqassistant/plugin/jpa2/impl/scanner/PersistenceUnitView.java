@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
-import com.sun.java.xml.ns.persistence.Persistence;
-
 import java.util.List;
 import java.util.Properties;
+
+import com.sun.java.xml.ns.persistence.Persistence;
 
 public class PersistenceUnitView {
     private Persistence.PersistenceUnit unitV20;

@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.xml.api.scanner;
 
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * Utility class for unmarshalling file resources.

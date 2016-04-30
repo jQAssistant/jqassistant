@@ -85,6 +85,7 @@
         <maven.failsafe.version>2.19.1</maven.failsafe.version>
         <maven.compiler.version>3.5.1</maven.compiler.version>
         <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
+        <maven_checkstyle.version>2.17</maven_checkstyle.version>
         <org.apache.maven_version>3.2.5</org.apache.maven_version>
         <org.neo4j_version>2.3.3</org.neo4j_version>
         <org.asciidoctor_version>1.5.4</org.asciidoctor_version>
@@ -187,6 +188,36 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven_checkstyle.version}</version>
+                    <executions>
+                        <execution>
+                            <id>verify-style</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <configLocation>checkstyle/jqa-code-style.xml</configLocation>
+                        <suppressionsLocation>checkstyle/jqa-code-suppressions.xml</suppressionsLocation>
+                        <!--<excludes>**/generated-sources/**/*</excludes>-->
+                        <!--<excludes>^target/generated-sources</excludes>-->
+                    </configuration>
+
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>jqassistant.checkstyle</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
@@ -670,6 +701,7 @@
         <module>plugin</module>
         <module>scm</module>
         <module>distribution</module>
+        <module>buildconfig</module>
     </modules>
 
 </project>

@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.model.Model;
-
 import com.buschmais.jqassistant.core.store.api.model.FullQualifiedNameDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ArtifactDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.NamedDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+
+import org.apache.maven.model.Model;
 
 /**
  * Descriptor for a pom.xml.

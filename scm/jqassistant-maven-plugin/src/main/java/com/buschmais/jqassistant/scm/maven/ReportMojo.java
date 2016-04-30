@@ -9,6 +9,10 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.buschmais.jqassistant.core.report.api.ReportTransformer;
+import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
+import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
+
 import org.apache.maven.doxia.siterenderer.Renderer;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -17,10 +21,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-
-import com.buschmais.jqassistant.core.report.api.ReportTransformer;
-import com.buschmais.jqassistant.core.report.api.ReportTransformerException;
-import com.buschmais.jqassistant.core.report.impl.HtmlReportTransformer;
 
 /**
  * Generates a HTML reports based on analysis results.

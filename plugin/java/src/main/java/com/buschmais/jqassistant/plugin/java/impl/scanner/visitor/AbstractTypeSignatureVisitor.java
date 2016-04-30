@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.signature.SignatureVisitor;
-
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.TypeDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * Abstract implementation of a types signature visitor.

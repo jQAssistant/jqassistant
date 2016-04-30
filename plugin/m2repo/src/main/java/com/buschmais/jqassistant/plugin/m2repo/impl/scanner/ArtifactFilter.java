@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
+import java.util.List;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
-
-import java.util.List;
 
 /**
  * A configurable artifact filter which handles includes and excludes patterns.

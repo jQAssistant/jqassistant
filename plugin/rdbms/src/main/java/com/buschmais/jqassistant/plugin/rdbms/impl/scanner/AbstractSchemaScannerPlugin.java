@@ -1,27 +1,23 @@
 package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 
-import static java.util.Arrays.asList;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
-import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
+import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import schemacrawler.schema.*;
 import schemacrawler.schemacrawler.SchemaCrawlerException;
 import schemacrawler.schemacrawler.SchemaCrawlerOptions;
 import schemacrawler.schemacrawler.SchemaInfoLevel;
 import schemacrawler.tools.options.InfoLevel;
 import schemacrawler.utility.SchemaCrawlerUtility;
-
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
-import com.buschmais.jqassistant.plugin.rdbms.api.model.*;
 
 /**
  * Abstract base class for database schema scanners.
@@ -44,26 +40,18 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Scans the connection identified by the given parameters.
      *
-     * @param url
-     *            The url.
-     * @param user
-     *            The user.
-     * @param password
-     *            The password.
-     * @param properties
-     *            The properties to pass to schema crawler.
-     * @param infoLevelName
-     *            The name of the info level to use.
-     * @param bundledDriverName
-     *            The name of the bundled driver as provided by schema crawler.
-     * @param store
-     *            The store.
+     * @param url               The url.
+     * @param user              The user.
+     * @param password          The password.
+     * @param properties        The properties to pass to schema crawler.
+     * @param infoLevelName     The name of the info level to use.
+     * @param bundledDriverName The name of the bundled driver as provided by schema crawler.
+     * @param store             The store.
      * @return The list of created schema descriptors.
-     * @throws java.io.IOException
-     *             If retrieval fails.
+     * @throws java.io.IOException If retrieval fails.
      */
     protected List<SchemaDescriptor> scanConnection(String url, String user, String password, String infoLevelName, String bundledDriverName,
-            Properties properties, Store store) throws IOException {
+                                                    Properties properties, Store store) throws IOException {
         Catalog catalog = getCatalog(url, user, password, infoLevelName, bundledDriverName, properties);
         return createSchemas(catalog, store);
     }
@@ -71,21 +59,14 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Retrieves the catalog metadata using schema crawler.
      *
-     * @param url
-     *            The url.
-     * @param user
-     *            The user.
-     * @param password
-     *            The password.
-     * @param properties
-     *            The properties to pass to schema crawler.
-     * @param infoLevelName
-     *            The name of the info level to use.
-     * @param bundledDriverName
-     *            The name of the bundled driver as provided by schema crawler.
+     * @param url               The url.
+     * @param user              The user.
+     * @param password          The password.
+     * @param properties        The properties to pass to schema crawler.
+     * @param infoLevelName     The name of the info level to use.
+     * @param bundledDriverName The name of the bundled driver as provided by schema crawler.
      * @return The catalog.
-     * @throws java.io.IOException
-     *             If retrieval fails.
+     * @throws java.io.IOException If retrieval fails.
      */
     protected Catalog getCatalog(String url, String user, String password, String infoLevelName, String bundledDriverName, Properties properties)
             throws IOException {
@@ -120,13 +101,10 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Loads the bundled driver options
      *
-     * @param bundledDriverName
-     *            The driver name.
-     * @param level
-     *            The info level.
+     * @param bundledDriverName The driver name.
+     * @param level             The info level.
      * @return The options or <code>null</code>.
-     * @throws java.io.IOException
-     *             If loading fails.
+     * @throws java.io.IOException If loading fails.
      */
     private SchemaCrawlerOptions getOptions(String bundledDriverName, InfoLevel level) throws IOException {
         for (BundledDriver bundledDriver : BundledDriver.values()) {
@@ -134,19 +112,16 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
                 return bundledDriver.getOptions(level);
             }
         }
-        throw new IOException("Unknown bundled driver name '" + bundledDriverName + "', supported values are " + asList(BundledDriver.values()));
+        throw new IOException("Unknown bundled driver name '" + bundledDriverName + "', supported values are " + Arrays.asList(BundledDriver.values()));
     }
 
     /**
      * Stores the data.
      *
-     * @param catalog
-     *            The catalog.
-     * @param store
-     *            The store.
+     * @param catalog The catalog.
+     * @param store   The store.
      * @return The list of created schema descriptors.
-     * @throws java.io.IOException
-     *             If an error occurs.
+     * @throws java.io.IOException If an error occurs.
      */
     private List<SchemaDescriptor> createSchemas(Catalog catalog, Store store) throws IOException {
         List<SchemaDescriptor> schemaDescriptors = new ArrayList<>();
@@ -172,23 +147,16 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Create the table descriptors.
      *
-     * @param catalog
-     *            The catalog.
-     * @param schema
-     *            The schema.
-     * @param schemaDescriptor
-     *            The schema descriptor.
-     * @param columnTypes
-     *            The cached data types.
-     * @param allColumns
-     *            The map to collect all columns.
-     * @param allForeignKeys
-     *            The map to collect all foreign keys.
-     * @param store
-     *            The store.
+     * @param catalog          The catalog.
+     * @param schema           The schema.
+     * @param schemaDescriptor The schema descriptor.
+     * @param columnTypes      The cached data types.
+     * @param allColumns       The map to collect all columns.
+     * @param allForeignKeys   The map to collect all foreign keys.
+     * @param store            The store.
      */
     private void createTables(Catalog catalog, Schema schema, SchemaDescriptor schemaDescriptor, Map<String, ColumnTypeDescriptor> columnTypes,
-            Map<Column, ColumnDescriptor> allColumns, Set<ForeignKey> allForeignKeys, Store store) {
+                              Map<Column, ColumnDescriptor> allColumns, Set<ForeignKey> allForeignKeys, Store store) {
         for (Table table : catalog.getTables(schema)) {
             TableDescriptor tableDescriptor = getTableDescriptor(table, schemaDescriptor, store);
             Map<String, ColumnDescriptor> localColumns = new HashMap<>();
@@ -235,18 +203,14 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Create a column descriptor.
      *
-     * @param column
-     *            The column.
-     * @param descriptorType
-     *            The type to create.
-     * @param columnTypes
-     *            The column types.
-     * @param store
-     *            The store.
+     * @param column         The column.
+     * @param descriptorType The type to create.
+     * @param columnTypes    The column types.
+     * @param store          The store.
      * @return The column descriptor.
      */
     private <T extends BaseColumnDescriptor> T createColumnDescriptor(BaseColumn column, Class<T> descriptorType,
-            Map<String, ColumnTypeDescriptor> columnTypes, Store store) {
+                                                                      Map<String, ColumnTypeDescriptor> columnTypes, Store store) {
         T columnDescriptor = store.create(descriptorType);
         columnDescriptor.setName(column.getName());
         columnDescriptor.setNullable(column.isNullable());
@@ -261,12 +225,9 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Create the foreign key descriptors.
      *
-     * @param allForeignKeys
-     *            All collected foreign keys.
-     * @param allColumns
-     *            All collected columns.
-     * @param store
-     *            The store.
+     * @param allForeignKeys All collected foreign keys.
+     * @param allColumns     All collected columns.
+     * @param store          The store.
      */
     private void createForeignKeys(Set<ForeignKey> allForeignKeys, Map<Column, ColumnDescriptor> allColumns, Store store) {
         // Foreign keys
@@ -294,16 +255,11 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Create routines, i.e. functions and procedures.
      *
-     * @param routines
-     *            The routines.
-     * @param schemaDescriptor
-     *            The schema descriptor.
-     * @param columnTypes
-     *            The column types.
-     * @param store
-     *            The store.
-     * @throws java.io.IOException
-     *             If an unsupported routine type has been found.
+     * @param routines         The routines.
+     * @param schemaDescriptor The schema descriptor.
+     * @param columnTypes      The column types.
+     * @param store            The store.
+     * @throws java.io.IOException If an unsupported routine type has been found.
      */
     private void createRoutines(Collection<Routine> routines, SchemaDescriptor schemaDescriptor, Map<String, ColumnTypeDescriptor> columnTypes, Store store)
             throws IOException {
@@ -311,23 +267,23 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
             RoutineDescriptor routineDescriptor;
             String returnType;
             switch (routine.getRoutineType()) {
-            case procedure:
-                routineDescriptor = store.create(ProcedureDescriptor.class);
-                returnType = ((ProcedureReturnType) routine.getReturnType()).name();
-                schemaDescriptor.getProcedures().add((ProcedureDescriptor) routineDescriptor);
-                break;
-            case function:
-                routineDescriptor = store.create(FunctionDescriptor.class);
-                returnType = ((FunctionReturnType) routine.getReturnType()).name();
-                schemaDescriptor.getFunctions().add((FunctionDescriptor) routineDescriptor);
-                break;
-            case unknown:
-                routineDescriptor = store.create(RoutineDescriptor.class);
-                returnType = null;
-                schemaDescriptor.getUnknownRoutines().add(routineDescriptor);
-                break;
-            default:
-                throw new IOException("Unsupported routine type " + routine.getRoutineType());
+                case procedure:
+                    routineDescriptor = store.create(ProcedureDescriptor.class);
+                    returnType = ((ProcedureReturnType) routine.getReturnType()).name();
+                    schemaDescriptor.getProcedures().add((ProcedureDescriptor) routineDescriptor);
+                    break;
+                case function:
+                    routineDescriptor = store.create(FunctionDescriptor.class);
+                    returnType = ((FunctionReturnType) routine.getReturnType()).name();
+                    schemaDescriptor.getFunctions().add((FunctionDescriptor) routineDescriptor);
+                    break;
+                case unknown:
+                    routineDescriptor = store.create(RoutineDescriptor.class);
+                    returnType = null;
+                    schemaDescriptor.getUnknownRoutines().add(routineDescriptor);
+                    break;
+                default:
+                    throw new IOException("Unsupported routine type " + routine.getRoutineType());
             }
             routineDescriptor.setName(routine.getName());
             routineDescriptor.setReturnType(returnType);
@@ -353,12 +309,9 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Add the sequences of a schema to the schema descriptor.
      *
-     * @param sequences
-     *            The sequences.
-     * @param schemaDescriptor
-     *            The schema descriptor.
-     * @param store
-     *            The store.
+     * @param sequences        The sequences.
+     * @param schemaDescriptor The schema descriptor.
+     * @param store            The store.
      */
     private void createSequences(Collection<Sequence> sequences, SchemaDescriptor schemaDescriptor, Store store) {
         for (Sequence sequence : sequences) {
@@ -375,10 +328,8 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Create a table descriptor for the given table.
      *
-     * @param store
-     *            The store
-     * @param table
-     *            The table
+     * @param store The store
+     * @param table The table
      * @return The table descriptor
      */
     private TableDescriptor getTableDescriptor(Table table, SchemaDescriptor schemaDescriptor, Store store) {
@@ -404,22 +355,16 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Stores index data.
      *
-     * @param index
-     *            The index.
-     * @param tableDescriptor
-     *            The table descriptor.
-     * @param columns
-     *            The cached columns.
-     * @param indexType
-     *            The index type to create.
-     * @param onColumnType
-     *            The type representing "on column" to create.
-     * @param store
-     *            The store.
+     * @param index           The index.
+     * @param tableDescriptor The table descriptor.
+     * @param columns         The cached columns.
+     * @param indexType       The index type to create.
+     * @param onColumnType    The type representing "on column" to create.
+     * @param store           The store.
      * @return The created index descriptor.
      */
     private <I extends IndexDescriptor> I storeIndex(Index index, TableDescriptor tableDescriptor, Map<String, ColumnDescriptor> columns, Class<I> indexType,
-            Class<? extends OnColumnDescriptor> onColumnType, Store store) {
+                                                     Class<? extends OnColumnDescriptor> onColumnType, Store store) {
         I indexDescriptor = store.create(indexType);
         indexDescriptor.setName(index.getName());
         indexDescriptor.setUnique(index.isUnique());
@@ -438,12 +383,9 @@ public abstract class AbstractSchemaScannerPlugin<I, D extends ConnectionDescrip
     /**
      * Return the column type descriptor for the given data type.
      *
-     * @param columnDataType
-     *            The data type.
-     * @param columnTypes
-     *            The cached data types.
-     * @param store
-     *            The store.
+     * @param columnDataType The data type.
+     * @param columnTypes    The cached data types.
+     * @param store          The store.
      * @return The column type descriptor.
      */
     private ColumnTypeDescriptor getColumnTypeDescriptor(ColumnDataType columnDataType, Map<String, ColumnTypeDescriptor> columnTypes, Store store) {

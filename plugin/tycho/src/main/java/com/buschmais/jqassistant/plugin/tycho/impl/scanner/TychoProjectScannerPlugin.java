@@ -1,19 +1,8 @@
 package com.buschmais.jqassistant.plugin.tycho.impl.scanner;
 
-import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
-import org.codehaus.plexus.components.io.resources.PlexusIoResource;
-import org.codehaus.plexus.util.AbstractScanner;
-import org.eclipse.tycho.core.TychoConstants;
-import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
-import org.eclipse.tycho.core.shared.BuildProperties;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
@@ -23,6 +12,17 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractScannerPlugin;
 import com.buschmais.jqassistant.plugin.java.api.model.JavaArtifactFileDescriptor;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenProjectDirectoryDescriptor;
+
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.components.io.resources.PlexusIoFileResourceCollection;
+import org.codehaus.plexus.components.io.resources.PlexusIoResource;
+import org.codehaus.plexus.util.AbstractScanner;
+import org.eclipse.tycho.core.TychoConstants;
+import org.eclipse.tycho.core.osgitools.project.EclipsePluginProject;
+import org.eclipse.tycho.core.shared.BuildProperties;
+
+import static com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
 
 /**
  * Implementation of a {@link ScannerPlugin} for tycho projects

@@ -18,6 +18,7 @@ import com.buschmais.jqassistant.core.analysis.api.RuleSetWriter;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
+
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**

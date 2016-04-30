@@ -8,6 +8,7 @@ import java.util.Map;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

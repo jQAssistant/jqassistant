@@ -1,12 +1,12 @@
 package com.buschmais.jqassistant.plugin.yaml.impl.scanner;
 
-import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDescriptor;
-import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyDescriptor;
-
 import java.util.ArrayDeque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLDescriptor;
+import com.buschmais.jqassistant.plugin.yaml.api.model.YAMLKeyDescriptor;
 
 class ProcessingContext {
     private ArrayDeque<YAMLDescriptor> stackedContext = new ArrayDeque<>();

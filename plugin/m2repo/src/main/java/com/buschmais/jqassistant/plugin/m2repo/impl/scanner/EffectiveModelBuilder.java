@@ -7,6 +7,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
+import com.buschmais.jqassistant.plugin.maven3.api.scanner.RawModelBuilder;
+
 import org.apache.maven.model.*;
 import org.apache.maven.model.building.*;
 import org.apache.maven.model.resolution.InvalidRepositoryException;
@@ -19,10 +23,6 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.plugin.m2repo.api.ArtifactProvider;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.PomModelBuilder;
-import com.buschmais.jqassistant.plugin.maven3.api.scanner.RawModelBuilder;
 
 /**
  * Implementation of a POM model builder which resolves the effective model.

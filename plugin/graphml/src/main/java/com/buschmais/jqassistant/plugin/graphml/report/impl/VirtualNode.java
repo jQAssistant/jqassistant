@@ -1,26 +1,11 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.RelationshipType;
-import org.neo4j.graphdb.ReturnableEvaluator;
-import org.neo4j.graphdb.StopEvaluator;
-import org.neo4j.graphdb.Traverser;
-import org.neo4j.graphdb.Traverser.Order;
+import java.util.*;
 
 import com.buschmais.jqassistant.core.store.api.model.SubGraph;
+
+import org.neo4j.graphdb.*;
+import org.neo4j.graphdb.Traverser.Order;
 
 public class VirtualNode extends VirtualPropertyContainer implements Node {
 
@@ -215,7 +200,7 @@ public class VirtualNode extends VirtualPropertyContainer implements Node {
 
     @Override
     public Traverser traverse(Order traversalOrder, StopEvaluator stopEvaluator, ReturnableEvaluator returnableEvaluator, RelationshipType relationshipType,
-            Direction direction) {
+                              Direction direction) {
         throw new UnsupportedOperationException();
     }
 

@@ -1,13 +1,13 @@
 package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
-import static java.util.Arrays.asList;
-
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author mh

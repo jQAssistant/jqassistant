@@ -1,11 +1,12 @@
 package com.buschmais.jqassistant.scm.maven;
 
+import java.util.Set;
+
 import com.buschmais.jqassistant.core.store.api.Store;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
-import java.util.Set;
 
 /**
  * Abstract base class for mojos which are executed per module.

@@ -3,14 +3,14 @@ package com.buschmais.jqassistant.plugin.java.impl.scanner.visitor;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-
 import com.buschmais.jqassistant.plugin.common.api.model.ArrayValueDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.model.ValueDescriptor;
 import com.buschmais.jqassistant.plugin.java.api.model.*;
 import com.buschmais.jqassistant.plugin.java.api.scanner.SignatureHelper;
 import com.buschmais.jqassistant.plugin.java.api.scanner.TypeCache;
+
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 public abstract class AbstractAnnotationVisitor<D> extends org.objectweb.asm.AnnotationVisitor {
 

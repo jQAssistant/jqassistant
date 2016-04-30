@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.jpa2.impl.scanner;
 
-import com.sun.java.xml.ns.persistence.Persistence;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.java.xml.ns.persistence.Persistence;
 
 public class PersistenceView {
     private Persistence persistenceV20;

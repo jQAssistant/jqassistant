@@ -1,8 +1,5 @@
 package com.buschmais.jqassistant.plugin.xml.api.model;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.List;
@@ -11,6 +8,9 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Incoming;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Label("Element")
 public interface XmlElementDescriptor extends XmlDescriptor, OfNamespaceDescriptor, SiblingDescriptor {

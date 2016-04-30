@@ -2,13 +2,13 @@ package com.buschmais.jqassistant.plugin.m2repo.impl.scanner;
 
 import java.io.File;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.ArtifactResolver;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.MavenArtifactHelper;
 import com.buschmais.jqassistant.plugin.maven3.api.model.MavenArtifactDescriptor;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class MavenRepositoryArtifactResolver implements ArtifactResolver {
 

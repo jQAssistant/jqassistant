@@ -1,18 +1,20 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+import javax.xml.validation.Schema;
+
 import com.buschmais.jqassistant.core.analysis.api.RuleException;
 import com.buschmais.jqassistant.core.analysis.api.RuleSetReader;
 import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
 import com.buschmais.jqassistant.core.analysis.rules.schema.v1.*;
 import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.validation.Schema;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
 
 /**
  * A {@link com.buschmais.jqassistant.core.analysis.api.RuleSetReader} implementation.

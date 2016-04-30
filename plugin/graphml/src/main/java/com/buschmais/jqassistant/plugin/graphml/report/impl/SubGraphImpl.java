@@ -2,15 +2,13 @@ package com.buschmais.jqassistant.plugin.graphml.report.impl;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
-
-import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Relationship;
 
 import com.buschmais.jqassistant.core.store.api.model.SubGraph;
 import com.buschmais.xo.api.CompositeObject;
+
+import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Relationship;
 
 class SubGraphImpl implements SubGraph {
 

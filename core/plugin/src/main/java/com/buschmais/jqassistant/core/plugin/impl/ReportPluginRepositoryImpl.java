@@ -1,5 +1,9 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.ReportPluginRepository;
@@ -8,10 +12,6 @@ import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
 import com.buschmais.jqassistant.core.plugin.schema.v1.ReportType;
 import com.buschmais.jqassistant.core.report.api.ReportException;
 import com.buschmais.jqassistant.core.report.api.ReportPlugin;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Report plugin repository implementation.

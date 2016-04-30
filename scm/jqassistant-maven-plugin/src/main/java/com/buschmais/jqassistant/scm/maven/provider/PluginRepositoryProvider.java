@@ -3,11 +3,11 @@ package com.buschmais.jqassistant.scm.maven.provider;
 
 import javax.inject.Singleton;
 
-import org.apache.maven.plugin.MojoExecutionException;
-
 import com.buschmais.jqassistant.core.plugin.api.*;
 import com.buschmais.jqassistant.core.plugin.impl.PluginConfigurationReaderImpl;
 import com.buschmais.jqassistant.core.plugin.impl.PluginRepositoryImpl;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 @Singleton
 public class PluginRepositoryProvider {

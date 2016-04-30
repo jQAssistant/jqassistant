@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.rdbms.impl.scanner;
 
+import schemacrawler.schemacrawler.SchemaInfoLevel;
+
 import static com.google.common.base.CaseFormat.LOWER_UNDERSCORE;
 import static com.google.common.base.CaseFormat.UPPER_CAMEL;
-
-import schemacrawler.schemacrawler.SchemaInfoLevel;
 
 /**
  * Defines the information levels of schema crawler.

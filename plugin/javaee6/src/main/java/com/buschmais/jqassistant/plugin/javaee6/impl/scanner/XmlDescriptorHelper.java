@@ -2,6 +2,7 @@ package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.javaee6.api.model.*;
+
 import com.sun.java.xml.ns.javaee.*;
 
 public class XmlDescriptorHelper {

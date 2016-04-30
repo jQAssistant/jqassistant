@@ -10,6 +10,7 @@ import com.buschmais.jqassistant.core.analysis.api.rule.Group;
 import com.buschmais.jqassistant.core.analysis.api.rule.RuleSet;
 import com.buschmais.jqassistant.core.analysis.api.rule.visitor.CollectRulesVisitor;
 import com.buschmais.jqassistant.core.analysis.impl.RuleExecutor;
+
 import org.slf4j.Logger;
 
 /**

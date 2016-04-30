@@ -1,5 +1,7 @@
 package com.buschmais.jqassistant.plugin.javaee6.impl.scanner;
 
+import java.io.IOException;
+
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerPlugin.Requires;
 import com.buschmais.jqassistant.core.scanner.api.Scope;
@@ -8,8 +10,6 @@ import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScann
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.Resource;
 import com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope;
 import com.buschmais.jqassistant.plugin.javaee6.api.scanner.WebApplicationScope;
-
-import java.io.IOException;
 
 @Requires(FileDescriptor.class)
 public class WarClassesResourceScannerPlugin extends AbstractResourceScannerPlugin<Resource, FileDescriptor> {
