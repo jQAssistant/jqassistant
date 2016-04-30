@@ -1,17 +1,12 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
-import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.buschmais.jqassistant.core.scanner.api.Scanner;
 import com.buschmais.jqassistant.core.scanner.api.ScannerContext;
@@ -34,6 +29,15 @@ import com.buschmais.jqassistant.plugin.maven3.api.scanner.MavenScope;
 import com.buschmais.jqassistant.plugin.maven3.api.scanner.ScanInclude;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.ArtifactCoordinates;
 import com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact.MavenArtifactResolver;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static com.buschmais.jqassistant.plugin.java.api.scanner.JavaScope.CLASSPATH;
+import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 
 /**
  * A scanner plugin for maven projects.

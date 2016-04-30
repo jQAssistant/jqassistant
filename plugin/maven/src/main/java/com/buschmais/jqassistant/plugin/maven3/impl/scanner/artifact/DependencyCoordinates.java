@@ -1,12 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
-import org.apache.maven.model.Dependency;
-
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
 
-/**
- * Created by dimahler on 5/5/2015.
- */
+import org.apache.maven.model.Dependency;
+
 public class DependencyCoordinates implements Coordinates {
 
     private Dependency dependency;

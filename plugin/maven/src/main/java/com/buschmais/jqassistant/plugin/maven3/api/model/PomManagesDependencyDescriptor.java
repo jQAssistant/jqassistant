@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
-
 import com.buschmais.xo.neo4j.api.annotation.Relation;
 import com.buschmais.xo.neo4j.api.annotation.Relation.Outgoing;
+
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
 
 /**
  * Descriptor for relation between POM and a managed dependency.

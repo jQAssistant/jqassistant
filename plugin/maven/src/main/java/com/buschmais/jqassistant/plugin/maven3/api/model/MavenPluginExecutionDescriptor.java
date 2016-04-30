@@ -2,11 +2,11 @@ package com.buschmais.jqassistant.plugin.maven3.api.model;
 
 import java.util.List;
 
-import org.apache.maven.model.PluginExecution;
-
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
+
+import org.apache.maven.model.PluginExecution;
 
 /**
  * Descriptor for plugin executions.

@@ -1,11 +1,11 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import org.apache.maven.model.Activation;
-
 import com.buschmais.jqassistant.plugin.common.api.model.PropertyDescriptor;
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
 import com.buschmais.xo.neo4j.api.annotation.Relation;
+
+import org.apache.maven.model.Activation;
 
 /**
  * Descriptor containing conditions within the build runtime environment which

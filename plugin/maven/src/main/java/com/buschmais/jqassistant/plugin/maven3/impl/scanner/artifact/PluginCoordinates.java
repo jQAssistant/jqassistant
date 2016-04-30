@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.maven3.impl.scanner.artifact;
 
-import org.apache.maven.model.Plugin;
-
 import com.buschmais.jqassistant.plugin.maven3.api.artifact.Coordinates;
+
+import org.apache.maven.model.Plugin;
 
 public final class PluginCoordinates implements Coordinates {
 

@@ -1,9 +1,9 @@
 package com.buschmais.jqassistant.plugin.maven3.api.model;
 
-import org.apache.maven.model.ActivationFile;
-
 import com.buschmais.xo.neo4j.api.annotation.Label;
 import com.buschmais.xo.neo4j.api.annotation.Property;
+
+import org.apache.maven.model.ActivationFile;
 
 /**
  * Descriptor for the file specification used to activate a profile.
