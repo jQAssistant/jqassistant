@@ -1,18 +1,20 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
-import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
-import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
-import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
-import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.validation.Schema;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+
+import javax.xml.validation.Schema;
+
+import com.buschmais.jqassistant.core.analysis.impl.XmlHelper;
+import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
+import com.buschmais.jqassistant.core.plugin.schema.v1.JqassistantPlugin;
+import com.buschmais.jqassistant.core.shared.xml.JAXBUnmarshaller;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Plugin reader implementation.

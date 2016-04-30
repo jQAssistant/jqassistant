@@ -3,8 +3,6 @@ package com.buschmais.jqassistant.core.analysis.api.rule;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-
 /**
  * Defines a group of {@link Metric}s.
  */

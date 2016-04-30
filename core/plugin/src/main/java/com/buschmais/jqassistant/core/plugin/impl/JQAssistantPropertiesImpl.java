@@ -3,9 +3,10 @@ package com.buschmais.jqassistant.core.plugin.impl;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.buschmais.jqassistant.core.plugin.api.JQAssistantProperties;
+
 import org.slf4j.LoggerFactory;
 
-import com.buschmais.jqassistant.core.plugin.api.JQAssistantProperties;
 
 /**
  * JQAssistant properties implementation.

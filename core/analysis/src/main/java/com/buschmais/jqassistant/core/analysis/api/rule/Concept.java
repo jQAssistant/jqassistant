@@ -1,10 +1,5 @@
 package com.buschmais.jqassistant.core.analysis.api.rule;
 
-import java.util.Map;
-import java.util.Set;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-
 /**
  * Defines a concept which can be applied.
  *

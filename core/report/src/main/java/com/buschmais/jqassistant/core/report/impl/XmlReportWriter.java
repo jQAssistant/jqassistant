@@ -20,6 +20,7 @@ import com.buschmais.jqassistant.core.report.api.LanguageHelper;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
 import com.buschmais.jqassistant.core.report.api.SourceProvider;
 import com.buschmais.jqassistant.core.store.api.model.Descriptor;
+
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
