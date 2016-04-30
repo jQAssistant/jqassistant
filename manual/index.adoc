@@ -33,6 +33,4 @@ include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
 
 include::include/plugins.adoc[]
 
-////
-include::devguide.adoc[]
-////
+

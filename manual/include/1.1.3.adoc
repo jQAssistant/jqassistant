@@ -1,15 +1,15 @@
 == 1.1.3
 
 === Core
+- Upgraded to Neo4j 2.3.3
 - Added support for severity on groups
-- Upgraded the XML schema for rules to 1.1 keeping backward compatibility to 1.0
-- Upgraded the XML schema for plugins to 1.1 keeping backward compatibility to 1.0
+- Upgraded the XML schema for rules and plugins to 1.1 keeping backward compatibility to their 1.0 versions
 - Added rule specific report properties
 - Allow selection of a specific report type per rule
 
 === Maven
 - Added configuration property 'useExecutionRootAsProjectRoot' for reactors with incomplete parent hierarchies
-- Added configuration property 'executeAppliedConcepts' for repeated execution of concepts that have already beend
+- Added configuration property 'executeAppliedConcepts' for repeated execution of concepts that have already been
   applied before (to ease development of concepts)
 - Added configuration property 'continueOnError' to continue scanning even if a plugin fails with an unrecoverable error
 
@@ -22,6 +22,7 @@
 ==== Java
 
 - Added an attribute 'sourceFileName' to Java types representing the name of the file the class has been compiled from.
+- Fixed a bug to add a label 'Java' to nodes representing Java packages (e.g. :Java:Package)
 
 ==== GraphML
 
@@ -40,4 +41,8 @@
   providing detail information for test cases that have a result "FAILURE" or "ERROR"
 
 === SonarQube
+
+- Split-up of provisioning of rules into two mutually exclusive plugins "projectrules" (rules are defined within the
+  Maven project) and "sonarrules" (administration of rules within SonarQube)
+- Migrated jQAssistant SonarQube plugins to support SonarQube 4.x/5.1.x (Note: compatibility with 3.x has been dropped)
 
