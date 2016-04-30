@@ -161,6 +161,9 @@ public final class ReportHelper {
                 Descriptor descriptor = (Descriptor) value;
                 String label = getLanguageLabel(descriptor);
                 return label != null ? label : descriptor.toString();
+            } else if (value.getClass().isArray()) {
+                Object[] objects = (Object[]) value;
+                return getLabel(Arrays.asList(objects));
             } else if (value instanceof Iterable) {
                 StringBuilder sb = new StringBuilder();
                 for (Object o : ((Iterable) value)) {
