@@ -1,10 +1,10 @@
 package com.buschmais.jqassistant.plugin.common.api.scanner.filesystem;
 
-import org.apache.commons.compress.archivers.zip.ZipFile;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 /**
  * Represents a ZIP file resource.

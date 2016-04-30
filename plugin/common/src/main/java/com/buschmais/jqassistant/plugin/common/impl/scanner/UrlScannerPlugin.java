@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.common.impl.scanner;
 
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -15,6 +13,8 @@ import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.AbstractResourceScannerPlugin;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.AbstractFileResource;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
 
 /**
  * Scanner plugin which handles URLs as input.

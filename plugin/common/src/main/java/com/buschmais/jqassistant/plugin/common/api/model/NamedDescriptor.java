@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.plugin.common.api.model;
 
-import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.Named;
-
 import com.buschmais.jqassistant.plugin.common.api.report.Generic;
+
+import static com.buschmais.jqassistant.plugin.common.api.report.Generic.GenericLanguageElement.Named;
 
 /**
  * Defines a descriptor having a name.
