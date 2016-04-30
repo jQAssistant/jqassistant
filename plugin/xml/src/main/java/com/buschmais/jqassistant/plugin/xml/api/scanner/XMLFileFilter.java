@@ -8,10 +8,10 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
 
 /**
  * Provides functionality to verify if a file resource represents a specific XML
