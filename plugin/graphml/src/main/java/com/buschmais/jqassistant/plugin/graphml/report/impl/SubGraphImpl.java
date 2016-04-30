@@ -21,10 +21,10 @@ class SubGraphImpl implements SubGraph {
     private Map<Long, CompositeObject> nodes = new LinkedHashMap<>();
     private Map<Long, CompositeObject> relationships = new LinkedHashMap<>();
 
-    public SubGraphImpl() {
+    SubGraphImpl() {
     }
 
-    public SubGraphImpl(Map m) {
+    SubGraphImpl(Map m) {
         if (!isSubgraph(m))
             throw new IllegalArgumentException("the argument m (" + m + ") is not a subgraph map");
         if (m.containsKey("nodes"))
@@ -47,17 +47,7 @@ class SubGraphImpl implements SubGraph {
      */
     @Override
     public Collection<CompositeObject> getNodes() {
-        Set<CompositeObject> allNodes = new LinkedHashSet<>();
-        if (parentNode != null) {
-            allNodes.add(parentNode);
-        }
-
-        allNodes.addAll(nodes.values());
-        for (SubGraph subgraph : subgraphs.values()) {
-            allNodes.addAll(subgraph.getNodes());
-        }
-
-        return allNodes;
+        return nodes.values();
     }
 
     /**
@@ -66,12 +56,7 @@ class SubGraphImpl implements SubGraph {
      * @return a list of all nodes
      */
     public Collection<CompositeObject> getRelationships() {
-        Set<CompositeObject> allRels = new LinkedHashSet<>();
-        allRels.addAll(relationships.values());
-        for (SubGraph subgraph : subgraphs.values()) {
-            allRels.addAll(subgraph.getRelationships());
-        }
-        return allRels;
+        return relationships.values();
     }
 
     public void add(Object value) {
@@ -101,7 +86,7 @@ class SubGraphImpl implements SubGraph {
         }
     }
 
-    public static boolean isSubgraph(Map m) {
+    static boolean isSubgraph(Map m) {
         return ROLE_GRAPH.equals(m.get("role"));
     }
 
@@ -120,7 +105,7 @@ class SubGraphImpl implements SubGraph {
 
         private Relationship rel;
 
-        public RelationWrapper(Relationship rel) {
+        RelationWrapper(Relationship rel) {
             this.rel = rel;
         }
 
@@ -151,7 +136,7 @@ class SubGraphImpl implements SubGraph {
 
         private Node node;
 
-        public NodeWrapper(Node node) {
+        NodeWrapper(Node node) {
             this.node = node;
         }
 

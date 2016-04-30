@@ -1,15 +1,15 @@
 package com.buschmais.jqassistant.plugin.graphml.test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.*;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,6 +19,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -44,7 +47,7 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GraphMLReportPlugin.class);
 
-    public static final String REPORT_DIR = "target/graphml";
+    private static final String REPORT_DIR = "target/graphml";
 
     static class TestClass {
 
@@ -85,24 +88,47 @@ public class GraphMLReportPluginIT extends AbstractJavaPluginIT {
     }
 
     @Test
-    public void renderGraphMLUsingWithSubgraph() throws Exception {
+    public void renderGraphMLUsingSubgraph() throws Exception {
         Document doc = scanAndWriteReport("test:DeclaredMembersWithSubgraph.graphml", A.class, B.class);
         XPathFactory xPathfactory = XPathFactory.newInstance();
         XPath xpath = xPathfactory.newXPath();
-        XPathExpression classExpression = xpath.compile("/graphml/graph/node[contains(@labels,':Class')]/data[@key='fqn']");
+//        XPathExpression classExpression = xpath.compile("/graphml/graph/node[contains(@labels,':Class')]/data[@key='fqn']");
+        XPathExpression classExpression = xpath.compile("/graphml/graph/node[contains(@labels,':Class')]");
+        XPathExpression methodExpression = xpath.compile("graph/node[contains(@labels,':Method')]");
+        XPathExpression fqnExpression = xpath.compile("data[@key='fqn']");
+        XPathExpression nameExpression = xpath.compile("data[@key='name']");
+
         NodeList classes = (NodeList) classExpression.evaluate(doc, XPathConstants.NODESET);
 
-        String[] classNames = {A.class.getName(), B.class.getName()};
-        for (int i = 0; i < classes.getLength(); i++) {
-            Node item = classes.item(i);
-            String value = item.getTextContent();
-            Assert.assertTrue("Assert that " + value + " is in list " + Arrays.toString(classNames), ArrayUtils.contains(classNames, value));
+        Map<String, Class<?>> expectedClasses = new HashMap<>();
+        expectedClasses.put(A.class.getName(), A.class);
+        expectedClasses.put(B.class.getName(), B.class);
+        int classCount = classes.getLength();
+        assertThat("Number of classes in report does not match.", classCount, equalTo(expectedClasses.size()));
+        for (int i = 0; i < classCount; i++) {
+            Node classNode = classes.item(i);
+            Node classNameNode = (Node) fqnExpression.evaluate(classNode, XPathConstants.NODE);
+            String className = classNameNode.getTextContent();
+            assertThat("Expecting class in report.", expectedClasses.keySet().contains(className), equalTo(true));
+            Class<?> expectedClass = expectedClasses.get(className);
+            Set<String> expectedMethods = new HashSet<>();
+            expectedMethods.add("<init>");
+            for (Method method : expectedClass.getDeclaredMethods()) {
+                expectedMethods.add(method.getName());
+            }
+            NodeList methods = (NodeList) methodExpression.evaluate(classNode, XPathConstants.NODESET);
+            int methodCount = methods.getLength();
+            assertThat(methodCount, equalTo(expectedMethods.size()));
+            for (int k = 0; k < methodCount; k++) {
+                Node methodNode = methods.item(k);
+                Node methodNameNode = (Node) nameExpression.evaluate(methodNode, XPathConstants.NODE);
+                String methodName = methodNameNode.getTextContent();
+                assertThat(expectedMethods.contains(methodName), equalTo(true));
+            }
         }
-
         XPathExpression edgeExpression = xpath.compile("//edge");
         NodeList edges = (NodeList) edgeExpression.evaluate(doc, XPathConstants.NODESET);
         assertThat(edges.getLength(), equalTo(2));
-
     }
 
     @Test

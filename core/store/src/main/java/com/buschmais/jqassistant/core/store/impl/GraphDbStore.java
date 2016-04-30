@@ -4,7 +4,6 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.GraphDatabaseAPI;
 
 import com.buschmais.xo.api.XOManager;
 import com.buschmais.xo.api.XOManagerFactory;
@@ -35,8 +34,8 @@ public class GraphDbStore extends AbstractGraphStore {
     }
 
     @Override
-    protected GraphDatabaseAPI getGraphDatabaseService(XOManager xoManager) {
-        return (GraphDatabaseAPI) graphDatabaseService;
+    protected GraphDatabaseService getGraphDatabaseService(XOManager xoManager) {
+        return graphDatabaseService;
     }
 
     @Override

@@ -58,24 +58,25 @@ class XmlGraphMLWriter {
             GraphMLNamespaceContext context = new GraphMLNamespaceContext(decorator.getNamespaces(), decorator.getSchemaLocations());
             xmlWriter.setNamespaceContext(context);
             writeHeader(xmlWriter, context);
-            writeKeyTypes(xmlWriter, graph);
+            Collection<CompositeObject> allCompositeNodes = getAllNodes(graph);
+            Collection<CompositeObject> allCompositeRelationships = getAllRelationships(graph);
+            writeKeyTypes(xmlWriter, allCompositeNodes, allCompositeRelationships);
             decorator.writeKeys();
 
             writeSubgraph(graph, xmlWriter, decorator);
 
             // filter and write edges
-            Collection<CompositeObject> allCoNodes = graph.getNodes();
-            Set<Long> allNodes = new HashSet<>();
-            for (CompositeObject compositeObject : allCoNodes) {
-                allNodes.add(((Node) compositeObject.getDelegate()).getId());
+            Set<Long> allNodeIds = new HashSet<>();
+            for (CompositeObject compositeObject : allCompositeNodes) {
+                allNodeIds.add(((Node) compositeObject.getDelegate()).getId());
             }
 
-            for (CompositeObject coRel : graph.getRelationships()) {
-                Relationship rel = coRel.getDelegate();
-                long startId = rel.getStartNode().getId();
-                long endId = rel.getEndNode().getId();
-                if (allNodes.contains(startId) && allNodes.contains(endId)) {
-                    writeRelationship(xmlWriter, decorator, coRel);
+            for (CompositeObject compositeRelationship : allCompositeRelationships) {
+                Relationship relationship = compositeRelationship.getDelegate();
+                long startId = relationship.getStartNode().getId();
+                long endId = relationship.getEndNode().getId();
+                if (allNodeIds.contains(startId) && allNodeIds.contains(endId)) {
+                    writeRelationship(xmlWriter, decorator, compositeRelationship);
                 }
             }
 
@@ -128,15 +129,15 @@ class XmlGraphMLWriter {
         }
     }
 
-    private void writeKeyTypes(XMLStreamWriter writer, SubGraph ops) throws IOException, XMLStreamException {
+    private void writeKeyTypes(XMLStreamWriter writer, Collection<CompositeObject> allNodes, Collection<CompositeObject> allRelationships) throws IOException, XMLStreamException {
         Map<String, Class> keyTypes = new HashMap<>();
         keyTypes.put("labels", String.class);
-        for (CompositeObject node : ops.getNodes()) {
+        for (CompositeObject node : allNodes) {
             updateKeyTypes(keyTypes, node);
         }
         writeKeyTypes(writer, keyTypes, "node");
         keyTypes.clear();
-        for (CompositeObject rel : ops.getRelationships()) {
+        for (CompositeObject rel : allRelationships) {
             updateKeyTypes(keyTypes, rel);
         }
         writeKeyTypes(writer, keyTypes, "edge");
@@ -276,6 +277,28 @@ class XmlGraphMLWriter {
 
     private void newLine(XMLStreamWriter writer) throws XMLStreamException {
         writer.writeCharacters("\n");
+    }
+
+    private Collection<CompositeObject> getAllNodes(SubGraph graph) {
+        Set<CompositeObject> allNodes = new LinkedHashSet<>();
+        CompositeObject parentNode = graph.getParentNode();
+        if (parentNode != null) {
+            allNodes.add(parentNode);
+        }
+        allNodes.addAll(graph.getNodes());
+        for (SubGraph subgraph : graph.getSubGraphs()) {
+            allNodes.addAll(subgraph.getNodes());
+        }
+        return allNodes;
+    }
+
+    private Collection<CompositeObject> getAllRelationships(SubGraph graph) {
+        Set<CompositeObject> allRels = new LinkedHashSet<>();
+        allRels.addAll(graph.getRelationships());
+        for (SubGraph subgraph : graph.getSubGraphs()) {
+            allRels.addAll(subgraph.getRelationships());
+        }
+        return allRels;
     }
 
 }

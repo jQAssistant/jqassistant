@@ -13,5 +13,5 @@ import com.buschmais.xo.neo4j.api.annotation.Label;
  */
 @Java(Package)
 @Label(value = "Package", usingIndexedPropertyOf = FullQualifiedNameDescriptor.class)
-public interface PackageDescriptor extends PackageMemberDescriptor, DirectoryDescriptor, FileContainerDescriptor {
+public interface PackageDescriptor extends JavaDescriptor, PackageMemberDescriptor, DirectoryDescriptor, FileContainerDescriptor {
 }

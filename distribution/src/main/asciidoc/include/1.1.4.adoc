@@ -1,0 +1,18 @@
+// Already merged from branch 1.1 to master.
+// Becomes valid after releasing 1.1.4
+
+== 1.1.4
+
+=== Core
+
+- Added support array properties in reports (e.g. HTML)
+
+=== Plugins
+
+==== JavaEE6
+
+- Fixed a bug where 'Package' label has not been added to for packages located in the WEB-INF/classes folder of a WAR file
+
+==== GraphML
+
+- Fixed a bug where sub graphs have not been evaluated properly
