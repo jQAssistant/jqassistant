@@ -1,7 +1,5 @@
 package com.buschmais.jqassistant.plugin.junit.impl.scanner;
 
-import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
@@ -23,12 +21,10 @@ import com.buschmais.jqassistant.core.scanner.api.Scope;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.plugin.common.api.model.FileDescriptor;
 import com.buschmais.jqassistant.plugin.common.api.scanner.filesystem.FileResource;
-import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDescriptor;
-import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseDetailDescriptor;
-import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseErrorDescriptor;
-import com.buschmais.jqassistant.plugin.junit.api.model.TestCaseFailureDescriptor;
-import com.buschmais.jqassistant.plugin.junit.api.model.TestSuiteDescriptor;
+import com.buschmais.jqassistant.plugin.junit.api.model.*;
 import com.buschmais.jqassistant.plugin.xml.api.scanner.AbstractXmlFileScannerPlugin;
+
+import static com.buschmais.jqassistant.plugin.junit.api.scanner.JunitScope.TESTREPORTS;
 
 @Requires(FileDescriptor.class)
 public class TestReportScannerPlugin extends AbstractXmlFileScannerPlugin<TestSuiteDescriptor> {
