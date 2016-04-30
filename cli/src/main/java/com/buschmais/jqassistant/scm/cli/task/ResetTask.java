@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import org.apache.commons.cli.CommandLine;
-
 import com.buschmais.jqassistant.core.store.api.Store;
+
+import org.apache.commons.cli.CommandLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

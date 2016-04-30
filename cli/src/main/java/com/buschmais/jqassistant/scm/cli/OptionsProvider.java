@@ -1,8 +1,8 @@
 package com.buschmais.jqassistant.scm.cli;
 
-import org.apache.commons.cli.Option;
-
 import java.util.List;
+
+import org.apache.commons.cli.Option;
 
 /**
  * @author jn4, Kontext E GmbH, 17.02.14

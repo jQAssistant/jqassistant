@@ -4,9 +4,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * The classloader used for loading the plugins.
  * 

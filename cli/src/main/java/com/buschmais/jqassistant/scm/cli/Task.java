@@ -2,9 +2,9 @@ package com.buschmais.jqassistant.scm.cli;
 
 import java.util.Map;
 
-import org.apache.commons.cli.CommandLine;
-
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
+
+import org.apache.commons.cli.CommandLine;
 
 /**
  * @author jn4, Kontext E GmbH, 17.02.14

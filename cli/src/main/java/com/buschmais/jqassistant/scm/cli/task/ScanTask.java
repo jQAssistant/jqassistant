@@ -1,18 +1,5 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
-import com.buschmais.jqassistant.core.scanner.api.*;
-import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
-import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
-import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,6 +7,20 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import com.buschmais.jqassistant.core.scanner.api.*;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerContextImpl;
+import com.buschmais.jqassistant.core.scanner.impl.ScannerImpl;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.scm.cli.CliConfigurationException;
+import com.buschmais.jqassistant.scm.cli.CliExecutionException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author jn4, Kontext E GmbH, 23.01.14
