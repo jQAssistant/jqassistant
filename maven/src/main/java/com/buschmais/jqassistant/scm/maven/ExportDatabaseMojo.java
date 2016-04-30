@@ -3,6 +3,9 @@ package com.buschmais.jqassistant.scm.maven;
 import java.io.*;
 import java.util.List;
 
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -12,9 +15,6 @@ import org.neo4j.cypher.export.DatabaseSubGraph;
 import org.neo4j.cypher.export.SubGraph;
 import org.neo4j.cypher.export.SubGraphExporter;
 import org.neo4j.graphdb.GraphDatabaseService;
-
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 
 /**
  * Exports the database as a file containing cypher statements.

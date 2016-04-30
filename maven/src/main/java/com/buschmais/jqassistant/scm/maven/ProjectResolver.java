@@ -1,14 +1,14 @@
 package com.buschmais.jqassistant.scm.maven;
 
-import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Resolver for root modules in a multi-module hierarchy.

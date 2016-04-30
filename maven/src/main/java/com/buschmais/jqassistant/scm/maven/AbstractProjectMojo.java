@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.buschmais.jqassistant.core.store.api.Store;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-
-import com.buschmais.jqassistant.core.store.api.Store;
 
 /**
  * Abstract base class for mojos which are executed per project.
