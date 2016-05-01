@@ -22,7 +22,7 @@
             <property name="processJavadoc" value="true"/>
         </module>
 
-
+        <module name="NeedBraces"/>
 
     </module>
 

@@ -54,10 +54,13 @@ public abstract class AbstractMojo extends org.apache.maven.plugin.AbstractMojo 
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
+            if (this == o) {
                 return true;
-            if (!(o instanceof ExecutionKey))
+            }
+
+            if (!(o instanceof ExecutionKey)) {
                 return false;
+            }
 
             ExecutionKey that = (ExecutionKey) o;
 

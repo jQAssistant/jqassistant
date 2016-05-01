@@ -23,14 +23,22 @@ class SubGraphImpl implements SubGraph {
     }
 
     SubGraphImpl(Map m) {
-        if (!isSubgraph(m))
+
+        if (!isSubgraph(m)) {
             throw new IllegalArgumentException("the argument m (" + m + ") is not a subgraph map");
-        if (m.containsKey("nodes"))
+        }
+
+        if (m.containsKey("nodes")) {
             add(m.get("nodes"));
-        if (m.containsKey("relationships"))
+        }
+
+        if (m.containsKey("relationships")) {
             add(m.get("relationships"));
-        if (m.containsKey("parent"))
+        }
+
+        if (m.containsKey("parent")) {
             parentNode = (CompositeObject) m.get("parent");
+        }
     }
 
     @Override
@@ -79,8 +87,9 @@ class SubGraphImpl implements SubGraph {
             Node node = (Node) value;
             nodes.put(node.getId(), new NodeWrapper(node));
         } else if (value instanceof Iterable) {
-            for (Object o : (Iterable) value)
+            for (Object o : (Iterable) value) {
                 add(o);
+            }
         }
     }
 

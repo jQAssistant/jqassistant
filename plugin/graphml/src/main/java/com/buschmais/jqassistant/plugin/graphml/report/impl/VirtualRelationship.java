@@ -25,8 +25,11 @@ class VirtualRelationship extends VirtualPropertyContainer implements Relationsh
 
     public VirtualRelationship(Map<String, Object> m) {
         super(m);
-        if (!isRelationship(m))
+
+        if (!isRelationship(m)) {
             throw new IllegalArgumentException("Not a relationship-map " + m);
+        }
+
         this.start = getDelegate(m.get("startNode"));
         this.end = getDelegate(m.get("endNode"));
         this.type = DynamicRelationshipType.withName((String) m.get("type"));
@@ -63,10 +66,14 @@ class VirtualRelationship extends VirtualPropertyContainer implements Relationsh
 
     @Override
     public Node getOtherNode(Node node) {
-        if (node.equals(start))
+        if (node.equals(start)) {
             return end;
-        if (node.equals(end))
+        }
+
+        if (node.equals(end)) {
             return start;
+        }
+
         throw new IllegalArgumentException("Node is neither start nor end-node " + node);
     }
 

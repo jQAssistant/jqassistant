@@ -39,8 +39,9 @@ public abstract class RuleSource {
     protected Type selectTypeById() {
         String path = getId();
         for (Type type : Type.values()) {
-            if (type.matches(path))
+            if (type.matches(path)) {
                 return type;
+            }
         }
         return null;
     }
@@ -53,10 +54,13 @@ public abstract class RuleSource {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (o == null || getClass() != o.getClass())
+        }
+
+        if (o == null || getClass() != o.getClass()) {
             return false;
+        }
         RuleSource that = (RuleSource) o;
         return getId().equals(that.getId());
     }

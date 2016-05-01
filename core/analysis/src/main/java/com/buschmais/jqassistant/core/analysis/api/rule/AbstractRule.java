@@ -49,15 +49,17 @@ public abstract class AbstractRule implements Rule {
 
     @Override
     public final boolean equals(Object o) {
-        if (this == o)
+        if (this == o) {
             return true;
-        if (!(o instanceof AbstractRule))
+        }
+
+        if (!(o instanceof AbstractRule)) {
             return false;
+        }
 
         AbstractRule that = (AbstractRule) o;
 
         return id.equals(that.id);
-
     }
 
     @Override

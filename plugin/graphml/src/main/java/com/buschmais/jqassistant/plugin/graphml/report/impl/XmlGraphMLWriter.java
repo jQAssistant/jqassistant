@@ -148,8 +148,11 @@ class XmlGraphMLWriter {
     private void writeKeyTypes(XMLStreamWriter writer, Map<String, Class> keyTypes, String forType) throws IOException, XMLStreamException {
         for (Map.Entry<String, Class> entry : keyTypes.entrySet()) {
             String type = MetaInformation.typeFor(entry.getValue(), MetaInformation.GRAPHML_ALLOWED);
-            if (type == null)
+
+            if (type == null) {
                 continue;
+            }
+
             writer.writeEmptyElement("key");
             writer.writeAttribute("id", entry.getKey());
             writer.writeAttribute("for", forType);
@@ -168,18 +171,23 @@ class XmlGraphMLWriter {
         for (String prop : pc.getPropertyKeys()) {
             Object value = pc.getProperty(prop);
             Class storedClass = keyTypes.get(prop);
+
             if (storedClass == null) {
                 keyTypes.put(prop, value.getClass());
                 continue;
             }
-            if (storedClass == void.class || storedClass.equals(value.getClass()))
+
+            if (storedClass == void.class || storedClass.equals(value.getClass())) {
                 continue;
+            }
+
             keyTypes.put(prop, void.class);
         }
     }
 
-    private void writeNode(XMLStreamWriter writer, GraphMLDecorator decorator, CompositeObject composite, boolean withEnd) throws IOException,
-            XMLStreamException {
+    private void writeNode(XMLStreamWriter writer, GraphMLDecorator decorator, CompositeObject composite, boolean withEnd)
+            throws IOException, XMLStreamException {
+
         if (decorator.isWriteNode(composite)) {
             Node node = composite.getDelegate();
             writer.writeStartElement("node");
@@ -189,8 +197,10 @@ class XmlGraphMLWriter {
             writeLabelsAsData(writer, node);
             decorator.writeNodeElements(composite);
             writeProps(writer, node);
-            if (withEnd)
+
+            if (withEnd) {
                 endElement(writer);
+            }
         }
     }
 
@@ -200,14 +210,18 @@ class XmlGraphMLWriter {
 
     private void writeLabels(XMLStreamWriter writer, Node node) throws IOException, XMLStreamException {
         String labelsString = getLabelsString(node);
-        if (!labelsString.isEmpty())
+        if (!labelsString.isEmpty()) {
             writer.writeAttribute("labels", labelsString);
+        }
     }
 
     private void writeLabelsAsData(XMLStreamWriter writer, Node node) throws IOException, XMLStreamException {
         String labelsString = getLabelsString(node);
-        if (labelsString.isEmpty())
+
+        if (labelsString.isEmpty()) {
             return;
+        }
+
         writeData(writer, "labels", labelsString);
     }
 
@@ -249,8 +263,11 @@ class XmlGraphMLWriter {
     private void writeData(XMLStreamWriter writer, String prop, Object value) throws IOException, XMLStreamException {
         writer.writeStartElement("data");
         writer.writeAttribute("key", prop);
-        if (value != null)
+
+        if (value != null) {
             writer.writeCharacters(value.toString());
+        }
+
         writer.writeEndElement();
     }
 

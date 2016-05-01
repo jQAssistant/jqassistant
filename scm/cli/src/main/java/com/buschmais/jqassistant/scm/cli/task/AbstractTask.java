@@ -83,8 +83,9 @@ public abstract class AbstractTask implements Task {
         if (options.hasOption(option)) {
             List<String> names = new ArrayList<>();
             for (String elementName : options.getOptionValues(option)) {
-                if (elementName.trim().length() > 0)
+                if (elementName.trim().length() > 0) {
                     names.add(elementName);
+                }
             }
             return names;
         }

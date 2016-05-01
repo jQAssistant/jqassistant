@@ -144,13 +144,20 @@ public class TypeCache {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o)
+            if (this == o) {
                 return true;
-            if (!(o instanceof CachedType))
+            }
+
+            if (!(o instanceof CachedType)) {
                 return false;
+            }
+
             CachedType that = (CachedType) o;
-            if (!typeDescriptor.equals(that.typeDescriptor))
+
+            if (!typeDescriptor.equals(that.typeDescriptor)) {
                 return false;
+            }
+
             return true;
         }
 
