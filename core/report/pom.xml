@@ -22,9 +22,10 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.analysis</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-        <groupId>com.sun.xml.bind</groupId>
+            <groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 		</dependency>
 		<dependency>

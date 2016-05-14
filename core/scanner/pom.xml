@@ -11,6 +11,7 @@
 		<dependency>
 			<groupId>com.buschmais.jqassistant.core</groupId>
 			<artifactId>jqassistant.core.store</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
