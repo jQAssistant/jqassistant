@@ -26,9 +26,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git@github.com:buschmais/jqa-core-framework.git</connection>
-        <developerConnection>scm:git:git@github.com:buschmais/jqa-core-framework.git</developerConnection>
-        <url>https://github.com/buschmais/jqa-core-framework</url>
+        <connection>scm:git:git@github.com:buschmais/jqa-plugin-parent.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-plugin-parent.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-plugin-parent</url>
     </scm>
 
     <description>
