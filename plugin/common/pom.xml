@@ -2,12 +2,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.buschmais.jqassistant.plugin</groupId>
-        <artifactId>jqassistant.plugin</artifactId>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>jqassistant.plugin.plugin-parent</artifactId>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jqassistant.plugin.common</artifactId>
+
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-plugin-common.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-plugin-common.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-plugin-common</url>
+    </scm>
 
     <build>
         <plugins>
@@ -54,13 +72,13 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${project.version}</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>com.buschmais.jqassistant.plugin</groupId>-->
+                <!--<artifactId>jqassistant.plugin.bom</artifactId>-->
+                <!--<type>pom</type>-->
+                <!--<scope>import</scope>-->
+                <!--<version>${project.version}</version>-->
+            <!--</dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -103,13 +121,11 @@
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
-            <version>${org.codehaus.groovy_version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-core</artifactId>
-            <version>${org.jruby_version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

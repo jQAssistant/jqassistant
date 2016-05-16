@@ -1,0 +1,8 @@
+= jQAssistant Plugin Common
+
+The jQAssistant Plugin Common provides common classes
+used by all other plugins.
+
+
+
+
