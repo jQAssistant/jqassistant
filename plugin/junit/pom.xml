@@ -23,6 +23,12 @@
         </license>
     </licenses>
 
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-junit-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-junit-plugin.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-junit-plugin</url>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
