@@ -11,6 +11,11 @@
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>jqa-junit-plugin</artifactId>
 
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
     <licenses>
         <license>
             <name>GNU General Public License, v3</name>
