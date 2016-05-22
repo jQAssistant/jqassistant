@@ -30,7 +30,6 @@
 
     <properties>
         <com.buschmais.xo.version>0.6.1</com.buschmais.xo.version>
-        <maven-jaxb2-pluigin.version>0.9.0</maven-jaxb2-pluigin.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
         <junit.version>4.12</junit.version>
         <org.asciidoctor.version>1.5.4</org.asciidoctor.version>
@@ -152,50 +151,6 @@
     </dependencyManagement>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.jvnet.jaxb2.maven2</groupId>
-                    <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>${maven-jaxb2-pluigin.version}</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                            <configuration>
-                                <schemaDirectory>src/main/resources/META-INF/xsd</schemaDirectory>
-                                <args>
-                                    <arg>-mark-generated</arg>
-                                    <arg>-Xdefault-value</arg>
-                                    <!-- Uncomment this to enable the nocomment-plugin
-                                     !   Oliver B. Fischer, 2016-03-08
-                                     ! <arg>-Xno-comment</arg>
-                                     !-->
-                                </args>
-                                <plugins>
-                                    <plugin>
-                                        <groupId>org.jvnet.jaxb2_commons</groupId>
-                                        <artifactId>jaxb2-default-value</artifactId>
-                                        <version>1.1</version>
-                                    </plugin>
-                                    <!--
-                                     ! Plugin is not available at the moment at Maven Central.
-                                     ! Oliver B. Fischer, 2016-03-08
-                                     !
-                                    <plugin>
-                                        <groupId>com.buschmais.x2j.nocomment</groupId>
-                                        <artifactId>nocomment-plugin</artifactId>
-                                        <version>0.1-SNAPSHOT</version>
-                                    </plugin>
-                                     !-->
-                                </plugins>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <!--<plugin>-->
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
