@@ -10,17 +10,16 @@
     <artifactId>jqassistant.scm.neo4jserver</artifactId>
 
     <properties>
+        <org.neo4j_version>2.3.3</org.neo4j_version>
         <org.seleniumhq_version>2.45.0</org.seleniumhq_version>
+        <org.slf4j.version>1.7.13</org.slf4j.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
             <artifactId>jqassistant.core.plugin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.scm</groupId>
-            <artifactId>jqassistant.scm.common</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.neo4j.app</groupId>
@@ -85,7 +84,7 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.7</version>
         </dependency>
-	   <dependency>
+        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
             <version>1.9.7</version>
@@ -94,10 +93,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+            <version>4.11</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>java-hamcrest</artifactId>
+            <version>2.0.0.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -129,6 +131,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
+            <version>${org.slf4j.version}</version>
         </dependency>
     </dependencies>
 </project>
