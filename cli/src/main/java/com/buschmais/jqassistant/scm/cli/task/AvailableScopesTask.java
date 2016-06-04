@@ -3,7 +3,7 @@ package com.buschmais.jqassistant.scm.cli.task;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
-import com.buschmais.jqassistant.scm.common.report.ScopeHelper;
+import com.buschmais.jqassistant.core.splittingsupport.scm.ScopeHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

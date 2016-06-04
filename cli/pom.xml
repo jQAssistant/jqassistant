@@ -10,6 +10,7 @@
     <properties>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
+        <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
     </properties>
 
     <build>
@@ -20,73 +21,85 @@
             </testResource>
         </testResources>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.buschmais.jqassistant.scm.cli.Main</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-lib</id>
-                        <phase>package</phase>
-                    </execution>
-                    <execution>
-                        <id>attach-asciidoc</id>
-                        <phase>package</phase>
-                    </execution>
-                    <execution>
-                        <id>attach-distribution</id>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>unpack-test-distribution</id>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <phase>pre-integration-test</phase>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <version>${project.version}</version>
-                                    <classifier>distribution</classifier>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${test.distribution}</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <environmentVariables>
-                        <JQASSISTANT_HOME>${test.jqassistant.home}</JQASSISTANT_HOME>
-                    </environmentVariables>
-                </configuration>
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<mainClass>com.buschmais.jqassistant.scm.cli.Main</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-assembly-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>attach-lib</id>-->
+                        <!--<phase>package</phase>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                        <!--<id>attach-asciidoc</id>-->
+                        <!--<phase>package</phase>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                        <!--<id>attach-distribution</id>-->
+                        <!--<phase>package</phase>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-dependency-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>unpack-test-distribution</id>-->
+                        <!--<goals>-->
+                            <!--<goal>unpack</goal>-->
+                        <!--</goals>-->
+                        <!--<phase>pre-integration-test</phase>-->
+                        <!--<configuration>-->
+                            <!--<artifactItems>-->
+                                <!--<artifactItem>-->
+                                    <!--<groupId>${project.groupId}</groupId>-->
+                                    <!--<artifactId>${project.artifactId}</artifactId>-->
+                                    <!--<version>${project.version}</version>-->
+                                    <!--<classifier>distribution</classifier>-->
+                                    <!--<type>zip</type>-->
+                                    <!--<overWrite>true</overWrite>-->
+                                    <!--<outputDirectory>${test.distribution}</outputDirectory>-->
+                                <!--</artifactItem>-->
+                            <!--</artifactItems>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<environmentVariables>-->
+                        <!--<JQASSISTANT_HOME>${test.jqassistant.home}</JQASSISTANT_HOME>-->
+                    <!--</environmentVariables>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqa-distribution-specification</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -106,11 +119,15 @@
             <artifactId>jqassistant.core.report</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.scm</groupId>
-            <artifactId>jqassistant.scm.common</artifactId>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.shared</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.buschmais.jqassistant.scm</groupId>
+            <groupId>com.buschmais.jqassistant.core</groupId>
+            <artifactId>jqassistant.core.splitting-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
             <artifactId>jqassistant.scm.neo4jserver</artifactId>
         </dependency>
 
@@ -121,109 +138,89 @@
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.yaml</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.xml</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-xml-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.common</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.java</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqa-java8-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.java8</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-javaee6-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.javaee6</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-jpa2-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.jpa2</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-cdi-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.cdi</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.ejb3</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-ejb3-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.graphml</artifactId>
-            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jqa-jaxrs-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.jaxrs</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-junit-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.junit</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.testng</artifactId>
-            <version>${project.version}</version>
+            <artifactId>jqa-testng-plugin</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.m2repo</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.maven3</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.osgi</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.tycho</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
             <artifactId>jqassistant.plugin.rdbms</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -237,10 +234,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
+            <version>1.7.13</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.11</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -250,6 +249,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <version>1.9.5</version>
         </dependency>
     </dependencies>
 </project>

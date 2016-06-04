@@ -1,24 +1,23 @@
 package com.buschmais.jqassistant.scm.cli.task;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.buschmais.jqassistant.core.plugin.api.PluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.report.api.ReportHelper;
+import com.buschmais.jqassistant.core.splittingsupport.scm.RuleHelper;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
 import com.buschmais.jqassistant.scm.cli.CliExecutionException;
 import com.buschmais.jqassistant.scm.cli.Task;
-import com.buschmais.jqassistant.scm.common.report.RuleHelper;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jn4, Kontext E GmbH, 24.01.14
