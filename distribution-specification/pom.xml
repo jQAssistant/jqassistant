@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>jqa-uber-parent</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jqa-distribution-specification</artifactId>
+
+    <packaging>pom</packaging>
+    <inceptionYear>2016</inceptionYear>
+
+    <description>
+        This POM specifies the version of all modules of jQAssistant which will
+        be part of the commandline distribution of jQAssistant and dependencies of
+        the Maven plugin of jQAssistant.
+    </description>
+
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <properties>
+        <jqa-cdi-plugin.version>1.2.0-SNAPSHOT</jqa-cdi-plugin.version>
+        <jqa-core.version>1.2.0-SNAPSHOT</jqa-core.version>
+        <jqa-graphml-plugin.version>1.2.0-SNAPSHOT</jqa-graphml-plugin.version>
+        <jqa-ejb3-plugin.version>1.2.0-SNAPSHOT</jqa-ejb3-plugin.version>
+        <jqa-java8-plugin.version>1.2.0-SNAPSHOT</jqa-java8-plugin.version>
+        <jqa-javaee6-plugin.version>1.2.0-SNAPSHOT</jqa-javaee6-plugin.version>
+        <jqa-java-plugin.version>1.2.0-SNAPSHOT</jqa-java-plugin.version>
+        <jqa-jaxrs-plugin.version>1.2.0-SNAPSHOT</jqa-jaxrs-plugin.version>
+        <jqa-jpa2-plugin.version>1.2.0-SNAPSHOT</jqa-jpa2-plugin.version>
+        <jqa-junit-plugin.version>1.2.0-SNAPSHOT</jqa-junit-plugin.version>
+        <jqa-osgi-plugin.version>1.2.0-SNAPSHOT</jqa-osgi-plugin.version>
+        <jqa-m2repo-plugin.version>1.2.0-SNAPSHOT</jqa-m2repo-plugin.version>
+        <jqa-maven3-plugin.version>1.2.0-SNAPSHOT</jqa-maven3-plugin.version>
+        <jqa-neo4jserver.version>1.2.0-SNAPSHOT</jqa-neo4jserver.version>
+        <jqa-plugin-common.version>1.2.0-SNAPSHOT</jqa-plugin-common.version>
+        <jqa-rdbms-plugin.version>1.2.0-SNAPSHOT</jqa-rdbms-plugin.version>
+        <jqa-yaml-plugin.version>1.2.0-SNAPSHOT</jqa-yaml-plugin.version>
+        <jqa-testng-plugin.version>1.2.0-SNAPSHOT</jqa-testng-plugin.version>
+        <jqa-tycho-plugin.version>1.2.0-SNAPSHOT</jqa-tycho-plugin.version>
+        <jqa-xml-plugin.version>1.2.0-SNAPSHOT</jqa-xml-plugin.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.analysis</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.scanner</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.store</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.report</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.shared</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.core</groupId>
+                <artifactId>jqassistant.core.splitting-support</artifactId>
+                <version>${jqa-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant.scm.neo4jserver</artifactId>
+                <version>${jqa-neo4jserver.version}</version>
+            </dependency>
+
+
+            <!--
+             ! Plugin dependencies for the command line distribution
+             ! and of the jQAssistant Maven plugin
+             !-->
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.yaml</artifactId>
+                <version>${jqa-yaml-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-cdi-plugin</artifactId>
+                <version>${jqa-cdi-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-ejb3-plugin</artifactId>
+                <version>${jqa-ejb3-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-java8-plugin</artifactId>
+                <version>${jqa-java8-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-javaee6-plugin</artifactId>
+                <version>${jqa-javaee6-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-jaxrs-plugin</artifactId>
+                <version>${jqa-jaxrs-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-jpa2-plugin</artifactId>
+                <version>${jqa-jpa2-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-junit-plugin</artifactId>
+                <version>${jqa-junit-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-testng-plugin</artifactId>
+                <version>${jqa-testng-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqa-xml-plugin</artifactId>
+                <version>${jqa-xml-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.common</artifactId>
+                <version>${jqa-plugin-common.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.graphml</artifactId>
+                <version>${jqa-graphml-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.java</artifactId>
+                <version>${jqa-java-plugin.version}</version>
+            </dependency>
+
+
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.m2repo</artifactId>
+                <version>${jqa-m2repo-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.maven3</artifactId>
+                <version>${jqa-maven3-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.osgi</artifactId>
+                <version>${jqa-osgi-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.tycho</artifactId>
+                <version>${jqa-tycho-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jqassistant.plugin.rdbms</artifactId>
+                <version>${jqa-rdbms-plugin.version}</version>
+            </dependency>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>
