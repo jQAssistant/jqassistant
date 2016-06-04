@@ -77,15 +77,15 @@
                     <!--</execution>-->
                 <!--</executions>-->
             <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-surefire-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<environmentVariables>-->
-                        <!--<JQASSISTANT_HOME>${test.jqassistant.home}</JQASSISTANT_HOME>-->
-                    <!--</environmentVariables>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <JQASSISTANT_HOME>${test.jqassistant.home}</JQASSISTANT_HOME>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
