@@ -14,7 +14,7 @@
                 <include>*</include>
             </includes>
             <fileMode>755</fileMode>
-			<lineEnding>lf</lineEnding>
+            <lineEnding>lf</lineEnding>
             <filtered>true</filtered>
         </fileSet>
     </fileSets>
