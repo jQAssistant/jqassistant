@@ -33,7 +33,7 @@
     <maven.compiler.version>3.5</maven.compiler.version>
     <maven.install.version>2.5.2</maven.install.version>
     <maven.javadoc.version>2.10.3</maven.javadoc.version>
-    <maven-jaxb2-pluigin.version>0.9.0</maven-jaxb2-pluigin.version>
+    <maven-jaxb2-plugin.version>0.9.0</maven-jaxb2-plugin.version>
   </properties>
 
   <build>
@@ -78,7 +78,7 @@
         <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>
           <artifactId>maven-jaxb2-plugin</artifactId>
-          <version>${maven-jaxb2-pluigin.version}</version>
+          <version>${maven-jaxb2-plugin.version}</version>
           <executions>
             <execution>
               <goals>
