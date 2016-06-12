@@ -27,6 +27,26 @@
     <tag>HEAD</tag>
   </scm>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </snapshotRepository>
+    <repository>
+       <id>bintray</id>
+       <url>https://api.bintray.com/maven/buschmais/maven/jQAssistant;publish=1</url>
+    </repository>
+  </distributionManagement>
+
+  <developers>
+    <developer>
+      <id>dirk-mahler</id>
+      <name>Dirk Mahler</name>
+      <email>dirk.mahler@buschmais.com</email>
+    </developer>
+  </developers>
+ 
   <properties>
     <com.buschmais.xo.version>0.6.1</com.buschmais.xo.version>
     <maven.clean.version>3.0.0</maven.clean.version>
@@ -132,6 +152,18 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>2.8.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.3</version>
+          <configuration>
+            <mavenExecutorId>forked-path</mavenExecutorId>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+        	<tagNameFormat>@{version}</tagNameFormat>
+        	<goals>deploy</goals>
+          </configuration>
         </plugin>
 
         <plugin>
