@@ -136,7 +136,7 @@
 
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.yaml</artifactId>
+            <artifactId>yaml</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
