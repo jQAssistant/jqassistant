@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
-    <artifactId>jqa-junit-plugin</artifactId>
+    <artifactId>junit</artifactId>
 
     <organization>
         <name>buschmais GbR</name>
