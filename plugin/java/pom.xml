@@ -9,7 +9,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
-    <artifactId>jqassistant.plugin.java</artifactId>
+    <artifactId>java</artifactId>
 
     <properties>
         <org.ow2.asm.version>5.1</org.ow2.asm.version>
