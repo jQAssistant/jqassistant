@@ -162,7 +162,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.java</artifactId>
+                <artifactId>java</artifactId>
                 <version>${jqa-java-plugin.version}</version>
             </dependency>
 
