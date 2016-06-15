@@ -156,7 +156,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-java8-plugin</artifactId>
+            <artifactId>java8</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
