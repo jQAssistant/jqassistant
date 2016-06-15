@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
-    <artifactId>jqa-xml-plugin</artifactId>
+    <artifactId>xml</artifactId>
 
     <build>
         <plugins>
