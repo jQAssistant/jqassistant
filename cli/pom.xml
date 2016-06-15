@@ -142,7 +142,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-xml-plugin</artifactId>
+            <artifactId>xml</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
