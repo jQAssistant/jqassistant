@@ -10,7 +10,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
-    <artifactId>jqassistant.plugin.maven3</artifactId>
+    <artifactId>maven3</artifactId>
 
     <properties>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
