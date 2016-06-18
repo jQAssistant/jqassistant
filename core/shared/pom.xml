@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.buschmais.jqassistant.core</groupId>
-		<artifactId>jqassistant.core</artifactId>
+		<artifactId>parent</artifactId>
 		<version>1.2.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>jqassistant.core.shared</artifactId>
+	<artifactId>shared</artifactId>
 
 </project>

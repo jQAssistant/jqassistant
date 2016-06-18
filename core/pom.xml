@@ -7,7 +7,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant.core</groupId>
-    <artifactId>jqassistant.core</artifactId>
+    <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
     <organization>
