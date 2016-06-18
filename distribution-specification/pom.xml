@@ -106,12 +106,12 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqa-cdi-plugin</artifactId>
+                <artifactId>cdi</artifactId>
                 <version>${jqa-cdi-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqa-ejb3-plugin</artifactId>
+                <artifactId>ejb3</artifactId>
                 <version>${jqa-ejb3-plugin.version}</version>
             </dependency>
             <dependency>
@@ -121,17 +121,17 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqa-javaee6-plugin</artifactId>
+                <artifactId>javaee6</artifactId>
                 <version>${jqa-javaee6-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqa-jaxrs-plugin</artifactId>
+                <artifactId>jaxrs</artifactId>
                 <version>${jqa-jaxrs-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqa-jpa2-plugin</artifactId>
+                <artifactId>jpa2</artifactId>
                 <version>${jqa-jpa2-plugin.version}</version>
             </dependency>
             <dependency>
@@ -141,7 +141,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqa-testng-plugin</artifactId>
+                <artifactId>testng</artifactId>
                 <version>${jqa-testng-plugin.version}</version>
             </dependency>
             <dependency>
@@ -157,7 +157,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.graphml</artifactId>
+                <artifactId>graphml</artifactId>
                 <version>${jqa-graphml-plugin.version}</version>
             </dependency>
             <dependency>
@@ -169,27 +169,27 @@
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.m2repo</artifactId>
+                <artifactId>m2repo</artifactId>
                 <version>${jqa-m2repo-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.maven3</artifactId>
+                <artifactId>maven3</artifactId>
                 <version>${jqa-maven3-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.osgi</artifactId>
+                <artifactId>osgi</artifactId>
                 <version>${jqa-osgi-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.tycho</artifactId>
+                <artifactId>tycho</artifactId>
                 <version>${jqa-tycho-plugin.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.rdbms</artifactId>
+                <artifactId>rdbms</artifactId>
                 <version>${jqa-rdbms-plugin.version}</version>
             </dependency>
 
