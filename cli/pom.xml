@@ -161,31 +161,31 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-javaee6-plugin</artifactId>
+            <artifactId>javaee6</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-jpa2-plugin</artifactId>
+            <artifactId>jpa2</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-cdi-plugin</artifactId>
+            <artifactId>cdi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-ejb3-plugin</artifactId>
+            <artifactId>ejb3</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.graphml</artifactId>
+            <artifactId>graphml</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-jaxrs-plugin</artifactId>
+            <artifactId>jaxrs</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -195,32 +195,32 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqa-testng-plugin</artifactId>
+            <artifactId>testng</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.m2repo</artifactId>
+            <artifactId>m2repo</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.maven3</artifactId>
+            <artifactId>maven3</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.osgi</artifactId>
+            <artifactId>osgi</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.tycho</artifactId>
+            <artifactId>tycho</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.rdbms</artifactId>
+            <artifactId>rdbms</artifactId>
             <scope>provided</scope>
         </dependency>
 
