@@ -214,7 +214,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.tycho</artifactId>
+            <artifactId>tycho</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
