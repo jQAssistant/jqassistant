@@ -10,7 +10,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.buschmais.jqassistant.core</groupId>
-			<artifactId>jqassistant.core.store</artifactId>
+			<artifactId>store</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

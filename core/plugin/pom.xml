@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>parent</artifactId>
         <groupId>com.buschmais.jqassistant.core</groupId>
+        <artifactId>parent</artifactId>
         <version>1.2.0-SNAPSHOT</version>
     </parent>
 
@@ -37,17 +37,17 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.scanner</artifactId>
+            <artifactId>scanner</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.analysis</artifactId>
+            <artifactId>analysis</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.report</artifactId>
+            <artifactId>report</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
