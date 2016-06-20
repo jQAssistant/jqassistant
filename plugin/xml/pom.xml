@@ -65,19 +65,19 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.shared</artifactId>
+            <artifactId>shared</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.scanner</artifactId>
+            <artifactId>scanner</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.report</artifactId>
+            <artifactId>report</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.plugin</artifactId>
+            <artifactId>plugin</artifactId>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -87,12 +87,12 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.store</artifactId>
+            <artifactId>store</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.analysis</artifactId>
+            <artifactId>analysis</artifactId>
             <type>test-jar</type>
         </dependency>
         <dependency>
