@@ -60,32 +60,32 @@
         <dependencies>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.analysis</artifactId>
+                <artifactId>analysis</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.scanner</artifactId>
+                <artifactId>scanner</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.store</artifactId>
+                <artifactId>store</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.report</artifactId>
+                <artifactId>report</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.shared</artifactId>
+                <artifactId>shared</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.core</groupId>
-                <artifactId>jqassistant.core.splitting-support</artifactId>
+                <artifactId>splittingsupport</artifactId>
                 <version>${jqa-core.version}</version>
             </dependency>
             <dependency>
