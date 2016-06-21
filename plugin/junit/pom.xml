@@ -69,7 +69,7 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.common</artifactId>
+            <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -84,14 +84,14 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.common</artifactId>
+            <artifactId>common</artifactId>
             <type>xsl</type>
             <classifier>plugin2asciidoc</classifier>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.common</artifactId>
+            <artifactId>common</artifactId>
             <type>xsl</type>
             <classifier>rules2asciidoc-v2</classifier>
             <version>${project.version}</version>
@@ -120,7 +120,7 @@
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.common</artifactId>
+            <artifactId>common</artifactId>
             <type>test-jar</type>
             <version>${project.version}</version>
         </dependency>
