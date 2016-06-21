@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
-    <artifactId>jqassistant.plugin.common</artifactId>
+    <artifactId>common</artifactId>
 
     <organization>
         <name>buschmais GbR</name>
