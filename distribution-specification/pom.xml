@@ -151,7 +151,7 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
-                <artifactId>jqassistant.plugin.common</artifactId>
+                <artifactId>common</artifactId>
                 <version>${jqa-plugin-common.version}</version>
                 <scope>provided</scope>
             </dependency>
