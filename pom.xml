@@ -51,9 +51,13 @@
     <com.buschmais.xo.version>0.6.1</com.buschmais.xo.version>
     <maven.clean.version>3.0.0</maven.clean.version>
     <maven.compiler.version>3.5</maven.compiler.version>
+    <maven.failsafe.version>2.19.1</maven.failsafe.version>
     <maven.install.version>2.5.2</maven.install.version>
     <maven.javadoc.version>2.10.3</maven.javadoc.version>
     <maven-jaxb2-plugin.version>0.9.0</maven-jaxb2-plugin.version>
+    <maven.min.version>3.2.5</maven.min.version>
+    <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
+    <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
   </properties>
 
   <build>
@@ -63,6 +67,56 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
           <version>${maven.clean.version}</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven.failsafe.version}</version>
+          <dependencies>
+            <!-- We need the manual specification of the JUnit provider
+                 since there is a single TestNG test class for the TestNG
+                 scanner plugin. Oliver B. Fischer, 2015-09-20
+                 See:
+                 https://github.com/buschmais/jqassistant/issues/252
+                 https://github.com/buschmais/jqassistant/issues/246
+                 https://github.com/buschmais/jqassistant/issues/249 -->
+            <dependency>
+              <groupId>org.apache.maven.surefire</groupId>
+              <artifactId>surefire-junit47</artifactId>
+              <version>${maven.failsafe.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven.surefire.version}</version>
+          <configuration>
+            <includes>
+              <include>**/*Test.java</include>
+            </includes>
+          </configuration>
+          <dependencies>
+            <!-- We need the manual specification of the JUnit provider
+                 since there is a single TestNG test class for the TestNG
+                 scanner plugin. Oliver B. Fischer, 2015-09-20
+                 See:
+                 https://github.com/buschmais/jqassistant/issues/252
+                 https://github.com/buschmais/jqassistant/issues/246
+                 https://github.com/buschmais/jqassistant/issues/249 -->
+            <dependency>
+              <groupId>org.apache.maven.surefire</groupId>
+              <artifactId>surefire-junit47</artifactId>
+              <version>${maven.surefire.version}</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>2.5.3</version>
         </plugin>
 
         <plugin>
@@ -156,13 +210,52 @@
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <version>1.4.1</version>
+          <executions>
+            <execution>
+              <id>enforce-maven</id>
+              <goals>
+                <goal>enforce</goal>
+              </goals>
+              <configuration>
+                <rules>
+                  <requireMavenVersion>
+                    <version>[${maven.min.version},)</version>
+                  </requireMavenVersion>
+                  <requireJavaVersion>
+                    <version>1.8</version>
+                  </requireJavaVersion>
+                  <requireSameVersions>
+                    <plugins>
+                      <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
+                      <plugin>org.apache.maven.plugins:maven-failsafe-plugin</plugin>
+                      <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
+                    </plugins>
+                  </requireSameVersions>
+                  <requirePluginVersions>
+                    <message>Best Practice is to always define plugin versions!</message>
+                    <banLatest>true</banLatest>
+                    <banRelease>true</banRelease>
+                    <banSnapshots>true</banSnapshots>
+                    <phases>clean,deploy,site</phases>
+                  </requirePluginVersions>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>2.5.3</version>
           <configuration>
             <mavenExecutorId>forked-path</mavenExecutorId>
             <autoVersionSubmodules>true</autoVersionSubmodules>
-        	<tagNameFormat>@{version}</tagNameFormat>
-        	<goals>deploy</goals>
+            <tagNameFormat>@{version}</tagNameFormat>
+            <goals>deploy</goals>
           </configuration>
         </plugin>
 
@@ -171,6 +264,28 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.7</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>3.4</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.doxia</groupId>
+              <artifactId>doxia-module-markdown</artifactId>
+              <version>1.6</version>
+            </dependency>
+            <dependency>
+              <groupId>org.asciidoctor</groupId>
+              <artifactId>asciidoctor-maven-plugin</artifactId>
+              <version>${org.asciidoctor-plugin.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <skipDeploy>true</skipDeploy>
+          </configuration>
+        </plugin>
+
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -194,7 +309,41 @@
       </plugins>
     </pluginManagement>
 
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+    </plugins>
+
   </build>
+
+  <profiles>
+    <profile>
+      <id>IT</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+                <configuration>
+                  <argLine>-Xmx768M -XX:+HeapDumpOnOutOfMemoryError</argLine>
+                  <forkCount>1</forkCount>
+                  <reuseForks>false</reuseForks>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
   <dependencyManagement>
     <dependencies>
