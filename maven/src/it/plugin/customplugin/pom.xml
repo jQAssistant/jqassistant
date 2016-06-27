@@ -11,22 +11,22 @@
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.common</artifactId>
+            <artifactId>common</artifactId>
             <version>@project.version@</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.plugin</groupId>
-            <artifactId>jqassistant.plugin.java</artifactId>
+            <artifactId>java</artifactId>
             <version>@project.version@</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.scanner</artifactId>
+            <artifactId>scanner</artifactId>
             <version>@project.version@</version>
         </dependency>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
-            <artifactId>jqassistant.core.report</artifactId>
+            <artifactId>report</artifactId>
             <version>@project.version@</version>
         </dependency>
     </dependencies>
