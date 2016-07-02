@@ -1,0 +1,10 @@
+= jQAssistant XML Plugin
+
+This is the XML Plugin of https://www.jqassistant.org[jQAssistant^].
+It enables jQAssistant to scan and to analyze XML related
+artifacts like:
+
+- XML documents
+- XML Schema Documents
+
+For more information on jQAssistant see https://www.jqassistant.org[^].
