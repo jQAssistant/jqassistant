@@ -4,5 +4,6 @@ target
 *.ipr
 *~
 *.log
+/*.html
 .DS_Store
 

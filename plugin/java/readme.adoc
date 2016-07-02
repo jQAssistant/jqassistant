@@ -1,0 +1,13 @@
+= jQAssistant Java Plugin
+
+This is the Java Plugin of https://www.jqassistant.org[jQAssistant^].
+It enables jQAssistant to scan and to analyze Java related
+artifacts like:
+
+- Manifest files
+- Jar archives
+- Java class files
+- Property files
+- Service Provider Interfaces
+
+For more information on jQAssistant see https://www.jqassistant.org[^].
