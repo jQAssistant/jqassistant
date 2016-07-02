@@ -47,13 +47,8 @@
          !   Hence this property must be set to false in each plugin
          !   repository.
          !-->
-        <jqassistant.skip>true</jqassistant.skip>
+        <!--<jqassistant.skip>true</jqassistant.skip>-->
 
-        <!-- Create the database not at jqassistant/store
-         !   We should not mix versioned artifacts and temporary data
-         !-->
-        <jqassistant.store.directory>${project.basedir}/.jqa-database</jqassistant.store.directory>
-        <jqassistant.rules.directory>${project.basedir}/jqa-rules</jqassistant.rules.directory>
         <org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>
         <org.jruby.version>9.0.5.0</org.jruby.version>
         <org.mockito.version>1.9.5</org.mockito.version>
@@ -66,20 +61,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <configuration>
-                        <!-- Remove the Neo4j database also -->
-                        <filesets>
-                            <fileset>
-                                <directory>${jqassistant.store.directory}</directory>
-                            </fileset>
-                        </filesets>
-
-                    </configuration>
-                </plugin>
-
-                <plugin>
                     <groupId>com.buschmais.jqassistant.scm</groupId>
                     <artifactId>jqassistant-maven-plugin</artifactId>
                     <configuration>
@@ -89,14 +70,13 @@
                             </scanInclude>
                         </scanIncludes>
                         <groups>
-                            <group>jqa-plugins:directories-and-files</group>
-                            <group>jqa-plugins:maven</group>
+                            <group>jqa-project-layout</group>
                         </groups>
                     </configuration>
                     <dependencies>
                         <dependency>
-                            <groupId>com.buschmais.jqassistant.plugin</groupId>
-                            <artifactId>jqassistant.plugin.plugin-rules</artifactId>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>project-layout-constraints</artifactId>
                             <version>${project.version}</version>
                         </dependency>
                     </dependencies>
@@ -106,6 +86,10 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <!-- Copies the XSL stylesheets to a subdirectory of the
                  !   the build directory. They are needed to process the XML
