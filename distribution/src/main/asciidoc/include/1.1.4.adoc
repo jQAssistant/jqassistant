@@ -7,6 +7,10 @@
 
 - Added support array properties in reports (e.g. HTML)
 
+=== CLI
+
+- Added daemon parameter to server task
+
 === Plugins
 
 ==== JavaEE6

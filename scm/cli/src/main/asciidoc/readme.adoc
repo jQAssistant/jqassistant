@@ -124,10 +124,13 @@ Transforms an XML report into HTML.
 ==== server
 ===== Description
 Starts the integrated Neo4j web server.
+
 * -serverAddress <address>
 ** specifies the binding address for the server (default: localhost)
 * -serverPort <port>
 ** specifies the binding port for the server (default: 7474)
+* -daemon
+** terminate the server using <Ctrl-c> instead of waiting for standard input (allows to run the server on a machine as a background process / service)
 
 ===== Options
 * <<cli:storeDirectory>>
