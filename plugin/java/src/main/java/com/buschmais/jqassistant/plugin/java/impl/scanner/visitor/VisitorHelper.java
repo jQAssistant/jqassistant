@@ -204,7 +204,7 @@ public class VisitorHelper {
     AnnotationValueDescriptor addAnnotation(TypeCache.CachedType containingDescriptor, AnnotatedDescriptor annotatedDescriptor, String typeName) {
         if (typeName != null) {
             TypeDescriptor type = resolveType(typeName, containingDescriptor).getTypeDescriptor();
-            AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class);
+            AnnotationValueDescriptor annotationDescriptor = scannerContext.getStore().create(AnnotationValueDescriptor.class, typeName);
             annotationDescriptor.setType(type);
             annotatedDescriptor.getAnnotatedBy().add(annotationDescriptor);
             return annotationDescriptor;
