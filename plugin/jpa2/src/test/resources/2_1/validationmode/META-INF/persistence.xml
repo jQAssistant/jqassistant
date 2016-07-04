@@ -1,8 +1,0 @@
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence">
-    <persistence-unit name="persistence-unit-NONE" transaction-type="RESOURCE_LOCAL">
-        <validation-mode>NONE</validation-mode>
-    </persistence-unit>
-    <persistence-unit name="persistence-unit-CALLBACK" transaction-type="RESOURCE_LOCAL">
-        <validation-mode>CALLBACK</validation-mode>
-    </persistence-unit>
-</persistence>

@@ -1,3 +1,0 @@
-<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence">
-    <persistence-unit name="persistence-unit" transaction-type="RESOURCE_LOCAL"/>
-</persistence>
