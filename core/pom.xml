@@ -10,6 +10,24 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-core-framework.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-core-framework.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-core-framework</url>
+    </scm>
+
     <properties>
         <com.buschmais.xo.version>0.6.1</com.buschmais.xo.version>
         <org.hamcrest.version>2.0.0.0</org.hamcrest.version>
