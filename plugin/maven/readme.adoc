@@ -1,0 +1,6 @@
+= jQAssistant Maven 3 Plugin
+
+This is the Maven 3 Plugin of https://www.jqassistant.org[jQAssistant^].
+It enables jQAssistant to scan and to analyze Maven 3 projects.
+
+For more information on jQAssistant see https://www.jqassistant.org[^].
