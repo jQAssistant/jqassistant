@@ -1,0 +1,8 @@
+= jQAssistant Distribution Specification
+
+This is the distribution specification of https://www.jqassistant.org[jQAssistant^].
+The POM of this repository specifies all
+artifacts and their version which will be part of a release of
+the jQAssitant Maven Plugin anf of the jQAssistant Commandline Tool.
+
+For more information on jQAssistant see https://www.jqassistant.org[^].
