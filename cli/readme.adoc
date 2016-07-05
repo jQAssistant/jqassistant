@@ -1,0 +1,6 @@
+= jQAssistant Commandline Tool
+
+This is the https://www.jqassistant.org[jQAssistant^] Commandline Tool.
+It allows to execute jQAssistant from the commandline.
+
+For more information on jQAssistant see https://www.jqassistant.org[^].
