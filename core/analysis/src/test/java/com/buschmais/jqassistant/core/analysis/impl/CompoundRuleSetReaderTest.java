@@ -1,6 +1,7 @@
 package com.buschmais.jqassistant.core.analysis.impl;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.aMapWithSize;
 import static org.hamcrest.Matchers.contains;
@@ -10,7 +11,9 @@ import static org.hamcrest.Matchers.equalTo;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 
+import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -26,8 +29,8 @@ public class CompoundRuleSetReaderTest {
 
     @Test
     public void testReadCompoundSources() throws Exception {
-        File adocFile = new File(getClass().getResource("/junit-without-assert.adoc").getFile());
-        File xmlFile = new File(getClass().getResource("/test-concepts.xml").getFile());
+        File adocFile = ClasspathResource.getFile("/junit-without-assert.adoc");
+        File xmlFile = ClasspathResource.getFile("/test-concepts.xml");
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         RuleSetReader reader = new CompoundRuleSetReader();
         reader.read(asList(new FileRuleSource(adocFile), new FileRuleSource(xmlFile)), ruleSetBuilder);
@@ -58,7 +61,7 @@ public class CompoundRuleSetReaderTest {
         RuleSetBuilder ruleSetBuilder = RuleSetBuilder.newInstance();
         URL url = getClass().getResource("/test-concepts.xml");
         RuleSetReader reader = new XmlRuleSetReader();
-        reader.read(Arrays.asList(new UrlRuleSource(url)), ruleSetBuilder);
+        reader.read(singletonList(new UrlRuleSource(url)), ruleSetBuilder);
 
         RuleSet ruleSet = ruleSetBuilder.getRuleSet();
         assertThat(ruleSet.getConceptBucket().size(), equalTo(1));
