@@ -1,0 +1,6 @@
+= jQAssistant Plugin for Maven
+
+This is the https://www.jqassistant.org[jQAssistant^] Plugin for Maven.
+It allows to execute jQAssistant during a Maven build.
+
+For more information on jQAssistant see https://www.jqassistant.org[^].
