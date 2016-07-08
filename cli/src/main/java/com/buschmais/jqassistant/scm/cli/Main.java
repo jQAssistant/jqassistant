@@ -359,6 +359,7 @@ public class Main {
                 } catch (IOException e) {
                     throw new CliExecutionException("Cannot read plugin directory.", e);
                 }
+                LOGGER.debug("Using plugin URLs: " + urls);
                 return new PluginClassLoader(urls, parentClassLoader);
             }
         }

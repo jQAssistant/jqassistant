@@ -5,8 +5,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.Map;
 
+import com.buschmais.jqassistant.core.shared.io.ClasspathResource;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,9 +45,9 @@ public class MainTest {
     @Test
     public void alternativePluginProperties() throws CliExecutionException {
         when(taskFactory.fromName("test")).thenReturn(task);
-        String propertyFilePath = MainTest.class.getResource("/jqassistant-alternative.properties").getPath();
+        File propertyFile = ClasspathResource.getFile(MainTest.class, "/jqassistant-alternative.properties");
         Main main = new Main(taskFactory);
-        main.run(new String[] { "test", "-p", propertyFilePath });
+        main.run(new String[] { "test", "-p", propertyFile.getAbsolutePath() });
         verifyPropertyValue("alternativeValue");
     }
 

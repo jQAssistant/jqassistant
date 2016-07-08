@@ -26,6 +26,9 @@
             <outputFileNameMapping>
                 ${artifact.groupId}-${artifact.artifactId}-${artifact.version}.${artifact.extension}
             </outputFileNameMapping>
+            <excludes>
+                <exclude>com.buschmais.jqassistant.plugin:*</exclude>
+            </excludes>
         </dependencySet>
         <dependencySet>
             <outputDirectory>plugins</outputDirectory>
