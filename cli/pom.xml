@@ -23,6 +23,33 @@
         </testResources>
         <plugins>
             <plugin>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <configuration>
+                    <scanIncludes>
+                        <scanInclude>
+                            <path>${project.basedir}</path>
+                        </scanInclude>
+                    </scanIncludes>
+                    <groups>
+                        <group>jqa-legal</group>
+                        <group>jqa-project-layout</group>
+                    </groups>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>legal-constraints</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>project-layout-constraints</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
