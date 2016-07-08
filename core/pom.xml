@@ -163,12 +163,18 @@
                     </scanIncludes>
                     <groups>
                         <group>jqa-project-layout</group>
+                        <group>jqa-legal</group>
                     </groups>
                 </configuration>
                 <dependencies>
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>project-layout-constraints</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>legal-constraints</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
