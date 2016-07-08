@@ -1,5 +1,8 @@
 package com.buschmais.jqassistant.core.plugin.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.buschmais.jqassistant.core.plugin.api.PluginConfigurationReader;
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 
@@ -7,6 +10,8 @@ import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
  * Abstract base implementation of a plugin repository.
  */
 public abstract class AbstractPluginRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPluginRepository.class);
 
     /*
      * The class loader to use for loading classes and resources.
@@ -23,6 +28,7 @@ public abstract class AbstractPluginRepository {
      */
     protected AbstractPluginRepository(PluginConfigurationReader pluginConfigurationReader) {
         this.classLoader = pluginConfigurationReader.getClassLoader();
+        LOGGER.debug("Using classloader '{}'", this.classLoader);
     }
 
     /**
