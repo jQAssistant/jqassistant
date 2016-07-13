@@ -108,7 +108,7 @@
                             <group>
                                 <!--<title>API</title>-->
                                 <title>Public API</title>
-                                <packages>com.buschmais.jqassistant.plugin.${project.artifactId}.api.*</packages>
+                                <packages>com.buschmais.jqassistant.plugin.${project.artifactId}.api*</packages>
                             </group>
                         </groups>
 
