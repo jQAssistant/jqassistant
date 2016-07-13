@@ -172,7 +172,7 @@
                         <groups>
                             <group>
                                 <title>Public API</title>
-                                <packages>com.buschmais.jqassistant.core.${project.artifactId}.api.*</packages>
+                                <packages>com.buschmais.jqassistant.core.${project.artifactId}.api*</packages>
                             </group>
                         </groups>
 
