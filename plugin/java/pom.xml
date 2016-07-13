@@ -10,6 +10,7 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>java</artifactId>
+    <name>jQAssistant Java Plugin</name>
 
     <properties>
         <org.ow2.asm.version>5.1</org.ow2.asm.version>
