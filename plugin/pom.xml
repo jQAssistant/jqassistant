@@ -88,6 +88,45 @@
                     </dependencies>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <detectLinks>false</detectLinks>
+                        <detectOfflineLinks>false</detectOfflineLinks>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <groups>
+                            <group>
+                                <!--<title>API</title>-->
+                                <title>Public API</title>
+                                <packages>com.buschmais.jqassistant.plugin.${project.artifactId}.api.*</packages>
+                            </group>
+                        </groups>
+
+                        <source>1.7</source>
+                        <doclet>org.asciidoctor.Asciidoclet</doclet>
+                        <docletArtifact>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoclet</artifactId>
+                            <version>1.5.4</version>
+                        </docletArtifact>
+                        <!--<overview>src/main/java/overview.adoc</overview>-->
+                        <additionalparam>
+                            --base-dir ${project.basedir}
+                        </additionalparam>
+
+                    </configuration>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -118,6 +157,10 @@
                         <id>transform-xml2asciidoc</id>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
             </plugin>
             <plugin>
                 <!-- Builds a jar with the Asciidoctor based documenation
