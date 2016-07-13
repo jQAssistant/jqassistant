@@ -14,8 +14,12 @@ import java.util.Set;
 
 /**
  * Provides utility functionality for creating reports.
+ *
+ * @deprecated Please use {@link com.buschmais.jqassistant.core.splittingsupport.impl.RuleHelper}
+ *             instead.
  */
-public final class RuleHelper {
+@Deprecated
+public class RuleHelper {
 
     public static final String LOG_LINE_PREFIX = "  \"";
     private Logger logger;

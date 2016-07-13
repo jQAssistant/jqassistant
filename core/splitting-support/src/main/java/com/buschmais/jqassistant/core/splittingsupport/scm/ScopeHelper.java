@@ -7,7 +7,11 @@ import java.util.Map;
 
 /**
  * Provides common functionality for working with scopes.
+ *
+ * @deprecated Please use {@link com.buschmais.jqassistant.core.splittingsupport.impl.ScopeHelper}
+ *             instead.
  */
+@Deprecated
 public class ScopeHelper {
 
     private final Logger logger;
