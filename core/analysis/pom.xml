@@ -7,6 +7,7 @@
     </parent>
 
     <artifactId>analysis</artifactId>
+    <name>jQAssistant Core Analysis</name>
 
     <build>
         <plugins>

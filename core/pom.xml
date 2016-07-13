@@ -151,6 +151,47 @@
     </dependencyManagement>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <detectLinks>false</detectLinks>
+                        <detectOfflineLinks>false</detectOfflineLinks>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <groups>
+                            <group>
+                                <title>Public API</title>
+                                <packages>com.buschmais.jqassistant.core.${project.artifactId}.api.*</packages>
+                            </group>
+                        </groups>
+
+                        <source>1.7</source>
+                        <doclet>org.asciidoctor.Asciidoclet</doclet>
+                        <docletArtifact>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoclet</artifactId>
+                            <version>1.5.4</version>
+                        </docletArtifact>
+                        <!--<overview>src/main/java/overview.adoc</overview>-->
+                        <additionalparam>
+                            --base-dir ${project.basedir}
+                        </additionalparam>
+
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>com.buschmais.jqassistant.scm</groupId>
@@ -183,6 +224,10 @@
                 <!--<groupId>org.apache.maven.plugins</groupId>-->
                 <!--<artifactId>maven-checkstyle-plugin</artifactId>-->
             <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
 

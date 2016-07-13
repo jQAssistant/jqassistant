@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>splittingsupport</artifactId>
+    <name>jQAssistant Core Splitting Support</name>
 
     <inceptionYear>2016</inceptionYear>
 

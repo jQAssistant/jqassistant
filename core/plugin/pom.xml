@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>plugin</artifactId>
+    <name>jQAssistant Core Plugin</name>
 
     <build>
         <resources>
