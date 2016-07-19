@@ -10,6 +10,7 @@
 
     <groupId>com.buschmais.jqassistant.plugin</groupId>
     <artifactId>junit</artifactId>
+    <name>jQAssistant JUnit Plugin</name>
 
     <organization>
         <name>buschmais GbR</name>
