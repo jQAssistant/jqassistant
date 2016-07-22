@@ -111,7 +111,7 @@ public class AsciiDocRuleSetReaderTest {
 	ConceptBucket concepts = ruleSet.getConceptBucket();
 	try {
 	    concepts.getById("test:MissingCodeFragment");
-	    fail("Concept has no code fragment, should have fail!");
+	    fail("Concept has no code fragment, should have failed!");
 	} catch (NoConceptException e) {
 	    // expected
 	}
