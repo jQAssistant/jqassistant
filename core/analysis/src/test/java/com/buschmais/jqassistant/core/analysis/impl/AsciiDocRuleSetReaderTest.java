@@ -4,30 +4,17 @@ import com.buschmais.jqassistant.core.analysis.api.rule.*;
 import org.junit.Test;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertEquals;
-
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import static org.junit.Assert.fail;
 
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.collection.IsEmptyCollection;
-import org.hamcrest.core.IsCollectionContaining;
-import org.junit.Test;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.*;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.RuleSource;
-import com.buschmais.jqassistant.core.analysis.api.rule.source.UrlRuleSource;
 
 public class AsciiDocRuleSetReaderTest {
 
@@ -114,5 +101,21 @@ public class AsciiDocRuleSetReaderTest {
         assertThat(includedGroups.keySet(), hasItems("test:Group"));
         Group group = groups.getById("test:Group");
         assertThat(group, notNullValue());
+    }
+    
+    @Test
+    public void brokenRules() throws Exception {
+	RuleSet ruleSet = RuleSetTestHelper.readRuleSet("/broken-rules.adoc");
+	assertThat(ruleSet.getConceptBucket().getIds(), hasItems("test:MissingDescription"));
+	
+	ConceptBucket concepts = ruleSet.getConceptBucket();
+	try {
+	    concepts.getById("test:MissingCodeFragment");
+	    fail("Concept has no code fragment, should have fail!");
+	} catch (NoConceptException e) {
+	    // expected
+	}
+	
+        
     }
 }
