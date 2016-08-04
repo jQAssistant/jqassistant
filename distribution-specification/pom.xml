@@ -185,7 +185,6 @@
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>common</artifactId>
                 <version>${jqa-plugin-common.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
