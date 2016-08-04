@@ -1,0 +1,18 @@
+= Rules
+
+== Concepts
+
+[[test:MissingDescription]]
+
+[source,cypher,role=concept]
+----
+match
+  (n)
+return
+  n
+----
+
+
+[[test:MissingCodeFragment]]
+.Test text
+[source,cypher,role=concept]

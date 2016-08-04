@@ -109,12 +109,18 @@ public class AsciiDocRuleSetReader implements RuleSetReader {
         for (ContentPart part : findExecutableRules(doc.getParts())) {
             Map<String, Object> attributes = part.getAttributes();
             String id = part.getId();
-            String description = attributes.get(TITLE).toString();
+            String description = "";
+            Object title = attributes.get(TITLE);
+            if(title != null){
+        	description = title.toString();
+            } else {
+        	LOGGER.info("Description of rule is missing: Using empty text for description (source='{}', id='{}').", ruleSource.getId(), id);
+            }
             Set<String> requiresConcepts = new HashSet<>(getDependencies(attributes, REQUIRES_CONCEPTS).keySet());
             Set<String> depends = getDependencies(attributes, DEPENDS).keySet();
             if (!depends.isEmpty()) {
                 LOGGER.info(
-                        "Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}'}.",
+                        "Using 'depends' to reference required concepts is deprecated, please use 'requiresConcepts' (source='{}', id='{}').",
                         ruleSource.getId(), id);
                 requiresConcepts.addAll(depends);
             }
