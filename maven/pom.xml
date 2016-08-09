@@ -9,6 +9,7 @@
 
     <artifactId>jqassistant-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
+    <name>jQAssistant Plugin for Apache Maven</name>
 
     <properties>
         <org.apache.maven.version>3.2.5</org.apache.maven.version>
