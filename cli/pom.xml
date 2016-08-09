@@ -64,7 +64,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathLayoutType>custom</classpathLayoutType>
                             <customClasspathLayout>$${artifact.groupId}-$${artifact.artifactId}-$${artifact.version}.$${artifact.extension}</customClasspathLayout>
-                            <mainClass>com.buschmais.jqassistant.scm.cli.Main</mainClass>
+                            <mainClass>com.buschmais.jqassistant.commandline.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
