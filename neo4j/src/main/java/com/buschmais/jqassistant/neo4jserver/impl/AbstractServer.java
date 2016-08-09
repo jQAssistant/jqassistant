@@ -1,18 +1,13 @@
-package com.buschmais.jqassistant.scm.neo4jserver.impl;
+package com.buschmais.jqassistant.neo4jserver.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.buschmais.jqassistant.MetricsService;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.api.Store;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
-import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.AnalysisService;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.MetricsService;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.rest.VersionService;
-
+import com.buschmais.jqassistant.neo4jserver.api.Server;
+import com.buschmais.jqassistant.neo4jserver.impl.rest.AnalysisService;
+import com.buschmais.jqassistant.neo4jserver.impl.rest.VersionService;
 import com.sun.jersey.api.core.HttpContext;
 import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.NeoServer;
@@ -21,6 +16,10 @@ import org.neo4j.server.database.InjectableProvider;
 import org.neo4j.server.modules.ServerModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Abstract base class for the customized Neo4j server.

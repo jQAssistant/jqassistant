@@ -1,10 +1,9 @@
-package com.buschmais.jqassistant.scm.neo4jserver.test;
-
-import java.io.IOException;
-
-import org.junit.Test;
+package com.buschmais.jqassistant.neo4jserver.test;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
+import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * Manual test to start a server.

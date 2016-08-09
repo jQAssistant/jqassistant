@@ -1,9 +1,9 @@
-package com.buschmais.jqassistant.scm.neo4jserver.impl;
-
-import java.util.List;
+package com.buschmais.jqassistant.neo4jserver.impl;
 
 import org.neo4j.server.modules.ServerModule;
 import org.neo4j.server.web.WebServer;
+
+import java.util.List;
 
 /**
  * Defines the Neo4j server module for jQAssistant.

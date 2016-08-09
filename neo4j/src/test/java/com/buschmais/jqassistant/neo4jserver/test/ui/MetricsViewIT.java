@@ -1,8 +1,13 @@
-package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
+package com.buschmais.jqassistant.neo4jserver.test.ui;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
+import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
+import com.buschmais.jqassistant.core.analysis.api.rule.NoMetricGroupException;
+import com.buschmais.jqassistant.core.store.api.Store;
+import com.buschmais.jqassistant.neo4jserver.test.ui.pageobjects.MetricsPage;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.support.PageFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,20 +15,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.buschmais.jqassistant.core.analysis.api.rule.NoMetricGroupException;
-import org.junit.Before;
-import org.junit.Test;
-import org.openqa.selenium.support.PageFactory;
-
-import com.buschmais.jqassistant.core.analysis.api.rule.Metric;
-import com.buschmais.jqassistant.core.analysis.api.rule.MetricGroup;
-import com.buschmais.jqassistant.core.store.api.Store;
-import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.MetricsPage;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test the metrics html page.
  */
-public class MetricsViewIT extends AbstractUITest {
+public class MetricsViewIT extends com.buschmais.jqassistant.neo4jserver.test.ui.AbstractUITest {
 
     /** This metric group is currently delivered by default. */
     private static final String METRIC_GROUP_ID_artifactDependencies = "metric:ArtifactDependencies";

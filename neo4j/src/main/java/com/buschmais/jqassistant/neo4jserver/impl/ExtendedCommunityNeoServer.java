@@ -1,4 +1,4 @@
-package com.buschmais.jqassistant.scm.neo4jserver.impl;
+package com.buschmais.jqassistant.neo4jserver.impl;
 
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;

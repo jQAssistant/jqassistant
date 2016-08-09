@@ -1,14 +1,13 @@
-package com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects;
+package com.buschmais.jqassistant.neo4jserver.test.ui.pageobjects;
 
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.base.Predicate;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import com.google.common.base.Predicate;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the index page.

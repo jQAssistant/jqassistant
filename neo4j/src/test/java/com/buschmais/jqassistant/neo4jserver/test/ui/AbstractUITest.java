@@ -1,13 +1,12 @@
-package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
+package com.buschmais.jqassistant.neo4jserver.test.ui;
 
-import static org.junit.Assume.assumeNoException;
-
+import com.buschmais.jqassistant.neo4jserver.test.AbstractServerTest;
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import com.buschmais.jqassistant.scm.neo4jserver.test.AbstractServerTest;
+import static org.junit.Assume.assumeNoException;
 
 /**
  * Abstract class for all UI tests.

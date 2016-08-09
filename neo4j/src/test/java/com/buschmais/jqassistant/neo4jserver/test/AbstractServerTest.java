@@ -1,17 +1,17 @@
-package com.buschmais.jqassistant.scm.neo4jserver.test;
-
-import java.io.IOException;
-
-import org.junit.After;
-import org.junit.Before;
+package com.buschmais.jqassistant.neo4jserver.test;
 
 import com.buschmais.jqassistant.core.plugin.api.PluginRepositoryException;
 import com.buschmais.jqassistant.core.plugin.api.RulePluginRepository;
 import com.buschmais.jqassistant.core.plugin.api.ScannerPluginRepository;
 import com.buschmais.jqassistant.core.store.impl.EmbeddedGraphStore;
+import com.buschmais.jqassistant.neo4jserver.api.Server;
+import com.buschmais.jqassistant.neo4jserver.impl.ExtendedCommunityNeoServer;
 import com.buschmais.jqassistant.plugin.java.test.AbstractJavaPluginIT;
-import com.buschmais.jqassistant.scm.neo4jserver.api.Server;
-import com.buschmais.jqassistant.scm.neo4jserver.impl.ExtendedCommunityNeoServer;
+import org.junit.After;
+import org.junit.Before;
+
+import java.io.IOException;
+
 
 /**
  * Abstract base class for server tests.

@@ -1,19 +1,18 @@
-package com.buschmais.jqassistant.scm.neo4jserver.test.ui;
+package com.buschmais.jqassistant;
 
-import java.io.IOException;
-
+import com.buschmais.jqassistant.core.plugin.impl.JQAssistantPropertiesImpl;
+import com.buschmais.jqassistant.neo4jserver.test.ui.pageobjects.IndexPage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.support.PageFactory;
 
-import com.buschmais.jqassistant.core.plugin.impl.JQAssistantPropertiesImpl;
-import com.buschmais.jqassistant.scm.neo4jserver.test.ui.pageobjects.IndexPage;
+import java.io.IOException;
 
 /**
  * Test the index UI component.
  */
-public class IndexViewIT extends AbstractUITest {
+public class IndexViewIT extends com.buschmais.jqassistant.neo4jserver.test.ui.AbstractUITest {
 
     /** The index page. */
     private IndexPage indexPage;
