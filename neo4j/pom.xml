@@ -8,6 +8,7 @@
     </parent>
 
     <artifactId>jqassistant.scm.neo4jserver</artifactId>
+    <name>jQAssistant Neo4j Backend</name>
 
     <properties>
         <org.neo4j_version>2.3.3</org.neo4j_version>
