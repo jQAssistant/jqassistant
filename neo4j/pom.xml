@@ -16,6 +16,58 @@
         <org.slf4j.version>1.7.13</org.slf4j.version>
     </properties>
 
+    <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <quiet>true</quiet>
+                        <detectLinks>false</detectLinks>
+                        <detectOfflineLinks>false</detectOfflineLinks>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                        <groups>
+                            <group>
+                                <!--<title>API</title>-->
+                                <title>Public API</title>
+                                <packages>com.buschmais.jqassistant.${project.artifactId}.api*</packages>
+                            </group>
+                        </groups>
+                        <source>1.7</source>
+                        <doclet>org.asciidoctor.Asciidoclet</doclet>
+                        <docletArtifact>
+                            <groupId>org.asciidoctor</groupId>
+                            <artifactId>asciidoclet</artifactId>
+                            <version>1.5.4</version>
+                        </docletArtifact>
+                        <!--<overview>src/main/java/overview.adoc</overview>-->
+                        <additionalparam>
+                            --base-dir ${project.basedir}
+                        </additionalparam>
+                    </configuration>
+
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>com.buschmais.jqassistant.core</groupId>
