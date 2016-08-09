@@ -7,7 +7,7 @@
         <version>1.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jqassistant.scm.neo4jserver</artifactId>
+    <artifactId>neo4jserver</artifactId>
     <name>jQAssistant Neo4j Backend</name>
 
     <properties>
