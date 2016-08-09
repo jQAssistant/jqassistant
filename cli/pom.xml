@@ -7,6 +7,8 @@
     </parent>
 
     <artifactId>commandline</artifactId>
+    <name>jQAssistant Commandline Tool</name>
+
 
     <properties>
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
