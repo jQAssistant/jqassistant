@@ -165,8 +165,8 @@
             <plugin>
                 <!-- Builds a jar with the Asciidoctor based documenation
                  !   of the plugin and all needed stuff. This artifact
-                 !   is required for building the user manual of the
-                 !   jQAssistant distribution.
+                 !   is required for building the user manual of
+                 !   jQAssistant.
                  !-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
