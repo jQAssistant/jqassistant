@@ -74,6 +74,7 @@
      !-->
     <maven.jqassistant.previous.version>1.1.3</maven.jqassistant.previous.version>
     <maven.min.version>3.2.5</maven.min.version>
+    <maven.source.plugin>3.0.1</maven.source.plugin>
     <maven.surefire.version>${maven.failsafe.version}</maven.surefire.version>
     <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
   </properties>
@@ -326,7 +327,15 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.4</version>
+          <version>${maven.source.plugin}</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -350,6 +359,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+
     </plugins>
 
   </build>
