@@ -146,6 +146,16 @@
                 <executions>
                     <execution>
                         <id>copy-asciidoc-stylesheets</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/xml2asciidoc</outputDirectory>
+                            <includeTypes>xsl</includeTypes>
+                            <includeClassifiers>rules2asciidoc-v2,plugin2asciidoc</includeClassifiers>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -155,8 +165,71 @@
                 <executions>
                     <execution>
                         <id>transform-xml2asciidoc</id>
+                        <goals>
+                            <goal>transform</goal>
+                        </goals>
+                        <!--<phase>none</phase>-->
+                        <phase>process-sources</phase>
+                        <configuration>
+                            <transformationSets>
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF</dir>
+                                    <includes>
+                                        <include>jqassistant-plugin.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-plugin2asciidoc.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper
+                                                implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^jqassistant-plugin\.xml$</pattern>
+                                            <replacement>plugin.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                    <parameters>
+                                        <parameter>
+                                            <name>artifactId</name>
+                                            <value>${project.artifactId}</value>
+                                        </parameter>
+                                    </parameters>
+                                </transformationSet>
+                                <transformationSet>
+                                    <dir>src/main/resources/META-INF/</dir>
+                                    <includes>
+                                        <include>jqassistant-plugin.xml</include>
+                                    </includes>
+                                    <stylesheet>
+                                        ${project.build.directory}/xml2asciidoc/asciidoctor-utilities-rules2asciidoc-v2.xsl
+                                    </stylesheet>
+                                    <outputDir>${project.build.directory}/generated-sources/asciidoc</outputDir>
+                                    <fileMappers>
+                                        <fileMapper
+                                                implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                                            <pattern>^jqassistant-plugin\.xml$</pattern>
+                                            <replacement>concepts-and-constraints.adoc</replacement>
+                                        </fileMapper>
+                                    </fileMappers>
+                                    <parameters>
+                                        <parameter>
+                                            <name>dirOfRules</name>
+                                            <value>${project.basedir}/src/main/resources/META-INF/jqassistant-rules
+                                            </value>
+                                        </parameter>
+                                    </parameters>
+                                </transformationSet>
+                            </transformationSets>
+                        </configuration>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sf.saxon</groupId>
+                        <artifactId>saxon</artifactId>
+                        <version>8.7</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -170,10 +243,26 @@
                  !-->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>asciidoctor-utilities</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>attach-asciidoc</id>
                         <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>asciidoc</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -305,6 +394,23 @@
 
 
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>asciidoctor-utilities</artifactId>
+            <type>xsl</type>
+            <classifier>plugin2asciidoc</classifier>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>asciidoctor-utilities</artifactId>
+            <type>xsl</type>
+            <classifier>rules2asciidoc-v2</classifier>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 
 
