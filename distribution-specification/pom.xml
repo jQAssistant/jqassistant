@@ -138,8 +138,24 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>yaml</artifactId>
+                <version>${jqa-yaml-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>cdi</artifactId>
                 <version>${jqa-cdi-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>cdi</artifactId>
+                <version>${jqa-cdi-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -148,8 +164,24 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>ejb3</artifactId>
+                <version>${jqa-ejb3-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>java8</artifactId>
                 <version>${jqa-java8-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>java8</artifactId>
+                <version>${jqa-java8-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -158,8 +190,24 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>javaee6</artifactId>
+                <version>${jqa-javaee6-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>jaxrs</artifactId>
                 <version>${jqa-jaxrs-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jaxrs</artifactId>
+                <version>${jqa-jaxrs-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -168,8 +216,24 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>jpa2</artifactId>
+                <version>${jqa-jpa2-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>junit</artifactId>
                 <version>${jqa-junit-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>junit</artifactId>
+                <version>${jqa-junit-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -178,8 +242,24 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>testng</artifactId>
+                <version>${jqa-testng-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>xml</artifactId>
                 <version>${jqa-xml-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>xml</artifactId>
+                <version>${jqa-xml-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -193,10 +273,25 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>graphml</artifactId>
+                <version>${jqa-graphml-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>java</artifactId>
                 <version>${jqa-java-plugin.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>java</artifactId>
+                <version>${jqa-java-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
 
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -205,8 +300,24 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>m2repo</artifactId>
+                <version>${jqa-m2repo-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>maven3</artifactId>
                 <version>${jqa-maven3-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>maven3</artifactId>
+                <version>${jqa-maven3-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
@@ -215,16 +326,38 @@
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>osgi</artifactId>
+                <version>${jqa-osgi-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>tycho</artifactId>
                 <version>${jqa-tycho-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>tycho</artifactId>
+                <version>${jqa-tycho-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.buschmais.jqassistant.plugin</groupId>
                 <artifactId>rdbms</artifactId>
                 <version>${jqa-rdbms-plugin.version}</version>
             </dependency>
-
-
+            <dependency>
+                <groupId>com.buschmais.jqassistant.plugin</groupId>
+                <artifactId>rdbms</artifactId>
+                <version>${jqa-rdbms-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
