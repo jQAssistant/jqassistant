@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.buschmais.jqassistant</groupId>
+        <artifactId>jqa-uber-parent</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.buschmais.jqassistant</groupId>
+    <artifactId>manual</artifactId>
+    <name>jQAssistant User Manual</name>
+
+    <inceptionYear>2016</inceptionYear>
+
+    <organization>
+        <name>buschmais GbR</name>
+        <url>http://www.buschmais.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, v3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git@github.com:buschmais/jqa-manual.git</connection>
+        <developerConnection>scm:git:git@github.com:buschmais/jqa-manual.git</developerConnection>
+        <url>https://github.com/buschmais/jqa-manual</url>
+    </scm>
+
+    <description>
+        The user manual of jQAssistant.
+    </description>
+
+    <properties>
+        <asciidoc.directory>${project.build.directory}/generated-asciidoc</asciidoc.directory>
+        <org.asciidoctor-plugin.version>1.5.3</org.asciidoctor-plugin.version>
+        <!-- This is tricky. This POM configures the jQAssistant run for
+         !   external plugins. The jQAssistant plugin configuration
+         !   can not be applied to this module. Therefore we have to
+         !   skip the execution for this modul!
+         !   Hence this property must be set to false in each plugin
+         !   repository.
+         !-->
+        <!--<jqassistant.skip>true</jqassistant.skip>-->
+
+        <!--<org.codehaus.groovy.version>2.4.0</org.codehaus.groovy.version>-->
+        <!--<org.jruby.version>9.0.5.0</org.jruby.version>-->
+        <!--<org.mockito.version>1.9.5</org.mockito.version>-->
+        <!--<org.slf4j.version>1.7.13</org.slf4j.version>-->
+        <!--<junit.version>4.12</junit.version>-->
+    </properties>
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.buschmais.jqassistant.scm</groupId>
+                    <artifactId>jqassistant-maven-plugin</artifactId>
+                    <configuration>
+                        <scanIncludes>
+                            <scanInclude>
+                                <path>${project.basedir}</path>
+                            </scanInclude>
+                        </scanIncludes>
+                        <groups>
+                            <group>jqa-legal</group>
+                            <group>jqa-project-layout</group>
+                        </groups>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>legal-constraints</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.buschmais.jqassistant</groupId>
+                            <artifactId>project-layout-constraints</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+
+                <!--<plugin>-->
+                    <!--<groupId>org.apache.maven.plugins</groupId>-->
+                    <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+                    <!--<executions>-->
+                        <!--<execution>-->
+                            <!--<id>attach-javadocs</id>-->
+                            <!--<goals>-->
+                                <!--<goal>jar</goal>-->
+                            <!--</goals>-->
+                        <!--</execution>-->
+                    <!--</executions>-->
+                    <!--<configuration>-->
+                        <!--<quiet>true</quiet>-->
+                        <!--<detectLinks>false</detectLinks>-->
+                        <!--<detectOfflineLinks>false</detectOfflineLinks>-->
+                        <!--<additionalparam>-Xdoclint:none</additionalparam>-->
+                        <!--<groups>-->
+                            <!--<group>-->
+                                <!--<title>API</title>-->
+                                <!--<title>Public API</title>-->
+                                <!--<packages>com.buschmais.jqassistant.plugin.${project.artifactId}.api*</packages>-->
+                            <!--</group>-->
+                        <!--</groups>-->
+<!---->
+                        <!--<source>1.7</source>-->
+                        <!--<doclet>org.asciidoctor.Asciidoclet</doclet>-->
+                        <!--<docletArtifact>-->
+                            <!--<groupId>org.asciidoctor</groupId>-->
+                            <!--<artifactId>asciidoclet</artifactId>-->
+                            <!--<version>1.5.4</version>-->
+                        <!--</docletArtifact>-->
+                        <!--<overview>src/main/java/overview.adoc</overview>-->
+                        <!--<additionalparam>-->
+                            <!--&#45;&#45;base-dir ${project.basedir}-->
+                        <!--</additionalparam>-->
+<!---->
+                    <!--</configuration>-->
+                <!--</plugin>-->
+<!---->
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${org.asciidoctor-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>index</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                        </configuration>
+                    </execution>
+                    <!--<execution>-->
+                        <!--<id>release-notes</id>-->
+                        <!--<phase>process-resources</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>process-asciidoc</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<sourceDocumentName>release-notes.adoc</sourceDocumentName>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                </executions>
+                <configuration>
+                    <backend>xhtml5</backend>
+                    <sourceHighlighter>coderay</sourceHighlighter>
+                    <attributes>
+                        <toc>auto</toc>
+                        <toclevels>3</toclevels>
+                        <tabsize>4</tabsize>
+                        <stylesheet>jqassistant.css</stylesheet>
+                        <docRoot>/${asciidoc.directory}</docRoot>
+                        <projectGroupId>${project.groupId}</projectGroupId>
+                        <projectArtifactId>${project.artifactId}</projectArtifactId>
+                        <projectVersion>${project.version}</projectVersion>
+                    </attributes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.buschmais.jqassistant.scm</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-manual-source</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${asciidoc.directory}</outputDirectory>
+                            <includeTypes>zip</includeTypes>
+                            <includeClassifiers>asciidoc</includeClassifiers>
+                            <stripVersion>true</stripVersion>
+                        </configuration>
+                    </execution>
+                    <!--<execution>-->
+                    <!--<id>unpack-javadoc</id>-->
+                    <!--<goals>-->
+                    <!--<goal>unpack-dependencies</goal>-->
+                    <!--</goals>-->
+                    <!--<phase>generate-resources</phase>-->
+                    <!--<configuration>-->
+                    <!--<outputDirectory>${project.build.directory}/generated-sources/javadoc</outputDirectory>-->
+                    <!--<includeClassifiers>javadoc</includeClassifiers>-->
+                    <!--<useSubDirectoryPerArtifact>true</useSubDirectoryPerArtifact>-->
+                    <!--<stripVersion>true</stripVersion>-->
+                    <!--<useSubDirectoryPerArtifact>true</useSubDirectoryPerArtifact>-->
+                    <!--</configuration>-->
+                    <!--</execution>-->
+                </executions>
+            </plugin>
+
+            <!--<plugin>-->
+                <!-- Copies the XSL stylesheets to a subdirectory of the
+                 !   the build directory. They are needed to process the XML
+                 !   descriptors of jQAssistant during the generation of the
+                 !   documentation.
+                 !-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-dependency-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>copy-asciidoc-stylesheets</id>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.codehaus.mojo</groupId>-->
+                <!--<artifactId>xml-maven-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>transform-xml2asciidoc</id>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-javadoc-plugin</artifactId>-->
+            <!--</plugin>-->
+            <!--<plugin>-->
+                <!-- Builds a jar with the Asciidoctor based documenation
+                 !   of the plugin and all needed stuff. This artifact
+                 !   is required for building the user manual of
+                 !   jQAssistant.
+                 !-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-assembly-plugin</artifactId>-->
+<!---->
+                <!--<dependencies>-->
+                    <!--<dependency>-->
+                        <!--<groupId>com.buschmais.jqassistant</groupId>-->
+                        <!--<artifactId>jqa-asciidoctor-assembly</artifactId>-->
+                        <!--<version>${project.version}</version>-->
+                    <!--</dependency>-->
+                <!--</dependencies>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<id>attach-asciidoc</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>single</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<descriptorRefs>-->
+                                <!--<descriptorRef>asciidoc</descriptorRef>-->
+                            <!--</descriptorRefs>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+        </plugins>
+    </build>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqa-distribution-specification</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jaxrs</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>cdi</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>ejb3</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>graphml</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>java</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>java8</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>javaee6</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>junit</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>jpa2</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>m2repo</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>maven3</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>osgi</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>rdbms</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>testng</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>tycho</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>xml</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.buschmais.jqassistant.plugin</groupId>
+            <artifactId>yaml</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+</project>
