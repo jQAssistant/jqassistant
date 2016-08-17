@@ -97,7 +97,7 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                     <path>config</path>
                                 </scanInclude>
                                 <scanInclude>
-                                    <path>target/extra-classes</path>
+                                    <path>${project.build.directory}/extra-classes</path>
                                     <scope>java:classpath</scope>
                                 </scanInclude>
                             </scanIncludes>
@@ -127,7 +127,9 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                                 <group>default</group>
                             </groups>
                             <reportProperties>
-                                <customReport.fileName>target/customReport.txt</customReport.fileName>
+                                <customReport.fileName>
+                                    ${project.build.directory}/customReport.txt
+                                </customReport.fileName>
                             </reportProperties>
                         </configuration>
                          -->
@@ -140,9 +142,13 @@ The jQAssistant Maven plugin must be configured in the pom.xml of the root modul
                     <storeLifecycle>REACTOR</storeLifecycle>
                     <rulesDirectory>jqassistant</rulesDirectory>
                     <rulesDirectories>
-                        <rulesDirectory>target/generated-rules</rulesDirectory>
+                        <rulesDirectory>
+                            ${project.build.directory}/generated-rules
+                        </rulesDirectory>
                     </rulesDirectories>
-                    <xmlReportFile>target/jqassistant/jqassistant-report.xml</xmlReportFile>
+                    <xmlReportFile>
+                        ${project.build.directory}/jqassistant/jqassistant-report.xml
+                    </xmlReportFile>
                     <serverAddress>localhost</serverAddress>
                     <serverPort>7474</serverPort>
                 </configuration>
