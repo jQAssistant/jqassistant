@@ -406,5 +406,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--
+         ! The documentation sources of the commandline tool
+         !-->
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>commandline</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+
+
     </dependencies>
 </project>
