@@ -121,7 +121,34 @@
                             <descriptor>src/main/assembly/distribution.xml</descriptor>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>attach-asciidoc</id>
+                        <!--
+                         ! Builds an assembly with all artifacts required to include
+                         ! the documentation of the command line tool in
+                         ! the user manual
+                         !-->
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>asciidoc</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.buschmais.jqassistant</groupId>
+                        <artifactId>asciidoctor-utilities</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
