@@ -34,6 +34,16 @@
     </licenses>
 
     <properties>
+        <!--
+         ! Version of the commandline tool
+         ! It is used only to include the correct version of
+         ! the documentation of the commandline tool in the user manual.
+         !-->
+        <jqa-commandline-tool.version>1.2.0-SNAPSHOT</jqa-commandline-tool.version>
+
+        <!--
+         ! Versions of the plugins to be include an a release.
+         !-->
         <jqa-cdi-plugin.version>1.2.0-SNAPSHOT</jqa-cdi-plugin.version>
         <jqa-core.version>1.2.0-SNAPSHOT</jqa-core.version>
         <jqa-graphml-plugin.version>1.2.0-SNAPSHOT</jqa-graphml-plugin.version>
@@ -358,6 +368,19 @@
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
             </dependency>
+
+            <!--
+             ! Dependency to the documentation of the commandline tool.
+             !-->
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>commandline</artifactId>
+                <version>${jqa-commandline-tool.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
