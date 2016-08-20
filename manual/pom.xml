@@ -417,6 +417,17 @@
             <scope>provided</scope>
         </dependency>
 
+        <!--
+         ! The documentation sources of the Maven plugin
+         !-->
+        <dependency>
+            <groupId>com.buschmais.jqassistant</groupId>
+            <artifactId>jqassistant-maven-plugin</artifactId>
+            <type>zip</type>
+            <classifier>asciidoc</classifier>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
 </project>

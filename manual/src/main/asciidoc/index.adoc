@@ -29,7 +29,7 @@ include::include/introduction.adoc[]
 
 include::{docRoot}/commandline/asciidoc/readme.adoc[]
 
-//include::{docRoot}/jqassistant-maven-plugin/readme.adoc[]
+include::{docRoot}/jqassistant-maven-plugin/asciidoc/readme.adoc[]
 
 include::include/plugins.adoc[]
 
