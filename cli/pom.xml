@@ -14,6 +14,7 @@
         <test.distribution>${project.build.directory}/distribution/</test.distribution>
         <test.jqassistant.home>${test.distribution}</test.jqassistant.home>
         <org.hamcrest_version>2.0.0.0</org.hamcrest_version>
+        <asciidoc-assembly-descr.version>1.2.0-SNAPSHOT</asciidoc-assembly-descr.version>
     </properties>
 
     <build>
@@ -145,7 +146,7 @@
                     <dependency>
                         <groupId>com.buschmais.jqassistant</groupId>
                         <artifactId>asciidoctor-utilities</artifactId>
-                        <version>${project.version}</version>
+                        <version>${asciidoc-assembly-descr.version}</version>
                     </dependency>
                 </dependencies>
 
