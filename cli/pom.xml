@@ -119,6 +119,8 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>jqassistant-commandline-${project.version}</finalName>
                             <descriptor>src/main/assembly/distribution.xml</descriptor>
                         </configuration>
                     </execution>
