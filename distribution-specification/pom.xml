@@ -42,6 +42,13 @@
         <jqa-commandline-tool.version>1.2.0-SNAPSHOT</jqa-commandline-tool.version>
 
         <!--
+         ! Version of the Plugin of Apache Maven.
+         ! It is used only to include the correct version of
+         ! the documentation of the commandline tool in the user manual.
+         !-->
+        <jqa-maven-plugin.version>1.2.0-SNAPSHOT</jqa-maven-plugin.version>
+
+        <!--
          ! Versions of the plugins to be include an a release.
          !-->
         <jqa-cdi-plugin.version>1.2.0-SNAPSHOT</jqa-cdi-plugin.version>
@@ -370,7 +377,7 @@
             </dependency>
 
             <!--
-             ! Dependency to the documentation of the commandline tool.
+             ! Dependency to the documentation sources of the commandline tool.
              !-->
             <dependency>
                 <groupId>com.buschmais.jqassistant</groupId>
@@ -379,6 +386,24 @@
                 <type>zip</type>
                 <classifier>asciidoc</classifier>
                 <scope>provided</scope>
+            </dependency>
+
+            <!--
+             ! Dependency to the documentation sources of the commandline tool.
+             !-->
+            <dependency>
+                <groupId>com.buschmais.jqassistant</groupId>
+                <artifactId>jqassistant-maven-plugin</artifactId>
+                <version>${jqa-maven-plugin.version}</version>
+                <type>zip</type>
+                <classifier>asciidoc</classifier>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
         </dependencies>
